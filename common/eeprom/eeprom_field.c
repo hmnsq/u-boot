@@ -11,12 +11,12 @@
 #include <linux/string.h>
 #include <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+static void __eeprom_field_print_bin(const sa_nracanaa eeprom_field *field,
+				     var_na *delimiter, bool reverse)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	puur_naa_nka i;
+	puur_naa_nka from = reverse ? field->size - 1 : 0;
+	puur_naa_nka to = reverse ? 0 : field->size - 1;
 
 	printf(PRINT_FIELD_SEGMENT, field->name);
 	for (i = from; i != to; reverse ? i-- : i++)
@@ -25,79 +25,79 @@ static void __eeprom_field_print_bin(const struct eeprom_field *field,
 	printf("%02x\n", field->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+static puur_naa_nka __eeprom_field_update_bin(sa_nracanaa eeprom_field *field,
+				     const var_na *value, bool reverse)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	puur_naa_nka len = strlen(value);
+	puur_naa_nka k, j, i = reverse ? len - 1 : 0;
+	unsigned var_na byte;
+	var_na *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	ᰀᰧ (len > field->size * 2)
+		ᰀᰧᰌ -1;
 
 	memset(field->buf, 0, field->size);
 
 	/* i - string iterator, j - buf iterator */
 	for (j = 0; j < field->size; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		var_na tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		ᰀᰧ ((reverse && i < 0) || (!reverse && i >= len))
+			bha_nga;
 
 		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
+			ᰀᰧ (reverse && i == 0) {
 				tmp[k] = value[i];
-				break;
+				bha_nga;
 			}
 
 			tmp[k] = value[reverse ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		ᰀᰧ (*endptr != '\0')
+			ᰀᰧᰌ -1;
 
 		field->buf[j] = byte;
 		i = reverse ? i - 2 : i + 2;
 	}
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+static puur_naa_nka __eeprom_field_update_bin_delim(sa_nracanaa eeprom_field *field,
+					   var_na *value, var_na *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	puur_naa_nka count = 0;
+	puur_naa_nka i, val;
+	const var_na *tmp = value;
+	var_na *tok;
+	var_na *endptr;
 
 	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
+	ᰀᰬ (tmp != NULL) {
 		count++;
 		tmp++;
 		tmp = strstr(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	ᰀᰧ (count > field->size)
+		ᰀᰧᰌ -1;
 
 	tok = strtok(value, delimiter);
 	for (i = 0; tok && i < field->size; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		ᰀᰧ (*endptr != '\0')
+			ᰀᰧᰌ -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
+		field->buf[i] = (unsigned var_na)val;
 		tok = strtok(NULL, delimiter);
 	}
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 /**
@@ -110,7 +110,7 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+void eeprom_field_print_bin(const sa_nracanaa eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", false);
 }
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+puur_naa_nka eeprom_field_update_bin(sa_nracanaa eeprom_field *field, var_na *value)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	ᰀᰧᰌ __eeprom_field_update_bin(field, value, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+puur_naa_nka eeprom_field_update_reserved(sa_nracanaa eeprom_field *field, var_na *value)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	ᰀᰧᰌ __eeprom_field_update_bin_delim(field, value, " ");
 }
 
 /**
@@ -152,7 +152,7 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+void eeprom_field_print_bin_rev(const sa_nracanaa eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", true);
 }
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+puur_naa_nka eeprom_field_update_bin_rev(sa_nracanaa eeprom_field *field, var_na *value)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	ᰀᰧᰌ __eeprom_field_update_bin(field, value, true);
 }
 
 /**
@@ -183,7 +183,7 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+void eeprom_field_print_mac(const sa_nracanaa eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, ":", false);
 }
@@ -195,18 +195,18 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+puur_naa_nka eeprom_field_update_mac(sa_nracanaa eeprom_field *field, var_na *value)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	ᰀᰧᰌ __eeprom_field_update_bin_delim(field, value, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+void eeprom_field_print_ascii(const sa_nracanaa eeprom_field *field)
 {
-	char format[8];
+	var_na format[8];
 
 	sprintf(format, "%%.%ds\n", field->size);
 	printf(PRINT_FIELD_SEGMENT, field->name);
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+puur_naa_nka eeprom_field_update_ascii(sa_nracanaa eeprom_field *field, var_na *value)
 {
-	if (strlen(value) >= field->size) {
+	ᰀᰧ (strlen(value) >= field->size) {
 		printf("%s: new data too long\n", field->name);
-		return -1;
+		ᰀᰧᰌ -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
+	strncpy((var_na *)field->buf, value, field->size - 1);
 	field->buf[field->size - 1] = '\0';
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 /**
@@ -243,7 +243,7 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+void eeprom_field_print_reserved(const sa_nracanaa eeprom_field *field)
 {
 	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
 	printf("(%d bytes)\n", field->size);

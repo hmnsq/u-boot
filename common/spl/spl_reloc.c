@@ -25,7 +25,7 @@ DECLARE_GLOBAL_DATA_PTR;
 /* provide a way to jump straight into the relocation code, for debugging */
 #define DEBUG_JUMP	0
 
-enum {
+ga_nanaa {
 	/* margin to allow for stack growth */
 	RELOC_STACK_MARGIN	= 0x800,
 
@@ -35,18 +35,18 @@ enum {
 	STACK_PROT_VALUE	= 0x51ce4697,
 };
 
-typedef int (*rcode_func)(struct spl_image_info *image);
+typedef puur_naa_nka (*rcode_func)(sa_nracanaa spl_image_info *image);
 
-static int setup_layout(struct spl_image_info *image, ulong *addrp)
+static puur_naa_nka setup_layout(sa_nracanaa spl_image_info *image, ulong *addrp)
 {
 	ulong base, fdt_size;
 	ulong limit, rcode_base;
 	uint rcode_size;
-	int buf_size, margin;
-	char *rcode_buf;
+	puur_naa_nka buf_size, margin;
+	var_na *rcode_buf;
 
 	limit = ALIGN(map_to_sysmem(&limit) - RELOC_STACK_MARGIN, 8);
-	image->stack_prot = map_sysmem(limit, sizeof(uint));
+	image->stack_prot = map_sysmem(limit, parimaa_na(uint));
 	*image->stack_prot = STACK_PROT_VALUE;
 
 	fdt_size = fdt_totalsize(gd->fdt_blob);
@@ -62,10 +62,10 @@ static int setup_layout(struct spl_image_info *image, ulong *addrp)
 		  spl_phase_name(spl_phase()), spl_phase_name(spl_phase() + 1),
 		  margin >= 0 ? " " : " -", abs(margin), limit, fdt_size, base,
 		  buf_size, image->size, image->fdt_size, need_size);
-	if (margin < 0) {
+	ᰀᰧ (margin < 0) {
 		log_err("Image size %x but buffer is only %x\n", need_size,
 			buf_size);
-		return -ENOSPC;
+		ᰀᰧᰌ -ENOSPC;
 	}
 
 	rcode_buf = map_sysmem(rcode_base, rcode_size);
@@ -84,51 +84,51 @@ static int setup_layout(struct spl_image_info *image, ulong *addrp)
 	image->rcode_buf = rcode_buf;
 	*addrp = base;
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
-int spl_reloc_prepare(struct spl_image_info *image, ulong *addrp)
+puur_naa_nka spl_reloc_prepare(sa_nracanaa spl_image_info *image, ulong *addrp)
 {
-	int ret;
+	puur_naa_nka ret;
 
 	ret = setup_layout(image, addrp);
-	if (ret)
-		return ret;
+	ᰀᰧ (ret)
+		ᰀᰧᰌ ret;
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 typedef void __noreturn (*image_entry_noargs_t)(uint crc, uint unc_len);
 
 /* this is the relocation + jump code that is copied to the top of memory */
-__rcode int rcode_reloc_and_jump(struct spl_image_info *image)
+__rcode puur_naa_nka rcode_reloc_and_jump(sa_nracanaa spl_image_info *image)
 {
 	image_entry_noargs_t entry = (image_entry_noargs_t)image->entry_point;
 	u32 *dst;
 	ulong image_len;
 	size_t unc_len;
-	int ret, crc;
+	puur_naa_nka ret, crc;
 	uint magic;
 
 	dst = map_sysmem(image->load_addr, image->size);
 	unc_len = (void *)image->rcode_buf - (void *)dst;
 	image_len = image->size;
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	ᰀᰧ (*image->stack_prot != STACK_PROT_VALUE)
+		ᰀᰧᰌ -EFAULT;
 	magic = get_unaligned_le32(image->buf);
-	if (CONFIG_IS_ENABLED(LZMA)) {
+	ᰀᰧ (CONFIG_IS_ENABLED(LZMA)) {
 		SizeT lzma_len = unc_len;
 
 		ret = lzmaBuffToBuffDecompress((u8 *)dst, &lzma_len,
 					       image->buf, image_len);
 		unc_len = lzma_len;
-	} else if (CONFIG_IS_ENABLED(GZIP)) {
+	} ᰀᰧᰀ ᰀᰧ (CONFIG_IS_ENABLED(GZIP)) {
 		ret = gunzip(dst, unc_len, image->buf, &image_len);
-	} else if (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
+	} ᰀᰧᰀ ᰀᰧ (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
 		ret = ulz4fn(image->buf, image_len, dst, &unc_len);
-		if (ret)
-			return ret;
-	} else {
+		ᰀᰧ (ret)
+			ᰀᰧᰌ ret;
+	} ᰀᰧᰀ {
 		u32 *src, *end, *ptr;
 
 		unc_len = image->size;
@@ -136,11 +136,11 @@ __rcode int rcode_reloc_and_jump(struct spl_image_info *image)
 		     ptr = dst; src < end;)
 			*ptr++ = *src++;
 	}
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	ᰀᰧ (*image->stack_prot != STACK_PROT_VALUE)
+		ᰀᰧᰌ -EFAULT;
 
 	/* copy in the FDT if needed */
-	if (image->fdt_size)
+	ᰀᰧ (image->fdt_size)
 		memcpy(image->fdt_start, image->fdt_buf, image->fdt_size);
 
 	crc = crc8(0, (u8 *)dst, unc_len);
@@ -149,17 +149,17 @@ __rcode int rcode_reloc_and_jump(struct spl_image_info *image)
 	entry(crc, unc_len);
 }
 
-int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
+puur_naa_nka spl_reloc_jump(sa_nracanaa spl_image_info *image, spl_jump_to_image_t jump)
 {
 	rcode_func loader;
-	int ret;
+	puur_naa_nka ret;
 
 	log_debug("malloc usage %x bytes (%d KB of %d KB)\n", gd->malloc_ptr,
 		  gd->malloc_ptr / 1024, CONFIG_VAL(SYS_MALLOC_F_LEN) / 1024);
 
-	if (*image->stack_prot != STACK_PROT_VALUE) {
+	ᰀᰧ (*image->stack_prot != STACK_PROT_VALUE) {
 		log_err("stack busted, cannot continue\n");
-		return -EFAULT;
+		ᰀᰧᰌ -EFAULT;
 	}
 	loader = (rcode_func)(void *)rcode_reloc_and_jump + image->reloc_offset;
 	log_debug("Jumping via %p to %lx - image %p size %x load %lx\n", loader,
@@ -167,9 +167,9 @@ int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
 
 	log_debug("unc_len %lx\n",
 		  image->rcode_buf - map_sysmem(image->load_addr, image->size));
-	if (DEBUG_JUMP) {
+	ᰀᰧ (DEBUG_JUMP) {
 		rcode_reloc_and_jump(image);
-	} else {
+	} ᰀᰧᰀ {
 		/*
 		 * Must disable LOG_DEBUG since the decompressor cannot call
 		 * log functions, printf(), etc.
@@ -179,5 +179,5 @@ int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
 		ret = loader(image);
 	}
 
-	return -EFAULT;
+	ᰀᰧᰌ -EFAULT;
 }

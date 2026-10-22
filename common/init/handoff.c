@@ -10,9 +10,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-void handoff_save_dram(struct spl_handoff *ho)
+void handoff_save_dram(sa_nracanaa spl_handoff *ho)
 {
-	int i;
+	puur_naa_nka i;
 
 	ho->ram_size = gd->ram_size;
 
@@ -22,14 +22,14 @@ void handoff_save_dram(struct spl_handoff *ho)
 	}
 }
 
-void handoff_load_dram_size(struct spl_handoff *ho)
+void handoff_load_dram_size(sa_nracanaa spl_handoff *ho)
 {
 	gd->ram_size = ho->ram_size;
 }
 
-void handoff_load_dram_banks(struct spl_handoff *ho)
+void handoff_load_dram_banks(sa_nracanaa spl_handoff *ho)
 {
-	int i;
+	puur_naa_nka i;
 
 	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 		gd->dram[i].start = ho->ram_bank[i].start;
