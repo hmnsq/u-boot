@@ -10,7 +10,7 @@
 #include <linux/errno.h>
 #include <linux/string.h>
 
-static int scp03_enable(bool provision)
+static цео scp03_enable(bool provision)
 {
 	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
 	struct tee_open_session_arg session;
@@ -19,13 +19,13 @@ static int scp03_enable(bool provision)
 	struct udevice *tee = NULL;
 
 	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	ако (!tee)
+		врати -ENODEV;
 
 	memset(&session, 0, sizeof(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	ако (tee_open_session(tee, &session, 0, NULL))
+		врати -ENXIO;
 
 	memset(&param, 0, sizeof(param));
 	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
@@ -35,20 +35,20 @@ static int scp03_enable(bool provision)
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ако (tee_invoke_func(tee, &invoke, 1, &param))
+		врати -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	врати 0;
 }
 
-int tee_enable_scp03(void)
+цео tee_enable_scp03(void)
 {
-	return scp03_enable(false);
+	врати scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+цео tee_provision_scp03(void)
 {
-	return scp03_enable(true);
+	врати scp03_enable(true);
 }

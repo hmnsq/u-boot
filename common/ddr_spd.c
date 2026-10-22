@@ -7,22 +7,22 @@
 #include <stdio.h>
 
 /* used for ddr1 and ddr2 spd */
-static int
+static цео
 spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
 {
-	unsigned int cksum = 0;
-	unsigned int i;
+	unsigned цео cksum = 0;
+	unsigned цео i;
 
 	/*
 	 * Check SPD revision supported
 	 * Rev 1.X or less supported by this code
 	 */
-	if (spd_rev >= 0x20) {
+	ако (spd_rev >= 0x20) {
 		printf("SPD revision %02X not supported by this code\n",
 		       spd_rev);
-		return 1;
+		врати 1;
 	}
-	if (spd_rev > 0x13) {
+	ако (spd_rev > 0x13) {
 		printf("SPD revision %02X not verified by this code\n",
 		       spd_rev);
 	}
@@ -30,64 +30,64 @@ spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
 	/*
 	 * Calculate checksum
 	 */
-	for (i = 0; i < 63; i++) {
+	за (i = 0; i < 63; i++) {
 		cksum += *buf++;
 	}
 	cksum &= 0xFF;
 
-	if (cksum != spd_cksum) {
+	ако (cksum != spd_cksum) {
 		printf("SPD checksum unexpected. "
 			"Checksum in SPD = %02X, computed SPD = %02X\n",
 			spd_cksum, cksum);
-		return 1;
+		врати 1;
 	}
 
-	return 0;
+	врати 0;
 }
 
-unsigned int
+unsigned цео
 ddr1_spd_check(const ddr1_spd_eeprom_t *spd)
 {
 	const u8 *p = (const u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	врати spd_check(p, spd->spd_rev, spd->cksum);
 }
 
-unsigned int
+unsigned цео
 ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
 {
 	const u8 *p = (const u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	врати spd_check(p, spd->spd_rev, spd->cksum);
 }
 
 /*
  * CRC16 compute for DDR3 SPD
  * Copied from DDR3 SPD spec.
  */
-static int
-crc16(char *ptr, int count)
+static цео
+crc16(char *ptr, цео count)
 {
-	int crc, i;
+	цео crc, i;
 
 	crc = 0;
-	while (--count >= 0) {
-		crc = crc ^ (int)*ptr++ << 8;
-		for (i = 0; i < 8; ++i)
-			if (crc & 0x8000)
+	док (--count >= 0) {
+		crc = crc ^ (цео)*ptr++ << 8;
+		за (i = 0; i < 8; ++i)
+			ако (crc & 0x8000)
 				crc = crc << 1 ^ 0x1021;
-			else
+			инако
 				crc = crc << 1;
 	}
-	return crc & 0xffff;
+	врати crc & 0xffff;
 }
 
-unsigned int
+unsigned цео
 ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 {
 	char *p = (char *)spd;
-	int csum16;
-	int len;
+	цео csum16;
+	цео len;
 	char crc_lsb;	/* byte 126 */
 	char crc_msb;	/* byte 127 */
 
@@ -103,22 +103,22 @@ ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 	crc_lsb = (char) (csum16 & 0xff);
 	crc_msb = (char) (csum16 >> 8);
 
-	if (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
-		return 0;
-	} else {
+	ако (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
+		врати 0;
+	} инако {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+		врати 1;
 	}
 }
 
-unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
+unsigned цео ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
 {
 	char *p = (char *)spd;
-	int csum16;
-	int len;
+	цео csum16;
+	цео len;
 	char crc_lsb;	/* byte 126 */
 	char crc_msb;	/* byte 127 */
 
@@ -128,12 +128,12 @@ unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
 	crc_lsb = (char) (csum16 & 0xff);
 	crc_msb = (char) (csum16 >> 8);
 
-	if (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
+	ако (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+		врати 1;
 	}
 
 	p = (char *)((ulong)spd + 128);
@@ -143,7 +143,7 @@ unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
 	crc_lsb = (char) (csum16 & 0xff);
 	crc_msb = (char) (csum16 >> 8);
 
-	if (spd->mod_section.uc[126] != crc_lsb ||
+	ако (spd->mod_section.uc[126] != crc_lsb ||
 	    spd->mod_section.uc[127] != crc_msb) {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
@@ -151,8 +151,8 @@ unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
 			spd->mod_section.uc[126],
 			crc_lsb, spd->mod_section.uc[127],
 			crc_msb);
-		return 1;
+		врати 1;
 	}
 
-	return 0;
+	врати 0;
 }

@@ -6,14 +6,14 @@
 
 #include <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+static цео hex1_bin (char  c);
+static цео hex2_bin (char *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+цео srec_decode (char *input, цео *count, ulong *addr, char *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
+	цео	i;
+	цео	v;				/* conversion buffer	*/
+	цео	srec_type;			/* S-Record type	*/
 	unsigned char chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
@@ -22,20 +22,20 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
+	за (; *input; ++input) {
+		ако (*input == 'S') {		/* skip 'S' */
 			++input;
 			break;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	ако (*input == '\0') {			/* no more data?	*/
+		врати (SREC_EMPTY);
 	}
 
 	v = *input++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ако ((*count = hex2_bin(input)) < 0) {
+		врати (SREC_E_NOSREC);
 	}
 
 	chksum += *count;
@@ -78,7 +78,7 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		*count   -= 3;			/* - checksum and addr	*/
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		врати (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
@@ -87,8 +87,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	switch (v) {
 	case '3':				/* 4 byte addr field	*/
 	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ако ((v = hex2_bin(input)) < 0) {
+			врати (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
@@ -96,8 +96,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		/* FALL THRU */
 	case '2':				/* 3 byte addr field	*/
 	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ако ((v = hex2_bin(input)) < 0) {
+			врати (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -108,16 +108,16 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	case '1':
 	case '5':
 	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ако ((v = hex2_bin(input)) < 0) {
+			врати (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ако ((v = hex2_bin(input)) < 0) {
+			врати (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -126,13 +126,13 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		врати (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	за (i=0; i < *count; ++i) {
+		ако ((v = hex2_bin(input)) < 0) {
+			врати (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
@@ -140,38 +140,38 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ако ((v = hex2_bin(input)) < 0) {
+		врати (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	ако ((unsigned char)v != (unsigned char)~chksum) {
+		врати (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	врати (srec_type);
 }
 
-static int hex1_bin (char c)
+static цео hex1_bin (char c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	ако (c >= '0' && c <= '9')
+		врати (c - '0');
+	ако (c >= 'a' && c <= 'f')
+		врати (c + 10 - 'a');
+	ако (c >= 'A' && c <= 'F')
+		врати (c + 10 - 'A');
+	врати (-1);
 }
 
-static int hex2_bin (char *s)
+static цео hex2_bin (char *s)
 {
-	int i, j;
+	цео i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	ако ((i = hex1_bin(*s++)) < 0) {
+		врати (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	ако ((j = hex1_bin(*s)) < 0) {
+		врати (-1);
 	}
 
-	return ((i<<4) + j);
+	врати ((i<<4) + j);
 }

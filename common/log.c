@@ -58,52 +58,52 @@ const char *log_get_cat_name(enum log_category_t cat)
 {
 	const char *name;
 
-	if (cat < 0 || cat >= LOGC_COUNT)
-		return "<invalid>";
-	if (cat >= LOGC_NONE)
-		return log_cat_name[cat - LOGC_NONE];
+	ако (cat < 0 || cat >= LOGC_COUNT)
+		врати "<invalid>";
+	ако (cat >= LOGC_NONE)
+		врати log_cat_name[cat - LOGC_NONE];
 
-#if CONFIG_IS_ENABLED(DM)
+#ако CONFIG_IS_ENABLED(DM)
 	name = uclass_get_name((enum uclass_id)cat);
-#else
+#инако
 	name = NULL;
 #endif
 
-	return name ? name : "<missing>";
+	врати name ? name : "<missing>";
 }
 
 enum log_category_t log_get_cat_by_name(const char *name)
 {
 	enum uclass_id id;
-	int i;
+	цео i;
 
-	for (i = LOGC_NONE; i < LOGC_COUNT; i++)
-		if (!strcmp(name, log_cat_name[i - LOGC_NONE]))
-			return i;
+	за (i = LOGC_NONE; i < LOGC_COUNT; i++)
+		ако (!strcmp(name, log_cat_name[i - LOGC_NONE]))
+			врати i;
 	id = uclass_get_by_name(name);
-	if (id != UCLASS_INVALID)
-		return (enum log_category_t)id;
+	ако (id != UCLASS_INVALID)
+		врати (enum log_category_t)id;
 
-	return LOGC_NONE;
+	врати LOGC_NONE;
 }
 
 const char *log_get_level_name(enum log_level_t level)
 {
-	if (level >= LOGL_COUNT)
-		return "INVALID";
-	return log_level_name[level];
+	ако (level >= LOGL_COUNT)
+		врати "INVALID";
+	врати log_level_name[level];
 }
 
 enum log_level_t log_get_level_by_name(const char *name)
 {
-	int i;
+	цео i;
 
-	for (i = 0; i < LOGL_COUNT; i++) {
-		if (!strcasecmp(log_level_name[i], name))
-			return i;
+	за (i = 0; i < LOGL_COUNT; i++) {
+		ако (!strcasecmp(log_level_name[i], name))
+			врати i;
 	}
 
-	return LOGL_NONE;
+	врати LOGL_NONE;
 }
 
 struct log_device *log_device_find_by_name(const char *drv_name)
@@ -111,23 +111,23 @@ struct log_device *log_device_find_by_name(const char *drv_name)
 	struct log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (!strcmp(drv_name, ldev->drv->name))
-			return ldev;
+		ако (!strcmp(drv_name, ldev->drv->name))
+			врати ldev;
 	}
 
-	return NULL;
+	врати NULL;
 }
 
 bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
 {
-	int i;
+	цео i;
 
-	for (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
-		if (cat_list[i] == cat)
-			return true;
+	за (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
+		ако (cat_list[i] == cat)
+			врати true;
 	}
 
-	return false;
+	врати false;
 }
 
 /**
@@ -140,19 +140,19 @@ bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
  */
 static bool log_has_member(const char *list, const char *member)
 {
-	int member_len = strlen(member);
+	цео member_len = strlen(member);
 	const char *s, *p;
-	int substr_len;
+	цео substr_len;
 
-	for (s = list; *s; s = p + (*p != '\0')) {
+	за (s = list; *s; s = p + (*p != '\0')) {
 		p = strchrnul(s, ',');
 		substr_len = p - s;
-		if (member_len >= substr_len &&
+		ако (member_len >= substr_len &&
 		    !strncmp(member + member_len - substr_len, s, substr_len))
-			return true;
+			врати true;
 	}
 
-	return false;
+	врати false;
 }
 
 /**
@@ -166,43 +166,43 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
 {
 	struct log_filter *filt;
 
-	if (rec->flags & LOGRECF_FORCE_DEBUG)
-		return true;
+	ако (rec->flags & LOGRECF_FORCE_DEBUG)
+		врати true;
 
 	/* If there are no filters, filter on the default log level */
-	if (list_empty(&ldev->filter_head)) {
-		if (rec->level > gd->default_log_level)
-			return false;
-		return true;
+	ако (list_empty(&ldev->filter_head)) {
+		ако (rec->level > gd->default_log_level)
+			врати false;
+		врати true;
 	}
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->flags & LOGFF_LEVEL_MIN) {
-			if (rec->level < filt->level)
+		ако (filt->flags & LOGFF_LEVEL_MIN) {
+			ако (rec->level < filt->level)
 				continue;
-		} else if (rec->level > filt->level) {
+		} инако ако (rec->level > filt->level) {
 			continue;
 		}
 
-		if ((filt->flags & LOGFF_HAS_CAT) &&
+		ако ((filt->flags & LOGFF_HAS_CAT) &&
 		    !log_has_cat(filt->cat_list, rec->cat))
 			continue;
 
-		if (filt->file_list &&
+		ако (filt->file_list &&
 		    !log_has_member(filt->file_list, rec->file))
 			continue;
 
-		if (filt->func_list &&
+		ако (filt->func_list &&
 		    !log_has_member(filt->func_list, rec->func))
 			continue;
 
-		if (filt->flags & LOGFF_DENY)
-			return false;
-		else
-			return true;
+		ако (filt->flags & LOGFF_DENY)
+			врати false;
+		инако
+			врати true;
 	}
 
-	return false;
+	врати false;
 }
 
 /**
@@ -216,7 +216,7 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
  * @rec:	log record to dispatch
  * Return:	0 msg sent, 1 msg not sent while already dispatching another msg
  */
-static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
+static цео log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 {
 	struct log_device *ldev;
 	char buf[CONFIG_SYS_CBSIZE];
@@ -226,16 +226,16 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 	 * may result in further generated messages. We cannot process them here
 	 * as this might result in infinite recursion.
 	 */
-	if (gd->processing_msg)
-		return 1;
+	ако (gd->processing_msg)
+		врати 1;
 
 	/* Emit message */
 	gd->processing_msg = true;
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if ((ldev->flags & LOGDF_ENABLE) &&
+		ако ((ldev->flags & LOGDF_ENABLE) &&
 		    log_passes_filters(ldev, rec)) {
-			if (!rec->msg) {
-				int len;
+			ако (!rec->msg) {
+				цео len;
 
 				len = vsnprintf(buf, sizeof(buf), fmt, args);
 				rec->msg = buf;
@@ -245,41 +245,41 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 		}
 	}
 	gd->processing_msg = false;
-	return 0;
+	врати 0;
 }
 
-int _log(enum log_category_t cat, enum log_level_t level, const char *file,
-	 int line, const char *func, const char *fmt, ...)
+цео _log(enum log_category_t cat, enum log_level_t level, const char *file,
+	 цео line, const char *func, const char *fmt, ...)
 {
 	struct log_rec rec;
 	va_list args;
 
-	if (!gd)
-		return -ENOSYS;
+	ако (!gd)
+		врати -ENOSYS;
 
 	/* Check for message continuation */
-	if (cat == LOGC_CONT)
+	ако (cat == LOGC_CONT)
 		cat = gd->logc_prev;
-	if (level == LOGL_CONT)
+	ако (level == LOGL_CONT)
 		level = gd->logl_prev;
 
 	rec.cat = cat;
 	rec.level = level & LOGL_LEVEL_MASK;
 	rec.flags = 0;
-	if (level & LOGL_FORCE_DEBUG)
+	ако (level & LOGL_FORCE_DEBUG)
 		rec.flags |= LOGRECF_FORCE_DEBUG;
-	if (gd->log_cont)
+	ако (gd->log_cont)
 		rec.flags |= LOGRECF_CONT;
 	rec.file = file;
 	rec.line = line;
 	rec.func = func;
 	rec.msg = NULL;
 
-	if (!(gd->flags & GD_FLG_LOG_READY)) {
+	ако (!(gd->flags & GD_FLG_LOG_READY)) {
 		gd->log_drop_count++;
 
 		/* display dropped traces with console puts and DEBUG_UART */
-		if (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
+		ако (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
 		    rec.flags & LOGRECF_FORCE_DEBUG) {
 			char buf[CONFIG_SYS_CBSIZE];
 
@@ -289,31 +289,31 @@ int _log(enum log_category_t cat, enum log_level_t level, const char *file,
 			va_end(args);
 		}
 
-		return -ENOSYS;
+		врати -ENOSYS;
 	}
 	va_start(args, fmt);
-	if (!log_dispatch(&rec, fmt, args)) {
+	ако (!log_dispatch(&rec, fmt, args)) {
 		gd->logc_prev = cat;
 		gd->logl_prev = level;
 	}
 	va_end(args);
 
-	return 0;
+	врати 0;
 }
 
 #define MAX_LINE_LENGTH_BYTES		64
 #define DEFAULT_LINE_LENGTH_BYTES	16
 
-int _log_buffer(enum log_category_t cat, enum log_level_t level,
-		const char *file, int line, const char *func, ulong addr,
+цео _log_buffer(enum log_category_t cat, enum log_level_t level,
+		const char *file, цео line, const char *func, ulong addr,
 		const void *data, uint width, uint count, uint linelen)
 {
-	if (linelen * width > MAX_LINE_LENGTH_BYTES)
+	ако (linelen * width > MAX_LINE_LENGTH_BYTES)
 		linelen = MAX_LINE_LENGTH_BYTES / width;
-	if (linelen < 1)
+	ако (linelen < 1)
 		linelen = DEFAULT_LINE_LENGTH_BYTES / width;
 
-	while (count) {
+	док (count) {
 		uint thislinelen;
 		char buf[HEXDUMP_MAX_BUF_LENGTH(width * linelen)];
 
@@ -328,86 +328,86 @@ int _log_buffer(enum log_category_t cat, enum log_level_t level,
 		count -= thislinelen;
 	}
 
-	return 0;
+	врати 0;
 }
 
-int log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
+цео log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
 			 enum log_level_t level, const char *file_list,
-			 const char *func_list, int flags)
+			 const char *func_list, цео flags)
 {
 	struct log_filter *filt;
 	struct log_device *ldev;
-	int ret;
-	int i;
+	цео ret;
+	цео i;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
+	ако (!ldev)
+		врати -ENOENT;
 	filt = calloc(1, sizeof(*filt));
-	if (!filt)
-		return -ENOMEM;
+	ако (!filt)
+		врати -ENOMEM;
 
 	filt->flags = flags;
-	if (cat_list) {
+	ако (cat_list) {
 		filt->flags |= LOGFF_HAS_CAT;
-		for (i = 0; ; i++) {
-			if (i == ARRAY_SIZE(filt->cat_list)) {
+		за (i = 0; ; i++) {
+			ако (i == ARRAY_SIZE(filt->cat_list)) {
 				ret = -ENOSPC;
 				goto err;
 			}
 			filt->cat_list[i] = cat_list[i];
-			if (cat_list[i] == LOGC_END)
+			ако (cat_list[i] == LOGC_END)
 				break;
 		}
 	}
 	filt->level = level;
-	if (file_list) {
+	ако (file_list) {
 		filt->file_list = strdup(file_list);
-		if (!filt->file_list) {
+		ако (!filt->file_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
-	if (func_list) {
+	ако (func_list) {
 		filt->func_list = strdup(func_list);
-		if (!filt->func_list) {
+		ако (!filt->func_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
 	filt->filter_num = ldev->next_filter_num++;
 	/* Add deny filters to the beginning of the list */
-	if (flags & LOGFF_DENY)
+	ако (flags & LOGFF_DENY)
 		list_add(&filt->sibling_node, &ldev->filter_head);
-	else
+	инако
 		list_add_tail(&filt->sibling_node, &ldev->filter_head);
 
-	return filt->filter_num;
+	врати filt->filter_num;
 
 err:
 	free(filt);
-	return ret;
+	врати ret;
 }
 
-int log_remove_filter(const char *drv_name, int filter_num)
+цео log_remove_filter(const char *drv_name, цео filter_num)
 {
 	struct log_filter *filt;
 	struct log_device *ldev;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
+	ако (!ldev)
+		врати -ENOENT;
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->filter_num == filter_num) {
+		ако (filt->filter_num == filter_num) {
 			list_del(&filt->sibling_node);
 			free(filt);
 
-			return 0;
+			врати 0;
 		}
 	}
 
-	return -ENOENT;
+	врати -ENOENT;
 }
 
 /**
@@ -421,8 +421,8 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 	struct log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (ldev->drv == drv)
-			return ldev;
+		ако (ldev->drv == drv)
+			врати ldev;
 	}
 	/*
 	 * It is quite hard to pass an invalid driver since passing an unknown
@@ -430,22 +430,22 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 	 * it is possible to pass NULL, for example, so this
 	 */
 
-	return NULL;
+	врати NULL;
 }
 
-int log_device_set_enable(struct log_driver *drv, bool enable)
+цео log_device_set_enable(struct log_driver *drv, bool enable)
 {
 	struct log_device *ldev;
 
 	ldev = log_find_device_by_drv(drv);
-	if (!ldev)
-		return -ENOENT;
-	if (enable)
+	ако (!ldev)
+		врати -ENOENT;
+	ако (enable)
 		ldev->flags |= LOGDF_ENABLE;
-	else
+	инако
 		ldev->flags &= ~LOGDF_ENABLE;
 
-	return 0;
+	врати 0;
 }
 
 void log_fixup_for_gd_move(struct global_data *new_gd)
@@ -453,10 +453,10 @@ void log_fixup_for_gd_move(struct global_data *new_gd)
 	new_gd->log_head.prev->next = &new_gd->log_head;
 }
 
-int log_init(void)
+цео log_init(void)
 {
 	struct log_driver *drv = ll_entry_start(struct log_driver, log_driver);
-	const int count = ll_entry_count(struct log_driver, log_driver);
+	const цео count = ll_entry_count(struct log_driver, log_driver);
 	struct log_driver *end = drv + count;
 
 	/*
@@ -465,13 +465,13 @@ int log_init(void)
 	 * We only support having a single device for each driver.
 	 */
 	INIT_LIST_HEAD((struct list_head *)&gd->log_head);
-	while (drv < end) {
+	док (drv < end) {
 		struct log_device *ldev;
 
 		ldev = calloc(1, sizeof(*ldev));
-		if (!ldev) {
+		ако (!ldev) {
 			debug("%s: Cannot allocate memory\n", __func__);
-			return -ENOMEM;
+			врати -ENOMEM;
 		}
 		INIT_LIST_HEAD(&ldev->filter_head);
 		ldev->drv = drv;
@@ -481,11 +481,11 @@ int log_init(void)
 		drv++;
 	}
 	gd->flags |= GD_FLG_LOG_READY;
-	if (!gd->default_log_level)
+	ако (!gd->default_log_level)
 		gd->default_log_level = CONFIG_LOG_DEFAULT_LEVEL;
 	gd->log_fmt = log_get_default_format();
 	gd->logc_prev = LOGC_NONE;
 	gd->logl_prev = LOGL_INFO;
 
-	return 0;
+	врати 0;
 }

@@ -9,21 +9,21 @@
 #include <log.h>
 #include <spl.h>
 
-static int spl_xip(struct spl_image_info *spl_image,
+static цео spl_xip(struct spl_image_info *spl_image,
 		   struct spl_boot_device *bootdev)
 {
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#ако CONFIG_IS_ENABLED(OS_BOOT)
+	ако (!spl_start_uboot()) {
 		spl_image->name = "Linux";
 		spl_image->os = IH_OS_LINUX;
 		spl_image->load_addr = CONFIG_SYS_LOAD_ADDR;
 		spl_image->entry_point = CONFIG_SYS_LOAD_ADDR;
 		debug("spl: payload xipImage, load addr: 0x%lx\n",
 		      spl_image->load_addr);
-		return 0;
+		врати 0;
 	}
 #endif
-	return(spl_parse_image_header(spl_image, bootdev,
+	врати(spl_parse_image_header(spl_image, bootdev,
 	       (const struct legacy_img_hdr *)CFG_SYS_UBOOT_BASE));
 }
 SPL_LOAD_IMAGE_METHOD("XIP", 0, BOOT_DEVICE_XIP, spl_xip);

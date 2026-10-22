@@ -18,29 +18,29 @@
 #include <linux/libfdt.h>
 #include <asm/cache.h>
 
-static int fat_registered;
+static цео fat_registered;
 
 void spl_fat_force_reregister(void)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+static цео spl_register_fat_device(struct blk_desc *block_dev, цео partition)
 {
-	int err = 0;
+	цео err = 0;
 
-	if (fat_registered)
-		return err;
+	ако (fat_registered)
+		врати err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
+	ако (err) {
 		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+		врати err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	врати err;
 }
 
 static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
@@ -48,44 +48,44 @@ static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
 {
 	struct legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
+	цео ret;
 	char *filename = load->priv;
 
 	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ако (ret)
+		врати ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
+	ако (CONFIG_IS_ENABLED(OS_BOOT)) {
 		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+		ако (image_get_magic(header) != FDT_MAGIC)
+			врати size;
 	}
 
-	return actread;
+	врати actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
+цео spl_load_image_fat(struct spl_image_info *spl_image,
 		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
+		       struct blk_desc *block_dev, цео partition,
 		       const char *filename)
 {
-	int err;
+	цео err;
 	loff_t size;
 	struct spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
+	ако (err)
 		goto end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	ако (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = fat_size(filename, &size);
-		if (err)
+		ако (err)
 			goto end;
-	} else {
+	} инако {
 		size = 0;
 	}
 
@@ -96,55 +96,55 @@ int spl_load_image_fat(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0) {
+	ако (err < 0) {
 		spl_fat_force_reregister();
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	врати err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
+#ако CONFIG_IS_ENABLED(OS_BOOT)
+цео spl_load_image_fat_os(struct spl_image_info *spl_image,
 			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+			  struct blk_desc *block_dev, цео partition)
 {
-	int err;
+	цео err;
 	__maybe_unused char *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	ако (err)
+		врати err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+	ако (!CONFIG_IS_ENABLED(ENV_SUPPORT))
 		goto defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	ако (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		ако (err != 0) {
 			puts("spl: falling back to default\n");
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ако IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		ако (file) {
 			err = file_fat_read(
 				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
+			ако (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
 				goto defaults;
 			}
-			return 0;
-		} else
+			врати 0;
+		} инако
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 #endif
 
-	} else
+	} инако
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
@@ -152,26 +152,26 @@ defaults:
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	ако (err)
+		врати err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ако IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
 			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
+	ако (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		врати -1;
 	}
 #endif
 
-	return 0;
+	врати 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
+#инако
+цео spl_load_image_fat_os(struct spl_image_info *spl_image,
 			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+			  struct blk_desc *block_dev, цео partition)
 {
-	return -ENOSYS;
+	врати -ENOSYS;
 }
 #endif
