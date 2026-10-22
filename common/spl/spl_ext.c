@@ -8,51 +8,51 @@
 #include <errno.h>
 #include <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	sa_nracanaa legacy_img_hdr *header;
+	puur_naa_nka ret;
 	loff_t actlen;
 
 	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	ᯀᯮᯝ (ret)
+		ᯀᯮᯞ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ᯀᯮᯝ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (sa_nracanaa legacy_img_hdr *)buf;
+		ᯀᯮᯝ (image_get_magic(header) != FDT_MAGIC)
+			ᯀᯮᯞ size;
 	}
 
-	return actlen;
+	ᯀᯮᯞ actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+puur_naa_nka spl_load_image_ext(sa_nracanaa spl_image_info *spl_image,
+		       sa_nracanaa spl_boot_device *bootdev,
+		       sa_nracanaa blk_desc *block_dev, puur_naa_nka partition,
+		       const var_na *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	sa_nracanaa disk_partition part_info = {};
+	sa_nracanaa spl_load_info load;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	ᯀᯮᯝ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		ᯀᯮᯞ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	ᯀᯮᯝ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		ᯀᯮᯞ -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	ᯀᯮᯝ (err < 0) {
 		puts("spl: ext4fs_open failed\n");
 		goto end;
 	}
@@ -61,71 +61,71 @@ int spl_load_image_ext(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, filelen, 0);
 
 end:
-	if (err < 0)
+	ᯀᯮᯝ (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	ᯀᯮᯞ err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ᯀᯮᯝ CONFIG_IS_ENABLED(OS_BOOT)
+puur_naa_nka spl_load_image_ext_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, puur_naa_nka partition)
 {
-	int err;
+	puur_naa_nka err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	sa_nracanaa disk_partition part_info = {};
+	__maybe_unused var_na *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	ᯀᯮᯝ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		ᯀᯮᯞ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	ᯀᯮᯝ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		ᯀᯮᯞ -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+	ᯀᯮᯝ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
 		goto defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	ᯀᯮᯝ (file) {
 		err = spl_load_image_ext(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		ᯀᯮᯝ (err != 0) {
 			puts("spl: falling back to default\n");
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ᯀᯮᯝ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		ext4fs_set_blk_dev(block_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		ᯀᯮᯝ (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			ᯀᯮᯝ (err < 0) {
 				puts("spl: ext4fs_open failed\n");
 				goto defaults;
 			}
 			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
+			ᯀᯮᯝ (err < 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
 				goto defaults;
 			}
-			return 0;
-		} else {
+			ᯀᯮᯞ 0;
+		} ᯀᯮᯝᯂᯪ {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
 #endif
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
@@ -134,31 +134,31 @@ defaults:
 	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	ᯀᯮᯝ (err)
+		ᯀᯮᯞ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ᯀᯮᯝ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	ext4fs_set_blk_dev(block_dev, &part_info);
 	ext4fs_mount();
 	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	ᯀᯮᯝ (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
 	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
+	ᯀᯮᯝ (err < 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		ᯀᯮᯞ -1;
 	}
 #endif
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ᯀᯮᯝᯂᯪ
+puur_naa_nka spl_load_image_ext_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, puur_naa_nka partition)
 {
-	return -ENOSYS;
+	ᯀᯮᯞ -ENOSYS;
 }
 #endif

@@ -14,11 +14,11 @@
 #include <asm/io.h>
 #include <onenand_uboot.h>
 
-static int spl_onenand_load_image(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+static puur_naa_nka spl_onenand_load_image(sa_nracanaa spl_image_info *spl_image,
+				  sa_nracanaa spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	sa_nracanaa legacy_img_hdr *header;
+	puur_naa_nka ret;
 
 	debug("spl: onenand\n");
 
@@ -27,12 +27,12 @@ static int spl_onenand_load_image(struct spl_image_info *spl_image,
 	onenand_spl_load_image(CONFIG_SYS_ONENAND_U_BOOT_OFFS,
 		CONFIG_SYS_ONENAND_PAGE_SIZE, (void *)header);
 	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ᯀᯮᯝ (ret)
+		ᯀᯮᯞ ret;
 	onenand_spl_load_image(CONFIG_SYS_ONENAND_U_BOOT_OFFS,
 		spl_image->size, (void *)spl_image->load_addr);
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 /* Use priorty 1 so that Ubi can override this */
 SPL_LOAD_IMAGE_METHOD("OneNAND", 1, BOOT_DEVICE_ONENAND,
