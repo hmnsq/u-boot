@@ -3,52 +3,52 @@
  * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
  */
 
-#include <image.h>
-#include <log.h>
-#include <semihosting.h>
-#include <spl.h>
-#include <spl_load.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <semihosting.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
 
-static ulong smh_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ساكن ulong smh_fit_read(بنية spl_بارول_info *بارول, ulong file_دننه_واټن,
+			  ulong اندازه, فراغ *buf)
 {
-	long fd = *(long *)load->priv;
+	اوږد fd = *(اوږد *)بارول->priv;
 	ulong ret;
 
-	if (smh_seek(fd, file_offset))
-		return 0;
+	إذا (smh_seek(fd, file_دننه_واټن))
+		أرجع 0;
 
-	ret = smh_read(fd, buf, size);
-	return ret < 0 ? 0 : ret;
+	ret = smh_read(fd, buf, اندازه);
+	أرجع ret < 0 ? 0 : ret;
 }
 
-static int spl_smh_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_smh_بارول_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	int ret;
-	long fd, len;
-	struct spl_load_info load;
+	ثابت حرف *filename = CONFIG_SPL_FS_بارول_PAYLOAD_NAME;
+	صحيح ret;
+	اوږد fd, len;
+	بنية spl_بارول_info بارول;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
-	if (fd < 0) {
+	fd = smh_open(filename, ډېرپېښ_READ | ډېرپېښ_دوګونی);
+	إذا (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
-		return fd;
+		أرجع fd;
 	}
 
 	ret = smh_flen(fd);
-	if (ret < 0) {
+	إذا (ret < 0) {
 		log_debug("could not get length of image: %d\n", ret);
-		goto out;
+		اذهب بهر;
 	}
 	len = ret;
 
-	spl_load_init(&load, smh_fit_read, &fd, 1);
-	ret = spl_load(spl_image, bootdev, &load, len, 0);
-	if (ret)
+	spl_بارول_init(&بارول, smh_fit_read, &fd, 1);
+	ret = spl_بارول(spl_image, bootdev, &بارول, len, 0);
+	إذا (ret)
 		log_debug("could not read %s: %d\n", filename, ret);
-out:
+بهر:
 	smh_close(fd);
-	return ret;
+	أرجع ret;
 }
-SPL_LOAD_IMAGE_METHOD("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_load_image);
+SPL_بارول_IMAGE_لاره("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_بارول_image);

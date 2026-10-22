@@ -3,117 +3,117 @@
  * Copyright (C) 2020 Stefan Roese <sr@denx.de>
  */
 
-#include <image.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/sections.h>
-#include <spl.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <malloc.h>
+#ضمن <mapmem.h>
+#ضمن <asm/sections.h>
+#ضمن <spl.h>
 
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
+#ضمن <lzma/LzmaTypes.h>
+#ضمن <lzma/LzmaDec.h>
+#ضمن <lzma/LzmaTools.h>
 
-#define LZMA_LEN	(1 << 20)
+#تعریف_کړه LZMA_LEN	(1 << 20)
 
-static void spl_parse_legacy_validate(ulong start, ulong size)
+ساكن فراغ spl_parse_legacy_validate(ulong پیل, ulong اندازه)
 {
-	ulong spl_start = (ulong)_start;
-	ulong spl_end = (ulong)&_image_binary_end;
-	ulong end = start + size;
+	ulong spl_پیل = (ulong)پیل_2;
+	ulong spl_پای_ټکی = (ulong)&image_دوګونی_پای_ټکی;
+	ulong پای_ټکی_2 = پیل + اندازه;
 
-	if ((start >= spl_start && start < spl_end) ||
-	    (end > spl_start && end <= spl_end) ||
-	    (start < spl_start && end >= spl_end) ||
-	    (start > end && end > spl_start))
+	إذا ((پیل >= spl_پیل && پیل < spl_پای_ټکی) ||
+	    (پای_ټکی_2 > spl_پیل && پای_ټکی_2 <= spl_پای_ټکی) ||
+	    (پیل < spl_پیل && پای_ټکی_2 >= spl_پای_ټکی) ||
+	    (پیل > پای_ټکی_2 && پای_ټکی_2 > spl_پیل))
 		panic("SPL: Image overlaps SPL\n");
 
-	if (size > CONFIG_SYS_BOOTM_LEN)
+	إذا (اندازه > CONFIG_SYS_BOOTM_LEN)
 		panic("SPL: Image too large\n");
 }
 
-int spl_parse_legacy_header(struct spl_image_info *spl_image,
-			    const struct legacy_img_hdr *header)
+صحيح spl_parse_legacy_سرلیک(بنية spl_image_info *spl_image,
+			    ثابت بنية legacy_img_hdr *سرلیک)
 {
-	u32 header_size = sizeof(struct legacy_img_hdr);
+	u32 سرلیک_اندازه = حجم(بنية legacy_img_hdr);
 
 	/* check uImage header CRC */
-	if (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK) &&
-	    !image_check_hcrc(header)) {
+	إذا (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_دوراني_ازموینه_CHECK) &&
+	    !image_check_hcrc(سرلیک)) {
 		puts("SPL: Image header CRC check failed!\n");
-		return -EINVAL;
+		أرجع -EINVAL;
 	}
 
-	if (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
+	إذا (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
 		/*
 		 * On some system (e.g. powerpc), the load-address and
 		 * entry-point is located at address 0. We can't load
 		 * to 0-0x40. So skip header in this case.
 		 */
-		spl_image->load_addr = image_get_load(header);
-		spl_image->entry_point = image_get_ep(header);
-		spl_image->size = image_get_data_size(header);
-	} else {
-		spl_image->entry_point = image_get_ep(header);
+		spl_image->بارول_addr = image_get_بارول(سرلیک);
+		spl_image->ثبت_ټکی = image_get_ep(سرلیک);
+		spl_image->اندازه = image_get_معلومات_اندازه(سرلیک);
+	} وإلا {
+		spl_image->ثبت_ټکی = image_get_ep(سرلیک);
 		/* Load including the header */
-		spl_image->load_addr = image_get_load(header) -
-			header_size;
-		spl_image->size = image_get_data_size(header) +
-			header_size;
+		spl_image->بارول_addr = image_get_بارول(سرلیک) -
+			سرلیک_اندازه;
+		spl_image->اندازه = image_get_معلومات_اندازه(سرلیک) +
+			سرلیک_اندازه;
 	}
 
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
+#که_تعریف_شوی CONFIG_SPL_LEGACY_IMAGE_دوراني_ازموینه_CHECK
 	/* store uImage data length and CRC to check later */
-	spl_image->dcrc_data = image_get_load(header);
-	spl_image->dcrc_length = image_get_data_size(header);
-	spl_image->dcrc = image_get_dcrc(header);
-#endif
+	spl_image->dcrc_معلومات = image_get_بارول(سرلیک);
+	spl_image->dcrc_اوږدتیا = image_get_معلومات_اندازه(سرلیک);
+	spl_image->dcrc = image_get_dcrc(سرلیک);
+#د_که_پای
 
-	spl_image->os = image_get_os(header);
-	spl_image->name = image_get_name(header);
+	spl_image->os = image_get_os(سرلیک);
+	spl_image->name = image_get_name(سرلیک);
 	debug(PHASE_PROMPT
 	      "payload image: %32s load addr: 0x%lx size: %d\n",
-	      spl_image->name, spl_image->load_addr, spl_image->size);
+	      spl_image->name, spl_image->بارول_addr, spl_image->اندازه);
 
-	spl_parse_legacy_validate(spl_image->load_addr, spl_image->size);
-	spl_parse_legacy_validate(spl_image->entry_point, 0);
+	spl_parse_legacy_validate(spl_image->بارول_addr, spl_image->اندازه);
+	spl_parse_legacy_validate(spl_image->ثبت_ټکی, 0);
 
-	return 0;
+	أرجع 0;
 }
 
-int spl_load_legacy_lzma(struct spl_image_info *spl_image,
-			 struct spl_load_info *load, ulong offset)
+صحيح spl_بارول_legacy_lzma(بنية spl_image_info *spl_image,
+			 بنية spl_بارول_info *بارول, ulong دننه_واټن)
 {
-	SizeT lzma_len = LZMA_LEN;
-	void *src;
-	ulong dataptr, overhead, size;
-	int ret;
+	اندازه_T lzma_len = LZMA_LEN;
+	فراغ *src;
+	ulong dataptr, overhead, اندازه;
+	صحيح ret;
 
 	/* dataptr points to compressed payload  */
-	dataptr = ALIGN_DOWN(sizeof(struct legacy_img_hdr),
-			     spl_get_bl_len(load));
-	overhead = sizeof(struct legacy_img_hdr) - dataptr;
-	size = ALIGN(spl_image->size + overhead, spl_get_bl_len(load));
-	dataptr += offset;
+	dataptr = ALIGN_ښکته(حجم(بنية legacy_img_hdr),
+			     spl_get_bl_len(بارول));
+	overhead = حجم(بنية legacy_img_hdr) - dataptr;
+	اندازه = ALIGN(spl_image->اندازه + overhead, spl_get_bl_len(بارول));
+	dataptr += دننه_واټن;
 
 	debug("LZMA: Decompressing %08lx to %08lx\n",
-	      dataptr, spl_image->load_addr);
-	src = malloc(size);
-	if (!src) {
-		printf("Unable to allocate %d bytes for LZMA\n",
-		       spl_image->size);
-		return -ENOMEM;
+	      dataptr, spl_image->بارول_addr);
+	src = حافظه_ورکړه(اندازه);
+	إذا (!src) {
+		چاپ_کړه("Unable to allocate %d bytes for LZMA\n",
+		       spl_image->اندازه);
+		أرجع -ENOMEM;
 	}
 
-	load->read(load, dataptr, size, src);
-	ret = lzmaBuffToBuffDecompress(map_sysmem(spl_image->load_addr,
-						  spl_image->size), &lzma_len,
-				       src + overhead, spl_image->size);
-	if (ret) {
-		printf("LZMA decompression error: %d\n", ret);
-		return ret;
+	بارول->اقرأ(بارول, dataptr, اندازه, src);
+	ret = lzma_Buff_منزل_Buff_Decompress(map_sysmem(spl_image->بارول_addr,
+						  spl_image->اندازه), &lzma_len,
+				       src + overhead, spl_image->اندازه);
+	إذا (ret) {
+		چاپ_کړه("LZMA decompression error: %d\n", ret);
+		أرجع ret;
 	}
 
-	spl_image->size = lzma_len;
-	return 0;
+	spl_image->اندازه = lzma_len;
+	أرجع 0;
 }

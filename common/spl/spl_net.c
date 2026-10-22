@@ -6,75 +6,75 @@
  * (C) Copyright 2012
  * Ilya Yanok <ilya.yanok@gmail.com>
  */
-#include <env.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <net.h>
-#include <linux/libfdt.h>
+#ضمن <env.h>
+#ضمن <errno.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
+#ضمن <net.h>
+#ضمن <linux/libfdt.h>
 
-#if defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
-static ulong spl_net_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+#إذا defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
+ساكن ulong spl_net_بارول_read(بنية spl_بارول_info *بارول, ulong sector,
+			       ulong شمېر, فراغ *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
-	memcpy(buf, map_sysmem(image_load_addr + sector, count), count);
-	return count;
+	      __func__, sector, شمېر, (ulong)buf);
+	حافظه_نقل(buf, map_sysmem(image_بارول_addr + sector, شمېر), شمېر);
+	أرجع شمېر;
 }
 
-static int spl_net_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_net_بارول_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
-	int rv;
+	بنية spl_بارول_info بارول;
+	صحيح rv;
 
 	env_init();
 	env_relocate();
-	env_set("autoload", "yes");
+	env_سېټ("autoload", "yes");
 	rv = eth_initialize();
-	if (rv == 0) {
-		printf("No Ethernet devices found\n");
-		return -ENODEV;
+	إذا (rv == 0) {
+		چاپ_کړه("No Ethernet devices found\n");
+		أرجع -ENODEV;
 	}
-	if (bootdev->boot_device_name)
-		env_set("ethact", bootdev->boot_device_name);
+	إذا (bootdev->boot_device_name)
+		env_سېټ("ethact", bootdev->boot_device_name);
 	rv = net_loop(BOOTP);
-	if (rv < 0) {
-		printf("Problem booting with BOOTP\n");
-		return rv;
+	إذا (rv < 0) {
+		چاپ_کړه("Problem booting with BOOTP\n");
+		أرجع rv;
 	}
 
-	spl_load_init(&load, spl_net_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, 0);
+	spl_بارول_init(&بارول, spl_net_بارول_read, عدم, 1);
+	أرجع spl_بارول(spl_image, bootdev, &بارول, 0, 0);
 }
-#endif
+#د_که_پای
 
-#ifdef CONFIG_SPL_ETH
-int spl_net_load_image_cpgmac(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+#که_تعریف_شوی CONFIG_SPL_ETH
+صحيح spl_net_بارول_image_cpgmac(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-#ifdef CONFIG_SPL_ETH_DEVICE
+#که_تعریف_شوی CONFIG_SPL_ETH_DEVICE
 	bootdev->boot_device_name = CONFIG_SPL_ETH_DEVICE;
-#endif
+#د_که_پای
 
-	return spl_net_load_image(spl_image, bootdev);
+	أرجع spl_net_بارول_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("eth device", 0, BOOT_DEVICE_CPGMAC,
-		      spl_net_load_image_cpgmac);
-#endif
+SPL_بارول_IMAGE_لاره("eth device", 0, BOOT_DEVICE_CPGMAC,
+		      spl_net_بارول_image_cpgmac);
+#د_که_پای
 
-#ifdef CONFIG_SPL_USB_ETHER
-int spl_net_load_image_usb(struct spl_image_info *spl_image,
-			   struct spl_boot_device *bootdev)
+#که_تعریف_شوی CONFIG_SPL_USB_ETHER
+صحيح spl_net_بارول_image_usb(بنية spl_image_info *spl_image,
+			   بنية spl_boot_device *bootdev)
 {
 	bootdev->boot_device_name = "usb_ether";
-#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+#إذا CONFIG_IS_ENABLED(DM_USB_GADGET)
 	usb_ether_init();
-#endif
-	return spl_net_load_image(spl_image, bootdev);
+#د_که_پای
+	أرجع spl_net_بارول_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_load_image_usb);
-#endif
+SPL_بارول_IMAGE_لاره("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_بارول_image_usb);
+#د_که_پای

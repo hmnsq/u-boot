@@ -3,185 +3,185 @@
  * Copyright 2018-2021 NXP
  */
 
-#define LOG_CATEGORY LOGC_ARCH
-#include <stdlib.h>
-#include <errno.h>
-#include <imx_container.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <cpu_func.h>
-#ifdef CONFIG_AHAB_BOOT
-#include <asm/mach-imx/ahab.h>
-#endif
+#تعریف_کړه LOG_CATEGORY LOGC_ARCH
+#ضمن <stdlib.h>
+#ضمن <errno.h>
+#ضمن <imx_container.h>
+#ضمن <log.h>
+#ضمن <mapmem.h>
+#ضمن <spl.h>
+#ضمن <cpu_func.h>
+#که_تعریف_شوی CONFIG_AHAB_BOOT
+#ضمن <asm/mach-imx/ahab.h>
+#د_که_پای
 
-__weak bool arch_check_dst_in_secure(void *start, ulong size)
+__weak bool arch_check_dst_دننه_secure(فراغ *پیل, ulong اندازه)
 {
-	return false;
+	أرجع false;
 }
 
-__weak void *arch_get_container_trampoline(void)
+__weak فراغ *arch_get_container_trampoline(فراغ)
 {
-	return NULL;
+	أرجع عدم;
 }
 
-static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
-					  struct spl_load_info *info,
-					  struct container_hdr *container,
-					  int image_index,
-					  ulong container_offset)
+ساكن بنية boot_img_t *read_auth_image(بنية spl_image_info *spl_image,
+					  بنية spl_بارول_info *info,
+					  بنية container_hdr *container,
+					  صحيح image_شاخص,
+					  ulong container_دننه_واټن)
 {
-	struct boot_img_t *images;
-	ulong offset, size;
-	void *buf, *trampoline;
+	بنية boot_img_t *images;
+	ulong دننه_واټن, اندازه;
+	فراغ *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	إذا (image_شاخص > container->عدد_images) {
 		debug("Invalid image number\n");
-		return NULL;
+		أرجع عدم;
 	}
 
-	images = (struct boot_img_t *)((u8 *)container +
-				       sizeof(struct container_hdr));
+	images = (بنية boot_img_t *)((u8 *)container +
+				       حجم(بنية container_hdr));
 
-	if (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
-		printf("%s: image%d offset not aligned to %u\n",
-		       __func__, image_index, spl_get_bl_len(info));
-		return NULL;
+	إذا (!IS_ALIGNED(images[image_شاخص].دننه_واټن, spl_get_bl_len(info))) {
+		چاپ_کړه("%s: image%d offset not aligned to %u\n",
+		       __func__, image_شاخص, spl_get_bl_len(info));
+		أرجع عدم;
 	}
 
-	size = ALIGN(images[image_index].size, spl_get_bl_len(info));
-	offset = images[image_index].offset + container_offset;
+	اندازه = ALIGN(images[image_شاخص].اندازه, spl_get_bl_len(info));
+	دننه_واټن = images[image_شاخص].دننه_واټن + container_دننه_واټن;
 
 	debug("%s: container: %p offset: %lu size: %lu\n", __func__,
-	      container, offset, size);
+	      container, دننه_واټن, اندازه);
 
-	buf = map_sysmem(images[image_index].dst, images[image_index].size);
-	if (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
-	    arch_check_dst_in_secure(buf, size)) {
+	buf = map_sysmem(images[image_شاخص].dst, images[image_شاخص].اندازه);
+	إذا (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
+	    arch_check_dst_دننه_secure(buf, اندازه)) {
 		trampoline = arch_get_container_trampoline();
-		if (!trampoline) {
-			printf("%s: trampoline size is zero\n", __func__);
-			return NULL;
+		إذا (!trampoline) {
+			چاپ_کړه("%s: trampoline size is zero\n", __func__);
+			أرجع عدم;
 		}
 
-		if (info->read(info, offset, size, trampoline) < images[image_index].size) {
-			printf("%s: failed to load image to a trampoline buffer\n", __func__);
-			return NULL;
+		إذا (info->اقرأ(info, دننه_واټن, اندازه, trampoline) < images[image_شاخص].اندازه) {
+			چاپ_کړه("%s: failed to load image to a trampoline buffer\n", __func__);
+			أرجع عدم;
 		}
 
-		memcpy(buf, trampoline, images[image_index].size);
-	} else {
-		if (info->read(info, offset, size, buf) < images[image_index].size) {
-				printf("%s: failed to load image to a non-secure region\n", __func__);
-			return NULL;
+		حافظه_نقل(buf, trampoline, images[image_شاخص].اندازه);
+	} وإلا {
+		إذا (info->اقرأ(info, دننه_واټن, اندازه, buf) < images[image_شاخص].اندازه) {
+				چاپ_کړه("%s: failed to load image to a non-secure region\n", __func__);
+			أرجع عدم;
 		}
 	}
 
-#ifdef CONFIG_AHAB_BOOT
-	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_index].size - 1));
-	if (ahab_verify_cntr_image(&images[image_index], image_index))
-		return NULL;
-#endif
+#که_تعریف_شوی CONFIG_AHAB_BOOT
+	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_شاخص].اندازه - 1));
+	إذا (ahab_verify_cntr_image(&images[image_شاخص], image_شاخص))
+		أرجع عدم;
+#د_که_پای
 
-	return &images[image_index];
+	أرجع &images[image_شاخص];
 }
 
-static int read_auth_container(struct spl_image_info *spl_image,
-			       struct spl_load_info *info, ulong offset)
+ساكن صحيح read_auth_container(بنية spl_image_info *spl_image,
+			       بنية spl_بارول_info *info, ulong دننه_واټن)
 {
-	struct container_hdr *container = NULL;
-	struct container_hdr *authhdr;
-	u16 length;
-	int i, size, ret = 0;
+	بنية container_hdr *container = عدم;
+	بنية container_hdr *authhdr;
+	u16 اوږدتیا;
+	صحيح i, اندازه, ret = 0;
 
-	size = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
+	اندازه = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
 
 	/*
 	 * It will not override the ATF code, so safe to use it here,
 	 * no need malloc
 	 */
-	container = malloc(size);
-	if (!container)
-		return -ENOMEM;
+	container = حافظه_ورکړه(اندازه);
+	إذا (!container)
+		أرجع -ENOMEM;
 
 	debug("%s: container: %p offset: %lu size: %u\n", __func__,
-	      container, offset, size);
-	if (info->read(info, offset, size, container) <
+	      container, دننه_واټن, اندازه);
+	إذا (info->اقرأ(info, دننه_واټن, اندازه, container) <
 	    CONTAINER_HDR_ALIGNMENT) {
 		ret = -EIO;
-		goto end;
+		اذهب پای_ټکی_2;
 	}
 
-	if (!valid_container_hdr(container)) {
+	إذا (!valid_container_hdr(container)) {
 		log_err("Wrong container header\n");
 		ret = -ENOENT;
-		goto end;
+		اذهب پای_ټکی_2;
 	}
 
-	if (!container->num_images) {
+	إذا (!container->عدد_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
-		goto end;
+		اذهب پای_ټکی_2;
 	}
 
-	length = container->length_lsb + (container->length_msb << 8);
-	debug("Container length %u\n", length);
+	اوږدتیا = container->اوږدتیا_lsb + (container->اوږدتیا_msb << 8);
+	debug("Container length %u\n", اوږدتیا);
 
-	if (length > CONTAINER_HDR_ALIGNMENT) {
-		size = ALIGN(length, spl_get_bl_len(info));
+	إذا (اوږدتیا > CONTAINER_HDR_ALIGNMENT) {
+		اندازه = ALIGN(اوږدتیا, spl_get_bl_len(info));
 
-		free(container);
-		container = malloc(size);
-		if (!container)
-			return -ENOMEM;
+		حرر(container);
+		container = حافظه_ورکړه(اندازه);
+		إذا (!container)
+			أرجع -ENOMEM;
 
 		debug("%s: container: %p offset: %lu size: %u\n",
-		      __func__, container, offset, size);
-		if (info->read(info, offset, size, container) < length) {
+		      __func__, container, دننه_واټن, اندازه);
+		إذا (info->اقرأ(info, دننه_واټن, اندازه, container) < اوږدتیا) {
 			ret = -EIO;
-			goto end;
+			اذهب پای_ټکی_2;
 		}
 	}
 
 	authhdr = container;
 
-#ifdef CONFIG_AHAB_BOOT
-	authhdr = ahab_auth_cntr_hdr(authhdr, length);
-	if (!authhdr) {
+#که_تعریف_شوی CONFIG_AHAB_BOOT
+	authhdr = ahab_auth_cntr_hdr(authhdr, اوږدتیا);
+	إذا (!authhdr) {
 		ret = -EINVAL;
-		goto end_auth;
+		اذهب پای_ټکی_auth;
 	}
-#endif
+#د_که_پای
 
-	for (i = 0; i < authhdr->num_images; i++) {
-		struct boot_img_t *image = read_auth_image(spl_image, info,
+	لكل (i = 0; i < authhdr->عدد_images; i++) {
+		بنية boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
-							   offset);
+							   دننه_واټن);
 
-		if (!image) {
+		إذا (!image) {
 			ret = -EINVAL;
-			goto end_auth;
+			اذهب پای_ټکی_auth;
 		}
 
-		if (i == 0) {
-			spl_image->load_addr = image->dst;
-			spl_image->entry_point = image->entry;
+		إذا (i == 0) {
+			spl_image->بارول_addr = image->dst;
+			spl_image->ثبت_ټکی = image->ثبت;
 		}
 	}
 
-end_auth:
-#ifdef CONFIG_AHAB_BOOT
+پای_ټکی_auth:
+#که_تعریف_شوی CONFIG_AHAB_BOOT
 	ahab_auth_release();
-#endif
+#د_که_پای
 
-end:
-	free(container);
+پای_ټکی_2:
+	حرر(container);
 
-	return ret;
+	أرجع ret;
 }
 
-int spl_load_imx_container(struct spl_image_info *spl_image,
-			   struct spl_load_info *info, ulong offset)
+صحيح spl_بارول_imx_container(بنية spl_image_info *spl_image,
+			   بنية spl_بارول_info *info, ulong دننه_واټن)
 {
-	return read_auth_container(spl_image, info, offset);
+	أرجع read_auth_container(spl_image, info, دننه_واټن);
 }
