@@ -27,12 +27,12 @@ DECLARE_GLOBAL_DATA_PTR;
 
 enum {
 	/* margin to allow for stack growth */
-	RELOC_STACK_MARGIN	= 0x800,
+	RELOC_सालानसान_MARGIN	= 0x800,
 
 	/* align base address for DMA controllers which require it */
 	BASE_ALIGN		= 0x200,
 
-	STACK_PROT_VALUE	= 0x51ce4697,
+	सालानसान_PROT_हालागा	= 0x51ce4697,
 };
 
 typedef int (*rcode_func)(struct spl_image_info *image);
@@ -45,9 +45,9 @@ static int setup_layout(struct spl_image_info *image, ulong *addrp)
 	int buf_size, margin;
 	char *rcode_buf;
 
-	limit = ALIGN(map_to_sysmem(&limit) - RELOC_STACK_MARGIN, 8);
-	image->stack_prot = map_sysmem(limit, sizeof(uint));
-	*image->stack_prot = STACK_PROT_VALUE;
+	limit = ALIGN(map_to_sysmem(&limit) - RELOC_सालानसान_MARGIN, 8);
+	image->सालानसान_prot = map_sysmem(limit, sizeof(uint));
+	*image->सालानसान_prot = सालानसान_PROT_हालागा;
 
 	fdt_size = fdt_totalsize(gd->fdt_blob);
 	base = ALIGN(map_to_sysmem(gd->fdt_blob) + fdt_size + BASE_ALIGN - 1,
@@ -113,7 +113,7 @@ __rcode int rcode_reloc_and_jump(struct spl_image_info *image)
 	dst = map_sysmem(image->load_addr, image->size);
 	unc_len = (void *)image->rcode_buf - (void *)dst;
 	image_len = image->size;
-	if (*image->stack_prot != STACK_PROT_VALUE)
+	if (*image->सालानसान_prot != सालानसान_PROT_हालागा)
 		return -EFAULT;
 	magic = get_unaligned_le32(image->buf);
 	if (CONFIG_IS_ENABLED(LZMA)) {
@@ -136,7 +136,7 @@ __rcode int rcode_reloc_and_jump(struct spl_image_info *image)
 		     ptr = dst; src < end;)
 			*ptr++ = *src++;
 	}
-	if (*image->stack_prot != STACK_PROT_VALUE)
+	if (*image->सालानसान_prot != सालानसान_PROT_हालागा)
 		return -EFAULT;
 
 	/* copy in the FDT if needed */
@@ -157,7 +157,7 @@ int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
 	log_debug("malloc usage %x bytes (%d KB of %d KB)\n", gd->malloc_ptr,
 		  gd->malloc_ptr / 1024, CONFIG_VAL(SYS_MALLOC_F_LEN) / 1024);
 
-	if (*image->stack_prot != STACK_PROT_VALUE) {
+	if (*image->सालानसान_prot != सालानसान_PROT_हालागा) {
 		log_err("stack busted, cannot continue\n");
 		return -EFAULT;
 	}

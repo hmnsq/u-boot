@@ -170,17 +170,17 @@ int run_command_list(const char *cmd, int len, int flag)
 
 int run_commandf(const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	int nbytes;
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 	/*
 	 * Limit the console_buffer space being used to CONFIG_SYS_CBSIZE,
 	 * because its last byte is used to fit the replacement of \0 by \n\0
 	 * in underlying hush parser
 	 */
-	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, args);
-	va_end(args);
+	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	if (nbytes < 0) {
 		pr_debug("I/O internal error occurred.\n");

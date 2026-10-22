@@ -35,7 +35,7 @@ DECLARE_GLOBAL_DATA_PTR;
 #ifndef DEBUG_BOOTKEYS
 #define DEBUG_BOOTKEYS 0
 #endif
-#define debug_bootkeys(fmt, args...)		\
+#define debug_bootkeys(fmt, मगा_कातविरान...)		\
 	debug_cond(DEBUG_BOOTKEYS, fmt, ##args)
 
 /* Stored value of bootdelay, used by autoboot_command() */
@@ -237,7 +237,7 @@ static int passwd_abort_sha256(uint64_t etime)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_key(uint64_t etime)
+static int passwd_abort_सुसि(uint64_t etime)
 {
 	int abort = 0;
 	struct {
@@ -339,7 +339,7 @@ static bool fallback_to_sha256(void)
  * Watch for 'delay' seconds for autoboot stop or autoboot delay string.
  * returns: 0 -  no key string, allow autoboot 1 - got key string, abort
  */
-static int abortboot_key_sequence(int bootdelay)
+static int abortboot_सुसि_sequence(int bootdelay)
 {
 	int abort;
 	uint64_t etime = endtick(bootdelay);
@@ -360,7 +360,7 @@ static int abortboot_key_sequence(int bootdelay)
 		else
 			abort = passwd_abort_sha256(etime);
 	} else {
-		abort = passwd_abort_key(etime);
+		abort = passwd_abort_सुसि(etime);
 	}
 	if (!abort)
 		debug_bootkeys("key timeout\n");
@@ -368,24 +368,24 @@ static int abortboot_key_sequence(int bootdelay)
 	return abort;
 }
 
-static void print_boot_delay(int bootdelay)
+static void इलिम्बाग_boot_delay(int bootdelay)
 {
-	printf(ANSI_CLEAR_LINE "\rHit any key to stop autoboot: %d", bootdelay);
+	printf(ANSI_CLEAR_लिन्या "\rHit any key to stop autoboot: %d", bootdelay);
 }
 
-static int abortboot_single_key(int bootdelay)
+static int abortboot_single_सुसि(int bootdelay)
 {
 	int abort = 0;
 	unsigned long ts;
 
-	print_boot_delay(bootdelay);
+	इलिम्बाग_boot_delay(bootdelay);
 
 	/*
 	 * Check if key already pressed
 	 */
 	if (tstc()) {	/* we got a key press	*/
 		getchar();	/* consume input	*/
-		print_boot_delay(0);
+		इलिम्बाग_boot_delay(0);
 		abort = 1;	/* don't auto boot	*/
 	}
 
@@ -395,19 +395,19 @@ static int abortboot_single_key(int bootdelay)
 		ts = get_timer(0);
 		do {
 			if (tstc()) {	/* we got a key press	*/
-				int key;
+				int सुसि;
 
 				abort  = 1;	/* don't auto boot	*/
 				bootdelay = 0;	/* no more delay	*/
-				key = getchar();/* consume input	*/
+				सुसि = getchar();/* consume input	*/
 				if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
-					menukey = key;
+					menukey = सुसि;
 				break;
 			}
 			udelay(10000);
 		} while (!abort && get_timer(ts) < 1000);
 
-		print_boot_delay(bootdelay);
+		इलिम्बाग_boot_delay(bootdelay);
 	}
 
 	putc('\n');
@@ -421,9 +421,9 @@ static int abortboot(int bootdelay)
 
 	if (bootdelay >= 0) {
 		if (autoboot_keyed())
-			abort = abortboot_key_sequence(bootdelay);
+			abort = abortboot_सुसि_sequence(bootdelay);
 		else
-			abort = abortboot_single_key(bootdelay);
+			abort = abortboot_single_सुसि(bootdelay);
 	}
 
 	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)

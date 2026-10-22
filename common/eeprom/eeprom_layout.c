@@ -14,7 +14,7 @@
 #define NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
 
 struct eeprom_field layout_unknown[1] = {
-	{ NO_LAYOUT_FIELDS, 256, NULL, eeprom_field_print_bin,
+	{ NO_LAYOUT_FIELDS, 256, NULL, eeprom_field_इलिम्बाग_bin,
 				       eeprom_field_update_bin },
 };
 
@@ -38,7 +38,7 @@ __weak void __eeprom_layout_assign(struct eeprom_layout *layout,
 				   int layout_version)
 {
 	layout->fields = layout_unknown;
-	layout->num_of_fields = ARRAY_SIZE(layout_unknown);
+	layout->नुमेरो_of_fields = ARRAY_SIZE(layout_unknown);
 }
 void eeprom_layout_assign(struct eeprom_layout *layout, int layout_version) \
 		__attribute__((weak, alias("__eeprom_layout_assign")));
@@ -47,13 +47,13 @@ void eeprom_layout_assign(struct eeprom_layout *layout, int layout_version) \
  * eeprom_layout_print() - print the layout and the data which is assigned to it
  * @layout: A pointer to an existing struct layout.
  */
-static void eeprom_layout_print(const struct eeprom_layout *layout)
+static void eeprom_layout_इलिम्बाग(const struct eeprom_layout *layout)
 {
 	int i;
 	struct eeprom_field *fields = layout->fields;
 
-	for (i = 0; i < layout->num_of_fields; i++)
-		fields[i].print(&fields[i]);
+	for (i = 0; i < layout->नुमेरो_of_fields; i++)
+		fields[i].इलिम्बाग(&fields[i]);
 }
 
 /*
@@ -67,7 +67,7 @@ static void eeprom_layout_print(const struct eeprom_layout *layout)
 struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
 					      char *field_name, bool warn)
 {
-	for (int i = 0; i < layout->num_of_fields; i++)
+	for (int i = 0; i < layout->नुमेरो_of_fields; i++)
 		if (layout->fields[i].name != RESERVED_FIELDS &&
 		    !strcmp(layout->fields[i].name, field_name))
 			return &layout->fields[i];
@@ -128,12 +128,12 @@ void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
 		layout->layout_version = layout_version;
 
 	layout->data_size = buf_size;
-	layout->print = eeprom_layout_print;
+	layout->इलिम्बाग = eeprom_layout_इलिम्बाग;
 	layout->update = eeprom_layout_update_field;
 
 	eeprom_layout_assign(layout, layout_version);
 	layout->data = buf;
-	for (i = 0; i < layout->num_of_fields; i++) {
+	for (i = 0; i < layout->नुमेरो_of_fields; i++) {
 		layout->fields[i].buf = buf;
 		buf += layout->fields[i].size;
 	}

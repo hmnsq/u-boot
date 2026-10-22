@@ -62,7 +62,7 @@ static struct
 #define xyzModem_CHAR_TIMEOUT            2000	/* 2 seconds */
 #define xyzModem_MAX_RETRIES             20
 #define xyzModem_MAX_RETRIES_WITH_CRC    10
-#define xyzModem_CAN_COUNT                3	/* Wait for 3 CAN before quitting */
+#define xyz_Modem_CAN_बिलांग                3	/* Wait for 3 CAN before quitting */
 
 typedef int cyg_int32;
 static int
@@ -132,7 +132,7 @@ _tolower (char c)
 
 /* Parse (scan) a number */
 static bool
-parse_num (char *s, unsigned long *val, char **es, char *delim)
+parse_नुमेरो (char *s, unsigned long *val, char **es, char *delim)
 {
   bool first = true;
   int radix = 10;
@@ -190,11 +190,11 @@ static int
 zm_dprintf(char *fmt, ...)
 {
 	int len;
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	len = diag_vsprintf(zm_out, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	len = diag_vsprintf(zm_out, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	zm_out += len;
 	return len;
 }
@@ -227,9 +227,9 @@ zm_save (unsigned char c)
 }
 
 static void
-zm_dump (int line)
+zm_dump (int लिन्या)
 {
-  zm_dprintf ("Packet at line: %d\n", line);
+  zm_dprintf ("Packet at line: %d\n", लिन्या);
   zm_dump_buf (zm_buf, zm_bp - zm_buf);
 }
 
@@ -292,7 +292,7 @@ xyzModem_get_hdr (void)
 	    case ETX:
 	      xyz.total_CAN++;
 	      ZM_DEBUG (zm_dump (__LINE__));
-	      if (++can_total == xyzModem_CAN_COUNT)
+	      if (++can_total == xyz_Modem_CAN_बिलांग)
 		{
 		  return xyzModem_cancel;
 		}
@@ -490,7 +490,7 @@ xyzModem_stream_open (connection_info_t * info, int *err)
 	      /* skip filename */
 	      while (*xyz.bufp++);
 	      /* get the length */
-	      parse_num ((char *) xyz.bufp, &xyz.file_length, NULL, " ");
+	      parse_नुमेरो ((char *) xyz.bufp, &xyz.file_length, NULL, " ");
 	      /* The rest of the file name data block quietly discarded */
 	      xyz.tx_ack = true;
 	    }

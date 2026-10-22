@@ -30,7 +30,7 @@ static int spl_smh_load_image(struct spl_image_info *spl_image,
 	long fd, len;
 	struct spl_load_info load;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
+	fd = smh_open(filename, MODE_READ | MODE_दालावाहान);
 	if (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
 		return fd;

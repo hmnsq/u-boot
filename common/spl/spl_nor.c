@@ -11,13 +11,13 @@
 #include <spl_load.h>
 
 static ulong spl_nor_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+			       ulong बिलांग, void *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %p\n",
-	      __func__, sector, count, buf);
-	memcpy(buf, map_sysmem(sector, count), count);
+	      __func__, sector, बिलांग, buf);
+	memcpy(buf, map_sysmem(sector, बिलांग), बिलांग);
 
-	return count;
+	return बिलांग;
 }
 
 unsigned long __weak spl_nor_get_uboot_base(void)
@@ -47,8 +47,8 @@ static int spl_nor_load_image_os(struct spl_image_info *spl_image,
 		ret = spl_load_simple_fit(spl_image, &load, CONFIG_SYS_OS_BASE,
 					  (void *)header);
 
-#if defined CONFIG_SPL_PAYLOAD_ARGS_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
-		memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+#if defined CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
+		memcpy((void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR,
 		       (void *)CONFIG_CMD_SPL_NOR_OFS,
 		       CONFIG_CMD_SPL_WRITE_SIZE);
 #endif

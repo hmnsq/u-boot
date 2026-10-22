@@ -28,7 +28,7 @@ int stdio_file_to_flags(const int file)
 {
 	switch (file) {
 	case stdin:
-		return DEV_FLAGS_INPUT;
+		return DEV_FLAGS_पासोक;
 	case stdout:
 	case stderr:
 		return DEV_FLAGS_OUTPUT;
@@ -48,7 +48,7 @@ static void nulldev_puts(struct stdio_dev *dev, const char *s)
 	/* nulldev is empty! */
 }
 
-static int nulldev_input(struct stdio_dev *dev)
+static int nulldev_पासोक(struct stdio_dev *dev)
 {
 	/* nulldev is empty! */
 	return 0;
@@ -61,11 +61,11 @@ static void nulldev_register(void)
 	memset(&dev, '\0', sizeof(dev));
 
 	strcpy(dev.name, "nulldev");
-	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_INPUT;
+	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_पासोक;
 	dev.putc = nulldev_putc;
 	dev.puts = nulldev_puts;
-	dev.getc = nulldev_input;
-	dev.tstc = nulldev_input;
+	dev.getc = nulldev_पासोक;
+	dev.tstc = nulldev_पासोक;
 
 	stdio_register(&dev);
 }
@@ -112,7 +112,7 @@ static void drv_system_init (void)
 	memset (&dev, 0, sizeof (dev));
 
 	strcpy (dev.name, "serial");
-	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_INPUT;
+	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_पासोक;
 	dev.putc = stdio_serial_putc;
 	dev.puts = stdio_serial_puts;
 	STDIO_DEV_ASSIGN_FLUSH(&dev, stdio_serial_flush);

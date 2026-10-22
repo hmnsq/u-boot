@@ -35,7 +35,7 @@ static const char *const log_cat_name[] = {
 	"test",
 };
 
-_Static_assert(ARRAY_SIZE(log_cat_name) == LOGC_COUNT - LOGC_NONE,
+_Static_assert(ARRAY_SIZE(log_cat_name) == LOGC_बिलांग - LOGC_NONE,
 	       "log_cat_name size");
 
 static const char *const log_level_name[] = {
@@ -51,14 +51,14 @@ static const char *const log_level_name[] = {
 	"IO",
 };
 
-_Static_assert(ARRAY_SIZE(log_level_name) == LOGL_COUNT, "log_level_name size");
+_Static_assert(ARRAY_SIZE(log_level_name) == LOGL_बिलांग, "log_level_name size");
 
 /* All error responses MUST begin with '<' */
 const char *log_get_cat_name(enum log_category_t cat)
 {
 	const char *name;
 
-	if (cat < 0 || cat >= LOGC_COUNT)
+	if (cat < 0 || cat >= LOGC_बिलांग)
 		return "<invalid>";
 	if (cat >= LOGC_NONE)
 		return log_cat_name[cat - LOGC_NONE];
@@ -77,7 +77,7 @@ enum log_category_t log_get_cat_by_name(const char *name)
 	enum uclass_id id;
 	int i;
 
-	for (i = LOGC_NONE; i < LOGC_COUNT; i++)
+	for (i = LOGC_NONE; i < LOGC_बिलांग; i++)
 		if (!strcmp(name, log_cat_name[i - LOGC_NONE]))
 			return i;
 	id = uclass_get_by_name(name);
@@ -89,7 +89,7 @@ enum log_category_t log_get_cat_by_name(const char *name)
 
 const char *log_get_level_name(enum log_level_t level)
 {
-	if (level >= LOGL_COUNT)
+	if (level >= LOGL_बिलांग)
 		return "INVALID";
 	return log_level_name[level];
 }
@@ -98,7 +98,7 @@ enum log_level_t log_get_level_by_name(const char *name)
 {
 	int i;
 
-	for (i = 0; i < LOGL_COUNT; i++) {
+	for (i = 0; i < LOGL_बिलांग; i++) {
 		if (!strcasecmp(log_level_name[i], name))
 			return i;
 	}
@@ -110,7 +110,7 @@ struct log_device *log_device_find_by_name(const char *drv_name)
 {
 	struct log_device *ldev;
 
-	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
+	list_for_each_entry(ldev, &gd->log_head, sibling_बुहोल) {
 		if (!strcmp(drv_name, ldev->drv->name))
 			return ldev;
 	}
@@ -176,7 +176,7 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
 		return true;
 	}
 
-	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
+	list_for_each_entry(filt, &ldev->filter_head, sibling_बुहोल) {
 		if (filt->flags & LOGFF_LEVEL_MIN) {
 			if (rec->level < filt->level)
 				continue;
@@ -216,7 +216,7 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
  * @rec:	log record to dispatch
  * Return:	0 msg sent, 1 msg not sent while already dispatching another msg
  */
-static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
+static int log_dispatch(struct log_rec *rec, const char *fmt, va_list मगा_कातविरान)
 {
 	struct log_device *ldev;
 	char buf[CONFIG_SYS_CBSIZE];
@@ -226,33 +226,33 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 	 * may result in further generated messages. We cannot process them here
 	 * as this might result in infinite recursion.
 	 */
-	if (gd->processing_msg)
+	if (gd->processing_मेनसाहे)
 		return 1;
 
 	/* Emit message */
-	gd->processing_msg = true;
-	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
+	gd->processing_मेनसाहे = true;
+	list_for_each_entry(ldev, &gd->log_head, sibling_बुहोल) {
 		if ((ldev->flags & LOGDF_ENABLE) &&
 		    log_passes_filters(ldev, rec)) {
-			if (!rec->msg) {
+			if (!rec->मेनसाहे) {
 				int len;
 
-				len = vsnprintf(buf, sizeof(buf), fmt, args);
-				rec->msg = buf;
+				len = vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+				rec->मेनसाहे = buf;
 				gd->log_cont = len && buf[len - 1] != '\n';
 			}
 			ldev->drv->emit(ldev, rec);
 		}
 	}
-	gd->processing_msg = false;
+	gd->processing_मेनसाहे = false;
 	return 0;
 }
 
 int _log(enum log_category_t cat, enum log_level_t level, const char *file,
-	 int line, const char *func, const char *fmt, ...)
+	 int लिन्या, const char *func, const char *fmt, ...)
 {
 	struct log_rec rec;
-	va_list args;
+	va_list मगा_कातविरान;
 
 	if (!gd)
 		return -ENOSYS;
@@ -271,61 +271,61 @@ int _log(enum log_category_t cat, enum log_level_t level, const char *file,
 	if (gd->log_cont)
 		rec.flags |= LOGRECF_CONT;
 	rec.file = file;
-	rec.line = line;
+	rec.लिन्या = लिन्या;
 	rec.func = func;
-	rec.msg = NULL;
+	rec.मेनसाहे = NULL;
 
 	if (!(gd->flags & GD_FLG_LOG_READY)) {
-		gd->log_drop_count++;
+		gd->log_drop_बिलांग++;
 
 		/* display dropped traces with console puts and DEBUG_UART */
 		if (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
 		    rec.flags & LOGRECF_FORCE_DEBUG) {
 			char buf[CONFIG_SYS_CBSIZE];
 
-			va_start(args, fmt);
-			vsnprintf(buf, sizeof(buf), fmt, args);
+			va_start(मगा_कातविरान, fmt);
+			vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
 			puts(buf);
-			va_end(args);
+			va_end(मगा_कातविरान);
 		}
 
 		return -ENOSYS;
 	}
-	va_start(args, fmt);
-	if (!log_dispatch(&rec, fmt, args)) {
+	va_start(मगा_कातविरान, fmt);
+	if (!log_dispatch(&rec, fmt, मगा_कातविरान)) {
 		gd->logc_prev = cat;
 		gd->logl_prev = level;
 	}
-	va_end(args);
+	va_end(मगा_कातविरान);
 
 	return 0;
 }
 
-#define MAX_LINE_LENGTH_BYTES		64
-#define DEFAULT_LINE_LENGTH_BYTES	16
+#define MAX_लिन्या_LENGTH_BYTES		64
+#define DEFAULT_लिन्या_LENGTH_BYTES	16
 
 int _log_buffer(enum log_category_t cat, enum log_level_t level,
-		const char *file, int line, const char *func, ulong addr,
-		const void *data, uint width, uint count, uint linelen)
+		const char *file, int लिन्या, const char *func, ulong addr,
+		const void *data, uint width, uint बिलांग, uint linelen)
 {
-	if (linelen * width > MAX_LINE_LENGTH_BYTES)
-		linelen = MAX_LINE_LENGTH_BYTES / width;
+	if (linelen * width > MAX_लिन्या_LENGTH_BYTES)
+		linelen = MAX_लिन्या_LENGTH_BYTES / width;
 	if (linelen < 1)
-		linelen = DEFAULT_LINE_LENGTH_BYTES / width;
+		linelen = DEFAULT_लिन्या_LENGTH_BYTES / width;
 
-	while (count) {
+	while (बिलांग) {
 		uint thislinelen;
 		char buf[HEXDUMP_MAX_BUF_LENGTH(width * linelen)];
 
-		thislinelen = hexdump_line(addr, data, width, count, linelen,
+		thislinelen = hexdump_लिन्या(addr, data, width, बिलांग, linelen,
 					   buf, sizeof(buf));
 		assert(thislinelen >= 0);
-		_log(cat, level, file, line, func, "%s\n", buf);
+		_log(cat, level, file, लिन्या, func, "%s\n", buf);
 
 		/* update references */
 		data += thislinelen * width;
 		addr += thislinelen * width;
-		count -= thislinelen;
+		बिलांग -= thislinelen;
 	}
 
 	return 0;
@@ -375,21 +375,21 @@ int log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
 			goto err;
 		}
 	}
-	filt->filter_num = ldev->next_filter_num++;
+	filt->filter_नुमेरो = ldev->next_filter_नुमेरो++;
 	/* Add deny filters to the beginning of the list */
 	if (flags & LOGFF_DENY)
-		list_add(&filt->sibling_node, &ldev->filter_head);
+		list_add(&filt->sibling_बुहोल, &ldev->filter_head);
 	else
-		list_add_tail(&filt->sibling_node, &ldev->filter_head);
+		list_add_tail(&filt->sibling_बुहोल, &ldev->filter_head);
 
-	return filt->filter_num;
+	return filt->filter_नुमेरो;
 
 err:
 	free(filt);
 	return ret;
 }
 
-int log_remove_filter(const char *drv_name, int filter_num)
+int log_remove_filter(const char *drv_name, int filter_नुमेरो)
 {
 	struct log_filter *filt;
 	struct log_device *ldev;
@@ -398,9 +398,9 @@ int log_remove_filter(const char *drv_name, int filter_num)
 	if (!ldev)
 		return -ENOENT;
 
-	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->filter_num == filter_num) {
-			list_del(&filt->sibling_node);
+	list_for_each_entry(filt, &ldev->filter_head, sibling_बुहोल) {
+		if (filt->filter_नुमेरो == filter_नुमेरो) {
+			list_del(&filt->sibling_बुहोल);
 			free(filt);
 
 			return 0;
@@ -420,7 +420,7 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 {
 	struct log_device *ldev;
 
-	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
+	list_for_each_entry(ldev, &gd->log_head, sibling_बुहोल) {
 		if (ldev->drv == drv)
 			return ldev;
 	}
@@ -456,8 +456,8 @@ void log_fixup_for_gd_move(struct global_data *new_gd)
 int log_init(void)
 {
 	struct log_driver *drv = ll_entry_start(struct log_driver, log_driver);
-	const int count = ll_entry_count(struct log_driver, log_driver);
-	struct log_driver *end = drv + count;
+	const int बिलांग = ll_entry_बिलांग(struct log_driver, log_driver);
+	struct log_driver *end = drv + बिलांग;
 
 	/*
 	 * We cannot add runtime data to the driver since it is likely stored
@@ -476,7 +476,7 @@ int log_init(void)
 		INIT_LIST_HEAD(&ldev->filter_head);
 		ldev->drv = drv;
 		ldev->flags = drv->flags;
-		list_add_tail(&ldev->sibling_node,
+		list_add_tail(&ldev->sibling_बुहोल,
 			      (struct list_head *)&gd->log_head);
 		drv++;
 	}

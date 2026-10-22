@@ -31,11 +31,11 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 	int i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
+	if (!info || info->sector_बिलांग == 0 || info->size == 0 || to < from) {
 		return;
 	}
 
-	s_end = info->sector_count - 1;	/* index of last sector */
+	s_end = info->sector_बिलांग - 1;	/* index of last sector */
 	b_end = info->start[0] + info->size - 1;	/* bank end address */
 
 	debug("%s %s: from 0x%08lX to 0x%08lX\n", __func__,
@@ -51,7 +51,7 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 		return;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
+	for (i=0; i<info->sector_बिलांग; ++i) {
 		ulong end;		/* last address in current sect	*/
 
 		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
@@ -140,8 +140,8 @@ flash_write(char *src, ulong addr, ulong cnt)
 
 	for (info = info_first; info <= info_last; ++info) {
 		ulong b_end = info->start[0] + info->size;	/* bank end addr */
-		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
+		short s_end = info->sector_बिलांग - 1;
+		for (i=0; i<info->sector_बिलांग; ++i) {
 			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
 
 			if ((end >= info->start[i]) && (addr < e_addr) &&

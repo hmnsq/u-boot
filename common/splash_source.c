@@ -77,7 +77,7 @@ static int splash_mmc_read_raw(ulong bmp_load_addr, struct splash_location *loca
 		return -ENOSYS;
 	}
 
-	ret = part_get_info_by_dev_and_name_or_num("mmc", location->devpart, &desc,
+	ret = part_get_info_by_dev_and_name_or_नुमेरो("mmc", location->devpart, &desc,
 						   &partition, 1);
 	if (ret < 0)
 		return ret;
@@ -118,7 +118,7 @@ static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr
 	size_t bmp_size, bmp_header_size = sizeof(struct bmp_header);
 
 	if (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+		goto splash_address_too_माताअस;
 
 	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_size);
 	if (res < 0)
@@ -128,11 +128,11 @@ static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr
 	bmp_size = le32_to_cpu(bmp_hdr->file_size);
 
 	if (bmp_load_addr + bmp_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+		goto splash_address_too_माताअस;
 
 	return splash_storage_read_raw(location, bmp_load_addr, bmp_size);
 
-splash_address_too_high:
+splash_address_too_माताअस:
 	printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 
 	return -EFAULT;
@@ -346,7 +346,7 @@ static struct splash_location *select_splash_location(
 static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr)
 {
 	int res;
-	int node_offset;
+	int बुहोल_offset;
 	const char *splash_file;
 	const void *internal_splash_data;
 	size_t internal_splash_size;
@@ -388,15 +388,15 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
 	if (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	node_offset = fit_image_get_node(fit_header, splash_file);
-	if (node_offset < 0) {
+	बुहोल_offset = fit_image_get_बुहोल(fit_header, splash_file);
+	if (बुहोल_offset < 0) {
 		debug("Could not find splash image '%s' in FIT\n",
 		      splash_file);
 		return -ENOENT;
 	}
 
 	/* Extract the splash data from FIT */
-	if (!fit_image_get_data(fit_header, node_offset, &internal_splash_data,
+	if (!fit_image_get_data(fit_header, बुहोल_offset, &internal_splash_data,
 				&internal_splash_size)) {
 		memmove((void *)(uintptr_t)bmp_load_addr, internal_splash_data,
 			internal_splash_size);
@@ -406,7 +406,7 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
 	}
 
 	if (is_splash_external) {
-		res = fit_image_get_data_size(fit_header, node_offset, &external_splash_size);
+		res = fit_image_get_data_size(fit_header, बुहोल_offset, &external_splash_size);
 		if (res < 0) {
 			printf("Failed to get size of splash image (err=%d)\n", res);
 			return res;
@@ -438,15 +438,15 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
 int splash_source_load(struct splash_location *locations, uint size)
 {
 	struct splash_location *splash_location;
-	char *env_splashimage_value;
+	char *env_splashimage_हालागा;
 	char *devpart;
 	ulong bmp_load_addr;
 
-	env_splashimage_value = env_get("splashimage");
-	if (env_splashimage_value == NULL)
+	env_splashimage_हालागा = env_get("splashimage");
+	if (env_splashimage_हालागा == NULL)
 		return -ENOENT;
 
-	bmp_load_addr = hextoul(env_splashimage_value, 0);
+	bmp_load_addr = hextoul(env_splashimage_हालागा, 0);
 	if (bmp_load_addr == 0) {
 		printf("Error: bad splashimage address specified\n");
 		return -EFAULT;

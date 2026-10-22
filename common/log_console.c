@@ -26,7 +26,7 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
+	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_मेनसाहे)) {
 		add_space = true;
 		if (fmt & BIT(LOGF_LEVEL))
 			printf("%s.", log_get_level_name(rec->level));
@@ -34,8 +34,8 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 			printf("%s,", log_get_cat_name(rec->cat));
 		if (fmt & BIT(LOGF_FILE))
 			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
+		if (fmt & BIT(LOGF_लिन्या))
+			printf("%d-", rec->लिन्या);
 		if (fmt & BIT(LOGF_FUNC)) {
 			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
 				printf("%s()", rec->func ?: "?");
@@ -45,8 +45,8 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	if (fmt & BIT(LOGF_मेनसाहे))
+		printf("%s%s", add_space ? " " : "", rec->मेनसाहे);
 
 	return 0;
 }

@@ -31,181 +31,181 @@
 
 static const struct display_timing dmt_timings[] = {
 	{ TIMING(31500000, 640, 32, 64, 96, 350, 32, 3, 60,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(31500000, 640, 32, 64, 96, 400, 1, 3, 41,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(35500000, 720, 36, 72, 108, 400, 1, 3, 42,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(25175000, 640, 16, 96, 48, 480, 10, 2, 33,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(31500000, 640, 24, 40, 128, 480, 9, 3, 28,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(31500000, 640, 16, 64, 120, 480, 1, 3, 16,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(36000000, 640, 56, 56, 80, 480, 1, 3, 25,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(36000000, 800, 24, 72, 128, 600, 1, 2, 22,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(40000000, 800, 40, 128, 88, 600, 1, 4, 23,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(50000000, 800, 56, 120, 64, 600, 37, 6, 23,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(49500000, 800, 16, 80, 160, 600, 1, 3, 21,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(56250000, 800, 32, 64, 152, 600, 1, 3, 27,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(73250000, 800, 48, 32, 80, 600, 3, 4, 29,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(33750000, 848, 16, 112, 112, 480, 6, 8, 23,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(44900000, 1024, 8, 176, 56, 768, 0, 8, 41,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(65000000, 1024, 24, 136, 160, 768, 3, 6, 29,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(75000000, 1024, 24, 136, 144, 768, 3, 6, 29,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(78750000, 1024, 16, 96, 176, 768, 1, 3, 28,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(94500000, 1024, 48, 96, 208, 768, 1, 3, 36,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(115500000, 1024, 48, 32, 80, 768, 3, 4, 38,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(108000000, 1152, 64, 128, 256, 864, 1, 3, 32,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(74250000, 1280, 110, 40, 220, 720, 5, 5, 20,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(68250000, 1280, 48, 32, 80, 768, 3, 7, 12,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(79500000, 1280, 64, 128, 192, 768, 3, 7, 20,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(102250000, 1280, 80, 128, 208, 768, 3, 7, 27,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(117500000, 1280, 80, 136, 216, 768, 3, 7, 31,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(140250000, 1280, 48, 32, 80, 768, 3, 7, 35,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(71000000, 1280, 48, 32, 80, 800, 3, 6, 14,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(83500000, 1280, 72, 128, 200, 800, 3, 6, 22,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(106500000, 1280, 80, 128, 208, 800, 3, 6, 29,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(122500000, 1280, 80, 136, 216, 800, 3, 6, 34,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(146250000, 1280, 48, 32, 80, 800, 3, 6, 38,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(108000000, 1280, 96, 112, 312, 960, 1, 3, 36,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(148500000, 1280, 64, 160, 224, 960, 1, 3, 47,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(175500000, 1280, 48, 32, 80, 960, 3, 4, 50,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(108000000, 1280, 48, 112, 248, 1024, 1, 3, 38,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(135000000, 1280, 16, 144, 248, 1024, 1, 3, 38,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(157500000, 1280, 64, 160, 224, 1024, 1, 3, 44,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(187250000, 1280, 48, 32, 80, 1024, 3, 7, 50,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(85500000, 1360, 64, 112, 256, 768, 3, 6, 18,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(148250000, 1360, 48, 32, 80, 768, 3, 5, 37,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(85500000, 1366, 70, 143, 213, 768, 3, 3, 24,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(72000000, 1366, 14, 56, 64, 768, 1, 3, 28,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(101000000, 1400, 48, 32, 80, 1050, 3, 4, 23,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(121750000, 1400, 88, 144, 232, 1050, 3, 4, 32,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(156000000, 1400, 104, 144, 248, 1050, 3, 4, 42,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(179500000, 1400, 104, 152, 256, 1050, 3, 4, 48,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(208000000, 1400, 48, 32, 80, 1050, 3, 4, 55,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(88750000, 1440, 48, 32, 80, 900, 3, 6, 17,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(106500000, 1440, 80, 152, 232, 900, 3, 6, 25,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(136750000, 1440, 96, 152, 248, 900, 3, 6, 33,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(157000000, 1440, 104, 152, 256, 900, 3, 6, 39,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(182750000, 1440, 48, 32, 80, 900, 3, 6, 44,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(108000000, 1600, 24, 80, 96, 900, 1, 3, 96,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(162000000, 1600, 64, 192, 304, 1200, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(175500000, 1600, 64, 192, 304, 1200, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(189000000, 1600, 64, 192, 304, 1200, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(202500000, 1600, 64, 192, 304, 1200, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(229500000, 1600, 64, 192, 304, 1200, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(268250000, 1600, 48, 32, 80, 1200, 3, 4, 64,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(119000000, 1680, 48, 32, 80, 1050, 3, 6, 21,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(146250000, 1680, 104, 176, 280, 1050, 3, 6, 30,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(187000000, 1680, 120, 176, 296, 1050, 3, 6, 40,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(214750000, 1680, 128, 176, 304, 1050, 3, 6, 46,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(245500000, 1680, 48, 32, 80, 1050, 3, 6, 53,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(204750000, 1792, 128, 200, 328, 1344, 1, 3, 46,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(261000000, 1792, 96, 216, 352, 1344, 1, 3, 69,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(333250000, 1792, 48, 32, 80, 1344, 3, 4, 72,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(218250000, 1856, 96, 224, 352, 1392, 1, 3, 43,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(288000000, 1856, 128, 224, 352, 1392, 1, 3, 104,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(356500000, 1856, 48, 32, 80, 1392, 3, 4, 75,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(148500000, 1920, 88, 44, 148, 1080, 4, 5, 36,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(154000000, 1920, 48, 32, 80, 1200, 3, 6, 26,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(193250000, 1920, 136, 200, 336, 1200, 3, 6, 36,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(245250000, 1920, 136, 208, 344, 1200, 3, 6, 46,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(281250000, 1920, 144, 208, 352, 1200, 3, 6, 53,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(317000000, 1920, 48, 32, 80, 1200, 3, 6, 62,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(234000000, 1920, 128, 208, 344, 1440, 1, 3, 56,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(297000000, 1920, 144, 224, 352, 1440, 1, 3, 56,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(380500000, 1920, 48, 32, 80, 1440, 3, 4, 78,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(162000000, 2048, 26, 80, 96, 1152, 1, 3, 44,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(268500000, 2560, 48, 32, 80, 1600, 3, 6, 37,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(348500000, 2560, 192, 280, 472, 1600, 3, 6, 49,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(443250000, 2560, 208, 280, 488, 1600, 3, 6, 63,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(505250000, 2560, 208, 280, 488, 1600, 3, 6, 73,
-		 DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_HIGH) },
+		 DISPLAY_FLAGS_HSYNC_माबाबा | DISPLAY_FLAGS_VSYNC_माताअस) },
 	{ TIMING(552750000, 2560, 48, 32, 80, 1600, 3, 6, 85,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(556744000, 4096, 8, 32, 40, 2160, 48, 8, 6,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 	{ TIMING(556188000, 4096, 8, 32, 40, 2160, 48, 8, 6,
-		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
+		 DISPLAY_FLAGS_HSYNC_माताअस | DISPLAY_FLAGS_VSYNC_माबाबा) },
 };
 #endif
 
@@ -259,11 +259,11 @@ int edid_get_ranges(struct edid1_info *edid, unsigned int *hmin,
 }
 
 /* Set all parts of a timing entry to the same value */
-static void set_entry(struct timing_entry *entry, u32 value)
+static void set_entry(struct timing_entry *entry, u32 हालागा)
 {
-	entry->min = value;
-	entry->typ = value;
-	entry->max = value;
+	entry->min = हालागा;
+	entry->typ = हालागा;
+	entry->max = हालागा;
 }
 
 /**
@@ -306,13 +306,13 @@ static void decode_timing(u8 *buf, struct display_timing *timing)
 
 	timing->flags = 0;
 	if (EDID_DETAILED_TIMING_FLAG_HSYNC_POLARITY(*t))
-		timing->flags |= DISPLAY_FLAGS_HSYNC_HIGH;
+		timing->flags |= DISPLAY_FLAGS_HSYNC_माताअस;
 	else
-		timing->flags |= DISPLAY_FLAGS_HSYNC_LOW;
+		timing->flags |= DISPLAY_FLAGS_HSYNC_माबाबा;
 	if (EDID_DETAILED_TIMING_FLAG_VSYNC_POLARITY(*t))
-		timing->flags |= DISPLAY_FLAGS_VSYNC_HIGH;
+		timing->flags |= DISPLAY_FLAGS_VSYNC_माताअस;
 	else
-		timing->flags |= DISPLAY_FLAGS_VSYNC_LOW;
+		timing->flags |= DISPLAY_FLAGS_VSYNC_माबाबा;
 
 	if (EDID_DETAILED_TIMING_FLAG_INTERLACED(*t))
 		timing->flags = DISPLAY_FLAGS_INTERLACED;
@@ -361,7 +361,7 @@ static bool cea_is_hdmi_vsdb_present(struct edid_cea861_info *info)
 	return false;
 }
 
-static bool edid_find_valid_detailed_timing(void *buf, int count,
+static bool edid_find_valid_detailed_timing(void *buf, int बिलांग,
 					    struct display_timing *timing,
 					    bool (*mode_valid)(void *priv,
 						const struct display_timing *timing),
@@ -371,7 +371,7 @@ static bool edid_find_valid_detailed_timing(void *buf, int count,
 	bool found = false;
 	int i;
 
-	for (i = 0; i < count && !found; i++, t++)
+	for (i = 0; i < बिलांग && !found; i++, t++)
 		if (EDID_DETAILED_TIMING_PIXEL_CLOCK(*t) != 0) {
 			decode_timing((u8 *)t, timing);
 			if (mode_valid)
@@ -466,7 +466,7 @@ int edid_get_timing_validate(u8 *buf, int buf_size,
 		return -EINVAL;
 	}
 
-	if (!EDID1_INFO_VIDEO_INPUT_DIGITAL(*edid)) {
+	if (!EDID1_INFO_VIDEO_पासोक_DIGITAL(*edid)) {
 		debug("%s: Not a digital display\n", __func__);
 		return -ENOSYS;
 	}
@@ -486,13 +486,13 @@ int edid_get_timing_validate(u8 *buf, int buf_size,
 			(struct edid_cea861_info *)(buf + sizeof(*edid));
 
 		if (info->extension_tag == EDID_CEA861_EXTENSION_TAG) {
-			int count = EDID_CEA861_DTD_COUNT(*info);
+			int बिलांग = EDID_CEA861_DTD_बिलांग(*info);
 			int offset = info->dtd_offset;
-			int size = count * sizeof(struct edid_detailed_timing);
+			int size = बिलांग * sizeof(struct edid_detailed_timing);
 
 			if (offset >= 4 && offset + size < EDID_SIZE)
 				found = edid_find_valid_detailed_timing(
-					(u8 *)info + offset, count, timing,
+					(u8 *)info + offset, बिलांग, timing,
 					mode_valid, mode_valid_priv);
 		}
 	}
@@ -513,7 +513,7 @@ int edid_get_timing_validate(u8 *buf, int buf_size,
 		*panel_bits_per_colourp = -1;
 	} else  {
 		*panel_bits_per_colourp =
-			((edid->video_input_definition & 0x70) >> 3) + 4;
+			((edid->video_पासोक_definition & 0x70) >> 3) + 4;
 	}
 
 	timing->hdmi_monitor = false;
@@ -565,7 +565,7 @@ static char *snip(char *string)
  * @param monitor	The EDID monitor descriptor block
  * @have_timing		Modifies to 1 if the desciptor contains timing info
  */
-static void edid_print_dtd(struct edid_monitor_descriptor *monitor,
+static void edid_इलिम्बाग_dtd(struct edid_monitor_descriptor *monitor,
 			   unsigned int *have_timing)
 {
 	unsigned char *bytes = (unsigned char *)monitor;
@@ -628,12 +628,12 @@ static void edid_get_manufacturer_name(struct edid1_info *edid, char *name)
 	name[3] = '\0';
 }
 
-void edid_print_info(struct edid1_info *edid_info)
+void edid_इलिम्बाग_info(struct edid1_info *edid_info)
 {
 	int i;
 	char manufacturer[4];
 	unsigned int have_timing = 0;
-	uint32_t serial_number;
+	uint32_t serial_नुमेरो;
 
 	if (edid_check_info(edid_info)) {
 		printf("Not a valid EDID\n");
@@ -648,32 +648,32 @@ void edid_print_info(struct edid1_info *edid_info)
 	edid_get_manufacturer_name(edid_info, manufacturer);
 	printf("Manufacturer: %s\n", manufacturer);
 
-	serial_number = EDID1_INFO_SERIAL_NUMBER(*edid_info);
-	if (serial_number != 0xffffffff) {
+	serial_नुमेरो = EDID1_INFO_SERIAL_नुमेरो(*edid_info);
+	if (serial_नुमेरो != 0xffffffff) {
 		if (strcmp(manufacturer, "MAG") == 0)
-			serial_number -= 0x7000000;
+			serial_नुमेरो -= 0x7000000;
 		if (strcmp(manufacturer, "OQI") == 0)
-			serial_number -= 456150000;
+			serial_नुमेरो -= 456150000;
 		if (strcmp(manufacturer, "VSC") == 0)
-			serial_number -= 640000000;
+			serial_नुमेरो -= 640000000;
 	}
-	printf("Serial number: %08x\n", serial_number);
+	printf("Serial number: %08x\n", serial_नुमेरो);
 	printf("Manufactured in week: %d year: %d\n",
 	       edid_info->week, edid_info->year + 1990);
 
 	printf("Video input definition: %svoltage level %d%s%s%s%s%s\n",
-	       EDID1_INFO_VIDEO_INPUT_DIGITAL(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_DIGITAL(*edid_info) ?
 	       "digital signal, " : "analog signal, ",
-	       EDID1_INFO_VIDEO_INPUT_VOLTAGE_LEVEL(*edid_info),
-	       EDID1_INFO_VIDEO_INPUT_BLANK_TO_BLACK(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_VOLTAGE_LEVEL(*edid_info),
+	       EDID1_INFO_VIDEO_पासोक_BLANK_TO_BLACK(*edid_info) ?
 	       ", blank to black" : "",
-	       EDID1_INFO_VIDEO_INPUT_SEPARATE_SYNC(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_SEPARATE_SYNC(*edid_info) ?
 	       ", separate sync" : "",
-	       EDID1_INFO_VIDEO_INPUT_COMPOSITE_SYNC(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_COMPOSITE_SYNC(*edid_info) ?
 	       ", composite sync" : "",
-	       EDID1_INFO_VIDEO_INPUT_SYNC_ON_GREEN(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_SYNC_ON_GREEN(*edid_info) ?
 	       ", sync on green" : "",
-	       EDID1_INFO_VIDEO_INPUT_SERRATION_V(*edid_info) ?
+	       EDID1_INFO_VIDEO_पासोक_SERRATION_V(*edid_info) ?
 	       ", serration v" : "");
 
 	printf("Monitor is %s\n",
@@ -740,7 +740,7 @@ void edid_print_info(struct edid1_info *edid_info)
 	/* Detailed timing information. */
 	for (i = 0; i < ARRAY_SIZE(edid_info->monitor_details.descriptor);
 			i++) {
-		edid_print_dtd(&edid_info->monitor_details.descriptor[i],
+		edid_इलिम्बाग_dtd(&edid_info->monitor_details.descriptor[i],
 			       &have_timing);
 	}
 

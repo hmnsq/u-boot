@@ -77,8 +77,8 @@
 // avoid problems with BSS at early stage:
 static char mcheck_pedantic_flag __section(".data") = 0;
 static void *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
-static size_t mcheck_chunk_count __section(".data") = 0;
-static size_t mcheck_chunk_count_max __section(".data") = 0;
+static size_t mcheck_chunk_बिलांग __section(".data") = 0;
+static size_t mcheck_chunk_बिलांग_max __section(".data") = 0;
 
 typedef unsigned long long mcheck_elem;
 typedef struct {
@@ -92,26 +92,26 @@ struct mcheck_hdr {
 
 static void mcheck_default_abort(enum mcheck_status status, const void *p)
 {
-	const char *msg;
+	const char *मेनसाहे;
 
 	switch (status) {
 	case MCHECK_OK:
-		msg = "memory is consistent, library is buggy\n";
+		मेनसाहे = "memory is consistent, library is buggy\n";
 		break;
 	case MCHECK_HEAD:
-		msg = "memory clobbered before allocated block\n";
+		मेनसाहे = "memory clobbered before allocated block\n";
 		break;
 	case MCHECK_TAIL:
-		msg = "memory clobbered past end of allocated block\n";
+		मेनसाहे = "memory clobbered past end of allocated block\n";
 		break;
 	case MCHECK_FREE:
-		msg = "block freed twice\n";
+		मेनसाहे = "block freed twice\n";
 		break;
 	default:
-		msg = "bogus mcheck_status, library is buggy\n";
+		मेनसाहे = "bogus mcheck_status, library is buggy\n";
 		break;
 	}
-	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, msg, mcheck_chunk_count_max);
+	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, मेनसाहे, mcheck_chunk_बिलांग_max);
 }
 
 static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
@@ -182,7 +182,7 @@ static void *mcheck_free_helper(void *ptr, int clean_content)
 			break;
 		}
 
-	--mcheck_chunk_count;
+	--mcheck_chunk_बिलांग;
 	return (char *)hdr - hdr->aln_skip;
 }
 
@@ -222,9 +222,9 @@ static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
 	for (i = 0; i < CANARY_DEPTH; ++i)
 		tail->elems[i] = MAGICTAIL;
 
-	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
-		mcheck_chunk_count_max = mcheck_chunk_count;
+	++mcheck_chunk_बिलांग;
+	if (mcheck_chunk_बिलांग > mcheck_chunk_बिलांग_max)
+		mcheck_chunk_बिलांग_max = mcheck_chunk_बिलांग;
 
 	for (i = 0; i < REGISTRY_SZ; ++i)
 		if (!mcheck_registry[i]) {
@@ -232,10 +232,10 @@ static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
 			return payload; // normal end
 		}
 
-	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
+	static char *overflow_मेनसाहे = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
-	printf("%s", overflow_msg);
-	overflow_msg = "(mcheck registry full)";
+	printf("%s", overflow_मेनसाहे);
+	overflow_मेनसाहे = "(mcheck registry full)";
 	return payload;
 }
 
@@ -298,7 +298,7 @@ void mcheck_on_ramrelocation(size_t offset)
 			mcheck_registry[i] = 0;
 		}
 
-	mcheck_chunk_count = 0;
+	mcheck_chunk_बिलांग = 0;
 }
 #endif
 #endif

@@ -21,22 +21,22 @@ DECLARE_GLOBAL_DATA_PTR;
 
 struct fw_dynamic_info opensbi_info;
 
-static int spl_opensbi_find_os_node(void *blob, int *uboot_node, int os_type)
+static int spl_opensbi_find_os_बुहोल(void *blob, int *uboot_बुहोल, int os_type)
 {
-	int fit_images_node, node;
+	int fit_images_बुहोल, बुहोल;
 	const char *fit_os;
 
-	fit_images_node = fdt_path_offset(blob, "/fit-images");
-	if (fit_images_node < 0)
+	fit_images_बुहोल = fdt_path_offset(blob, "/fit-images");
+	if (fit_images_बुहोल < 0)
 		return -ENODEV;
 
-	fdt_for_each_subnode(node, blob, fit_images_node) {
-		fit_os = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
+	fdt_for_each_subnode(बुहोल, blob, fit_images_बुहोल) {
+		fit_os = fdt_getprop(blob, बुहोल, FIT_OS_PROP, NULL);
 		if (!fit_os)
 			continue;
 
 		if (genimg_get_os_id(fit_os) == os_type) {
-			*uboot_node = node;
+			*uboot_बुहोल = बुहोल;
 			return 0;
 		}
 	}
@@ -46,7 +46,7 @@ static int spl_opensbi_find_os_node(void *blob, int *uboot_node, int os_type)
 
 void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 {
-	int ret, os_node;
+	int ret, os_बुहोल;
 	ulong os_entry;
 	int os_type;
 	typedef void __noreturn (*opensbi_entry_t)(ulong hartid, ulong dtb, ulong info);
@@ -70,10 +70,10 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	 * Moving DTB in front of the kernel can avoid the error.
 	 */
 #if CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT) && \
-    CONFIG_VAL(PAYLOAD_ARGS_ADDR)
-	memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, spl_image->fdt_addr,
+    CONFIG_VAL(PAYLOAD_मगा_कातविरान_ADDR)
+	memcpy((void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR, spl_image->fdt_addr,
 	       fdt_totalsize(spl_image->fdt_addr));
-	spl_image->fdt_addr = map_sysmem(CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+	spl_image->fdt_addr = map_sysmem(CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR, 0);
 #endif
 
 	/*
@@ -86,7 +86,7 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	else
 		os_type = IH_OS_U_BOOT;
 
-	ret = spl_opensbi_find_os_node(spl_image->fdt_addr, &os_node, os_type);
+	ret = spl_opensbi_find_os_बुहोल(spl_image->fdt_addr, &os_बुहोल, os_type);
 	if (ret) {
 		pr_err("Can't find %s node for opensbi, %d\n",
 		       genimg_get_os_name(os_type), ret);
@@ -94,12 +94,12 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	}
 
 	/* Get U-Boot entry point */
-	ret = fit_image_get_entry(spl_image->fdt_addr, os_node, &os_entry);
+	ret = fit_image_get_entry(spl_image->fdt_addr, os_बुहोल, &os_entry);
 	if (ret)
-		ret = fit_image_get_load(spl_image->fdt_addr, os_node, &os_entry);
+		ret = fit_image_get_load(spl_image->fdt_addr, os_बुहोल, &os_entry);
 
 	/* Prepare opensbi_info object */
-	opensbi_info.magic = FW_DYNAMIC_INFO_MAGIC_VALUE;
+	opensbi_info.magic = FW_DYNAMIC_INFO_MAGIC_हालागा;
 	opensbi_info.version = FW_DYNAMIC_INFO_VERSION;
 	opensbi_info.next_addr = os_entry;
 	opensbi_info.next_mode = FW_DYNAMIC_INFO_NEXT_MODE_S;

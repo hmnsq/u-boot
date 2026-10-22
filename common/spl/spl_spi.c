@@ -22,14 +22,14 @@
 #include <dm/ofnode.h>
 
 static ulong spl_spi_fit_read(struct spl_load_info *load, ulong sector,
-			      ulong count, void *buf)
+			      ulong बिलांग, void *buf)
 {
 	struct spi_flash *flash = load->priv;
 	ulong ret;
 
-	ret = spi_flash_read(flash, sector, count, buf);
+	ret = spi_flash_read(flash, sector, बिलांग, buf);
 	if (!ret)
-		return count;
+		return बिलांग;
 	else
 		return 0;
 }
@@ -61,11 +61,11 @@ static int spl_spi_load_image_os(struct spl_image_info *spl_image,
 	if (err)
 		return err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_मगा_कातविरान)
 	/* Read device tree. */
-	return spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
-			      CONFIG_SYS_SPI_ARGS_SIZE,
-			      (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
+	return spi_flash_read(flash, CONFIG_SYS_SPI_मगा_कातविरान_OFFS,
+			      CONFIG_SYS_SPI_मगा_कातविरान_SIZE,
+			      (void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR);
 #else
 	return 0;
 #endif

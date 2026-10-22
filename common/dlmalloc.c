@@ -64,7 +64,7 @@ static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(
 /* resrve 64MB to insure large contiguous space */
 #define RESERVED_SIZE (1024*1024*64)
 #define NEXT_SIZE (2048*1024)
-#define TOP_MEMORY ((unsigned long)2*1024*1024*1024)
+#define इताअस_MEMORY ((unsigned long)2*1024*1024*1024)
 
 struct GmListElement;
 typedef struct GmListElement GmListElement;
@@ -120,9 +120,9 @@ static
 void* findRegion (void* start_address, unsigned long size)
 {
 	MEMORY_BASIC_INFORMATION info;
-	if (size >= TOP_MEMORY) return NULL;
+	if (size >= इताअस_MEMORY) return NULL;
 
-	while ((unsigned long)start_address + size < TOP_MEMORY)
+	while ((unsigned long)start_address + size < इताअस_MEMORY)
 	{
 		VirtualQuery (start_address, &info, sizeof (info));
 		if ((info.State == MEM_FREE) && (info.RegionSize >= size))
@@ -531,7 +531,7 @@ typedef struct malloc_chunk* mbinptr;
    indexing, maintain locality, and avoid some initialization tests.
 */
 
-#define top            (av_[2])          /* The topmost chunk */
+#define इताअस            (av_[2])          /* The topmost chunk */
 #define last_remainder (bin_at(1))       /* remainder from last split */
 
 /*
@@ -541,7 +541,7 @@ typedef struct malloc_chunk* mbinptr;
    it even exists yet. But we still need to in malloc_extend_top.
 */
 
-#define initial_top    ((mchunkptr)(bin_at(0)))
+#define initial_इताअस    ((mchunkptr)(bin_at(0)))
 
 /* Helper macro to initialize bins */
 
@@ -675,7 +675,7 @@ void mem_malloc_init(ulong start, ulong size)
 /* variables holding tunable values */
 
 static unsigned long trim_threshold   = DEFAULT_TRIM_THRESHOLD;
-static unsigned long top_pad          = DEFAULT_TOP_PAD;
+static unsigned long इताअस_pad          = DEFAULT_इताअस_PAD;
 static unsigned int  n_mmaps_max      = DEFAULT_MMAP_MAX;
 static unsigned long mmap_threshold   = DEFAULT_MMAP_THRESHOLD;
 
@@ -763,8 +763,8 @@ static void do_check_chunk(p) mchunkptr p;
 
   /* Check for legal address ... */
   assert((char*)p >= sbrk_base);
-  if (p != top)
-    assert((char*)p + sz <= (char*)top);
+  if (p != इताअस)
+    assert((char*)p + sz <= (char*)इताअस);
   else
     assert((char*)p + sz <= sbrk_base + sbrked_mem);
 
@@ -793,7 +793,7 @@ static void do_check_free_chunk(p) mchunkptr p;
     assert(next->prev_size == sz);
     /* ... and is fully consolidated */
     assert(prev_inuse(p));
-    assert (next == top || inuse(next));
+    assert (next == इताअस || inuse(next));
 
     /* ... and has minimally sane links */
     assert(p->fd->bk == p);
@@ -825,7 +825,7 @@ static void do_check_inuse_chunk(p) mchunkptr p;
     assert(next_chunk(prv) == p);
     do_check_free_chunk(prv);
   }
-  if (next == top)
+  if (next == इताअस)
   {
     assert(prev_inuse(next));
     assert(chunksize(next) >= MINSIZE);
@@ -1070,24 +1070,24 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 */
 
 #if __STD_C
-static void malloc_extend_top(INTERNAL_SIZE_T nb)
+static void malloc_extend_इताअस(INTERNAL_SIZE_T nb)
 #else
-static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
+static void malloc_extend_इताअस(nb) INTERNAL_SIZE_T nb;
 #endif
 {
   char*     brk;                  /* return value from sbrk */
   INTERNAL_SIZE_T front_misalign; /* unusable bytes at front of sbrked space */
   INTERNAL_SIZE_T correction;     /* bytes for 2nd sbrk call */
   char*     new_brk;              /* return of 2nd sbrk call */
-  INTERNAL_SIZE_T top_size;       /* new size of top chunk */
+  INTERNAL_SIZE_T इताअस_size;       /* new size of top chunk */
 
-  mchunkptr old_top     = top;  /* Record state of old top */
-  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
-  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+  mchunkptr old_इताअस     = इताअस;  /* Record state of old top */
+  INTERNAL_SIZE_T old_इताअस_size = chunksize(old_इताअस);
+  char*     old_end      = (char*)(chunk_at_offset(old_इताअस, old_इताअस_size));
 
   /* Pad request with top_pad plus minimal overhead */
 
-  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
+  INTERNAL_SIZE_T    sbrk_size     = nb + इताअस_pad + MINSIZE;
   unsigned long pagesz    = malloc_getpagesize;
 
   /* If not the first time through, round to preserve page boundary */
@@ -1101,15 +1101,15 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 
   /* Fail if sbrk failed or if a foreign sbrk call killed our space */
   if (brk == (char*)(MORECORE_FAILURE) ||
-      (brk < old_end && old_top != initial_top))
+      (brk < old_end && old_इताअस != initial_इताअस))
     return;
 
   sbrked_mem += sbrk_size;
 
   if (brk == old_end) /* can just add bytes to current top */
   {
-    top_size = sbrk_size + old_top_size;
-    set_head(top, top_size | PREV_INUSE);
+    इताअस_size = sbrk_size + old_इताअस_size;
+    set_head(इताअस, इताअस_size | PREV_INUSE);
   }
   else
   {
@@ -1139,33 +1139,33 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 
     sbrked_mem += correction;
 
-    top = (mchunkptr)brk;
-    top_size = new_brk - brk + correction;
-    set_head(top, top_size | PREV_INUSE);
+    इताअस = (mchunkptr)brk;
+    इताअस_size = new_brk - brk + correction;
+    set_head(इताअस, इताअस_size | PREV_INUSE);
 
-    if (old_top != initial_top)
+    if (old_इताअस != initial_इताअस)
     {
 
       /* There must have been an intervening foreign sbrk call. */
       /* A double fencepost is necessary to prevent consolidation */
 
       /* If not enough space to do this, then user did something very wrong */
-      if (old_top_size < MINSIZE)
+      if (old_इताअस_size < MINSIZE)
       {
-	set_head(top, PREV_INUSE); /* will force null return from malloc */
+	set_head(इताअस, PREV_INUSE); /* will force null return from malloc */
 	return;
       }
 
       /* Also keep size a multiple of MALLOC_ALIGNMENT */
-      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
-      set_head_size(old_top, old_top_size);
-      chunk_at_offset(old_top, old_top_size          )->size =
+      old_इताअस_size = (old_इताअस_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
+      set_head_size(old_इताअस, old_इताअस_size);
+      chunk_at_offset(old_इताअस, old_इताअस_size          )->size =
 	SIZE_SZ|PREV_INUSE;
-      chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
+      chunk_at_offset(old_इताअस, old_इताअस_size + SIZE_SZ)->size =
 	SIZE_SZ|PREV_INUSE;
       /* If possible, release the rest. */
-      if (old_top_size >= MINSIZE)
-	fREe(chunk2mem(old_top));
+      if (old_इताअस_size >= MINSIZE)
+	fREe(chunk2mem(old_इताअस));
     }
   }
 
@@ -1175,7 +1175,7 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
     max_total_mem = mmapped_mem + sbrked_mem;
 
   /* We always land on a page boundary */
-  assert(((unsigned long)((char*)top + top_size) & (pagesz - 1)) == 0);
+  assert(((unsigned long)((char*)इताअस + इताअस_size) & (pagesz - 1)) == 0);
 }
 
 /* Main public routines */
@@ -1472,7 +1472,7 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
   /* Try to use top chunk */
 
   /* Require that there be a remainder, ensuring top always exists  */
-  if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+  if ( (remainder_size = chunksize(इताअस) - nb) < (long)MINSIZE)
   {
 
 #if HAVE_MMAP
@@ -1484,15 +1484,15 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 #endif
 
     /* Try to extend */
-    malloc_extend_top(nb);
-    if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+    malloc_extend_इताअस(nb);
+    if ( (remainder_size = chunksize(इताअस) - nb) < (long)MINSIZE)
       return NULL; /* propagate failure */
   }
 
-  victim = top;
+  victim = इताअस;
   set_head(victim, nb | PREV_INUSE);
-  top = chunk_at_offset(victim, nb);
-  set_head(top, remainder_size | PREV_INUSE);
+  इताअस = chunk_at_offset(victim, nb);
+  set_head(इताअस, remainder_size | PREV_INUSE);
   check_malloced_chunk(victim, nb);
   VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
   return chunk2mem(victim);
@@ -1567,7 +1567,7 @@ void fREe_impl(mem) Void_t* mem;
   nextsz = chunksize(next);
   VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
 
-  if (next == top)                            /* merge with top */
+  if (next == इताअस)                            /* merge with top */
   {
     sz += nextsz;
 
@@ -1580,9 +1580,9 @@ void fREe_impl(mem) Void_t* mem;
     }
 
     set_head(p, sz | PREV_INUSE);
-    top = p;
+    इताअस = p;
     if ((unsigned long)(sz) >= (unsigned long)trim_threshold)
-      malloc_trim(top_pad);
+      malloc_trim(इताअस_pad);
     return;
   }
 
@@ -1739,18 +1739,18 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
     /* Try expanding forward */
 
     next = chunk_at_offset(oldp, oldsize);
-    if (next == top || !inuse(next))
+    if (next == इताअस || !inuse(next))
     {
       nextsize = chunksize(next);
 
       /* Forward into top only if a remainder */
-      if (next == top)
+      if (next == इताअस)
       {
 	if ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
 	{
 	  newsize += nextsize;
-	  top = chunk_at_offset(oldp, nb);
-	  set_head(top, (newsize - nb) | PREV_INUSE);
+	  इताअस = chunk_at_offset(oldp, nb);
+	  set_head(इताअस, (newsize - nb) | PREV_INUSE);
 	  set_head_size(oldp, nb);
 	  VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
 	  VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
@@ -1786,7 +1786,7 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
       if (next != NULL)
       {
 	/* into top */
-	if (next == top)
+	if (next == इताअस)
 	{
 	  if ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
 	  {
@@ -1796,8 +1796,8 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	    newmem = chunk2mem(newp);
 	    VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
 	    MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	    top = chunk_at_offset(newp, nb);
-	    set_head(top, (newsize - nb) | PREV_INUSE);
+	    इताअस = chunk_at_offset(newp, nb);
+	    set_head(इताअस, (newsize - nb) | PREV_INUSE);
 	    set_head_size(newp, nb);
 	    VALGRIND_FREELIKE_BLOCK(oldmem, SIZE_SZ);
 	    return newmem;
@@ -2098,8 +2098,8 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
   /* check if expand_top called, in which case don't need to clear */
 #if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
 #if MORECORE_CLEARS
-  mchunkptr oldtop = top;
-  INTERNAL_SIZE_T oldtopsize = chunksize(top);
+  mchunkptr oldtop = इताअस;
+  INTERNAL_SIZE_T oldtopsize = chunksize(इताअस);
 #endif
 #endif
   Void_t* mem = mALLOc_impl (sz);
@@ -2273,15 +2273,15 @@ int malloc_trim(size_t pad)
 int malloc_trim(pad) size_t pad;
 #endif
 {
-  long  top_size;        /* Amount of top-most memory */
+  long  इताअस_size;        /* Amount of top-most memory */
   long  extra;           /* Amount to release */
   char* current_brk;     /* address returned by pre-check sbrk call */
   char* new_brk;         /* address returned by negative sbrk call */
 
   unsigned long pagesz = malloc_getpagesize;
 
-  top_size = chunksize(top);
-  extra = ((top_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
+  इताअस_size = chunksize(इताअस);
+  extra = ((इताअस_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
 
   if (extra < (long)pagesz)  /* Not enough memory to release */
     return 0;
@@ -2290,7 +2290,7 @@ int malloc_trim(pad) size_t pad;
   {
     /* Test to make sure no one else called sbrk */
     current_brk = (char*)(MORECORE (0));
-    if (current_brk != (char*)(top) + top_size)
+    if (current_brk != (char*)(इताअस) + इताअस_size)
       return 0;     /* Apparently we don't own memory; must fail */
 
     else
@@ -2301,22 +2301,22 @@ int malloc_trim(pad) size_t pad;
       {
 	/* Try to figure out what we have */
 	current_brk = (char*)(MORECORE (0));
-	top_size = current_brk - (char*)top;
-	if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+	इताअस_size = current_brk - (char*)इताअस;
+	if (इताअस_size >= (long)MINSIZE) /* if not, we are very very dead! */
 	{
 	  sbrked_mem = current_brk - sbrk_base;
-	  set_head(top, top_size | PREV_INUSE);
+	  set_head(इताअस, इताअस_size | PREV_INUSE);
 	}
-	check_chunk(top);
+	check_chunk(इताअस);
 	return 0;
       }
 
       else
       {
 	/* Success. Adjust top accordingly. */
-	set_head(top, (top_size - extra) | PREV_INUSE);
+	set_head(इताअस, (इताअस_size - extra) | PREV_INUSE);
 	sbrked_mem -= extra;
-	check_chunk(top);
+	check_chunk(इताअस);
 	return 1;
       }
     }
@@ -2368,7 +2368,7 @@ static void malloc_update_mallinfo(void)
   mchunkptr q;
 #endif
 
-  INTERNAL_SIZE_T avail = chunksize(top);
+  INTERNAL_SIZE_T avail = chunksize(इताअस);
   int   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
 
   for (i = 1; i < NAV; ++i)
@@ -2379,7 +2379,7 @@ static void malloc_update_mallinfo(void)
 #ifdef DEBUG
       check_free_chunk(p);
       for (q = next_chunk(p);
-	   q < top && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
+	   q < इताअस && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
 	   q = next_chunk(q))
 	check_inuse_chunk(q);
 #endif
@@ -2393,7 +2393,7 @@ static void malloc_update_mallinfo(void)
   current_mallinfo.fordblks = avail;
   current_mallinfo.hblks = n_mmaps;
   current_mallinfo.hblkhd = mmapped_mem;
-  current_mallinfo.keepcost = chunksize(top);
+  current_mallinfo.keepcost = chunksize(इताअस);
 
 }
 #endif	/* DEBUG */
@@ -2456,24 +2456,24 @@ struct mallinfo mALLINFo(void)
 */
 
 #if __STD_C
-int mALLOPt(int param_number, int value)
+int mALLOPt(int param_नुमेरो, int हालागा)
 #else
-int mALLOPt(param_number, value) int param_number; int value;
+int mALLOPt(param_नुमेरो, हालागा) int param_नुमेरो; int हालागा;
 #endif
 {
-  switch(param_number)
+  switch(param_नुमेरो)
   {
     case M_TRIM_THRESHOLD:
-      trim_threshold = value; return 1;
+      trim_threshold = हालागा; return 1;
     case M_TOP_PAD:
-      top_pad = value; return 1;
+      इताअस_pad = हालागा; return 1;
     case M_MMAP_THRESHOLD:
-      mmap_threshold = value; return 1;
+      mmap_threshold = हालागा; return 1;
     case M_MMAP_MAX:
 #if HAVE_MMAP
-      n_mmaps_max = value; return 1;
+      n_mmaps_max = हालागा; return 1;
 #else
-      if (value != 0) return 0; else  n_mmaps_max = value; return 1;
+      if (हालागा != 0) return 0; else  n_mmaps_max = हालागा; return 1;
 #endif
 
     default:

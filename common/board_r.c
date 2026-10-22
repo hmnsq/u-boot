@@ -242,7 +242,7 @@ static int initr_of_live(void)
 
 		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
 		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
+				    (struct device_बुहोल **)gd_of_उगात_ptr());
 		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
 		if (ret)
 			return ret;
@@ -259,7 +259,7 @@ static int initr_dm(void)
 	oftree_reset();
 
 	/* Drop the pre-reloc driver model and start a new one */
-	gd->dm_root = NULL;
+	gd->dm_उगात = NULL;
 #ifdef CONFIG_TIMER
 	gd->timer = NULL;
 #endif
@@ -347,7 +347,7 @@ static int initr_flash(void)
 	else
 		flash_size = flash_init();
 
-	print_size(flash_size, "");
+	इलिम्बाग_size(flash_size, "");
 #ifdef CONFIG_SYS_FLASH_CHECKSUM
 	/*
 	 * Compute and print flash CRC if flashchecksum is set to 'y'
@@ -544,13 +544,13 @@ static int initr_lmb(void)
 
 static int dm_announce(void)
 {
-	int device_count;
-	int uclass_count;
+	int device_बिलांग;
+	int uclass_बिलांग;
 
 	if (IS_ENABLED(CONFIG_DM)) {
-		dm_get_stats(&device_count, &uclass_count);
-		printf("Core:  %d devices, %d uclasses", device_count,
-		       uclass_count);
+		dm_get_stats(&device_बिलांग, &uclass_बिलांग);
+		printf("Core:  %d devices, %d uclasses", device_बिलांग,
+		       uclass_बिलांग);
 		if (CONFIG_IS_ENABLED(OF_REAL))
 			printf(", devicetree: %s", fdtdec_get_srcname());
 		if (CONFIG_IS_ENABLED(UPL))

@@ -72,7 +72,7 @@ int usb_init(void)
 	}
 
 	/* init low_level USB */
-	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_बिलांग; i++) {
 		/* init low_level USB */
 		printf("USB%d:   ", i);
 		ret = usb_lowlevel_init(i, USB_INIT_HOST, &ctrl);
@@ -136,7 +136,7 @@ int usb_stop(void)
 		usb_started = 0;
 		usb_hub_reset();
 
-		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_बिलांग; i++) {
 			if (usb_lowlevel_stop(i))
 				printf("failed to stop USB controller %d\n", i);
 		}
@@ -184,10 +184,10 @@ __weak int usb_lock_async(struct usb_device *dev, int lock)
  */
 int usb_disable_asynch(int disable)
 {
-	int old_value = asynch_allowed;
+	int old_हालागा = asynch_allowed;
 
 	asynch_allowed = !disable;
-	return old_value;
+	return old_हालागा;
 }
 #endif /* !CONFIG_IS_ENABLED(DM_USB) */
 
@@ -201,10 +201,10 @@ int usb_disable_asynch(int disable)
  * polling: when non-block is true and the device is not responding return
  * -EAGAIN instead of waiting for device to respond.
  */
-int usb_int_msg(struct usb_device *dev, unsigned long pipe,
+int usb_int_मेनसाहे(struct usb_device *dev, unsigned long pipe,
 		void *buffer, int transfer_len, int interval, bool nonblock)
 {
-	return submit_int_msg(dev, pipe, buffer, transfer_len, interval,
+	return submit_int_मेनसाहे(dev, pipe, buffer, transfer_len, interval,
 			      nonblock);
 }
 
@@ -218,9 +218,9 @@ int usb_int_msg(struct usb_device *dev, unsigned long pipe,
  * transferred length and the current status are stored in the dev->act_len and
  * dev->status.
  */
-int usb_control_msg(struct usb_device *dev, unsigned int pipe,
+int usb_control_मेनसाहे(struct usb_device *dev, unsigned int pipe,
 			unsigned char request, unsigned char requesttype,
-			unsigned short value, unsigned short index,
+			unsigned short हालागा, unsigned short index,
 			void *data, unsigned short size, int timeout)
 {
 	ALLOC_CACHE_ALIGN_BUFFER(struct devrequest, setup_packet, 1);
@@ -234,15 +234,15 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
 	/* set setup command */
 	setup_packet->requesttype = requesttype;
 	setup_packet->request = request;
-	setup_packet->value = cpu_to_le16(value);
+	setup_packet->हालागा = cpu_to_le16(हालागा);
 	setup_packet->index = cpu_to_le16(index);
 	setup_packet->length = cpu_to_le16(size);
 	debug("usb_control_msg: request: 0x%X, requesttype: 0x%X, " \
 	      "value 0x%X index 0x%X length 0x%X\n",
-	      request, requesttype, value, index, size);
+	      request, requesttype, हालागा, index, size);
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
 
-	err = submit_control_msg(dev, pipe, data, size, setup_packet);
+	err = submit_control_मेनसाहे(dev, pipe, data, size, setup_packet);
 	if (err < 0)
 		return err;
 	if (timeout == 0)
@@ -273,13 +273,13 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
  * negative if Error.
  * synchronous behavior
  */
-int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
+int usb_bulk_मेनसाहे(struct usb_device *dev, unsigned int pipe,
 			void *data, int len, int *actual_length, int timeout)
 {
 	if (len < 0)
 		return -EINVAL;
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
-	if (submit_bulk_msg(dev, pipe, data, len) < 0)
+	if (submit_bulk_मेनसाहे(dev, pipe, data, len) < 0)
 		return -EIO;
 	while (timeout--) {
 		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
@@ -330,7 +330,7 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 
 	ep = &dev->config.if_desc[if_idx].ep_desc[ep_idx];
 
-	b = ep->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
+	b = ep->bEndpointAddress & USB_ENDPOINT_नुमेरो_MASK;
 	ep_wMaxPacketSize = get_unaligned(&ep->wMaxPacketSize);
 
 	if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
@@ -366,8 +366,8 @@ static int usb_set_maxpacket(struct usb_device *dev)
 {
 	int i, ii;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++)
-		for (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
+	for (i = 0; i < dev->config.desc.b_नुमेरो_Interfaces; i++)
+		for (ii = 0; ii < dev->config.if_desc[i].desc.b_नुमेरो_Endpoints; ii++)
 			usb_set_maxpacket_ep(dev, i, ii);
 
 	return 0;
@@ -382,13 +382,13 @@ static int usb_parse_config(struct usb_device *dev,
 			unsigned char *buffer, int cfgno)
 {
 	struct usb_descriptor_header *head;
-	int index, ifno, epno, curr_if_num;
+	int index, ifno, epno, curr_if_नुमेरो;
 	u16 ep_wMaxPacketSize;
 	struct usb_interface *if_desc = NULL;
 
 	ifno = -1;
 	epno = -1;
-	curr_if_num = -1;
+	curr_if_नुमेरो = -1;
 
 	dev->configno = cfgno;
 	head = (struct usb_descriptor_header *) &buffer[0];
@@ -422,7 +422,7 @@ static int usb_parse_config(struct usb_device *dev,
 				break;
 			}
 			if (((struct usb_interface_descriptor *) \
-			     head)->bInterfaceNumber != curr_if_num) {
+			     head)->b_Interface_नुमेरो != curr_if_नुमेरो) {
 				/* this is a new interface, copy new desc */
 				ifno = dev->config.no_of_if;
 				if (ifno >= USB_MAXINTERFACES) {
@@ -435,14 +435,14 @@ static int usb_parse_config(struct usb_device *dev,
 				memcpy(if_desc, head,
 					USB_DT_INTERFACE_SIZE);
 				if_desc->no_of_ep = 0;
-				if_desc->num_altsetting = 1;
-				curr_if_num =
-				     if_desc->desc.bInterfaceNumber;
+				if_desc->नुमेरो_altsetting = 1;
+				curr_if_नुमेरो =
+				     if_desc->desc.b_Interface_नुमेरो;
 			} else {
 				/* found alternate setting for the interface */
 				if (ifno >= 0) {
 					if_desc = &dev->config.if_desc[ifno];
-					if_desc->num_altsetting++;
+					if_desc->नुमेरो_altsetting++;
 				}
 			}
 			break;
@@ -466,7 +466,7 @@ static int usb_parse_config(struct usb_device *dev,
 			if_desc = &dev->config.if_desc[ifno];
 			if (epno >= USB_MAXENDPOINTS) {
 				printf("Interface %d has too many endpoints!\n",
-					if_desc->desc.bInterfaceNumber);
+					if_desc->desc.b_Interface_नुमेरो);
 				return -EINVAL;
 			}
 			/* found an endpoint */
@@ -538,7 +538,7 @@ int usb_clear_halt(struct usb_device *dev, int pipe)
 	int result;
 	int endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
 
-	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	result = usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 				 USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
 				 endp, NULL, 0, USB_CNTL_TIMEOUT * 3);
 
@@ -574,7 +574,7 @@ static int usb_get_descriptor(struct usb_device *dev, unsigned char type,
 
 	for (i = 0; i < 3; ++i) {
 		/* retry on length 0 or error; some devices are flakey */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+		result = usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 					 USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 					 (type << 8) + index, 0, buf, size,
 					 USB_CNTL_TIMEOUT);
@@ -638,7 +638,7 @@ static int usb_set_address(struct usb_device *dev)
 {
 	debug("set address %d\n", dev->devnum);
 
-	return usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
+	return usb_control_मेनसाहे(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
 			       0, (dev->devnum), 0, NULL, 0, USB_CNTL_TIMEOUT);
 }
 
@@ -650,8 +650,8 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	struct usb_interface *if_face = NULL;
 	int ret, i;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
-		if (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
+	for (i = 0; i < dev->config.desc.b_नुमेरो_Interfaces; i++) {
+		if (dev->config.if_desc[i].desc.b_Interface_नुमेरो == interface) {
 			if_face = &dev->config.if_desc[i];
 			break;
 		}
@@ -667,10 +667,10 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	 * some USB sticks timeouting during initialization and then being
 	 * unusable in U-Boot.
 	 */
-	if (if_face->num_altsetting == 1)
+	if (if_face->नुमेरो_altsetting == 1)
 		return 0;
 
-	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	ret = usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_INTERFACE, USB_RECIP_INTERFACE,
 				alternate, interface, NULL, 0,
 				USB_CNTL_TIMEOUT * 5);
@@ -688,7 +688,7 @@ static int usb_set_configuration(struct usb_device *dev, int configuration)
 	int res;
 	debug("set configuration %d\n", configuration);
 	/* set setup command */
-	res = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	res = usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_CONFIGURATION, 0,
 				configuration, 0,
 				NULL, 0, USB_CNTL_TIMEOUT);
@@ -705,7 +705,7 @@ static int usb_set_configuration(struct usb_device *dev, int configuration)
  */
 int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 		protocol, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
 }
@@ -715,7 +715,7 @@ int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
  */
 int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 		(duration << 8) | report_id, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
 }
@@ -726,7 +726,7 @@ int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
 int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
 		   unsigned char id, void *buf, int size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_REPORT,
 			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 			(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
@@ -738,7 +738,7 @@ int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
 int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
 		unsigned char type, unsigned char id, void *buf, int size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_IN,
 		(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
 }
@@ -754,7 +754,7 @@ static int usb_get_string(struct usb_device *dev, unsigned short langid,
 
 	for (i = 0; i < 3; ++i) {
 		/* some devices are flaky */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+		result = usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 			(USB_DT_STRING << 8) + index, langid, buf, size,
 			USB_CNTL_TIMEOUT);
@@ -936,7 +936,7 @@ __weak int usb_alloc_device(struct usb_device *udev)
 static int usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
 {
 	if (!hub)
-		usb_reset_root_port(dev);
+		usb_reset_उगात_port(dev);
 
 	return 0;
 }
@@ -984,7 +984,7 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 	 * some more, or keeps on retransmitting the 8 byte header.
 	 */
 
-	if (dev->speed == USB_SPEED_LOW) {
+	if (dev->speed == USB_SPEED_माबाबा) {
 		dev->descriptor.bMaxPacketSize0 = 8;
 		dev->maxpacketsize = PACKET_SIZE_8;
 	} else {
@@ -1217,7 +1217,7 @@ int usb_select_config(struct usb_device *dev)
 	 * This seems premature. If the driver wants a different configuration
 	 * it will need to select itself.
 	 */
-	err = usb_set_configuration(dev, dev->config.desc.bConfigurationValue);
+	err = usb_set_configuration(dev, dev->config.desc.b_Configuration_हालागा);
 	if (err < 0) {
 		printf("failed to set default configuration " \
 			"len %d, status %lX\n", dev->act_len, dev->status);
@@ -1233,7 +1233,7 @@ int usb_select_config(struct usb_device *dev)
 
 	debug("new device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
 	      dev->descriptor.iManufacturer, dev->descriptor.iProduct,
-	      dev->descriptor.iSerialNumber);
+	      dev->descriptor.i_Serial_नुमेरो);
 	memset(dev->mf, 0, sizeof(dev->mf));
 	memset(dev->prod, 0, sizeof(dev->prod));
 	memset(dev->serial, 0, sizeof(dev->serial));
@@ -1243,8 +1243,8 @@ int usb_select_config(struct usb_device *dev)
 	if (dev->descriptor.iProduct)
 		usb_string(dev, dev->descriptor.iProduct,
 			   dev->prod, sizeof(dev->prod));
-	if (dev->descriptor.iSerialNumber)
-		usb_string(dev, dev->descriptor.iSerialNumber,
+	if (dev->descriptor.i_Serial_नुमेरो)
+		usb_string(dev, dev->descriptor.i_Serial_नुमेरो,
 			   dev->serial, sizeof(dev->serial));
 	debug("Manufacturer %s\n", dev->mf);
 	debug("Product      %s\n", dev->prod);
@@ -1345,7 +1345,7 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	parent = udev->dev;
 	uparent = dev_get_parent_priv(parent);
 
-	while (uparent->speed != USB_SPEED_HIGH) {
+	while (uparent->speed != USB_SPEED_माताअस) {
 		struct udevice *dev = parent;
 
 		if (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
@@ -1368,7 +1368,7 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 {
 	/* Find out the nearest parent which is high speed */
 	while (udev->parent->parent != NULL)
-		if (udev->parent->speed != USB_SPEED_HIGH) {
+		if (udev->parent->speed != USB_SPEED_माताअस) {
 			udev = udev->parent;
 		} else {
 			*hub_address = udev->parent->devnum;

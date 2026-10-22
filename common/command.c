@@ -27,24 +27,24 @@ DECLARE_GLOBAL_DATA_PTR;
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
+int _do_help(struct cmd_tbl *cmd_start, int cmd_मगा_बागाय, struct cmd_tbl *cmdtp,
 	     int flag, int argc, char *const argv[])
 {
 	int i;
 	int rcode = 0;
 
 	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
+		struct cmd_tbl *cmd_array[cmd_मगा_बागाय];
 		int i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
 		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		for (i = 0; i < cmd_मगा_बागाय; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		for (i = cmd_मगा_बागाय - 1; i > 0; --i) {
 			swaps = 0;
 			for (j = 0; j < i; ++j) {
 				if (strcmp(cmd_array[j]->name,
@@ -61,7 +61,7 @@ int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
+		for (i = 0; i < cmd_मगा_बागाय; i++) {
 			const char *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
@@ -78,7 +78,7 @@ int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
 	 * command help (long version)
 	 */
 	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
+		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_मगा_बागाय);
 		if (cmdtp != NULL) {
 			rcode |= cmd_usage(cmdtp);
 		} else {
@@ -129,7 +129,7 @@ struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
 struct cmd_tbl *find_cmd(const char *cmd)
 {
 	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
+	const int len = ll_entry_बिलांग(struct cmd_tbl, cmd);
 	return find_cmd_tbl(cmd, start, len);
 }
 
@@ -187,12 +187,12 @@ static int dollar_complete(int argc, char *const argv[], char last_char,
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
+int complete_subcmdv(struct cmd_tbl *cmdtp, int बिलांग, int argc,
 		     char *const argv[], char last_char,
 		     int maxv, char *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
+	const struct cmd_tbl *cmdend = cmdtp + बिलांग;
 	const char *p;
 	int len, clen;
 	int n_found = 0;
@@ -219,7 +219,7 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 
 	/* more than one arg or one but the start of the next */
 	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
+		cmdtp = find_cmd_tbl(argv[0], cmdtp, बिलांग);
 		if (cmdtp == NULL || cmdtp->complete == NULL) {
 			cmdv[0] = NULL;
 			return 0;
@@ -269,7 +269,7 @@ static int complete_cmdv(int argc, char *const argv[], char last_char,
 {
 #ifdef CONFIG_CMDLINE
 	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
+				ll_entry_बिलांग(struct cmd_tbl, cmd), argc, argv,
 				last_char, maxv, cmdv);
 #else
 	return 0;
@@ -306,7 +306,7 @@ static int make_argv(char *s, int argvsz, char *argv[])
 	return argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
+static void इलिम्बाग_argv(const char *banner, const char *leader, const char *sep,
 		       int linemax, char *const argv[])
 {
 	int ll = leader != NULL ? strlen(leader) : 0;
@@ -459,7 +459,7 @@ int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
 		*np = n;
 		*colp = col;
 	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+		इलिम्बाग_argv(NULL, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);

@@ -377,7 +377,7 @@
 #if ENABLE_FEATURE_SH_EMBEDDED_SCRIPTS && !ENABLE_SHELL_ASH
 # include "embedded_scripts.h"
 #else
-# define NUM_SCRIPTS 0
+# define नुमेरो_SCRIPTS 0
 #endif
 #endif /* !__U_BOOT__ */
 
@@ -423,7 +423,7 @@
 
 #ifndef __U_BOOT__
 #include "NUM_APPLETS.h"
-#if NUM_APPLETS == 1
+#if नुमेरो_APPLETS == 1
 /* STANDALONE does not make sense, and won't compile */
 # undef ENABLE_FEATURE_SH_STANDALONE
 # undef IF_FEATURE_SH_STANDALONE
@@ -460,7 +460,7 @@
 /* Finer-grained debug switches */
 #define debug_printf_parse(...)   do {} while (0)
 #define debug_printf_heredoc(...) do {} while (0)
-#define debug_print_tree(a, b)    do {} while (0)
+#define debug_इलिम्बाग_पुनो(a, b)    do {} while (0)
 #define debug_printf_exec(...)    do {} while (0)
 #define debug_printf_env(...)     do {} while (0)
 #define debug_printf_jobs(...)    do {} while (0)
@@ -497,8 +497,8 @@
 # define MINUS_PLUS_EQUAL_QUESTION ("%#:-=+?" + 3)
 #endif
 
-#define SPECIAL_VAR_SYMBOL_STR "\3"
-#define SPECIAL_VAR_SYMBOL       3
+#define SPECIAL_VAR_सिम्बोलो_STR "\3"
+#define SPECIAL_VAR_सिम्बोलो       3
 /* The "variable" with name "\1" emits string "\3". Testcase: "echo ^C" */
 #define SPECIAL_VAR_QUOTED_SVS   1
 
@@ -631,7 +631,7 @@ struct redir_struct {
 	 */
 };
 typedef enum redir_type {
-	REDIRECT_INPUT     = 0,
+	REDIRECT_पासोक     = 0,
 	REDIRECT_OVERWRITE = 1,
 	REDIRECT_APPEND    = 2,
 	REDIRECT_IO        = 3,
@@ -720,7 +720,7 @@ struct command {
 #endif /* __U_BOOT__ */
 struct pipe {
 	struct pipe *next;
-	int num_cmds;               /* total number of commands in pipe */
+	int नुमेरो_cmds;               /* total number of commands in pipe */
 #ifndef __U_BOOT__
 	int alive_cmds;             /* number of commands running (not exited) */
 	int stopped_cmds;           /* number of commands alive, but stopped */
@@ -743,7 +743,7 @@ typedef enum pipe_style {
 } pipe_style;
 /* Is there anything in this pipe at all? */
 #define IS_NULL_PIPE(pi) \
-	((pi)->num_cmds == 0 IF_HAS_KEYWORDS( && (pi)->res_word == RES_NONE))
+	((pi)->नुमेरो_cmds == 0 IF_HAS_KEYWORDS( && (pi)->res_word == RES_NONE))
 
 /* This holds pointers to the various results of parsing */
 struct parse_context {
@@ -779,7 +779,7 @@ struct parse_context {
 	 * copy ->stack into current context, and delete ->stack.
 	 * (parsing of { list } and ( list ) doesn't use this method)
 	 */
-	struct parse_context *stack;
+	struct parse_context *सालानसान;
 #endif
 };
 enum {
@@ -871,7 +871,7 @@ enum {
 #if ENABLE_HUSH_MODE_X
 	OPT_O_XTRACE,
 #endif
-	NUM_OPT_O
+	नुमेरो_OPT_O
 };
 
 /* "Globals" within this file */
@@ -903,10 +903,10 @@ struct globals {
 #endif /* __U_BOOT__ */
 #ifndef __U_BOOT__
 #if ENABLE_FEATURE_EDITING
-	line_input_t *line_input_state;
+	लिन्या_पासोक_t *लिन्या_पासोक_state;
 #endif
-	pid_t root_pid;
-	pid_t root_ppid;
+	pid_t उगात_pid;
+	pid_t उगात_ppid;
 	pid_t last_bg_pid;
 #if ENABLE_HUSH_RANDOM_SUPPORT
 	random_t random_gen;
@@ -941,7 +941,7 @@ struct globals {
 	 * the compound command or the command containing the function call completes.
 	 */
 
-	char o_opt[NUM_OPT_O];
+	char o_opt[नुमेरो_OPT_O];
 #if ENABLE_HUSH_MODE_X
 # define G_x_mode (G.o_opt[OPT_O_XTRACE])
 #else
@@ -978,10 +978,10 @@ struct globals {
 #ifndef __U_BOOT__
 #if ENABLE_HUSH_SET
 	/* are global_argv and global_argv[1..n] malloced? (note: not [0]) */
-	smalluint global_args_malloced;
-# define G_global_args_malloced (G.global_args_malloced)
+	smalluint global_मगा_कातविरान_malloced;
+# define G_global_मगा_कातविरान_malloced (G.global_मगा_कातविरान_malloced)
 #else
-# define G_global_args_malloced 0
+# define G_global_मगा_कातविरान_malloced 0
 #endif
 #if ENABLE_HUSH_BASH_COMPAT
 	int dead_job_exitcode; /* for "wait -n" */
@@ -1001,7 +1001,7 @@ struct globals {
 #endif
 #ifndef __U_BOOT__
 #if ENABLE_HUSH_GETOPTS
-	unsigned getopt_count;
+	unsigned getopt_बिलांग;
 #endif
 #endif /* !__U_BOOT__ */
 	const char *ifs;
@@ -1014,7 +1014,7 @@ struct globals {
 #ifndef __U_BOOT__
 	const char *cwd;
 #endif /* !__U_BOOT__ */
-	struct variable *top_var;
+	struct variable *इताअस_var;
 	char **expanded_assignments;
 	struct variable **shadowed_vars_pp;
 	unsigned var_nest_level;
@@ -1023,11 +1023,11 @@ struct globals {
 # if ENABLE_HUSH_LOCAL
 	unsigned func_nest_level; /* solely to prevent "local v" in non-functions */
 # endif
-	struct function *top_func;
+	struct function *इताअस_func;
 #endif
 	/* Signal and trap handling */
 #if ENABLE_HUSH_FAST
-	unsigned count_SIGCHLD;
+	unsigned बिलांग_SIGCHLD;
 	unsigned handled_SIGCHLD;
 	smallint we_have_children;
 #endif
@@ -1063,7 +1063,7 @@ struct globals {
 #endif
 	sigset_t pending_set;
 #if ENABLE_HUSH_MEMLEAK
-	unsigned long memleak_value;
+	unsigned long memleak_हालागा;
 #endif
 #if ENABLE_HUSH_MODE_X
 	unsigned x_mode_depth;
@@ -1085,7 +1085,7 @@ struct globals {
 	char epoch_buf[sizeof("%llu.nnnnnn") + sizeof(long long)*3];
 #endif
 #if ENABLE_FEATURE_EDITING
-	char user_input_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
+	char user_पासोक_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
 #endif
 #endif /* !__U_BOOT__ */
 };
@@ -1400,7 +1400,7 @@ static const struct built_in_command bltins2[] ALIGN_PTR = {
 #endif
 
 #if DEBUG_EXPAND
-static void debug_print_strings(const char *prefix, char **vv)
+static void debug_इलिम्बाग_strings(const char *prefix, char **vv)
 {
 	indent();
 	fdprintf(2, "%s:\n", prefix);
@@ -1408,7 +1408,7 @@ static void debug_print_strings(const char *prefix, char **vv)
 		fdprintf(2, " '%s'\n", *vv++);
 }
 #else
-# define debug_print_strings(prefix, vv) ((void)0)
+# define debug_इलिम्बाग_strings(prefix, vv) ((void)0)
 #endif
 
 /* Leak hunting. Use hush_leaktool.sh for post-processing.
@@ -1449,9 +1449,9 @@ static void xxfree(void *ptr)
  * HUSH_DEBUG >= 2 prints line number in this file where it was detected.
  */
 #if HUSH_DEBUG < 2
-# define msg_and_die_if_script(lineno, ...)     msg_and_die_if_script(__VA_ARGS__)
-# define syntax_error(lineno, msg)              syntax_error(msg)
-# define syntax_error_at(lineno, msg)           syntax_error_at(msg)
+# define मेनसाहे_and_die_if_script(lineno, ...)     मेनसाहे_and_die_if_script(__VA_ARGS__)
+# define syntax_error(lineno, मेनसाहे)              syntax_error(मेनसाहे)
+# define syntax_error_at(lineno, मेनसाहे)           syntax_error_at(मेनसाहे)
 # define syntax_error_unterm_ch(lineno, ch)     syntax_error_unterm_ch(ch)
 # define syntax_error_unterm_str(lineno, s)     syntax_error_unterm_str(s)
 # define syntax_error_unexpected_ch(lineno, ch) syntax_error_unexpected_ch(ch)
@@ -1467,40 +1467,40 @@ static void die_if_script(void)
 }
 
 #ifdef __U_BOOT__
-static void __maybe_unused msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
+static void __maybe_unused मेनसाहे_and_die_if_script(unsigned lineno, const char *fmt, ...)
 #else /* !__U_BOOT__ */
-static void msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
+static void मेनसाहे_and_die_if_script(unsigned lineno, const char *fmt, ...)
 #endif /* !__U_BOOT__ */
 {
 	va_list p;
 
 #if HUSH_DEBUG >= 2
-	bb_error_msg("hush.c:%u", lineno);
+	bb_error_मेनसाहे("hush.c:%u", lineno);
 #endif
 	va_start(p, fmt);
-	bb_verror_msg(fmt, p, NULL);
+	bb_verror_मेनसाहे(fmt, p, NULL);
 	va_end(p);
 	die_if_script();
 }
 
-static void syntax_error(unsigned lineno UNUSED_PARAM, const char *msg)
+static void syntax_error(unsigned lineno UNUSED_PARAM, const char *मेनसाहे)
 {
-	if (msg)
-		bb_error_msg("syntax error: %s", msg);
+	if (मेनसाहे)
+		bb_error_मेनसाहे("syntax error: %s", मेनसाहे);
 	else
-		bb_simple_error_msg("syntax error");
+		bb_simple_error_मेनसाहे("syntax error");
 	die_if_script();
 }
 
-static void syntax_error_at(unsigned lineno UNUSED_PARAM, const char *msg)
+static void syntax_error_at(unsigned lineno UNUSED_PARAM, const char *मेनसाहे)
 {
-	bb_error_msg("syntax error at '%s'", msg);
+	bb_error_मेनसाहे("syntax error at '%s'", मेनसाहे);
 	die_if_script();
 }
 
 static void syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, const char *s)
 {
-	bb_error_msg("syntax error: unterminated %s", s);
+	bb_error_मेनसाहे("syntax error: unterminated %s", s);
 //? source4.tests fails: in bash, echo ${^} in script does not terminate the script
 // (but bash --posix, or if bash is run as "sh", does terminate in script, so maybe uncomment this?)
 //	die_if_script();
@@ -1508,33 +1508,33 @@ static void syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, const char *s)
 
 static void syntax_error_unterm_ch(unsigned lineno, char ch)
 {
-	char msg[2] = { ch, '\0' };
-	syntax_error_unterm_str(lineno, msg);
+	char मेनसाहे[2] = { ch, '\0' };
+	syntax_error_unterm_str(lineno, मेनसाहे);
 }
 
 static void syntax_error_unexpected_ch(unsigned lineno UNUSED_PARAM, int ch)
 {
-	char msg[2];
-	msg[0] = ch;
-	msg[1] = '\0';
+	char मेनसाहे[2];
+	मेनसाहे[0] = ch;
+	मेनसाहे[1] = '\0';
 #if HUSH_DEBUG >= 2
-	bb_error_msg("hush.c:%u", lineno);
+	bb_error_मेनसाहे("hush.c:%u", lineno);
 #endif
-	bb_error_msg("syntax error: unexpected %s", ch == EOF ? "EOF" : msg);
+	bb_error_मेनसाहे("syntax error: unexpected %s", ch == EOF ? "EOF" : मेनसाहे);
 	die_if_script();
 }
 
 #if HUSH_DEBUG < 2
-# undef msg_and_die_if_script
+# undef मेनसाहे_and_die_if_script
 # undef syntax_error
 # undef syntax_error_at
 # undef syntax_error_unterm_ch
 # undef syntax_error_unterm_str
 # undef syntax_error_unexpected_ch
 #else
-# define msg_and_die_if_script(...)     msg_and_die_if_script(__LINE__, __VA_ARGS__)
-# define syntax_error(msg)              syntax_error(__LINE__, msg)
-# define syntax_error_at(msg)           syntax_error_at(__LINE__, msg)
+# define मेनसाहे_and_die_if_script(...)     मेनसाहे_and_die_if_script(__LINE__, __VA_ARGS__)
+# define syntax_error(मेनसाहे)              syntax_error(__LINE__, मेनसाहे)
+# define syntax_error_at(मेनसाहे)           syntax_error_at(__LINE__, मेनसाहे)
 # define syntax_error_unterm_ch(ch)     syntax_error_unterm_ch(__LINE__, ch)
 # define syntax_error_unterm_str(s)     syntax_error_unterm_str(__LINE__, s)
 # define syntax_error_unexpected_ch(ch) syntax_error_unexpected_ch(__LINE__, ch)
@@ -1665,7 +1665,7 @@ static int dup_CLOEXEC(int fd, int avoid_fd)
 			 * (This differs from "echo >&99" where saving works, but
 			 * subsequent dup2(99,1) fails if fd 99 is not open).
 			 */
-			bb_perror_msg("fcntl(%d,F_DUPFD,%d)", fd, avoid_fd + 1);
+			bb_perror_मेनसाहे("fcntl(%d,F_DUPFD,%d)", fd, avoid_fd + 1);
 		}
 	}
 	return newfd;
@@ -1762,7 +1762,7 @@ static int refill_HFILE_and_getc(HFILE *fp)
 	/* Try to buffer more input */
 	n = safe_read(fp->fd, fp->buf, sizeof(fp->buf));
 	if (n < 0) {
-		bb_simple_perror_msg("read error");
+		bb_simple_perror_मेनसाहे("read error");
 		n = 0;
 	}
 	fp->cur = fp->buf;
@@ -1852,24 +1852,24 @@ typedef struct save_arg_t {
 } save_arg_t;
 
 #ifndef __U_BOOT__
-static void save_and_replace_G_args(save_arg_t *sv, char **argv)
+static void save_and_replace_G_मगा_कातविरान(save_arg_t *sv, char **argv)
 {
 	sv->sv_argv0 = argv[0];
 	sv->sv_g_argv = G.global_argv;
 	sv->sv_g_argc = G.global_argc;
-	IF_HUSH_SET(sv->sv_g_malloced = G.global_args_malloced;)
+	IF_HUSH_SET(sv->sv_g_malloced = G.global_मगा_कातविरान_malloced;)
 
 	argv[0] = G.global_argv[0]; /* retain $0 */
 	G.global_argv = argv;
-	IF_HUSH_SET(G.global_args_malloced = 0;)
+	IF_HUSH_SET(G.global_मगा_कातविरान_malloced = 0;)
 
 	G.global_argc = 1 + string_array_len(argv + 1);
 }
 
-static void restore_G_args(save_arg_t *sv, char **argv)
+static void restore_G_मगा_कातविरान(save_arg_t *sv, char **argv)
 {
 #if ENABLE_HUSH_SET
-	if (G.global_args_malloced) {
+	if (G.global_मगा_कातविरान_malloced) {
 		/* someone ran "set -- arg1 arg2 ...", undo */
 		char **pp = G.global_argv;
 		while (*++pp) /* note: does not free $0 */
@@ -1880,7 +1880,7 @@ static void restore_G_args(save_arg_t *sv, char **argv)
 	argv[0] = sv->sv_argv0;
 	G.global_argv = sv->sv_g_argv;
 	G.global_argc = sv->sv_g_argc;
-	IF_HUSH_SET(G.global_args_malloced = sv->sv_g_malloced;)
+	IF_HUSH_SET(G.global_मगा_कातविरान_malloced = sv->sv_g_malloced;)
 }
 #endif /* !__U_BOOT__ */
 
@@ -2054,7 +2054,7 @@ static void record_pending_signo(int sig)
 #endif
 #if ENABLE_HUSH_FAST
 	if (sig == SIGCHLD) {
-		G.count_SIGCHLD++;
+		G.बिलांग_SIGCHLD++;
 //bb_error_msg("[%d] SIGCHLD_handler: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 	}
 #endif
@@ -2129,7 +2129,7 @@ static void sigexit(int sig)
 {
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid) {
+	if (G_saved_tty_pgrp && getpid() == G.उगात_pid) {
 		/* Disable all signals: job control, SIGPIPE, etc.
 		 * Mostly paranoid measure, to prevent infinite SIGTTOU.
 		 */
@@ -2185,7 +2185,7 @@ static sighandler_t pick_sighandler(unsigned sig)
 static void hush_exit(int exitcode)
 {
 #if ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
-	save_history(G.line_input_state); /* may be NULL */
+	save_history(G.लिन्या_पासोक_state); /* may be NULL */
 #endif
 
 	fflush_all();
@@ -2204,9 +2204,9 @@ static void hush_exit(int exitcode)
 #if ENABLE_FEATURE_CLEAN_UP
 	{
 		struct variable *cur_var;
-		if (G.cwd != bb_msg_unknown)
+		if (G.cwd != bb_मेनसाहे_unknown)
 			free((char*)G.cwd);
-		cur_var = G.top_var;
+		cur_var = G.इताअस_var;
 		while (cur_var) {
 			struct variable *tmp = cur_var;
 			if (!cur_var->max_len)
@@ -2310,7 +2310,7 @@ static int check_and_run_traps(void)
 #if ENABLE_HUSH_FAST
 		case SIGCHLD:
 			debug_printf_exec("%s: sig:%d default SIGCHLD handler\n", __func__, sig);
-			G.count_SIGCHLD++;
+			G.बिलांग_SIGCHLD++;
 //bb_error_msg("[%d] check_and_run_traps: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 			/* Note:
 			 * We don't do 'last_sig = sig' here -> NOT returning this sig.
@@ -2337,11 +2337,11 @@ static const char *get_cwd(int force)
 	if (force || G.cwd == NULL) {
 		/* xrealloc_getcwd_or_warn(arg) calls free(arg),
 		 * we must not try to free(bb_msg_unknown) */
-		if (G.cwd == bb_msg_unknown)
+		if (G.cwd == bb_मेनसाहे_unknown)
 			G.cwd = NULL;
 		G.cwd = xrealloc_getcwd_or_warn((char *)G.cwd);
 		if (!G.cwd)
-			G.cwd = bb_msg_unknown;
+			G.cwd = bb_मेनसाहे_unknown;
 	}
 	return G.cwd;
 }
@@ -2356,7 +2356,7 @@ static struct variable **get_ptr_to_local_var(const char *name)
 	struct variable **pp;
 	struct variable *cur;
 
-	pp = &G.top_var;
+	pp = &G.इताअस_var;
 	while ((cur = *pp) != NULL) {
 		if (varcmp(cur->varstr, name) == 0)
 			return pp;
@@ -2365,7 +2365,7 @@ static struct variable **get_ptr_to_local_var(const char *name)
 	return NULL;
 }
 
-static const char* FAST_FUNC get_local_var_value(const char *name)
+static const char* FAST_FUNC get_local_var_हालागा(const char *name)
 {
 	struct variable **vpp;
 
@@ -2385,7 +2385,7 @@ static const char* FAST_FUNC get_local_var_value(const char *name)
 
 #ifndef __U_BOOT__
 	if (strcmp(name, "PPID") == 0)
-		return utoa(G.root_ppid);
+		return utoa(G.उगात_ppid);
 #endif /* !__U_BOOT__ */
 	// bash compat: UID? EUID?
 #if ENABLE_HUSH_RANDOM_SUPPORT
@@ -2420,7 +2420,7 @@ static const char* FAST_FUNC get_local_var_value(const char *name)
 static void handle_changed_special_names(const char *name)
 {
 	if (varcmp(name, "OPTIND") == 0) {
-		G.getopt_count = 0;
+		G.getopt_बिलांग = 0;
 		return;
 	}
 }
@@ -2460,10 +2460,10 @@ int set_local_var_modern(char *str, int flags)
 
 	eq_sign = strchr(str, '=');
 	if (HUSH_DEBUG && !eq_sign)
-		bb_simple_error_msg_and_die("BUG in setvar");
+		bb_simple_error_मेनसाहे_and_die("BUG in setvar");
 
 	name_len = eq_sign - str + 1; /* including '=' */
-	cur_pp = &G.top_var;
+	cur_pp = &G.इताअस_var;
 	while ((cur = *cur_pp) != NULL) {
 		if (strncmp(cur->varstr, str, name_len) != 0) {
 			cur_pp = &cur->next;
@@ -2473,7 +2473,7 @@ int set_local_var_modern(char *str, int flags)
 #ifndef __U_BOOT__
 		/* We found an existing var with this name */
 		if (cur->flg_read_only) {
-			bb_error_msg("%s: readonly variable", str);
+			bb_error_मेनसाहे("%s: readonly variable", str);
 			free(str);
 //NOTE: in bash, assignment in "export READONLY_VAR=Z" fails, and sets $?=1,
 //but export per se succeeds (does put the var in env). We don't mimic that.
@@ -2626,11 +2626,11 @@ static int unset_local_var(const char *name)
 	struct variable *cur;
 	struct variable **cur_pp;
 
-	cur_pp = &G.top_var;
+	cur_pp = &G.इताअस_var;
 	while ((cur = *cur_pp) != NULL) {
 		if (varcmp(cur->varstr, name) == 0) {
 			if (cur->flg_read_only) {
-				bb_error_msg("%s: readonly variable", name);
+				bb_error_मेनसाहे("%s: readonly variable", name);
 				return EXIT_FAILURE;
 			}
 
@@ -2663,8 +2663,8 @@ static void add_vars(struct variable *var)
 
 	while (var) {
 		next = var->next;
-		var->next = G.top_var;
-		G.top_var = var;
+		var->next = G.इताअस_var;
+		G.इताअस_var = var;
 		if (var->flg_export) {
 			debug_printf_env("%s: restoring exported '%s'/%u\n", __func__, var->varstr, var->var_nest_level);
 			putenv(var->varstr);
@@ -2695,13 +2695,13 @@ static void set_vars_and_save_old(char **strings)
 
 		eq = strchr(*s, '=');
 		if (HUSH_DEBUG && !eq)
-			bb_simple_error_msg_and_die("BUG in varexp4");
+			bb_simple_error_मेनसाहे_and_die("BUG in varexp4");
 		var_pp = get_ptr_to_local_var(*s);
 		if (var_pp) {
 			var_p = *var_pp;
 			if (var_p->flg_read_only) {
 				char **p;
-				bb_error_msg("%s: readonly variable", *s);
+				bb_error_मेनसाहे("%s: readonly variable", *s);
 				/*
 				 * "VAR=V BLTIN" unsets VARs after BLTIN completes.
 				 * If VAR is readonly, leaving it in the list
@@ -2739,9 +2739,9 @@ static void reinit_unicode_for_hush(void)
 	if (ENABLE_FEATURE_CHECK_UNICODE_IN_ENV
 	 || ENABLE_UNICODE_USING_LOCALE
 	) {
-		const char *s = get_local_var_value("LC_ALL");
-		if (!s) s = get_local_var_value("LC_CTYPE");
-		if (!s) s = get_local_var_value("LANG");
+		const char *s = get_local_var_हालागा("LC_ALL");
+		if (!s) s = get_local_var_हालागा("LC_CTYPE");
+		if (!s) s = get_local_var_हालागा("LANG");
 		reinit_unicode(s);
 	}
 }
@@ -2768,7 +2768,7 @@ static const char *setup_prompt_string(void)
 	debug_printf_prompt("%s promptmode:%d\n", __func__, G.promptmode);
 
 # if ENABLE_FEATURE_EDITING_FANCY_PROMPT
-	prompt_str = get_local_var_value(G.promptmode == 0 ? "PS1" : "PS2");
+	prompt_str = get_local_var_हालागा(G.promptmode == 0 ? "PS1" : "PS2");
 	if (!prompt_str)
 		prompt_str = "";
 # else
@@ -2788,9 +2788,9 @@ static const char *setup_prompt_string(void)
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static int get_user_input(struct in_str *i)
+static int get_user_पासोक(struct in_str *i)
 #else /* __U_BOOT__ */
-static void get_user_input(struct in_str *i)
+static void get_user_पासोक(struct in_str *i)
 #endif /* __U_BOOT__ */
 {
 #ifndef __U_BOOT__
@@ -2825,8 +2825,8 @@ static void get_user_input(struct in_str *i)
 			 * #^^^ prints "T", prints prompt, repeats
 			 * #(bash 5.0.17 exits after first "T", looks like a bug)
 			 */
-			r = read_line_input(G.line_input_state, prompt_str,
-				G.user_input_buf, CONFIG_FEATURE_EDITING_MAX_LEN-1
+			r = read_लिन्या_पासोक(G.लिन्या_पासोक_state, prompt_str,
+				G.user_पासोक_buf, CONFIG_FEATURE_EDITING_MAX_LEN-1
 			);
 			/* read_line_input intercepts ^C, "convert" it to SIGINT */
 			if (r == 0)
@@ -2854,7 +2854,7 @@ static void get_user_input(struct in_str *i)
 		}
 		/* it was a signal: go back, read another input line */
 	}
-	i->p = G.user_input_buf;
+	i->p = G.user_पासोक_buf;
 	return (unsigned char)*i->p++;
 # else
 	/* In !EDITING case, this function gets called for every char.
@@ -2988,7 +2988,7 @@ static int fgetc_interactive(struct in_str *i)
 #endif /* !__U_BOOT__ */
 #ifndef __U_BOOT__
 		/* Returns first char (or EOF), the rest is in i->p[] */
-		ch = get_user_input(i);
+		ch = get_user_पासोक(i);
 #else /* __U_BOOT__ */
 		/* Avoid garbage value and make clang happy. */
 		ch = 0;
@@ -2997,7 +2997,7 @@ static int fgetc_interactive(struct in_str *i)
 		 * U-Boot.
 		 * So, we need to take the read character from i->p[].
 		 */
-		get_user_input(i);
+		get_user_पासोक(i);
 		if (i->p && *i->p) {
 			ch = *i->p++;
 		}
@@ -3180,39 +3180,39 @@ static int i_peek2(struct in_str *i)
 #endif /* __U_BOOT__ */
 }
 
-static int i_getch_and_eat_bkslash_nl(struct in_str *input)
+static int i_getch_and_eat_bkslash_nl(struct in_str *पासोक)
 {
 	for (;;) {
 		int ch, ch2;
 
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		if (ch != '\\')
 			return ch;
-		ch2 = i_peek(input);
+		ch2 = i_peek(पासोक);
 		if (ch2 != '\n')
 			return ch;
 		/* backslash+newline, skip it */
-		i_getch(input);
+		i_getch(पासोक);
 	}
 }
 
 /* Note: this function _eats_ \<newline> pairs, safe to use plain
  * i_getch() after it instead of i_getch_and_eat_bkslash_nl().
  */
-static int i_peek_and_eat_bkslash_nl(struct in_str *input)
+static int i_peek_and_eat_bkslash_nl(struct in_str *पासोक)
 {
 	for (;;) {
 		int ch, ch2;
 
-		ch = i_peek(input);
+		ch = i_peek(पासोक);
 		if (ch != '\\')
 			return ch;
-		ch2 = i_peek2(input);
+		ch2 = i_peek2(पासोक);
 		if (ch2 != '\n')
 			return ch;
 		/* backslash+newline, skip it */
-		i_getch(input);
-		i_getch(input);
+		i_getch(पासोक);
+		i_getch(पासोक);
 	}
 }
 
@@ -3462,7 +3462,7 @@ static void o_addQstr(o_string *o, const char *str)
  * and stores actual char* ptrs in list[]. Oh, it NULL terminates it as well.
  */
 #if DEBUG_EXPAND || DEBUG_GLOB
-static void debug_print_list(const char *prefix, o_string *o, int n)
+static void debug_इलिम्बाग_list(const char *prefix, o_string *o, int n)
 {
 	char **list = (char**)o->data;
 	int string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
@@ -3492,7 +3492,7 @@ static void debug_print_list(const char *prefix, o_string *o, int n)
 	}
 }
 #else
-# define debug_print_list(prefix, o, n) ((void)0)
+# define debug_इलिम्बाग_list(prefix, o, n) ((void)0)
 #endif
 
 /* n = o_save_ptr_helper(str, n) "starts new string" by storing an index value
@@ -3734,7 +3734,7 @@ static int glob_brace(char *pattern, o_string *o, int n)
 				bb_die_memory_exhausted();
 			/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 			 * but we didn't specify it. Paranoia again. */
-			bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
+			bb_error_मेनसाहे_and_die("glob error %d on '%s'", gr, pattern);
 		}
 		if (globdata.gl_pathv && globdata.gl_pathv[0]) {
 			char **argv = globdata.gl_pathv;
@@ -3775,7 +3775,7 @@ static int perform_glob(o_string *o, int n)
 	n = glob_brace(copy, o, n);
 	free(copy);
 	if (DEBUG_GLOB)
-		debug_print_list("perform_glob returning", o, n);
+		debug_इलिम्बाग_list("perform_glob returning", o, n);
 	return n;
 }
 
@@ -3841,7 +3841,7 @@ static int perform_glob(o_string *o, int n)
 			bb_die_memory_exhausted();
 		/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 		 * but we didn't specify it. Paranoia again. */
-		bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
+		bb_error_मेनसाहे_and_die("glob error %d on '%s'", gr, pattern);
 	}
 	if (globdata.gl_pathv && globdata.gl_pathv[0]) {
 		char **argv = globdata.gl_pathv;
@@ -3857,7 +3857,7 @@ static int perform_glob(o_string *o, int n)
 	}
 	globfree(&globdata);
 	if (DEBUG_GLOB)
-		debug_print_list("perform_glob returning", o, n);
+		debug_इलिम्बाग_list("perform_glob returning", o, n);
 	return n;
 #else /* __U_BOOT__ */
 	/*
@@ -3892,7 +3892,7 @@ static char **o_finalize_list(o_string *o, int n)
 	int string_start;
 
 	if (DEBUG_EXPAND)
-		debug_print_list("finalized", o, n);
+		debug_इलिम्बाग_list("finalized", o, n);
 	debug_printf_expand("finalized n:%d\n", n);
 	list = (char**)o->data;
 	string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
@@ -3915,7 +3915,7 @@ static struct pipe *free_pipe(struct pipe *pi)
 #ifndef __U_BOOT__
 	debug_printf_clean("free_pipe (pid %d)\n", getpid());
 #endif /* !__U_BOOT__ */
-	for (i = 0; i < pi->num_cmds; i++) {
+	for (i = 0; i < pi->नुमेरो_cmds; i++) {
 		struct command *command;
 #ifndef __U_BOOT__
 		struct redir_struct *r, *rnext;
@@ -3998,8 +3998,8 @@ static void free_pipe_list(struct pipe *pi)
 
 /*** Parsing routines ***/
 
-#ifndef debug_print_tree
-static void debug_print_tree(struct pipe *pi, int lvl)
+#ifndef debug_इलिम्बाग_पुनो
+static void debug_इलिम्बाग_पुनो(struct pipe *pi, int lvl)
 {
 	static const char *const PIPE[] ALIGN_PTR = {
 		[PIPE_SEQ] = "SEQ",
@@ -4052,13 +4052,13 @@ static void debug_print_tree(struct pipe *pi, int lvl)
 		fdprintf(2, "%*spipe %d #cmds:%d %sres_word=%s followup=%d %s\n",
 				lvl*2, "",
 				pin,
-				pi->num_cmds,
+				pi->नुमेरो_cmds,
 				(IF_HAS_KEYWORDS(pi->pi_inverted ? "! " :) ""),
 				RES[pi->res_word],
 				pi->followup, PIPE[pi->followup]
 		);
 		prn = 0;
-		while (prn < pi->num_cmds) {
+		while (prn < pi->नुमेरो_cmds) {
 			struct command *command = &pi->cmds[prn];
 			char **argv = command->argv;
 
@@ -4078,7 +4078,7 @@ static void debug_print_tree(struct pipe *pi, int lvl)
 						, "", ""
 # endif
 				);
-				debug_print_tree(command->group, lvl+1);
+				debug_इलिम्बाग_पुनो(command->group, lvl+1);
 				prn++;
 				continue;
 			}
@@ -4128,27 +4128,27 @@ static int done_command(struct parse_context *ctx)
 
 	if (command) {
 		if (IS_NULL_CMD(command)) {
-			debug_printf_parse("done_command: skipping null cmd, num_cmds=%d\n", pi->num_cmds);
+			debug_printf_parse("done_command: skipping null cmd, num_cmds=%d\n", pi->नुमेरो_cmds);
 			goto clear_and_ret;
 		}
-		pi->num_cmds++;
-		debug_printf_parse("done_command: ++num_cmds=%d\n", pi->num_cmds);
+		pi->नुमेरो_cmds++;
+		debug_printf_parse("done_command: ++num_cmds=%d\n", pi->नुमेरो_cmds);
 		//debug_print_tree(ctx->list_head, 20);
 	} else {
-		debug_printf_parse("done_command: initializing, num_cmds=%d\n", pi->num_cmds);
+		debug_printf_parse("done_command: initializing, num_cmds=%d\n", pi->नुमेरो_cmds);
 	}
 
 	/* Only real trickiness here is that the uncommitted
 	 * command structure is not counted in pi->num_cmds. */
-	pi->cmds = xrealloc(pi->cmds, sizeof(*pi->cmds) * (pi->num_cmds+1));
-	ctx->command = command = &pi->cmds[pi->num_cmds];
+	pi->cmds = xrealloc(pi->cmds, sizeof(*pi->cmds) * (pi->नुमेरो_cmds+1));
+	ctx->command = command = &pi->cmds[pi->नुमेरो_cmds];
  clear_and_ret:
 	memset(command, 0, sizeof(*command));
 #if ENABLE_HUSH_LINENO_VAR
 	command->lineno = G.parse_lineno;
 	debug_printf_parse("command->lineno = G.parse_lineno (%u)\n", G.parse_lineno);
 #endif
-	return pi->num_cmds; /* used only for 0/nonzero check */
+	return pi->नुमेरो_cmds; /* used only for 0/nonzero check */
 }
 
 static void done_pipe(struct parse_context *ctx, pipe_style type)
@@ -4183,7 +4183,7 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 		pi->followup = PIPE_SEQ; /* close pN _not_ with "&"! */
 		pi = xzalloc(sizeof(*pi));
 		pi->followup = PIPE_BG;
-		pi->num_cmds = 1;
+		pi->नुमेरो_cmds = 1;
 		pi->cmds = xzalloc(sizeof(pi->cmds[0]));
 		command = &pi->cmds[0];
 		if (CMD_NORMAL != 0) /* "if xzalloc didn't do that already" */
@@ -4383,7 +4383,7 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 		old = xmemdup(ctx, sizeof(*ctx));
 		debug_printf_parse("push stack %p\n", old);
 		initialize_context(ctx);
-		ctx->stack = old;
+		ctx->सालानसान = old;
 	} else if (/*ctx->ctx_res_w == RES_NONE ||*/ !(ctx->old_flag & (1 << r->res))) {
 		syntax_error_at(ctx->word.data);
 		ctx->ctx_res_w = RES_SNTX;
@@ -4405,8 +4405,8 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 		struct parse_context *old;
 
 		done_pipe(ctx, PIPE_SEQ);
-		debug_printf_parse("pop stack %p\n", ctx->stack);
-		old = ctx->stack;
+		debug_printf_parse("pop stack %p\n", ctx->सालानसान);
+		old = ctx->सालानसान;
 		old->command->group = ctx->list_head;
 		old->command->cmd_type = CMD_NORMAL;
 # if !BB_MMU
@@ -4611,7 +4611,7 @@ static int done_word(struct parse_context *ctx)
 #ifdef __U_BOOT__
 		command->argc++;
 #endif /* __U_BOOT__ */
-		debug_print_strings("word appended to argv", command->argv);
+		debug_इलिम्बाग_strings("word appended to argv", command->argv);
 
 #ifndef __U_BOOT__
 	}
@@ -4656,22 +4656,22 @@ static int done_word(struct parse_context *ctx)
  * or the number found.
  */
 #if BB_MMU
-#define parse_redir_right_fd(as_string, input) \
-	parse_redir_right_fd(input)
+#define parse_redir_कानान_fd(as_string, पासोक) \
+	parse_redir_कानान_fd(पासोक)
 #endif
-static int parse_redir_right_fd(o_string *as_string, struct in_str *input)
+static int parse_redir_कानान_fd(o_string *as_string, struct in_str *पासोक)
 {
 	int ch, d, ok;
 
-	ch = i_peek(input);
+	ch = i_peek(पासोक);
 	if (ch != '&')
 		return REDIRFD_TO_FILE;
 
-	ch = i_getch(input);  /* get the & */
+	ch = i_getch(पासोक);  /* get the & */
 	nommu_addchr(as_string, ch);
-	ch = i_peek(input);
+	ch = i_peek(पासोक);
 	if (ch == '-') {
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
 		return REDIRFD_CLOSE;
 	}
@@ -4680,15 +4680,15 @@ static int parse_redir_right_fd(o_string *as_string, struct in_str *input)
 	while (ch != EOF && isdigit(ch)) {
 		d = d*10 + (ch-'0');
 		ok = 1;
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
-		ch = i_peek(input);
+		ch = i_peek(पासोक);
 	}
 	if (ok) return d;
 
 //TODO: this is the place to catch ">&file" bashism (redirect both fd 1 and 2)
 
-	bb_simple_error_msg("ambiguous redirect");
+	bb_simple_error_मेनसाहे("ambiguous redirect");
 	return REDIRFD_SYNTAX_ERR;
 }
 
@@ -4697,37 +4697,37 @@ static int parse_redir_right_fd(o_string *as_string, struct in_str *input)
 static int parse_redirect(struct parse_context *ctx,
 		int fd,
 		redir_type style,
-		struct in_str *input)
+		struct in_str *पासोक)
 {
 	struct command *command = ctx->command;
 	struct redir_struct *redir;
 	struct redir_struct **redirp;
-	int dup_num;
+	int dup_नुमेरो;
 
-	dup_num = REDIRFD_TO_FILE;
+	dup_नुमेरो = REDIRFD_TO_FILE;
 	if (style != REDIRECT_HEREDOC) {
 		/* Check for a '>&1' type redirect */
-		dup_num = parse_redir_right_fd(&ctx->as_string, input);
-		if (dup_num == REDIRFD_SYNTAX_ERR)
+		dup_नुमेरो = parse_redir_कानान_fd(&ctx->as_string, पासोक);
+		if (dup_नुमेरो == REDIRFD_SYNTAX_ERR)
 			return 1;
 	} else {
-		int ch = i_peek_and_eat_bkslash_nl(input);
-		dup_num = (ch == '-'); /* HEREDOC_SKIPTABS bit is 1 */
-		if (dup_num) { /* <<-... */
-			ch = i_getch(input);
+		int ch = i_peek_and_eat_bkslash_nl(पासोक);
+		dup_नुमेरो = (ch == '-'); /* HEREDOC_SKIPTABS bit is 1 */
+		if (dup_नुमेरो) { /* <<-... */
+			ch = i_getch(पासोक);
 			nommu_addchr(&ctx->as_string, ch);
-			ch = i_peek(input);
+			ch = i_peek(पासोक);
 		}
 	}
 
-	if (style == REDIRECT_OVERWRITE && dup_num == REDIRFD_TO_FILE) {
-		int ch = i_peek_and_eat_bkslash_nl(input);
+	if (style == REDIRECT_OVERWRITE && dup_नुमेरो == REDIRFD_TO_FILE) {
+		int ch = i_peek_and_eat_bkslash_nl(पासोक);
 		if (ch == '|') {
 			/* >|FILE redirect ("clobbering" >).
 			 * Since we do not support "set -o noclobber" yet,
 			 * >| and > are the same for now. Just eat |.
 			 */
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			nommu_addchr(&ctx->as_string, ch);
 		}
 	}
@@ -4746,8 +4746,8 @@ static int parse_redirect(struct parse_context *ctx,
 	debug_printf_parse("redirect type %d %s\n", redir->rd_fd,
 				redir_table[style].descrip);
 
-	redir->rd_dup = dup_num;
-	if (style != REDIRECT_HEREDOC && dup_num != REDIRFD_TO_FILE) {
+	redir->rd_dup = dup_नुमेरो;
+	if (style != REDIRECT_HEREDOC && dup_नुमेरो != REDIRFD_TO_FILE) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
@@ -4787,25 +4787,25 @@ static int parse_redirect(struct parse_context *ctx,
  * A -1 return means no valid number was found,
  * the caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+static int redirect_opt_नुमेरो(o_string *o)
 {
-	int num;
+	int नुमेरो;
 
 	if (o->data == NULL)
 		return -1;
-	num = bb_strtou(o->data, NULL, 10);
-	if (errno || num < 0)
+	नुमेरो = bb_strtou(o->data, NULL, 10);
+	if (errno || नुमेरो < 0)
 		return -1;
 	o_reset_to_empty_unquoted(o);
-	return num;
+	return नुमेरो;
 }
 
 #if BB_MMU
-#define fetch_till_str(as_string, input, word, skip_tabs) \
-	fetch_till_str(input, word, skip_tabs)
+#define fetch_till_str(as_string, पासोक, word, skip_tabs) \
+	fetch_till_str(पासोक, word, skip_tabs)
 #endif
 static char *fetch_till_str(o_string *as_string,
-		struct in_str *input,
+		struct in_str *पासोक,
 		const char *word,
 		int heredoc_flags)
 {
@@ -4825,7 +4825,7 @@ static char *fetch_till_str(o_string *as_string,
 	goto jump_in;
 
 	while (1) {
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		if (ch != EOF)
 			nommu_addchr(as_string, ch);
 		if (ch == '\n' || ch == EOF) {
@@ -4851,7 +4851,7 @@ static char *fetch_till_str(o_string *as_string,
 					past_EOL = heredoc.length;
 					/* Get 1st char of next line, possibly skipping leading tabs */
 					do {
-						ch = i_getch(input);
+						ch = i_getch(पासोक);
 						if (ch != EOF)
 							nommu_addchr(as_string, ch);
 #ifndef __U_BOOT__
@@ -4901,20 +4901,20 @@ static char *fetch_till_str(o_string *as_string,
  * and load them all. There should be exactly heredoc_cnt of them.
  */
 #if BB_MMU
-#define fetch_heredocs(as_string, pi, heredoc_cnt, input) \
-	fetch_heredocs(pi, heredoc_cnt, input)
+#define fetch_heredocs(as_string, pi, heredoc_cnt, पासोक) \
+	fetch_heredocs(pi, heredoc_cnt, पासोक)
 #endif
-static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt, struct in_str *input)
+static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt, struct in_str *पासोक)
 {
 	while (pi && heredoc_cnt) {
 		int i;
 		struct command *cmd = pi->cmds;
 
 		debug_printf_heredoc("fetch_heredocs: num_cmds:%d cmd argv0:'%s'\n",
-				pi->num_cmds,
+				pi->नुमेरो_cmds,
 				cmd->argv ? cmd->argv[0] : "NONE"
 		);
-		for (i = 0; i < pi->num_cmds; i++) {
+		for (i = 0; i < pi->नुमेरो_cmds; i++) {
 #ifndef __U_BOOT__
 			struct redir_struct *redir = cmd->redirects;
 
@@ -4928,7 +4928,7 @@ static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt,
 
 					redir->rd_type = REDIRECT_HEREDOC2;
 					/* redir->rd_dup is (ab)used to indicate <<- */
-					p = fetch_till_str(as_string, input,
+					p = fetch_till_str(as_string, पासोक,
 							redir->rd_filename, redir->rd_dup);
 					if (!p) {
 						syntax_error("unexpected EOF in here document");
@@ -4943,7 +4943,7 @@ static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt,
 #endif /* !__U_BOOT__ */
 			if (cmd->group) {
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
-				heredoc_cnt = fetch_heredocs(as_string, cmd->group, heredoc_cnt, input);
+				heredoc_cnt = fetch_heredocs(as_string, cmd->group, heredoc_cnt, पासोक);
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
 				if (heredoc_cnt < 0)
 					return heredoc_cnt; /* error */
@@ -4957,19 +4957,19 @@ static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt,
 
 static int run_list(struct pipe *pi);
 #if BB_MMU
-#define parse_stream(pstring, heredoc_cnt_ptr, input, end_trigger) \
-	parse_stream(heredoc_cnt_ptr, input, end_trigger)
+#define parse_stream(pstring, heredoc_cnt_ptr, पासोक, end_trigger) \
+	parse_stream(heredoc_cnt_ptr, पासोक, end_trigger)
 #endif
 static struct pipe *parse_stream(char **pstring,
 		int *heredoc_cnt_ptr,
-		struct in_str *input,
+		struct in_str *पासोक,
 		int end_trigger);
 
 /* Returns number of heredocs not yet consumed,
  * or -1 on error.
  */
 static int parse_group(struct parse_context *ctx,
-		struct in_str *input, int ch)
+		struct in_str *पासोक, int ch)
 {
 	/* ctx->word contains characters seen prior to ( or {.
 	 * Typically it's empty, but for function defs,
@@ -4998,7 +4998,7 @@ static int parse_group(struct parse_context *ctx,
 		}
 		/* it is "word(..." or "word (..." */
 		do
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 		while (ch == ' ' || ch == '\t');
 		if (ch != ')') {
 			syntax_error_unexpected_ch(ch);
@@ -5006,7 +5006,7 @@ static int parse_group(struct parse_context *ctx,
 		}
 		nommu_addchr(&ctx->as_string, ch);
 		do
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 		while (ch == ' ' || ch == '\t' || ch == '\n');
 		if (ch != '{' && ch != '(') {
 			syntax_error_unexpected_ch(ch);
@@ -5048,7 +5048,7 @@ static int parse_group(struct parse_context *ctx,
 #endif /* !__U_BOOT__ */
 	} else {
 		/* bash does not allow "{echo...", requires whitespace */
-		ch = i_peek(input);
+		ch = i_peek(पासोक);
 		if (ch != ' ' && ch != '\t' && ch != '\n'
 		 && ch != '('	/* but "{(..." is allowed (without whitespace) */
 		) {
@@ -5056,13 +5056,13 @@ static int parse_group(struct parse_context *ctx,
 			return -1;
 		}
 		if (ch != '(') {
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			nommu_addchr(&ctx->as_string, ch);
 		}
 	}
 
 	debug_printf_heredoc("calling parse_stream, heredoc_cnt:%d\n", heredoc_cnt);
-	pipe_list = parse_stream(&as_string, &heredoc_cnt, input, endch);
+	pipe_list = parse_stream(&as_string, &heredoc_cnt, पासोक, endch);
 	debug_printf_heredoc("parse_stream returned: heredoc_cnt:%d\n", heredoc_cnt);
 #if !BB_MMU
 	if (as_string)
@@ -5101,7 +5101,7 @@ static int parse_group(struct parse_context *ctx,
 
 		pipe_list = new_pipe();
 		pipe_list->cmds = cmd2;
-		pipe_list->num_cmds = 1;
+		pipe_list->नुमेरो_cmds = 1;
 	}
 #endif
 
@@ -5117,10 +5117,10 @@ static int parse_group(struct parse_context *ctx,
 #if ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS
 /* Subroutines for copying $(...) and `...` things */
 /* '...' */
-static int add_till_single_quote(o_string *dest, struct in_str *input)
+static int add_till_single_quote(o_string *dest, struct in_str *पासोक)
 {
 	while (1) {
-		int ch = i_getch(input);
+		int ch = i_getch(पासोक);
 		if (ch == EOF) {
 			syntax_error_unterm_ch('\'');
 			return 0;
@@ -5130,10 +5130,10 @@ static int add_till_single_quote(o_string *dest, struct in_str *input)
 		o_addchr(dest, ch);
 	}
 }
-static int add_till_single_quote_dquoted(o_string *dest, struct in_str *input)
+static int add_till_single_quote_dquoted(o_string *dest, struct in_str *पासोक)
 {
 	while (1) {
-		int ch = i_getch(input);
+		int ch = i_getch(पासोक);
 		if (ch == EOF) {
 			syntax_error_unterm_ch('\'');
 			return 0;
@@ -5145,11 +5145,11 @@ static int add_till_single_quote_dquoted(o_string *dest, struct in_str *input)
 }
 
 /* "...\"...`..`...." - do we need to handle "...$(..)..." too? */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote);
-static int add_till_double_quote(o_string *dest, struct in_str *input)
+static int add_till_backquote(o_string *dest, struct in_str *पासोक, int in_dquote);
+static int add_till_double_quote(o_string *dest, struct in_str *पासोक)
 {
 	while (1) {
-		int ch = i_getch(input);
+		int ch = i_getch(पासोक);
 		if (ch == EOF) {
 			syntax_error_unterm_ch('"');
 			return 0;
@@ -5158,11 +5158,11 @@ static int add_till_double_quote(o_string *dest, struct in_str *input)
 			return 1;
 		if (ch == '\\') {  /* \x. Copy both chars. */
 			o_addchr(dest, ch);
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 		}
 		o_addchr(dest, ch);
 		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 1))
+			if (!add_till_backquote(dest, पासोक, /*in_dquote:*/ 1))
 				return 0;
 			o_addchr(dest, ch);
 			continue;
@@ -5185,15 +5185,15 @@ static int add_till_double_quote(o_string *dest, struct in_str *input)
  * Example                               Output
  * echo `echo '\'TEST\`echo ZZ\`BEST`    \TESTZZBEST
  */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote)
+static int add_till_backquote(o_string *dest, struct in_str *पासोक, int in_dquote)
 {
 	while (1) {
-		int ch = i_getch(input);
+		int ch = i_getch(पासोक);
 		if (ch == '`')
 			return 1;
 		if (ch == '\\') {
 			/* \x. Copy both unless it is \`, \$, \\ and maybe \" */
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			if (ch != '`'
 			 && ch != '$'
 			 && ch != '\\'
@@ -5227,7 +5227,7 @@ static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquot
  * for ${var:N[:M]} and ${var/P[/R]} parsing.
  */
 #define DOUBLE_CLOSE_CHAR_FLAG 0x80
-static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsigned end_ch)
+static int add_till_closing_bracket(o_string *dest, struct in_str *पासोक, unsigned end_ch)
 {
 	int ch;
 	char dbl = end_ch & DOUBLE_CLOSE_CHAR_FLAG;
@@ -5242,7 +5242,7 @@ static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsign
 	debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 
 	while (1) {
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		if (ch == EOF) {
 			syntax_error_unterm_ch(end_ch);
 			return 0;
@@ -5255,8 +5255,8 @@ static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsign
 			if (!dbl)
 				break;
 			/* we look for closing )) of $((EXPR)) */
-			if (i_peek_and_eat_bkslash_nl(input) == end_ch) {
-				i_getch(input); /* eat second ')' */
+			if (i_peek_and_eat_bkslash_nl(पासोक) == end_ch) {
+				i_getch(पासोक); /* eat second ')' */
 				break;
 			}
 		}
@@ -5264,32 +5264,32 @@ static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsign
 		//bb_error_msg("%s:o_addchr('%c')", __func__, ch);
 		if (ch == '(' || ch == '{') {
 			ch = (ch == '(' ? ')' : '}');
-			if (!add_till_closing_bracket(dest, input, ch))
+			if (!add_till_closing_bracket(dest, पासोक, ch))
 				return 0;
 			o_addchr(dest, ch);
 			continue;
 		}
 		if (ch == '\'') {
-			if (!add_till_single_quote(dest, input))
+			if (!add_till_single_quote(dest, पासोक))
 				return 0;
 			o_addchr(dest, ch);
 			continue;
 		}
 		if (ch == '"') {
-			if (!add_till_double_quote(dest, input))
+			if (!add_till_double_quote(dest, पासोक))
 				return 0;
 			o_addchr(dest, ch);
 			continue;
 		}
 		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 0))
+			if (!add_till_backquote(dest, पासोक, /*in_dquote:*/ 0))
 				return 0;
 			o_addchr(dest, ch);
 			continue;
 		}
 		if (ch == '\\') {
 			/* \x. Copy verbatim. Important for  \(, \) */
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			if (ch == EOF) {
 				syntax_error_unterm_ch(end_ch);
 				return 0;
@@ -5314,14 +5314,14 @@ static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsign
 #if BASH_DOLLAR_SQUOTE
 /* Return code: 1 for "found and parsed", 0 for "seen something else" */
 # if BB_MMU
-#define parse_dollar_squote(as_string, dest, input) \
-	parse_dollar_squote(dest, input)
+#define parse_dollar_squote(as_string, dest, पासोक) \
+	parse_dollar_squote(dest, पासोक)
 #define as_string NULL
 # endif
-static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_str *input)
+static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_str *पासोक)
 {
 	int start;
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	int ch = i_peek_and_eat_bkslash_nl(पासोक);  /* first character after the $ */
 	debug_printf_parse("parse_dollar_squote entered: ch='%c'\n", ch);
 	if (ch != '\'')
 		return 0;
@@ -5329,10 +5329,10 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 	dest->has_quoted_part = 1;
 	start = dest->length;
 
-	ch = i_getch(input); /* eat ' */
+	ch = i_getch(पासोक); /* eat ' */
 	nommu_addchr(as_string, ch);
 	while (1) {
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
 		if (ch == EOF) {
 			syntax_error_unterm_ch('\'');
@@ -5340,15 +5340,15 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 		}
 		if (ch == '\'')
 			break;
-		if (ch == SPECIAL_VAR_SYMBOL) {
+		if (ch == SPECIAL_VAR_सिम्बोलो) {
 			/* Convert raw ^C to corresponding special variable reference */
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
 			/* will addchr() another SPECIAL_VAR_SYMBOL (see after the if() block) */
 		} else if (ch == '\\') {
 			static const char C_escapes[] ALIGN1 = "nrbtfav""x\\01234567";
 
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			nommu_addchr(as_string, ch);
 			if (strchr(C_escapes, ch)) {
 				char buf[4];
@@ -5358,18 +5358,18 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 				buf[0] = ch;
 				if ((unsigned char)(ch - '0') <= 7) { /* \ooo */
 					do {
-						ch = i_peek(input);
+						ch = i_peek(पासोक);
 						if ((unsigned char)(ch - '0') > 7)
 							break;
-						*++p = ch = i_getch(input);
+						*++p = ch = i_getch(पासोक);
 						nommu_addchr(as_string, ch);
 					} while (--cnt != 0);
 				} else if (ch == 'x') { /* \xHH */
 					do {
-						ch = i_peek(input);
+						ch = i_peek(पासोक);
 						if (!isxdigit(ch))
 							break;
-						*++p = ch = i_getch(input);
+						*++p = ch = i_getch(पासोक);
 						nommu_addchr(as_string, ch);
 					} while (--cnt != 0);
 					if (cnt == 2) { /* \x but next char is "bad" */
@@ -5395,58 +5395,58 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 
 	if (dest->length == start) {
 		/* $'', $'\0', $'\000\x00' and the like */
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 	}
 
 	return 1;
 # undef as_string
 }
 #else
-# define parse_dollar_squote(as_string, dest, input) 0
+# define parse_dollar_squote(as_string, dest, पासोक) 0
 #endif /* BASH_DOLLAR_SQUOTE */
 #endif /* !__U_BOOT__ */
 
 /* Return code: 0 for OK, 1 for syntax error */
 #if BB_MMU
-#define parse_dollar(as_string, dest, input, quote_mask) \
-	parse_dollar(dest, input, quote_mask)
+#define parse_dollar(as_string, dest, पासोक, quote_mask) \
+	parse_dollar(dest, पासोक, quote_mask)
 #define as_string NULL
 #endif
 static int parse_dollar(o_string *as_string,
 		o_string *dest,
-		struct in_str *input, unsigned char quote_mask)
+		struct in_str *पासोक, unsigned char quote_mask)
 {
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	int ch = i_peek_and_eat_bkslash_nl(पासोक);  /* first character after the $ */
 
 	debug_printf_parse("parse_dollar entered: ch='%c' quote_mask:0x%x\n", ch, quote_mask);
 	if (isalpha(ch)) {
  make_var:
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
  /*make_var1:*/
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		while (1) {
 			debug_printf_parse(": '%c'\n", ch);
 			o_addchr(dest, ch | quote_mask);
 			quote_mask = 0;
-			ch = i_peek_and_eat_bkslash_nl(input);
+			ch = i_peek_and_eat_bkslash_nl(पासोक);
 			if (!isalnum(ch) && ch != '_') {
 				/* End of variable name reached */
 				break;
 			}
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			nommu_addchr(as_string, ch);
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 	} else if (isdigit(ch)) {
  make_one_char_var:
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		debug_printf_parse(": '%c'\n", ch);
 		o_addchr(dest, ch | quote_mask);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 	} else switch (ch) {
 #ifndef __U_BOOT__
 	case '$': /* pid */
@@ -5454,19 +5454,19 @@ static int parse_dollar(o_string *as_string,
 #endif /* !__U_BOOT__ */
 	case '?': /* last exit code */
 	case '#': /* number of args */
-	case '*': /* args */
-	case '@': /* args */
+	case '*': /*मगा_कातविरान*/
+	case '@': /*मगा_कातविरान*/
 	case '-': /* $- option flags set by set builtin or shell options (-i etc) */
 		goto make_one_char_var;
 	case '{': {
 		char len_single_ch;
 
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 
-		ch = i_getch(input); /* eat '{' */
+		ch = i_getch(पासोक); /* eat '{' */
 		nommu_addchr(as_string, ch);
 
-		ch = i_getch_and_eat_bkslash_nl(input); /* first char after '{' */
+		ch = i_getch_and_eat_bkslash_nl(पासोक); /* first char after '{' */
 		/* It should be ${?}, or ${#var},
 		 * or even ${?+subst} - operator acting on a special variable,
 		 * or the beginning of variable name.
@@ -5489,7 +5489,7 @@ static int parse_dollar(o_string *as_string,
 		 * Oh well... let's check that the var name part is fine... */
 
 		if (isdigit(len_single_ch)
-		 || (len_single_ch == '#' && isdigit(i_peek_and_eat_bkslash_nl(input)))
+		 || (len_single_ch == '#' && isdigit(i_peek_and_eat_bkslash_nl(पासोक)))
 		) {
 			/* Execution engine uses plain xatoi_positive()
 			 * to interpret ${NNN} and {#NNN},
@@ -5501,7 +5501,7 @@ static int parse_dollar(o_string *as_string,
 			while (1) {
 				o_addchr(dest, ch);
 				debug_printf_parse(": '%c'\n", ch);
-				ch = i_getch_and_eat_bkslash_nl(input);
+				ch = i_getch_and_eat_bkslash_nl(पासोक);
 				nommu_addchr(as_string, ch);
 				if (ch == '}')
 					break;
@@ -5520,7 +5520,7 @@ static int parse_dollar(o_string *as_string,
 			o_addchr(dest, ch);
 			debug_printf_parse(": '%c'\n", ch);
 
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			nommu_addchr(as_string, ch);
 			if (ch == '}')
 				break;
@@ -5548,7 +5548,7 @@ static int parse_dollar(o_string *as_string,
 				if (!strchr(VAR_SUBST_OPS, ch)) { /* ${var<bad_char>... */
 					if (len_single_ch != '#'
 					/*|| !strchr(SPECIAL_VARS_STR, ch) - disallow errors like ${#+} ? */
-					 || i_peek(input) != '}'
+					 || i_peek(पासोक) != '}'
 					) {
 						goto bad_dollar_syntax;
 					}
@@ -5563,7 +5563,7 @@ static int parse_dollar(o_string *as_string,
 #ifndef __U_BOOT__
 				if (BASH_SUBSTR
 				 && ch == ':'
-				 && !strchr(MINUS_PLUS_EQUAL_QUESTION, i_peek(input))
+				 && !strchr(MINUS_PLUS_EQUAL_QUESTION, i_peek(पासोक))
 				) {
 					/* It's ${var:N[:M]} thing */
 					end_ch = '}' * 0x100 + ':';
@@ -5572,8 +5572,8 @@ static int parse_dollar(o_string *as_string,
 				 && ch == '/'
 				) {
 					/* It's ${var/[/]pattern[/repl]} thing */
-					if (i_peek(input) == '/') { /* ${var//pattern[/repl]}? */
-						i_getch(input);
+					if (i_peek(पासोक) == '/') { /* ${var//pattern[/repl]}? */
+						i_getch(पासोक);
 						nommu_addchr(as_string, '/');
 						ch = '\\';
 					}
@@ -5587,8 +5587,8 @@ static int parse_dollar(o_string *as_string,
 				 *  v=/dev/ram; echo ${v////-}  prints -dev-ram (pattern is "/")
 				 *  v=/dev/ram; echo ${v///r/-} prints /dev-am  (pattern is "/r")
 				 */
-				if (i_peek(input) == '/') {
-					o_addchr(dest, i_getch(input));
+				if (i_peek(पासोक) == '/') {
+					o_addchr(dest, i_getch(पासोक));
 				}
 #ifndef __U_BOOT__
  again:
@@ -5597,7 +5597,7 @@ static int parse_dollar(o_string *as_string,
 					pos = dest->length;
 #if ENABLE_HUSH_DOLLAR_OPS
 #ifndef __U_BOOT__
-				last_ch = add_till_closing_bracket(dest, input, end_ch);
+				last_ch = add_till_closing_bracket(dest, पासोक, end_ch);
 				if (last_ch == 0) /* error? */
 					return 0;
 #endif /* !__U_BOOT__ */
@@ -5616,7 +5616,7 @@ static int parse_dollar(o_string *as_string,
 					 && (end_ch & 0xff00)
 				) {
 					/* close the first block: */
-					o_addchr(dest, SPECIAL_VAR_SYMBOL);
+					o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 					/* while parsing N from ${var:N[:M]}
 					 * or pattern from ${var/[/]pattern[/repl]} */
 					if ((end_ch & 0xff) == last_ch) {
@@ -5635,46 +5635,46 @@ static int parse_dollar(o_string *as_string,
 			}
 			len_single_ch = 0; /* it can't be ${#C} op */
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		break;
 	}
 #if ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_TICK
 	case '(': {
 		unsigned pos;
 
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
 # if ENABLE_FEATURE_SH_MATH
-		if (i_peek_and_eat_bkslash_nl(input) == '(') {
-			ch = i_getch(input);
+		if (i_peek_and_eat_bkslash_nl(पासोक) == '(') {
+			ch = i_getch(पासोक);
 			nommu_addchr(as_string, ch);
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(dest, quote_mask | '+');
 			if (!BB_MMU)
 				pos = dest->length;
-			if (!add_till_closing_bracket(dest, input, ')' | DOUBLE_CLOSE_CHAR_FLAG))
+			if (!add_till_closing_bracket(dest, पासोक, ')' | DOUBLE_CLOSE_CHAR_FLAG))
 				return 0; /* error */
 			if (as_string) {
 				o_addstr(as_string, dest->data + pos);
 				o_addchr(as_string, ')');
 				o_addchr(as_string, ')');
 			}
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 			break;
 		}
 # endif
 # if ENABLE_HUSH_TICK
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		o_addchr(dest, quote_mask | '`');
 		if (!BB_MMU)
 			pos = dest->length;
-		if (!add_till_closing_bracket(dest, input, ')'))
+		if (!add_till_closing_bracket(dest, पासोक, ')'))
 			return 0; /* error */
 		if (as_string) {
 			o_addstr(as_string, dest->data + pos);
 			o_addchr(as_string, ')');
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 # endif
 		break;
 	}
@@ -5686,9 +5686,9 @@ static int parse_dollar(o_string *as_string,
 	/* $_ Shell or shell script name; or last argument of last command
 	 * (if last command wasn't a pipe; if it was, bash sets $_ to "");
 	 * but in command's env, set to full pathname used to invoke it */
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		nommu_addchr(as_string, ch);
-		ch = i_peek_and_eat_bkslash_nl(input);
+		ch = i_peek_and_eat_bkslash_nl(पासोक);
 		if (isalnum(ch)) { /* it's $_name or $_123 */
 			ch = '_';
 			goto make_var1;
@@ -5704,20 +5704,20 @@ static int parse_dollar(o_string *as_string,
 }
 
 #if BB_MMU
-#define encode_string(as_string, dest, input, dquote_end) \
-	encode_string(dest, input, dquote_end)
+#define encode_string(as_string, dest, पासोक, dquote_end) \
+	encode_string(dest, पासोक, dquote_end)
 #define as_string NULL
 #endif
 static int encode_string(o_string *as_string,
 		o_string *dest,
-		struct in_str *input,
+		struct in_str *पासोक,
 		int dquote_end)
 {
 	int ch;
 	int next;
 
  again:
-	ch = i_getch(input);
+	ch = i_getch(पासोक);
 	if (ch != EOF)
 		nommu_addchr(as_string, ch);
 	if (ch == dquote_end) { /* may be only '"' or EOF */
@@ -5731,7 +5731,7 @@ static int encode_string(o_string *as_string,
 	}
 	next = '\0';
 	if (ch != '\n') {
-		next = i_peek(input);
+		next = i_peek(पासोक);
 	}
 	debug_printf_parse("\" ch=%c (%d) escape=%d\n",
 			ch, ch, !!(dest->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
@@ -5753,7 +5753,7 @@ static int encode_string(o_string *as_string,
 		 * therefore we check for it by "next == dquote_end" cond.
 		 */
 		if (next == dquote_end || strchr("$`\\\n", next)) {
-			ch = i_getch(input); /* eat next */
+			ch = i_getch(पासोक); /* eat next */
 			if (ch == '\n')
 				goto again; /* skip \<newline> */
 		} /* else: ch remains == '\\', and we double it below: */
@@ -5764,7 +5764,7 @@ static int encode_string(o_string *as_string,
 	if (ch == '$') {
 		//if (parse_dollar_squote(as_string, dest, input))
 		//	goto again;
-		if (!parse_dollar(as_string, dest, input, /*quote_mask:*/ 0x80)) {
+		if (!parse_dollar(as_string, dest, पासोक, /*quote_mask:*/ 0x80)) {
 			debug_printf_parse("encode_string return 0: "
 					"parse_dollar returned 0 (error)\n");
 			return 0;
@@ -5774,20 +5774,20 @@ static int encode_string(o_string *as_string,
 #if ENABLE_HUSH_TICK
 	if (ch == '`') {
 		//unsigned pos = dest->length;
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		o_addchr(dest, 0x80 | '`');
-		if (!add_till_backquote(dest, input, /*in_dquote:*/ dquote_end == '"'))
+		if (!add_till_backquote(dest, पासोक, /*in_dquote:*/ dquote_end == '"'))
 			return 0; /* error */
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 		//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
 		goto again;
 	}
 #endif
 	o_addQchr(dest, ch);
-	if (ch == SPECIAL_VAR_SYMBOL) {
+	if (ch == SPECIAL_VAR_सिम्बोलो) {
 		/* Convert "^C" to corresponding special variable reference */
 		o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_सिम्बोलो);
 	}
 	goto again;
 #undef as_string
@@ -5803,7 +5803,7 @@ static int encode_string(o_string *as_string,
  */
 static struct pipe *parse_stream(char **pstring,
 		int *heredoc_cnt_ptr,
-		struct in_str *input,
+		struct in_str *पासोक,
 		int end_trigger)
 {
 	struct parse_context ctx;
@@ -5839,7 +5839,7 @@ static struct pipe *parse_stream(char **pstring,
 		redir_type redir_style;
 #endif /* !__U_BOOT__ */
 
-		ch = i_getch(input);
+		ch = i_getch(पासोक);
 		debug_printf_parse(": ch=%c (%d) escape=%d\n",
 				ch, ch, !!(ctx.word.o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
 		if (ch == EOF) {
@@ -5876,7 +5876,7 @@ static struct pipe *parse_stream(char **pstring,
 			/* If we got nothing... */
 			/* (this makes bare "&" cmd a no-op.
 			 * bash says: "syntax error near unexpected token '&'") */
-			if (pi->num_cmds == 0
+			if (pi->नुमेरो_cmds == 0
 			IF_HAS_KEYWORDS(&& pi->res_word == RES_NONE)
 			) {
 				free_pipe_list(pi);
@@ -5907,14 +5907,14 @@ static struct pipe *parse_stream(char **pstring,
 		 * would break.
 		 */
 		if (ch == '\\') {
-			ch = i_getch(input);
+			ch = i_getch(पासोक);
 			if (ch == '\n')
 				continue; /* drop \<newline>, get next char */
 			nommu_addchr(&ctx.as_string, '\\');
-			if (ch == SPECIAL_VAR_SYMBOL) {
+			if (ch == SPECIAL_VAR_सिम्बोलो) {
 				nommu_addchr(&ctx.as_string, ch);
 				/* Convert \^C to corresponding special variable reference */
-				goto case_SPECIAL_VAR_SYMBOL;
+				goto case_SPECIAL_VAR_सिम्बोलो;
 			}
 			o_addchr(&ctx.word, '\\');
 			if (ch == EOF) {
@@ -5935,10 +5935,10 @@ static struct pipe *parse_stream(char **pstring,
 		nommu_addchr(&ctx.as_string, ch);
 		if (ch == '\'') {
 			ctx.word.has_quoted_part = 1;
-			next = i_getch(input);
+			next = i_getch(पासोक);
 #ifndef __U_BOOT__
 			if (next == '\'' && !ctx.pending_redirect)
-				goto insert_empty_quoted_str_marker;
+				goto इसिंगित_empty_quoted_str_marker;
 #endif /* !__U_BOOT__ */
 
 			ch = next;
@@ -5950,20 +5950,20 @@ static struct pipe *parse_stream(char **pstring,
 				nommu_addchr(&ctx.as_string, ch);
 				if (ch == '\'')
 					break;
-				if (ch == SPECIAL_VAR_SYMBOL) {
+				if (ch == SPECIAL_VAR_सिम्बोलो) {
 					/* Convert raw ^C to corresponding special variable reference */
-					o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+					o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
 					o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
 				}
 				o_addqchr(&ctx.word, ch);
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 			}
 			continue; /* get next char */
 		}
 
 		next = '\0';
 		if (ch != '\n')
-			next = i_peek_and_eat_bkslash_nl(input);
+			next = i_peek_and_eat_bkslash_nl(पासोक);
 
 		is_special = "{}<>&|();#" /* special outside of "str" */
 #ifndef __U_BOOT__
@@ -5971,7 +5971,7 @@ static struct pipe *parse_stream(char **pstring,
 #else /* __U_BOOT__ */
 				"$\""
 #endif /* __U_BOOT__ */
-				SPECIAL_VAR_SYMBOL_STR;
+				SPECIAL_VAR_सिम्बोलो_STR;
 #if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
 		if (ctx.command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB) {
 			/* In [[ ]], {}<>&|() are not special */
@@ -6020,10 +6020,10 @@ static struct pipe *parse_stream(char **pstring,
  * We need to skip all whitespace before newlines.
  */
 			while (ch != '\n') {
-				next = i_peek(input);
+				next = i_peek(पासोक);
 				if (next != ' ' && next != '\t' && next != '\n')
 					break; /* next char is not ws */
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 			}
 			/* ch == last eaten whitespace char */
 #endif
@@ -6059,7 +6059,7 @@ static struct pipe *parse_stream(char **pstring,
 					 * cmd1 may need to run in BG).
 					 */
 					struct pipe *pi = ctx.list_head;
-					if (pi->num_cmds != 0       /* check #1 */
+					if (pi->नुमेरो_cmds != 0       /* check #1 */
 					 && pi->followup != PIPE_BG /* check #2 */
 					) {
 						continue;
@@ -6069,7 +6069,7 @@ static struct pipe *parse_stream(char **pstring,
 				done_pipe(&ctx, PIPE_SEQ);
 				debug_printf_heredoc("heredoc_cnt:%d\n", heredoc_cnt);
 				if (heredoc_cnt) {
-					heredoc_cnt = fetch_heredocs(&ctx.as_string, ctx.list_head, heredoc_cnt, input);
+					heredoc_cnt = fetch_heredocs(&ctx.as_string, ctx.list_head, heredoc_cnt, पासोक);
 					if (heredoc_cnt != 0)
 						goto parse_error_exitcode1;
 				}
@@ -6167,14 +6167,14 @@ static struct pipe *parse_stream(char **pstring,
 		switch (ch) {
 #ifndef __U_BOOT__
 		case '>':
-			redir_fd = redirect_opt_num(&ctx.word);
+			redir_fd = redirect_opt_नुमेरो(&ctx.word);
 			if (done_word(&ctx)) {
 				goto parse_error_exitcode1;
 			}
 			redir_style = REDIRECT_OVERWRITE;
 			if (next == '>') {
 				redir_style = REDIRECT_APPEND;
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 			}
 #if 0
@@ -6183,24 +6183,24 @@ static struct pipe *parse_stream(char **pstring,
 				goto parse_error_exitcode1;
 			}
 #endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
+			if (parse_redirect(&ctx, redir_fd, redir_style, पासोक))
 				goto parse_error_exitcode1;
 			continue; /* get next char */
 		case '<':
-			redir_fd = redirect_opt_num(&ctx.word);
+			redir_fd = redirect_opt_नुमेरो(&ctx.word);
 			if (done_word(&ctx)) {
 				goto parse_error_exitcode1;
 			}
-			redir_style = REDIRECT_INPUT;
+			redir_style = REDIRECT_पासोक;
 			if (next == '<') {
 				redir_style = REDIRECT_HEREDOC;
 				heredoc_cnt++;
 				debug_printf_heredoc("++heredoc_cnt=%d\n", heredoc_cnt);
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 			} else if (next == '>') {
 				redir_style = REDIRECT_IO;
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 			}
 #if 0
@@ -6209,7 +6209,7 @@ static struct pipe *parse_stream(char **pstring,
 				goto parse_error_exitcode1;
 			}
 #endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
+			if (parse_redirect(&ctx, redir_fd, redir_style, पासोक))
 				goto parse_error_exitcode1;
 			continue; /* get next char */
 #else /* __U_BOOT__ */
@@ -6245,12 +6245,12 @@ static struct pipe *parse_stream(char **pstring,
  * We accept both (comment ends where command subst ends, in both cases).
  */
 				while (1) {
-					ch = i_peek(input);
+					ch = i_peek(पासोक);
 					if (ch == '\n') {
 						nommu_addchr(&ctx.as_string, '\n');
 						break;
 					}
-					ch = i_getch(input);
+					ch = i_getch(पासोक);
 					if (ch == EOF)
 						break;
 				}
@@ -6275,10 +6275,10 @@ static struct pipe *parse_stream(char **pstring,
 		/* Note: nommu_addchr(&ctx.as_string, ch) is already done */
 
 		switch (ch) {
-		case_SPECIAL_VAR_SYMBOL:
-		case SPECIAL_VAR_SYMBOL:
+		case_SPECIAL_VAR_सिम्बोलो:
+		case SPECIAL_VAR_सिम्बोलो:
 			/* Convert raw ^C to corresponding special variable reference */
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+			o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
 			/* fall through */
 		case '#':
@@ -6287,10 +6287,10 @@ static struct pipe *parse_stream(char **pstring,
 			continue; /* get next char */
 		case '$':
 #ifndef __U_BOOT__
-			if (parse_dollar_squote(&ctx.as_string, &ctx.word, input))
+			if (parse_dollar_squote(&ctx.as_string, &ctx.word, पासोक))
 				continue; /* get next char */
 #endif /* !__U_BOOT__ */
-			if (!parse_dollar(&ctx.as_string, &ctx.word, input, /*quote_mask:*/ 0)) {
+			if (!parse_dollar(&ctx.as_string, &ctx.word, पासोक, /*quote_mask:*/ 0)) {
 				debug_printf_parse("parse_stream parse error: "
 					"parse_dollar returned 0 (error)\n");
 				goto parse_error_exitcode1;
@@ -6303,18 +6303,18 @@ static struct pipe *parse_stream(char **pstring,
 #else /* __U_BOOT__ */
 			if (next == '"') {
 #endif /* __U_BOOT__ */
-				i_getch(input); /* eat second " */
+				i_getch(पासोक); /* eat second " */
 #ifndef __U_BOOT__
- insert_empty_quoted_str_marker:
+ इसिंगित_empty_quoted_str_marker:
 #endif /* !__U_BOOT__ */
 				nommu_addchr(&ctx.as_string, next);
-				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+				o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
+				o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
 				continue; /* get next char */
 			}
 			if (ctx.is_assignment == NOT_ASSIGNMENT)
 				ctx.word.o_expflags |= EXP_FLAG_ESC_GLOB_CHARS;
-			if (!encode_string(&ctx.as_string, &ctx.word, input, '"'))
+			if (!encode_string(&ctx.as_string, &ctx.word, पासोक, '"'))
 				goto parse_error_exitcode1;
 			ctx.word.o_expflags &= ~EXP_FLAG_ESC_GLOB_CHARS;
 			continue; /* get next char */
@@ -6322,16 +6322,16 @@ static struct pipe *parse_stream(char **pstring,
 		case '`': {
 			USE_FOR_NOMMU(unsigned pos;)
 
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+			o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(&ctx.word, '`');
 			USE_FOR_NOMMU(pos = ctx.word.length;)
-			if (!add_till_backquote(&ctx.word, input, /*in_dquote:*/ 0))
+			if (!add_till_backquote(&ctx.word, पासोक, /*in_dquote:*/ 0))
 				goto parse_error_exitcode1;
 # if !BB_MMU
 			o_addstr(&ctx.as_string, ctx.word.data + pos);
 			o_addchr(&ctx.as_string, '`');
 # endif
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+			o_addchr(&ctx.word, SPECIAL_VAR_सिम्बोलो);
 			//debug_printf_subst("SUBST RES3 '%s'\n", ctx.word.data + pos);
 			continue; /* get next char */
 		}
@@ -6348,10 +6348,10 @@ static struct pipe *parse_stream(char **pstring,
 			/* Eat multiple semicolons, detect
 			 * whether it means something special */
 			while (1) {
-				ch = i_peek_and_eat_bkslash_nl(input);
+				ch = i_peek_and_eat_bkslash_nl(पासोक);
 				if (ch != ';')
 					break;
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 				if (ctx.ctx_res_w == RES_CASE_BODY) {
 					ctx.ctx_dsemicolon = 1;
@@ -6371,7 +6371,7 @@ static struct pipe *parse_stream(char **pstring,
 				goto parse_error_exitcode1;
 			}
 			if (next == '&') {
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 				done_pipe(&ctx, PIPE_AND);
 			} else {
@@ -6387,7 +6387,7 @@ static struct pipe *parse_stream(char **pstring,
 				break; /* we are in case's "word | word)" */
 #endif
 			if (next == '|') { /* || */
-				ch = i_getch(input);
+				ch = i_getch(पासोक);
 				nommu_addchr(&ctx.as_string, ch);
 				done_pipe(&ctx, PIPE_OR);
 			} else {
@@ -6410,7 +6410,7 @@ static struct pipe *parse_stream(char **pstring,
 #endif
 			/* fall through */
 		case '{': {
-			int n = parse_group(&ctx, input, ch);
+			int n = parse_group(&ctx, पासोक, ch);
 			if (n < 0) {
 				goto parse_error_exitcode1;
 			}
@@ -6432,7 +6432,7 @@ static struct pipe *parse_stream(char **pstring,
 			goto parse_error;
 		default:
 			if (HUSH_DEBUG)
-				bb_error_msg_and_die("BUG: unexpected %c", ch);
+				bb_error_मेनसाहे_and_die("BUG: unexpected %c", ch);
 		}
 	} /* while (1) */
 
@@ -6458,13 +6458,13 @@ static struct pipe *parse_stream(char **pstring,
 			done_pipe(pctx, PIPE_SEQ);
 			debug_printf_clean("freeing list %p from ctx %p\n",
 					pctx->list_head, pctx);
-			debug_print_tree(pctx->list_head, 0);
+			debug_इलिम्बाग_पुनो(pctx->list_head, 0);
 			free_pipe_list(pctx->list_head);
 			debug_printf_clean("freed list %p\n", pctx->list_head);
 #if !BB_MMU
 			o_free(&pctx->as_string);
 #endif
-			IF_HAS_KEYWORDS(p2 = pctx->stack;)
+			IF_HAS_KEYWORDS(p2 = pctx->सालानसान;)
 			if (pctx != &ctx) {
 				free(pctx);
 			}
@@ -6602,13 +6602,13 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
 		) {
  new_word:
 			o_addchr(output, '\0');
-			debug_print_list("expand_on_ifs", output, n);
+			debug_इलिम्बाग_list("expand_on_ifs", output, n);
 			n = o_save_ptr(output, n);
 		}
 	}
 
 	output->ended_in_ifs = last_is_ifs;
-	debug_print_list("expand_on_ifs[1]", output, n);
+	debug_इलिम्बाग_list("expand_on_ifs[1]", output, n);
 	return n;
 }
 
@@ -6623,7 +6623,7 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
 static char *encode_then_expand_string(const char *str)
 {
 	char *exp_str;
-	struct in_str input;
+	struct in_str पासोक;
 	o_string dest = NULL_O_STRING;
 	const char *cp;
 
@@ -6641,8 +6641,8 @@ static char *encode_then_expand_string(const char *str)
 	/* We need to expand. Example:
 	 * echo $(($a + `echo 1`)) $((1 + $((2)) ))
 	 */
-	setup_string_in_str(&input, str);
-	encode_string(NULL, &dest, &input, EOF);
+	setup_string_in_str(&पासोक, str);
+	encode_string(NULL, &dest, &पासोक, EOF);
 //TODO: error check (encode_string returns 0 on error)?
 	//bb_error_msg("'%s' -> '%s'", str, dest.data);
 	exp_str = expand_string_to_string(dest.data,
@@ -6691,7 +6691,7 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 	const int do_unbackslash = 0;
 #endif
 	char *exp_str;
-	struct in_str input;
+	struct in_str पासोक;
 	o_string dest = NULL_O_STRING;
 
 	if (!first_special_char_in_vararg(str)) {
@@ -6699,14 +6699,14 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 		return NULL;
 	}
 
-	setup_string_in_str(&input, str);
+	setup_string_in_str(&पासोक, str);
 	dest.data = xzalloc(1); /* start as "", not as NULL */
 	exp_str = NULL;
 
 	for (;;) {
 		int ch;
 
-		ch = i_getch(&input);
+		ch = i_getch(&पासोक);
 		debug_printf_parse("%s: ch=%c (%d) escape=%d\n",
 				__func__, ch, ch, !!dest.o_expflags);
 
@@ -6714,7 +6714,7 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 			if (ch == EOF)
 				break;
 			if (handle_squotes && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
+				if (!add_till_single_quote_dquoted(&dest, &पासोक))
 					goto ret; /* error */
 				continue;
 			}
@@ -6728,7 +6728,7 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 			continue;
 		}
 		if (ch == '\\') {
-			ch = i_getch(&input);
+			ch = i_getch(&पासोक);
 			if (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
@@ -6738,9 +6738,9 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 			continue;
 		}
 		if (ch == '$') {
-			if (parse_dollar_squote(NULL, &dest, &input))
+			if (parse_dollar_squote(NULL, &dest, &पासोक))
 				continue;
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ 0x80)) {
+			if (!parse_dollar(NULL, &dest, &पासोक, /*quote_mask:*/ 0x80)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
 				goto ret;
 			}
@@ -6749,15 +6749,15 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 #if ENABLE_HUSH_TICK
 		if (ch == '`') {
 			//unsigned pos = dest->length;
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(&dest, 0x80 | '`');
-			if (!add_till_backquote(&dest, &input,
+			if (!add_till_backquote(&dest, &पासोक,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
 				goto ret; /* error */
 			}
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
 			continue;
 		}
@@ -6781,7 +6781,7 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
 static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 		char *str, int dquoted)
 {
-	struct in_str input;
+	struct in_str पासोक;
 	o_string dest = NULL_O_STRING;
 
 	if (!first_special_char_in_vararg(str)
@@ -6799,12 +6799,12 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 		return expand_vars_to_list(output, n, str);
 	}
 
-	setup_string_in_str(&input, str);
+	setup_string_in_str(&पासोक, str);
 
 	for (;;) {
 		int ch;
 
-		ch = i_getch(&input);
+		ch = i_getch(&पासोक);
 		debug_printf_parse("%s: ch=%c (%d) escape=%x\n",
 				__func__, ch, ch, dest.o_expflags);
 
@@ -6839,10 +6839,10 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 				continue;
 			}
 			if (!dquoted && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
+				if (!add_till_single_quote_dquoted(&dest, &पासोक))
 					goto ret; /* error */
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+				o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
+				o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 				continue;
 			}
 		}
@@ -6853,13 +6853,13 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 		if (ch == '"') {
 			dest.o_expflags ^= EXP_FLAG_ESC_GLOB_CHARS;
 			if (dest.o_expflags) {
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+				o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
+				o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 			}
 			continue;
 		}
 		if (ch == '\\') {
-			ch = i_getch(&input);
+			ch = i_getch(&पासोक);
 			if (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
@@ -6869,7 +6869,7 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 			continue;
 		}
 		if (ch == '$') {
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
+			if (!parse_dollar(NULL, &dest, &पासोक, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
 				goto ret;
 			}
@@ -6878,15 +6878,15 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 #if ENABLE_HUSH_TICK
 		if (ch == '`') {
 			//unsigned pos = dest->length;
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 			o_addchr(&dest, (dest.o_expflags || dquoted) ? 0x80 | '`' : '`');
-			if (!add_till_backquote(&dest, &input,
+			if (!add_till_backquote(&dest, &पासोक,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
 				goto ret; /* error */
 			}
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_सिम्बोलो);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
 			continue;
 		}
@@ -6923,7 +6923,7 @@ static arith_t expand_and_evaluate_arith(const char *arg, const char **errmsg_p)
 	arith_t res;
 	char *exp_str;
 
-	math_state.lookupvar = get_local_var_value;
+	math_state.lookupvar = get_local_var_हालागा;
 	math_state.setvar = set_local_var_from_halves;
 	//math_state.endofname = endofname;
 	exp_str = encode_then_expand_string(arg);
@@ -6932,7 +6932,7 @@ static arith_t expand_and_evaluate_arith(const char *arg, const char **errmsg_p)
 	if (errmsg_p)
 		*errmsg_p = math_state.errmsg;
 	if (math_state.errmsg)
-		msg_and_die_if_script(math_state.errmsg);
+		मेनसाहे_and_die_if_script(math_state.errmsg);
 	return res;
 }
 #endif
@@ -6961,7 +6961,7 @@ static char *strstr_pattern(char *val, const char *pattern, int *size)
 	}
 
 	while (1) {
-		char *end = scan_and_match(val, pattern, SCAN_MOVE_FROM_RIGHT + SCAN_MATCH_LEFT_HALF);
+		char *end = scan_and_match(val, pattern, SCAN_MOVE_FROM_कानान + SCAN_MATCH_कालिवा_HALF);
 		debug_printf_varexp("val:'%s' pattern:'%s' end:'%s'\n", val, pattern, end);
 		if (end) {
 			*size = end - val;
@@ -7110,7 +7110,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 		switch (var[0]) {
 #ifndef __U_BOOT__
 		case '$': /* pid */
-			val = utoa(G.root_pid);
+			val = utoa(G.उगात_pid);
 			break;
 		case '!': /* bg pid */
 			val = G.last_bg_pid ? utoa(G.last_bg_pid) : "";
@@ -7147,7 +7147,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 #endif /* !__U_BOOT__ */
 		default:
 #ifndef __U_BOOT__
-			val = get_local_var_value(var);
+			val = get_local_var_हालागा(var);
 #else /* __U_BOOT__ */
 			/*
 			 * Environment variable set with setenv* have to be
@@ -7158,7 +7158,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 */
 			val = env_get(var);
 			if (!val)
-				val = get_local_var_value(var);
+				val = get_local_var_हालागा(var);
 #endif /* __U_BOOT__ */
 		}
 	}
@@ -7209,10 +7209,10 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				debug_printf_expand("op:%c str:'%s' pat:'%s' res:'%s'\n", exp_op, t, exp_word, loc);
 				free(exp_exp_word);
 				if (loc) { /* match was found */
-					if (scan_flags & SCAN_MATCH_LEFT_HALF) /* #[#] */
+					if (scan_flags & SCAN_MATCH_कालिवा_HALF) /* #[#] */
 						val = loc; /* take right part */
 					else /* %[%] */
-						val = to_be_freed = xstrndup(val, loc - val); /* left */
+						val = to_be_freed = xstrndup(val, loc - val); /*कालिवा*/
 				}
 			}
 		}
@@ -7245,9 +7245,9 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				if (!pattern)
 					pattern = xstrdup(exp_word);
 				debug_printf_varexp("pattern:'%s'->'%s'\n", exp_word, pattern);
-				*p++ = SPECIAL_VAR_SYMBOL;
+				*p++ = SPECIAL_VAR_सिम्बोलो;
 				exp_word = p;
-				p = strchr(p, SPECIAL_VAR_SYMBOL);
+				p = strchr(p, SPECIAL_VAR_सिम्बोलो);
 				*p = '\0';
 				repl = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 1);
 				debug_printf_varexp("repl:'%s'->'%s'\n", exp_word, repl);
@@ -7269,8 +7269,8 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				//  a=; echo ${a/*/w}      # "w"
 				//  unset a; echo ${a/*/w} # ""
 				/* Just skip "replace" part */
-				*p++ = SPECIAL_VAR_SYMBOL;
-				p = strchr(p, SPECIAL_VAR_SYMBOL);
+				*p++ = SPECIAL_VAR_सिम्बोलो;
+				p = strchr(p, SPECIAL_VAR_सिम्बोलो);
 				*p = '\0';
 			}
 		}
@@ -7289,9 +7289,9 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			if (errmsg)
 				goto empty_result;
 			debug_printf_varexp("beg:'%s'=%lld\n", exp_word, (long long)beg);
-			*p++ = SPECIAL_VAR_SYMBOL;
+			*p++ = SPECIAL_VAR_सिम्बोलो;
 			exp_word = p;
-			p = strchr(p, SPECIAL_VAR_SYMBOL);
+			p = strchr(p, SPECIAL_VAR_सिम्बोलो);
 			*p = '\0';
 			vallen = val ? strlen(val) : 0;
 			if (beg < 0) {
@@ -7315,7 +7315,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				/* in bash, len=-n means strlen()-n */
 				len = (arith_t)vallen - beg + len;
 				if (len < 0) /* bash compat */
-					msg_and_die_if_script("%s: substring expression < 0", var);
+					मेनसाहे_and_die_if_script("%s: substring expression < 0", var);
 			}
 			if (len <= 0 || !val /*|| beg >= vallen*/) {
  empty_result:
@@ -7329,7 +7329,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			}
 			debug_printf_varexp("val:'%s'\n", val);
 #else /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
-			msg_and_die_if_script("malformed ${%s:...}", var);
+			मेनसाहे_and_die_if_script("malformed ${%s:...}", var);
 			val = NULL;
 #endif
 		} else { /* one of "-=+?" */
@@ -7408,7 +7408,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 						exp_word = to_be_freed;
 					if (exp_op == '?') {
 						/* mimic bash message */
-						msg_and_die_if_script("%s: %s",
+						मेनसाहे_and_die_if_script("%s: %s",
 							var,
 							exp_word[0]
 							? exp_word
@@ -7429,7 +7429,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 						/* ${var=[word]} or ${var:=[word]} */
 						if (isdigit(var[0]) || var[0] == '#') {
 							/* mimic bash message */
-							msg_and_die_if_script("$%s: cannot assign in this way", var);
+							मेनसाहे_and_die_if_script("$%s: cannot assign in this way", var);
 							val = NULL;
 						} else {
 							char *new_var = xasprintf("%s=%s", var, val);
@@ -7468,9 +7468,9 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 
 	debug_printf_expand("expand_vars_to_list: arg:'%s' singleword:%x\n", arg,
 			!!(output->o_expflags & EXP_FLAG_SINGLEWORD));
-	debug_print_list("expand_vars_to_list[0]", output, n);
+	debug_इलिम्बाग_list("expand_vars_to_list[0]", output, n);
 
-	while ((p = strchr(arg, SPECIAL_VAR_SYMBOL)) != NULL) {
+	while ((p = strchr(arg, SPECIAL_VAR_सिम्बोलो)) != NULL) {
 		char first_ch;
 #if ENABLE_FEATURE_SH_MATH
 		char arith_buf[sizeof(arith_t)*3 + 2];
@@ -7483,9 +7483,9 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		}
 
 		o_addblock(output, arg, p - arg);
-		debug_print_list("expand_vars_to_list[1]", output, n);
+		debug_इलिम्बाग_list("expand_vars_to_list[1]", output, n);
 		arg = ++p;
-		p = strchr(p, SPECIAL_VAR_SYMBOL);
+		p = strchr(p, SPECIAL_VAR_सिम्बोलो);
 
 		/* Fetch special var name (if it is indeed one of them)
 		 * and quote bit, force the bit on if singleword expansion -
@@ -7520,9 +7520,9 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 						/* this argv[] is not empty and not last:
 						 * put terminating NUL, start new word */
 						o_addchr(output, '\0');
-						debug_print_list("expand_vars_to_list[2]", output, n);
+						debug_इलिम्बाग_list("expand_vars_to_list[2]", output, n);
 						n = o_save_ptr(output, n);
-						debug_print_list("expand_vars_to_list[3]", output, n);
+						debug_इलिम्बाग_list("expand_vars_to_list[3]", output, n);
 					}
 				}
 			} else
@@ -7536,7 +7536,7 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 					if (++i >= G.global_argc)
 						break;
 					o_addchr(output, '\0');
-					debug_print_list("expand_vars_to_list[4]", output, n);
+					debug_इलिम्बाग_list("expand_vars_to_list[4]", output, n);
 					n = o_save_ptr(output, n);
 				}
 			} else { /* quoted $* (or v="$@" case): add as one word */
@@ -7551,7 +7551,7 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 			}
 			break;
 		}
-		case SPECIAL_VAR_SYMBOL: {
+		case SPECIAL_VAR_सिम्बोलो: {
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_SYMBOL> */
 			/* "Empty variable", used to make "" etc to not disappear */
 			output->has_quoted_part = 1;
@@ -7562,7 +7562,7 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		case SPECIAL_VAR_QUOTED_SVS:
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_QUOTED_SVS><SPECIAL_VAR_SYMBOL> */
 			/* "^C variable", represents literal ^C char (possible in scripts) */
-			o_addchr(output, SPECIAL_VAR_SYMBOL);
+			o_addchr(output, SPECIAL_VAR_सिम्बोलो);
 			arg++;
 			break;
 #if ENABLE_HUSH_TICK
@@ -7618,8 +7618,8 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 
 		/* Restore NULL'ed SPECIAL_VAR_SYMBOL.
 		 * Do the check to avoid writing to a const string. */
-		if (*p != SPECIAL_VAR_SYMBOL)
-			*p = SPECIAL_VAR_SYMBOL;
+		if (*p != SPECIAL_VAR_सिम्बोलो)
+			*p = SPECIAL_VAR_सिम्बोलो;
 		arg = ++p;
 	} /* end of "while (SPECIAL_VAR_SYMBOL is found) ..." */
 
@@ -7629,12 +7629,12 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 			o_addchr(output, '\0');
 			n = o_save_ptr(output, n);
 		}
-		debug_print_list("expand_vars_to_list[a]", output, n);
+		debug_इलिम्बाग_list("expand_vars_to_list[a]", output, n);
 		/* this part is literal, and it was already pre-quoted
 		 * if needed (much earlier), do not use o_addQstr here!
 		 */
 		o_addstr(output, arg);
-		debug_print_list("expand_vars_to_list[b]", output, n);
+		debug_इलिम्बाग_list("expand_vars_to_list[b]", output, n);
 	} else
 	if (output->length == o_get_last_ptr(output, n) /* expansion is empty */
 	 && !(cant_be_null & 0x80)   /* and all vars were not quoted */
@@ -7670,11 +7670,11 @@ static char **expand_variables(char **argv, unsigned expflags)
 		/* if (!output->has_empty_slot) -- need this?? */
 			o_addchr(&output, '\0');
 	}
-	debug_print_list("expand_variables", &output, n);
+	debug_इलिम्बाग_list("expand_variables", &output, n);
 
 	/* output.data (malloced in one block) gets returned in "list" */
 	list = o_finalize_list(&output, n);
-	debug_print_strings("expand_variables[1]", list);
+	debug_इलिम्बाग_strings("expand_variables[1]", list);
 	return list;
 }
 
@@ -7709,7 +7709,7 @@ static char *expand_string_to_string(const char *str, int EXP_flags, int do_unba
 	 * handles "", which otherwise trips over !list[0] check below.
 	 * (is this ever happens that we actually get str="" here?)
 	 */
-	if (!strchr(str, SPECIAL_VAR_SYMBOL) && !strchr(str, '\\')) {
+	if (!strchr(str, SPECIAL_VAR_सिम्बोलो) && !strchr(str, '\\')) {
 		//TODO: Can use on strings with \ too, just unbackslash() them?
 		debug_printf_expand("string_to_string(fast)=>'%s'\n", str);
 		return xstrdup(str);
@@ -7726,7 +7726,7 @@ static char *expand_string_to_string(const char *str, int EXP_flags, int do_unba
 	} else {
 		if (HUSH_DEBUG)
 			if (list[1])
-				bb_simple_error_msg_and_die("BUG in varexp2");
+				bb_simple_error_मेनसाहे_and_die("BUG in varexp2");
 		/* actually, just move string 2*sizeof(char*) bytes back */
 		overlapping_strcpy((char*)list, list[0]);
 		if (do_unbackslash)
@@ -7748,7 +7748,7 @@ static char* expand_strvec_to_string(char **argv)
 		while (list[n]) {
 			if (HUSH_DEBUG)
 				if (list[n-1] + strlen(list[n-1]) + 1 != list[n])
-					bb_error_msg_and_die("BUG in varexp3");
+					bb_error_मेनसाहे_and_die("BUG in varexp3");
 			/* bash uses ' ' regardless of $IFS contents */
 			list[n][-1] = ' ';
 			n++;
@@ -7761,14 +7761,14 @@ static char* expand_strvec_to_string(char **argv)
 #endif
 
 #ifndef __U_BOOT__
-static char **expand_assignments(char **argv, int count)
+static char **expand_assignments(char **argv, int बिलांग)
 {
 	int i;
 	char **p;
 
 	G.expanded_assignments = p = NULL;
 	/* Expand assignments into one string each */
-	for (i = 0; i < count; i++) {
+	for (i = 0; i < बिलांग; i++) {
 		p = add_string_to_strings(p,
 			expand_string_to_string(argv[i],
 				EXP_FLAG_ESC_GLOB_CHARS,
@@ -7903,8 +7903,8 @@ static void re_execute_shell(char ***to_free, const char *s,
 	}
 
 	sprintf(param_buf, NOMMU_HACK_FMT
-			, (unsigned) G.root_pid
-			, (unsigned) G.root_ppid
+			, (unsigned) G.उगात_pid
+			, (unsigned) G.उगात_ppid
 			, (unsigned) G.last_bg_pid
 			, (unsigned) G.last_exitcode
 			, cnt
@@ -7916,7 +7916,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 	 * 3:-c 4:<cmd> 5:<arg0> <argN...> 6:NULL
 	 */
 	cnt += 6;
-	for (cur = G.top_var; cur; cur = cur->next) {
+	for (cur = G.इताअस_var; cur; cur = cur->next) {
 		if (!cur->flg_export || cur->flg_read_only)
 			cnt += 2;
 	}
@@ -7924,7 +7924,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 	cnt += 2;
 # endif
 # if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next)
+	for (funcp = G.इताअस_func; funcp; funcp = funcp->next)
 		cnt += 3;
 # endif
 	pp = g_argv;
@@ -7933,7 +7933,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 	*to_free = argv = pp = xzalloc(sizeof(argv[0]) * cnt);
 	*pp++ = (char *) G.argv0_for_re_execing;
 	*pp++ = param_buf;
-	for (cur = G.top_var; cur; cur = cur->next) {
+	for (cur = G.इताअस_var; cur; cur = cur->next) {
 		if (strcmp(cur->varstr, hush_version_str) == 0)
 			continue;
 		if (cur->flg_read_only) {
@@ -7949,7 +7949,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 	*pp++ = utoa(G.execute_lineno);
 # endif
 # if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next) {
+	for (funcp = G.इताअस_func; funcp; funcp = funcp->next) {
 		*pp++ = (char *) "-F";
 		*pp++ = funcp->name;
 		*pp++ = funcp->body_as_string;
@@ -7996,7 +7996,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 	if (argv[0][0] == '/')
 		execve(argv[0], argv, pp);
 	xfunc_error_retval = 127;
-	bb_simple_error_msg_and_die("can't re-execute the shell");
+	bb_simple_error_मेनसाहे_and_die("can't re-execute the shell");
 }
 #endif  /* !BB_MMU */
 
@@ -8058,7 +8058,7 @@ static int parse_and_run_stream(struct in_str *inp, int end_trigger)
 				G.last_exitcode = 0;
 			break;
 		}
-		debug_print_tree(pipe_list, 0);
+		debug_इलिम्बाग_पुनो(pipe_list, 0);
 		debug_printf_exec("parse_and_run_stream: run_and_free_list\n");
 #ifndef __U_BOOT__
 		run_and_free_list(pipe_list);
@@ -8093,18 +8093,18 @@ static void parse_and_run_string(const char *s)
 static int parse_and_run_string(const char *s)
 #endif /* __U_BOOT__ */
 {
-	struct in_str input;
+	struct in_str पासोक;
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 #else /* __U_BOOT__ */
 	//IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 #endif /* __U_BOOT__ */
 
-	setup_string_in_str(&input, s);
+	setup_string_in_str(&पासोक, s);
 #ifndef __U_BOOT__
-	parse_and_run_stream(&input, '\0');
+	parse_and_run_stream(&पासोक, '\0');
 #else /* __U_BOOT__ */
-	return parse_and_run_stream(&input, '\0');
+	return parse_and_run_stream(&पासोक, '\0');
 #endif /* __U_BOOT__ */
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
@@ -8139,16 +8139,16 @@ static void parse_and_run_file(HFILE *fp)
 void parse_and_run_file(void)
 #endif /* __U_BOOT__ */
 {
-	struct in_str input;
+	struct in_str पासोक;
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 
 	IF_HUSH_LINENO_VAR(G.parse_lineno = 1;)
-	setup_file_in_str(&input, fp);
+	setup_file_in_str(&पासोक, fp);
 #else /* __U_BOOT__ */
-	setup_file_in_str(&input);
+	setup_file_in_str(&पासोक);
 #endif /* __U_BOOT__ */
-	parse_and_run_stream(&input, ';');
+	parse_and_run_stream(&पासोक, ';');
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(G.parse_lineno = sv;)
 #endif /* !__U_BOOT__ */
@@ -8250,7 +8250,7 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 	/* parent */
 	*pid_p = pid;
 # if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++;
+	G.बिलांग_SIGCHLD++;
 //bb_error_msg("[%d] fork in generate_stream_from_string:"
 //		" G.count_SIGCHLD:%d G.handled_SIGCHLD:%d",
 //		getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
@@ -8368,7 +8368,7 @@ static void setup_heredoc(struct redir_struct *redir)
 	}
 	/* parent */
 #if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++;
+	G.बिलांग_SIGCHLD++;
 //bb_error_msg("[%d] fork in setup_heredoc: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 #endif
 	enable_restore_tty_pgrp_on_exit();
@@ -8692,12 +8692,12 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 		} else {
 			/* if newfd is a script fd or saved fd, do not allow to use it */
 			if (internally_opened_fd(newfd, sqp && sqp != ERR_PTR ? *sqp : NULL)) {
-				bb_error_msg("fd#%d is not open", newfd);
+				bb_error_मेनसाहे("fd#%d is not open", newfd);
 				return 1;
 			}
 			if (dup2(newfd, redir->rd_fd) < 0) {
 				/* "echo >&99" testcase */
-				bb_perror_msg("dup2(%d,%d)", newfd, redir->rd_fd);
+				bb_perror_मेनसाहे("dup2(%d,%d)", newfd, redir->rd_fd);
 				return 1;
 			}
 			if (redir->rd_dup == REDIRFD_TO_FILE)
@@ -8712,7 +8712,7 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 static char *find_in_path(const char *arg)
 {
 	char *ret = NULL;
-	const char *PATH = get_local_var_value("PATH");
+	const char *PATH = get_local_var_हालागा("PATH");
 
 	if (!PATH)
 		return NULL;
@@ -8782,7 +8782,7 @@ static const char * FAST_FUNC hush_command_name(int i)
 	{
 		struct function *funcp;
 		i -= ARRAY_SIZE(bltins2);
-		for (funcp = G.top_func; funcp; funcp = funcp->next) {
+		for (funcp = G.इताअस_func; funcp; funcp = funcp->next) {
 			if (--i < 0)
 				return funcp->name;
 		}
@@ -8799,7 +8799,7 @@ static void remove_nested_vars(void)
 	struct variable *cur;
 	struct variable **cur_pp;
 
-	cur_pp = &G.top_var;
+	cur_pp = &G.इताअस_var;
 	while ((cur = *cur_pp) != NULL) {
 		if (cur->var_nest_level <= G.var_nest_level) {
 			cur_pp = &cur->next;
@@ -8833,7 +8833,7 @@ static void enter_var_nest_level(void)
 	 * not too long after 2^16 recursions anyway.
 	 */
 	if (G.var_nest_level > 0xff00)
-		bb_error_msg_and_die("fatal recursion (depth %u)", G.var_nest_level);
+		bb_error_मेनसाहे_and_die("fatal recursion (depth %u)", G.var_nest_level);
 }
 
 static void leave_var_nest_level(void)
@@ -8841,7 +8841,7 @@ static void leave_var_nest_level(void)
 	G.var_nest_level--;
 	debug_printf_env("var_nest_level-- %u\n", G.var_nest_level);
 	if (HUSH_DEBUG && (int)G.var_nest_level < 0)
-		bb_simple_error_msg_and_die("BUG: nesting underflow");
+		bb_simple_error_मेनसाहे_and_die("BUG: nesting underflow");
 
 	remove_nested_vars();
 }
@@ -8851,7 +8851,7 @@ static void leave_var_nest_level(void)
 static struct function **find_function_slot(const char *name)
 {
 	struct function *funcp;
-	struct function **funcpp = &G.top_func;
+	struct function **funcpp = &G.इताअस_func;
 
 	while ((funcp = *funcpp) != NULL) {
 		if (strcmp(name, funcp->name) == 0) {
@@ -8992,7 +8992,7 @@ static int run_function(const struct function *funcp, char **argv)
 	save_arg_t sv;
 	smallint sv_flg;
 
-	save_and_replace_G_args(&sv, argv);
+	save_and_replace_G_मगा_कातविरान(&sv, argv);
 
 	/* "We are in function, ok to use return" */
 	sv_flg = G_flag_return_in_progress;
@@ -9023,7 +9023,7 @@ static int run_function(const struct function *funcp, char **argv)
 	G.return_exitcode = -1; /* invalidate stashed return value */
 # endif
 
-	restore_G_args(&sv, argv);
+	restore_G_मगा_कातविरान(&sv, argv);
 
 	return rc;
 }
@@ -9077,12 +9077,12 @@ static void execvp_or_die(char **argv)
 	e = 2;
 	if (errno == EACCES) e = 126;
 	if (errno == ENOENT) e = 127;
-	bb_perror_msg("can't execute '%s'", argv[0]);
+	bb_perror_मेनसाहे("can't execute '%s'", argv[0]);
 	_exit(e);
 }
 
 #if ENABLE_HUSH_MODE_X
-static void x_mode_print_optionally_squoted(const char *str)
+static void x_mode_इलिम्बाग_optionally_squoted(const char *str)
 {
 	unsigned len;
 	const char *cp;
@@ -9136,7 +9136,7 @@ static void dump_cmd_in_x_mode(char **argv)
 				x_mode_addchr('\'');
 				x_mode_addchr('\'');
 			} else {
-				x_mode_print_optionally_squoted(argv[n]);
+				x_mode_इलिम्बाग_optionally_squoted(argv[n]);
 			}
 			n++;
 		}
@@ -9150,7 +9150,7 @@ static void dump_cmd_in_x_mode(char **argv)
 
 #ifndef __U_BOOT__
 #if ENABLE_HUSH_COMMAND
-static void if_command_vV_print_and_exit(char opt_vV, char *cmd, const char *explanation)
+static void if_command_v_V_इलिम्बाग_and_exit(char opt_vV, char *cmd, const char *explanation)
 {
 	char *to_free;
 
@@ -9172,7 +9172,7 @@ static void if_command_vV_print_and_exit(char opt_vV, char *cmd, const char *exp
 	_exit(0);
 }
 #else
-# define if_command_vV_print_and_exit(a,b,c) ((void)0)
+# define if_command_v_V_इलिम्बाग_and_exit(a,b,c) ((void)0)
 #endif
 #endif /* !__U_BOOT__ */
 
@@ -9274,14 +9274,14 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 				opt_vV = *p;
 				continue;
 			default:
-				bb_error_msg_and_die("%s: %s: invalid option", "command", argv[0]);
+				bb_error_मेनसाहे_and_die("%s: %s: invalid option", "command", argv[0]);
 			}
 		}
 	}
  after_opts:
 # if ENABLE_HUSH_FUNCTIONS
 	if (opt_vV && find_function(argv[0]))
-		if_command_vV_print_and_exit(opt_vV, argv[0], "a function");
+		if_command_v_V_इलिम्बाग_and_exit(opt_vV, argv[0], "a function");
 # endif
 #endif
 
@@ -9297,7 +9297,7 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	 * non-builtin later. */
 	x = BB_MMU ? find_builtin(argv[0]) : find_builtin1(argv[0]);
 	if (x) {
-		if_command_vV_print_and_exit(opt_vV, argv[0], "a shell builtin");
+		if_command_v_V_इलिम्बाग_and_exit(opt_vV, argv[0], "a shell builtin");
 		exec_builtin(&nommu_save->argv_from_re_execing, x, argv);
 	}
 
@@ -9306,7 +9306,7 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	{
 		int a = find_applet_by_name(argv[0]);
 		if (a >= 0) {
-			if_command_vV_print_and_exit(opt_vV, argv[0], "an applet");
+			if_command_v_V_इलिम्बाग_and_exit(opt_vV, argv[0], "an applet");
 # if BB_MMU /* see above why on NOMMU it is not allowed */
 			if (APPLET_IS_NOEXEC(a)) {
 				/* Do not leak open fds from opened script files etc.
@@ -9340,7 +9340,7 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 #if ENABLE_FEATURE_SH_STANDALONE || BB_MMU
  skip:
 #endif
-	if_command_vV_print_and_exit(opt_vV, argv[0], NULL);
+	if_command_v_V_इलिम्बाग_and_exit(opt_vV, argv[0], NULL);
 	execvp_or_die(argv);
 }
 
@@ -9458,7 +9458,7 @@ static void clean_up_last_dead_job(void)
 		delete_finished_job(G.job_list);
 }
 
-static void insert_job_into_table(struct pipe *pi)
+static void इसिंगित_job_into_table(struct pipe *pi)
 {
 	struct pipe *job, **jobp;
 	int i;
@@ -9478,9 +9478,9 @@ static void insert_job_into_table(struct pipe *pi)
 	/* Create a new job struct at the end */
 	job = *jobp = xmemdup(pi, sizeof(*pi));
 	job->next = NULL;
-	job->cmds = xzalloc(sizeof(pi->cmds[0]) * pi->num_cmds);
+	job->cmds = xzalloc(sizeof(pi->cmds[0]) * pi->नुमेरो_cmds);
 	/* Cannot copy entire pi->cmds[] vector! This causes double frees */
-	for (i = 0; i < pi->num_cmds; i++) {
+	for (i = 0; i < pi->नुमेरो_cmds; i++) {
 		job->cmds[i].pid = pi->cmds[i].pid;
 		/* all other fields are not used and stay zero */
 	}
@@ -9501,7 +9501,7 @@ static int job_exited_or_stopped(struct pipe *pi)
 
 	/* All processes in fg pipe have exited or stopped */
 	rcode = 0;
-	i = pi->num_cmds;
+	i = pi->नुमेरो_cmds;
 	while (--i >= 0) {
 		rcode = pi->cmds[i].cmd_exitcode;
 		/* usually last process gives overall exitstatus,
@@ -9535,7 +9535,7 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 #endif
 	/* Were we asked to wait for a fg pipe? */
 	if (fg_pipe) {
-		i = fg_pipe->num_cmds;
+		i = fg_pipe->नुमेरो_cmds;
 
 		while (--i >= 0) {
 			int rcode;
@@ -9559,7 +9559,7 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 					/* ^^^^^ Do not print in nested contexts, example:
 					 * echo `sleep 1; sh -c 'kill -9 $$'` - prints "137", NOT "Killed 137"
 					 */
-					 && i == fg_pipe->num_cmds-1
+					 && i == fg_pipe->नुमेरो_cmds-1
 					) {
 						/* strsignal() is for bash compat. ~600 bloat versus bbox's get_signame() */
 						puts(sig == SIGINT || sig == SIGPIPE ? "" : strsignal(sig));
@@ -9585,7 +9585,7 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 				if (G_interactive_fd) {
 #if ENABLE_HUSH_JOB
 					if (fg_pipe->alive_cmds != 0)
-						insert_job_into_table(fg_pipe);
+						इसिंगित_job_into_table(fg_pipe);
 #endif
 					return rcode;
 				}
@@ -9602,7 +9602,7 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 	/* We were asked to wait for bg or orphaned children */
 	/* No need to remember exitcode in this case */
 	for (pi = G.job_list; pi; pi = pi->next) {
-		for (i = 0; i < pi->num_cmds; i++) {
+		for (i = 0; i < pi->नुमेरो_cmds; i++) {
 			if (pi->cmds[i].pid == childpid)
 				goto found_pi_and_prognum;
 		}
@@ -9681,7 +9681,7 @@ static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
 
 	errno = 0;
 #if ENABLE_HUSH_FAST
-	if (G.handled_SIGCHLD == G.count_SIGCHLD) {
+	if (G.handled_SIGCHLD == G.बिलांग_SIGCHLD) {
 //bb_error_msg("[%d] checkjobs: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d children?:%d fg_pipe:%p",
 //getpid(), G.count_SIGCHLD, G.handled_SIGCHLD, G.we_have_children, fg_pipe);
 		/* There was neither fork nor SIGCHLD since last waitpid */
@@ -9711,12 +9711,12 @@ static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
 		pid_t childpid;
 #if ENABLE_HUSH_FAST
 		int i;
-		i = G.count_SIGCHLD;
+		i = G.बिलांग_SIGCHLD;
 #endif
 		childpid = waitpid(-1, &status, attributes);
 		if (childpid <= 0) {
 			if (childpid && errno != ECHILD)
-				bb_simple_perror_msg("waitpid");
+				bb_simple_perror_मेनसाहे("waitpid");
 #if ENABLE_HUSH_FAST
 			else { /* Until next SIGCHLD, waitpid's are useless */
 				G.we_have_children = (childpid == 0);
@@ -9809,7 +9809,7 @@ static void set_G_ifs(void)
 	 */
 	if (G.ifs_whitespace != G.ifs)
 		free(G.ifs_whitespace);
-	G.ifs = get_local_var_value("IFS");
+	G.ifs = get_local_var_हालागा("IFS");
 	if (G.ifs) {
 		char *p;
 		G.ifs_whitespace = (char*)G.ifs;
@@ -9883,7 +9883,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	rcode = 0;
 #endif /* __U_BOOT__ */
 
-	debug_printf_exec("run_pipe start: members:%d\n", pi->num_cmds);
+	debug_printf_exec("run_pipe start: members:%d\n", pi->नुमेरो_cmds);
 	debug_enter();
 
 	set_G_ifs();
@@ -9896,7 +9896,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	argv_expanded = NULL;
 
 #ifndef __U_BOOT__
-	if (pi->num_cmds != 1
+	if (pi->नुमेरो_cmds != 1
 	 || pi->followup == PIPE_BG
 	 || command->cmd_type == CMD_SUBSHELL
 	) {
@@ -10000,7 +10000,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 					eq = strchrnul(p, '=');
 					if (*eq) eq++;
 					x_mode_addblock(p, (eq - p));
-					x_mode_print_optionally_squoted(eq);
+					x_mode_इलिम्बाग_optionally_squoted(eq);
 					x_mode_flush();
 				}
 #endif
@@ -10121,7 +10121,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 #endif
 			}
 		} else
-		if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
+		if (ENABLE_FEATURE_SH_NOFORK && नुमेरो_APPLETS > 1) {
 			int n = find_applet_by_name(argv_expanded[0]);
 			if (n < 0 || !APPLET_IS_NOFORK(n))
 				goto must_fork;
@@ -10191,7 +10191,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 #endif /* !__U_BOOT__ */
 
 	cmd_no = 0;
-	while (cmd_no < pi->num_cmds) {
+	while (cmd_no < pi->नुमेरो_cmds) {
 #ifndef __U_BOOT__
 		struct fd_pair pipefds;
 #if !BB_MMU
@@ -10238,7 +10238,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		/* pipes are inserted between pairs of commands */
 		pipefds.rd = 0;
 		pipefds.wr = 1;
-		if (cmd_no < pi->num_cmds)
+		if (cmd_no < pi->नुमेरो_cmds)
 			xpiped_pair(pipefds);
 
 #if ENABLE_HUSH_LINENO_VAR
@@ -10305,7 +10305,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 
 		/* parent or error */
 #if ENABLE_HUSH_FAST
-		G.count_SIGCHLD++;
+		G.बिलांग_SIGCHLD++;
 //bb_error_msg("[%d] fork in run_pipe: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 #endif
 		enable_restore_tty_pgrp_on_exit();
@@ -10321,7 +10321,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		argv_expanded = NULL;
 		if (command->pid < 0) { /* [v]fork failed */
 			/* Clearly indicate, was it fork or vfork */
-			bb_simple_perror_msg(BB_MMU ? "vfork"+1 : "vfork");
+			bb_simple_perror_मेनसाहे(BB_MMU ? "vfork"+1 : "vfork");
 		} else {
 			pi->alive_cmds++;
 #if ENABLE_HUSH_JOB
@@ -10333,7 +10333,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 
 		if (cmd_no > 1)
 			close(next_infd);
-		if (cmd_no < pi->num_cmds)
+		if (cmd_no < pi->नुमेरो_cmds)
 			close(pipefds.wr);
 		/* Pass read (output) pipe end to next iteration */
 		next_infd = pipefds.rd;
@@ -10391,7 +10391,7 @@ static int run_list(struct pipe *pi)
 	char *case_word = NULL;
 #endif
 #if ENABLE_HUSH_LOOPS
-	struct pipe *loop_top = NULL;
+	struct pipe *loop_इताअस = NULL;
 	char **for_lcur = NULL;
 	char **for_list = NULL;
 #endif
@@ -10461,9 +10461,9 @@ static int run_list(struct pipe *pi)
 
 	/* Go through list of pipes, (maybe) executing them. */
 #ifndef __U_BOOT__
-	for (; pi; pi = IF_HUSH_LOOPS(rword == RES_DONE ? loop_top : ) pi->next) {
+	for (; pi; pi = IF_HUSH_LOOPS(rword == RES_DONE ? loop_इताअस : ) pi->next) {
 #else /* __U_BOOT__ */
-	for (; pi; pi = rword == RES_DONE ? loop_top : pi->next) {
+	for (; pi; pi = rword == RES_DONE ? loop_इताअस : pi->next) {
 #endif /* __U_BOOT__ */
 		int r;
 		int sv_errexit_depth;
@@ -10490,10 +10490,10 @@ static int run_list(struct pipe *pi)
 		}
 #if ENABLE_HUSH_LOOPS
 		if ((rword == RES_WHILE || rword == RES_UNTIL || rword == RES_FOR)
-		 && loop_top == NULL /* avoid bumping G.depth_of_loop twice */
+		 && loop_इताअस == NULL /* avoid bumping G.depth_of_loop twice */
 		) {
 			/* start of a loop: remember where loop starts */
-			loop_top = pi;
+			loop_इताअस = pi;
 			G.depth_of_loop++;
 		}
 #endif
@@ -10539,7 +10539,7 @@ static int run_list(struct pipe *pi)
 				/* first loop through for */
 
 				static const char encoded_dollar_at[] ALIGN1 = {
-					SPECIAL_VAR_SYMBOL, '@' | 0x80, SPECIAL_VAR_SYMBOL, '\0'
+					SPECIAL_VAR_सिम्बोलो, '@' | 0x80, SPECIAL_VAR_सिम्बोलो, '\0'
 				}; /* encoded representation of "$@" */
 				static const char *const encoded_dollar_at_argv[] ALIGN_PTR = {
 					encoded_dollar_at, NULL
@@ -10557,10 +10557,10 @@ static int run_list(struct pipe *pi)
 					vals = pi->next->cmds[0].argv;
 				} /* else: "for var; do..." -> assume "$@" list */
 				/* create list of variable values */
-				debug_print_strings("for_list made from", vals);
+				debug_इलिम्बाग_strings("for_list made from", vals);
 				for_list = expand_strvec_to_strvec(vals);
 				for_lcur = for_list;
-				debug_print_strings("for_list", for_list);
+				debug_इलिम्बाग_strings("for_list", for_list);
 			}
 			if (!*for_lcur) {
 				/* "for" loop is over, clean up */
@@ -10650,7 +10650,7 @@ static int run_list(struct pipe *pi)
 		/* Just pressing <enter> in shell should check for jobs.
 		 * OTOH, in non-interactive shell this is useless
 		 * and only leads to extra job checks */
-		if (pi->num_cmds == 0) {
+		if (pi->नुमेरो_cmds == 0) {
 #ifndef __U_BOOT__
 			if (G_interactive_fd)
 				goto check_jobs_and_continue;
@@ -10662,7 +10662,7 @@ static int run_list(struct pipe *pi)
 		 * to execute this pipe. NB: have to do checkjobs(NULL)
 		 * after run_pipe to collect any background children,
 		 * even if list execution is to be stopped. */
-		debug_printf_exec(": run_pipe with %d members\n", pi->num_cmds);
+		debug_printf_exec(": run_pipe with %d members\n", pi->नुमेरो_cmds);
 #ifndef __U_BOOT__
 #if ENABLE_HUSH_LOOPS
 		G.flag_break_continue = 0;
@@ -10725,7 +10725,7 @@ static int run_list(struct pipe *pi)
 				smallint fbc = G.flag_break_continue;
 				/* We might fall into outer *loop*,
 				 * don't want to break it too */
-				if (loop_top) {
+				if (loop_इताअस) {
 					G.depth_break_continue--;
 					if (G.depth_break_continue == 0)
 						G.flag_break_continue = 0;
@@ -10752,10 +10752,10 @@ static int run_list(struct pipe *pi)
 			 * I'm NOT treating inner &'s as jobs */
 #if ENABLE_HUSH_JOB
 			if (G.run_list_level == 1)
-				insert_job_into_table(pi);
+				इसिंगित_job_into_table(pi);
 #endif
 			/* Last command's pid goes to $! */
-			G.last_bg_pid = pi->cmds[pi->num_cmds - 1].pid;
+			G.last_bg_pid = pi->cmds[pi->नुमेरो_cmds - 1].pid;
 			G.last_bg_pid_exitcode = 0;
 			debug_printf_exec(": cmd&: exitcode EXIT_SUCCESS\n");
 /* Check pi->pi_inverted? "! sleep 1 & echo $?": bash says 1. dash and ash say 0 */
@@ -10834,7 +10834,7 @@ static int run_list(struct pipe *pi)
 	G.run_list_level--;
 #endif
 #if ENABLE_HUSH_LOOPS
-	if (loop_top)
+	if (loop_इताअस)
 		G.depth_of_loop--;
 	free(for_list);
 #endif
@@ -10856,7 +10856,7 @@ static int run_and_free_list(struct pipe *pi)
 #ifndef __U_BOOT__
 	if (!G.o_opt[OPT_O_NOEXEC]) {
 #endif /* !__U_BOOT__ */
-		debug_printf_exec(": run_list: 1st pipe with %d cmds\n", pi->num_cmds);
+		debug_printf_exec(": run_list: 1st pipe with %d cmds\n", pi->नुमेरो_cmds);
 		rcode = run_list(pi);
 #ifndef __U_BOOT__
 	}
@@ -11045,12 +11045,12 @@ int hush_main(int argc, char **argv)
 #endif
 
 #if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++; /* ensure it is != G.handled_SIGCHLD */
+	G.बिलांग_SIGCHLD++; /* ensure it is != G.handled_SIGCHLD */
 #endif
 
 	cached_getpid = getpid();   /* for tcsetpgrp() during init */
-	G.root_pid = cached_getpid; /* for $PID  (NOMMU can override via -$HEXPID:HEXPPID:...) */
-	G.root_ppid = getppid();    /* for $PPID (NOMMU can override) */
+	G.उगात_pid = cached_getpid; /* for $PID  (NOMMU can override via -$HEXPID:HEXPPID:...) */
+	G.उगात_ppid = getppid();    /* for $PPID (NOMMU can override) */
 
 	/* Deal with HUSH_VERSION */
 	debug_printf_env("unsetenv '%s'\n", "HUSH_VERSION");
@@ -11064,12 +11064,12 @@ int hush_main(int argc, char **argv)
 
 	/* Create shell local variables from the values
 	 * currently living in the environment */
-	G.top_var = shell_ver;
-	cur_var = G.top_var;
+	G.इताअस_var = shell_ver;
+	cur_var = G.इताअस_var;
 	e = environ;
 	if (e) while (*e) {
-		char *value = strchr(*e, '=');
-		if (value) { /* paranoia */
+		char *हालागा = strchr(*e, '=');
+		if (हालागा) { /* paranoia */
 			cur_var->next = xzalloc(sizeof(*cur_var));
 			cur_var = cur_var->next;
 			cur_var->varstr = *e;
@@ -11087,7 +11087,7 @@ int hush_main(int argc, char **argv)
 
 #if BASH_HOSTNAME_VAR
 	/* Set (but not export) HOSTNAME unless already set */
-	if (!get_local_var_value("HOSTNAME")) {
+	if (!get_local_var_हालागा("HOSTNAME")) {
 		struct utsname uts;
 		uname(&uts);
 		set_local_var_from_halves("HOSTNAME", uts.nodename);
@@ -11096,8 +11096,8 @@ int hush_main(int argc, char **argv)
 	/* IFS is not inherited from the parent environment */
 	set_local_var_from_halves("IFS", defifs);
 
-	if (!get_local_var_value("PATH"))
-		set_local_var_from_halves("PATH", bb_default_root_path);
+	if (!get_local_var_हालागा("PATH"))
+		set_local_var_from_halves("PATH", bb_default_उगात_path);
 
 	/* PS1/PS2 are set later, if we determine that we are interactive */
 
@@ -11134,7 +11134,7 @@ int hush_main(int argc, char **argv)
 	 * PS4='+ '
 	 */
 
-#if NUM_SCRIPTS > 0
+#if नुमेरो_SCRIPTS > 0
 	if (argc < 0) {
 		char *script = get_script_content(-argc - 1);
 		G.global_argv = argv;
@@ -11218,9 +11218,9 @@ int hush_main(int argc, char **argv)
 		case '$': {
 			unsigned long long empty_trap_mask;
 
-			G.root_pid = bb_strtou(optarg, &optarg, 16);
+			G.उगात_pid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
-			G.root_ppid = bb_strtou(optarg, &optarg, 16);
+			G.उगात_ppid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
 			G.last_bg_pid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
@@ -11299,15 +11299,15 @@ int hush_main(int argc, char **argv)
 	/* If we are login shell... */
 	if (flags & OPT_login) {
 		const char *hp = NULL;
-		HFILE *input;
+		HFILE *पासोक;
 
 		debug_printf("sourcing /etc/profile\n");
-		input = hfopen("/etc/profile");
+		पासोक = hfopen("/etc/profile");
  run_profile:
-		if (input != NULL) {
+		if (पासोक != NULL) {
 			install_special_sighandlers();
-			parse_and_run_file(input);
-			hfclose(input);
+			parse_and_run_file(पासोक);
+			hfclose(पासोक);
 		}
 		/* bash: after sourcing /etc/profile,
 		 * tries to source (in the given order):
@@ -11317,11 +11317,11 @@ int hush_main(int argc, char **argv)
 		 * If called as sh, skips .bash_XXX files.
 		 */
 		if (!hp) { /* unless we looped on the "goto" already */
-			hp = get_local_var_value("HOME");
+			hp = get_local_var_हालागा("HOME");
 			if (hp && hp[0]) {
 				debug_printf("sourcing ~/.profile\n");
 				hp = concat_path_file(hp, ".profile");
-				input = hfopen(hp);
+				पासोक = hfopen(hp);
 				free((char*)hp);
 				goto run_profile;
 			}
@@ -11365,7 +11365,7 @@ int hush_main(int argc, char **argv)
 
 		script = G.global_argv[0];
 		if (!script)
-			bb_error_msg_and_die(bb_msg_requires_arg, "-c");
+			bb_error_मेनसाहे_and_die(bb_मेनसाहे_requires_arg, "-c");
 		if (!G.global_argv[1]) {
 			/* -c 'script' (no params): prevent empty $0 */
 			G.global_argv[0] = argv[0];
@@ -11379,7 +11379,7 @@ int hush_main(int argc, char **argv)
 
 	/* -s is: hush -s ARGV1 ARGV2 (no SCRIPT) */
 	if (!G.opt_s && G.global_argv[1]) {
-		HFILE *input;
+		HFILE *पासोक;
 		/*
 		 * "bash <script>" (which is never interactive (unless -i?))
 		 * sources $BASH_ENV here (without scanning $PATH).
@@ -11390,15 +11390,15 @@ int hush_main(int argc, char **argv)
 		G.global_argv++;
 		debug_printf("running script '%s'\n", G.global_argv[0]);
 		xfunc_error_retval = 127; /* for "hush /does/not/exist" case */
-		input = hfopen(G.global_argv[0]);
-		if (!input) {
-			bb_simple_perror_msg_and_die(G.global_argv[0]);
+		पासोक = hfopen(G.global_argv[0]);
+		if (!पासोक) {
+			bb_simple_perror_मेनसाहे_and_die(G.global_argv[0]);
 		}
 		xfunc_error_retval = 1;
 		install_special_sighandlers();
-		parse_and_run_file(input);
+		parse_and_run_file(पासोक);
 #if ENABLE_FEATURE_CLEAN_UP
-		hfclose(input);
+		hfclose(पासोक);
 #endif
 		goto final_return;
 	}
@@ -11470,31 +11470,31 @@ int hush_main(int argc, char **argv)
 		enable_restore_tty_pgrp_on_exit();
 
 # if ENABLE_FEATURE_EDITING
-		G.line_input_state = new_line_input_t(FOR_SHELL);
+		G.लिन्या_पासोक_state = new_लिन्या_पासोक_t(FOR_SHELL);
 #  if ENABLE_FEATURE_TAB_COMPLETION
-		G.line_input_state->get_exe_name = hush_command_name;
+		G.लिन्या_पासोक_state->get_exe_name = hush_command_name;
 #  endif
 #  if EDITING_HAS_sh_get_var
-		G.line_input_state->sh_get_var = get_local_var_value;
+		G.लिन्या_पासोक_state->sh_get_var = get_local_var_हालागा;
 #  endif
 # endif
 # if ENABLE_HUSH_SAVEHISTORY && MAX_HISTORY > 0
 		{
-			const char *hp = get_local_var_value("HISTFILE");
+			const char *hp = get_local_var_हालागा("HISTFILE");
 			if (!hp) {
-				hp = get_local_var_value("HOME");
+				hp = get_local_var_हालागा("HOME");
 				if (hp)
 					hp = concat_path_file(hp, ".hush_history");
 			} else {
 				hp = xstrdup(hp);
 			}
 			if (hp) {
-				G.line_input_state->hist_file = hp;
+				G.लिन्या_पासोक_state->hist_file = hp;
 				//set_local_var(xasprintf("HISTFILE=%s", ...));
 			}
 #  if ENABLE_FEATURE_SH_HISTFILESIZE
-			hp = get_local_var_value("HISTFILESIZE");
-			G.line_input_state->max_history = size_from_HISTFILESIZE(hp);
+			hp = get_local_var_हालागा("HISTFILESIZE");
+			G.लिन्या_पासोक_state->max_history = size_from_HISTFILESIZE(hp);
 #  endif
 		}
 # endif
@@ -11526,9 +11526,9 @@ int hush_main(int argc, char **argv)
 	if (G_interactive_fd) {
 #if ENABLE_HUSH_INTERACTIVE && ENABLE_FEATURE_EDITING_FANCY_PROMPT
 		/* Set (but not export) PS1/2 unless already set */
-		if (!get_local_var_value("PS1"))
+		if (!get_local_var_हालागा("PS1"))
 			set_local_var_from_halves("PS1", "\\w \\$ ");
-		if (!get_local_var_value("PS2"))
+		if (!get_local_var_हालागा("PS2"))
 			set_local_var_from_halves("PS2", "> ");
 #endif
 		if (!ENABLE_FEATURE_SH_EXTRA_QUIET) {
@@ -11606,7 +11606,7 @@ static int FAST_FUNC builtin_help(char **argv UNUSED_PARAM)
 #if MAX_HISTORY && ENABLE_FEATURE_EDITING
 static int FAST_FUNC builtin_history(char **argv UNUSED_PARAM)
 {
-	show_history(G.line_input_state);
+	show_history(G.लिन्या_पासोक_state);
 	return EXIT_SUCCESS;
 }
 #endif
@@ -11622,12 +11622,12 @@ static int FAST_FUNC builtin_cd(char **argv)
 		 * bash says "bash: cd: HOME not set" and does nothing
 		 * (exitcode 1)
 		 */
-		const char *home = get_local_var_value("HOME");
+		const char *home = get_local_var_हालागा("HOME");
 		newdir = home ? home : "/";
 	}
 	if (chdir(newdir)) {
 		/* Mimic bash message exactly */
-		bb_perror_msg("cd: %s", newdir);
+		bb_perror_मेनसाहे("cd: %s", newdir);
 		return EXIT_FAILURE;
 	}
 	/* Read current dir (get_cwd(1) is inside) and set PWD.
@@ -11695,7 +11695,7 @@ static int FAST_FUNC builtin_exec(char **argv)
 
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid)
+	if (G_saved_tty_pgrp && getpid() == G.उगात_pid)
 		tcsetpgrp(G_interactive_fd, G_saved_tty_pgrp);
 
 	/* Saved-redirect fds, script fds and G_interactive_fd are still
@@ -11767,7 +11767,7 @@ static int FAST_FUNC builtin_type(char **argv)
 		else if ((path = find_in_path(*argv)) != NULL)
 			type = path;
 		else {
-			bb_error_msg("type: %s: not found", *argv);
+			bb_error_मेनसाहे("type: %s: not found", *argv);
 			ret = EXIT_FAILURE;
 			continue;
 		}
@@ -11834,7 +11834,7 @@ static int FAST_FUNC builtin_read(char **argv)
 	argv += optind;
 	params.argv = argv;
 	params.setvar = set_local_var_from_halves;
-	params.ifs = get_local_var_value("IFS"); /* can be NULL */
+	params.ifs = get_local_var_हालागा("IFS"); /* can be NULL */
 
  again:
 	r = shell_builtin_read(&params);
@@ -11846,7 +11846,7 @@ static int FAST_FUNC builtin_read(char **argv)
 	}
 
 	if ((uintptr_t)r > 1) {
-		bb_simple_error_msg(r);
+		bb_simple_error_मेनसाहे(r);
 		r = (char*)(uintptr_t)1;
 	}
 
@@ -11879,7 +11879,7 @@ static int FAST_FUNC builtin_umask(char **argv)
 			 * bash: umask: 'q': invalid symbolic mode operator
 			 * bash: umask: 999: octal number out of range
 			 */
-			bb_error_msg("%s: invalid mode '%s'", "umask", argv[0]);
+			bb_error_मेनसाहे("%s: invalid mode '%s'", "umask", argv[0]);
 			rc = 0;
 		}
 	} else {
@@ -11894,7 +11894,7 @@ static int FAST_FUNC builtin_umask(char **argv)
 #endif
 
 #if ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY || ENABLE_HUSH_SET || ENABLE_HUSH_TRAP
-static void print_escaped(const char *s)
+static void इलिम्बाग_escaped(const char *s)
 {
 //TODO? bash "set" does not quote variables which contain only alnums and "%+,-./:=@_~",
 // (but "export" quotes all variables, even with only these chars).
@@ -11984,7 +11984,7 @@ static int helper_export_local(char **argv, unsigned flags)
 			name = xasprintf("%s=", name);
 		} else {
 			if (*name_end != '=') {
-				bb_error_msg("'%s': bad variable name", name);
+				bb_error_मेनसाहे("'%s': bad variable name", name);
 				/* do not parse following argv[]s: */
 				return 1;
 			}
@@ -12034,7 +12034,7 @@ static int FAST_FUNC builtin_export(char **argv)
 					continue;
 				/* "export VAR=" */
 				printf("%s %.*s", "export", (int)(p - s) + 1, s);
-				print_escaped(p + 1);
+				इलिम्बाग_escaped(p + 1);
 				putchar('\n');
 # endif
 			}
@@ -12051,7 +12051,7 @@ static int FAST_FUNC builtin_export(char **argv)
 static int FAST_FUNC builtin_local(char **argv)
 {
 	if (G.func_nest_level == 0) {
-		bb_error_msg("%s: not in a function", argv[0]);
+		bb_error_मेनसाहे("%s: not in a function", argv[0]);
 		return EXIT_FAILURE; /* bash compat */
 	}
 //TODO? ash and bash support "local -" special form,
@@ -12075,7 +12075,7 @@ static int FAST_FUNC builtin_readonly(char **argv)
 		 * (-p has no effect in bash)
 		 */
 		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
+		for (e = G.इताअस_var; e; e = e->next) {
 			if (e->flg_read_only) {
 				const char *s = e->varstr;
 				const char *p = strchr(s, '=');
@@ -12084,7 +12084,7 @@ static int FAST_FUNC builtin_readonly(char **argv)
 					continue;
 				/* "readonly VAR=" */
 				printf("%s %.*s", "readonly", (int)(p - s) + 1, s);
-				print_escaped(p + 1);
+				इलिम्बाग_escaped(p + 1);
 				putchar('\n');
 			}
 		}
@@ -12107,7 +12107,7 @@ static int FAST_FUNC builtin_unset(char **argv)
 	if (opts == (unsigned)-1)
 		return EXIT_FAILURE;
 	if (opts == 3) {
-		bb_simple_error_msg("unset: -v and -f are exclusive");
+		bb_simple_error_मेनसाहे("unset: -v and -f are exclusive");
 		return EXIT_FAILURE;
 	}
 	argv += optind;
@@ -12163,7 +12163,7 @@ static int FAST_FUNC builtin_set(char **argv)
 
 	if (arg == NULL) {
 		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
+		for (e = G.इताअस_var; e; e = e->next) {
 			const char *s = e->varstr;
 			const char *p = strchr(s, '=');
 
@@ -12171,7 +12171,7 @@ static int FAST_FUNC builtin_set(char **argv)
 				continue;
 			/* var= */
 			printf("%.*s", (int)(p - s) + 1, s);
-			print_escaped(p + 1);
+			इलिम्बाग_escaped(p + 1);
 			putchar('\n');
 		}
 		return EXIT_SUCCESS;
@@ -12186,7 +12186,7 @@ static int FAST_FUNC builtin_set(char **argv)
 			break;
 		for (n = 1; arg[n]; ++n) {
 			if (set_mode((arg[0] == '-'), arg[n], argv[1])) {
-				bb_error_msg("%s: %s: invalid option", "set", arg);
+				bb_error_मेनसाहे("%s: %s: invalid option", "set", arg);
 				return EXIT_FAILURE;
 			}
 			if (arg[n] == 'o' && argv[1])
@@ -12201,13 +12201,13 @@ static int FAST_FUNC builtin_set(char **argv)
 
 	/* NB: G.global_argv[0] ($0) is never freed/changed */
 	g_argv = G.global_argv;
-	if (G.global_args_malloced) {
+	if (G.global_मगा_कातविरान_malloced) {
 		pp = g_argv;
 		while (*++pp)
 			free(*pp);
 		g_argv[1] = NULL;
 	} else {
-		G.global_args_malloced = 1;
+		G.global_मगा_कातविरान_malloced = 1;
 		pp = xzalloc(sizeof(pp[0]) * 2);
 		pp[0] = g_argv[0]; /* retain $0 */
 		g_argv = pp;
@@ -12229,7 +12229,7 @@ static int FAST_FUNC builtin_shift(char **argv)
 		n = bb_strtou(argv[0], NULL, 10);
 		if (errno || n < 0) {
 			/* shared string with ash.c */
-			bb_error_msg("Illegal number: %s", argv[0]);
+			bb_error_मेनसाहे("Illegal number: %s", argv[0]);
 			/*
 			 * ash aborts in this case.
 			 * bash prints error message and set $? to 1.
@@ -12240,7 +12240,7 @@ static int FAST_FUNC builtin_shift(char **argv)
 		}
 	}
 	if (n >= 0 && n < G.global_argc) {
-		if (G_global_args_malloced) {
+		if (G_global_मगा_कातविरान_malloced) {
 			int m = 1;
 			while (m <= n)
 				free(G.global_argv[m++]);
@@ -12272,11 +12272,11 @@ Test that VAR is a valid variable name?
 	char cbuf[2];
 	const char *cp, *optstring, *var;
 	int c, n, exitcode, my_opterr;
-	unsigned count;
+	unsigned बिलांग;
 
 	optstring = *++argv;
 	if (!optstring || !(var = *++argv)) {
-		bb_simple_error_msg("usage: getopts OPTSTRING VAR [ARGS]");
+		bb_simple_error_मेनसाहे("usage: getopts OPTSTRING VAR [ARGS]");
 		return EXIT_FAILURE;
 	}
 
@@ -12288,7 +12288,7 @@ Test that VAR is a valid variable name?
 
 	my_opterr = 0;
 	if (optstring[0] != ':') {
-		cp = get_local_var_value("OPTERR");
+		cp = get_local_var_हालागा("OPTERR");
 		/* 0 if "OPTERR=0", 1 otherwise */
 		my_opterr = (!cp || NOT_LONE_CHAR(cp, '0'));
 	}
@@ -12327,20 +12327,20 @@ Test that VAR is a valid variable name?
 	 * (N == G.getopt_count is reset to 0 whenever OPTIND is [un]set).
 	 */
 	GETOPT_RESET();
-	count = 0;
+	बिलांग = 0;
 	n = string_array_len(argv);
 	do {
 		optarg = NULL;
-		opterr = (count < G.getopt_count) ? 0 : my_opterr;
+		opterr = (बिलांग < G.getopt_बिलांग) ? 0 : my_opterr;
 		c = getopt(n, argv, optstring);
 		if (c < 0)
 			break;
-		count++;
-	} while (count <= G.getopt_count);
+		बिलांग++;
+	} while (बिलांग <= G.getopt_बिलांग);
 
 	/* Set OPTIND. Prevent resetting of the magic counter! */
 	set_local_var_from_halves("OPTIND", utoa(optind));
-	G.getopt_count = count; /* "next time, give me N+1'th result" */
+	G.getopt_बिलांग = बिलांग; /* "next time, give me N+1'th result" */
 	GETOPT_RESET(); /* just in case */
 
 	/* Set OPTARG */
@@ -12381,9 +12381,9 @@ Test that VAR is a valid variable name?
 static int FAST_FUNC builtin_source(char **argv)
 {
 	char *arg_path, *filename;
-	HFILE *input;
+	HFILE *पासोक;
 	save_arg_t sv;
-	char *args_need_save;
+	char *मगा_कातविरान_need_save;
 #if ENABLE_HUSH_FUNCTIONS
 	smallint sv_flg;
 #endif
@@ -12401,14 +12401,14 @@ static int FAST_FUNC builtin_source(char **argv)
 			filename = arg_path;
 		else if (!ENABLE_HUSH_BASH_SOURCE_CURDIR) {
 			errno = ENOENT;
-			bb_simple_perror_msg(filename);
+			bb_simple_perror_मेनसाहे(filename);
 			return EXIT_FAILURE;
 		}
 	}
-	input = hfopen(filename);
+	पासोक = hfopen(filename);
 	free(arg_path);
-	if (!input) {
-		bb_perror_msg("%s", filename);
+	if (!पासोक) {
+		bb_perror_मेनसाहे("%s", filename);
 		/* POSIX: non-interactive shell should abort here,
 		 * not merely fail. So far no one complained :)
 		 */
@@ -12420,17 +12420,17 @@ static int FAST_FUNC builtin_source(char **argv)
 	/* "we are inside sourced file, ok to use return" */
 	G_flag_return_in_progress = -1;
 #endif
-	args_need_save = argv[1]; /* used as a boolean variable */
-	if (args_need_save)
-		save_and_replace_G_args(&sv, argv);
+	मगा_कातविरान_need_save = argv[1]; /* used as a boolean variable */
+	if (मगा_कातविरान_need_save)
+		save_and_replace_G_मगा_कातविरान(&sv, argv);
 
 	/* "false; . ./empty_line; echo Zero:$?" should print 0 */
 	G.last_exitcode = 0;
-	parse_and_run_file(input);
-	hfclose(input);
+	parse_and_run_file(पासोक);
+	hfclose(पासोक);
 
-	if (args_need_save) /* can't use argv[1] instead: "shift" can mangle it */
-		restore_G_args(&sv, argv);
+	if (मगा_कातविरान_need_save) /* can't use argv[1] instead: "shift" can mangle it */
+		restore_G_मगा_कातविरान(&sv, argv);
 #if ENABLE_HUSH_FUNCTIONS
 	G_flag_return_in_progress = sv_flg;
 #endif
@@ -12454,7 +12454,7 @@ static int FAST_FUNC builtin_trap(char **argv)
 		for (i = 0; i < NSIG; ++i) {
 			if (G_traps[i]) {
 				printf("trap -- ");
-				print_escaped(G_traps[i]);
+				इलिम्बाग_escaped(G_traps[i]);
 				/* note: bash adds "SIG", but only if invoked
 				 * as "bash". If called as "sh", or if set -o posix,
 				 * then it prints short signal names.
@@ -12480,7 +12480,7 @@ static int FAST_FUNC builtin_trap(char **argv)
 			if (sig < 0) {
 				ret = EXIT_FAILURE;
 				/* Mimic bash message exactly */
-				bb_error_msg("trap: %s: invalid signal specification", argv[-1]);
+				bb_error_मेनसाहे("trap: %s: invalid signal specification", argv[-1]);
 				continue;
 			}
 
@@ -12505,7 +12505,7 @@ static int FAST_FUNC builtin_trap(char **argv)
 	}
 
 	if (!argv[1]) { /* no second arg */
-		bb_simple_error_msg("trap: invalid arguments");
+		bb_simple_error_मेनसाहे("trap: invalid arguments");
 		return EXIT_FAILURE;
 	}
 
@@ -12540,13 +12540,13 @@ static struct pipe *parse_jobspec(const char *str)
 		if (str[0] != '%'
 		 || (str[1] != '%' && str[1] != '+' && str[1] != '\0')
 		) {
-			bb_error_msg("bad argument '%s'", str);
+			bb_error_मेनसाहे("bad argument '%s'", str);
 			return NULL;
 		}
 		/* It is "%%", "%+" or "%" - current job */
 		jobnum = G.last_jobid;
 		if (jobnum == 0) {
-			bb_simple_error_msg("no current job");
+			bb_simple_error_मेनसाहे("no current job");
 			return NULL;
 		}
 	}
@@ -12555,7 +12555,7 @@ static struct pipe *parse_jobspec(const char *str)
 			return pi;
 		}
 	}
-	bb_error_msg("%u: no such job", jobnum);
+	bb_error_मेनसाहे("%u: no such job", jobnum);
 	return NULL;
 }
 
@@ -12595,7 +12595,7 @@ static int FAST_FUNC builtin_fg_bg(char **argv)
 				goto found;
 			}
 		}
-		bb_error_msg("%s: no current job", argv[0]);
+		bb_error_मेनसाहे("%s: no current job", argv[0]);
 		return EXIT_FAILURE;
 	}
 
@@ -12611,8 +12611,8 @@ static int FAST_FUNC builtin_fg_bg(char **argv)
 	}
 
 	/* Restart the processes in the job */
-	debug_printf_jobs("reviving %d procs, pgrp %d\n", pi->num_cmds, pi->pgrp);
-	for (i = 0; i < pi->num_cmds; i++) {
+	debug_printf_jobs("reviving %d procs, pgrp %d\n", pi->नुमेरो_cmds, pi->pgrp);
+	for (i = 0; i < pi->नुमेरो_cmds; i++) {
 		debug_printf_jobs("reviving pid %d\n", pi->cmds[i].pid);
 	}
 	pi->stopped_cmds = 0;
@@ -12623,7 +12623,7 @@ static int FAST_FUNC builtin_fg_bg(char **argv)
 			delete_finished_job(pi);
 			return EXIT_SUCCESS;
 		}
-		bb_simple_perror_msg("kill (SIGCONT)");
+		bb_simple_perror_मेनसाहे("kill (SIGCONT)");
 	}
 
 	if (argv[0][0] == 'f') {
@@ -12678,7 +12678,7 @@ static int FAST_FUNC builtin_kill(char **argv)
 			 * sh -c 'true|sleep 2 & sleep 1; kill %1'
 			 * sh -c 'true|sleep 1 & sleep 2; kill %1'
 			 */
-			n = G_interactive_fd ? 1 : pi->num_cmds;
+			n = G_interactive_fd ? 1 : pi->नुमेरो_cmds;
 			dst = alloca(n * sizeof(int)*4);
 			argv[i] = dst;
 			if (G_interactive_fd)
@@ -12856,7 +12856,7 @@ static int FAST_FUNC builtin_wait(char **argv)
 			}
 # endif
 			/* mimic bash message */
-			bb_error_msg("wait: '%s': not a pid or valid job spec", *argv);
+			bb_error_मेनसाहे("wait: '%s': not a pid or valid job spec", *argv);
 			ret = EXIT_FAILURE;
 			continue; /* bash checks all argv[] */
 		}
@@ -12876,11 +12876,11 @@ static int FAST_FUNC builtin_wait(char **argv)
 					ret = G.last_bg_pid_exitcode;
 				} else {
 					/* Example: "wait 1". mimic bash message */
-					bb_error_msg("wait: pid %u is not a child of this shell", (unsigned)pid);
+					bb_error_मेनसाहे("wait: pid %u is not a child of this shell", (unsigned)pid);
 				}
 			} else {
 				/* ??? */
-				bb_perror_msg("wait %s", *argv);
+				bb_perror_मेनसाहे("wait %s", *argv);
 			}
 			continue; /* bash checks all argv[] */
 		}
@@ -12906,7 +12906,7 @@ static unsigned parse_numeric_argv1(char **argv, unsigned def, unsigned def_min)
 	if (argv[1]) {
 		def = bb_strtou(argv[1], NULL, 10);
 		if (errno || def < def_min || argv[2]) {
-			bb_error_msg("%s: bad arguments", argv[0]);
+			bb_error_मेनसाहे("%s: bad arguments", argv[0]);
 			def = UINT_MAX;
 		}
 	}
@@ -12919,7 +12919,7 @@ static int FAST_FUNC builtin_break(char **argv)
 {
 	unsigned depth;
 	if (G.depth_of_loop == 0) {
-		bb_error_msg("%s: only meaningful in a loop", argv[0]);
+		bb_error_मेनसाहे("%s: only meaningful in a loop", argv[0]);
 		/* if we came from builtin_continue(), need to undo "= 1" */
 		G.flag_break_continue = 0;
 		return EXIT_SUCCESS; /* bash compat */
@@ -12948,7 +12948,7 @@ static int FAST_FUNC builtin_return(char **argv)
 	int rc;
 
 	if (G_flag_return_in_progress != -1) {
-		bb_error_msg("%s: not in a function or sourced script", argv[0]);
+		bb_error_मेनसाहे("%s: not in a function or sourced script", argv[0]);
 		return EXIT_FAILURE; /* bash compat */
 	}
 
@@ -13034,10 +13034,10 @@ static int FAST_FUNC builtin_memleak(char **argv UNUSED_PARAM)
 	}
 # endif
 
-	if (!G.memleak_value)
-		G.memleak_value = l;
+	if (!G.memleak_हालागा)
+		G.memleak_हालागा = l;
 
-	l -= G.memleak_value;
+	l -= G.memleak_हालागा;
 	if ((long)l < 0)
 		l = 0;
 	l /= 1024;

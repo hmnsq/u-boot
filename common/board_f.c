@@ -122,8 +122,8 @@ static int display_text_info(void)
 	return 0;
 }
 
-#ifdef CONFIG_SYSRESET_PRINT_RESETINFO
-static int print_resetinfo(void)
+#ifdef CONFIG_SYSRESET_इलिम्बाग_RESETINFO
+static int इलिम्बाग_resetinfo(void)
 {
 	struct udevice *dev;
 	char status[256];
@@ -155,7 +155,7 @@ static int print_resetinfo(void)
 #endif
 
 #if defined(CONFIG_DISPLAY_CPUINFO) && CONFIG_IS_ENABLED(CPU)
-static int print_cpuinfo(void)
+static int इलिम्बाग_cpuinfo(void)
 {
 	struct udevice *dev;
 	char desc[512];
@@ -228,15 +228,15 @@ static int show_dram_config(void)
 		debug("Bank #%d: %llx ", i,
 		      (unsigned long long)(gd->dram[i].start));
 #ifdef DEBUG
-		print_size(gd->dram[i].size, "\n");
+		इलिम्बाग_size(gd->dram[i].size, "\n");
 #endif
 	}
 	debug("\nDRAM:  ");
 
-	print_size(gd->ram_size, "");
+	इलिम्बाग_size(gd->ram_size, "");
 	if (!sizes_near(gd->ram_size, size)) {
 		printf(" (total ");
-		print_size(size, ")");
+		इलिम्बाग_size(size, ")");
 	}
 	board_add_ram_info(0);
 	putc('\n');
@@ -308,24 +308,24 @@ __weak int mach_cpu_init(void)
 }
 
 /* Get the top of usable RAM */
-__weak phys_addr_t board_get_usable_ram_top(phys_size_t total_size)
+__weak phys_addr_t board_get_usable_ram_इताअस(phys_size_t total_size)
 {
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP))
-		return gd->ram_top;
+	if (CONFIG_IS_ENABLED(RELOC_ADDR_इताअस))
+		return gd->ram_इताअस;
 
 #if defined(CFG_SYS_SDRAM_BASE) && CFG_SYS_SDRAM_BASE > 0
 	/*
 	 * Detect whether we have so much RAM that it goes past the end of our
 	 * 32-bit address space. If so, clip the usable RAM so it doesn't.
 	 */
-	if (gd->ram_top < CFG_SYS_SDRAM_BASE)
+	if (gd->ram_इताअस < CFG_SYS_SDRAM_BASE)
 		/*
 		 * Will wrap back to top of 32-bit space when reservations
 		 * are made.
 		 */
 		return 0;
 #endif
-	return gd->ram_top;
+	return gd->ram_इताअस;
 }
 
 __weak int arch_setup_dest_addr(void)
@@ -345,22 +345,22 @@ static int setup_ram_config(void)
 {
 	debug("Monitor len: %08x\n", gd->mon_len);
 
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP)) {
+	if (CONFIG_IS_ENABLED(RELOC_ADDR_इताअस)) {
 		int i;
-		phys_addr_t top;
+		phys_addr_t इताअस;
 
 		gd->ram_size = 0;
 		for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-			top = get_mem_top(gd->dram[i].start, gd->dram[i].size,
+			इताअस = get_mem_इताअस(gd->dram[i].start, gd->dram[i].size,
 					  ALIGN(gd->mon_len, SZ_1M),
 					  (void *)gd->fdt_blob);
-			gd->ram_top = max(top, gd->ram_top);
+			gd->ram_इताअस = max(इताअस, gd->ram_इताअस);
 			gd->ram_size += gd->dram[i].size;
 		}
 	} else {
-		gd->ram_top = gd->ram_base + get_effective_memsize();
+		gd->ram_इताअस = gd->ram_base + get_effective_memsize();
 	}
-	gd->ram_top = board_get_usable_ram_top(gd->mon_len);
+	gd->ram_इताअस = board_get_usable_ram_इताअस(gd->mon_len);
 	/*
 	 * Subtract specified amount of memory to hide so that it won't
 	 * get "touched" at all by U-Boot. By fixing up gd->ram_size
@@ -371,12 +371,12 @@ static int setup_ram_config(void)
 	 * memory size from the SDRAM controller setup will have to
 	 * get fixed.
 	 */
-#if CONFIG_VAL(SYS_MEM_TOP_HIDE)
-	gd->ram_top -= CONFIG_SYS_MEM_TOP_HIDE;
-	gd->ram_size -= CONFIG_SYS_MEM_TOP_HIDE;
+#if CONFIG_VAL(SYS_MEM_इताअस_HIDE)
+	gd->ram_इताअस -= CONFIG_SYS_MEM_इताअस_HIDE;
+	gd->ram_size -= CONFIG_SYS_MEM_इताअस_HIDE;
 #endif
 
-	debug("Ram top: %08llx\n", (unsigned long long)gd->ram_top);
+	debug("Ram top: %08llx\n", (unsigned long long)gd->ram_इताअस);
 	debug("Ram size: %08llx\n", (unsigned long long)gd->ram_size);
 
 	return 0;
@@ -386,7 +386,7 @@ static int setup_dest_addr(void)
 {
 	int ret;
 
-	gd->relocaddr = gd->ram_top;
+	gd->relocaddr = gd->ram_इताअस;
 	debug("Reloc addr: %08llX\n", (unsigned long long)gd->relocaddr);
 
 	ret = arch_setup_dest_addr();
@@ -431,11 +431,11 @@ static int reserve_video_from_videoblob(void)
 
 		ho = bloblist_find(BLOBLISTT_U_BOOT_VIDEO, sizeof(*ho));
 		if (!ho)
-			return log_msg_ret("Missing video bloblist", -ENOENT);
+			return log_मेनसाहे_ret("Missing video bloblist", -ENOENT);
 
 		ret = video_reserve_from_bloblist(ho);
 		if (ret)
-			return log_msg_ret("Invalid Video handoff info", ret);
+			return log_मेनसाहे_ret("Invalid Video handoff info", ret);
 
 		/* Sanity check fb from blob is before current relocaddr */
 		if (likely(gd->relocaddr > (unsigned long)ho->fb))
@@ -527,7 +527,7 @@ static int reserve_uboot(void)
  * ref = x86_64 ABI: https://reviews.llvm.org/D30049: 16 bytes
  *     = ARMv8 Instruction Set Overview: quad word, 16 bytes
  */
-static unsigned long reserve_stack_aligned(size_t size)
+static unsigned long reserve_सालानसान_aligned(size_t size)
 {
 	return ALIGN_DOWN(gd->start_addr_sp - size, 16);
 }
@@ -557,7 +557,7 @@ static int reserve_noncached(void)
 /* reserve memory for malloc() area */
 static int reserve_malloc(void)
 {
-	gd->start_addr_sp = reserve_stack_aligned(TOTAL_MALLOC_LEN);
+	gd->start_addr_sp = reserve_सालानसान_aligned(TOTAL_MALLOC_LEN);
 	debug("Reserving %dk for malloc() at: %08lx\n",
 	      TOTAL_MALLOC_LEN >> 10, gd->start_addr_sp);
 #ifdef CONFIG_SYS_NONCACHED_MEMORY
@@ -571,7 +571,7 @@ static int reserve_malloc(void)
 static int reserve_board(void)
 {
 	if (!gd->bd) {
-		gd->start_addr_sp = reserve_stack_aligned(sizeof(struct bd_info));
+		gd->start_addr_sp = reserve_सालानसान_aligned(sizeof(struct bd_info));
 		gd->bd = (struct bd_info *)map_sysmem(gd->start_addr_sp,
 						      sizeof(struct bd_info));
 		memset(gd->bd, '\0', sizeof(struct bd_info));
@@ -583,7 +583,7 @@ static int reserve_board(void)
 
 static int reserve_global_data(void)
 {
-	gd->start_addr_sp = reserve_stack_aligned(sizeof(gd_t));
+	gd->start_addr_sp = reserve_सालानसान_aligned(sizeof(gd_t));
 	gd->new_gd = (gd_t *)map_sysmem(gd->start_addr_sp, sizeof(gd_t));
 	debug("Reserving %zu Bytes for Global Data at: %08lx\n",
 	      sizeof(gd_t), gd->start_addr_sp);
@@ -602,7 +602,7 @@ static int reserve_fdt(void)
 			gd->boardf->fdt_size =
 				ALIGN(fdt_totalsize(gd->fdt_blob), 32);
 
-			gd->start_addr_sp = reserve_stack_aligned(
+			gd->start_addr_sp = reserve_सालानसान_aligned(
 				gd->boardf->fdt_size);
 			gd->boardf->new_fdt = map_sysmem(gd->start_addr_sp,
 							 gd->boardf->fdt_size);
@@ -619,7 +619,7 @@ static int reserve_bootstage(void)
 #ifdef CONFIG_BOOTSTAGE
 	int size = bootstage_get_size(true);
 
-	gd->start_addr_sp = reserve_stack_aligned(size);
+	gd->start_addr_sp = reserve_सालानसान_aligned(size);
 	gd->boardf->new_bootstage = map_sysmem(gd->start_addr_sp, size);
 	debug("Reserving %#x Bytes for bootstage at: %08lx\n", size,
 	      gd->start_addr_sp);
@@ -636,7 +636,7 @@ __weak int arch_reserve_stacks(void)
 static int reserve_stacks(void)
 {
 	/* make stack pointer 16-byte aligned */
-	gd->start_addr_sp = reserve_stack_aligned(16);
+	gd->start_addr_sp = reserve_सालानसान_aligned(16);
 
 	/*
 	 * let the architecture-specific code tailor gd->start_addr_sp and
@@ -965,12 +965,12 @@ static void initcall_run_f(void)
 	INITCALL(display_options);	/* say that we are here */
 	INITCALL(display_text_info);	/* show debugging info if required */
 	INITCALL(checkcpu);
-#if CONFIG_IS_ENABLED(SYSRESET_PRINT_RESETINFO)
-	INITCALL(print_resetinfo);
+#if CONFIG_IS_ENABLED(SYSRESET_इलिम्बाग_RESETINFO)
+	INITCALL(इलिम्बाग_resetinfo);
 #endif
 	/* display cpu info (and speed) */
 #if CONFIG_IS_ENABLED(DISPLAY_CPUINFO)
-	INITCALL(print_cpuinfo);
+	INITCALL(इलिम्बाग_cpuinfo);
 #endif
 #if CONFIG_IS_ENABLED(DTB_RESELECT)
 	INITCALL(embedded_dtb_select);

@@ -25,7 +25,7 @@
  * this struct is used at all.
  */
 struct menu_item {
-	char *key;
+	char *सुसि;
 	void *data;
 	struct list_head list;
 };
@@ -42,11 +42,11 @@ struct menu {
 	char *title;
 	int prompt;
 	void (*display_statusline)(struct menu *);
-	void (*item_data_print)(void *);
+	void (*item_data_इलिम्बाग)(void *);
 	char *(*item_choice)(void *);
 	bool (*need_reprint)(void *);
 	void *item_choice_data;
-	struct list_head items;
+	struct list_head मगा_बागाय;
 	int item_cnt;
 };
 
@@ -58,7 +58,7 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
+static inline void *menu_मगा_बागाय_iter(struct menu *m,
 		void *(*callback)(struct menu *, struct menu_item *, void *),
 		void *extra)
 {
@@ -66,7 +66,7 @@ static inline void *menu_items_iter(struct menu *m,
 	struct menu_item *item;
 	void *ret;
 
-	list_for_each_safe(pos, n, &m->items) {
+	list_for_each_safe(pos, n, &m->मगा_बागाय) {
 		item = list_entry(pos, struct menu_item, list);
 
 		ret = callback(m, item, extra);
@@ -83,15 +83,15 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
+static inline void *menu_item_इलिम्बाग(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (!m->item_data_print) {
-		puts(item->key);
+	if (!m->item_data_इलिम्बाग) {
+		puts(item->सुसि);
 		putc('\n');
 	} else {
-		m->item_data_print(item->data);
+		m->item_data_इलिम्बाग(item->data);
 	}
 
 	return NULL;
@@ -105,8 +105,8 @@ static inline void *menu_item_destroy(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (item->key)
-		free(item->key);
+	if (item->सुसि)
+		free(item->सुसि);
 
 	free(item);
 
@@ -131,7 +131,7 @@ static inline void menu_display(struct menu *m)
 	if (m->display_statusline)
 		m->display_statusline(m);
 
-	menu_items_iter(m, menu_item_print, NULL);
+	menu_मगा_बागाय_iter(m, menu_item_इलिम्बाग, NULL);
 }
 
 /*
@@ -142,19 +142,19 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
+static inline void *menu_item_सुसि_match(struct menu *m,
 			struct menu_item *item, void *extra)
 {
-	char *item_key = extra;
+	char *item_सुसि = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
+	if (!item_सुसि || !item->सुसि) {
+		if (item_सुसि == item->सुसि)
 			return item;
 
 		return NULL;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
+	if (strcmp(item->सुसि, item_सुसि) == 0)
 		return item;
 
 	return NULL;
@@ -163,10 +163,10 @@ static inline void *menu_item_key_match(struct menu *m,
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+static inline struct menu_item *menu_item_by_सुसि(struct menu *m,
+							char *item_सुसि)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	return menu_मगा_बागाय_iter(m, menu_item_सुसि_match, item_सुसि);
 }
 
 /*
@@ -208,7 +208,7 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
 							   cbuf, m->timeout);
 
 			if (readret >= 0) {
-				choice_item = menu_item_by_key(m, cbuf);
+				choice_item = menu_item_by_सुसि(m, cbuf);
 				if (!choice_item)
 					printf("%s not found\n", cbuf);
 			} else if (readret == -1)  {
@@ -218,10 +218,10 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
 				return menu_default_choice(m, choice);
 			}
 		} else {
-			char *key = m->item_choice(m->item_choice_data);
+			char *सुसि = m->item_choice(m->item_choice_data);
 
-			if (key)
-				choice_item = menu_item_by_key(m, key);
+			if (सुसि)
+				choice_item = menu_item_by_सुसि(m, सुसि);
 		}
 
 		if (!choice_item)
@@ -245,14 +245,14 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+int menu_default_set(struct menu *m, char *item_सुसि)
 {
 	struct menu_item *item;
 
 	if (!m)
 		return -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_सुसि(m, item_सुसि);
 
 	if (!item)
 		return -ENOENT;
@@ -309,14 +309,14 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+int menu_item_add(struct menu *m, char *item_सुसि, void *item_data)
 {
 	struct menu_item *item;
 
 	if (!m)
 		return -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_सुसि(m, item_सुसि);
 
 	if (item) {
 		item->data = item_data;
@@ -327,16 +327,16 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
 	if (!item)
 		return -ENOMEM;
 
-	item->key = strdup(item_key);
+	item->सुसि = strdup(item_सुसि);
 
-	if (!item->key) {
+	if (!item->सुसि) {
 		free(item);
 		return -ENOMEM;
 	}
 
 	item->data = item_data;
 
-	list_add_tail(&item->list, &m->items);
+	list_add_tail(&item->list, &m->मगा_बागाय);
 	m->item_cnt++;
 
 	return 1;
@@ -379,7 +379,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  */
 struct menu *menu_create(char *title, int timeout, int prompt,
 				void (*display_statusline)(struct menu *),
-				void (*item_data_print)(void *),
+				void (*item_data_इलिम्बाग)(void *),
 				char *(*item_choice)(void *),
 				bool (*need_reprint)(void *),
 				void *item_choice_data)
@@ -395,7 +395,7 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->prompt = prompt;
 	m->timeout = timeout;
 	m->display_statusline = display_statusline;
-	m->item_data_print = item_data_print;
+	m->item_data_इलिम्बाग = item_data_इलिम्बाग;
 	m->item_choice = item_choice;
 	m->need_reprint = need_reprint;
 	m->item_choice_data = item_choice_data;
@@ -410,7 +410,7 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	} else
 		m->title = NULL;
 
-	INIT_LIST_HEAD(&m->items);
+	INIT_LIST_HEAD(&m->मगा_बागाय);
 
 	return m;
 }
@@ -427,7 +427,7 @@ int menu_destroy(struct menu *m)
 	if (!m)
 		return -EINVAL;
 
-	menu_items_iter(m, menu_item_destroy, NULL);
+	menu_मगा_बागाय_iter(m, menu_item_destroy, NULL);
 
 	if (m->title)
 		free(m->title);
@@ -437,19 +437,19 @@ int menu_destroy(struct menu *m)
 	return 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+static int bootmenu_conv_shortcut_सुसि(struct bootmenu_data *menu, int ichar)
 {
-	int shortcut_key;
+	int shortcut_सुसि;
 
 	ichar = tolower(ichar);
 	switch (ichar) {
 	/* a-z for bootmenu entry > 9 */
 	case 'a' ... 'z':
-		shortcut_key = ichar - 'a' + 9;
+		shortcut_सुसि = ichar - 'a' + 9;
 		break;
 	/* 1-9 for bootmenu entry <= 9 */
 	case '1' ... '9':
-		shortcut_key = ichar - '1';
+		shortcut_सुसि = ichar - '1';
 		break;
 	/* Reserve 0 for last option (aka Exit) */
 	case '0':
@@ -457,20 +457,20 @@ static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
 		return -1;
 	}
 
-	return shortcut_key;
+	return shortcut_सुसि;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
+enum bootmenu_सुसि bootmenu_autoboot_loop(struct bootmenu_data *menu,
 					 struct cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
+	enum bootmenu_सुसि सुसि = BKEY_NONE;
 	int i, c;
 
 	while (menu->delay > 0) {
 		int ichar;
 
 		if (ansi)
-			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
+			printf(ANSI_CURSOR_POSITION, menu->बिलांग + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
 		for (i = 0; i < 100; ++i) {
 			if (!tstc()) {
@@ -486,28 +486,28 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 
 			switch (ichar) {
 			case '\0':
-				key = BKEY_NONE;
+				सुसि = BKEY_NONE;
 				break;
 			case '\n':
-				key = BKEY_SELECT;
+				सुसि = BKEY_SELECT;
 				break;
 			case 0x3: /* ^C */
-				key = BKEY_QUIT;
+				सुसि = BKEY_QUIT;
 				break;
 			case 'A' ... 'Z':
 			case 'a' ... 'z':
 			case '0' ... '9':
-				key = BKEY_SHORTCUT;
+				सुसि = BKEY_SHORTCUT;
 				break;
 			default:
-				key = BKEY_NONE;
+				सुसि = BKEY_NONE;
 				break;
 			}
 			break;
 		}
 
-		if (key == BKEY_SHORTCUT)
-			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
+		if (सुसि == BKEY_SHORTCUT)
+			cch->shortcut_सुसि = bootmenu_conv_shortcut_सुसि(menu, ichar);
 
 		if (menu->delay < 0)
 			break;
@@ -516,58 +516,58 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 	}
 
 	if (ansi)
-		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
+		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_लिन्या, menu->बिलांग + 5, 1);
 
 	if (menu->delay == 0)
-		key = BKEY_SELECT;
+		सुसि = BKEY_SELECT;
 
-	return key;
+	return सुसि;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+enum bootmenu_सुसि bootmenu_conv_सुसि(int ichar)
 {
-	enum bootmenu_key key;
+	enum bootmenu_सुसि सुसि;
 
 	switch (ichar) {
 	case '\n':
 		/* enter key was pressed */
-		key = BKEY_SELECT;
+		सुसि = BKEY_SELECT;
 		break;
 	case CTL_CH('c'):
 	case '\e':
 		/* ^C was pressed */
-		key = BKEY_QUIT;
+		सुसि = BKEY_QUIT;
 		break;
 	case CTL_CH('p'):
-		key = BKEY_UP;
+		सुसि = BKEY_UP;
 		break;
 	case CTL_CH('n'):
-		key = BKEY_DOWN;
+		सुसि = BKEY_DOWN;
 		break;
 	case CTL_CH('s'):
-		key = BKEY_SAVE;
+		सुसि = BKEY_SAVE;
 		break;
 	case '+':
-		key = BKEY_PLUS;
+		सुसि = BKEY_PLUS;
 		break;
 	case '-':
-		key = BKEY_MINUS;
+		सुसि = BKEY_MINUS;
 		break;
 	case ' ':
-		key = BKEY_SPACE;
+		सुसि = BKEY_SPACE;
 		break;
 	default:
-		key = BKEY_NONE;
+		सुसि = BKEY_NONE;
 		break;
 	}
 
-	return key;
+	return सुसि;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
+enum bootmenu_सुसि bootmenu_loop(struct bootmenu_data *menu,
 				struct cli_ch_state *cch)
 {
-	enum bootmenu_key key;
+	enum bootmenu_सुसि सुसि;
 	int c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
@@ -584,12 +584,12 @@ enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 		}
 	}
 
-	key = bootmenu_conv_key(c);
+	सुसि = bootmenu_conv_सुसि(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
-		key = BKEY_SHORTCUT;
-		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
+	if (सुसि == BKEY_NONE && isalnum(c)) {
+		सुसि = BKEY_SHORTCUT;
+		cch->shortcut_सुसि = bootmenu_conv_shortcut_सुसि(menu, c);
 	}
 
-	return key;
+	return सुसि;
 }

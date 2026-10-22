@@ -19,7 +19,7 @@
 static void spl_parse_legacy_validate(ulong start, ulong size)
 {
 	ulong spl_start = (ulong)_start;
-	ulong spl_end = (ulong)&_image_binary_end;
+	ulong spl_end = (ulong)&image_दालावाहान_end;
 	ulong end = start + size;
 
 	if ((start >= spl_start && start < spl_end) ||

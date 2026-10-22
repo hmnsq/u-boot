@@ -17,12 +17,12 @@
 
 #if defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
 static ulong spl_net_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+			       ulong बिलांग, void *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
-	memcpy(buf, map_sysmem(image_load_addr + sector, count), count);
-	return count;
+	      __func__, sector, बिलांग, (ulong)buf);
+	memcpy(buf, map_sysmem(image_load_addr + sector, बिलांग), बिलांग);
+	return बिलांग;
 }
 
 static int spl_net_load_image(struct spl_image_info *spl_image,

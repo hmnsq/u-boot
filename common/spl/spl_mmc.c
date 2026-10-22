@@ -21,9 +21,9 @@ static ulong h_spl_load_read(struct spl_load_info *load, ulong off,
 {
 	struct blk_desc *bd = load->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t बिलांग = size >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	return blk_dread(bd, sector, बिलांग, buf) << bd->log2blksz;
 }
 
 static __maybe_unused unsigned long spl_mmc_raw_uboot_offset(int part)
@@ -183,14 +183,14 @@ static int mmc_load_image_raw_os(struct spl_image_info *spl_image,
 		return -ENOENT;
 	}
 
-#if defined(CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR)
-	unsigned long count;
+#if defined(CONFIG_SYS_MMCSD_RAW_MODE_मगा_कातविरान_SECTOR)
+	unsigned long बिलांग;
 
-	count = blk_dread(mmc_get_blk_desc(mmc),
-		CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR,
-		CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS,
-		(void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-	if (count != CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS) {
+	बिलांग = blk_dread(mmc_get_blk_desc(mmc),
+		CONFIG_SYS_MMCSD_RAW_MODE_मगा_कातविरान_SECTOR,
+		CONFIG_SYS_MMCSD_RAW_MODE_मगा_कातविरान_SECTORS,
+		(void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR);
+	if (बिलांग != CONFIG_SYS_MMCSD_RAW_MODE_मगा_कातविरान_SECTORS) {
 		puts("mmc_load_image_raw_os: mmc block read error\n");
 		return -EIO;
 	}

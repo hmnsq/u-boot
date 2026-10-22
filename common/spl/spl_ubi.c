@@ -22,9 +22,9 @@ int spl_ubi_load_image_os(struct spl_image_info *spl_image,
 
 	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_KERNEL_ID;
 	volumes[0].load_addr = (void *)CONFIG_SYS_LOAD_ADDR;
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	volumes[1].vol_id = CONFIG_SPL_UBI_LOAD_ARGS_ID;
-	volumes[1].load_addr = (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR;
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_मगा_कातविरान)
+	volumes[1].vol_id = CONFIG_SPL_UBI_LOAD_मगा_कातविरान_ID;
+	volumes[1].load_addr = (void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR;
 
 	err = ubispl_load_volumes(info, volumes, 2);
 #else
@@ -72,7 +72,7 @@ int spl_ubi_load_image(struct spl_image_info *spl_image,
 	info.peb_offset = CONFIG_SPL_UBI_PEB_OFFSET;
 	info.vid_offset = CONFIG_SPL_UBI_VID_OFFSET;
 	info.leb_start = CONFIG_SPL_UBI_LEB_START;
-	info.peb_count = CONFIG_SPL_UBI_MAX_PEBS - info.peb_offset;
+	info.peb_बिलांग = CONFIG_SPL_UBI_MAX_PEBS - info.peb_offset;
 
 #if CONFIG_IS_ENABLED(OS_BOOT)
 	if (!spl_start_uboot()) {

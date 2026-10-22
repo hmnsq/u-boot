@@ -130,7 +130,7 @@ hex(unsigned char ch)
  * Return a pointer to the last char put in buf (null).
  */
 static unsigned char *
-mem2hex(char *mem, char *buf, int count)
+mem2hex(char *mem, char *buf, int बिलांग)
 {
 	char *tmp;
 	unsigned char ch;
@@ -139,12 +139,12 @@ mem2hex(char *mem, char *buf, int count)
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory copy.  Hex conversion will work against this one.
 	 */
-	tmp = buf + count;
+	tmp = buf + बिलांग;
 	longjmp_on_fault = 1;
 
-	memcpy(tmp, mem, count);
+	memcpy(tmp, mem, बिलांग);
 
-	while (count-- > 0) {
+	while (बिलांग-- > 0) {
 		ch = *tmp++;
 		*buf++ = hexchars[ch >> 4];
 		*buf++ = hexchars[ch & 0xf];
@@ -158,35 +158,35 @@ mem2hex(char *mem, char *buf, int count)
  * return a pointer to the character AFTER the last byte fetched from buf.
 */
 static char *
-hex2mem(char *buf, char *mem, int count)
+hex2mem(char *buf, char *mem, int बिलांग)
 {
-	int hexValue;
+	int hex_हालागा;
 	char *tmp_raw, *tmp_hex;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory that is converted from hex.
 	 */
-	tmp_raw = buf + count * 2;
+	tmp_raw = buf + बिलांग * 2;
 	tmp_hex = tmp_raw - 1;
 
 	longjmp_on_fault = 1;
 	while (tmp_hex >= buf) {
 		tmp_raw--;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		hex_हालागा = hex(*tmp_hex--);
+		if (hex_हालागा < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw = hexValue;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		*tmp_raw = hex_हालागा;
+		hex_हालागा = hex(*tmp_hex--);
+		if (hex_हालागा < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw |= hexValue << 4;
+		*tmp_raw |= hex_हालागा << 4;
 
 	}
 
-	memcpy(mem, tmp_raw, count);
+	memcpy(mem, tmp_raw, बिलांग);
 
-	kgdb_flush_cache_range((void *)mem, (void *)(mem+count));
+	kgdb_flush_cache_range((void *)mem, (void *)(mem+बिलांग));
 	longjmp_on_fault = 0;
 
 	return buf;
@@ -197,27 +197,27 @@ hex2mem(char *buf, char *mem, int count)
  * Return number of chars processed.
  */
 static int
-hexToInt(char **ptr, int *intValue)
+hexToInt(char **ptr, int *int_हालागा)
 {
-	int numChars = 0;
-	int hexValue;
+	int नुमेरो_Chars = 0;
+	int hex_हालागा;
 
-	*intValue = 0;
+	*int_हालागा = 0;
 
 	longjmp_on_fault = 1;
 	while (**ptr) {
-		hexValue = hex(**ptr);
-		if (hexValue < 0)
+		hex_हालागा = hex(**ptr);
+		if (hex_हालागा < 0)
 			break;
 
-		*intValue = (*intValue << 4) | hexValue;
-		numChars ++;
+		*int_हालागा = (*int_हालागा << 4) | hex_हालागा;
+		नुमेरो_Chars ++;
 
 		(*ptr)++;
 	}
 	longjmp_on_fault = 0;
 
-	return (numChars);
+	return (नुमेरो_Chars);
 }
 
 /* scan for the sequence $<data>#<checksum>     */
@@ -227,7 +227,7 @@ getpacket(char *buffer)
 	unsigned char checksum;
 	unsigned char xmitcsum;
 	int i;
-	int count;
+	int बिलांग;
 	unsigned char ch;
 
 	do {
@@ -244,22 +244,22 @@ getpacket(char *buffer)
 		checksum = 0;
 		xmitcsum = -1;
 
-		count = 0;
+		बिलांग = 0;
 
 		/* now, read until a # or end of buffer is found */
-		while (count < BUFMAX) {
+		while (बिलांग < BUFMAX) {
 			ch = getDebugChar() & 0x7f;
 			if (ch == '#')
 				break;
 			checksum = checksum + ch;
-			buffer[count] = ch;
-			count = count + 1;
+			buffer[बिलांग] = ch;
+			बिलांग = बिलांग + 1;
 		}
 
-		if (count >= BUFMAX)
+		if (बिलांग >= BUFMAX)
 			continue;
 
-		buffer[count] = 0;
+		buffer[बिलांग] = 0;
 
 		if (ch == '#') {
 			xmitcsum = hex(getDebugChar() & 0x7f) << 4;
@@ -273,8 +273,8 @@ getpacket(char *buffer)
 					putDebugChar(buffer[0]);
 					putDebugChar(buffer[1]);
 					/* remove sequence chars from buffer */
-					count = strlen(buffer);
-					for (i=3; i <= count; i++)
+					बिलांग = strlen(buffer);
+					for (i=3; i <= बिलांग; i++)
 						buffer[i-3] = buffer[i];
 				}
 			}
@@ -287,19 +287,19 @@ static void
 putpacket(unsigned char *buffer)
 {
 	unsigned char checksum;
-	int count;
+	int बिलांग;
 	unsigned char ch, recv;
 
 	/*  $<packet info>#<checksum>. */
 	do {
 		putDebugChar('$');
 		checksum = 0;
-		count = 0;
+		बिलांग = 0;
 
-		while ((ch = buffer[count])) {
+		while ((ch = buffer[बिलांग])) {
 			putDebugChar(ch);
 			checksum += ch;
-			count += 1;
+			बिलांग += 1;
 		}
 
 		putDebugChar('#');
@@ -360,8 +360,8 @@ handle_exception (struct pt_regs *regs)
 	for (i = 0; i < kd.nregs; i++) {
 		kgdb_reg *rp = &kd.regs[i];
 
-		*ptr++ = hexchars[rp->num >> 4];
-		*ptr++ = hexchars[rp->num & 0xf];
+		*ptr++ = hexchars[rp->नुमेरो >> 4];
+		*ptr++ = hexchars[rp->नुमेरो & 0xf];
 		*ptr++ = ':';
 		ptr = (char *)mem2hex((char *)&rp->val, ptr, 4);
 		*ptr++ = ';';
@@ -550,15 +550,15 @@ kgdb_error(int errnum)
 /* Output string in GDB O-packet format if GDB has connected. If nothing
    output, returns 0 (caller must then handle output). */
 int
-kgdb_output_string (const char* s, unsigned int count)
+kgdb_output_string (const char* s, unsigned int बिलांग)
 {
 	char buffer[512];
 
-	count = (count <= (sizeof(buffer) / 2 - 2))
-		? count : (sizeof(buffer) / 2 - 2);
+	बिलांग = (बिलांग <= (sizeof(buffer) / 2 - 2))
+		? बिलांग : (sizeof(buffer) / 2 - 2);
 
 	buffer[0] = 'O';
-	mem2hex ((char *)s, &buffer[1], count);
+	mem2hex ((char *)s, &buffer[1], बिलांग);
 	putpacket((unsigned char *)&buffer);
 
 	return 1;

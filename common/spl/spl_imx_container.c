@@ -35,7 +35,7 @@ static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
 	ulong offset, size;
 	void *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	if (image_index > container->नुमेरो_images) {
 		debug("Invalid image number\n");
 		return NULL;
 	}
@@ -118,7 +118,7 @@ static int read_auth_container(struct spl_image_info *spl_image,
 		goto end;
 	}
 
-	if (!container->num_images) {
+	if (!container->नुमेरो_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
 		goto end;
@@ -153,7 +153,7 @@ static int read_auth_container(struct spl_image_info *spl_image,
 	}
 #endif
 
-	for (i = 0; i < authhdr->num_images; i++) {
+	for (i = 0; i < authhdr->नुमेरो_images; i++) {
 		struct boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
 							   offset);

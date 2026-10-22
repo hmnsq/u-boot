@@ -101,7 +101,7 @@ static int spl_nand_load_image_os(struct spl_image_info *spl_image,
 	if (err)
 		return err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_मगा_कातविरान)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
@@ -112,7 +112,7 @@ static int spl_nand_load_image_os(struct spl_image_info *spl_image,
 	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
 			    (void *)CONFIG_TEXT_BASE);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+	for (dst = (int *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR,
 	    src = (int *)CONFIG_TEXT_BASE;
 	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
 	     src++, dst++) {

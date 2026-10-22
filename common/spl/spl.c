@@ -27,7 +27,7 @@
 #include <nand.h>
 #include <fat.h>
 #include <u-boot/crc.h>
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
+#if CONFIG_IS_ENABLED(BANNER_इलिम्बाग)
 #include <timestamp.h>
 #endif
 #include <version.h>
@@ -160,13 +160,13 @@ void spl_fixup_fdt(void *fdt_blob)
 #endif
 }
 
-int spl_reserve_video_from_ram_top(void)
+int spl_reserve_video_from_ram_इताअस(void)
 {
 	if (CONFIG_IS_ENABLED(VIDEO)) {
 		ulong addr;
 		int ret;
 
-		addr = gd->ram_top;
+		addr = gd->ram_इताअस;
 		ret = video_reserve(&addr);
 		if (ret)
 			return ret;
@@ -514,7 +514,7 @@ static int spl_common_init(bool setup_malloc)
 	if (CONFIG_IS_ENABLED(OF_LIVE)) {
 		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
 		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
+				    (struct device_बुहोल **)gd_of_उगात_ptr());
 		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
 		if (ret)
 			return ret;
@@ -565,7 +565,7 @@ int spl_early_init(void)
 int spl_init(void)
 {
 	int ret;
-	bool setup_malloc = !(IS_ENABLED(CONFIG_SPL_STACK_R) &&
+	bool setup_malloc = !(IS_ENABLED(CONFIG_SPL_सालानसान_R) &&
 			IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIMPLE));
 
 	debug("%s\n", __func__);
@@ -633,16 +633,16 @@ static int spl_load_image(struct spl_image_info *spl_image,
  *	devices but none worked
  */
 static int boot_from_devices(struct spl_image_info *spl_image,
-			     u32 spl_boot_list[], int count)
+			     u32 spl_boot_list[], int बिलांग)
 {
 	struct spl_image_loader *drv =
 		ll_entry_start(struct spl_image_loader, spl_image_loader);
 	const int n_ents =
-		ll_entry_count(struct spl_image_loader, spl_image_loader);
+		ll_entry_बिलांग(struct spl_image_loader, spl_image_loader);
 	int ret = -ENODEV;
 	int i;
 
-	for (i = 0; i < count && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
+	for (i = 0; i < बिलांग && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
 		struct spl_image_loader *loader;
 		int bootdev = spl_boot_list[i];
 
@@ -759,7 +759,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 
 	memset(&spl_image, '\0', sizeof(spl_image));
 	if (IS_ENABLED(CONFIG_SPL_OS_BOOT))
-		spl_image.arg = (void *)SPL_PAYLOAD_ARGS_ADDR;
+		spl_image.arg = (void *)SPL_PAYLOAD_मगा_कातविरान_ADDR;
 	spl_image.boot_device = BOOT_DEVICE_NONE;
 	board_boot_order(spl_boot_list);
 
@@ -793,8 +793,8 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 		jumper = &spl_invoke_opensbi;
 	} else if (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
 		debug("Jumping to Linux\n");
-		if (CONFIG_IS_ENABLED(OS_BOOT_ARGS))
-			fdt = (void *)SPL_PAYLOAD_ARGS_ADDR;
+		if (CONFIG_IS_ENABLED(OS_BOOT_मगा_कातविरान))
+			fdt = (void *)SPL_PAYLOAD_मगा_कातविरान_ADDR;
 		else
 			fdt = spl_image_fdt_addr(&spl_image);
 		spl_fixup_fdt(fdt);
@@ -876,12 +876,12 @@ void preloader_console_init(void)
 
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
+#if CONFIG_IS_ENABLED(BANNER_इलिम्बाग)
 	puts("\nU-Boot " PHASE_NAME " " PLAIN_VERSION " (" U_BOOT_DATE " - "
 	     U_BOOT_TIME " " U_BOOT_TZ ")\n");
 #endif
-#ifdef CONFIG_SPL_DISPLAY_PRINT
-	spl_display_print();
+#ifdef CONFIG_SPL_DISPLAY_इलिम्बाग
+	spl_display_इलिम्बाग();
 #endif
 #endif
 }
@@ -890,21 +890,21 @@ void preloader_console_init(void)
  * This function is called before the stack is changed from initial stack to
  * relocated stack. It tries to dump the stack size used
  */
-__weak void spl_relocate_stack_check(void)
+__weak void spl_relocate_सालानसान_check(void)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
+#if CONFIG_IS_ENABLED(SYS_REPORT_सालानसान_F_USAGE)
 	ulong init_sp = gd->start_addr_sp;
-	ulong stack_bottom = init_sp - CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK);
-	u8 *ptr = (u8 *)stack_bottom;
+	ulong सालानसान_bottom = init_sp - CONFIG_VAL(SIZE_LIMIT_PROVIDE_सालानसान);
+	u8 *ptr = (u8 *)सालानसान_bottom;
 	ulong i;
 
-	for (i = 0; i < CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK); i++) {
-		if (*ptr != CONFIG_VAL(SYS_STACK_F_CHECK_BYTE))
+	for (i = 0; i < CONFIG_VAL(SIZE_LIMIT_PROVIDE_सालानसान); i++) {
+		if (*ptr != CONFIG_VAL(SYS_सालानसान_F_CHECK_BYTE))
 			break;
 		ptr++;
 	}
 	printf("SPL initial stack usage: %lu bytes\n",
-	       CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK) - i);
+	       CONFIG_VAL(SIZE_LIMIT_PROVIDE_सालानसान) - i);
 #endif
 }
 
@@ -926,22 +926,22 @@ __weak void spl_relocate_stack_check(void)
  *
  * Return: new stack location, or 0 to use the same stack
  */
-ulong spl_relocate_stack_gd(void)
+ulong spl_relocate_सालानसान_gd(void)
 {
-#if CONFIG_IS_ENABLED(STACK_R)
+#if CONFIG_IS_ENABLED(सालानसान_R)
 	gd_t *new_gd;
-	ulong ptr = CONFIG_SPL_STACK_R_ADDR;
+	ulong ptr = CONFIG_SPL_सालानसान_R_ADDR;
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
-		spl_relocate_stack_check();
+	if (CONFIG_IS_ENABLED(SYS_REPORT_सालानसान_F_USAGE))
+		spl_relocate_सालानसान_check();
 
 #if defined(CONFIG_SPL_SYS_MALLOC_SIMPLE) && CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN) {
+	if (CONFIG_SPL_सालानसान_R_MALLOC_SIMPLE_LEN) {
 		debug("SPL malloc() before relocation used 0x%x bytes (%d KB)\n",
 		      gd->malloc_ptr, gd->malloc_ptr / 1024);
-		ptr -= CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
+		ptr -= CONFIG_SPL_सालानसान_R_MALLOC_SIMPLE_LEN;
 		gd->malloc_base = ptr;
-		gd->malloc_limit = CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
+		gd->malloc_limit = CONFIG_SPL_सालानसान_R_MALLOC_SIMPLE_LEN;
 		gd->malloc_ptr = 0;
 	}
 #endif

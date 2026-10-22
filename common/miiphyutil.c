@@ -25,9 +25,9 @@
 
 #undef debug
 #ifdef MII_DEBUG
-#define debug(fmt, args...)	printf(fmt, ##args)
+#define debug(fmt, मगा_कातविरान...)	printf(fmt, ##args)
 #else
-#define debug(fmt, args...)
+#define debug(fmt, मगा_कातविरान...)
 #endif /* MII_DEBUG */
 
 static LIST_HEAD(mii_devs);
@@ -228,7 +228,7 @@ static struct mii_dev *miiphy_get_active_dev(const char *devname)
  *   0 on success
  */
 int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
-		 unsigned short *value)
+		 unsigned short *हालागा)
 {
 	struct mii_dev *bus;
 	int ret;
@@ -241,7 +241,7 @@ int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
 	if (ret < 0)
 		return 1;
 
-	*value = (unsigned short)ret;
+	*हालागा = (unsigned short)ret;
 	return 0;
 }
 
@@ -256,13 +256,13 @@ int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
  *   0 on success
  */
 int miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
-		  unsigned short value)
+		  unsigned short हालागा)
 {
 	struct mii_dev *bus;
 
 	bus = miiphy_get_active_dev(devname);
 	if (bus)
-		return bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
+		return bus->write(bus, addr, MDIO_DEVAD_NONE, reg, हालागा);
 
 	return 1;
 }

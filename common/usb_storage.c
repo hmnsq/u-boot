@@ -139,7 +139,7 @@ static void usb_show_progress(void)
  */
 int usb_stor_info(void)
 {
-	int count = 0;
+	int बिलांग = 0;
 #if CONFIG_IS_ENABLED(BLK)
 	struct udevice *dev;
 
@@ -149,8 +149,8 @@ int usb_stor_info(void)
 		struct blk_desc *desc = dev_get_uclass_plat(dev);
 
 		printf("  Device %d: ", desc->devnum);
-		dev_print(desc);
-		count++;
+		dev_इलिम्बाग(desc);
+		बिलांग++;
 	}
 #else
 	int i;
@@ -158,12 +158,12 @@ int usb_stor_info(void)
 	if (usb_max_devs > 0) {
 		for (i = 0; i < usb_max_devs; i++) {
 			printf("  Device %d: ", i);
-			dev_print(&usb_dev_desc[i]);
+			dev_इलिम्बाग(&usb_dev_desc[i]);
 		}
 		return 0;
 	}
 #endif
-	if (!count) {
+	if (!बिलांग) {
 		printf("No storage devices, perhaps not 'usb start'ed..?\n");
 		return 1;
 	}
@@ -175,7 +175,7 @@ static unsigned int usb_get_max_lun(struct us_data *us)
 {
 	int len;
 	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, result, 1);
-	len = usb_control_msg(us->pusb_dev,
+	len = usb_control_मेनसाहे(us->pusb_dev,
 			      usb_rcvctrlpipe(us->pusb_dev, 0),
 			      US_BBB_GET_MAX_LUN,
 			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
@@ -251,8 +251,8 @@ static int usb_stor_probe_device(struct usb_device *udev)
 
 			ret2 = device_unbind(dev);
 			if (ret2)
-				return log_msg_ret("bootdev", ret2);
-			return log_msg_ret("bootdev", ret);
+				return log_मेनसाहे_ret("bootdev", ret2);
+			return log_मेनसाहे_ret("bootdev", ret);
 		}
 	}
 #else
@@ -406,7 +406,7 @@ static int us_one_transfer(struct us_data *us, int pipe, char *buf, int length)
 			debug("Bulk xfer 0x%lx(%d) try #%d\n",
 			      (ulong)map_to_sysmem(buf), this_xfer,
 			      11 - maxtry);
-			result = usb_bulk_msg(us->pusb_dev, pipe, buf,
+			result = usb_bulk_मेनसाहे(us->pusb_dev, pipe, buf,
 					      this_xfer, &partial,
 					      USB_CNTL_TIMEOUT * 5);
 			debug("bulk_msg returned %d xferred %d/%d\n",
@@ -481,7 +481,7 @@ static int usb_stor_BBB_reset(struct us_data *us)
 	 * This comment stolen from FreeBSD's /sys/dev/usb/umass.c.
 	 */
 	debug("BBB_reset\n");
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	result = usb_control_मेनसाहे(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_BBB_RESET,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 				 0, us->ifnum, NULL, 0, USB_CNTL_TIMEOUT * 5);
@@ -524,7 +524,7 @@ static int usb_stor_CB_reset(struct us_data *us)
 	memset(cmd, 0xff, sizeof(cmd));
 	cmd[0] = SCSI_SEND_DIAG;
 	cmd[1] = 4;
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	result = usb_control_मेनसाहे(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_CBI_ADSC,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 				 0, us->ifnum, cmd, sizeof(cmd),
@@ -584,7 +584,7 @@ static int usb_stor_BBB_comdat(struct scsi_cmd *srb, struct us_data *us)
 	/* DST SRC LEN!!! */
 
 	memcpy(cbw->CBWCDB, srb->cmd, srb->cmdlen);
-	result = usb_bulk_msg(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_SIZE,
+	result = usb_bulk_मेनसाहे(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_SIZE,
 			      &actlen, USB_CNTL_TIMEOUT * 5);
 	if (result < 0)
 		debug("usb_stor_BBB_comdat:usb_bulk_msg error\n");
@@ -615,7 +615,7 @@ static int usb_stor_CB_comdat(struct scsi_cmd *srb, struct us_data *us)
 		usb_show_srb(srb);
 #endif
 		/* let's send the command via the control pipe */
-		result = usb_control_msg(us->pusb_dev,
+		result = usb_control_मेनसाहे(us->pusb_dev,
 					 usb_sndctrlpipe(us->pusb_dev , 0),
 					 US_CBI_ADSC,
 					 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
@@ -667,7 +667,7 @@ static int usb_stor_CBI_get_status(struct scsi_cmd *srb, struct us_data *us)
 	int timeout;
 
 	us->ip_wanted = 1;
-	usb_int_msg(us->pusb_dev, us->irqpipe,
+	usb_int_मेनसाहे(us->pusb_dev, us->irqpipe,
 		    (void *)&us->ip_data, us->irqmaxp, us->irqinterval, false);
 	timeout = 1000;
 	while (timeout--) {
@@ -712,7 +712,7 @@ static int usb_stor_CBI_get_status(struct scsi_cmd *srb, struct us_data *us)
 static int usb_stor_BBB_clear_endpt_stall(struct us_data *us, __u8 endpt)
 {
 	/* ENDPOINT_HALT = 0, so set value to 0 */
-	return usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	return usb_control_मेनसाहे(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 			       USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
 			       endpt, NULL, 0, USB_CNTL_TIMEOUT * 5);
 }
@@ -755,7 +755,7 @@ static int usb_stor_BBB_transport(struct scsi_cmd *srb, struct us_data *us)
 	else
 		pipe = pipeout;
 
-	result = usb_bulk_msg(us->pusb_dev, pipe, srb->pdata, srb->datalen,
+	result = usb_bulk_मेनसाहे(us->pusb_dev, pipe, srb->pdata, srb->datalen,
 			      &data_actlen, USB_CNTL_TIMEOUT * 5);
 	/* special handling of STALL in DATA phase */
 	if ((result < 0) && (us->pusb_dev->status & USB_ST_STALLED)) {
@@ -783,7 +783,7 @@ st:
 	retry = 0;
 again:
 	debug("STATUS phase\n");
-	result = usb_bulk_msg(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_SIZE,
+	result = usb_bulk_मेनसाहे(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_SIZE,
 				&actlen, USB_CNTL_TIMEOUT*5);
 
 	/* special handling of STALL in STATUS phase */
@@ -1371,25 +1371,25 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	 * An optional interrupt is OK (necessary for CBI protocol).
 	 * We will ignore any others.
 	 */
-	for (i = 0; i < iface->desc.bNumEndpoints; i++) {
+	for (i = 0; i < iface->desc.b_नुमेरो_Endpoints; i++) {
 		ep_desc = &iface->ep_desc[i];
 		/* is it an BULK endpoint? */
 		if ((ep_desc->bmAttributes &
 		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_BULK) {
 			if (ep_desc->bEndpointAddress & USB_DIR_IN)
 				ss->ep_in = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
+						USB_ENDPOINT_नुमेरो_MASK;
 			else
 				ss->ep_out =
 					ep_desc->bEndpointAddress &
-					USB_ENDPOINT_NUMBER_MASK;
+					USB_ENDPOINT_नुमेरो_MASK;
 		}
 
 		/* is it an interrupt endpoint? */
 		if ((ep_desc->bmAttributes &
 		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_INT) {
 			ss->ep_int = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
+						USB_ENDPOINT_नुमेरो_MASK;
 			ss->irqinterval = ep_desc->bInterval;
 		}
 	}
@@ -1397,7 +1397,7 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	      ss->ep_in, ss->ep_out, ss->ep_int);
 
 	/* Do some basic sanity checks, and bail if we find a problem */
-	if (usb_set_interface(dev, iface->desc.bInterfaceNumber, 0) ||
+	if (usb_set_interface(dev, iface->desc.b_Interface_नुमेरो, 0) ||
 	    !ss->ep_in || !ss->ep_out ||
 	    (ss->protocol == US_PR_CBI && ss->ep_int == 0)) {
 		debug("Problems with device\n");

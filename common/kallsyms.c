@@ -18,7 +18,7 @@ extern const char system_map[] __attribute__((weak));
  *		base = 0x03fb9b7c;
  *		sym = "_spi_cs_deactivate";
  */
-const char *symbol_lookup(unsigned long addr, unsigned long *caddr)
+const char *सिम्बोलो_lookup(unsigned long addr, unsigned long *caddr)
 {
 	const char *sym, *csym;
 	char *esym;

@@ -28,8 +28,8 @@ static int scp03_enable(bool provision)
 		return -ENXIO;
 
 	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	param.attr = TEE_PARAM_ATTR_TYPE_हालागा_पासोक;
+	param.u.हालागा.a = provision;
 
 	memset(&invoke, 0, sizeof(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;

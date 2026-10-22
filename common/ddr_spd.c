@@ -66,12 +66,12 @@ ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
  * Copied from DDR3 SPD spec.
  */
 static int
-crc16(char *ptr, int count)
+crc16(char *ptr, int बिलांग)
 {
 	int crc, i;
 
 	crc = 0;
-	while (--count >= 0) {
+	while (--बिलांग >= 0) {
 		crc = crc ^ (int)*ptr++ << 8;
 		for (i = 0; i < 8; ++i)
 			if (crc & 0x8000)

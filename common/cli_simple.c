@@ -18,14 +18,14 @@
 
 #define DEBUG_PARSER	0	/* set to 1 to debug */
 
-#define debug_parser(fmt, args...)		\
+#define debug_parser(fmt, मगा_कातविरान...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+int cli_simple_process_macros(const char *पासोक, char *output, int max_size)
 {
 	char c, prev;
 	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
+	int inputcnt = strlen(पासोक);
 	int outputcnt = max_size;
 	int state = 0;		/* 0 = waiting for '$'  */
 	int ret;
@@ -35,13 +35,13 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 	/* 3 = waiting for '''  */
 	char __maybe_unused *output_start = output;
 
-	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(input),
-		     input);
+	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(पासोक),
+		     पासोक);
 
 	prev = '\0';		/* previous character   */
 
 	while (inputcnt && outputcnt) {
-		c = *input++;
+		c = *पासोक++;
 		inputcnt--;
 
 		if (state != 3) {
@@ -50,7 +50,7 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				if (inputcnt-- == 0)
 					break;
 				prev = c;
-				c = *input++;
+				c = *पासोक++;
 			}
 		}
 
@@ -70,7 +70,7 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 		case 1:	/* Waiting for (        */
 			if (c == '(' || c == '{') {
 				state++;
-				varname_start = input;
+				varname_start = पासोक;
 			} else {
 				state = 0;
 				*(output++) = '$';
@@ -87,7 +87,7 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				int i;
 				char envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				int envcnt = पासोक - varname_start - 1;
 
 				/* Get the varname */
 				for (i = 0; i < envcnt; i++)
@@ -134,35 +134,35 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 }
 
 #ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+int cli_simple_parse_लिन्या(char *लिन्या, char *argv[])
 {
 	int nargs = 0;
 
-	debug_parser("%s: \"%s\"\n", __func__, line);
+	debug_parser("%s: \"%s\"\n", __func__, लिन्या);
 	while (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
-			++line;
+		while (isblank(*लिन्या))
+			++लिन्या;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		if (*लिन्या == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
 			return nargs;
 		}
 
-		argv[nargs++] = line;	/* begin of argument string	*/
+		argv[nargs++] = लिन्या;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
-			++line;
+		while (*लिन्या && !isblank(*लिन्या))
+			++लिन्या;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		if (*लिन्या == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("parse_line: nargs=%d\n", nargs);
 			return nargs;
 		}
 
-		*line++ = '\0';		/* terminate current arg	 */
+		*लिन्या++ = '\0';		/* terminate current arg	 */
 	}
 
 	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
@@ -248,7 +248,7 @@ int cli_simple_run_command(const char *cmd, int flag)
 					  sizeof(finaltoken));
 
 		/* Extract arguments */
-		argc = cli_simple_parse_line(finaltoken, argv);
+		argc = cli_simple_parse_लिन्या(finaltoken, argv);
 		if (argc == 0) {
 			rc = -1;	/* no command at all */
 			continue;
@@ -316,7 +316,7 @@ void cli_simple_loop(void)
 
 int cli_simple_run_command_list(char *cmd, int flag)
 {
-	char *line, *next;
+	char *लिन्या, *next;
 	int rcode = 0;
 
 	/*
@@ -324,24 +324,24 @@ int cli_simple_run_command_list(char *cmd, int flag)
 	 * error.
 	 */
 	next = cmd;
-	line = cmd;
+	लिन्या = cmd;
 	while (*next) {
 		if (*next == '\n') {
 			*next = '\0';
 			/* run only non-empty commands */
-			if (*line) {
-				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+			if (*लिन्या) {
+				debug("** exec: \"%s\"\n", लिन्या);
+				if (cli_simple_run_command(लिन्या, 0) < 0) {
 					rcode = 1;
 					break;
 				}
 			}
-			line = next + 1;
+			लिन्या = next + 1;
 		}
 		++next;
 	}
-	if (rcode == 0 && *line)
-		rcode = (cli_simple_run_command(line, 0) < 0);
+	if (rcode == 0 && *लिन्या)
+		rcode = (cli_simple_run_command(लिन्या, 0) < 0);
 
 	return rcode;
 }

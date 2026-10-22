@@ -56,7 +56,7 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
+_Static_assert(ARRAY_SIZE(type_name) == EVT_बिलांग, "event type_name size");
 #endif
 
 const char *event_type_name(enum event_t type)
@@ -75,7 +75,7 @@ static int notify_static(struct event *ev)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const int n_ents = ll_entry_बिलांग(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
 
 	for (spy = start; spy != start + n_ents; spy++) {
@@ -100,7 +100,7 @@ static int notify_static(struct event *ev)
 			 * - return an error from the event
 			 */
 			if (ret)
-				return log_msg_ret("spy", ret);
+				return log_मेनसाहे_ret("spy", ret);
 		}
 	}
 
@@ -112,7 +112,7 @@ static int notify_dynamic(struct event *ev)
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_बुहोल) {
 		if (spy->type == ev->type) {
 			int ret;
 
@@ -127,7 +127,7 @@ static int notify_dynamic(struct event *ev)
 			 * - return an error from the event
 			 */
 			if (ret)
-				return log_msg_ret("spy", ret);
+				return log_मेनसाहे_ret("spy", ret);
 		}
 	}
 
@@ -141,17 +141,17 @@ int event_notify(enum event_t type, void *data, int size)
 
 	event.type = type;
 	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+		return log_मेनसाहे_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
 	if (ret)
-		return log_msg_ret("sta", ret);
+		return log_मेनसाहे_ret("sta", ret);
 
 	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
 		if (ret)
-			return log_msg_ret("dyn", ret);
+			return log_मेनसाहे_ret("dyn", ret);
 	}
 
 	return 0;
@@ -166,7 +166,7 @@ void event_show_spy_list(void)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const int n_ents = ll_entry_बिलांग(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
 	const int size = sizeof(ulong) * 2;
 
@@ -181,7 +181,7 @@ void event_show_spy_list(void)
 #if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
 static void spy_free(struct event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_बुहोल);
 }
 
 int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
@@ -191,13 +191,13 @@ int event_register(const char *id, enum event_t type, event_handler_t func, void
 
 	spy = malloc(sizeof(*spy));
 	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+		return log_मेनसाहे_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_add_tail(&spy->sibling_बुहोल, &state->spy_head);
 
 	return 0;
 }
@@ -207,7 +207,7 @@ int event_uninit(void)
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_बुहोल)
 		spy_free(spy);
 
 	return 0;

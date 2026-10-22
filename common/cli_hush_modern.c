@@ -87,47 +87,47 @@ static void __noreturn xfunc_die(void)
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#define bb_error_मेनसाहे_and_die(format, ...) do { \
 panic("HUSH: " format, __VA_ARGS__); \
 } while (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
+#define bb_simple_error_मेनसाहे_and_die(मेनसाहे) do { \
+panic_str("HUSH: " मेनसाहे); \
 } while (0);
 
 /* fdprintf() is used for debug output. */
 static int __maybe_unused fdprintf(int fd, const char *format, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	uint i;
 
 	assert(fd == 2);
 
-	va_start(args, format);
-	i = vprintf(format, args);
-	va_end(args);
+	va_start(मगा_कातविरान, format);
+	i = vprintf(format, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	return i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+static void bb_verror_मेनसाहे(const char *s, va_list p, const char* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+static void bb_error_मेनसाहे(const char *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
+	bb_verror_मेनसाहे(s, p, NULL);
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+static void bb_simple_error_मेनसाहे(const char *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_मेनसाहे("%s", s);
 }
 
 static void *xmalloc(size_t size)

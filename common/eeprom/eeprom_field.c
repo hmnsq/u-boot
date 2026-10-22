@@ -18,7 +18,7 @@ static void __eeprom_field_print_bin(const struct eeprom_field *field,
 	int from = reverse ? field->size - 1 : 0;
 	int to = reverse ? 0 : field->size - 1;
 
-	printf(PRINT_FIELD_SEGMENT, field->name);
+	printf(इलिम्बाग_FIELD_SEGMENT, field->name);
 	for (i = from; i != to; reverse ? i-- : i++)
 		printf("%02x%s", field->buf[i], delimiter);
 
@@ -26,9 +26,9 @@ static void __eeprom_field_print_bin(const struct eeprom_field *field,
 }
 
 static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+				     const char *हालागा, bool reverse)
 {
-	int len = strlen(value);
+	int len = strlen(हालागा);
 	int k, j, i = reverse ? len - 1 : 0;
 	unsigned char byte;
 	char *endptr;
@@ -49,11 +49,11 @@ static int __eeprom_field_update_bin(struct eeprom_field *field,
 
 		for (k = 0; k < 2; k++) {
 			if (reverse && i == 0) {
-				tmp[k] = value[i];
+				tmp[k] = हालागा[i];
 				break;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = हालागा[reverse ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
@@ -68,25 +68,25 @@ static int __eeprom_field_update_bin(struct eeprom_field *field,
 }
 
 static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+					   char *हालागा, char *delimiter)
 {
-	int count = 0;
+	int बिलांग = 0;
 	int i, val;
-	const char *tmp = value;
+	const char *tmp = हालागा;
 	char *tok;
 	char *endptr;
 
 	tmp = strstr(tmp, delimiter);
 	while (tmp != NULL) {
-		count++;
+		बिलांग++;
 		tmp++;
 		tmp = strstr(tmp, delimiter);
 	}
 
-	if (count > field->size)
+	if (बिलांग > field->size)
 		return -1;
 
-	tok = strtok(value, delimiter);
+	tok = strtok(हालागा, delimiter);
 	for (i = 0; tok && i < field->size; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
 		if (*endptr != '\0')
@@ -110,7 +110,7 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+void eeprom_field_इलिम्बाग_bin(const struct eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", false);
 }
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+int eeprom_field_update_bin(struct eeprom_field *field, char *हालागा)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	return __eeprom_field_update_bin(field, हालागा, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+int eeprom_field_update_reserved(struct eeprom_field *field, char *हालागा)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	return __eeprom_field_update_bin_delim(field, हालागा, " ");
 }
 
 /**
@@ -152,7 +152,7 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+void eeprom_field_इलिम्बाग_bin_rev(const struct eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", true);
 }
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+int eeprom_field_update_bin_rev(struct eeprom_field *field, char *हालागा)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	return __eeprom_field_update_bin(field, हालागा, true);
 }
 
 /**
@@ -183,7 +183,7 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+void eeprom_field_इलिम्बाग_mac(const struct eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, ":", false);
 }
@@ -195,21 +195,21 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+int eeprom_field_update_mac(struct eeprom_field *field, char *हालागा)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	return __eeprom_field_update_bin_delim(field, हालागा, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+void eeprom_field_इलिम्बाग_ascii(const struct eeprom_field *field)
 {
 	char format[8];
 
 	sprintf(format, "%%.%ds\n", field->size);
-	printf(PRINT_FIELD_SEGMENT, field->name);
+	printf(इलिम्बाग_FIELD_SEGMENT, field->name);
 	printf(format, field->buf);
 }
 
@@ -220,14 +220,14 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+int eeprom_field_update_ascii(struct eeprom_field *field, char *हालागा)
 {
-	if (strlen(value) >= field->size) {
+	if (strlen(हालागा) >= field->size) {
 		printf("%s: new data too long\n", field->name);
 		return -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
+	strncpy((char *)field->buf, हालागा, field->size - 1);
 	field->buf[field->size - 1] = '\0';
 
 	return 0;
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+void eeprom_field_इलिम्बाग_reserved(const struct eeprom_field *field)
 {
-	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
+	printf(इलिम्बाग_FIELD_SEGMENT, "Reserved fields\t");
 	printf("(%d bytes)\n", field->size);
 }

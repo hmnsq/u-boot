@@ -183,7 +183,7 @@ static int bloblist_addrec(uint tag, int size, int align_log2,
 
 		ret = bloblist_addrec(BLOBLISTT_VOID, void_size, 0, &vrec);
 		if (ret)
-			return log_msg_ret("void", ret);
+			return log_मेनसाहे_ret("void", ret);
 
 		/* start the record after that */
 		data_start = map_to_sysmem(hdr) + hdr->used_size + sizeof(*vrec);
@@ -197,7 +197,7 @@ static int bloblist_addrec(uint tag, int size, int align_log2,
 		log_err("Failed to allocate %x bytes\n", size);
 		log_err("Used size=%x, total size=%x\n",
 			hdr->used_size, hdr->total_size);
-		return log_msg_ret("bloblist add", -ENOSPC);
+		return log_मेनसाहे_ret("bloblist add", -ENOSPC);
 	}
 	rec = (void *)hdr + hdr->used_size;
 
@@ -374,13 +374,13 @@ static int bloblist_resize_rec(struct bloblist_hdr *hdr,
 	if (new_size < 0) {
 		log_debug("Attempt to shrink blob size below 0 (%x)\n",
 			  new_size);
-		return log_msg_ret("size", -EINVAL);
+		return log_मेनसाहे_ret("size", -EINVAL);
 	}
 	if (new_alloced > hdr->total_size) {
 		log_err("Failed to allocate %x bytes\n", new_size);
 		log_err("Used size=%x, total size=%x\n",
 			hdr->used_size, hdr->total_size);
-		return log_msg_ret("alloc", -ENOSPC);
+		return log_मेनसाहे_ret("alloc", -ENOSPC);
 	}
 
 	/* Move the following blobs up or down, if this is not the last */
@@ -411,10 +411,10 @@ int bloblist_resize(uint tag, int new_size)
 
 	rec = bloblist_findrec(tag);
 	if (!rec)
-		return log_msg_ret("find", -ENOENT);
+		return log_मेनसाहे_ret("find", -ENOENT);
 	ret = bloblist_resize_rec(hdr, rec, new_size);
 	if (ret)
-		return log_msg_ret("resize", ret);
+		return log_मेनसाहे_ret("resize", ret);
 
 	return 0;
 }
@@ -460,20 +460,20 @@ int bloblist_check(ulong addr, uint size)
 
 	hdr = map_sysmem(addr, sizeof(*hdr));
 	if (hdr->magic != BLOBLIST_MAGIC)
-		return log_msg_ret("Bad magic", -ENOENT);
+		return log_मेनसाहे_ret("Bad magic", -ENOENT);
 	if (hdr->version != BLOBLIST_VERSION)
-		return log_msg_ret("Bad version", -EPROTONOSUPPORT);
+		return log_मेनसाहे_ret("Bad version", -EPROTONOSUPPORT);
 	if (!hdr->total_size || (size && hdr->total_size > size))
-		return log_msg_ret("Bad total size", -EFBIG);
+		return log_मेनसाहे_ret("Bad total size", -EFBIG);
 	if (hdr->used_size > hdr->total_size)
-		return log_msg_ret("Bad used size", -ENOENT);
+		return log_मेनसाहे_ret("Bad used size", -ENOENT);
 	if (hdr->hdr_size != sizeof(struct bloblist_hdr))
-		return log_msg_ret("Bad header size", -ENOENT);
+		return log_मेनसाहे_ret("Bad header size", -ENOENT);
 
 	chksum = bloblist_calc_chksum(hdr);
 	if (hdr->chksum != chksum) {
 		log_err("Checksum %x != %x\n", hdr->chksum, chksum);
-		return log_msg_ret("Bad checksum", -EIO);
+		return log_मेनसाहे_ret("Bad checksum", -EIO);
 	}
 	gd->bloblist = hdr;
 	gd->flags |= GD_FLG_BLOBLIST_HANDOFF;
@@ -520,10 +520,10 @@ void bloblist_get_stats(ulong *basep, ulong *tsizep, ulong *usizep)
 	*usizep = hdr->used_size;
 }
 
-static void show_value(const char *prompt, ulong value)
+static void show_हालागा(const char *prompt, ulong हालागा)
 {
-	printf("%s:%*s %-5lx  ", prompt, 10 - (int)strlen(prompt), "", value);
-	print_size(value, "\n");
+	printf("%s:%*s %-5lx  ", prompt, 10 - (int)strlen(prompt), "", हालागा);
+	इलिम्बाग_size(हालागा, "\n");
 }
 
 void bloblist_show_stats(void)
@@ -532,9 +532,9 @@ void bloblist_show_stats(void)
 
 	bloblist_get_stats(&base, &tsize, &usize);
 	printf("base:       %lx\n", base);
-	show_value("total size", tsize);
-	show_value("used size", usize);
-	show_value("free", tsize - usize);
+	show_हालागा("total size", tsize);
+	show_हालागा("used size", usize);
+	show_हालागा("free", tsize - usize);
 }
 
 void bloblist_show_list(void)
@@ -649,7 +649,7 @@ int bloblist_init(void)
 		void *ptr = memalign(BLOBLIST_ALIGN, size);
 
 		if (!ptr)
-			return log_msg_ret("alloc", -ENOMEM);
+			return log_मेनसाहे_ret("alloc", -ENOMEM);
 		addr = map_to_sysmem(ptr);
 	} else
 		addr = IF_ENABLED_INT(CONFIG_BLOBLIST_FIXED,
@@ -659,7 +659,7 @@ int bloblist_init(void)
 		  addr);
 	ret = bloblist_new(addr, size, 0, 0);
 	if (ret)
-		return log_msg_ret("ini", ret);
+		return log_मेनसाहे_ret("ini", ret);
 
 	return 0;
 }

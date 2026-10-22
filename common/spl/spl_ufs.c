@@ -15,9 +15,9 @@ static ulong spl_ufs_load_read(struct spl_load_info *load, ulong off, ulong size
 {
 	struct blk_desc *bd = load->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t बिलांग = size >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	return blk_dread(bd, sector, बिलांग, buf) << bd->log2blksz;
 }
 
 static int spl_ufs_load_image(struct spl_image_info *spl_image,

@@ -49,7 +49,7 @@
 
 #define HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
 
-#define PORT_OVERCURRENT_MAX_SCAN_COUNT		3
+#define PORT_OVERCURRENT_MAX_SCAN_बिलांग		3
 
 struct usb_device_scan {
 	struct usb_device *dev;		/* USB hub device to scan */
@@ -71,7 +71,7 @@ static inline bool usb_hub_is_superspeed(struct usb_device *hdev)
 }
 
 #if CONFIG_IS_ENABLED(DM_USB)
-bool usb_hub_is_root_hub(struct udevice *hub)
+bool usb_hub_is_उगात_hub(struct udevice *hub)
 {
 	if (device_get_uclass_id(hub->parent) != UCLASS_USB_HUB)
 		return true;
@@ -84,7 +84,7 @@ static int usb_set_hub_depth(struct usb_device *dev, int depth)
 	if (depth < 0 || depth > 4)
 		return -EINVAL;
 
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_HUB_DEPTH, USB_DIR_OUT | USB_RT_HUB,
 		depth, 0, NULL, 0, USB_CNTL_TIMEOUT);
 }
@@ -97,28 +97,28 @@ static int usb_get_hub_descriptor(struct usb_device *dev, void *data, int size)
 	if (usb_hub_is_superspeed(dev))
 		dtype = USB_DT_SS_HUB;
 
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 		USB_REQ_GET_DESCRIPTOR, USB_DIR_IN | USB_RT_HUB,
 		dtype << 8, 0, data, size, USB_CNTL_TIMEOUT);
 }
 
 static int usb_clear_port_feature(struct usb_device *dev, int port, int feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_CLEAR_FEATURE, USB_RT_PORT, feature,
 				port, NULL, 0, USB_CNTL_TIMEOUT);
 }
 
 static int usb_set_port_feature(struct usb_device *dev, int port, int feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_FEATURE, USB_RT_PORT, feature,
 				port, NULL, 0, USB_CNTL_TIMEOUT);
 }
 
 static int usb_get_hub_status(struct usb_device *dev, void *data)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	return usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_HUB, 0, 0,
 			data, sizeof(struct usb_hub_status), USB_CNTL_TIMEOUT);
 }
@@ -127,7 +127,7 @@ int usb_get_port_status(struct usb_device *dev, int port, void *data)
 {
 	int ret;
 
-	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	ret = usb_control_मेनसाहे(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_PORT, 0, port,
 			data, sizeof(struct usb_port_status), USB_CNTL_TIMEOUT);
 
@@ -144,7 +144,7 @@ int usb_get_port_status(struct usb_device *dev, int port, void *data)
 	 * Note: this only supports driver model.
 	 */
 
-	if (!usb_hub_is_root_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
+	if (!usb_hub_is_उगात_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
 		struct usb_port_status *status = (struct usb_port_status *)data;
 		u16 tmp = le16_to_cpu(status->wPortStatus) &
 			USB_SS_PORT_STAT_MASK;
@@ -250,9 +250,9 @@ static inline const char *portspeed(int portstatus)
 	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
 	case USB_PORT_STAT_SUPER_SPEED:
 		return "5 Gb/s";
-	case USB_PORT_STAT_HIGH_SPEED:
+	case USB_PORT_STAT_माताअस_SPEED:
 		return "480 Mb/s";
-	case USB_PORT_STAT_LOW_SPEED:
+	case USB_PORT_STAT_माबाबा_SPEED:
 		return "1.5 Mb/s";
 	default:
 		return "12 Mb/s";
@@ -387,11 +387,11 @@ int usb_hub_port_connect_change(struct usb_device *dev, int port)
 	case USB_PORT_STAT_SUPER_SPEED:
 		speed = USB_SPEED_SUPER;
 		break;
-	case USB_PORT_STAT_HIGH_SPEED:
-		speed = USB_SPEED_HIGH;
+	case USB_PORT_STAT_माताअस_SPEED:
+		speed = USB_SPEED_माताअस;
 		break;
-	case USB_PORT_STAT_LOW_SPEED:
-		speed = USB_SPEED_LOW;
+	case USB_PORT_STAT_माबाबा_SPEED:
+		speed = USB_SPEED_माबाबा;
 		break;
 	default:
 		speed = USB_SPEED_FULL;
@@ -541,19 +541,19 @@ static int usb_scan_port(struct usb_device_scan *usb_scan)
 				       USB_PORT_FEAT_C_OVER_CURRENT);
 		/* Only power-on this one port */
 		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		hub->overcurrent_count[i]++;
+		hub->overcurrent_बिलांग[i]++;
 
 		/*
 		 * If the max-scan-count is not reached, return without removing
 		 * the device from scan-list. This will re-issue a new scan.
 		 */
-		if (hub->overcurrent_count[i] <=
-		    PORT_OVERCURRENT_MAX_SCAN_COUNT)
+		if (hub->overcurrent_बिलांग[i] <=
+		    PORT_OVERCURRENT_MAX_SCAN_बिलांग)
 			return 0;
 
 		/* Otherwise the device will get removed */
 		printf("Port %d over-current occurred %d times\n", i + 1,
-		       hub->overcurrent_count[i]);
+		       hub->overcurrent_बिलांग[i]);
 	}
 
 	/*
@@ -814,14 +814,14 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * string' to locate the bits it uses to determine the downstream
 	 * port number.
 	 */
-	if (usb_hub_is_root_hub(dev->dev)) {
+	if (usb_hub_is_उगात_hub(dev->dev)) {
 		hub->hub_depth = -1;
 	} else {
 		struct udevice *hdev;
 		int depth = 0;
 
 		hdev = dev->dev->parent;
-		while (!usb_hub_is_root_hub(hdev)) {
+		while (!usb_hub_is_उगात_hub(hdev)) {
 			depth++;
 			hdev = hdev->parent;
 		}
@@ -899,7 +899,7 @@ static int usb_hub_check(struct usb_device *dev, int ifnum)
 	    (iface->desc.bInterfaceSubClass != 1))
 		goto err;
 	/* Multiple endpoints? What kind of mutant ninja-hub is this? */
-	if (iface->desc.bNumEndpoints != 1)
+	if (iface->desc.b_नुमेरो_Endpoints != 1)
 		goto err;
 	ep = &iface->ep_desc[0];
 	/* Output endpoint? Curiousier and curiousier.. */
@@ -915,7 +915,7 @@ static int usb_hub_check(struct usb_device *dev, int ifnum)
 err:
 	debug("USB hub not found: bInterfaceClass=%d, bInterfaceSubClass=%d, bNumEndpoints=%d\n",
 	      iface->desc.bInterfaceClass, iface->desc.bInterfaceSubClass,
-	      iface->desc.bNumEndpoints);
+	      iface->desc.b_नुमेरो_Endpoints);
 	if (ep) {
 		debug("   bEndpointAddress=%#x, bmAttributes=%d",
 		      ep->bEndpointAddress, ep->bmAttributes);

@@ -9,7 +9,7 @@
 
 #include <asm/types.h>
 
-#define MEM_RGN_COUNT	64
+#define MEM_RGN_बिलांग	64
 
 struct region {
 	phys_addr_t base;
@@ -17,8 +17,8 @@ struct region {
 };
 
 struct mem_region {
-	struct region rgn[MEM_RGN_COUNT];
-	uint count;
+	struct region rgn[MEM_RGN_बिलांग];
+	uint बिलांग;
 };
 
 static void add_mem_region(struct mem_region *mem_rgn, phys_addr_t base,
@@ -26,7 +26,7 @@ static void add_mem_region(struct mem_region *mem_rgn, phys_addr_t base,
 {
 	long i;
 
-	for (i = mem_rgn->count; i >= 0; i--) {
+	for (i = mem_rgn->बिलांग; i >= 0; i--) {
 		if (i && base < mem_rgn->rgn[i - 1].base) {
 			mem_rgn->rgn[i] = mem_rgn->rgn[i - 1];
 		} else {
@@ -36,15 +36,15 @@ static void add_mem_region(struct mem_region *mem_rgn, phys_addr_t base,
 		}
 	}
 
-	mem_rgn->count++;
+	mem_rgn->बिलांग++;
 }
 
 static void mem_regions_init(struct mem_region *mem)
 {
 	uint i;
 
-	mem->count = 0;
-	for (i = 0; i < MEM_RGN_COUNT; i++) {
+	mem->बिलांग = 0;
+	for (i = 0; i < MEM_RGN_बिलांग; i++) {
 		mem->rgn[i].base = 0;
 		mem->rgn[i].size = 0;
 	}
@@ -63,8 +63,8 @@ static int fdt_add_reserved_regions(struct mem_region *free_mem,
 		return -1;
 
 	/* process memreserve sections */
-	total = fdt_num_mem_rsv(fdt_blob);
-	assert_noisy(total < MEM_RGN_COUNT);
+	total = fdt_नुमेरो_mem_rsv(fdt_blob);
+	assert_noisy(total < MEM_RGN_बिलांग);
 	for (i = 0; i < total; i++) {
 		if (fdt_get_mem_rsv(fdt_blob, i, &addr, &size) != 0)
 			continue;
@@ -83,7 +83,7 @@ static int fdt_add_reserved_regions(struct mem_region *free_mem,
 			if (!ret && fdtdec_get_is_enabled(fdt_blob, subnode)) {
 				addr = res.start;
 				size = res.end - res.start + 1;
-				assert_noisy(i < MEM_RGN_COUNT);
+				assert_noisy(i < MEM_RGN_बिलांग);
 				add_mem_region(reserved_mem, addr, size);
 			}
 
@@ -110,7 +110,7 @@ static long region_overlap_check(struct mem_region *mem_rgn, phys_addr_t base,
 	unsigned long i;
 	struct region *rgn = mem_rgn->rgn;
 
-	for (i = 0; i < mem_rgn->count; i++) {
+	for (i = 0; i < mem_rgn->बिलांग; i++) {
 		phys_addr_t rgnbase = rgn[i].base;
 		phys_size_t rgnsize = rgn[i].size;
 
@@ -118,17 +118,17 @@ static long region_overlap_check(struct mem_region *mem_rgn, phys_addr_t base,
 			break;
 	}
 
-	return (i < mem_rgn->count) ? i : -1;
+	return (i < mem_rgn->बिलांग) ? i : -1;
 }
 
-static phys_addr_t find_ram_top(struct mem_region *free_mem,
+static phys_addr_t find_ram_इताअस(struct mem_region *free_mem,
 				struct mem_region *reserved_mem, phys_size_t size)
 {
 	long i, rgn;
 	phys_addr_t base = 0;
 	phys_addr_t res_base;
 
-	for (i = free_mem->count - 1; i >= 0; i--) {
+	for (i = free_mem->बिलांग - 1; i >= 0; i--) {
 		phys_addr_t rgnbase = free_mem->rgn[i].base;
 		phys_size_t rgnsize = free_mem->rgn[i].size;
 
@@ -151,7 +151,7 @@ static phys_addr_t find_ram_top(struct mem_region *free_mem,
 	return 0;
 }
 
-phys_addr_t get_mem_top(phys_addr_t ram_start, phys_size_t ram_size,
+phys_addr_t get_mem_इताअस(phys_addr_t ram_start, phys_size_t ram_size,
 			phys_size_t size, void *fdt)
 {
 	int i;
@@ -167,5 +167,5 @@ phys_addr_t get_mem_top(phys_addr_t ram_start, phys_size_t ram_size,
 	if (i < 0)
 		return 0;
 
-	return find_ram_top(&free_mem, &reserved_mem, size);
+	return find_ram_इताअस(&free_mem, &reserved_mem, size);
 }

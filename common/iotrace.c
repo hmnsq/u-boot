@@ -37,7 +37,7 @@ static struct iotrace {
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+static void add_record(int flags, const void *ptr, ulong हालागा)
 {
 	struct iotrace_record srec, *rec = &srec;
 
@@ -59,7 +59,7 @@ static void add_record(int flags, const void *ptr, ulong value)
 	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
 		rec = (struct iotrace_record *)map_sysmem(
 					iotrace.start + iotrace.offset,
-					sizeof(value));
+					sizeof(हालागा));
 	} else {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
 		iotrace.needed_size += sizeof(struct iotrace_record);
@@ -69,7 +69,7 @@ static void add_record(int flags, const void *ptr, ulong value)
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
 	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->हालागा = हालागा;
 
 	/* Update our checksum */
 	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
@@ -89,10 +89,10 @@ u32 iotrace_readl(const void *ptr)
 	return v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+void iotrace_writel(ulong हालागा, void *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	add_record(IOT_32 | IOT_WRITE, ptr, हालागा);
+	writel(हालागा, ptr);
 }
 
 u16 iotrace_readw(const void *ptr)
@@ -105,10 +105,10 @@ u16 iotrace_readw(const void *ptr)
 	return v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+void iotrace_writew(ulong हालागा, void *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	add_record(IOT_16 | IOT_WRITE, ptr, हालागा);
+	writew(हालागा, ptr);
 }
 
 u8 iotrace_readb(const void *ptr)
@@ -121,10 +121,10 @@ u8 iotrace_readb(const void *ptr)
 	return v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+void iotrace_writeb(ulong हालागा, void *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	add_record(IOT_8 | IOT_WRITE, ptr, हालागा);
+	writeb(हालागा, ptr);
 }
 
 void iotrace_reset_checksum(void)
@@ -173,11 +173,11 @@ void iotrace_set_buffer(ulong start, ulong size)
 	iotrace.crc32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *बिलांग)
 {
 	*start = iotrace.start;
 	*size = iotrace.size;
 	*needed_size = iotrace.needed_size;
 	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*बिलांग = iotrace.offset / sizeof(struct iotrace_record);
 }

@@ -22,15 +22,15 @@ static int __maybe_unused spl_sata_load_image_raw(struct spl_image_info *spl_ima
 						  unsigned long sector)
 {
 	struct legacy_img_hdr *header;
-	unsigned long count;
+	unsigned long बिलांग;
 	u32 image_size_sectors;
 	u32 image_offset_sectors;
 	u32 image_offset;
 	int ret;
 
 	header = spl_get_load_buffer(-sizeof(*header), stor_dev->blksz);
-	count = blk_dread(stor_dev, sector, 1, header);
-	if (count == 0)
+	बिलांग = blk_dread(stor_dev, sector, 1, header);
+	if (बिलांग == 0)
 		return -EIO;
 
 	ret = spl_parse_image_header(spl_image, bootdev, header);
@@ -40,10 +40,10 @@ static int __maybe_unused spl_sata_load_image_raw(struct spl_image_info *spl_ima
 	image_size_sectors = DIV_ROUND_UP(spl_image->size, stor_dev->blksz);
 	image_offset_sectors = spl_image->offset / stor_dev->blksz;
 	image_offset = spl_image->offset % stor_dev->blksz;
-	count = blk_dread(stor_dev, sector + image_offset_sectors,
+	बिलांग = blk_dread(stor_dev, sector + image_offset_sectors,
 			image_size_sectors,
 			(void *)spl_image->load_addr);
-	if (count != image_size_sectors)
+	if (बिलांग != image_size_sectors)
 		return -EIO;
 
 	if (image_offset)

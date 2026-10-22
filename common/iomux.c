@@ -32,13 +32,13 @@ int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sd
 /* This tries to preserve the old list if an error occurs. */
 int iomux_doenv(const int console, const char *arg)
 {
-	char *console_args, *temp, **start;
+	char *console_मगा_कातविरान, *temp, **start;
 	int i, j, io_flag, cs_idx, repeat;
 	struct stdio_dev **cons_set, **old_set;
 	struct stdio_dev *dev;
 
-	console_args = strdup(arg);
-	if (console_args == NULL)
+	console_मगा_कातविरान = strdup(arg);
+	if (console_मगा_कातविरान == NULL)
 		return 1;
 	/*
 	 * Check whether a comma separated list of devices was
@@ -50,7 +50,7 @@ int iomux_doenv(const int console, const char *arg)
 	 * commas and then again to populate start.
 	 */
 	i = 0;
-	temp = console_args;
+	temp = console_मगा_कातविरान;
 	for (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
@@ -63,11 +63,11 @@ int iomux_doenv(const int console, const char *arg)
 	}
 	start = (char **)malloc(i * sizeof(char *));
 	if (start == NULL) {
-		free(console_args);
+		free(console_मगा_कातविरान);
 		return 1;
 	}
 	i = 0;
-	start[0] = console_args;
+	start[0] = console_मगा_कातविरान;
 	for (;;) {
 		temp = strchr(start[i++], ',');
 		if (temp == NULL)
@@ -78,14 +78,14 @@ int iomux_doenv(const int console, const char *arg)
 	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
 	if (cons_set == NULL) {
 		free(start);
-		free(console_args);
+		free(console_मगा_कातविरान);
 		return 1;
 	}
 
 	io_flag = stdio_file_to_flags(console);
 	if (io_flag < 0) {
 		free(start);
-		free(console_args);
+		free(console_मगा_कातविरान);
 		free(cons_set);
 		return 1;
 	}
@@ -97,7 +97,7 @@ int iomux_doenv(const int console, const char *arg)
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
-		dev = console_search_dev(io_flag, start[j]);
+		dev = console_हानाप_dev(io_flag, start[j]);
 		if (dev == NULL)
 			continue;
 		/*
@@ -114,7 +114,7 @@ int iomux_doenv(const int console, const char *arg)
 			continue;
 		cons_set[cs_idx++] = dev;
 	}
-	free(console_args);
+	free(console_मगा_कातविरान);
 	free(start);
 	/* failed to set any console */
 	if (cs_idx == 0) {
@@ -123,10 +123,10 @@ int iomux_doenv(const int console, const char *arg)
 	}
 
 	old_set = console_devices[console];
-	repeat = cd_count[console];
+	repeat = cd_बिलांग[console];
 
 	console_devices[console] = cons_set;
-	cd_count[console] = cs_idx;
+	cd_बिलांग[console] = cs_idx;
 
 	/* Stop dropped consoles */
 	for (i = 0; i < repeat; i++) {

@@ -23,7 +23,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 enum {
-	RECORD_COUNT = CONFIG_VAL(BOOTSTAGE_RECORD_COUNT),
+	RECORD_बिलांग = CONFIG_VAL(BOOTSTAGE_RECORD_बिलांग),
 };
 
 struct bootstage_record {
@@ -35,9 +35,9 @@ struct bootstage_record {
 };
 
 struct bootstage_data {
-	uint rec_count;
+	uint rec_बिलांग;
 	uint next_id;
-	struct bootstage_record record[RECORD_COUNT];
+	struct bootstage_record record[RECORD_बिलांग];
 };
 
 enum {
@@ -48,7 +48,7 @@ enum {
 
 struct bootstage_hdr {
 	u32 version;		/* BOOTSTAGE_VERSION */
-	u32 count;		/* Number of records */
+	u32 बिलांग;		/* Number of records */
 	u32 size;		/* Total data size (non-zero if valid) */
 	u32 magic;		/* Magic number */
 	u32 next_id;		/* Next ID to use for bootstage */
@@ -71,8 +71,8 @@ int bootstage_relocate(void *to)
 	 * Duplicate all strings.  They may point to an old location in the
 	 * program .text section that can eventually get trashed.
 	 */
-	debug("Relocating %d records\n", data->rec_count);
-	for (i = 0; i < data->rec_count; i++) {
+	debug("Relocating %d records\n", data->rec_बिलांग);
+	for (i = 0; i < data->rec_बिलांग; i++) {
 		const char *from = data->record[i].name;
 
 		if (!from)
@@ -91,7 +91,7 @@ struct bootstage_record *find_id(struct bootstage_data *data,
 	struct bootstage_record *rec;
 	struct bootstage_record *end;
 
-	for (rec = data->record, end = rec + data->rec_count; rec < end;
+	for (rec = data->record, end = rec + data->rec_बिलांग; rec < end;
 	     rec++) {
 		if (rec->id == id)
 			return rec;
@@ -106,8 +106,8 @@ struct bootstage_record *ensure_id(struct bootstage_data *data,
 	struct bootstage_record *rec;
 
 	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
-		rec = &data->record[data->rec_count++];
+	if (!rec && data->rec_बिलांग < RECORD_बिलांग) {
+		rec = &data->record[data->rec_बिलांग++];
 		rec->id = id;
 		return rec;
 	}
@@ -134,8 +134,8 @@ ulong bootstage_add_record(enum bootstage_id id, const char *name,
 	/* Only record the first event for each */
 	rec = find_id(data, id);
 	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
-			rec = &data->record[data->rec_count++];
+		if (data->rec_बिलांग < RECORD_बिलांग) {
+			rec = &data->record[data->rec_बिलांग++];
 			rec->time_us = mark;
 			rec->name = name;
 			rec->flags = flags;
@@ -243,18 +243,18 @@ static const char *get_record_name(char *buf, int len,
 	return buf;
 }
 
-static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
+static uint32_t इलिम्बाग_time_record(struct bootstage_record *rec, uint32_t prev)
 {
 	char buf[20];
 
 	if (prev == -1U) {
 		printf("%11s", "");
-		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
+		इलिम्बाग_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
 	} else {
 		if (prev > rec->time_us)
 			prev = 0;
-		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
+		इलिम्बाग_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
+		इलिम्बाग_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
 	}
 	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
 
@@ -291,24 +291,24 @@ static int add_bootstages_devicetree(struct fdt_header *blob)
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
-	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
+	for (recnum = data->rec_बिलांग - 1, i = 0; recnum >= 0; recnum--, i++) {
 		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+		int बुहोल;
 
 		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
 			continue;
 
-		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
+		बुहोल = fdt_add_subnode(blob, bootstage, simple_itoa(i));
+		if (बुहोल < 0)
 			break;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
+		if (fdt_setprop_string(blob, बुहोल, "name",
 				       get_record_name(buf, sizeof(buf), rec)))
 			return -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
+		if (fdt_setprop_cell(blob, बुहोल,
 				rec->start_us ? "accum" : "mark",
 				rec->time_us))
 			return -EINVAL;
@@ -334,24 +334,24 @@ void bootstage_report(void)
 	int i;
 
 	printf("Timer summary in microseconds (%d records):\n",
-	       data->rec_count);
+	       data->rec_बिलांग);
 	printf("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
 
-	prev = print_time_record(rec, 0);
+	prev = इलिम्बाग_time_record(rec, 0);
 
-	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
+	for (i = 1, rec++; i < data->rec_बिलांग; i++, rec++) {
 		if (rec->id && !rec->start_us)
-			prev = print_time_record(rec, prev);
+			prev = इलिम्बाग_time_record(rec, prev);
 	}
-	if (data->rec_count > RECORD_COUNT)
+	if (data->rec_बिलांग > RECORD_बिलांग)
 		printf("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		       data->rec_count - RECORD_COUNT);
+		       data->rec_बिलांग - RECORD_बिलांग);
 
 	puts("\nAccumulated time:\n");
-	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
+	for (i = 0, rec = data->record; i < data->rec_बिलांग; i++, rec++) {
 		if (rec->start_us)
-			prev = print_time_record(rec, -1);
+			prev = इलिम्बाग_time_record(rec, -1);
 	}
 }
 
@@ -394,18 +394,18 @@ int bootstage_stash(void *base, int size)
 	/* Write an arbitrary version number */
 	hdr->version = BOOTSTAGE_VERSION;
 
-	hdr->count = data->rec_count;
+	hdr->बिलांग = data->rec_बिलांग;
 	hdr->size = 0;
 	hdr->magic = BOOTSTAGE_MAGIC;
 	hdr->next_id = data->next_id;
 	ptr += sizeof(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
+	for (rec = data->record, i = 0; i < data->rec_बिलांग; i++, rec++)
 		append_data(&ptr, end, rec, sizeof(*rec));
 
 	/* Write the name strings */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
+	for (rec = data->record, i = 0; i < data->rec_बिलांग; i++, rec++) {
 		const char *name;
 
 		name = get_record_name(buf, sizeof(buf), rec);
@@ -420,7 +420,7 @@ int bootstage_stash(void *base, int size)
 
 	/* Update total data size */
 	hdr->size = ptr - (char *)base;
-	debug("Stashed %d records\n", hdr->count);
+	debug("Stashed %d records\n", hdr->बिलांग);
 
 	return 0;
 }
@@ -452,10 +452,10 @@ int bootstage_unstash(const void *base, int size)
 		return -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	if (hdr->बिलांग * sizeof(*rec) > hdr->size) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
-			"only %d bytes is available\n", __func__, hdr->count,
-		      (ulong)hdr->count * sizeof(*rec), hdr->size);
+			"only %d bytes is available\n", __func__, hdr->बिलांग,
+		      (ulong)hdr->बिलांग * sizeof(*rec), hdr->size);
 		return -ENOSPC;
 	}
 
@@ -465,22 +465,22 @@ int bootstage_unstash(const void *base, int size)
 		return -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	if (data->rec_बिलांग + hdr->बिलांग > RECORD_बिलांग) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
+		      __func__, hdr->बिलांग, RECORD_बिलांग - data->rec_बिलांग);
 		return -ENOSPC;
 	}
 
 	ptr += sizeof(*hdr);
 
 	/* Read the records */
-	rec_size = hdr->count * sizeof(*data->record);
-	memcpy(data->record + data->rec_count, ptr, rec_size);
+	rec_size = hdr->बिलांग * sizeof(*data->record);
+	memcpy(data->record + data->rec_बिलांग, ptr, rec_size);
 
 	/* Read the name strings */
 	ptr += rec_size;
-	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
+	for (rec = data->record + data->rec_बिलांग, i = 0; i < hdr->बिलांग;
 	     i++, rec++) {
 		rec->name = ptr;
 		if (xpl_phase() == PHASE_SPL)
@@ -491,9 +491,9 @@ int bootstage_unstash(const void *base, int size)
 	}
 
 	/* Mark the records as read */
-	data->rec_count += hdr->count;
+	data->rec_बिलांग += hdr->बिलांग;
 	data->next_id = hdr->next_id;
-	debug("Unstashed %d records\n", hdr->count);
+	debug("Unstashed %d records\n", hdr->बिलांग);
 
 	return 0;
 }
@@ -524,7 +524,7 @@ int bootstage_get_size(bool add_strings)
 		struct bootstage_record *rec;
 		int i;
 
-		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
+		for (rec = data->record, i = 0; i < data->rec_बिलांग; i++, rec++)
 			if (rec->name)
 				size += strlen(rec->name) + 1;
 	}

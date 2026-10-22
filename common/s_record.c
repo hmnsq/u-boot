@@ -9,7 +9,7 @@
 static int hex1_bin (char  c);
 static int hex2_bin (char *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+int srec_decode (char *पासोक, int *बिलांग, ulong *addr, char *data)
 {
 	int	i;
 	int	v;				/* conversion buffer	*/
@@ -22,60 +22,60 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
+	for (; *पासोक; ++पासोक) {
+		if (*पासोक == 'S') {		/* skip 'S' */
+			++पासोक;
 			break;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
+	if (*पासोक == '\0') {			/* no more data?	*/
 		return (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *पासोक++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
+	if ((*बिलांग = hex2_bin(पासोक)) < 0) {
 		return (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *बिलांग;
+	पासोक  += 2;
 
 	switch (v) {				/* record type		*/
 
 	case '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
+		*बिलांग   -= 3;			/* - checksum and addr	*/
 		break;
 	case '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
+		*बिलांग   -= 3;			/* - checksum and addr	*/
 		break;
 	case '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
+		*बिलांग   -= 4;			/* - checksum and addr	*/
 		break;
 	case '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
+		*बिलांग   -= 5;			/* - checksum and addr	*/
 		break;
 /***	case '4'  ***/
 	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
+		srec_type = SREC_बिलांग;	/* a 2 byte record counter	*/
+		*बिलांग    = 0;			/* no data		*/
 		break;
 /***	case '6' -- not used  ***/
 	case '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
+		*बिलांग   -= 5;			/* - checksum and addr	*/
 		break;
 	case '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
+		*बिलांग   -= 4;			/* - checksum and addr	*/
 		break;
 	case '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
+		*बिलांग   -= 3;			/* - checksum and addr	*/
 		break;
 	default:
 		return (SREC_E_BADTYPE);
@@ -87,42 +87,42 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	switch (v) {
 	case '3':				/* 4 byte addr field	*/
 	case '7':
-		if ((v = hex2_bin(input)) < 0) {
+		if ((v = hex2_bin(पासोक)) < 0) {
 			return (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		पासोक  += 2;
 		/* FALL THRU */
 	case '2':				/* 3 byte addr field	*/
 	case '8':
-		if ((v = hex2_bin(input)) < 0) {
+		if ((v = hex2_bin(पासोक)) < 0) {
 			return (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		पासोक  += 2;
 		/* FALL THRU */
 	case '0':				/* 2 byte addr field	*/
 	case '1':
 	case '5':
 	case '9':
-		if ((v = hex2_bin(input)) < 0) {
+		if ((v = hex2_bin(पासोक)) < 0) {
 			return (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		पासोक  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
+		if ((v = hex2_bin(पासोक)) < 0) {
 			return (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		पासोक  += 2;
 
 		break;
 	default:
@@ -130,17 +130,17 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
+	for (i=0; i < *बिलांग; ++i) {
+		if ((v = hex2_bin(पासोक)) < 0) {
 			return (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		पासोक  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
+	if ((v = hex2_bin(पासोक)) < 0) {
 		return (SREC_E_NOSREC);
 	}
 

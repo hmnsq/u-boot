@@ -29,7 +29,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
+static int on_console(const char *name, const char *हालागा, enum env_op op,
 	int flags)
 {
 	int console = -1;
@@ -51,11 +51,11 @@ static int on_console(const char *name, const char *value, enum env_op op,
 	case env_op_overwrite:
 
 		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
+			if (iomux_doenv(console, हालागा))
 				return 1;
 		} else {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
+			if (console_assign(console, हालागा) < 0)
 				return 1;
 		}
 
@@ -73,7 +73,7 @@ static int on_console(const char *name, const char *value, enum env_op op,
 U_BOOT_ENV_CALLBACK(console, on_console);
 
 #ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
+static int on_silent(const char *name, const char *हालागा, enum env_op op,
 	int flags)
 {
 	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
@@ -84,7 +84,7 @@ static int on_silent(const char *name, const char *value, enum env_op op,
 		if ((flags & H_INTERACTIVE) == 0)
 			return 0;
 
-	if (value != NULL)
+	if (हालागा != NULL)
 		gd->flags |= GD_FLG_SILENT;
 	else
 		gd->flags &= ~GD_FLG_SILENT;
@@ -244,12 +244,12 @@ static bool console_dev_is_serial(struct stdio_dev *sdev)
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
 static struct stdio_dev *tstcdev;
 struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+int cd_बिलांग[MAX_FILES];
 
 static void console_devices_set(int file, struct stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
-	cd_count[file] = 1;
+	cd_बिलांग[file] = 1;
 }
 
 /**
@@ -267,11 +267,11 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
 {
 	int i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
+	for (i = 0; i < ARRAY_SIZE(cd_बिलांग); i++) {
 		if (i == file)
 			continue;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
+		if (iomux_match_device(console_devices[i], cd_बिलांग[i], sdev) >= 0)
 			return false;
 	}
 	return true;
@@ -362,16 +362,16 @@ void console_puts_select_stderr(bool serial_only, const char *s)
 int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
 {
 	char buf[CONFIG_SYS_PBSIZE];
-	va_list args;
+	va_list मगा_कातविरान;
 	int ret;
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 
 	/* For this to work, buf must be larger than anything we ever want to
 	 * print.
 	 */
-	ret = vscnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	ret = vscnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	console_puts_select_stderr(serial_only, buf);
 
 	return ret;
@@ -502,17 +502,17 @@ void console_stop(int file, struct stdio_dev *sdev)
 
 int serial_printf(const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	uint i;
 	char printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	serial_puts(printbuffer);
 	return i;
@@ -581,17 +581,17 @@ void fflush(int file)
 
 int fprintf(int file, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	uint i;
 	char printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	/* Send to desired file */
 	fputs(file, printbuffer);
@@ -681,7 +681,7 @@ static void pre_console_puts(const char *s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+static void इलिम्बाग_pre_console_buffer(int flushpoint)
 {
 	long in = 0, out = 0;
 	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
@@ -714,7 +714,7 @@ static void print_pre_console_buffer(int flushpoint)
 #else
 static inline void pre_console_putc(const char c) {}
 static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
+static inline void इलिम्बाग_pre_console_buffer(int flushpoint) {}
 #endif
 
 void putc(const char c)
@@ -920,23 +920,23 @@ int ctrlc(void)
 int confirm_yesno(void)
 {
 	int i;
-	char str_input[5];
+	char str_पासोक[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
-		str_input[i] = getchar();
-		putc(str_input[i]);
-		if (str_input[i] == '\r')
+	while (i < sizeof(str_पासोक)) {
+		str_पासोक[i] = getchar();
+		putc(str_पासोक[i]);
+		if (str_पासोक[i] == '\r')
 			break;
 		i++;
 	}
 	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
-	    strncmp(str_input, "Y\r", 2) == 0 ||
-	    strncmp(str_input, "yes\r", 4) == 0 ||
-	    strncmp(str_input, "YES\r", 4) == 0)
+	if (strncmp(str_पासोक, "y\r", 2) == 0 ||
+	    strncmp(str_पासोक, "Y\r", 2) == 0 ||
+	    strncmp(str_पासोक, "yes\r", 4) == 0 ||
+	    strncmp(str_पासोक, "YES\r", 4) == 0)
 		return 1;
 	return 0;
 }
@@ -963,7 +963,7 @@ void clear_ctrlc(void)
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+struct stdio_dev *console_हानाप_dev(int flags, const char *name)
 {
 	struct stdio_dev *dev;
 
@@ -986,7 +986,7 @@ int console_assign(int file, const char *devname)
 
 	/* Check for valid device name */
 
-	dev = console_search_dev(flag, devname);
+	dev = console_हानाप_dev(flag, devname);
 
 	if (dev)
 		return console_setfile(file, dev);
@@ -1037,7 +1037,7 @@ int console_init_f(void)
 
 	console_update_silent();
 
-	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
+	इलिम्बाग_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
 	return 0;
 }
@@ -1075,7 +1075,7 @@ static char *get_stdio(const u8 std)
 	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
-static void stdio_print_current_devices(void)
+static void stdio_इलिम्बाग_current_devices(void)
 {
 	char *stdinname = NULL;
 	char *stdoutname = NULL;
@@ -1134,9 +1134,9 @@ int console_init_r(void)
 	stderrname = env_get("stderr");
 
 	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
+		inputdev  = console_हानाप_dev(DEV_FLAGS_पासोक,  stdinname);
+		outputdev = console_हानाप_dev(DEV_FLAGS_OUTPUT, stdoutname);
+		errdev    = console_हानाप_dev(DEV_FLAGS_OUTPUT, stderrname);
 		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 			iomux_err = iomux_doenv(stdin, stdinname);
 			iomux_err += iomux_doenv(stdout, stdoutname);
@@ -1148,13 +1148,13 @@ int console_init_r(void)
 	}
 	/* if the devices are overwritten or not found, use default device */
 	if (inputdev == NULL) {
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
+		inputdev  = console_हानाप_dev(DEV_FLAGS_पासोक,  "serial");
 	}
 	if (outputdev == NULL) {
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+		outputdev = console_हानाप_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	if (errdev == NULL) {
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+		errdev    = console_हानाप_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
 	if (outputdev != NULL) {
@@ -1173,7 +1173,7 @@ int console_init_r(void)
 done:
 
 	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
-		stdio_print_current_devices();
+		stdio_इलिम्बाग_current_devices();
 
 	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
@@ -1183,7 +1183,7 @@ done:
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
+	इलिम्बाग_pre_console_buffer(flushpoint);
 	return 0;
 }
 
@@ -1213,14 +1213,14 @@ int console_init_r(void)
 	 */
 	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
 		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
+			outputdev = console_हानाप_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
 	/* Scan devices looking for input and output devices */
 	list_for_each(pos, list) {
 		dev = list_entry(pos, struct stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		if ((dev->flags & DEV_FLAGS_पासोक) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
@@ -1244,7 +1244,7 @@ int console_init_r(void)
 		console_setfile_and_devices(stdin, inputdev);
 
 	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
-		stdio_print_current_devices();
+		stdio_इलिम्बाग_current_devices();
 
 	/* Setting environment variables */
 	for (i = 0; i < MAX_FILES; i++) {
@@ -1253,7 +1253,7 @@ int console_init_r(void)
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
+	इलिम्बाग_pre_console_buffer(flushpoint);
 	return 0;
 }
 
@@ -1271,10 +1271,10 @@ int console_remove_by_name(const char *name)
 		struct stdio_dev **src, **dest;
 		int i;
 
-		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
+		log_debug("file %d: %d devices: ", fnum, cd_बिलांग[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
+		for (i = 0; i < cd_बिलांग[fnum]; i++, src++) {
 			struct stdio_dev *sdev = *src;
 			int ret = 0;
 
@@ -1285,8 +1285,8 @@ int console_remove_by_name(const char *name)
 			if (ret && !err)
 				err = ret;
 		}
-		cd_count[fnum] = dest - console_devices[fnum];
-		log_debug("now %d\n", cd_count[fnum]);
+		cd_बिलांग[fnum] = dest - console_devices[fnum];
+		log_debug("now %d\n", cd_बिलांग[fnum]);
 	}
 #endif /* CONSOLE_MUX */
 

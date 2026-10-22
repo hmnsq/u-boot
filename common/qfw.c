@@ -28,7 +28,7 @@ int qfw_online_cpus(struct udevice *dev)
 int qfw_read_firmware_list(struct udevice *dev)
 {
 	int i;
-	u32 count;
+	u32 बिलांग;
 	struct fw_file *file;
 	struct list_head *entry;
 
@@ -38,12 +38,12 @@ int qfw_read_firmware_list(struct udevice *dev)
 	if (!list_empty(&qdev->fw_list))
 		return 0;
 
-	qfw_read_entry(dev, FW_CFG_FILE_DIR, 4, &count);
-	if (!count)
+	qfw_read_entry(dev, FW_CFG_FILE_DIR, 4, &बिलांग);
+	if (!बिलांग)
 		return 0;
 
-	count = be32_to_cpu(count);
-	for (i = 0; i < count; i++) {
+	बिलांग = be32_to_cpu(बिलांग);
+	for (i = 0; i < बिलांग; i++) {
 		file = malloc(sizeof(*file));
 		if (!file) {
 			printf("error: allocating resource\n");

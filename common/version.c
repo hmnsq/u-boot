@@ -12,5 +12,5 @@
 	U_BOOT_TIME " " U_BOOT_TZ ")" CONFIG_IDENT_STRING
 
 const char version_string[] = U_BOOT_VERSION_STRING;
-const unsigned short version_num = U_BOOT_VERSION_NUM;
-const unsigned char version_num_patch = U_BOOT_VERSION_NUM_PATCH;
+const unsigned short version_नुमेरो = U_BOOT_VERSION_नुमेरो;
+const unsigned char version_नुमेरो_patch = U_BOOT_VERSION_नुमेरो_PATCH;

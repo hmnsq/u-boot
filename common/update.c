@@ -24,7 +24,7 @@
 #define UPDATE_FILE_ENV		"updatefile"
 
 extern ulong tftp_timeout_ms;
-extern int tftp_timeout_count_max;
+extern int tftp_timeout_बिलांग_max;
 #ifdef CONFIG_MTD_NOR_FLASH
 #include <flash.h>
 #include <mtd/cfi_flash.h>
@@ -34,19 +34,19 @@ static int update_load(char *filename, ulong msec_max, int cnt_max, ulong addr)
 {
 	int rv, ret;
 	ulong saved_timeout_msecs;
-	int saved_timeout_count;
+	int saved_timeout_बिलांग;
 	char *saved_netretry, *saved_bootfile;
 
 	rv = 0;
 	/* save used globals and env variable */
 	saved_timeout_msecs = tftp_timeout_ms;
-	saved_timeout_count = tftp_timeout_count_max;
+	saved_timeout_बिलांग = tftp_timeout_बिलांग_max;
 	saved_netretry = strdup(env_get("netretry"));
 	saved_bootfile = strdup(net_boot_file_name);
 
 	/* set timeouts for auto-update */
 	tftp_timeout_ms = msec_max;
-	tftp_timeout_count_max = cnt_max;
+	tftp_timeout_बिलांग_max = cnt_max;
 
 	/* we don't want to retry the connection if errors occur */
 	env_set("netretry", "no");
@@ -63,7 +63,7 @@ static int update_load(char *filename, ulong msec_max, int cnt_max, ulong addr)
 
 	/* restore changed globals and env variable */
 	tftp_timeout_ms = saved_timeout_msecs;
-	tftp_timeout_count_max = saved_timeout_count;
+	tftp_timeout_बिलांग_max = saved_timeout_बिलांग;
 
 	env_set("netretry", saved_netretry);
 	if (saved_netretry != NULL)
@@ -100,7 +100,7 @@ static int update_flash_protect(int prot, ulong addr_first, ulong addr_last)
 		info = &flash_info[bank];
 
 		/* Nothing to do if the bank doesn't exist */
-		if (info->sector_count == 0)
+		if (info->sector_बिलांग == 0)
 			return 0;
 
 		/* Point to current bank protection information */
@@ -118,7 +118,7 @@ static int update_flash_protect(int prot, ulong addr_first, ulong addr_last)
 		if (addr_first < info->start[0])
 			addr_first = info->start[0];
 
-		for (i = 0; i < info->sector_count; i++) {
+		for (i = 0; i < info->sector_बिलांग; i++) {
 			/* Save current information about protected sectors */
 			if (prot == 0) {
 				s = info->start[i];
@@ -273,10 +273,10 @@ got_update_file:
 	images_noffset = fdt_path_offset(fit, FIT_IMAGES_PATH);
 
 	ndepth = 0;
-	noffset = fdt_next_node(fit, images_noffset, &ndepth);
+	noffset = fdt_next_बुहोल(fit, images_noffset, &ndepth);
 	while (noffset >= 0 && ndepth > 0) {
 		if (ndepth != 1)
-			goto next_node;
+			goto next_बुहोल;
 
 		fit_image_name = (char *)fit_get_name(fit, noffset, NULL);
 		printf("Processing update '%s' :", fit_image_name);
@@ -284,7 +284,7 @@ got_update_file:
 		if (!fit_image_verify(fit, noffset)) {
 			printf("Error: invalid update hash, aborting\n");
 			ret = 1;
-			goto next_node;
+			goto next_बुहोल;
 		}
 
 		printf("\n");
@@ -292,7 +292,7 @@ got_update_file:
 					&update_fladdr, &update_size)) {
 			printf("Error: can't get update parameters, aborting\n");
 			ret = 1;
-			goto next_node;
+			goto next_बुहोल;
 		}
 
 		if (!update_tftp_dfu) {
@@ -300,7 +300,7 @@ got_update_file:
 					 update_size)) {
 				printf("Error: can't flash update, aborting\n");
 				ret = 1;
-				goto next_node;
+				goto next_बुहोल;
 			}
 		} else if (fit_image_check_type(fit, noffset,
 						IH_TYPE_FIRMWARE)) {
@@ -311,8 +311,8 @@ got_update_file:
 			if (ret)
 				return ret;
 		}
-next_node:
-		noffset = fdt_next_node(fit, noffset, &ndepth);
+next_बुहोल:
+		noffset = fdt_next_बुहोल(fit, noffset, &ndepth);
 	}
 
 	return ret;
@@ -349,10 +349,10 @@ int fit_update(const void *fit)
 	images_noffset = fdt_path_offset(fit, FIT_IMAGES_PATH);
 
 	ndepth = 0;
-	noffset = fdt_next_node(fit, images_noffset, &ndepth);
+	noffset = fdt_next_बुहोल(fit, images_noffset, &ndepth);
 	while (noffset >= 0 && ndepth > 0) {
 		if (ndepth != 1)
-			goto next_node;
+			goto next_बुहोल;
 
 		fit_image_name = (char *)fit_get_name(fit, noffset, NULL);
 		printf("Processing update '%s' :", fit_image_name);
@@ -360,7 +360,7 @@ int fit_update(const void *fit)
 		if (!fit_image_verify(fit, noffset)) {
 			printf("Error: invalid update hash, aborting\n");
 			ret = 1;
-			goto next_node;
+			goto next_बुहोल;
 		}
 
 		printf("\n");
@@ -368,7 +368,7 @@ int fit_update(const void *fit)
 					 &update_fladdr, &update_size)) {
 			printf("Error: can't get update parameters, aborting\n");
 			ret = 1;
-			goto next_node;
+			goto next_बुहोल;
 		}
 
 		if (fit_image_check_type(fit, noffset, IH_TYPE_FIRMWARE)) {
@@ -378,8 +378,8 @@ int fit_update(const void *fit)
 			if (ret)
 				return ret;
 		}
-next_node:
-		noffset = fdt_next_node(fit, noffset, &ndepth);
+next_बुहोल:
+		noffset = fdt_next_बुहोल(fit, noffset, &ndepth);
 	}
 
 	return ret;

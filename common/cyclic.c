@@ -60,7 +60,7 @@ void cyclic_unregister(struct cyclic_info *cyclic)
 static void cyclic_run(void)
 {
 	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	struct hlist_बुहोल *tmp;
 	u64 now, after, cpu_time;
 
 	/*
@@ -134,7 +134,7 @@ void schedule(void)
 int cyclic_unregister_all(void)
 {
 	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	struct hlist_बुहोल *tmp;
 
 	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);

@@ -17,12 +17,12 @@
 #include <linux/libfdt.h>
 
 static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+			       ulong बिलांग, void *buf)
 {
 	ulong addr = 0;
 
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
+	      __func__, sector, बिलांग, (ulong)buf);
 
 	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
 		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
@@ -37,9 +37,9 @@ static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
 	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
 		addr += image_load_offset;
 
-	memcpy(buf, (void *)addr, count);
+	memcpy(buf, (void *)addr, बिलांग);
 
-	return count;
+	return बिलांग;
 }
 
 static int spl_ram_load_image(struct spl_image_info *spl_image,

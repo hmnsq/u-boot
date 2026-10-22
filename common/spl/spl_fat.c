@@ -129,11 +129,11 @@ int spl_load_image_fat_os(struct spl_image_info *spl_image,
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_मगा_कातविरान)
 		file = env_get("falcon_args_file");
 		if (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+				file, (void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR, 0);
 			if (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
@@ -155,12 +155,12 @@ defaults:
 	if (err)
 		return err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_मगा_कातविरान)
+	err = file_fat_read(CONFIG_SPL_FS_LOAD_मगा_कातविरान_NAME,
+			    (void *)CONFIG_SPL_PAYLOAD_मगा_कातविरान_ADDR, 0);
 	if (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
-		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
+		       __func__, CONFIG_SPL_FS_LOAD_मगा_कातविरान_NAME, err);
 		return -1;
 	}
 #endif
