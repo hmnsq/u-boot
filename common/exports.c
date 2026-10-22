@@ -9,15 +9,15 @@ DECLARE_GLOBAL_DATA_PTR;
 
 unsigned long get_version(void)
 {
-	return XF_VERSION;
+	вернуть XF_VERSION;
 }
 
 #define EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
 
-int jumptable_init(void)
+целое jumptable_init(void)
 {
 	gd->jt = malloc(sizeof(struct jt_funcs));
 #include <_exports.h>
 
-	return 0;
+	вернуть 0;
 }

@@ -66,10 +66,10 @@ DECLARE_GLOBAL_DATA_PTR;
  * a structure...
  */
 
-#if defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)
-static int init_func_watchdog_init(void)
+#если defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)
+static целое init_func_watchdog_init(void)
 {
-# if defined(CONFIG_HW_WATCHDOG) && \
+# если defined(CONFIG_HW_WATCHDOG) && \
 	(defined(CONFIG_M68K) || defined(CONFIG_MICROBLAZE) || \
 	defined(CONFIG_SH) || \
 	defined(CONFIG_DESIGNWARE_WATCHDOG) || \
@@ -79,31 +79,31 @@ static int init_func_watchdog_init(void)
 # endif
 	schedule();
 
-	return 0;
+	вернуть 0;
 }
 
-int init_func_watchdog_reset(void)
+целое init_func_watchdog_reset(void)
 {
 	schedule();
 
-	return 0;
+	вернуть 0;
 }
 #endif /* CONFIG_WATCHDOG */
 
-__weak void board_add_ram_info(int use_default)
+__weak void board_add_ram_info(целое use_default)
 {
 	/* please define platform specific board_add_ram_info() */
 }
 
-static int init_baud_rate(void)
+static целое init_baud_rate(void)
 {
 	gd->baudrate = env_get_ulong("baudrate", 10, CONFIG_BAUDRATE);
-	return 0;
+	вернуть 0;
 }
 
-static int display_text_info(void)
+static целое display_text_info(void)
 {
-#if !defined(CONFIG_SANDBOX) && !defined(CONFIG_EFI_APP)
+#если !defined(CONFIG_SANDBOX) && !defined(CONFIG_EFI_APP)
 	ulong bss_start, bss_end, text_base;
 
 	bss_start = (ulong)__bss_start;
@@ -111,7 +111,7 @@ static int display_text_info(void)
 
 #ifdef CONFIG_TEXT_BASE
 	text_base = CONFIG_TEXT_BASE;
-#else
+#иначе
 	text_base = CONFIG_SYS_MONITOR_BASE;
 #endif
 
@@ -119,72 +119,72 @@ static int display_text_info(void)
 	      text_base, bss_start, bss_end);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
 #ifdef CONFIG_SYSRESET_PRINT_RESETINFO
-static int print_resetinfo(void)
+static целое print_resetinfo(void)
 {
 	struct udevice *dev;
 	char status[256];
 	bool status_printed = false;
-	int ret;
+	целое ret;
 
 	/*
 	 * Not all boards have sysreset drivers available during early
 	 * boot, so don't fail if one can't be found.
 	 */
-	for (ret = uclass_first_device_check(UCLASS_SYSRESET, &dev); dev;
+	для (ret = uclass_first_device_check(UCLASS_SYSRESET, &dev); dev;
 	     ret = uclass_next_device_check(&dev)) {
-		if (ret) {
+		если (ret) {
 			debug("%s: %s sysreset device (error: %d)\n",
 			      __func__, dev->name, ret);
 			continue;
 		}
 
-		if (!sysreset_get_status(dev, status, sizeof(status))) {
+		если (!sysreset_get_status(dev, status, sizeof(status))) {
 			printf("%s%s", status_printed ? " " : "", status);
 			status_printed = true;
 		}
 	}
-	if (status_printed)
+	если (status_printed)
 		printf("\n");
 
-	return 0;
+	вернуть 0;
 }
 #endif
 
-#if defined(CONFIG_DISPLAY_CPUINFO) && CONFIG_IS_ENABLED(CPU)
-static int print_cpuinfo(void)
+#если defined(CONFIG_DISPLAY_CPUINFO) && CONFIG_IS_ENABLED(CPU)
+static целое print_cpuinfo(void)
 {
 	struct udevice *dev;
 	char desc[512];
-	int ret;
+	целое ret;
 
 	dev = cpu_get_current_dev();
-	if (!dev) {
+	если (!dev) {
 		debug("%s: Could not get CPU device\n",
 		      __func__);
-		return -ENODEV;
+		вернуть -ENODEV;
 	}
 
 	ret = cpu_get_desc(dev, desc, sizeof(desc));
-	if (ret) {
+	если (ret) {
 		debug("%s: Could not get CPU description (err = %d)\n",
 		      dev->name, ret);
-		return ret;
+		вернуть ret;
 	}
 
 	printf("CPU:   %s\n", desc);
 
-	return 0;
+	вернуть 0;
 }
 #endif
 
-static int announce_dram_init(void)
+static целое announce_dram_init(void)
 {
 	puts("DRAM:  ");
-	return 0;
+	вернуть 0;
 }
 
 /*
@@ -200,30 +200,30 @@ static int announce_dram_init(void)
 #define compute_size_scale_val(size, scale, val) do { \
 	scale = ilog2(size) / 10 * 10; \
 	val = (10 * size + ((1ULL << scale) >> 1)) >> scale; \
-	if (val == 10240) { val = 10; scale += 10; } \
-} while (0)
+	если (val == 10240) { val = 10; scale += 10; } \
+} пока (0)
 
 /*
  * Check if the sizes in their natural units written in decimal format with
  * one fraction number are same.
  */
-static int sizes_near(unsigned long long size1, unsigned long long size2)
+static целое sizes_near(unsigned long long size1, unsigned long long size2)
 {
-	unsigned int size1_scale, size1_val, size2_scale, size2_val;
+	unsigned целое size1_scale, size1_val, size2_scale, size2_val;
 
 	compute_size_scale_val(size1, size1_scale, size1_val);
 	compute_size_scale_val(size2, size2_scale, size2_val);
 
-	return size1_scale == size2_scale && size1_val == size2_val;
+	вернуть size1_scale == size2_scale && size1_val == size2_val;
 }
 
-static int show_dram_config(void)
+static целое show_dram_config(void)
 {
 	unsigned long long size;
-	int i;
+	целое i;
 
 	debug("\nRAM Configuration:\n");
-	for (i = size = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+	для (i = size = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 		size += gd->dram[i].size;
 		debug("Bank #%d: %llx ", i,
 		      (unsigned long long)(gd->dram[i].start));
@@ -234,37 +234,37 @@ static int show_dram_config(void)
 	debug("\nDRAM:  ");
 
 	print_size(gd->ram_size, "");
-	if (!sizes_near(gd->ram_size, size)) {
+	если (!sizes_near(gd->ram_size, size)) {
 		printf(" (total ");
 		print_size(size, ")");
 	}
 	board_add_ram_info(0);
 	putc('\n');
 
-	return 0;
+	вернуть 0;
 }
 
-__weak int dram_init_banksize(void)
+__weak целое dram_init_banksize(void)
 {
 	gd->dram[0].start = gd->ram_base;
 	gd->dram[0].size = get_effective_memsize();
 
-	return 0;
+	вернуть 0;
 }
 
-#if CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
-static int init_func_i2c(void)
+#если CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
+static целое init_func_i2c(void)
 {
 	puts("I2C:   ");
 	i2c_init_all();
 	puts("ready\n");
-	return 0;
+	вернуть 0;
 }
 #endif
 
-static int setup_mon_len(void)
+static целое setup_mon_len(void)
 {
-#if defined(CONFIG_ARCH_NEXELL)
+#если defined(CONFIG_ARCH_NEXELL)
 	gd->mon_len = (ulong)__bss_end - (ulong)__image_copy_start;
 #elif defined(__ARM__) || defined(__MICROBLAZE__)
 	gd->mon_len = (ulong)__bss_end - (ulong)_start;
@@ -283,81 +283,81 @@ static int setup_mon_len(void)
 	/* TODO: use (ulong)__bss_end - (ulong)__text_start; ? */
 	gd->mon_len = (ulong)__bss_end - CONFIG_SYS_MONITOR_BASE;
 #endif
-	return 0;
+	вернуть 0;
 }
 
-static int setup_spl_handoff(void)
+static целое setup_spl_handoff(void)
 {
-#if CONFIG_IS_ENABLED(HANDOFF)
+#если CONFIG_IS_ENABLED(HANDOFF)
 	gd->spl_handoff = bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF,
 					sizeof(struct spl_handoff));
 	debug("Found SPL hand-off info %p\n", gd->spl_handoff);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
-__weak int arch_cpu_init(void)
+__weak целое arch_cpu_init(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-__weak int mach_cpu_init(void)
+__weak целое mach_cpu_init(void)
 {
-	return 0;
+	вернуть 0;
 }
 
 /* Get the top of usable RAM */
 __weak phys_addr_t board_get_usable_ram_top(phys_size_t total_size)
 {
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP))
-		return gd->ram_top;
+	если (CONFIG_IS_ENABLED(RELOC_ADDR_TOP))
+		вернуть gd->ram_top;
 
-#if defined(CFG_SYS_SDRAM_BASE) && CFG_SYS_SDRAM_BASE > 0
+#если defined(CFG_SYS_SDRAM_BASE) && CFG_SYS_SDRAM_BASE > 0
 	/*
 	 * Detect whether we have so much RAM that it goes past the end of our
 	 * 32-bit address space. If so, clip the usable RAM so it doesn't.
 	 */
-	if (gd->ram_top < CFG_SYS_SDRAM_BASE)
+	если (gd->ram_top < CFG_SYS_SDRAM_BASE)
 		/*
 		 * Will wrap back to top of 32-bit space when reservations
 		 * are made.
 		 */
-		return 0;
+		вернуть 0;
 #endif
-	return gd->ram_top;
+	вернуть gd->ram_top;
 }
 
-__weak int arch_setup_dest_addr(void)
+__weak целое arch_setup_dest_addr(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-static int setup_ram_base(void)
+static целое setup_ram_base(void)
 {
 #ifdef CFG_SYS_SDRAM_BASE
 	gd->ram_base = CFG_SYS_SDRAM_BASE;
 #endif
-	return 0;
+	вернуть 0;
 }
 
-static int setup_ram_config(void)
+static целое setup_ram_config(void)
 {
 	debug("Monitor len: %08x\n", gd->mon_len);
 
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP)) {
-		int i;
+	если (CONFIG_IS_ENABLED(RELOC_ADDR_TOP)) {
+		целое i;
 		phys_addr_t top;
 
 		gd->ram_size = 0;
-		for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		для (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 			top = get_mem_top(gd->dram[i].start, gd->dram[i].size,
 					  ALIGN(gd->mon_len, SZ_1M),
 					  (void *)gd->fdt_blob);
 			gd->ram_top = max(top, gd->ram_top);
 			gd->ram_size += gd->dram[i].size;
 		}
-	} else {
+	} иначе {
 		gd->ram_top = gd->ram_base + get_effective_memsize();
 	}
 	gd->ram_top = board_get_usable_ram_top(gd->mon_len);
@@ -371,7 +371,7 @@ static int setup_ram_config(void)
 	 * memory size from the SDRAM controller setup will have to
 	 * get fixed.
 	 */
-#if CONFIG_VAL(SYS_MEM_TOP_HIDE)
+#если CONFIG_VAL(SYS_MEM_TOP_HIDE)
 	gd->ram_top -= CONFIG_SYS_MEM_TOP_HIDE;
 	gd->ram_size -= CONFIG_SYS_MEM_TOP_HIDE;
 #endif
@@ -379,27 +379,27 @@ static int setup_ram_config(void)
 	debug("Ram top: %08llx\n", (unsigned long long)gd->ram_top);
 	debug("Ram size: %08llx\n", (unsigned long long)gd->ram_size);
 
-	return 0;
+	вернуть 0;
 }
 
-static int setup_dest_addr(void)
+static целое setup_dest_addr(void)
 {
-	int ret;
+	целое ret;
 
 	gd->relocaddr = gd->ram_top;
 	debug("Reloc addr: %08llX\n", (unsigned long long)gd->relocaddr);
 
 	ret = arch_setup_dest_addr();
-	if (ret)
-		return ret;
+	если (ret)
+		вернуть ret;
 
 	gd->initial_relocaddr = gd->relocaddr;
-	return 0;
+	вернуть 0;
 }
 
 #ifdef CFG_PRAM
 /* reserve protected RAM */
-static int reserve_pram(void)
+static целое reserve_pram(void)
 {
 	ulong reg;
 
@@ -407,42 +407,42 @@ static int reserve_pram(void)
 	gd->relocaddr -= (reg << 10);		/* size is in kB */
 	debug("Reserving %ldk for protected RAM at %08lx\n", reg,
 	      gd->relocaddr);
-	return 0;
+	вернуть 0;
 }
 #endif /* CFG_PRAM */
 
 /* Round memory pointer down to next 4 kB limit */
-static int reserve_round_4k(void)
+static целое reserve_round_4k(void)
 {
 	gd->relocaddr &= ~(4096 - 1);
-	return 0;
+	вернуть 0;
 }
 
-__weak int arch_reserve_mmu(void)
+__weak целое arch_reserve_mmu(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_video_from_videoblob(void)
+static целое reserve_video_from_videoblob(void)
 {
-	if (IS_ENABLED(CONFIG_SPL_VIDEO_HANDOFF) && xpl_phase() > PHASE_SPL) {
+	если (IS_ENABLED(CONFIG_SPL_VIDEO_HANDOFF) && xpl_phase() > PHASE_SPL) {
 		struct video_handoff *ho;
-		int ret = 0;
+		целое ret = 0;
 
 		ho = bloblist_find(BLOBLISTT_U_BOOT_VIDEO, sizeof(*ho));
-		if (!ho)
-			return log_msg_ret("Missing video bloblist", -ENOENT);
+		если (!ho)
+			вернуть log_msg_ret("Missing video bloblist", -ENOENT);
 
 		ret = video_reserve_from_bloblist(ho);
-		if (ret)
-			return log_msg_ret("Invalid Video handoff info", ret);
+		если (ret)
+			вернуть log_msg_ret("Invalid Video handoff info", ret);
 
 		/* Sanity check fb from blob is before current relocaddr */
-		if (likely(gd->relocaddr > (unsigned long)ho->fb))
+		если (likely(gd->relocaddr > (unsigned long)ho->fb))
 			gd->relocaddr = ho->fb;
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 /*
@@ -454,32 +454,32 @@ static int reserve_video_from_videoblob(void)
  * IT is recommended that all bloblists from previous stage are reserved from ram_top
  * as next stage will simply start reserving further regions after them.
  */
-static int setup_relocaddr_from_bloblist(void)
+static целое setup_relocaddr_from_bloblist(void)
 {
 	reserve_video_from_videoblob();
 
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_video(void)
+static целое reserve_video(void)
 {
-	if (CONFIG_IS_ENABLED(VIDEO)) {
+	если (CONFIG_IS_ENABLED(VIDEO)) {
 		ulong addr;
-		int ret;
+		целое ret;
 
 		addr = gd->relocaddr;
 		ret = video_reserve(&addr);
-		if (ret)
-			return ret;
+		если (ret)
+			вернуть ret;
 		debug("Reserving %luk for video at: %08lx\n",
 		      ((unsigned long)gd->relocaddr - addr) >> 10, addr);
 		gd->relocaddr = addr;
 	}
 
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_trace(void)
+static целое reserve_trace(void)
 {
 #ifdef CONFIG_TRACE
 	gd->relocaddr -= CONFIG_TRACE_BUFFER_SIZE;
@@ -488,26 +488,26 @@ static int reserve_trace(void)
 	      (unsigned long)CONFIG_TRACE_BUFFER_SIZE >> 10, gd->relocaddr);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_uboot(void)
+static целое reserve_uboot(void)
 {
 	/*
 	 * This should be the first place GD_FLG_SKIP_RELOC is read from.
 	 * Set GD_FLG_SKIP_RELOC flag if CONFIG_SKIP_RELOCATE is enabled.
 	 */
-	if (CONFIG_IS_ENABLED(SKIP_RELOCATE))
+	если (CONFIG_IS_ENABLED(SKIP_RELOCATE))
 		gd->flags |= GD_FLG_SKIP_RELOC;
 
-	if (!(gd->flags & GD_FLG_SKIP_RELOC) && !CONFIG_IS_ENABLED(SKIP_RELOCATE_CODE)) {
+	если (!(gd->flags & GD_FLG_SKIP_RELOC) && !CONFIG_IS_ENABLED(SKIP_RELOCATE_CODE)) {
 		/*
 		 * reserve memory for U-Boot code, data & bss
 		 * round down to next 4 kB limit
 		 */
 		gd->relocaddr -= gd->mon_len;
 		gd->relocaddr &= ~(4096 - 1);
-	#if defined(CONFIG_E500) || defined(CONFIG_MIPS)
+	#если defined(CONFIG_E500) || defined(CONFIG_MIPS)
 		/* round down to next 64 kB limit so that IVPR stays aligned */
 		gd->relocaddr &= ~(65536 - 1);
 	#endif
@@ -518,7 +518,7 @@ static int reserve_uboot(void)
 
 	gd->start_addr_sp = gd->relocaddr;
 
-	return 0;
+	вернуть 0;
 }
 
 /*
@@ -529,11 +529,11 @@ static int reserve_uboot(void)
  */
 static unsigned long reserve_stack_aligned(size_t size)
 {
-	return ALIGN_DOWN(gd->start_addr_sp - size, 16);
+	вернуть ALIGN_DOWN(gd->start_addr_sp - size, 16);
 }
 
 #ifdef CONFIG_SYS_NONCACHED_MEMORY
-static int reserve_noncached(void)
+static целое reserve_noncached(void)
 {
 	/*
 	 * The value of gd->start_addr_sp must match the value of
@@ -550,12 +550,12 @@ static int reserve_noncached(void)
 	debug("Reserving %dM for noncached_alloc() at: %08lx\n",
 	      CONFIG_SYS_NONCACHED_MEMORY >> 20, gd->start_addr_sp);
 
-	return 0;
+	вернуть 0;
 }
 #endif
 
 /* reserve memory for malloc() area */
-static int reserve_malloc(void)
+static целое reserve_malloc(void)
 {
 	gd->start_addr_sp = reserve_stack_aligned(TOTAL_MALLOC_LEN);
 	debug("Reserving %dk for malloc() at: %08lx\n",
@@ -564,13 +564,13 @@ static int reserve_malloc(void)
 	reserve_noncached();
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
 /* (permanently) allocate a Board Info struct */
-static int reserve_board(void)
+static целое reserve_board(void)
 {
-	if (!gd->bd) {
+	если (!gd->bd) {
 		gd->start_addr_sp = reserve_stack_aligned(sizeof(struct bd_info));
 		gd->bd = (struct bd_info *)map_sysmem(gd->start_addr_sp,
 						      sizeof(struct bd_info));
@@ -578,27 +578,27 @@ static int reserve_board(void)
 		debug("Reserving %zu Bytes for Board Info at: %08lx\n",
 		      sizeof(struct bd_info), gd->start_addr_sp);
 	}
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_global_data(void)
+static целое reserve_global_data(void)
 {
 	gd->start_addr_sp = reserve_stack_aligned(sizeof(gd_t));
 	gd->new_gd = (gd_t *)map_sysmem(gd->start_addr_sp, sizeof(gd_t));
 	debug("Reserving %zu Bytes for Global Data at: %08lx\n",
 	      sizeof(gd_t), gd->start_addr_sp);
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_fdt(void)
+static целое reserve_fdt(void)
 {
-	if (!IS_ENABLED(CONFIG_OF_EMBED)) {
+	если (!IS_ENABLED(CONFIG_OF_EMBED)) {
 		/*
 		 * If the device tree is sitting immediately above our image
 		 * then we must relocate it. If it is embedded in the data
 		 * section, then it will be relocated with other data.
 		 */
-		if (gd->fdt_blob) {
+		если (gd->fdt_blob) {
 			gd->boardf->fdt_size =
 				ALIGN(fdt_totalsize(gd->fdt_blob), 32);
 
@@ -611,13 +611,13 @@ static int reserve_fdt(void)
 		}
 	}
 
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_bootstage(void)
+static целое reserve_bootstage(void)
 {
 #ifdef CONFIG_BOOTSTAGE
-	int size = bootstage_get_size(true);
+	целое size = bootstage_get_size(true);
 
 	gd->start_addr_sp = reserve_stack_aligned(size);
 	gd->boardf->new_bootstage = map_sysmem(gd->start_addr_sp, size);
@@ -625,15 +625,15 @@ static int reserve_bootstage(void)
 	      gd->start_addr_sp);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
-__weak int arch_reserve_stacks(void)
+__weak целое arch_reserve_stacks(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-static int reserve_stacks(void)
+static целое reserve_stacks(void)
 {
 	/* make stack pointer 16-byte aligned */
 	gd->start_addr_sp = reserve_stack_aligned(16);
@@ -642,15 +642,15 @@ static int reserve_stacks(void)
 	 * let the architecture-specific code tailor gd->start_addr_sp and
 	 * gd->irq_sp
 	 */
-	return arch_reserve_stacks();
+	вернуть arch_reserve_stacks();
 }
 
-static int reserve_bloblist(void)
+static целое reserve_bloblist(void)
 {
 #ifdef CONFIG_BLOBLIST
 	ulong size = bloblist_get_total_size();
 
-	if (size < CONFIG_BLOBLIST_SIZE_RELOC)
+	если (size < CONFIG_BLOBLIST_SIZE_RELOC)
 		size = CONFIG_BLOBLIST_SIZE_RELOC;
 
 	/* Align to a 4KB boundary for easier reading of addresses */
@@ -658,91 +658,91 @@ static int reserve_bloblist(void)
 	gd->boardf->new_bloblist = map_sysmem(gd->start_addr_sp, size);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
-static int display_new_sp(void)
+static целое display_new_sp(void)
 {
 	debug("New Stack Pointer is: %08lx\n", gd->start_addr_sp);
 
-	return 0;
+	вернуть 0;
 }
 
-__weak int arch_setup_bdinfo(void)
+__weak целое arch_setup_bdinfo(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-int setup_bdinfo(void)
+целое setup_bdinfo(void)
 {
-	return arch_setup_bdinfo();
+	вернуть arch_setup_bdinfo();
 }
 
 #ifdef CONFIG_POST
-static int init_post(void)
+static целое init_post(void)
 {
 	post_bootmode_init();
 	post_run(NULL, POST_ROM | post_bootmode_get(0));
 
-	return 0;
+	вернуть 0;
 }
 #endif
 
-static int reloc_fdt(void)
+static целое reloc_fdt(void)
 {
-	if (!IS_ENABLED(CONFIG_OF_EMBED)) {
-		if (gd->boardf->new_fdt) {
+	если (!IS_ENABLED(CONFIG_OF_EMBED)) {
+		если (gd->boardf->new_fdt) {
 			memcpy(gd->boardf->new_fdt, gd->fdt_blob,
 			       fdt_totalsize(gd->fdt_blob));
 			gd->fdt_blob = gd->boardf->new_fdt;
 		}
 	}
 
-	return 0;
+	вернуть 0;
 }
 
-static int reloc_bootstage(void)
+static целое reloc_bootstage(void)
 {
 #ifdef CONFIG_BOOTSTAGE
-	if (gd->flags & GD_FLG_SKIP_RELOC)
-		return 0;
-	if (gd->boardf->new_bootstage)
+	если (gd->flags & GD_FLG_SKIP_RELOC)
+		вернуть 0;
+	если (gd->boardf->new_bootstage)
 		bootstage_relocate(gd->boardf->new_bootstage);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
-static int reloc_bloblist(void)
+static целое reloc_bloblist(void)
 {
 #ifdef CONFIG_BLOBLIST
 	/*
 	 * Relocate only if we are supposed to send it
 	 */
-	if ((gd->flags & GD_FLG_SKIP_RELOC) &&
+	если ((gd->flags & GD_FLG_SKIP_RELOC) &&
 	    CONFIG_BLOBLIST_SIZE == CONFIG_BLOBLIST_SIZE_RELOC) {
 		debug("Not relocating bloblist\n");
-		return 0;
+		вернуть 0;
 	}
-	if (gd->boardf->new_bloblist) {
+	если (gd->boardf->new_bloblist) {
 		ulong size = bloblist_get_total_size();
 
-		if (size < CONFIG_BLOBLIST_SIZE_RELOC)
+		если (size < CONFIG_BLOBLIST_SIZE_RELOC)
 			size = CONFIG_BLOBLIST_SIZE_RELOC;
 
 		debug("Copying bloblist from %p to %p, size %lx\n",
 		      gd->bloblist, gd->boardf->new_bloblist, size);
-		return bloblist_reloc(gd->boardf->new_bloblist, size);
+		вернуть bloblist_reloc(gd->boardf->new_bloblist, size);
 	}
 #endif
 
-	return 0;
+	вернуть 0;
 }
 
 void mcheck_on_ramrelocation(size_t offset);
-static int setup_reloc(void)
+static целое setup_reloc(void)
 {
-	if (!(gd->flags & GD_FLG_SKIP_RELOC)) {
+	если (!(gd->flags & GD_FLG_SKIP_RELOC)) {
 #ifdef CONFIG_TEXT_BASE
 #ifdef ARM
 		gd->reloc_off = gd->relocaddr - (unsigned long)__image_copy_start;
@@ -762,9 +762,9 @@ static int setup_reloc(void)
 
 	memcpy(gd->new_gd, (char *)gd, sizeof(gd_t));
 
-	if (gd->flags & GD_FLG_SKIP_RELOC) {
+	если (gd->flags & GD_FLG_SKIP_RELOC) {
 		debug("Skipping relocation due to flag\n");
-	} else {
+	} иначе {
 #ifdef MCHECK_HEAP_PROTECTION
 		mcheck_on_ramrelocation(gd->reloc_off);
 #endif
@@ -774,23 +774,23 @@ static int setup_reloc(void)
 		      gd->start_addr_sp);
 	}
 
-	return 0;
+	вернуть 0;
 }
 
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP)
-static int fix_fdt(void)
+#если CONFIG_IS_ENABLED(OF_BOARD_FIXUP)
+static целое fix_fdt(void)
 {
-	return board_fix_fdt((void *)gd->fdt_blob);
+	вернуть board_fix_fdt((void *)gd->fdt_blob);
 }
 #endif
 
 /* ARM calls relocate_code from its crt0.S */
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
+#если !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
 
-static int jump_to_copy(void)
+static целое jump_to_copy(void)
 {
-	if (gd->flags & GD_FLG_SKIP_RELOC)
-		return 0;
+	если (gd->flags & GD_FLG_SKIP_RELOC)
+		вернуть 0;
 	/*
 	 * x86 is special, but in a nice way. It uses a trampoline which
 	 * enables the dcache if possible.
@@ -799,7 +799,7 @@ static int jump_to_copy(void)
 	 * similarly for all archs. When we do generic relocation, hopefully
 	 * we can make all archs enable the dcache prior to relocation.
 	 */
-#if defined(CONFIG_X86) || defined(CONFIG_ARC)
+#если defined(CONFIG_X86) || defined(CONFIG_ARC)
 	/*
 	 * SDRAM and console are now initialised. The final stack can now
 	 * be setup in SDRAM. Code execution will continue in Flash, but
@@ -807,48 +807,48 @@ static int jump_to_copy(void)
 	 * (CPU cache)
 	 */
 	arch_setup_gd(gd->new_gd);
-# if CONFIG_IS_ENABLED(X86_64)
+# если CONFIG_IS_ENABLED(X86_64)
 		board_init_f_r_trampoline64(gd->new_gd, gd->start_addr_sp);
-# else
+# иначе
 		board_init_f_r_trampoline(gd->start_addr_sp);
 # endif
-#else
+#иначе
 	relocate_code(gd->start_addr_sp, gd->new_gd, gd->relocaddr);
 #endif
 
-	return 0;
+	вернуть 0;
 }
 #endif
 
 /* Record the board_init_f() bootstage (after arch_cpu_init()) */
-static int initf_bootstage(void)
+static целое initf_bootstage(void)
 {
 	bool from_spl = IS_ENABLED(CONFIG_SPL_BOOTSTAGE) &&
 			IS_ENABLED(CONFIG_BOOTSTAGE_STASH);
-	int ret;
+	целое ret;
 
 	ret = bootstage_init(!from_spl);
-	if (ret)
-		return ret;
-	if (from_spl) {
+	если (ret)
+		вернуть ret;
+	если (from_spl) {
 		ret = bootstage_unstash_default();
-		if (ret && ret != -ENOENT) {
+		если (ret && ret != -ENOENT) {
 			debug("Failed to unstash bootstage: err=%d\n", ret);
-			return ret;
+			вернуть ret;
 		}
 	}
 
 	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_F, "board_init_f");
 
-	return 0;
+	вернуть 0;
 }
 
-static int initf_dm(void)
+static целое initf_dm(void)
 {
-	int ret;
+	целое ret;
 
-	if (!CONFIG_IS_ENABLED(SYS_MALLOC_F))
-		return 0;
+	если (!CONFIG_IS_ENABLED(SYS_MALLOC_F))
+		вернуть 0;
 
 	bootstage_start(BOOTSTAGE_ID_ACCUM_DM_F, "dm_f");
 
@@ -857,63 +857,63 @@ static int initf_dm(void)
 	 * model, the serial port will still be bound later through
 	 * serial_find_console_or_panic() via /chosen/stdout-path
 	 */
-	if (!CONFIG_IS_ENABLED(SKIP_EARLY_DM))
+	если (!CONFIG_IS_ENABLED(SKIP_EARLY_DM))
 		ret = dm_init_and_scan(true);
-	else
+	иначе
 		ret = dm_init(false);
-	if (ret)
-		return ret;
+	если (ret)
+		вернуть ret;
 
 	ret = dm_autoprobe();
-	if (ret)
-		return ret;
+	если (ret)
+		вернуть ret;
 	bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_F);
 
-	if (IS_ENABLED(CONFIG_TIMER_EARLY)) {
+	если (IS_ENABLED(CONFIG_TIMER_EARLY)) {
 		ret = dm_timer_init();
-		if (ret)
-			return ret;
+		если (ret)
+			вернуть ret;
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 /* Architecture-specific memory reservation */
-__weak int reserve_arch(void)
+__weak целое reserve_arch(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-__weak int checkcpu(void)
+__weak целое checkcpu(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-__weak int clear_bss(void)
+__weak целое clear_bss(void)
 {
-	return 0;
+	вернуть 0;
 }
 
-static int initf_upl(void)
+static целое initf_upl(void)
 {
 	struct upl *upl;
-	int ret;
+	целое ret;
 
-	if (!IS_ENABLED(CONFIG_UPL_IN) || !(gd->flags & GD_FLG_UPL))
-		return 0;
+	если (!IS_ENABLED(CONFIG_UPL_IN) || !(gd->flags & GD_FLG_UPL))
+		вернуть 0;
 
 	upl = malloc(sizeof(struct upl));
-	if (!upl)
-		return -ENOMEM;
+	если (!upl)
+		вернуть -ENOMEM;
 
 	ret = upl_read_handoff(upl, oftree_default());
-	if (ret) {
+	если (ret) {
 		printf("UPL handoff: read failure (err=%dE)\n", ret);
-		return ret;
+		вернуть ret;
 	}
 	gd_set_upl(upl);
 
-	return 0;
+	вернуть 0;
 }
 
 static void initcall_run_f(void)
@@ -924,38 +924,38 @@ static void initcall_run_f(void)
 	 */
 	INITCALL(setup_mon_len);
 	INITCALL(initf_malloc);
-#if CONFIG_IS_ENABLED(OF_CONTROL)
+#если CONFIG_IS_ENABLED(OF_CONTROL)
 	INITCALL(fdtdec_setup);
 #endif
-#if CONFIG_IS_ENABLED(TRACE_EARLY)
+#если CONFIG_IS_ENABLED(TRACE_EARLY)
 	INITCALL(trace_early_init);
 #endif
 	INITCALL(initf_upl);
 	INITCALL(log_init);
 	INITCALL(initf_bootstage); /* uses its own timer, so does not need DM */
 	INITCALL(event_init);
-#if CONFIG_IS_ENABLED(BLOBLIST)
+#если CONFIG_IS_ENABLED(BLOBLIST)
 	INITCALL(bloblist_init);
 #endif
 	INITCALL(setup_spl_handoff);
-#if CONFIG_IS_ENABLED(CONSOLE_RECORD_INIT_F)
+#если CONFIG_IS_ENABLED(CONSOLE_RECORD_INIT_F)
 	INITCALL(console_record_init);
 #endif
 	INITCALL_EVT(EVT_FSP_INIT_F);
 	INITCALL(arch_cpu_init);	/* basic arch cpu dependent setup */
 	INITCALL(mach_cpu_init);	/* SoC/machine dependent CPU setup */
 	INITCALL(initf_dm);
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
+#если CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
 	INITCALL(board_early_init_f);
 #endif
-#if defined(CONFIG_PPC) || defined(CONFIG_SYS_FSL_CLK) || defined(CONFIG_M68K)
+#если defined(CONFIG_PPC) || defined(CONFIG_SYS_FSL_CLK) || defined(CONFIG_M68K)
 	/* get CPU and bus clocks according to the environment variable */
 	INITCALL(get_clocks);		/* get CPU and bus clocks (etc.) */
 #endif
-#if !defined(CONFIG_M68K) || (defined(CONFIG_M68K) && !defined(CONFIG_MCFTMR))
+#если !defined(CONFIG_M68K) || (defined(CONFIG_M68K) && !defined(CONFIG_MCFTMR))
 	INITCALL(timer_init);		/* initialize timer */
 #endif
-#if CONFIG_IS_ENABLED(BOARD_POSTCLK_INIT)
+#если CONFIG_IS_ENABLED(BOARD_POSTCLK_INIT)
 	INITCALL(board_postclk_init);
 #endif
 	INITCALL(env_init);		/* initialize environment */
@@ -965,36 +965,36 @@ static void initcall_run_f(void)
 	INITCALL(display_options);	/* say that we are here */
 	INITCALL(display_text_info);	/* show debugging info if required */
 	INITCALL(checkcpu);
-#if CONFIG_IS_ENABLED(SYSRESET_PRINT_RESETINFO)
+#если CONFIG_IS_ENABLED(SYSRESET_PRINT_RESETINFO)
 	INITCALL(print_resetinfo);
 #endif
 	/* display cpu info (and speed) */
-#if CONFIG_IS_ENABLED(DISPLAY_CPUINFO)
+#если CONFIG_IS_ENABLED(DISPLAY_CPUINFO)
 	INITCALL(print_cpuinfo);
 #endif
-#if CONFIG_IS_ENABLED(DTB_RESELECT)
+#если CONFIG_IS_ENABLED(DTB_RESELECT)
 	INITCALL(embedded_dtb_select);
 #endif
-#if CONFIG_IS_ENABLED(DISPLAY_BOARDINFO)
+#если CONFIG_IS_ENABLED(DISPLAY_BOARDINFO)
 	INITCALL(show_board_info);
 #endif
 	WATCHDOG_INIT();
 	INITCALL_EVT(EVT_MISC_INIT_F);
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
+#если CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
 	INITCALL(init_func_i2c);
 #endif
 	INITCALL(announce_dram_init);
 	INITCALL(dram_init);		/* configure available RAM banks */
-#if CONFIG_IS_ENABLED(POST)
+#если CONFIG_IS_ENABLED(POST)
 	INITCALL(post_init_f);
 #endif
 	WATCHDOG_RESET();
-#if defined(CFG_SYS_DRAM_TEST)
+#если defined(CFG_SYS_DRAM_TEST)
 	INITCALL(testdram);
 #endif /* CFG_SYS_DRAM_TEST */
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(POST)
+#если CONFIG_IS_ENABLED(POST)
 	INITCALL(init_post);
 #endif
 	WATCHDOG_RESET();
@@ -1014,7 +1014,7 @@ static void initcall_run_f(void)
 	INITCALL(dram_init_banksize);
 	INITCALL(setup_ram_config);
 	INITCALL(setup_dest_addr);
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
+#если CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
     !CONFIG_IS_ENABLED(OF_INITIAL_DTB_READONLY)
 	INITCALL(fix_fdt);
 #endif
@@ -1031,7 +1031,7 @@ static void initcall_run_f(void)
 	INITCALL(reserve_board);
 	INITCALL(reserve_global_data);
 	INITCALL(reserve_fdt);
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
+#если CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
     CONFIG_IS_ENABLED(OF_INITIAL_DTB_READONLY)
 	INITCALL(reloc_fdt);
 	INITCALL(fix_fdt);
@@ -1045,14 +1045,14 @@ static void initcall_run_f(void)
 	INITCALL(setup_bdinfo);
 	INITCALL(display_new_sp);
 	WATCHDOG_RESET();
-#if !CONFIG_IS_ENABLED(OF_BOARD_FIXUP) || \
+#если !CONFIG_IS_ENABLED(OF_BOARD_FIXUP) || \
     !CONFIG_IS_ENABLED(INITIAL_DTB_READONLY)
 	INITCALL(reloc_fdt);
 #endif
 	INITCALL(reloc_bootstage);
 	INITCALL(reloc_bloblist);
 	INITCALL(setup_reloc);
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(ARC)
+#если CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(ARC)
 	INITCALL(copy_uboot_to_ram);
 	INITCALL(do_elf_reloc_fixups);
 #endif
@@ -1067,7 +1067,7 @@ static void initcall_run_f(void)
 	 * watchdog device is not serviced is as small as possible.
 	 */
 	INITCALL(cyclic_unregister_all);
-#if !CONFIG_IS_ENABLED(ARM) && !CONFIG_IS_ENABLED(SANDBOX)
+#если !CONFIG_IS_ENABLED(ARM) && !CONFIG_IS_ENABLED(SANDBOX)
 	INITCALL(jump_to_copy);
 #endif
 }
@@ -1082,7 +1082,7 @@ void board_init_f(ulong boot_flags)
 
 	initcall_run_f();
 
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX) && \
+#если !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX) && \
 		!defined(CONFIG_EFI_APP) && !CONFIG_IS_ENABLED(X86_64) && \
 		!defined(CONFIG_ARC)
 	/* NOTREACHED - jump_to_copy() does not return */
@@ -1090,7 +1090,7 @@ void board_init_f(ulong boot_flags)
 #endif
 }
 
-#if defined(CONFIG_X86) || defined(CONFIG_ARC)
+#если defined(CONFIG_X86) || defined(CONFIG_ARC)
 /*
  * For now this code is only used on x86.
  *
@@ -1110,7 +1110,7 @@ void board_init_f(ulong boot_flags)
  */
 static void initcall_run_f_r(void)
 {
-#if !CONFIG_IS_ENABLED(X86_64)
+#если !CONFIG_IS_ENABLED(X86_64)
 	INITCALL(init_cache_f_r);
 #endif
 }

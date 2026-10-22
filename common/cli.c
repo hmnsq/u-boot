@@ -28,7 +28,7 @@
 
 static inline bool use_hush_old(void)
 {
-	return IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
+	вернуть IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
 	gd->flags & GD_FLG_HUSH_OLD_PARSER :
 	IS_ENABLED(CONFIG_HUSH_OLD_PARSER);
 }
@@ -40,24 +40,24 @@ static inline bool use_hush_old(void)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 on success, or != 0 on error.
  */
-int run_command(const char *cmd, int flag)
+целое run_command(const char *cmd, целое flag)
 {
-#if !IS_ENABLED(CONFIG_HUSH_PARSER)
+#если !IS_ENABLED(CONFIG_HUSH_PARSER)
 	/*
 	 * cli_run_command can return 0 or 1 for success, so clean up
 	 * its result.
 	 */
-	if (cli_simple_run_command(cmd, flag) == -1)
-		return 1;
+	если (cli_simple_run_command(cmd, flag) == -1)
+		вернуть 1;
 
-	return 0;
-#else
-	if (use_hush_old()) {
-		int hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
+	вернуть 0;
+#иначе
+	если (use_hush_old()) {
+		целое hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
 
-		if (flag & CMD_FLAG_ENV)
+		если (flag & CMD_FLAG_ENV)
 			hush_flags |= FLAG_CONT_ON_NEWLINE;
-		return parse_string_outer(cmd, hush_flags);
+		вернуть parse_string_outer(cmd, hush_flags);
 	}
 	/*
 	 * Possible values for flags are the following:
@@ -74,7 +74,7 @@ int run_command(const char *cmd, int flag)
 	 * run_command(). In this case, modern Hush reads until it finds
 	 * '\0'. So, I think we do not need this flag.
 	 */
-	return parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
+	вернуть parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
 #endif
 }
 
@@ -85,18 +85,18 @@ int run_command(const char *cmd, int flag)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 (not repeatable) or 1 (repeatable) on success, -1 on error.
  */
-int run_command_repeatable(const char *cmd, int flag)
+целое run_command_repeatable(const char *cmd, целое flag)
 {
 #ifndef CONFIG_HUSH_PARSER
-	return cli_simple_run_command(cmd, flag);
-#else
-	int ret;
+	вернуть cli_simple_run_command(cmd, flag);
+#иначе
+	целое ret;
 
-	if (use_hush_old()) {
+	если (use_hush_old()) {
 		ret = parse_string_outer(cmd,
 					 FLAG_PARSE_SEMICOLON
 					 | FLAG_EXIT_FROM_LOOP);
-	} else {
+	} иначе {
 		ret = parse_string_outer_modern(cmd,
 					      FLAG_PARSE_SEMICOLON
 					      | FLAG_EXIT_FROM_LOOP);
@@ -106,49 +106,49 @@ int run_command_repeatable(const char *cmd, int flag)
 	 * parse_string_outer() returns 1 for failure, so clean up
 	 * its result.
 	 */
-	if (ret)
-		return -1;
+	если (ret)
+		вернуть -1;
 
-	return 0;
+	вернуть 0;
 #endif
 }
-#else
-__weak int board_run_command(const char *cmdline)
+#иначе
+__weak целое board_run_command(const char *cmdline)
 {
 	printf("## Commands are disabled. Please enable CONFIG_CMDLINE.\n");
 
-	return 1;
+	вернуть 1;
 }
 #endif /* CONFIG_CMDLINE */
 
-int run_command_list(const char *cmd, int len, int flag)
+целое run_command_list(const char *cmd, целое len, целое flag)
 {
-	int need_buff = 1;
+	целое need_buff = 1;
 	char *buff = (char *)cmd;	/* cast away const */
-	int rcode = 0;
+	целое rcode = 0;
 
-	if (len == -1) {
+	если (len == -1) {
 		len = strlen(cmd);
 #ifdef CONFIG_HUSH_PARSER
 		/* hush will never change our string */
 		need_buff = 0;
-#else
+#иначе
 		/* the built-in parser will change our string if it sees \n */
 		need_buff = strchr(cmd, '\n') != NULL;
 #endif
 	}
-	if (need_buff) {
+	если (need_buff) {
 		buff = memdup_nul(cmd, len);
-		if (!buff)
-			return 1;
+		если (!buff)
+			вернуть 1;
 	}
 #ifdef CONFIG_HUSH_PARSER
-	if (use_hush_old()) {
+	если (use_hush_old()) {
 		rcode = parse_string_outer(buff, FLAG_PARSE_SEMICOLON);
-	} else {
+	} иначе {
 		rcode = parse_string_outer_modern(buff, FLAG_PARSE_SEMICOLON);
 	}
-#else
+#иначе
 	/*
 	 * This function will overwrite any \n it sees with a \0, which
 	 * is why it can't work with a const char *. Here we are making
@@ -158,20 +158,20 @@ int run_command_list(const char *cmd, int len, int flag)
 	 */
 #ifdef CONFIG_CMDLINE
 	rcode = cli_simple_run_command_list(buff, flag);
-#else
+#иначе
 	rcode = board_run_command(buff);
 #endif
 #endif
-	if (need_buff)
+	если (need_buff)
 		free(buff);
 
-	return rcode;
+	вернуть rcode;
 }
 
-int run_commandf(const char *fmt, ...)
+целое run_commandf(const char *fmt, ...)
 {
 	va_list args;
-	int nbytes;
+	целое nbytes;
 
 	va_start(args, fmt);
 	/*
@@ -182,57 +182,57 @@ int run_commandf(const char *fmt, ...)
 	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, args);
 	va_end(args);
 
-	if (nbytes < 0) {
+	если (nbytes < 0) {
 		pr_debug("I/O internal error occurred.\n");
-		return -EIO;
-	} else if (nbytes >= CONFIG_SYS_CBSIZE) {
+		вернуть -EIO;
+	} иначе если (nbytes >= CONFIG_SYS_CBSIZE) {
 		pr_debug("'fmt' size:%d exceeds the limit(%d)\n",
 			 nbytes, CONFIG_SYS_CBSIZE);
-		return -ENOSPC;
+		вернуть -ENOSPC;
 	}
-	return run_command(console_buffer, 0);
+	вернуть run_command(console_buffer, 0);
 }
 
 /****************************************************************************/
 
-#if defined(CONFIG_CMD_RUN)
-int do_run(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+#если defined(CONFIG_CMD_RUN)
+целое do_run(struct cmd_tbl *cmdtp, целое flag, целое argc, char *const argv[])
 {
-	int i, ret;
+	целое i, ret;
 
-	if (argc < 2)
-		return CMD_RET_USAGE;
+	если (argc < 2)
+		вернуть CMD_RET_USAGE;
 
-	for (i = 1; i < argc; ++i) {
+	для (i = 1; i < argc; ++i) {
 		char *arg;
 
 		arg = env_get(argv[i]);
-		if (arg == NULL) {
+		если (arg == NULL) {
 			printf("## Error: \"%s\" not defined\n", argv[i]);
-			return 1;
+			вернуть 1;
 		}
 
 		ret = run_command(arg, flag | CMD_FLAG_ENV);
-		if (ret)
-			return ret;
+		если (ret)
+			вернуть ret;
 	}
-	return 0;
+	вернуть 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(OF_CONTROL)
+#если CONFIG_IS_ENABLED(OF_CONTROL)
 bool cli_process_fdt(const char **cmdp)
 {
 	/* Allow the fdt to override the boot command */
 	const char *env = ofnode_conf_read_str("bootcmd");
-	if (env)
+	если (env)
 		*cmdp = env;
 	/*
 	 * If the bootsecure option was chosen, use secure_boot_cmd().
 	 * Always use 'env' in this case, since bootsecure requres that the
 	 * bootcmd was specified in the FDT too.
 	 */
-	return ofnode_conf_read_int("bootsecure", 0);
+	вернуть ofnode_conf_read_int("bootsecure", 0);
 }
 
 /*
@@ -253,9 +253,9 @@ void cli_secure_boot_cmd(const char *cmd)
 #ifdef CONFIG_CMDLINE
 	struct cmd_tbl *cmdtp;
 #endif
-	int rc;
+	целое rc;
 
-	if (!cmd) {
+	если (!cmd) {
 		printf("## Error: Secure boot command not specified\n");
 		goto err;
 	}
@@ -266,7 +266,7 @@ void cli_secure_boot_cmd(const char *cmd)
 	/* Find the command directly. */
 #ifdef CONFIG_CMDLINE
 	cmdtp = find_cmd(cmd);
-	if (!cmdtp) {
+	если (!cmdtp) {
 		printf("## Error: \"%s\" not defined\n", cmd);
 		goto err;
 	}
@@ -274,7 +274,7 @@ void cli_secure_boot_cmd(const char *cmd)
 	/* Run the command, forcing no flags and faking argc and argv. */
 	rc = (cmdtp->cmd)(cmdtp, 0, 1, (char **)&cmd);
 
-#else
+#иначе
 	rc = board_run_command(cmd);
 #endif
 
@@ -294,21 +294,21 @@ void cli_loop(void)
 {
 	bootstage_mark(BOOTSTAGE_ID_ENTER_CLI_LOOP);
 
-	if (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
+	если (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
 		console_flush_stdin();
 
-#if CONFIG_IS_ENABLED(HUSH_PARSER)
-	if (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
+#если CONFIG_IS_ENABLED(HUSH_PARSER)
+	если (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
 		parse_and_run_file();
-	else if (gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	иначе если (gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		parse_file_outer();
 
 	printf("Problem\n");
 	/* This point is never reached */
-	for (;;);
+	для (;;);
 #elif defined(CONFIG_CMDLINE)
 	cli_simple_loop();
-#else
+#иначе
 	printf("## U-Boot command line is disabled. Please enable CONFIG_CMDLINE\n");
 #endif /*CONFIG_HUSH_PARSER*/
 }
@@ -317,28 +317,28 @@ void cli_init(void)
 {
 #ifdef CONFIG_HUSH_PARSER
 	/* This if block is used to initialize hush parser gd flag. */
-	if (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	если (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		&& !(gd->flags & GD_FLG_HUSH_MODERN_PARSER)) {
-		if (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
+		если (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
 			gd->flags |= GD_FLG_HUSH_OLD_PARSER;
-		else if (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
+		иначе если (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
 			gd->flags |= GD_FLG_HUSH_MODERN_PARSER;
 	}
 
-	if (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
+	если (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
 		u_boot_hush_start();
-	} else if (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
+	} иначе если (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
 		u_boot_hush_start_modern();
-	} else {
+	} иначе {
 		printf("No valid hush parser to use, cli will not initialized!\n");
-		return;
+		вернуть;
 	}
 #endif
 
-#if defined(CONFIG_HUSH_INIT_VAR)
+#если defined(CONFIG_HUSH_INIT_VAR)
 	hush_init_var();
 #endif
 
-	if (CONFIG_IS_ENABLED(VIDEO_ANSI))
+	если (CONFIG_IS_ENABLED(VIDEO_ANSI))
 		printf(ANSI_CURSOR_SHOW "\n");
 }

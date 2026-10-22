@@ -27,27 +27,27 @@ DECLARE_GLOBAL_DATA_PTR;
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+целое _do_help(struct cmd_tbl *cmd_start, целое cmd_items, struct cmd_tbl *cmdtp,
+	     целое flag, целое argc, char *const argv[])
 {
-	int i;
-	int rcode = 0;
+	целое i;
+	целое rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
+	если (argc == 1) {	/* show list of commands */
 		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+		целое i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
 		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		для (i = 0; i < cmd_items; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		для (i = cmd_items - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			для (j = 0; j < i; ++j) {
+				если (strcmp(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
 					struct cmd_tbl *tmp;
 					tmp = cmd_array[j];
@@ -56,175 +56,175 @@ int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
 					++swaps;
 				}
 			}
-			if (!swaps)
+			если (!swaps)
 				break;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
+		для (i = 0; i < cmd_items; i++) {
 			const char *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
+			если (ctrlc())
+				вернуть 1;
+			если (usage == NULL)
 				continue;
 			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		вернуть 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
+	для (i = 1; i < argc; ++i) {
 		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+		если (cmdtp != NULL) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
+		} иначе {
 			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	вернуть rcode;
 }
 
 /* find command table entry for a command */
 struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+			     целое table_len)
 {
 #ifdef CONFIG_CMDLINE
 	struct cmd_tbl *cmdtp;
 	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
 	const char *p;
-	int len;
-	int n_found = 0;
+	целое len;
+	целое n_found = 0;
 
-	if (!cmd)
-		return NULL;
+	если (!cmd)
+		вернуть NULL;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
 	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	для (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
+		если (strncmp(cmd, cmdtp->name, len) == 0) {
+			если (len == strlen(cmdtp->name))
+				вернуть cmdtp;	/* full match */
 
 			cmdtp_temp = cmdtp;	/* abbreviated command ? */
 			n_found++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	если (n_found == 1) {			/* exactly one match */
+		вернуть cmdtp_temp;
 	}
 #endif /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	вернуть NULL;	/* not found or ambiguous command */
 }
 
 struct cmd_tbl *find_cmd(const char *cmd)
 {
 	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	const целое len = ll_entry_count(struct cmd_tbl, cmd);
+	вернуть find_cmd_tbl(cmd, start, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+целое cmd_usage(const struct cmd_tbl *cmdtp)
 {
 	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
 #ifdef	CONFIG_SYS_LONGHELP
 	printf("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
+	если (!cmdtp->help) {
 		puts ("- No additional help available.\n");
-		return 1;
+		вернуть 1;
 	}
 
 	puts(cmdtp->help);
 	putc('\n');
 #endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+	вернуть 1;
 }
 
 #ifdef CONFIG_AUTO_COMPLETE
 static char env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
+целое var_complete(целое argc, char *const argv[], char last_char, целое maxv,
 		 char *cmdv[])
 {
-	int space;
+	целое space;
 
 	space = last_char == '\0' || isblank(last_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	если (space && argc == 1)
+		вернуть env_complete("", maxv, cmdv, sizeof(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
+	если (!space && argc == 2)
+		вернуть env_complete(argv[1], maxv, cmdv,
 				    sizeof(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	вернуть 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+static целое dollar_complete(целое argc, char *const argv[], char last_char,
+			   целое maxv, char *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
+	если (argc < 1 || argv[argc - 1][0] != '$' ||
 	    last_char == '\0' || isblank(last_char))
-		return 0;
+		вернуть 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	вернуть env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
+целое complete_subcmdv(struct cmd_tbl *cmdtp, целое count, целое argc,
 		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+		     целое maxv, char *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
 	const struct cmd_tbl *cmdend = cmdtp + count;
 	const char *p;
-	int len, clen;
-	int n_found = 0;
+	целое len, clen;
+	целое n_found = 0;
 	const char *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	если (maxv < 2)
+		вернуть -2;
 
 	cmdv[0] = NULL;
 
-	if (argc == 0) {
+	если (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
+		для (; cmdtp != cmdend; cmdtp++) {
+			если (n_found >= maxv - 2) {
 				cmdv[n_found++] = "...";
 				break;
 			}
 			cmdv[n_found++] = cmdtp->name;
 		}
 		cmdv[n_found] = NULL;
-		return n_found;
+		вернуть n_found;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
+	если (argc > 1 || last_char == '\0' || isblank(last_char)) {
 		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
+		если (cmdtp == NULL || cmdtp->complete == NULL) {
 			cmdv[0] = NULL;
-			return 0;
+			вернуть 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		вернуть (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,23 +233,23 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
+	если (p == NULL)
 		len = strlen(cmd);
-	else
+	иначе
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	для (; cmdtp != cmdend; cmdtp++) {
 
 		clen = strlen(cmdtp->name);
-		if (clen < len)
+		если (clen < len)
 			continue;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
+		если (memcmp(cmd, cmdtp->name, len) != 0)
 			continue;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
+		если (n_found >= maxv - 2) {
 			cmdv[n_found++] = "...";
 			break;
 		}
@@ -258,75 +258,75 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	}
 
 	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
+	вернуть n_found;
+#иначе
+	вернуть 0;
 #endif
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+static целое complete_cmdv(целое argc, char *const argv[], char last_char,
+			 целое maxv, char *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
+	вернуть complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
 				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
 				last_char, maxv, cmdv);
-#else
-	return 0;
+#иначе
+	вернуть 0;
 #endif
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+static целое make_argv(char *s, целое argvsz, char *argv[])
 {
-	int argc = 0;
+	целое argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	пока (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		пока (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
+		если (*s == '\0')	/* end of s, no more args	*/
 			break;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		пока (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
+		если (*s == '\0')		/* end of s, no more args	*/
 			break;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
 	argv[argc] = NULL;
 
-	return argc;
+	вернуть argc;
 }
 
 static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+		       целое linemax, char *const argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	целое ll = leader != NULL ? strlen(leader) : 0;
+	целое sl = sep != NULL ? strlen(sep) : 0;
+	целое len, i;
 
-	if (banner) {
+	если (banner) {
 		puts("\n");
 		puts(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
+	пока (*argv != NULL) {
 		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
+		если (i + len >= linemax) {
 			puts("\n");
-			if (leader)
+			если (leader)
 				puts(leader);
 			i = ll - sl;
-		} else if (sep)
+		} иначе если (sep)
 			puts(sep);
 		puts(*argv++);
 		i += len;
@@ -334,56 +334,56 @@ static void print_argv(const char *banner, const char *leader, const char *sep,
 	printf("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+static целое find_common_prefix(char *const argv[])
 {
-	int i, len;
+	целое i, len;
 	char *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	если (*argv == NULL)
+		вернуть 0;
 
 	/* begin with max */
 	anchor = *argv++;
 	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	пока ((t = *argv++) != NULL) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
+		для (i = 0; i < len; i++, t++, s++) {
+			если (*t != *s)
 				break;
 		}
 		len = s - anchor;
 	}
-	return len;
+	вернуть len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+целое cmd_auto_complete(const char *const prompt, char *buf, целое *np, целое *colp)
 {
 	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
+	целое n = *np, col = *colp;
 	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
 	char *cmdv[20];
 	char *s, *t;
 	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
+	целое i, j, k, len, seplen, argc;
+	целое cnt;
 	char last_char;
 	const char *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	если (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		если (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} иначе
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	если (strcmp(prompt, ps_prompt) != 0)
+		вернуть 0;	/* not in normal console */
 
 	cnt = strlen(buf);
-	if (cnt >= 1)
+	если (cnt >= 1)
 		last_char = buf[cnt - 1];
-	else
+	иначе
 		last_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
@@ -395,175 +395,175 @@ int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
 	/* first try a $ completion */
 	i = dollar_complete(argc, argv, last_char,
 			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+	если (!i) {
 		/* do the completion and return the possible completions */
 		i = complete_cmdv(argc, argv, last_char,
 				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	если (i == 0) {
+		если (argc > 1)	/* allow tab for non command */
+			вернуть 0;
 		putc('\a');
-		return 1;
+		вернуть 1;
 	}
 
 	s = NULL;
 	len = 0;
 	sep = NULL;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
+	если (i == 1) { /* one match; perfect */
+		если (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		иначе
 			k = 0;
 
 		s = cmdv[0] + k;
 		len = strlen(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
+	} иначе если (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
+		если (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		иначе
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		если (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	если (s != NULL) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		если (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			вернуть 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		для (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		если (sep != NULL)
+			для (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
 		col += k;
 		puts(t - k);
-		if (sep == NULL)
+		если (sep == NULL)
 			putc('\a');
 		*np = n;
 		*colp = col;
-	} else {
+	} иначе {
 		print_argv(NULL, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);
 	}
-	return 1;
+	вернуть 1;
 }
 
 #endif
 
 #ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+целое cmd_get_data_size(const char *arg, целое default_size)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
+	целое len = strlen(arg);
+	если (len >= 2 && arg[len-2] == '.') {
 		switch (arg[len-1]) {
 		case 'b':
-			return 1;
+			вернуть 1;
 		case 'w':
-			return 2;
+			вернуть 2;
 		case 'l':
-			return 4;
+			вернуть 4;
 		case 's':
-			return CMD_DATA_SIZE_STR;
+			вернуть CMD_DATA_SIZE_STR;
 		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+			если (MEM_SUPPORT_64BIT_DATA)
+				вернуть 8;
 			fallthrough;
 		default:
-			return CMD_DATA_SIZE_ERR;
+			вернуть CMD_DATA_SIZE_ERR;
 		}
 	}
-	return default_size;
+	вернуть default_size;
 }
 #endif
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+void fixup_cmdtable(struct cmd_tbl *cmdtp, целое size)
 {
-	int	i;
+	целое	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	если (gd->reloc_off == 0)
+		вернуть;
 
-	for (i = 0; i < size; i++) {
+	для (i = 0; i < size; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(целое (*)(struct cmd_tbl *, целое, целое,
+				 char * const [], целое *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
 #ifdef DEBUG_COMMANDS
 		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
 #endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
+		cmdtp->cmd = (целое (*)(struct cmd_tbl *, целое, целое,
 				      char *const []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
 		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		если (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
 			cmdtp->usage = (char *)addr;
 		}
 #ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+		если (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
 			cmdtp->help = (char *)addr;
 		}
 #endif
 #ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+		если (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(целое (*)(целое, char * const [], char, целое, char * []))addr;
 		}
 #endif
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+целое cmd_always_repeatable(struct cmd_tbl *cmdtp, целое flag, целое argc,
+			  char *const argv[], целое *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	вернуть cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+целое cmd_never_repeatable(struct cmd_tbl *cmdtp, целое flag, целое argc,
+			 char *const argv[], целое *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	вернуть cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
+целое cmd_discard_repeatable(struct cmd_tbl *cmdtp, целое flag, целое argc,
 			   char *const argv[])
 {
-	int repeatable;
+	целое repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	вернуть cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,30 +578,30 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+static целое cmd_call(struct cmd_tbl *cmdtp, целое flag, целое argc,
+		    char *const argv[], целое *repeatable)
 {
-	int result;
+	целое result;
 
 	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
+	если (result)
 		debug("Command failed, result=%d\n", result);
-	return result;
+	вернуть result;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+enum command_ret_t cmd_process(целое flag, целое argc, char *const argv[],
+			       целое *repeatable, ulong *ticks)
 {
 	enum command_ret_t rc = CMD_RET_SUCCESS;
 	struct cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
+#если defined(CONFIG_SYS_XTRACE)
 	char *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
+	если (xtrace) {
 		puts("+");
-		for (int i = 0; i < argc; i++) {
+		для (целое i = 0; i < argc; i++) {
 			puts(" ");
 			puts(argv[i]);
 		}
@@ -611,69 +611,69 @@ enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
 
 	/* Look up command in command table */
 	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
+	если (cmdtp == NULL) {
 		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+		вернуть 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	если (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#если defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
+	иначе если (cmdtp->cmd == do_bootd) {
+		если (flag & CMD_FLAG_BOOTD) {
 			puts("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} иначе {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
 #endif
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	если (!rc) {
+		целое newrep;
 
-		if (ticks)
+		если (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		если (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	если (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	вернуть rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+целое cmd_process_error(struct cmd_tbl *cmdtp, целое err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	если (err == CMD_RET_USAGE)
+		вернуть CMD_RET_USAGE;
 
-	if (err) {
+	если (err) {
 		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+		вернуть CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	вернуть CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+целое cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
 {
 	char *data;
 	void *buf;
 	uint len;
-	int ret;
+	целое ret;
 
 	buf = map_sysmem(addr, 0);
 	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	если (ret)
+		вернуть CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	вернуть run_command_list(data, len, 0);
 }

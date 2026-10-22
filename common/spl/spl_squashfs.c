@@ -21,47 +21,47 @@ static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
 	struct legacy_img_hdr *header;
 	char *filename = load->priv;
 	loff_t actread;
-	int ret;
+	целое ret;
 
 	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	если (ret)
+		вернуть ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
+	если (CONFIG_IS_ENABLED(OS_BOOT)) {
 		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+		если (image_get_magic(header) != FDT_MAGIC)
+			вернуть size;
 	}
 
-	return actread;
+	вернуть actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
+целое spl_load_image_sqfs(struct spl_image_info *spl_image,
 			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
+			struct blk_desc *block_dev, целое partition,
 			const char *filename)
 {
-	int err;
+	целое err;
 	loff_t size = 0;
 	struct spl_load_info load;
 	struct disk_partition part_info = {};
 
 	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
+	если (err) {
 		printf("spl: no partition table found\n");
 		goto end;
 	}
 
 	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
+	если (err) {
 		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
 		goto end;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	если (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = sqfs_size(filename, &size);
-		if (err)
+		если (err)
 			goto end;
 	}
 
@@ -70,9 +70,9 @@ int spl_load_image_sqfs(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0)
+	если (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	вернуть err;
 }

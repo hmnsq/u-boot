@@ -21,14 +21,14 @@
 #define debug_parser(fmt, args...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+целое cli_simple_process_macros(const char *input, char *output, целое max_size)
 {
 	char c, prev;
 	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
-	int outputcnt = max_size;
-	int state = 0;		/* 0 = waiting for '$'  */
-	int ret;
+	целое inputcnt = strlen(input);
+	целое outputcnt = max_size;
+	целое state = 0;		/* 0 = waiting for '$'  */
+	целое ret;
 
 	/* 1 = waiting for '(' or '{' */
 	/* 2 = waiting for ')' or '}' */
@@ -40,14 +40,14 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 
 	prev = '\0';		/* previous character   */
 
-	while (inputcnt && outputcnt) {
+	пока (inputcnt && outputcnt) {
 		c = *input++;
 		inputcnt--;
 
-		if (state != 3) {
+		если (state != 3) {
 			/* remove one level of escape characters */
-			if ((c == '\\') && (prev != '\\')) {
-				if (inputcnt-- == 0)
+			если ((c == '\\') && (prev != '\\')) {
+				если (inputcnt-- == 0)
 					break;
 				prev = c;
 				c = *input++;
@@ -56,41 +56,41 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 
 		switch (state) {
 		case 0:	/* Waiting for (unescaped) $    */
-			if ((c == '\'') && (prev != '\\')) {
+			если ((c == '\'') && (prev != '\\')) {
 				state = 3;
 				break;
 			}
-			if ((c == '$') && (prev != '\\')) {
+			если ((c == '$') && (prev != '\\')) {
 				state++;
-			} else {
+			} иначе {
 				*(output++) = c;
 				outputcnt--;
 			}
 			break;
 		case 1:	/* Waiting for (        */
-			if (c == '(' || c == '{') {
+			если (c == '(' || c == '{') {
 				state++;
 				varname_start = input;
-			} else {
+			} иначе {
 				state = 0;
 				*(output++) = '$';
 				outputcnt--;
 
-				if (outputcnt) {
+				если (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
 			}
 			break;
 		case 2:	/* Waiting for )        */
-			if (c == ')' || c == '}') {
-				int i;
+			если (c == ')' || c == '}') {
+				целое i;
 				char envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				целое envcnt = input - varname_start - 1;
 
 				/* Get the varname */
-				for (i = 0; i < envcnt; i++)
+				для (i = 0; i < envcnt; i++)
 					envname[i] = varname_start[i];
 				envname[i] = 0;
 
@@ -98,8 +98,8 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				envval = env_get(envname);
 
 				/* Copy into the line if it exists */
-				if (envval != NULL)
-					while ((*envval) && outputcnt) {
+				если (envval != NULL)
+					пока ((*envval) && outputcnt) {
 						*(output++) = *(envval++);
 						outputcnt--;
 					}
@@ -108,9 +108,9 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 			}
 			break;
 		case 3:	/* Waiting for '        */
-			if ((c == '\'') && (prev != '\\')) {
+			если ((c == '\'') && (prev != '\\')) {
 				state = 0;
-			} else {
+			} иначе {
 				*(output++) = c;
 				outputcnt--;
 			}
@@ -120,9 +120,9 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 	}
 
 	ret = inputcnt ? -ENOSPC : 0;
-	if (outputcnt) {
+	если (outputcnt) {
 		*output = 0;
-	} else {
+	} иначе {
 		*(output - 1) = 0;
 		ret = -ENOSPC;
 	}
@@ -130,36 +130,36 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 	debug_parser("[PROCESS_MACROS] OUTPUT len %zd: \"%s\"\n",
 		     strlen(output_start), output_start);
 
-	return ret;
+	вернуть ret;
 }
 
 #ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+целое cli_simple_parse_line(char *line, char *argv[])
 {
-	int nargs = 0;
+	целое nargs = 0;
 
 	debug_parser("%s: \"%s\"\n", __func__, line);
-	while (nargs < CONFIG_SYS_MAXARGS) {
+	пока (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
+		пока (isblank(*line))
 			++line;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		если (*line == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
-			return nargs;
+			вернуть nargs;
 		}
 
 		argv[nargs++] = line;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
+		пока (*line && !isblank(*line))
 			++line;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		если (*line == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("parse_line: nargs=%d\n", nargs);
-			return nargs;
+			вернуть nargs;
 		}
 
 		*line++ = '\0';		/* terminate current arg	 */
@@ -168,7 +168,7 @@ int cli_simple_parse_line(char *line, char *argv[])
 	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
 
 	debug_parser("%s: nargs=%d\n", __func__, nargs);
-	return nargs;
+	вернуть nargs;
 }
 
  /*
@@ -179,7 +179,7 @@ int cli_simple_parse_line(char *line, char *argv[])
  * the environment data, which may change magicly when the command we run
  * creates or modifies environment variables (like "bootp" does).
  */
-int cli_simple_run_command(const char *cmd, int flag)
+целое cli_simple_run_command(const char *cmd, целое flag)
 {
 	char cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
 	char *token;			/* start of token in cmdbuf	*/
@@ -187,24 +187,24 @@ int cli_simple_run_command(const char *cmd, int flag)
 	char finaltoken[CONFIG_SYS_CBSIZE];
 	char *str = cmdbuf;
 	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
-	int argc, inquotes;
-	int repeatable = 1;
-	int rc = 0;
+	целое argc, inquotes;
+	целое repeatable = 1;
+	целое rc = 0;
 
 	debug_parser("[RUN_COMMAND] cmd[%p]=\"", cmd);
-	if (DEBUG_PARSER) {
+	если (DEBUG_PARSER) {
 		/* use puts - string may be loooong */
 		puts(cmd ? cmd : "NULL");
 		puts("\"\n");
 	}
 	clear_ctrlc();		/* forget any previous Control C */
 
-	if (!cmd || !*cmd)
-		return -1;	/* empty command */
+	если (!cmd || !*cmd)
+		вернуть -1;	/* empty command */
 
-	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
+	если (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
 		puts("## Command too long!\n");
-		return -1;
+		вернуть -1;
 	}
 
 	strcpy(cmdbuf, cmd);
@@ -214,17 +214,17 @@ int cli_simple_run_command(const char *cmd, int flag)
 	 */
 
 	debug_parser("[PROCESS_SEPARATORS] %s\n", cmd);
-	while (*str) {
+	пока (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for (inquotes = 0, sep = str; *sep; sep++) {
-			if ((*sep == '\'') &&
+		для (inquotes = 0, sep = str; *sep; sep++) {
+			если ((*sep == '\'') &&
 			    (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
 
-			if (!inquotes &&
+			если (!inquotes &&
 			    (*sep == ';') &&	/* separator		*/
 			    (sep != str) &&	/* past string start	*/
 			    (*(sep - 1) != '\\'))	/* and NOT escaped */
@@ -235,10 +235,10 @@ int cli_simple_run_command(const char *cmd, int flag)
 		 * Limit the token to data between separators
 		 */
 		token = str;
-		if (*sep) {
+		если (*sep) {
 			str = sep + 1;	/* start of command for next pass */
 			*sep = '\0';
-		} else {
+		} иначе {
 			str = sep;	/* no more commands for next pass */
 		}
 		debug_parser("token: \"%s\"\n", token);
@@ -249,32 +249,32 @@ int cli_simple_run_command(const char *cmd, int flag)
 
 		/* Extract arguments */
 		argc = cli_simple_parse_line(finaltoken, argv);
-		if (argc == 0) {
+		если (argc == 0) {
 			rc = -1;	/* no command at all */
 			continue;
 		}
 
-		if (cmd_process(flag, argc, argv, &repeatable, NULL))
+		если (cmd_process(flag, argc, argv, &repeatable, NULL))
 			rc = -1;
 
 		/* Did the user stop this? */
-		if (had_ctrlc())
-			return -1;	/* if stopped then not repeatable */
+		если (had_ctrlc())
+			вернуть -1;	/* if stopped then not repeatable */
 	}
 
-	return rc ? rc : repeatable;
+	вернуть rc ? rc : repeatable;
 }
 
 void cli_simple_loop(void)
 {
 	static char lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
 
-	int len;
-	int flag;
-	int rc = 1;
+	целое len;
+	целое flag;
+	целое rc = 1;
 
-	for (;;) {
-		if (rc >= 0) {
+	для (;;) {
+		если (rc >= 0) {
 			/* Saw enough of a valid command to
 			 * restart the timeout.
 			 */
@@ -283,41 +283,41 @@ void cli_simple_loop(void)
 		len = cli_readline(CONFIG_SYS_PROMPT);
 
 		flag = 0;	/* assume no special flags for now */
-		if (len > 0)
+		если (len > 0)
 			strlcpy(lastcommand, console_buffer,
 				CONFIG_SYS_CBSIZE + 1);
-		else if (len == 0)
+		иначе если (len == 0)
 			flag |= CMD_FLAG_REPEAT;
 #ifdef CONFIG_BOOT_RETRY_TIME
-		else if (len == -2) {
+		иначе если (len == -2) {
 			/* -2 means timed out, retry autoboot
 			 */
 			puts("\nTimed out waiting for command\n");
 # ifdef CONFIG_RESET_TO_RETRY
 			/* Reinit board to run initialization code again */
 			do_reset(NULL, 0, 0, NULL);
-# else
-			return;		/* retry autoboot */
+# иначе
+			вернуть;		/* retry autoboot */
 # endif
 		}
 #endif
 
-		if (len == -1)
+		если (len == -1)
 			puts("<INTERRUPT>\n");
-		else
+		иначе
 			rc = run_command_repeatable(lastcommand, flag);
 
-		if (rc <= 0) {
+		если (rc <= 0) {
 			/* invalid command or not repeatable, forget it */
 			lastcommand[0] = 0;
 		}
 	}
 }
 
-int cli_simple_run_command_list(char *cmd, int flag)
+целое cli_simple_run_command_list(char *cmd, целое flag)
 {
 	char *line, *next;
-	int rcode = 0;
+	целое rcode = 0;
 
 	/*
 	 * Break into individual lines, and execute each line; terminate on
@@ -325,13 +325,13 @@ int cli_simple_run_command_list(char *cmd, int flag)
 	 */
 	next = cmd;
 	line = cmd;
-	while (*next) {
-		if (*next == '\n') {
+	пока (*next) {
+		если (*next == '\n') {
 			*next = '\0';
 			/* run only non-empty commands */
-			if (*line) {
+			если (*line) {
 				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+				если (cli_simple_run_command(line, 0) < 0) {
 					rcode = 1;
 					break;
 				}
@@ -340,9 +340,9 @@ int cli_simple_run_command_list(char *cmd, int flag)
 		}
 		++next;
 	}
-	if (rcode == 0 && *line)
+	если (rcode == 0 && *line)
 		rcode = (cli_simple_run_command(line, 0) < 0);
 
-	return rcode;
+	вернуть rcode;
 }
 #endif

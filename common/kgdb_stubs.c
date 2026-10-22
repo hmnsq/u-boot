@@ -12,7 +12,7 @@
 #include <serial.h>
 #include <asm/ptrace.h>
 
-int (*debugger_exception_handler)(struct pt_regs *);
+целое (*debugger_exception_handler)(struct pt_regs *);
 
 __attribute__((weak))
 void kgdb_serial_init(void)
@@ -21,7 +21,7 @@ void kgdb_serial_init(void)
 }
 
 __attribute__((weak))
-void putDebugChar(int c)
+void putDebugChar(целое c)
 {
 	serial_putc(c);
 }
@@ -35,15 +35,15 @@ void putDebugStr(const char *str)
 }
 
 __attribute__((weak))
-int getDebugChar(void)
+целое getDebugChar(void)
 {
-	return serial_getc();
+	вернуть serial_getc();
 }
 
 __attribute__((weak))
-void kgdb_interruptible(int yes)
+void kgdb_interruptible(целое yes)
 {
-	return;
+	вернуть;
 }
 
 __attribute__((weak))
@@ -55,11 +55,11 @@ void kgdb_flush_cache_range(void *from, void *to)
 __attribute__((weak))
 void kgdb_flush_cache_all(void)
 {
-	if (dcache_status()) {
+	если (dcache_status()) {
 		dcache_disable();
 		dcache_enable();
 	}
-	if (icache_status()) {
+	если (icache_status()) {
 		icache_disable();
 		icache_enable();
 	}
