@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#अन्तर्भाव <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+स्थिर पूर्णाङ्क hex1_bin (वर्ण  c);
+स्थिर पूर्णाङ्क hex2_bin (वर्ण *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+पूर्णाङ्क srec_decode (वर्ण *आगत, पूर्णाङ्क *गन्ती, ulong *addr, वर्ण *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	पूर्णाङ्क	i;
+	पूर्णाङ्क	v;				/* conversion buffer	*/
+	पूर्णाङ्क	srec_type;			/* S-Record type	*/
+	अचिन्हित वर्ण chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	लागि (; *आगत; ++आगत) {
+		यदि (*आगत == 'S') {		/* skip 'S' */
+			++आगत;
+			रोक;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	यदि (*आगत == '\0') {			/* no more data?	*/
+		फर्काऊ (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *आगत++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	यदि ((*गन्ती = hex2_bin(आगत)) < 0) {
+		फर्काऊ (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *गन्ती;
+	आगत  += 2;
 
-	switch (v) {				/* record type		*/
+	विकल्प (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	पक्ष '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		*गन्ती   -= 3;			/* - checksum and addr	*/
+		रोक;
+	पक्ष '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*गन्ती   -= 3;			/* - checksum and addr	*/
+		रोक;
+	पक्ष '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*गन्ती   -= 4;			/* - checksum and addr	*/
+		रोक;
+	पक्ष '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*गन्ती   -= 5;			/* - checksum and addr	*/
+		रोक;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	पक्ष '5':			/* count record, addr field contains */
+		srec_type = SREC_गन्ती;	/* a 2 byte record counter	*/
+		*गन्ती    = 0;			/* no data		*/
+		रोक;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	पक्ष '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*गन्ती   -= 5;			/* - checksum and addr	*/
+		रोक;
+	पक्ष '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*गन्ती   -= 4;			/* - checksum and addr	*/
+		रोक;
+	पक्ष '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*गन्ती   -= 3;			/* - checksum and addr	*/
+		रोक;
+	स्वभाव:
+		फर्काऊ (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	विकल्प (v) {
+	पक्ष '3':				/* 4 byte addr field	*/
+	पक्ष '7':
+		यदि ((v = hex2_bin(आगत)) < 0) {
+			फर्काऊ (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		आगत  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	पक्ष '2':				/* 3 byte addr field	*/
+	पक्ष '8':
+		यदि ((v = hex2_bin(आगत)) < 0) {
+			फर्काऊ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		आगत  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	पक्ष '0':				/* 2 byte addr field	*/
+	पक्ष '1':
+	पक्ष '5':
+	पक्ष '9':
+		यदि ((v = hex2_bin(आगत)) < 0) {
+			फर्काऊ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		आगत  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		यदि ((v = hex2_bin(आगत)) < 0) {
+			फर्काऊ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		आगत  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		रोक;
+	स्वभाव:
+		फर्काऊ (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	लागि (i=0; i < *गन्ती; ++i) {
+		यदि ((v = hex2_bin(आगत)) < 0) {
+			फर्काऊ (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		आगत  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	यदि ((v = hex2_bin(आगत)) < 0) {
+		फर्काऊ (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	यदि ((अचिन्हित वर्ण)v != (अचिन्हित वर्ण)~chksum) {
+		फर्काऊ (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	फर्काऊ (srec_type);
 }
 
-static int hex1_bin (char c)
+स्थिर पूर्णाङ्क hex1_bin (वर्ण c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	यदि (c >= '0' && c <= '9')
+		फर्काऊ (c - '0');
+	यदि (c >= 'a' && c <= 'f')
+		फर्काऊ (c + 10 - 'a');
+	यदि (c >= 'A' && c <= 'F')
+		फर्काऊ (c + 10 - 'A');
+	फर्काऊ (-1);
 }
 
-static int hex2_bin (char *s)
+स्थिर पूर्णाङ्क hex2_bin (वर्ण *s)
 {
-	int i, j;
+	पूर्णाङ्क i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	यदि ((i = hex1_bin(*s++)) < 0) {
+		फर्काऊ (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	यदि ((j = hex1_bin(*s)) < 0) {
+		फर्काऊ (-1);
 	}
 
-	return ((i<<4) + j);
+	फर्काऊ ((i<<4) + j);
 }
