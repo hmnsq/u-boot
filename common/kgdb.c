@@ -102,35 +102,35 @@ static char remcomInBuffer[BUFMAX];
 static char remcomOutBuffer[BUFMAX];
 static char remcomRegBuffer[BUFMAX];
 
-static int initialized = 0;
-static int kgdb_active;
+static 整数 initialized = 0;
+static 整数 kgdb_active;
 static struct pt_regs entry_regs;
 static long error_jmp_buf[BUFMAX/2];
-static int longjmp_on_fault = 0;
+static 整数 longjmp_on_fault = 0;
 #ifdef KGDB_DEBUG
-static int kdebug = 1;
+static 整数 kdebug = 1;
 #endif
 
 static const char hexchars[]="0123456789abcdef";
 
 /* Convert ch from a hex digit to an int */
-static int
+static 整数
 hex(unsigned char ch)
 {
-	if (ch >= 'a' && ch <= 'f')
-		return ch-'a'+10;
-	if (ch >= '0' && ch <= '9')
-		return ch-'0';
-	if (ch >= 'A' && ch <= 'F')
-		return ch-'A'+10;
-	return -1;
+	如果 (ch >= 'a' && ch <= 'f')
+		返回 ch-'a'+10;
+	如果 (ch >= '0' && ch <= '9')
+		返回 ch-'0';
+	如果 (ch >= 'A' && ch <= 'F')
+		返回 ch-'A'+10;
+	返回 -1;
 }
 
 /* Convert the memory pointed to by mem into hex, placing result in buf.
  * Return a pointer to the last char put in buf (null).
  */
 static unsigned char *
-mem2hex(char *mem, char *buf, int count)
+mem2hex(char *mem, char *buf, 整数 count)
 {
 	char *tmp;
 	unsigned char ch;
@@ -144,23 +144,23 @@ mem2hex(char *mem, char *buf, int count)
 
 	memcpy(tmp, mem, count);
 
-	while (count-- > 0) {
+	当 (count-- > 0) {
 		ch = *tmp++;
 		*buf++ = hexchars[ch >> 4];
 		*buf++ = hexchars[ch & 0xf];
 	}
 	*buf = 0;
 	longjmp_on_fault = 0;
-	return (unsigned char *)buf;
+	返回 (unsigned char *)buf;
 }
 
 /* convert the hex array pointed to by buf into binary to be placed in mem
  * return a pointer to the character AFTER the last byte fetched from buf.
 */
 static char *
-hex2mem(char *buf, char *mem, int count)
+hex2mem(char *buf, char *mem, 整数 count)
 {
-	int hexValue;
+	整数 hexValue;
 	char *tmp_raw, *tmp_hex;
 
 	/*
@@ -171,14 +171,14 @@ hex2mem(char *buf, char *mem, int count)
 	tmp_hex = tmp_raw - 1;
 
 	longjmp_on_fault = 1;
-	while (tmp_hex >= buf) {
+	当 (tmp_hex >= buf) {
 		tmp_raw--;
 		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		如果 (hexValue < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
 		*tmp_raw = hexValue;
 		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		如果 (hexValue < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
 		*tmp_raw |= hexValue << 4;
 
@@ -189,25 +189,25 @@ hex2mem(char *buf, char *mem, int count)
 	kgdb_flush_cache_range((void *)mem, (void *)(mem+count));
 	longjmp_on_fault = 0;
 
-	return buf;
+	返回 buf;
 }
 
 /*
  * While we find nice hex chars, build an int.
  * Return number of chars processed.
  */
-static int
-hexToInt(char **ptr, int *intValue)
+static 整数
+hexToInt(char **ptr, 整数 *intValue)
 {
-	int numChars = 0;
-	int hexValue;
+	整数 numChars = 0;
+	整数 hexValue;
 
 	*intValue = 0;
 
 	longjmp_on_fault = 1;
-	while (**ptr) {
+	当 (**ptr) {
 		hexValue = hex(**ptr);
-		if (hexValue < 0)
+		如果 (hexValue < 0)
 			break;
 
 		*intValue = (*intValue << 4) | hexValue;
@@ -217,7 +217,7 @@ hexToInt(char **ptr, int *intValue)
 	}
 	longjmp_on_fault = 0;
 
-	return (numChars);
+	返回 (numChars);
 }
 
 /* scan for the sequence $<data>#<checksum>     */
@@ -226,16 +226,16 @@ getpacket(char *buffer)
 {
 	unsigned char checksum;
 	unsigned char xmitcsum;
-	int i;
-	int count;
+	整数 i;
+	整数 count;
 	unsigned char ch;
 
 	do {
 		/* wait around for the start character, ignore all other
 		 * characters */
-		while ((ch = (getDebugChar() & 0x7f)) != '$') {
+		当 ((ch = (getDebugChar() & 0x7f)) != '$') {
 #ifdef KGDB_DEBUG
-			if (kdebug)
+			如果 (kdebug)
 				putc(ch);
 #endif
 			;
@@ -247,39 +247,39 @@ getpacket(char *buffer)
 		count = 0;
 
 		/* now, read until a # or end of buffer is found */
-		while (count < BUFMAX) {
+		当 (count < BUFMAX) {
 			ch = getDebugChar() & 0x7f;
-			if (ch == '#')
+			如果 (ch == '#')
 				break;
 			checksum = checksum + ch;
 			buffer[count] = ch;
 			count = count + 1;
 		}
 
-		if (count >= BUFMAX)
+		如果 (count >= BUFMAX)
 			continue;
 
 		buffer[count] = 0;
 
-		if (ch == '#') {
+		如果 (ch == '#') {
 			xmitcsum = hex(getDebugChar() & 0x7f) << 4;
 			xmitcsum |= hex(getDebugChar() & 0x7f);
-			if (checksum != xmitcsum)
+			如果 (checksum != xmitcsum)
 				putDebugChar('-');	/* failed checksum */
-			else {
+			否则 {
 				putDebugChar('+'); /* successful transfer */
 				/* if a sequence char is present, reply the ID */
-				if (buffer[2] == ':') {
+				如果 (buffer[2] == ':') {
 					putDebugChar(buffer[0]);
 					putDebugChar(buffer[1]);
 					/* remove sequence chars from buffer */
 					count = strlen(buffer);
-					for (i=3; i <= count; i++)
+					为 (i=3; i <= count; i++)
 						buffer[i-3] = buffer[i];
 				}
 			}
 		}
-	} while (checksum != xmitcsum);
+	} 当 (checksum != xmitcsum);
 }
 
 /* send the packet in buffer.  */
@@ -287,7 +287,7 @@ static void
 putpacket(unsigned char *buffer)
 {
 	unsigned char checksum;
-	int count;
+	整数 count;
 	unsigned char ch, recv;
 
 	/*  $<packet info>#<checksum>. */
@@ -296,7 +296,7 @@ putpacket(unsigned char *buffer)
 		checksum = 0;
 		count = 0;
 
-		while ((ch = buffer[count])) {
+		当 ((ch = buffer[count])) {
 			putDebugChar(ch);
 			checksum += ch;
 			count += 1;
@@ -306,36 +306,36 @@ putpacket(unsigned char *buffer)
 		putDebugChar(hexchars[checksum >> 4]);
 		putDebugChar(hexchars[checksum & 0xf]);
 		recv = getDebugChar();
-	} while ((recv & 0x7f) != '+');
+	} 当 ((recv & 0x7f) != '+');
 }
 
 /*
  * This function does all command processing for interfacing to gdb.
  */
-static int
+static 整数
 handle_exception (struct pt_regs *regs)
 {
-	int addr;
-	int length;
+	整数 addr;
+	整数 length;
 	char *ptr;
 	kgdb_data kd;
-	int i;
+	整数 i;
 
-	if (!initialized) {
+	如果 (!initialized) {
 		printf("kgdb: exception before kgdb is initialized! huh?\n");
-		return (0);
+		返回 (0);
 	}
 
 	/* probably should check which exception occurred as well */
-	if (longjmp_on_fault) {
+	如果 (longjmp_on_fault) {
 		longjmp_on_fault = 0;
 		kgdb_longjmp(error_jmp_buf, KGDBERR_MEMFAULT);
 		panic("kgdb longjump failed!\n");
 	}
 
-	if (kgdb_active) {
+	如果 (kgdb_active) {
 		printf("kgdb: unexpected exception from within kgdb\n");
-		return (0);
+		返回 (0);
 	}
 	kgdb_active = 1;
 
@@ -343,7 +343,7 @@ handle_exception (struct pt_regs *regs)
 
 	printf("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
 
-	if (kgdb_setjmp(error_jmp_buf) != 0)
+	如果 (kgdb_setjmp(error_jmp_buf) != 0)
 		panic("kgdb: error or fault in entry init!\n");
 
 	kgdb_enter(regs, &kd);
@@ -357,7 +357,7 @@ handle_exception (struct pt_regs *regs)
 	*ptr++ = hexchars[kd.sigval >> 4];
 	*ptr++ = hexchars[kd.sigval & 0xf];
 
-	for (i = 0; i < kd.nregs; i++) {
+	为 (i = 0; i < kd.nregs; i++) {
 		kgdb_reg *rp = &kd.regs[i];
 
 		*ptr++ = hexchars[rp->num >> 4];
@@ -370,14 +370,14 @@ handle_exception (struct pt_regs *regs)
 	*ptr = 0;
 
 #ifdef KGDB_DEBUG
-	if (kdebug)
+	如果 (kdebug)
 		printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
 #endif
 
 	putpacket((unsigned char *)&remcomOutBuffer);
 
-	while (1) {
-		volatile int errnum;
+	当 (1) {
+		volatile 整数 errnum;
 
 		remcomOutBuffer[0] = 0;
 
@@ -385,13 +385,13 @@ handle_exception (struct pt_regs *regs)
 		ptr = &remcomInBuffer[1];
 
 #ifdef KGDB_DEBUG
-		if (kdebug)
+		如果 (kdebug)
 			printf("kgdb:  remcomInBuffer: %s\n", remcomInBuffer);
 #endif
 
 		errnum = kgdb_setjmp(error_jmp_buf);
 
-		if (errnum == 0) switch (remcomInBuffer[0]) {
+		如果 (errnum == 0) switch (remcomInBuffer[0]) {
 
 		case '?':               /* report most recent signal */
 			remcomOutBuffer[0] = 'S';
@@ -414,7 +414,7 @@ handle_exception (struct pt_regs *regs)
 
 		case 'G':   /* set the value of the CPU registers */
 			length = strlen(ptr);
-			if ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
+			如果 ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
 			hex2mem(ptr, remcomRegBuffer, length/2);
 			kgdb_putregs(regs, remcomRegBuffer, length/2);
 			strcpy(remcomOutBuffer,"OK");
@@ -423,11 +423,11 @@ handle_exception (struct pt_regs *regs)
 		case 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
 				/* Try to read %x,%x.  */
 
-			if (hexToInt(&ptr, &addr)
+			如果 (hexToInt(&ptr, &addr)
 			    && *ptr++ == ','
 			    && hexToInt(&ptr, &length))	{
 				mem2hex((char *)addr, remcomOutBuffer, length);
-			} else {
+			} 否则 {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
 			break;
@@ -435,13 +435,13 @@ handle_exception (struct pt_regs *regs)
 		case 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
 			/* Try to read '%x,%x:'.  */
 
-			if (hexToInt(&ptr, &addr)
+			如果 (hexToInt(&ptr, &addr)
 			    && *ptr++ == ','
 			    && hexToInt(&ptr, &length)
 			    && *ptr++ == ':') {
 				hex2mem(ptr, (char *)addr, length);
 				strcpy(remcomOutBuffer, "OK");
-			} else {
+			} 否则 {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
 			break;
@@ -459,7 +459,7 @@ handle_exception (struct pt_regs *regs)
 			/* try to read optional parameter, pc unchanged if no parm */
 			kd.extype = KGDBEXIT_CONTINUE;
 
-			if (hexToInt(&ptr, &addr)) {
+			如果 (hexToInt(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
@@ -473,7 +473,7 @@ handle_exception (struct pt_regs *regs)
 		case 's':
 			kd.extype = KGDBEXIT_SINGLE;
 
-			if (hexToInt(&ptr, &addr)) {
+			如果 (hexToInt(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
@@ -487,31 +487,31 @@ handle_exception (struct pt_regs *regs)
 			kgdb_exit(regs, &kd);
 			kgdb_active = 0;
 			kgdb_interruptible(1);
-			return (1);
+			返回 (1);
 
 		case 'r':		/* Reset (if user process..exit ???)*/
 			panic("kgdb reset.");
 			break;
 
 		case 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
-			if (hexToInt(&ptr, &addr)
+			如果 (hexToInt(&ptr, &addr)
 			    && *ptr++ == '='
 			    && ((length = strlen(ptr)) & 1) == 0) {
 				hex2mem(ptr, remcomRegBuffer, length/2);
 				kgdb_putreg(regs, addr,
 					remcomRegBuffer, length/2);
 				strcpy(remcomOutBuffer,"OK");
-			} else {
+			} 否则 {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
 			break;
 		}			/* switch */
 
-		if (errnum != 0)
+		如果 (errnum != 0)
 			sprintf(remcomOutBuffer, "E%02d", errnum);
 
 #ifdef KGDB_DEBUG
-		if (kdebug)
+		如果 (kdebug)
 			printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
 #endif
 
@@ -525,7 +525,7 @@ handle_exception (struct pt_regs *regs)
  * kgdb_init must be called *after* the
  * monitor is relocated into ram
  */
-int kgdb_init(void)
+整数 kgdb_init(void)
 {
 	puts("KGDB:  ");
 
@@ -536,11 +536,11 @@ int kgdb_init(void)
 	putDebugStr("kgdb ready\n");
 	puts("ready\n");
 
-	return 0;
+	返回 0;
 }
 
 void
-kgdb_error(int errnum)
+kgdb_error(整数 errnum)
 {
 	longjmp_on_fault = 0;
 	kgdb_longjmp(error_jmp_buf, errnum);
@@ -549,8 +549,8 @@ kgdb_error(int errnum)
 
 /* Output string in GDB O-packet format if GDB has connected. If nothing
    output, returns 0 (caller must then handle output). */
-int
-kgdb_output_string (const char* s, unsigned int count)
+整数
+kgdb_output_string (const char* s, unsigned 整数 count)
 {
 	char buffer[512];
 
@@ -561,27 +561,27 @@ kgdb_output_string (const char* s, unsigned int count)
 	mem2hex ((char *)s, &buffer[1], count);
 	putpacket((unsigned char *)&buffer);
 
-	return 1;
+	返回 1;
 }
 
 void
 breakpoint(void)
 {
-	if (!initialized) {
+	如果 (!initialized) {
 		printf("breakpoint() called b4 kgdb init\n");
-		return;
+		返回;
 	}
 
 	kgdb_breakpoint(0, 0);
 }
 
-int
-do_kgdb(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+整数
+do_kgdb(struct cmd_tbl *cmdtp, 整数 flag, 整数 argc, char *const argv[])
 {
     printf("Entering KGDB mode via exception handler...\n\n");
     kgdb_breakpoint(argc - 1, argv + 1);
     printf("\nReturned from KGDB mode\n");
-    return 0;
+    返回 0;
 }
 
 U_BOOT_CMD(

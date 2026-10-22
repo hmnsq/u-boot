@@ -64,61 +64,61 @@ static struct splash_location default_splash_locations[] = {
 
 #include <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+static 整数 splash_video_logo_load(void)
 {
 	char *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	如果 (!splashimage)
+		返回 -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	如果 (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		返回 -EFAULT;
 	}
 
 	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
 	       ARRAY_SIZE(bmp_logo_bitmap));
 
-	return 0;
+	返回 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#否则
+static inline 整数 splash_video_logo_load(void) { 返回 -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak 整数 splash_screen_prepare(void)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
+	如果 (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		返回 splash_source_load(default_splash_locations,
 					  ARRAY_SIZE(default_splash_locations));
 
-	return splash_video_logo_load();
+	返回 splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+void splash_get_pos(整数 *x, 整数 *y)
 {
 	char *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	如果 (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		返回;
 
-	if (s[0] == 'm')
+	如果 (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
+	否则
 		*x = simple_strtol(s, NULL, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	如果 (s != NULL) {
+		如果 (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
+		否则
 			*y = simple_strtol(s + 1, NULL, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#如果 CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
 #include <bmp_logo.h>
@@ -133,16 +133,16 @@ void splash_display_banner(void)
 	struct video_fontdata __maybe_unused *fontdata = fonts;
 	struct udevice *dev;
 	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	整数 col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	如果 (ret)
+		返回;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#如果 IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#否则
 	col = 0;
 	row = 0;
 #endif
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+整数 splash_display(void)
 {
 	ulong addr;
 	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	整数 x = 0, y = 0, ret;
+	如果 (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		返回 -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	如果 (!s)
+		返回 -EINVAL;
 
 	addr = hextoul(s, NULL);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	如果 (ret)
+		返回 ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	如果 (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	否则
+		返回 -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
+	如果 (x || y)
 		goto end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#如果 CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	返回 ret;
 }

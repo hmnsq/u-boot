@@ -28,15 +28,15 @@ const char *symbol_lookup(unsigned long addr, unsigned long *caddr)
 	csym = NULL;
 	*caddr = 0;
 
-	while (*sym) {
+	当 (*sym) {
 		sym_addr = hextoul(sym, &esym);
 		sym = esym;
-		if (sym_addr > addr)
+		如果 (sym_addr > addr)
 			break;
 		*caddr = sym_addr;
 		csym = sym;
 		sym += strlen(sym) + 1;
 	}
 
-	return csym;
+	返回 csym;
 }

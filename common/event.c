@@ -21,7 +21,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
+#如果 CONFIG_IS_ENABLED(EVENT_DEBUG)
 const char *const type_name[] = {
 	"none",
 	"test",
@@ -61,35 +61,35 @@ _Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
 
 const char *event_type_name(enum event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#如果 CONFIG_IS_ENABLED(EVENT_DEBUG)
+	如果 (type < ARRAY_SIZE(type_name))
+		返回 type_name[type];
+	否则
+		返回 "(unknown)";
+#否则
+	返回 "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+static 整数 notify_static(struct event *ev)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const 整数 n_ents = ll_entry_count(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	为 (spy = start; spy != start + n_ents; spy++) {
+		如果 (spy->type == ev->type) {
+			整数 ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
+			如果 (spy->flags & EVSPYF_SIMPLE) {
 				const struct evspy_info_simple *simple;
 
 				simple = (struct evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
+			} 否则 {
 				ret = spy->func(NULL, ev);
 			}
 
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			如果 (ret)
+				返回 log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	返回 0;
 }
 
-static int notify_dynamic(struct event *ev)
+static 整数 notify_dynamic(struct event *ev)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
 
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+		如果 (spy->type == ev->type) {
+			整数 ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,72 +126,72 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			如果 (ret)
+				返回 log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	返回 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+整数 event_notify(enum event_t type, void *data, 整数 size)
 {
 	struct event event;
-	int ret;
+	整数 ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+	如果 (size > sizeof(event.data))
+		返回 log_msg_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	如果 (ret)
+		返回 log_msg_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	如果 (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		如果 (ret)
+			返回 log_msg_ret("dyn", ret);
 	}
 
-	return 0;
+	返回 0;
 }
 
-int event_notify_null(enum event_t type)
+整数 event_notify_null(enum event_t type)
 {
-	return event_notify(type, NULL, 0);
+	返回 event_notify(type, NULL, 0);
 }
 
 void event_show_spy_list(void)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const 整数 n_ents = ll_entry_count(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	const 整数 size = sizeof(ulong) * 2;
 
 	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	为 (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
 		       spy->type, event_type_name(spy->type), size, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+#如果 CONFIG_IS_ENABLED(EVENT_DYNAMIC)
 static void spy_free(struct event_spy *spy)
 {
 	list_del(&spy->sibling_node);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+整数 event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy;
 
 	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	如果 (!spy)
+		返回 log_msg_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
@@ -199,10 +199,10 @@ int event_register(const char *id, enum event_t type, event_handler_t func, void
 	spy->ctx = ctx;
 	list_add_tail(&spy->sibling_node, &state->spy_head);
 
-	return 0;
+	返回 0;
 }
 
-int event_uninit(void)
+整数 event_uninit(void)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
@@ -210,15 +210,15 @@ int event_uninit(void)
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
 		spy_free(spy);
 
-	return 0;
+	返回 0;
 }
 
-int event_init(void)
+整数 event_init(void)
 {
 	struct event_state *state = gd_event_state();
 
 	INIT_LIST_HEAD(&state->spy_head);
 
-	return 0;
+	返回 0;
 }
 #endif /* EVENT_DYNAMIC */

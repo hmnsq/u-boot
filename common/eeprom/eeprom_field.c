@@ -14,41 +14,41 @@
 static void __eeprom_field_print_bin(const struct eeprom_field *field,
 				     char *delimiter, bool reverse)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	整数 i;
+	整数 from = reverse ? field->size - 1 : 0;
+	整数 to = reverse ? 0 : field->size - 1;
 
 	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
+	为 (i = from; i != to; reverse ? i-- : i++)
 		printf("%02x%s", field->buf[i], delimiter);
 
 	printf("%02x\n", field->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
+static 整数 __eeprom_field_update_bin(struct eeprom_field *field,
 				     const char *value, bool reverse)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
+	整数 len = strlen(value);
+	整数 k, j, i = reverse ? len - 1 : 0;
 	unsigned char byte;
 	char *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	如果 (len > field->size * 2)
+		返回 -1;
 
 	memset(field->buf, 0, field->size);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	为 (j = 0; j < field->size; j++) {
 		byte = 0;
 		char tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
+		如果 ((reverse && i < 0) || (!reverse && i >= len))
 			break;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
+		为 (k = 0; k < 2; k++) {
+			如果 (reverse && i == 0) {
 				tmp[k] = value[i];
 				break;
 			}
@@ -57,47 +57,47 @@ static int __eeprom_field_update_bin(struct eeprom_field *field,
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		如果 (*endptr != '\0')
+			返回 -1;
 
 		field->buf[j] = byte;
 		i = reverse ? i - 2 : i + 2;
 	}
 
-	return 0;
+	返回 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
+static 整数 __eeprom_field_update_bin_delim(struct eeprom_field *field,
 					   char *value, char *delimiter)
 {
-	int count = 0;
-	int i, val;
+	整数 count = 0;
+	整数 i, val;
 	const char *tmp = value;
 	char *tok;
 	char *endptr;
 
 	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
+	当 (tmp != NULL) {
 		count++;
 		tmp++;
 		tmp = strstr(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	如果 (count > field->size)
+		返回 -1;
 
 	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	为 (i = 0; tok && i < field->size; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		如果 (*endptr != '\0')
+			返回 -1;
 
 		/* here we assume that each tok is no more than byte long */
 		field->buf[i] = (unsigned char)val;
 		tok = strtok(NULL, delimiter);
 	}
 
-	return 0;
+	返回 0;
 }
 
 /**
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+整数 eeprom_field_update_bin(struct eeprom_field *field, char *value)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	返回 __eeprom_field_update_bin(field, value, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+整数 eeprom_field_update_reserved(struct eeprom_field *field, char *value)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	返回 __eeprom_field_update_bin_delim(field, value, " ");
 }
 
 /**
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+整数 eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	返回 __eeprom_field_update_bin(field, value, true);
 }
 
 /**
@@ -195,9 +195,9 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+整数 eeprom_field_update_mac(struct eeprom_field *field, char *value)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	返回 __eeprom_field_update_bin_delim(field, value, ":");
 }
 
 /**
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+整数 eeprom_field_update_ascii(struct eeprom_field *field, char *value)
 {
-	if (strlen(value) >= field->size) {
+	如果 (strlen(value) >= field->size) {
 		printf("%s: new data too long\n", field->name);
-		return -1;
+		返回 -1;
 	}
 
 	strncpy((char *)field->buf, value, field->size - 1);
 	field->buf[field->size - 1] = '\0';
 
-	return 0;
+	返回 0;
 }
 
 /**

@@ -6,14 +6,14 @@
 
 #include <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+static 整数 hex1_bin (char  c);
+static 整数 hex2_bin (char *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+整数 srec_decode (char *input, 整数 *count, ulong *addr, char *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
+	整数	i;
+	整数	v;				/* conversion buffer	*/
+	整数	srec_type;			/* S-Record type	*/
 	unsigned char chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
@@ -22,20 +22,20 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
+	为 (; *input; ++input) {
+		如果 (*input == 'S') {		/* skip 'S' */
 			++input;
 			break;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	如果 (*input == '\0') {			/* no more data?	*/
+		返回 (SREC_EMPTY);
 	}
 
 	v = *input++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	如果 ((*count = hex2_bin(input)) < 0) {
+		返回 (SREC_E_NOSREC);
 	}
 
 	chksum += *count;
@@ -78,7 +78,7 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		*count   -= 3;			/* - checksum and addr	*/
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		返回 (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
@@ -87,8 +87,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	switch (v) {
 	case '3':				/* 4 byte addr field	*/
 	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		如果 ((v = hex2_bin(input)) < 0) {
+			返回 (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
@@ -96,8 +96,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		/* FALL THRU */
 	case '2':				/* 3 byte addr field	*/
 	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		如果 ((v = hex2_bin(input)) < 0) {
+			返回 (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -108,16 +108,16 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	case '1':
 	case '5':
 	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		如果 ((v = hex2_bin(input)) < 0) {
+			返回 (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		如果 ((v = hex2_bin(input)) < 0) {
+			返回 (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -126,13 +126,13 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		返回 (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	为 (i=0; i < *count; ++i) {
+		如果 ((v = hex2_bin(input)) < 0) {
+			返回 (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
@@ -140,38 +140,38 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	如果 ((v = hex2_bin(input)) < 0) {
+		返回 (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	如果 ((unsigned char)v != (unsigned char)~chksum) {
+		返回 (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	返回 (srec_type);
 }
 
-static int hex1_bin (char c)
+static 整数 hex1_bin (char c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	如果 (c >= '0' && c <= '9')
+		返回 (c - '0');
+	如果 (c >= 'a' && c <= 'f')
+		返回 (c + 10 - 'a');
+	如果 (c >= 'A' && c <= 'F')
+		返回 (c + 10 - 'A');
+	返回 (-1);
 }
 
-static int hex2_bin (char *s)
+static 整数 hex2_bin (char *s)
 {
-	int i, j;
+	整数 i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	如果 ((i = hex1_bin(*s++)) < 0) {
+		返回 (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	如果 ((j = hex1_bin(*s)) < 0) {
+		返回 (-1);
 	}
 
-	return ((i<<4) + j);
+	返回 ((i<<4) + j);
 }

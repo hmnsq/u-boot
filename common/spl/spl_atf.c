@@ -97,14 +97,14 @@ struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
 	SET_PARAM_HEAD(bl2_to_bl31_params->bl33_image_info,
 		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
 
-	return bl2_to_bl31_params;
+	返回 bl2_to_bl31_params;
 }
 
 __weak struct bl31_params *bl2_plat_get_bl31_params(ulong bl32_entry,
 						    ulong bl33_entry,
 						    ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_default(bl32_entry, bl33_entry,
+	返回 bl2_plat_get_bl31_params_default(bl32_entry, bl33_entry,
 						fdt_addr);
 }
 
@@ -170,18 +170,18 @@ struct bl_params *bl2_plat_get_bl31_params_v2_default(ulong bl32_entry,
 	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
 		       ATF_VERSION_2, 0);
 
-	return bl_params;
+	返回 bl_params;
 }
 
 __weak struct bl_params *bl2_plat_get_bl31_params_v2(ulong bl32_entry,
 						     ulong bl33_entry,
 						     ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_v2_default(bl32_entry, bl33_entry,
+	返回 bl2_plat_get_bl31_params_v2_default(bl32_entry, bl33_entry,
 						   fdt_addr);
 }
 
-static inline void raw_write_daif(unsigned int daif)
+static inline void raw_write_daif(unsigned 整数 daif)
 {
 	__asm__ __volatile__("msr DAIF, %x0\n\t" : : "r" (daif) : "memory");
 }
@@ -194,46 +194,46 @@ static void __noreturn bl31_entry(ulong bl31_entry, ulong bl32_entry,
 	atf_entry_t  atf_entry = (atf_entry_t)bl31_entry;
 	void *bl31_params;
 
-	if (CONFIG_IS_ENABLED(ATF_LOAD_IMAGE_V2))
+	如果 (CONFIG_IS_ENABLED(ATF_LOAD_IMAGE_V2))
 		bl31_params = bl2_plat_get_bl31_params_v2(bl32_entry,
 							  bl33_entry,
 							  fdt_addr);
-	else
+	否则
 		bl31_params = bl2_plat_get_bl31_params(bl32_entry, bl33_entry,
 						       fdt_addr);
 
 	raw_write_daif(SPSR_EXCEPTION_MASK);
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+	如果 (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
 		dcache_disable();
 
 	atf_entry(bl31_params, (void *)fdt_addr);
 }
 
-static int spl_fit_images_find(void *blob, int os)
+static 整数 spl_fit_images_find(void *blob, 整数 os)
 {
-	int parent, node, ndepth = 0;
-	int found = -FDT_ERR_NOTFOUND;
+	整数 parent, node, ndepth = 0;
+	整数 found = -FDT_ERR_NOTFOUND;
 	const void *data;
 	ulong val;
 
-	if (!blob)
-		return -FDT_ERR_BADMAGIC;
+	如果 (!blob)
+		返回 -FDT_ERR_BADMAGIC;
 
 	parent = fdt_path_offset(blob, "/fit-images");
-	if (parent < 0)
-		return -FDT_ERR_NOTFOUND;
+	如果 (parent < 0)
+		返回 -FDT_ERR_NOTFOUND;
 
-	for (node = fdt_next_node(blob, parent, &ndepth);
+	为 (node = fdt_next_node(blob, parent, &ndepth);
 	     (node >= 0) && (ndepth > 0);
 	     node = fdt_next_node(blob, node, &ndepth)) {
-		if (ndepth != 1)
+		如果 (ndepth != 1)
 			continue;
 
 		data = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
-		if (!data)
+		如果 (!data)
 			continue;
 
-		if (genimg_get_os_id(data) != os)
+		如果 (genimg_get_os_id(data) != os)
 			continue;
 
 		/*
@@ -242,27 +242,27 @@ static int spl_fit_images_find(void *blob, int os)
 		 * the same os. Only the segment holding the ELF entry
 		 * point carries an entry property, so prefer that node.
 		 */
-		if (!fit_image_get_entry(blob, node, &val))
-			return node;
+		如果 (!fit_image_get_entry(blob, node, &val))
+			返回 node;
 
-		if (found < 0)
+		如果 (found < 0)
 			found = node;
 	};
 
-	return found;
+	返回 found;
 }
 
-ulong spl_fit_images_get_entry(void *blob, int node)
+ulong spl_fit_images_get_entry(void *blob, 整数 node)
 {
 	ulong  val;
-	int ret;
+	整数 ret;
 
 	ret = fit_image_get_entry(blob, node, &val);
-	if (ret)
+	如果 (ret)
 		ret = fit_image_get_load(blob, node, &val);
 
 	debug("%s: entry point 0x%lx\n", __func__, val);
-	return val;
+	返回 val;
 }
 
 void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
@@ -271,7 +271,7 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	ulong  bl33_entry = CONFIG_TEXT_BASE;
 	void *blob = spl_image->fdt_addr;
 	ulong platform_param = (ulong)blob;
-	int node;
+	整数 node;
 
 	/*
 	 * Find the OP-TEE binary (in /fit-images) load address or
@@ -279,7 +279,7 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * point, this is optional.
 	 */
 	node = spl_fit_images_find(blob, IH_OS_TEE);
-	if (node >= 0)
+	如果 (node >= 0)
 		bl32_entry = spl_fit_images_get_entry(blob, node);
 
 	/*
@@ -290,7 +290,7 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 */
 
 	node = spl_fit_images_find(blob, IH_OS_U_BOOT);
-	if (node >= 0)
+	如果 (node >= 0)
 		bl33_entry = spl_fit_images_get_entry(blob, node);
 
 	/*
@@ -299,7 +299,7 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * older ATF versions that have insufficiently robust (or
 	 * overzealous) argument validation.
 	 */
-	if (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
+	如果 (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
 		platform_param = 0;
 
 	/*

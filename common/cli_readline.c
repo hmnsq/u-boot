@@ -25,34 +25,34 @@ static const char   tab_seq[] = "        ";	/* used to expand TABs */
 
 char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+static char *delete_char (char *buffer, char *p, 整数 *colp, 整数 *np, 整数 plen)
 {
 	char *s;
 
-	if (*np == 0)
-		return p;
+	如果 (*np == 0)
+		返回 p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	如果 (*(--p) == '\t') {		/* will retype the whole line */
+		当 (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		为 (s = buffer; s < p; ++s) {
+			如果 (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} 否则 {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} 否则 {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	返回 p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,7 +62,7 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (整数)n, str)
 
 #define CTL_BACKSPACE		('\b')
 #define DEL			((char)255)
@@ -76,14 +76,14 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#否则
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
+static 整数 hist_max;
+static 整数 hist_add_idx;
+static 整数 hist_cur = -1;
 static unsigned hist_num;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
@@ -93,29 +93,29 @@ static char *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+static void getcmd_putchars(整数 count, 整数 ch)
 {
-	int i;
+	整数 i;
 
-	for (i = 0; i < count; i++)
+	为 (i = 0; i < count; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+static 整数 hist_init(void)
 {
-	int i;
+	整数 i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	为 (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
+#否则
 	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+	如果 (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	为 (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
@@ -124,17 +124,17 @@ static int hist_init(void)
 	hist_cur = -1;
 	hist_num = 0;
 
-	return 0;
+	返回 0;
 }
 
 static void cread_add_to_hist(char *line)
 {
 	strcpy(hist_list[hist_add_idx], line);
 
-	if (++hist_add_idx >= HIST_MAX)
+	如果 (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	如果 (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
 	hist_num++;
@@ -143,58 +143,58 @@ static void cread_add_to_hist(char *line)
 static char *hist_prev(void)
 {
 	char *ret;
-	int old_cur;
+	整数 old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	如果 (hist_cur < 0)
+		返回 NULL;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	如果 (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	如果 (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
 		ret = NULL;
-	} else {
+	} 否则 {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	返回 ret;
 }
 
 static char *hist_next(void)
 {
 	char *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	如果 (hist_cur < 0)
+		返回 NULL;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	如果 (hist_cur == hist_add_idx)
+		返回 NULL;
 
-	if (++hist_cur > hist_max)
+	如果 (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	如果 (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	否则
 		ret = hist_list[hist_cur];
 
-	return ret;
+	返回 ret;
 }
 
 void cread_print_hist_list(void)
 {
-	int i;
+	整数 i;
 	uint n;
 
 	n = hist_num - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	当 (1) {
+		如果 (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
+		如果 (i == hist_add_idx)
 			break;
 		printf("%s\n", hist_list[i]);
 		n++;
@@ -203,54 +203,54 @@ void cread_print_hist_list(void)
 }
 
 #define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+	当 (cls->num) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
 		cls->num--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
+	如果 (cls->num < cls->eol_num) {		\
+		printf("%*s", (整数)(cls->eol_num - cls->num), ""); \
 		do {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} 当 (--cls->eol_num > cls->num);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
+	如果 (cls->num < cls->eol_num) {			\
 		uint wlen = cls->eol_num - cls->num;	\
 		putnstr(buf + cls->num, wlen);		\
 		cls->num = cls->eol_num;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
+static void cread_add_char(char ichar, 整数 insert, uint *num,
 			   uint *eol_num, char *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	如果 (insert || *num == *eol_num) {
+		如果 (*eol_num > len - 1) {
 			getcmd_cbeep();
-			return;
+			返回;
 		}
 		(*eol_num)++;
 	}
 
-	if (insert) {
+	如果 (insert) {
 		wlen = *eol_num - *num;
-		if (wlen > 1)
+		如果 (wlen > 1)
 			memmove(&buf[*num+1], &buf[*num], wlen-1);
 
 		buf[*num] = ichar;
 		putnstr(buf + *num, wlen);
 		(*num)++;
-		while (--wlen)
+		当 (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} 否则 {
 		/* echo the character */
 		wlen = 1;
 		buf[*num] = ichar;
@@ -259,27 +259,27 @@ static void cread_add_char(char ichar, int insert, uint *num,
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
+static void cread_add_str(char *str, 整数 strsize, 整数 insert,
 			  uint *num, uint *eol_num, char *buf, uint len)
 {
-	while (strsize--) {
+	当 (strsize--) {
 		cread_add_char(*str, insert, num, eol_num, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+整数 cread_line_process_ch(struct cli_line_state *cls, char ichar)
 {
 	char *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	如果 (!ichar)
+		返回 -EAGAIN;
 
-	if (ichar == '\n') {
+	如果 (ichar == '\n') {
 		putc('\n');
 		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		返回 0;
 	}
 
 	switch (ichar) {
@@ -288,25 +288,25 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		break;
 	case CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
+		返回 -EINTR;
 	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
+		如果 (cls->num < cls->eol_num) {
 			getcmd_putch(buf[cls->num]);
 			cls->num++;
 		}
 		break;
 	case CTL_CH('b'):
-		if (cls->num) {
+		如果 (cls->num) {
 			getcmd_putch(CTL_BACKSPACE);
 			cls->num--;
 		}
 		break;
 	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		如果 (cls->num < cls->eol_num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
+			如果 (wlen) {
 				memmove(&buf[cls->num], &buf[cls->num + 1],
 					wlen);
 				putnstr(buf + cls->num, wlen);
@@ -315,7 +315,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} 当 (wlen--);
 			cls->eol_num--;
 		}
 		break;
@@ -329,13 +329,13 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		cls->insert = !cls->insert;
 		break;
 	case CTL_CH('w'):
-		if (cls->num) {
+		如果 (cls->num) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			为 (base = cls->num;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			为 (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
@@ -359,7 +359,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	case DEL:
 	case DEL7:
 	case 8:
-		if (cls->num) {
+		如果 (cls->num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num;
@@ -370,21 +370,21 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} 当 (wlen--);
 			cls->eol_num--;
 		}
 		break;
 	case CTL_CH('p'):
 	case CTL_CH('n'):
-		if (cls->history) {
+		如果 (cls->history) {
 			char *hline;
 
-			if (ichar == CTL_CH('p'))
+			如果 (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			否则
 				hline = hist_next();
 
-			if (!hline) {
+			如果 (!hline) {
 				getcmd_cbeep();
 				break;
 			}
@@ -404,11 +404,11 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		}
 		break;
 	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		如果 (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			整数 num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			如果 (cls->num < cls->eol_num) {
 				getcmd_cbeep();
 				break;
 			}
@@ -416,7 +416,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			buf[cls->num] = '\0';
 			col = strlen(cls->prompt) + cls->eol_num;
 			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+			如果 (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
 				col = num2 - cls->num;
 				cls->num += col;
 				cls->eol_num += col;
@@ -436,30 +436,30 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	 */
 	buf[cls->eol_num] = '\0';
 
-	return -EAGAIN;
+	返回 -EAGAIN;
 }
 
 void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	整数 init_len = strlen(buf);
 
 	memset(cls, '\0', sizeof(struct cli_line_state));
 	cls->insert = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
+	如果 (init_len)
 		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static 整数 cread_line(const char *const prompt, char *buf, unsigned 整数 *len,
+		      整数 timeout)
 {
 	struct cli_ch_state s_cch, *cch = &s_cch;
 	struct cli_line_state s_cls, *cls = &s_cls;
 	char ichar;
-	int first = 1;
+	整数 first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	当 (1) {
+		整数 ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		如果 (!ichar) {
+			如果 (bootretry_tstc_timeout())
+				返回 -2;	/* timed out */
+			如果 (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				当 (!tstc()) {	/* while no incoming data */
+					如果 (get_ticks() >= etime)
+						返回 -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -492,38 +492,38 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 		}
 
 		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
+		如果 (ret == -EINTR)
+			返回 -1;
+		否则 如果 (!ret)
 			break;
 	}
 	*len = cls->eol_num;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	如果 (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	返回 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#否则 /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+static inline 整数 hist_init(void)
 {
-	return 0;
+	返回 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static 整数 cread_line(const char *const prompt, char *buf, unsigned 整数 *len,
+		      整数 timeout)
 {
-	return 0;
+	返回 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+整数 cli_readline(const char *const prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	返回 cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+static 整数 cread_line_simple(const char *const prompt, char *p)
 {
 	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	整数 n = 0;		/* buffer index */
+	整数 plen = 0;		/* prompt length */
+	整数 col;		/* output column cnt */
+	整数 c;
 
 	/* print prompt */
-	if (prompt) {
+	如果 (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	为 (;;) {
+		如果 (bootretry_tstc_timeout())
+			返回 -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -573,17 +573,17 @@ static int cread_line_simple(const char *const prompt, char *p)
 		case '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			返回 p - p_buf;
 
 		case '\0':			/* nul			*/
 			continue;
 
 		case 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			返回 -1;
 
 		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+			当 (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
@@ -593,7 +593,7 @@ static int cread_line_simple(const char *const prompt, char *p)
 
 		case 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			当 ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
@@ -604,18 +604,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 
 		default:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			如果 (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
 				break;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			如果 (c == '\t') {	/* expand TABs */
+				如果 (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					如果 (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
@@ -624,7 +624,7 @@ static int cread_line_simple(const char *const prompt, char *p)
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
+			} 否则 {
 				char __maybe_unused buf[2];
 
 				/*
@@ -643,13 +643,13 @@ static int cread_line_simple(const char *const prompt, char *p)
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+整数 cli_readline_into_buffer(const char *const prompt, char *buffer,
+			     整数 timeout)
 {
 	char *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	整数 rc;
+	static 整数 initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	如果 (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		如果 (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			如果 (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		如果 (prompt)
 			puts(prompt);
 
 		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		返回 rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} 否则 {
+		返回 cread_line_simple(prompt, p);
 	}
 }

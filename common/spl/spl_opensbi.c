@@ -21,43 +21,43 @@ DECLARE_GLOBAL_DATA_PTR;
 
 struct fw_dynamic_info opensbi_info;
 
-static int spl_opensbi_find_os_node(void *blob, int *uboot_node, int os_type)
+static 整数 spl_opensbi_find_os_node(void *blob, 整数 *uboot_node, 整数 os_type)
 {
-	int fit_images_node, node;
+	整数 fit_images_node, node;
 	const char *fit_os;
 
 	fit_images_node = fdt_path_offset(blob, "/fit-images");
-	if (fit_images_node < 0)
-		return -ENODEV;
+	如果 (fit_images_node < 0)
+		返回 -ENODEV;
 
 	fdt_for_each_subnode(node, blob, fit_images_node) {
 		fit_os = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
-		if (!fit_os)
+		如果 (!fit_os)
 			continue;
 
-		if (genimg_get_os_id(fit_os) == os_type) {
+		如果 (genimg_get_os_id(fit_os) == os_type) {
 			*uboot_node = node;
-			return 0;
+			返回 0;
 		}
 	}
 
-	return -ENODEV;
+	返回 -ENODEV;
 }
 
 void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 {
-	int ret, os_node;
+	整数 ret, os_node;
 	ulong os_entry;
-	int os_type;
+	整数 os_type;
 	typedef void __noreturn (*opensbi_entry_t)(ulong hartid, ulong dtb, ulong info);
 	opensbi_entry_t opensbi_entry;
 
-	if (!spl_image->fdt_addr) {
+	如果 (!spl_image->fdt_addr) {
 		pr_err("No device tree specified in SPL image\n");
 		hang();
 	}
 
-	if (!IS_ALIGNED((uintptr_t)spl_image->fdt_addr, 8)) {
+	如果 (!IS_ALIGNED((uintptr_t)spl_image->fdt_addr, 8)) {
 		pr_err("SPL image loaded an improperly-aligned device tree\n");
 		hang();
 	}
@@ -69,7 +69,7 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	 * causing the DTB to be cleared by kernel BSS initializtion.
 	 * Moving DTB in front of the kernel can avoid the error.
 	 */
-#if CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT) && \
+#如果 CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT) && \
     CONFIG_VAL(PAYLOAD_ARGS_ADDR)
 	memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, spl_image->fdt_addr,
 	       fdt_totalsize(spl_image->fdt_addr));
@@ -81,13 +81,13 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	 * The next os image default is u-boot proper, once enable
 	 * OpenSBI OS boot mode, the OS image should be linux.
 	 */
-	if (CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT))
+	如果 (CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT))
 		os_type = IH_OS_LINUX;
-	else
+	否则
 		os_type = IH_OS_U_BOOT;
 
 	ret = spl_opensbi_find_os_node(spl_image->fdt_addr, &os_node, os_type);
-	if (ret) {
+	如果 (ret) {
 		pr_err("Can't find %s node for opensbi, %d\n",
 		       genimg_get_os_name(os_type), ret);
 		hang();
@@ -95,7 +95,7 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 
 	/* Get U-Boot entry point */
 	ret = fit_image_get_entry(spl_image->fdt_addr, os_node, &os_entry);
-	if (ret)
+	如果 (ret)
 		ret = fit_image_get_load(spl_image->fdt_addr, os_node, &os_entry);
 
 	/* Prepare opensbi_info object */
@@ -123,7 +123,7 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	ret = smp_call_function((ulong)spl_image->entry_point,
 				(ulong)spl_image->fdt_addr,
 				(ulong)&opensbi_info, 1);
-	if (ret)
+	如果 (ret)
 		hang();
 #endif
 	opensbi_entry(gd->arch.boot_hart, (ulong)spl_image->fdt_addr,
