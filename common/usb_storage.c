@@ -31,104 +31,104 @@
  * only been tested with USB memory sticks.
  */
 
-#include <blk.h>
-#include <bootdev.h>
-#include <command.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
-#include <mapmem.h>
-#include <memalign.h>
-#include <asm/byteorder.h>
-#include <asm/cache.h>
-#include <asm/processor.h>
-#include <dm/device-internal.h>
-#include <dm/lists.h>
-#include <linux/delay.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <blk.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootdev.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <memalign.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/byteorder.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/cache.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/processor.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm/device-internal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm/lists.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/delay.h>
 
-#include <part.h>
-#include <usb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <part.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <usb.h>
 
-#undef BBB_COMDAT_TRACE
-#undef BBB_XPORT_TRACE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ BBB_COMDAT_TRACE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ BBB_XPORT_TRACE
 
-#include <scsi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <scsi.h>
 /* direction table -- this indicates the direction of the data
  * transfer for each command code -- a 1 indicates input
  */
-static const unsigned char us_direction[256/8] = {
+ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ us_direction[256/8] = {
 	0x28, 0x81, 0x14, 0x14, 0x20, 0x01, 0x90, 0x77,
 	0x0C, 0x20, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-#define US_DIRECTION(x) ((us_direction[x>>3] >> (x & 7)) & 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ US_DIRECTION(x) ((us_direction[x>>3] >> (x & 7)) & 1)
 
-static struct scsi_cmd usb_ccb __aligned(ARCH_DMA_MINALIGN);
-static __u32 CBWTag;
+ਸਥਿਰ ਬਣਤਰ scsi_cmd usb_ccb __aligned(ARCH_DMA_MINALIGN);
+ਸਥਿਰ __u32 CBWTag;
 
-static int usb_max_devs; /* number of highest available usb device */
+ਸਥਿਰ ਪੂਰਨ usb_max_devs; /* number of highest available usb device */
 
-#if !CONFIG_IS_ENABLED(BLK)
-static struct blk_desc usb_dev_desc[USB_MAX_STOR_DEV];
-#endif
+#ਜੇ !CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਬਣਤਰ blk_desc usb_dev_desc[USB_MAX_STOR_DEV];
+#ਜੇ_ਅੰਤ
 
-struct us_data;
-typedef int (*trans_cmnd)(struct scsi_cmd *cb, struct us_data *data);
-typedef int (*trans_reset)(struct us_data *data);
+ਬਣਤਰ us_ਅੰਕੜੇ;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ (*trans_cmnd)(ਬਣਤਰ scsi_cmd *cb, ਬਣਤਰ us_ਅੰਕੜੇ *ਅੰਕੜੇ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ (*trans_reset)(ਬਣਤਰ us_ਅੰਕੜੇ *ਅੰਕੜੇ);
 
-struct us_data {
-	struct usb_device *pusb_dev;	 /* this usb_device */
+ਬਣਤਰ us_ਅੰਕੜੇ {
+	ਬਣਤਰ usb_device *pusb_dev;	 /* this usb_device */
 
-	unsigned int	flags;			/* from filter initially */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	flags;			/* from filter initially */
 #	define USB_READY	(1 << 0)
-	unsigned char	ifnum;			/* interface number */
-	unsigned char	ep_in;			/* in endpoint */
-	unsigned char	ep_out;			/* out ....... */
-	unsigned char	ep_int;			/* interrupt . */
-	unsigned char	subclass;		/* as in overview */
-	unsigned char	protocol;		/* .............. */
-	unsigned char	attention_done;		/* force attn on first cmd */
-	unsigned short	ip_data;		/* interrupt data */
-	int		action;			/* what to do */
-	int		ip_wanted;		/* needed */
-	int		*irq_handle;		/* for USB int requests */
-	unsigned int	irqpipe;		/* pipe for release_irq */
-	unsigned char	irqmaxp;		/* max packed for irq Pipe */
-	unsigned char	irqinterval;		/* Intervall for IRQ Pipe */
-	struct scsi_cmd	*srb;			/* current srb */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	ifnum;			/* interface number */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	ep_ਵਿੱਚ;			/* in endpoint */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	ep_ਬਾਹਰਲਾ;			/* out ....... */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	ep_int;			/* interrupt . */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	subclass;		/* as in overview */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	protocol;		/* .............. */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	attention_ਪੂਰਾ;		/* force attn on first cmd */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ	ip_ਅੰਕੜੇ;		/* interrupt data */
+	ਪੂਰਨ		action;			/* what to do */
+	ਪੂਰਨ		ip_wanted;		/* needed */
+	ਪੂਰਨ		*irq_handle;		/* for USB int requests */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	irqpipe;		/* pipe for release_irq */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	irqmaxp;		/* max packed for irq Pipe */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ	irqinterval;		/* Intervall for IRQ Pipe */
+	ਬਣਤਰ scsi_cmd	*srb;			/* current srb */
 	trans_reset	transport_reset;	/* reset routine */
 	trans_cmnd	transport;		/* transport routine */
-	unsigned short	max_xfer_blk;		/* maximum transfer blocks */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ	max_xfer_blk;		/* maximum transfer blocks */
 	bool		cmd12;			/* use 12-byte commands (RBC/UFI) */
 };
 
-#if !CONFIG_IS_ENABLED(BLK)
-static struct us_data usb_stor[USB_MAX_STOR_DEV];
-#endif
+#ਜੇ !CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਬਣਤਰ us_ਅੰਕੜੇ usb_stor[USB_MAX_STOR_DEV];
+#ਜੇ_ਅੰਤ
 
-#define USB_STOR_TRANSPORT_GOOD	   0
-#define USB_STOR_TRANSPORT_FAILED -1
-#define USB_STOR_TRANSPORT_ERROR  -2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_STOR_TRANSPORT_GOOD	   0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_STOR_TRANSPORT_FAILED -1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_STOR_TRANSPORT_ERROR  -2
 
-int usb_stor_get_info(struct usb_device *dev, struct us_data *us,
-		      struct blk_desc *dev_desc);
-int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
-		      struct us_data *ss);
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_read(struct udevice *dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer);
-static unsigned long usb_stor_write(struct udevice *dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer);
-#else
-static unsigned long usb_stor_read(struct blk_desc *block_dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer);
-static unsigned long usb_stor_write(struct blk_desc *block_dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer);
-#endif
-void uhci_show_temp_int_td(void);
+ਪੂਰਨ usb_stor_get_info(ਬਣਤਰ usb_device *dev, ਬਣਤਰ us_ਅੰਕੜੇ *us,
+		      ਬਣਤਰ blk_desc *dev_desc);
+ਪੂਰਨ usb_storage_probe(ਬਣਤਰ usb_device *dev, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ifnum,
+		      ਬਣਤਰ us_ਅੰਕੜੇ *ss);
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_read(ਬਣਤਰ udevice *dev, lbaint_t blknr,
+				   lbaint_t blkcnt, ਖਾਲੀ *ਬਫਰ);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_write(ਬਣਤਰ udevice *dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ਅਚਲ ਖਾਲੀ *ਬਫਰ);
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_read(ਬਣਤਰ blk_desc *ਖੰਡ_dev, lbaint_t blknr,
+				   lbaint_t blkcnt, ਖਾਲੀ *ਬਫਰ);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_write(ਬਣਤਰ blk_desc *ਖੰਡ_dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ਅਚਲ ਖਾਲੀ *ਬਫਰ);
+#ਜੇ_ਅੰਤ
+ਖਾਲੀ uhci_show_ਆਰਜ਼ੀ_int_td(ਖਾਲੀ);
 
-static void usb_show_progress(void)
+ਸਥਿਰ ਖਾਲੀ usb_show_ਤਰੱਕੀ(ਖਾਲੀ)
 {
 	debug(".");
 }
@@ -137,159 +137,159 @@ static void usb_show_progress(void)
  * show info on storage devices; 'usb start/init' must be invoked earlier
  * as we only retrieve structures populated during devices initialization
  */
-int usb_stor_info(void)
+ਪੂਰਨ usb_stor_info(ਖਾਲੀ)
 {
-	int count = 0;
-#if CONFIG_IS_ENABLED(BLK)
-	struct udevice *dev;
+	ਪੂਰਨ ਗਿਣਤੀ_2 = 0;
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਬਣਤਰ udevice *dev;
 
-	for (blk_first_device(UCLASS_USB, &dev);
+	ਲਈ (blk_ਪਹਿਲਾ_device(UCLASS_USB, &dev);
 	     dev;
-	     blk_next_device(&dev)) {
-		struct blk_desc *desc = dev_get_uclass_plat(dev);
+	     blk_ਅਗਲਾ_device(&dev)) {
+		ਬਣਤਰ blk_desc *desc = dev_get_uclass_plat(dev);
 
-		printf("  Device %d: ", desc->devnum);
+		ਲਿਖੋ("  Device %d: ", desc->devnum);
 		dev_print(desc);
-		count++;
+		ਗਿਣਤੀ_2++;
 	}
-#else
-	int i;
+#ਨਹੀਂਤਾਂ
+	ਪੂਰਨ i;
 
-	if (usb_max_devs > 0) {
-		for (i = 0; i < usb_max_devs; i++) {
-			printf("  Device %d: ", i);
+	ਜੇ (usb_max_devs > 0) {
+		ਲਈ (i = 0; i < usb_max_devs; i++) {
+			ਲਿਖੋ("  Device %d: ", i);
 			dev_print(&usb_dev_desc[i]);
 		}
-		return 0;
+		ਵਾਪਸ 0;
 	}
-#endif
-	if (!count) {
-		printf("No storage devices, perhaps not 'usb start'ed..?\n");
-		return 1;
+#ਜੇ_ਅੰਤ
+	ਜੇ (!ਗਿਣਤੀ_2) {
+		ਲਿਖੋ("No storage devices, perhaps not 'usb start'ed..?\n");
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static unsigned int usb_get_max_lun(struct us_data *us)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ usb_get_max_lun(ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int len;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, result, 1);
-	len = usb_control_msg(us->pusb_dev,
+	ਪੂਰਨ len;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ, ਨਤੀਜਾ, 1);
+	len = usb_control_ਸੁਨੇਹਾ(us->pusb_dev,
 			      usb_rcvctrlpipe(us->pusb_dev, 0),
 			      US_BBB_GET_MAX_LUN,
-			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
+			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_ਵਿੱਚ,
 			      0, us->ifnum,
-			      result, sizeof(char),
+			      ਨਤੀਜਾ, ਆਕਾਰ(ਅੱਖਰ),
 			      USB_CNTL_TIMEOUT * 5);
-	debug("Get Max LUN -> len = %i, result = %i\n", len, (int) *result);
-	return (len > 0) ? *result : 0;
+	debug("Get Max LUN -> len = %i, result = %i\n", len, (ਪੂਰਨ) *ਨਤੀਜਾ);
+	ਵਾਪਸ (len > 0) ? *ਨਤੀਜਾ : 0;
 }
 
-static int usb_stor_probe_device(struct usb_device *udev)
+ਸਥਿਰ ਪੂਰਨ usb_stor_probe_device(ਬਣਤਰ usb_device *udev)
 {
-	int lun, max_lun;
+	ਪੂਰਨ lun, max_lun;
 
-#if CONFIG_IS_ENABLED(BLK)
-	struct us_data *data;
-	int ret;
-#else
-	int start;
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਬਣਤਰ us_ਅੰਕੜੇ *ਅੰਕੜੇ;
+	ਪੂਰਨ ret;
+#ਨਹੀਂਤਾਂ
+	ਪੂਰਨ ਸ਼ੁਰੂ;
 
-	if (udev == NULL)
-		return -ENOENT; /* no more devices available */
-#endif
+	ਜੇ (udev == ਨਿਰਾ)
+		ਵਾਪਸ -ENOENT; /* no more devices available */
+#ਜੇ_ਅੰਤ
 
 	debug("\n\nProbing for storage\n");
-#if CONFIG_IS_ENABLED(BLK)
+#ਜੇ CONFIG_IS_ENABLED(BLK)
 	/*
 	 * We store the us_data in the mass storage device's plat. It
 	 * is shared by all LUNs (block devices) attached to this mass storage
 	 * device.
 	 */
-	data = dev_get_plat(udev->dev);
-	if (!usb_storage_probe(udev, 0, data))
-		return 0;
-	max_lun = usb_get_max_lun(data);
-	for (lun = 0; lun <= max_lun; lun++) {
-		struct blk_desc *blkdev;
-		struct udevice *dev;
-		char str[10];
+	ਅੰਕੜੇ = dev_get_plat(udev->dev);
+	ਜੇ (!usb_storage_probe(udev, 0, ਅੰਕੜੇ))
+		ਵਾਪਸ 0;
+	max_lun = usb_get_max_lun(ਅੰਕੜੇ);
+	ਲਈ (lun = 0; lun <= max_lun; lun++) {
+		ਬਣਤਰ blk_desc *blkdev;
+		ਬਣਤਰ udevice *dev;
+		ਅੱਖਰ str[10];
 
-		snprintf(str, sizeof(str), "lun%d", lun);
+		snprintf(str, ਆਕਾਰ(str), "lun%d", lun);
 		ret = blk_create_devicef(udev->dev, "usb_storage_blk", str,
 					 UCLASS_USB, usb_max_devs,
 					 DEFAULT_BLKSZ, 0, &dev);
-		if (ret) {
+		ਜੇ (ret) {
 			debug("Cannot bind driver\n");
-			return ret;
+			ਵਾਪਸ ret;
 		}
 
 		blkdev = dev_get_uclass_plat(dev);
-		blkdev->target = 0xff;
+		blkdev->ਨਿਸ਼ਾਨਾ = 0xff;
 		blkdev->lun = lun;
 
-		ret = usb_stor_get_info(udev, data, blkdev);
-		if (ret == 1) {
+		ret = usb_stor_get_info(udev, ਅੰਕੜੇ, blkdev);
+		ਜੇ (ret == 1) {
 			usb_max_devs++;
 			debug("%s: Found device %p\n", __func__, udev);
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			debug("usb_stor_get_info: Invalid device\n");
 			ret = device_unbind(dev);
-			if (ret)
-				return ret;
-			continue;
+			ਜੇ (ret)
+				ਵਾਪਸ ret;
+			ਜਾਰੀ;
 		}
 
 		ret = blk_probe_or_unbind(dev);
-		if (ret)
-			return ret;
+		ਜੇ (ret)
+			ਵਾਪਸ ret;
 
-		ret = bootdev_setup_for_sibling_blk(dev, "usb_bootdev");
-		if (ret) {
-			int ret2;
+		ret = bootdev_ਤਿਆਰੀ_for_sibling_blk(dev, "usb_bootdev");
+		ਜੇ (ret) {
+			ਪੂਰਨ ret2;
 
 			ret2 = device_unbind(dev);
-			if (ret2)
-				return log_msg_ret("bootdev", ret2);
-			return log_msg_ret("bootdev", ret);
+			ਜੇ (ret2)
+				ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("bootdev", ret2);
+			ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("bootdev", ret);
 		}
 	}
-#else
+#ਨਹੀਂਤਾਂ
 	/* We don't have space to even probe if we hit the maximum */
-	if (usb_max_devs == USB_MAX_STOR_DEV) {
-		printf("max USB Storage Device reached: %d stopping\n",
+	ਜੇ (usb_max_devs == USB_MAX_STOR_DEV) {
+		ਲਿਖੋ("max USB Storage Device reached: %d stopping\n",
 		       usb_max_devs);
-		return -ENOSPC;
+		ਵਾਪਸ -ENOSPC;
 	}
 
-	if (!usb_storage_probe(udev, 0, &usb_stor[usb_max_devs]))
-		return 0;
+	ਜੇ (!usb_storage_probe(udev, 0, &usb_stor[usb_max_devs]))
+		ਵਾਪਸ 0;
 
 	/*
 	 * OK, it's a storage device.  Iterate over its LUNs and populate
 	 * usb_dev_desc'
 	 */
-	start = usb_max_devs;
+	ਸ਼ੁਰੂ = usb_max_devs;
 
 	max_lun = usb_get_max_lun(&usb_stor[usb_max_devs]);
-	for (lun = 0; lun <= max_lun && usb_max_devs < USB_MAX_STOR_DEV;
+	ਲਈ (lun = 0; lun <= max_lun && usb_max_devs < USB_MAX_STOR_DEV;
 	     lun++) {
-		struct blk_desc *blkdev;
+		ਬਣਤਰ blk_desc *blkdev;
 
 		blkdev = &usb_dev_desc[usb_max_devs];
-		memset(blkdev, '\0', sizeof(struct blk_desc));
+		memset(blkdev, '\0', ਆਕਾਰ(ਬਣਤਰ blk_desc));
 		blkdev->uclass_id = UCLASS_USB;
 		blkdev->devnum = usb_max_devs;
 		blkdev->part_type = PART_TYPE_UNKNOWN;
-		blkdev->target = 0xff;
+		blkdev->ਨਿਸ਼ਾਨਾ = 0xff;
 		blkdev->type = DEV_TYPE_UNKNOWN;
-		blkdev->block_read = usb_stor_read;
-		blkdev->block_write = usb_stor_write;
+		blkdev->ਖੰਡ_read = usb_stor_read;
+		blkdev->ਖੰਡ_write = usb_stor_write;
 		blkdev->lun = lun;
 		blkdev->priv = udev;
 
-		if (usb_stor_get_info(udev, &usb_stor[start],
+		ਜੇ (usb_stor_get_info(udev, &usb_stor[ਸ਼ੁਰੂ],
 				      &usb_dev_desc[usb_max_devs]) == 1) {
 			debug("partype: %d\n", blkdev->part_type);
 			part_init(blkdev);
@@ -298,12 +298,12 @@ static int usb_stor_probe_device(struct usb_device *udev)
 			debug("%s: Found device %p\n", __func__, udev);
 		}
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-void usb_stor_reset(void)
+ਖਾਲੀ usb_stor_reset(ਖਾਲੀ)
 {
 	usb_max_devs = 0;
 }
@@ -313,158 +313,158 @@ void usb_stor_reset(void)
  * to the user if mode = 1
  * returns current device or -1 if no
  */
-int usb_stor_scan(int mode)
+ਪੂਰਨ usb_stor_ਜਾਂਚ(ਪੂਰਨ ਬਹੁਲਕ)
 {
-	if (mode == 1)
-		printf("       scanning usb for storage devices... ");
+	ਜੇ (ਬਹੁਲਕ == 1)
+		ਲਿਖੋ("       scanning usb for storage devices... ");
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-	unsigned char i;
+#ਜੇ !CONFIG_IS_ENABLED(DM_USB)
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ i;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
 
 	usb_stor_reset();
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
-		struct usb_device *dev;
+	ਲਈ (i = 0; i < USB_MAX_DEVICE; i++) {
+		ਬਣਤਰ usb_device *dev;
 
-		dev = usb_get_dev_index(i); /* get device */
+		dev = usb_get_dev_ਸੂਚਕਾਂਕ(i); /* get device */
 		debug("i=%d\n", i);
-		if (usb_stor_probe_device(dev))
-			break;
+		ਜੇ (usb_stor_probe_device(dev))
+			ਰੋਕੋ;
 	} /* for */
 
 	usb_disable_asynch(0); /* asynch transfer allowed */
-#endif
-	printf("%d Storage Device(s) found\n", usb_max_devs);
-	if (usb_max_devs > 0)
-		return 0;
-	return -1;
+#ਜੇ_ਅੰਤ
+	ਲਿਖੋ("%d Storage Device(s) found\n", usb_max_devs);
+	ਜੇ (usb_max_devs > 0)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ -1;
 }
 
-static int usb_stor_irq(struct usb_device *dev)
+ਸਥਿਰ ਪੂਰਨ usb_stor_irq(ਬਣਤਰ usb_device *dev)
 {
-	struct us_data *us;
-	us = (struct us_data *)dev->privptr;
+	ਬਣਤਰ us_ਅੰਕੜੇ *us;
+	us = (ਬਣਤਰ us_ਅੰਕੜੇ *)dev->privptr;
 
-	if (us->ip_wanted)
+	ਜੇ (us->ip_wanted)
 		us->ip_wanted = 0;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#ifdef	DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ	DEBUG
 
-static void usb_show_srb(struct scsi_cmd *pccb)
+ਸਥਿਰ ਖਾਲੀ usb_show_srb(ਬਣਤਰ scsi_cmd *pccb)
 {
-	int i;
-	printf("SRB: len %d datalen 0x%lX\n ", pccb->cmdlen, pccb->datalen);
-	for (i = 0; i < pccb->cmdlen; i++)
-		printf("%02X ", pccb->cmd[i]);
-	printf("\n");
+	ਪੂਰਨ i;
+	ਲਿਖੋ("SRB: len %d datalen 0x%lX\n ", pccb->cmdlen, pccb->datalen);
+	ਲਈ (i = 0; i < pccb->cmdlen; i++)
+		ਲਿਖੋ("%02X ", pccb->cmd[i]);
+	ਲਿਖੋ("\n");
 }
 
-static void display_int_status(unsigned long tmp)
+ਸਥਿਰ ਖਾਲੀ display_int_ਸਥਿਤੀ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tmp)
 {
-	printf("Status: %s %s %s %s %s %s %s\n",
-		(tmp & USB_ST_ACTIVE) ? "Active" : "",
+	ਲਿਖੋ("Status: %s %s %s %s %s %s %s\n",
+		(tmp & USB_ST_ਸਰਗਰਮ) ? "Active" : "",
 		(tmp & USB_ST_STALLED) ? "Stalled" : "",
 		(tmp & USB_ST_BUF_ERR) ? "Buffer Error" : "",
 		(tmp & USB_ST_BABBLE_DET) ? "Babble Det" : "",
 		(tmp & USB_ST_NAK_REC) ? "NAKed" : "",
-		(tmp & USB_ST_CRC_ERR) ? "CRC Error" : "",
-		(tmp & USB_ST_BIT_ERR) ? "Bitstuff Error" : "");
+		(tmp & USB_ST_ਚੱਕਰੀ_ਜਾਂਚ_ERR) ? "CRC Error" : "",
+		(tmp & USB_ST_ਦੋਆਧਾਰੀ_ਅੰਕ_ERR) ? "Bitstuff Error" : "");
 }
-#endif
+#ਜੇ_ਅੰਤ
 /***********************************************************************
  * Data transfer routines
  ***********************************************************************/
 
-static int us_one_transfer(struct us_data *us, int pipe, char *buf, int length)
+ਸਥਿਰ ਪੂਰਨ us_one_transfer(ਬਣਤਰ us_ਅੰਕੜੇ *us, ਪੂਰਨ pipe, ਅੱਖਰ *buf, ਪੂਰਨ ਲੰਮਾਈ)
 {
-	int max_size;
-	int this_xfer;
-	int result;
-	int partial;
-	int maxtry;
-	int stat;
+	ਪੂਰਨ max_ਮਾਪ;
+	ਪੂਰਨ this_xfer;
+	ਪੂਰਨ ਨਤੀਜਾ;
+	ਪੂਰਨ partial;
+	ਪੂਰਨ maxtry;
+	ਪੂਰਨ stat;
 
 	/* determine the maximum packet size for these transfers */
-	max_size = usb_maxpacket(us->pusb_dev, pipe) * 16;
+	max_ਮਾਪ = usb_maxpacket(us->pusb_dev, pipe) * 16;
 
 	/* while we have data left to transfer */
-	while (length) {
+	ਜਦੋਂ (ਲੰਮਾਈ) {
 
 		/* calculate how long this will be -- maximum or a remainder */
-		this_xfer = length > max_size ? max_size : length;
-		length -= this_xfer;
+		this_xfer = ਲੰਮਾਈ > max_ਮਾਪ ? max_ਮਾਪ : ਲੰਮਾਈ;
+		ਲੰਮਾਈ -= this_xfer;
 
 		/* setup the retry counter */
 		maxtry = 10;
 
 		/* set up the transfer loop */
-		do {
+		ਕਰੋ {
 			/* transfer the data */
 			debug("Bulk xfer 0x%lx(%d) try #%d\n",
-			      (ulong)map_to_sysmem(buf), this_xfer,
+			      (ulong)map_ਮੰਜ਼ਿਲ_sysmem(buf), this_xfer,
 			      11 - maxtry);
-			result = usb_bulk_msg(us->pusb_dev, pipe, buf,
+			ਨਤੀਜਾ = usb_bulk_ਸੁਨੇਹਾ(us->pusb_dev, pipe, buf,
 					      this_xfer, &partial,
 					      USB_CNTL_TIMEOUT * 5);
 			debug("bulk_msg returned %d xferred %d/%d\n",
-			      result, partial, this_xfer);
-			if (us->pusb_dev->status != 0) {
+			      ਨਤੀਜਾ, partial, this_xfer);
+			ਜੇ (us->pusb_dev->ਸਥਿਤੀ != 0) {
 				/* if we stall, we need to clear it before
 				 * we go on
 				 */
-#ifdef DEBUG
-				display_int_status(us->pusb_dev->status);
-#endif
-				if (us->pusb_dev->status & USB_ST_STALLED) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG
+				display_int_ਸਥਿਤੀ(us->pusb_dev->ਸਥਿਤੀ);
+#ਜੇ_ਅੰਤ
+				ਜੇ (us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED) {
 					debug("stalled ->clearing endpoint" \
 					      "halt for pipe 0x%x\n", pipe);
-					stat = us->pusb_dev->status;
+					stat = us->pusb_dev->ਸਥਿਤੀ;
 					usb_clear_halt(us->pusb_dev, pipe);
-					us->pusb_dev->status = stat;
-					if (this_xfer == partial) {
+					us->pusb_dev->ਸਥਿਤੀ = stat;
+					ਜੇ (this_xfer == partial) {
 						debug("bulk transferred" \
 						      "with error %lX," \
 						      " but data ok\n",
-						      us->pusb_dev->status);
-						return 0;
+						      us->pusb_dev->ਸਥਿਤੀ);
+						ਵਾਪਸ 0;
 					}
-					else
-						return result;
+					ਨਹੀਂਤਾਂ
+						ਵਾਪਸ ਨਤੀਜਾ;
 				}
-				if (us->pusb_dev->status & USB_ST_NAK_REC) {
+				ਜੇ (us->pusb_dev->ਸਥਿਤੀ & USB_ST_NAK_REC) {
 					debug("Device NAKed bulk_msg\n");
-					return result;
+					ਵਾਪਸ ਨਤੀਜਾ;
 				}
 				debug("bulk transferred with error");
-				if (this_xfer == partial) {
+				ਜੇ (this_xfer == partial) {
 					debug(" %ld, but data ok\n",
-					      us->pusb_dev->status);
-					return 0;
+					      us->pusb_dev->ਸਥਿਤੀ);
+					ਵਾਪਸ 0;
 				}
 				/* if our try counter reaches 0, bail out */
 				debug(" %ld, data %d\n",
-				      us->pusb_dev->status, partial);
-				if (!maxtry--)
-						return result;
+				      us->pusb_dev->ਸਥਿਤੀ, partial);
+				ਜੇ (!maxtry--)
+						ਵਾਪਸ ਨਤੀਜਾ;
 			}
 			/* update to show what data was transferred */
 			this_xfer -= partial;
 			buf += partial;
 			/* continue until this transfer is done */
-		} while (this_xfer);
+		} ਜਦੋਂ (this_xfer);
 	}
 
 	/* if we get here, we're done and successful */
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int usb_stor_BBB_reset(struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_BBB_reset(ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int result;
-	unsigned int pipe;
+	ਪੂਰਨ ਨਤੀਜਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ pipe;
 
 	/*
 	 * Reset recovery (5.3.4 in Universal Serial Bus Mass Storage Class)
@@ -481,141 +481,141 @@ static int usb_stor_BBB_reset(struct us_data *us)
 	 * This comment stolen from FreeBSD's /sys/dev/usb/umass.c.
 	 */
 	debug("BBB_reset\n");
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	ਨਤੀਜਾ = usb_control_ਸੁਨੇਹਾ(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_BBB_RESET,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-				 0, us->ifnum, NULL, 0, USB_CNTL_TIMEOUT * 5);
+				 0, us->ifnum, ਨਿਰਾ, 0, USB_CNTL_TIMEOUT * 5);
 
-	if ((result < 0) && (us->pusb_dev->status & USB_ST_STALLED)) {
+	ਜੇ ((ਨਤੀਜਾ < 0) && (us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED)) {
 		debug("RESET:stall\n");
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* long wait for reset */
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX reset\n",
-	      result, us->pusb_dev->status);
-	pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	result = usb_clear_halt(us->pusb_dev, pipe);
+	      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
+	pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_ਵਿੱਚ);
+	ਨਤੀਜਾ = usb_clear_halt(us->pusb_dev, pipe);
 	/* long wait for reset */
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX clearing IN endpoint\n",
-	      result, us->pusb_dev->status);
+	      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
 	/* long wait for reset */
-	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
-	result = usb_clear_halt(us->pusb_dev, pipe);
+	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_ਬਾਹਰਲਾ);
+	ਨਤੀਜਾ = usb_clear_halt(us->pusb_dev, pipe);
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX clearing OUT endpoint\n",
-	      result, us->pusb_dev->status);
+	      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
 	debug("BBB_reset done\n");
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* FIXME: this reset function doesn't really reset the port, and it
  * should. Actually it should probably do what it's doing here, and
  * reset the port physically
  */
-static int usb_stor_CB_reset(struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_CB_reset(ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	unsigned char cmd[12];
-	int result;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ cmd[12];
+	ਪੂਰਨ ਨਤੀਜਾ;
 
 	debug("CB_reset\n");
-	memset(cmd, 0xff, sizeof(cmd));
+	memset(cmd, 0xff, ਆਕਾਰ(cmd));
 	cmd[0] = SCSI_SEND_DIAG;
 	cmd[1] = 4;
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	ਨਤੀਜਾ = usb_control_ਸੁਨੇਹਾ(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_CBI_ADSC,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-				 0, us->ifnum, cmd, sizeof(cmd),
+				 0, us->ifnum, cmd, ਆਕਾਰ(cmd),
 				 USB_CNTL_TIMEOUT * 5);
 
 	/* long wait for reset */
 	mdelay(1500);
 	debug("CB_reset result %d: status %lX clearing endpoint halt\n",
-	      result, us->pusb_dev->status);
-	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_in));
-	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_out));
+	      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
+	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_ਵਿੱਚ));
+	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_ਬਾਹਰਲਾ));
 
 	debug("CB_reset done\n");
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Set up the command for a BBB device. Note that the actual SCSI
  * command is copied into cbw.CBWCDB.
  */
-static int usb_stor_BBB_comdat(struct scsi_cmd *srb, struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_BBB_comdat(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int result;
-	int actlen;
-	int dir_in;
-	unsigned int pipe;
-	ALLOC_CACHE_ALIGN_BUFFER(struct umass_bbb_cbw, cbw, 1);
+	ਪੂਰਨ ਨਤੀਜਾ;
+	ਪੂਰਨ actlen;
+	ਪੂਰਨ dir_ਵਿੱਚ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ pipe;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਣਤਰ umass_bbb_cbw, cbw, 1);
 
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_ਵਿੱਚ = US_DIRECTION(srb->cmd[0]);
 
-#ifdef BBB_COMDAT_TRACE
-	printf("dir %d lun %d cmdlen %d cmd %p datalen %lu pdata %p\n",
-		dir_in, srb->lun, srb->cmdlen, srb->cmd, srb->datalen,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BBB_COMDAT_TRACE
+	ਲਿਖੋ("dir %d lun %d cmdlen %d cmd %p datalen %lu pdata %p\n",
+		dir_ਵਿੱਚ, srb->lun, srb->cmdlen, srb->cmd, srb->datalen,
 		srb->pdata);
-	if (srb->cmdlen) {
-		for (result = 0; result < srb->cmdlen; result++)
-			printf("cmd[%d] %#x ", result, srb->cmd[result]);
-		printf("\n");
+	ਜੇ (srb->cmdlen) {
+		ਲਈ (ਨਤੀਜਾ = 0; ਨਤੀਜਾ < srb->cmdlen; ਨਤੀਜਾ++)
+			ਲਿਖੋ("cmd[%d] %#x ", ਨਤੀਜਾ, srb->cmd[ਨਤੀਜਾ]);
+		ਲਿਖੋ("\n");
 	}
-#endif
+#ਜੇ_ਅੰਤ
 	/* sanity checks */
-	if (!(srb->cmdlen <= CBWCDBLENGTH)) {
+	ਜੇ (!(srb->cmdlen <= CBWCDBLENGTH)) {
 		debug("usb_stor_BBB_comdat:cmdlen too large\n");
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	/* always OUT to the ep */
-	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_ਬਾਹਰਲਾ);
 
-	cbw->dCBWSignature = cpu_to_le32(CBWSIGNATURE);
-	cbw->dCBWTag = cpu_to_le32(CBWTag++);
-	cbw->dCBWDataTransferLength = cpu_to_le32(srb->datalen);
-	cbw->bCBWFlags = (dir_in ? CBWFLAGS_IN : CBWFLAGS_OUT);
+	cbw->dCBWSignature = cpu_ਮੰਜ਼ਿਲ_le32(CBWSIGNATURE);
+	cbw->dCBWTag = cpu_ਮੰਜ਼ਿਲ_le32(CBWTag++);
+	cbw->d_CBWData_Transfer_ਲੰਮਾਈ = cpu_ਮੰਜ਼ਿਲ_le32(srb->datalen);
+	cbw->bCBWFlags = (dir_ਵਿੱਚ ? CBWFLAGS_ਵਿੱਚ : CBWFLAGS_ਬਾਹਰਲਾ);
 	cbw->bCBWLUN = srb->lun;
 	cbw->bCDBLength = srb->cmdlen;
 	/* copy the command data into the CBW command data buffer */
 	/* DST SRC LEN!!! */
 
-	memcpy(cbw->CBWCDB, srb->cmd, srb->cmdlen);
-	result = usb_bulk_msg(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_SIZE,
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(cbw->CBWCDB, srb->cmd, srb->cmdlen);
+	ਨਤੀਜਾ = usb_bulk_ਸੁਨੇਹਾ(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_ਮਾਪ,
 			      &actlen, USB_CNTL_TIMEOUT * 5);
-	if (result < 0)
+	ਜੇ (ਨਤੀਜਾ < 0)
 		debug("usb_stor_BBB_comdat:usb_bulk_msg error\n");
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /* FIXME: we also need a CBI_command which sets up the completion
  * interrupt, and waits for it
  */
-static int usb_stor_CB_comdat(struct scsi_cmd *srb, struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_CB_comdat(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int result = 0;
-	int dir_in, retry;
-	unsigned int pipe;
-	unsigned long status;
+	ਪੂਰਨ ਨਤੀਜਾ = 0;
+	ਪੂਰਨ dir_ਵਿੱਚ, retry;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ pipe;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਥਿਤੀ;
 
 	retry = 5;
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_ਵਿੱਚ = US_DIRECTION(srb->cmd[0]);
 
-	if (dir_in)
-		pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	else
-		pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	ਜੇ (dir_ਵਿੱਚ)
+		pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_ਵਿੱਚ);
+	ਨਹੀਂਤਾਂ
+		pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_ਬਾਹਰਲਾ);
 
-	while (retry--) {
+	ਜਦੋਂ (retry--) {
 		debug("CBI gets a command: Try %d\n", 5 - retry);
-#ifdef DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG
 		usb_show_srb(srb);
-#endif
+#ਜੇ_ਅੰਤ
 		/* let's send the command via the control pipe */
-		result = usb_control_msg(us->pusb_dev,
+		ਨਤੀਜਾ = usb_control_ਸੁਨੇਹਾ(us->pusb_dev,
 					 usb_sndctrlpipe(us->pusb_dev , 0),
 					 US_CBI_ADSC,
 					 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
@@ -623,270 +623,270 @@ static int usb_stor_CB_comdat(struct scsi_cmd *srb, struct us_data *us)
 					 srb->cmd, srb->cmdlen,
 					 USB_CNTL_TIMEOUT * 5);
 		debug("CB_transport: control msg returned %d, status %lX\n",
-		      result, us->pusb_dev->status);
+		      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
 		/* check the return code for the command */
-		if (result < 0) {
-			if (us->pusb_dev->status & USB_ST_STALLED) {
-				status = us->pusb_dev->status;
+		ਜੇ (ਨਤੀਜਾ < 0) {
+			ਜੇ (us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED) {
+				ਸਥਿਤੀ = us->pusb_dev->ਸਥਿਤੀ;
 				debug(" stall during command found," \
 				      " clear pipe\n");
 				usb_clear_halt(us->pusb_dev,
 					      usb_sndctrlpipe(us->pusb_dev, 0));
-				us->pusb_dev->status = status;
+				us->pusb_dev->ਸਥਿਤੀ = ਸਥਿਤੀ;
 			}
 			debug(" error during command %02X" \
 			      " Stat = %lX\n", srb->cmd[0],
-			      us->pusb_dev->status);
-			return result;
+			      us->pusb_dev->ਸਥਿਤੀ);
+			ਵਾਪਸ ਨਤੀਜਾ;
 		}
 		/* transfer the data payload for this command, if one exists*/
 
 		debug("CB_transport: control msg returned %d," \
-		      " direction is %s to go 0x%lx\n", result,
-		      dir_in ? "IN" : "OUT", srb->datalen);
-		if (srb->datalen) {
-			result = us_one_transfer(us, pipe, (char *)srb->pdata,
+		      " direction is %s to go 0x%lx\n", ਨਤੀਜਾ,
+		      dir_ਵਿੱਚ ? "IN" : "OUT", srb->datalen);
+		ਜੇ (srb->datalen) {
+			ਨਤੀਜਾ = us_one_transfer(us, pipe, (ਅੱਖਰ *)srb->pdata,
 						 srb->datalen);
 			debug("CBI attempted to transfer data," \
 			      " result is %d status %lX, len %d\n",
-			      result, us->pusb_dev->status,
+			      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ,
 				us->pusb_dev->act_len);
-			if (!(us->pusb_dev->status & USB_ST_NAK_REC))
-				break;
+			ਜੇ (!(us->pusb_dev->ਸਥਿਤੀ & USB_ST_NAK_REC))
+				ਰੋਕੋ;
 		} /* if (srb->datalen) */
-		else
-			break;
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 	/* return result */
 
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
-static int usb_stor_CBI_get_status(struct scsi_cmd *srb, struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_CBI_get_ਸਥਿਤੀ(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int timeout;
+	ਪੂਰਨ timeout;
 
 	us->ip_wanted = 1;
-	usb_int_msg(us->pusb_dev, us->irqpipe,
-		    (void *)&us->ip_data, us->irqmaxp, us->irqinterval, false);
+	usb_int_ਸੁਨੇਹਾ(us->pusb_dev, us->irqpipe,
+		    (ਖਾਲੀ *)&us->ip_ਅੰਕੜੇ, us->irqmaxp, us->irqinterval, false);
 	timeout = 1000;
-	while (timeout--) {
-		if (us->ip_wanted == 0)
-			break;
+	ਜਦੋਂ (timeout--) {
+		ਜੇ (us->ip_wanted == 0)
+			ਰੋਕੋ;
 		mdelay(10);
 	}
-	if (us->ip_wanted) {
-		printf("	Did not get interrupt on CBI\n");
+	ਜੇ (us->ip_wanted) {
+		ਲਿਖੋ("	Did not get interrupt on CBI\n");
 		us->ip_wanted = 0;
-		return USB_STOR_TRANSPORT_ERROR;
+		ਵਾਪਸ USB_STOR_TRANSPORT_ERROR;
 	}
 	debug("Got interrupt data 0x%x, transferred %d status 0x%lX\n",
-	      us->ip_data, us->pusb_dev->irq_act_len,
-	      us->pusb_dev->irq_status);
+	      us->ip_ਅੰਕੜੇ, us->pusb_dev->irq_act_len,
+	      us->pusb_dev->irq_ਸਥਿਤੀ);
 	/* UFI gives us ASC and ASCQ, like a request sense */
-	if (us->subclass == US_SC_UFI) {
-		if (srb->cmd[0] == SCSI_REQ_SENSE ||
+	ਜੇ (us->subclass == US_SC_UFI) {
+		ਜੇ (srb->cmd[0] == SCSI_REQ_SENSE ||
 		    srb->cmd[0] == SCSI_INQUIRY)
-			return USB_STOR_TRANSPORT_GOOD; /* Good */
-		else if (us->ip_data)
-			return USB_STOR_TRANSPORT_FAILED;
-		else
-			return USB_STOR_TRANSPORT_GOOD;
+			ਵਾਪਸ USB_STOR_TRANSPORT_GOOD; /* Good */
+		ਨਹੀਂਤਾਂ ਜੇ (us->ip_ਅੰਕੜੇ)
+			ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+		ਨਹੀਂਤਾਂ
+			ਵਾਪਸ USB_STOR_TRANSPORT_GOOD;
 	}
 	/* otherwise, we interpret the data normally */
-	switch (us->ip_data) {
-	case 0x0001:
-		return USB_STOR_TRANSPORT_GOOD;
-	case 0x0002:
-		return USB_STOR_TRANSPORT_FAILED;
-	default:
-		return USB_STOR_TRANSPORT_ERROR;
+	ਚੋਣ (us->ip_ਅੰਕੜੇ) {
+	ਹਾਲਤ 0x0001:
+		ਵਾਪਸ USB_STOR_TRANSPORT_GOOD;
+	ਹਾਲਤ 0x0002:
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	ਮੂਲ:
+		ਵਾਪਸ USB_STOR_TRANSPORT_ERROR;
 	}			/* switch */
-	return USB_STOR_TRANSPORT_ERROR;
+	ਵਾਪਸ USB_STOR_TRANSPORT_ERROR;
 }
 
-#define USB_TRANSPORT_UNKNOWN_RETRY 5
-#define USB_TRANSPORT_NOT_READY_RETRY 10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_TRANSPORT_UNKNOWN_RETRY 5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_TRANSPORT_NOT_READY_RETRY 10
 
 /* clear a stall on an endpoint - special for BBB devices */
-static int usb_stor_BBB_clear_endpt_stall(struct us_data *us, __u8 endpt)
+ਸਥਿਰ ਪੂਰਨ usb_stor_BBB_clear_endpt_stall(ਬਣਤਰ us_ਅੰਕੜੇ *us, __u8 endpt)
 {
 	/* ENDPOINT_HALT = 0, so set value to 0 */
-	return usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 			       USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
-			       endpt, NULL, 0, USB_CNTL_TIMEOUT * 5);
+			       endpt, ਨਿਰਾ, 0, USB_CNTL_TIMEOUT * 5);
 }
 
-static int usb_stor_BBB_transport(struct scsi_cmd *srb, struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_BBB_transport(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int result, retry;
-	int dir_in;
-	int actlen, data_actlen;
-	unsigned int pipe, pipein, pipeout;
-	ALLOC_CACHE_ALIGN_BUFFER(struct umass_bbb_csw, csw, 1);
-#ifdef BBB_XPORT_TRACE
-	unsigned char *ptr;
-	int index;
-#endif
+	ਪੂਰਨ ਨਤੀਜਾ, retry;
+	ਪੂਰਨ dir_ਵਿੱਚ;
+	ਪੂਰਨ actlen, ਅੰਕੜੇ_actlen;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ pipe, pipein, pipeout;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਣਤਰ umass_bbb_csw, csw, 1);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BBB_XPORT_TRACE
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ptr;
+	ਪੂਰਨ ਸੂਚਕਾਂਕ;
+#ਜੇ_ਅੰਤ
 
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_ਵਿੱਚ = US_DIRECTION(srb->cmd[0]);
 
 	/* COMMAND phase */
 	debug("COMMAND phase\n");
-	result = usb_stor_BBB_comdat(srb, us);
-	if (result < 0) {
+	ਨਤੀਜਾ = usb_stor_BBB_comdat(srb, us);
+	ਜੇ (ਨਤੀਜਾ < 0) {
 		debug("failed to send CBW status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->ਸਥਿਤੀ);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
 	}
-	if (!(us->flags & USB_READY))
+	ਜੇ (!(us->flags & USB_READY))
 		mdelay(5);
-	pipein = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	pipeout = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	pipein = usb_rcvbulkpipe(us->pusb_dev, us->ep_ਵਿੱਚ);
+	pipeout = usb_sndbulkpipe(us->pusb_dev, us->ep_ਬਾਹਰਲਾ);
 	/* DATA phase + error handling */
-	data_actlen = 0;
+	ਅੰਕੜੇ_actlen = 0;
 	/* no data, go immediately to the STATUS phase */
-	if (srb->datalen == 0)
-		goto st;
+	ਜੇ (srb->datalen == 0)
+		ਜਾਓ st;
 	debug("DATA phase\n");
-	if (dir_in)
+	ਜੇ (dir_ਵਿੱਚ)
 		pipe = pipein;
-	else
+	ਨਹੀਂਤਾਂ
 		pipe = pipeout;
 
-	result = usb_bulk_msg(us->pusb_dev, pipe, srb->pdata, srb->datalen,
-			      &data_actlen, USB_CNTL_TIMEOUT * 5);
+	ਨਤੀਜਾ = usb_bulk_ਸੁਨੇਹਾ(us->pusb_dev, pipe, srb->pdata, srb->datalen,
+			      &ਅੰਕੜੇ_actlen, USB_CNTL_TIMEOUT * 5);
 	/* special handling of STALL in DATA phase */
-	if ((result < 0) && (us->pusb_dev->status & USB_ST_STALLED)) {
+	ਜੇ ((ਨਤੀਜਾ < 0) && (us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED)) {
 		debug("DATA:stall\n");
 		/* clear the STALL on the endpoint */
-		result = usb_stor_BBB_clear_endpt_stall(us,
-					dir_in ? us->ep_in : us->ep_out);
-		if (result >= 0)
+		ਨਤੀਜਾ = usb_stor_BBB_clear_endpt_stall(us,
+					dir_ਵਿੱਚ ? us->ep_ਵਿੱਚ : us->ep_ਬਾਹਰਲਾ);
+		ਜੇ (ਨਤੀਜਾ >= 0)
 			/* continue on to STATUS phase */
-			goto st;
+			ਜਾਓ st;
 	}
-	if (result < 0) {
+	ਜੇ (ਨਤੀਜਾ < 0) {
 		debug("usb_bulk_msg error status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->ਸਥਿਤੀ);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
 	}
-#ifdef BBB_XPORT_TRACE
-	for (index = 0; index < data_actlen; index++)
-		printf("pdata[%d] %#x ", index, srb->pdata[index]);
-	printf("\n");
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BBB_XPORT_TRACE
+	ਲਈ (ਸੂਚਕਾਂਕ = 0; ਸੂਚਕਾਂਕ < ਅੰਕੜੇ_actlen; ਸੂਚਕਾਂਕ++)
+		ਲਿਖੋ("pdata[%d] %#x ", ਸੂਚਕਾਂਕ, srb->pdata[ਸੂਚਕਾਂਕ]);
+	ਲਿਖੋ("\n");
+#ਜੇ_ਅੰਤ
 	/* STATUS phase + error handling */
 st:
 	retry = 0;
 again:
 	debug("STATUS phase\n");
-	result = usb_bulk_msg(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_SIZE,
+	ਨਤੀਜਾ = usb_bulk_ਸੁਨੇਹਾ(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_ਮਾਪ,
 				&actlen, USB_CNTL_TIMEOUT*5);
 
 	/* special handling of STALL in STATUS phase */
-	if ((result < 0) && (retry < 1) &&
-	    (us->pusb_dev->status & USB_ST_STALLED)) {
+	ਜੇ ((ਨਤੀਜਾ < 0) && (retry < 1) &&
+	    (us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED)) {
 		debug("STATUS:stall\n");
 		/* clear the STALL on the endpoint */
-		result = usb_stor_BBB_clear_endpt_stall(us, us->ep_in);
-		if (result >= 0 && (retry++ < 1))
+		ਨਤੀਜਾ = usb_stor_BBB_clear_endpt_stall(us, us->ep_ਵਿੱਚ);
+		ਜੇ (ਨਤੀਜਾ >= 0 && (retry++ < 1))
 			/* do a retry */
-			goto again;
+			ਜਾਓ again;
 	}
-	if (result < 0) {
+	ਜੇ (ਨਤੀਜਾ < 0) {
 		debug("usb_bulk_msg error status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->ਸਥਿਤੀ);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
 	}
-#ifdef BBB_XPORT_TRACE
-	ptr = (unsigned char *)csw;
-	for (index = 0; index < UMASS_BBB_CSW_SIZE; index++)
-		printf("ptr[%d] %#x ", index, ptr[index]);
-	printf("\n");
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BBB_XPORT_TRACE
+	ptr = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)csw;
+	ਲਈ (ਸੂਚਕਾਂਕ = 0; ਸੂਚਕਾਂਕ < UMASS_BBB_CSW_ਮਾਪ; ਸੂਚਕਾਂਕ++)
+		ਲਿਖੋ("ptr[%d] %#x ", ਸੂਚਕਾਂਕ, ptr[ਸੂਚਕਾਂਕ]);
+	ਲਿਖੋ("\n");
+#ਜੇ_ਅੰਤ
 	/* misuse pipe to get the residue */
-	pipe = le32_to_cpu(csw->dCSWDataResidue);
-	if (pipe == 0 && srb->datalen != 0 && srb->datalen - data_actlen != 0)
-		pipe = srb->datalen - data_actlen;
-	if (CSWSIGNATURE != le32_to_cpu(csw->dCSWSignature)) {
+	pipe = le32_ਮੰਜ਼ਿਲ_cpu(csw->dCSWDataResidue);
+	ਜੇ (pipe == 0 && srb->datalen != 0 && srb->datalen - ਅੰਕੜੇ_actlen != 0)
+		pipe = srb->datalen - ਅੰਕੜੇ_actlen;
+	ਜੇ (CSWSIGNATURE != le32_ਮੰਜ਼ਿਲ_cpu(csw->dCSWSignature)) {
 		debug("!CSWSIGNATURE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if ((CBWTag - 1) != le32_to_cpu(csw->dCSWTag)) {
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	} ਨਹੀਂਤਾਂ ਜੇ ((CBWTag - 1) != le32_ਮੰਜ਼ਿਲ_cpu(csw->dCSWTag)) {
 		debug("!Tag\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus > CSWSTATUS_PHASE) {
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	} ਨਹੀਂਤਾਂ ਜੇ (csw->bCSWStatus > CSWSTATUS_PHASE) {
 		debug(">PHASE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus == CSWSTATUS_PHASE) {
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	} ਨਹੀਂਤਾਂ ਜੇ (csw->bCSWStatus == CSWSTATUS_PHASE) {
 		debug("=PHASE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (data_actlen > srb->datalen) {
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	} ਨਹੀਂਤਾਂ ਜੇ (ਅੰਕੜੇ_actlen > srb->datalen) {
 		debug("transferred %dB instead of %ldB\n",
-		      data_actlen, srb->datalen);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus == CSWSTATUS_FAILED) {
+		      ਅੰਕੜੇ_actlen, srb->datalen);
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+	} ਨਹੀਂਤਾਂ ਜੇ (csw->bCSWStatus == CSWSTATUS_FAILED) {
 		debug("FAILED\n");
-		return USB_STOR_TRANSPORT_FAILED;
+		ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
 	}
 
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
-static int usb_stor_CB_transport(struct scsi_cmd *srb, struct us_data *us)
+ਸਥਿਰ ਪੂਰਨ usb_stor_CB_transport(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
-	int result, status;
-	struct scsi_cmd *psrb;
-	struct scsi_cmd reqsrb;
-	int retry, notready;
+	ਪੂਰਨ ਨਤੀਜਾ, ਸਥਿਤੀ;
+	ਬਣਤਰ scsi_cmd *psrb;
+	ਬਣਤਰ scsi_cmd reqsrb;
+	ਪੂਰਨ retry, notready;
 
 	psrb = &reqsrb;
-	status = USB_STOR_TRANSPORT_GOOD;
+	ਸਥਿਤੀ = USB_STOR_TRANSPORT_GOOD;
 	retry = 0;
 	notready = 0;
 	/* issue the command */
 do_retry:
-	result = usb_stor_CB_comdat(srb, us);
+	ਨਤੀਜਾ = usb_stor_CB_comdat(srb, us);
 	debug("command / Data returned %d, status %lX\n",
-	      result, us->pusb_dev->status);
+	      ਨਤੀਜਾ, us->pusb_dev->ਸਥਿਤੀ);
 	/* if this is an CBI Protocol, get IRQ */
-	if (us->protocol == US_PR_CBI) {
-		status = usb_stor_CBI_get_status(srb, us);
+	ਜੇ (us->protocol == US_PR_CBI) {
+		ਸਥਿਤੀ = usb_stor_CBI_get_ਸਥਿਤੀ(srb, us);
 		/* if the status is error, report it */
-		if (status == USB_STOR_TRANSPORT_ERROR) {
+		ਜੇ (ਸਥਿਤੀ == USB_STOR_TRANSPORT_ERROR) {
 			debug(" USB CBI Command Error\n");
-			return status;
+			ਵਾਪਸ ਸਥਿਤੀ;
 		}
-		srb->sense_buf[12] = (unsigned char)(us->ip_data >> 8);
-		srb->sense_buf[13] = (unsigned char)(us->ip_data & 0xff);
-		if (!us->ip_data) {
+		srb->sense_buf[12] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(us->ip_ਅੰਕੜੇ >> 8);
+		srb->sense_buf[13] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(us->ip_ਅੰਕੜੇ & 0xff);
+		ਜੇ (!us->ip_ਅੰਕੜੇ) {
 			/* if the status is good, report it */
-			if (status == USB_STOR_TRANSPORT_GOOD) {
+			ਜੇ (ਸਥਿਤੀ == USB_STOR_TRANSPORT_GOOD) {
 				debug(" USB CBI Command Good\n");
-				return status;
+				ਵਾਪਸ ਸਥਿਤੀ;
 			}
 		}
 	}
 	/* do we have to issue an auto request? */
 	/* HERE we have to check the result */
-	if ((result < 0) && !(us->pusb_dev->status & USB_ST_STALLED)) {
-		debug("ERROR %lX\n", us->pusb_dev->status);
+	ਜੇ ((ਨਤੀਜਾ < 0) && !(us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED)) {
+		debug("ERROR %lX\n", us->pusb_dev->ਸਥਿਤੀ);
 		us->transport_reset(us);
-		return USB_STOR_TRANSPORT_ERROR;
+		ਵਾਪਸ USB_STOR_TRANSPORT_ERROR;
 	}
-	if ((us->protocol == US_PR_CBI) &&
+	ਜੇ ((us->protocol == US_PR_CBI) &&
 	    ((srb->cmd[0] == SCSI_REQ_SENSE) ||
 	    (srb->cmd[0] == SCSI_INQUIRY))) {
 		/* do not issue an autorequest after request sense */
 		debug("No auto request and good\n");
-		return USB_STOR_TRANSPORT_GOOD;
+		ਵਾਪਸ USB_STOR_TRANSPORT_GOOD;
 	}
 	/* issue an request_sense */
 	memset(&psrb->cmd[0], 0, 12);
@@ -897,63 +897,63 @@ do_retry:
 	psrb->pdata = &srb->sense_buf[0];
 	psrb->cmdlen = us->cmd12 ? 12 : 6;
 	/* issue the command */
-	result = usb_stor_CB_comdat(psrb, us);
-	debug("auto request returned %d\n", result);
+	ਨਤੀਜਾ = usb_stor_CB_comdat(psrb, us);
+	debug("auto request returned %d\n", ਨਤੀਜਾ);
 	/* if this is an CBI Protocol, get IRQ */
-	if (us->protocol == US_PR_CBI)
-		status = usb_stor_CBI_get_status(psrb, us);
+	ਜੇ (us->protocol == US_PR_CBI)
+		ਸਥਿਤੀ = usb_stor_CBI_get_ਸਥਿਤੀ(psrb, us);
 
-	if ((result < 0) && !(us->pusb_dev->status & USB_ST_STALLED)) {
+	ਜੇ ((ਨਤੀਜਾ < 0) && !(us->pusb_dev->ਸਥਿਤੀ & USB_ST_STALLED)) {
 		debug(" AUTO REQUEST ERROR %ld\n",
-		      us->pusb_dev->status);
-		return USB_STOR_TRANSPORT_ERROR;
+		      us->pusb_dev->ਸਥਿਤੀ);
+		ਵਾਪਸ USB_STOR_TRANSPORT_ERROR;
 	}
 	debug("autorequest returned 0x%02X 0x%02X 0x%02X 0x%02X\n",
 	      srb->sense_buf[0], srb->sense_buf[2],
 	      srb->sense_buf[12], srb->sense_buf[13]);
 	/* Check the auto request result */
-	if ((srb->sense_buf[2] == 0) &&
+	ਜੇ ((srb->sense_buf[2] == 0) &&
 	    (srb->sense_buf[12] == 0) &&
 	    (srb->sense_buf[13] == 0)) {
 		/* ok, no sense */
-		return USB_STOR_TRANSPORT_GOOD;
+		ਵਾਪਸ USB_STOR_TRANSPORT_GOOD;
 	}
 
 	/* Check the auto request result */
-	switch (srb->sense_buf[2]) {
-	case 0x01:
+	ਚੋਣ (srb->sense_buf[2]) {
+	ਹਾਲਤ 0x01:
 		/* Recovered Error */
-		return USB_STOR_TRANSPORT_GOOD;
-		break;
-	case 0x02:
+		ਵਾਪਸ USB_STOR_TRANSPORT_GOOD;
+		ਰੋਕੋ;
+	ਹਾਲਤ 0x02:
 		/* Not Ready */
-		if (notready++ > USB_TRANSPORT_NOT_READY_RETRY) {
-			printf("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
+		ਜੇ (notready++ > USB_TRANSPORT_NOT_READY_RETRY) {
+			ਲਿਖੋ("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
 			       " 0x%02X (NOT READY)\n", srb->cmd[0],
 				srb->sense_buf[0], srb->sense_buf[2],
 				srb->sense_buf[12], srb->sense_buf[13]);
-			return USB_STOR_TRANSPORT_FAILED;
-		} else {
+			ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+		} ਨਹੀਂਤਾਂ {
 			mdelay(100);
-			goto do_retry;
+			ਜਾਓ do_retry;
 		}
-		break;
-	default:
-		if (retry++ > USB_TRANSPORT_UNKNOWN_RETRY) {
-			printf("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਜੇ (retry++ > USB_TRANSPORT_UNKNOWN_RETRY) {
+			ਲਿਖੋ("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
 			       " 0x%02X\n", srb->cmd[0], srb->sense_buf[0],
 				srb->sense_buf[2], srb->sense_buf[12],
 				srb->sense_buf[13]);
-			return USB_STOR_TRANSPORT_FAILED;
-		} else
-			goto do_retry;
-		break;
+			ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
+		} ਨਹੀਂਤਾਂ
+			ਜਾਓ do_retry;
+		ਰੋਕੋ;
 	}
-	return USB_STOR_TRANSPORT_FAILED;
+	ਵਾਪਸ USB_STOR_TRANSPORT_FAILED;
 }
 
-static void usb_stor_set_max_xfer_blk(struct usb_device *udev,
-				      struct us_data *us)
+ਸਥਿਰ ਖਾਲੀ usb_stor_ਸੈੱਟ_max_xfer_blk(ਬਣਤਰ usb_device *udev,
+				      ਬਣਤਰ us_ਅੰਕੜੇ *us)
 {
 	/*
 	 * Limit the total size of a transfer to 120 KB.
@@ -972,25 +972,25 @@ static void usb_stor_set_max_xfer_blk(struct usb_device *udev,
 	 * and Apple Mac OS X 10.11 limiting transfers to 256 sectors for USB2
 	 * and 2048 for USB3 devices.
 	 */
-	unsigned short blk = 240;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ blk = 240;
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	size_t size;
-	int ret;
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
+	size_t ਮਾਪ;
+	ਪੂਰਨ ret;
 
-	ret = usb_get_max_xfer_size(udev, (size_t *)&size);
-	if ((ret >= 0) && (size < blk * 512))
-		blk = size / 512;
-#endif
+	ret = usb_get_max_xfer_ਮਾਪ(udev, (size_t *)&ਮਾਪ);
+	ਜੇ ((ret >= 0) && (ਮਾਪ < blk * 512))
+		blk = ਮਾਪ / 512;
+#ਜੇ_ਅੰਤ
 
 	us->max_xfer_blk = blk;
 }
 
-static int usb_inquiry(struct scsi_cmd *srb, struct us_data *ss)
+ਸਥਿਰ ਪੂਰਨ usb_inquiry(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss)
 {
-	int retry, i;
+	ਪੂਰਨ retry, i;
 	retry = 5;
-	do {
+	ਕਰੋ {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_INQUIRY;
 		srb->cmd[1] = srb->lun << 5;
@@ -999,22 +999,22 @@ static int usb_inquiry(struct scsi_cmd *srb, struct us_data *ss)
 		srb->cmdlen = ss->cmd12 ? 12 : 6;
 		i = ss->transport(srb, ss);
 		debug("inquiry returns %d\n", i);
-		if (i == 0)
-			break;
-	} while (--retry);
+		ਜੇ (i == 0)
+			ਰੋਕੋ;
+	} ਜਦੋਂ (--retry);
 
-	if (!retry) {
-		printf("error in inquiry\n");
-		return -1;
+	ਜੇ (!retry) {
+		ਲਿਖੋ("error in inquiry\n");
+		ਵਾਪਸ -1;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int usb_request_sense(struct scsi_cmd *srb, struct us_data *ss)
+ਸਥਿਰ ਪੂਰਨ usb_request_sense(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss)
 {
-	char *ptr;
+	ਅੱਖਰ *ptr;
 
-	ptr = (char *)srb->pdata;
+	ptr = (ਅੱਖਰ *)srb->pdata;
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_REQ_SENSE;
 	srb->cmd[1] = srb->lun << 5;
@@ -1027,22 +1027,22 @@ static int usb_request_sense(struct scsi_cmd *srb, struct us_data *ss)
 	      srb->sense_buf[2], srb->sense_buf[12],
 	      srb->sense_buf[13]);
 	srb->pdata = (uchar *)ptr;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int usb_test_unit_ready(struct scsi_cmd *srb, struct us_data *ss)
+ਸਥਿਰ ਪੂਰਨ usb_test_unit_ready(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss)
 {
-	int retries = 10;
+	ਪੂਰਨ retries = 10;
 
-	do {
+	ਕਰੋ {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_TST_U_RDY;
 		srb->cmd[1] = srb->lun << 5;
 		srb->datalen = 0;
 		srb->cmdlen = ss->cmd12 ? 12 : 6;
-		if (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD) {
+		ਜੇ (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD) {
 			ss->flags |= USB_READY;
-			return 0;
+			ਵਾਪਸ 0;
 		}
 		usb_request_sense(srb, ss);
 		/*
@@ -1052,68 +1052,68 @@ static int usb_test_unit_ready(struct scsi_cmd *srb, struct us_data *ss)
 		 * return immediately as the medium being absent won't change
 		 * unless there is a user action.
 		 */
-		if ((srb->sense_buf[2] == 0x02) &&
+		ਜੇ ((srb->sense_buf[2] == 0x02) &&
 		    (srb->sense_buf[12] == 0x3a))
-			return -1;
+			ਵਾਪਸ -1;
 		mdelay(100);
-	} while (retries--);
+	} ਜਦੋਂ (retries--);
 
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-static int usb_read_capacity(struct scsi_cmd *srb, struct us_data *ss)
+ਸਥਿਰ ਪੂਰਨ usb_read_ਸਮਰੱਥਾ(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss)
 {
-	int retry;
+	ਪੂਰਨ retry;
 	/* XXX retries */
 	retry = 3;
-	do {
+	ਕਰੋ {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_RD_CAPAC;
 		srb->cmd[1] = srb->lun << 5;
 		srb->datalen = 8;
 		srb->cmdlen = ss->cmd12 ? 12 : 10;
-		if (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD)
-			return 0;
-	} while (retry--);
+		ਜੇ (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD)
+			ਵਾਪਸ 0;
+	} ਜਦੋਂ (retry--);
 
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-static int usb_read_10(struct scsi_cmd *srb, struct us_data *ss,
-		       unsigned long start, unsigned short blocks)
+ਸਥਿਰ ਪੂਰਨ usb_read_10(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss,
+		       ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸ਼ੁਰੂ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ ਖੰਡਾਂ)
 {
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_READ10;
 	srb->cmd[1] = srb->lun << 5;
-	srb->cmd[2] = ((unsigned char) (start >> 24)) & 0xff;
-	srb->cmd[3] = ((unsigned char) (start >> 16)) & 0xff;
-	srb->cmd[4] = ((unsigned char) (start >> 8)) & 0xff;
-	srb->cmd[5] = ((unsigned char) (start)) & 0xff;
-	srb->cmd[7] = ((unsigned char) (blocks >> 8)) & 0xff;
-	srb->cmd[8] = (unsigned char) blocks & 0xff;
+	srb->cmd[2] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 24)) & 0xff;
+	srb->cmd[3] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 16)) & 0xff;
+	srb->cmd[4] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 8)) & 0xff;
+	srb->cmd[5] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ)) & 0xff;
+	srb->cmd[7] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਖੰਡਾਂ >> 8)) & 0xff;
+	srb->cmd[8] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) ਖੰਡਾਂ & 0xff;
 	srb->cmdlen = ss->cmd12 ? 12 : 10;
-	debug("read10: start %lx blocks %x\n", start, blocks);
-	return ss->transport(srb, ss);
+	debug("read10: start %lx blocks %x\n", ਸ਼ੁਰੂ, ਖੰਡਾਂ);
+	ਵਾਪਸ ss->transport(srb, ss);
 }
 
-static int usb_write_10(struct scsi_cmd *srb, struct us_data *ss,
-			unsigned long start, unsigned short blocks)
+ਸਥਿਰ ਪੂਰਨ usb_write_10(ਬਣਤਰ scsi_cmd *srb, ਬਣਤਰ us_ਅੰਕੜੇ *ss,
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸ਼ੁਰੂ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ ਖੰਡਾਂ)
 {
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_WRITE10;
 	srb->cmd[1] = srb->lun << 5;
-	srb->cmd[2] = ((unsigned char) (start >> 24)) & 0xff;
-	srb->cmd[3] = ((unsigned char) (start >> 16)) & 0xff;
-	srb->cmd[4] = ((unsigned char) (start >> 8)) & 0xff;
-	srb->cmd[5] = ((unsigned char) (start)) & 0xff;
-	srb->cmd[7] = ((unsigned char) (blocks >> 8)) & 0xff;
-	srb->cmd[8] = (unsigned char) blocks & 0xff;
+	srb->cmd[2] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 24)) & 0xff;
+	srb->cmd[3] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 16)) & 0xff;
+	srb->cmd[4] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ >> 8)) & 0xff;
+	srb->cmd[5] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਸ਼ੁਰੂ)) & 0xff;
+	srb->cmd[7] = ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) (ਖੰਡਾਂ >> 8)) & 0xff;
+	srb->cmd[8] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) ਖੰਡਾਂ & 0xff;
 	srb->cmdlen = ss->cmd12 ? 12 : 10;
-	debug("write10: start %lx blocks %x\n", start, blocks);
-	return ss->transport(srb, ss);
+	debug("write10: start %lx blocks %x\n", ਸ਼ੁਰੂ, ਖੰਡਾਂ);
+	ਵਾਪਸ ss->transport(srb, ss);
 }
 
-#ifdef CONFIG_USB_BIN_FIXUP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_USB_BIN_FIXUP
 /*
  * Some USB storage devices queried for SCSI identification data respond with
  * binary strings, which if output to the console freeze the terminal. The
@@ -1123,212 +1123,212 @@ static int usb_write_10(struct scsi_cmd *srb, struct us_data *ss,
  * Vendor and product length limits are taken from the definition of
  * struct blk_desc in include/part.h.
  */
-static void usb_bin_fixup(struct usb_device_descriptor descriptor,
-				unsigned char vendor[],
-				unsigned char product[]) {
-	const unsigned char max_vendor_len = 40;
-	const unsigned char max_product_len = 20;
-	if (descriptor.idVendor == 0x0424 && descriptor.idProduct == 0x223a) {
-		strncpy((char *)vendor, "SMSC", max_vendor_len);
-		strncpy((char *)product, "Flash Media Cntrller",
-			max_product_len);
+ਸਥਿਰ ਖਾਲੀ usb_bin_fixup(ਬਣਤਰ usb_device_descriptor descriptor,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ vendor[],
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਗੁਣਨਫਲ[]) {
+	ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ max_vendor_len = 40;
+	ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ max_ਗੁਣਨਫਲ_len = 20;
+	ਜੇ (descriptor.idVendor == 0x0424 && descriptor.id_ਗੁਣਨਫਲ_2 == 0x223a) {
+		strncpy((ਅੱਖਰ *)vendor, "SMSC", max_vendor_len);
+		strncpy((ਅੱਖਰ *)ਗੁਣਨਫਲ, "Flash Media Cntrller",
+			max_ਗੁਣਨਫਲ_len);
 	}
 }
-#endif /* CONFIG_USB_BIN_FIXUP */
+#ਜੇ_ਅੰਤ /* CONFIG_USB_BIN_FIXUP */
 
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_read(struct udevice *dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer)
-#else
-static unsigned long usb_stor_read(struct blk_desc *block_dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer)
-#endif
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_read(ਬਣਤਰ udevice *dev, lbaint_t blknr,
+				   lbaint_t blkcnt, ਖਾਲੀ *ਬਫਰ)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_read(ਬਣਤਰ blk_desc *ਖੰਡ_dev, lbaint_t blknr,
+				   lbaint_t blkcnt, ਖਾਲੀ *ਬਫਰ)
+#ਜੇ_ਅੰਤ
 {
-	lbaint_t start, blks;
+	lbaint_t ਸ਼ੁਰੂ, blks;
 	uintptr_t buf_addr;
-	unsigned short smallblks;
-	struct usb_device *udev;
-	struct us_data *ss;
-	int retry;
-	struct scsi_cmd *srb = &usb_ccb;
-#if CONFIG_IS_ENABLED(BLK)
-	struct blk_desc *block_dev;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ smallblks;
+	ਬਣਤਰ usb_device *udev;
+	ਬਣਤਰ us_ਅੰਕੜੇ *ss;
+	ਪੂਰਨ retry;
+	ਬਣਤਰ scsi_cmd *srb = &usb_ccb;
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਬਣਤਰ blk_desc *ਖੰਡ_dev;
+#ਜੇ_ਅੰਤ
 
-	if (blkcnt == 0)
-		return 0;
+	ਜੇ (blkcnt == 0)
+		ਵਾਪਸ 0;
 	/* Setup  device */
-#if CONFIG_IS_ENABLED(BLK)
-	block_dev = dev_get_uclass_plat(dev);
-	udev = dev_get_parent_priv(dev_get_parent(dev));
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-#else
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-	udev = usb_dev_desc[block_dev->devnum].priv;
-	if (!udev) {
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਖੰਡ_dev = dev_get_uclass_plat(dev);
+	udev = dev_get_ਮਾਪਾ_priv(dev_get_ਮਾਪਾ(dev));
+	debug("\nusb_read: udev %d\n", ਖੰਡ_dev->devnum);
+#ਨਹੀਂਤਾਂ
+	debug("\nusb_read: udev %d\n", ਖੰਡ_dev->devnum);
+	udev = usb_dev_desc[ਖੰਡ_dev->devnum].priv;
+	ਜੇ (!udev) {
 		debug("%s: No device\n", __func__);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-#endif
-	ss = (struct us_data *)udev->privptr;
+#ਜੇ_ਅੰਤ
+	ss = (ਬਣਤਰ us_ਅੰਕੜੇ *)udev->privptr;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
-	usb_lock_async(udev, 1);
-	srb->lun = block_dev->lun;
-	buf_addr = (uintptr_t)buffer;
-	start = blknr;
+	usb_ਤਾਲਾ_async(udev, 1);
+	srb->lun = ਖੰਡ_dev->lun;
+	buf_addr = (uintptr_t)ਬਫਰ;
+	ਸ਼ੁਰੂ = blknr;
 	blks = blkcnt;
 
 	debug("\nusb_read: dev %d startblk " LBAF ", blccnt " LBAF " buffer %lx\n",
-	      block_dev->devnum, start, blks, buf_addr);
+	      ਖੰਡ_dev->devnum, ਸ਼ੁਰੂ, blks, buf_addr);
 
-	do {
+	ਕਰੋ {
 		/* XXX need some comment here */
 		retry = 2;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (blks > ss->max_xfer_blk)
+		srb->pdata = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)buf_addr;
+		ਜੇ (blks > ss->max_xfer_blk)
 			smallblks = ss->max_xfer_blk;
-		else
-			smallblks = (unsigned short) blks;
+		ਨਹੀਂਤਾਂ
+			smallblks = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ) blks;
 retry_it:
-		if (smallblks == ss->max_xfer_blk)
-			usb_show_progress();
-		srb->datalen = block_dev->blksz * smallblks;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (usb_read_10(srb, ss, start, smallblks)) {
+		ਜੇ (smallblks == ss->max_xfer_blk)
+			usb_show_ਤਰੱਕੀ();
+		srb->datalen = ਖੰਡ_dev->blksz * smallblks;
+		srb->pdata = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)buf_addr;
+		ਜੇ (usb_read_10(srb, ss, ਸ਼ੁਰੂ, smallblks)) {
 			debug("Read ERROR\n");
 			ss->flags &= ~USB_READY;
 			usb_request_sense(srb, ss);
-			if (retry--)
-				goto retry_it;
+			ਜੇ (retry--)
+				ਜਾਓ retry_it;
 			blkcnt -= blks;
-			break;
+			ਰੋਕੋ;
 		}
-		start += smallblks;
+		ਸ਼ੁਰੂ += smallblks;
 		blks -= smallblks;
 		buf_addr += srb->datalen;
-	} while (blks != 0);
+	} ਜਦੋਂ (blks != 0);
 
 	debug("usb_read: end startblk " LBAF ", blccnt %x buffer %lx\n",
-	      start, smallblks, buf_addr);
+	      ਸ਼ੁਰੂ, smallblks, buf_addr);
 
-	usb_lock_async(udev, 0);
+	usb_ਤਾਲਾ_async(udev, 0);
 	usb_disable_asynch(0); /* asynch transfer allowed */
-	if (blkcnt >= ss->max_xfer_blk)
+	ਜੇ (blkcnt >= ss->max_xfer_blk)
 		debug("\n");
-	return blkcnt;
+	ਵਾਪਸ blkcnt;
 }
 
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_write(struct udevice *dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer)
-#else
-static unsigned long usb_stor_write(struct blk_desc *block_dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer)
-#endif
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_write(ਬਣਤਰ udevice *dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ਅਚਲ ਖਾਲੀ *ਬਫਰ)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ usb_stor_write(ਬਣਤਰ blk_desc *ਖੰਡ_dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ਅਚਲ ਖਾਲੀ *ਬਫਰ)
+#ਜੇ_ਅੰਤ
 {
-	lbaint_t start, blks;
+	lbaint_t ਸ਼ੁਰੂ, blks;
 	uintptr_t buf_addr;
-	unsigned short smallblks;
-	struct usb_device *udev;
-	struct us_data *ss;
-	int retry;
-	struct scsi_cmd *srb = &usb_ccb;
-#if CONFIG_IS_ENABLED(BLK)
-	struct blk_desc *block_dev;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ smallblks;
+	ਬਣਤਰ usb_device *udev;
+	ਬਣਤਰ us_ਅੰਕੜੇ *ss;
+	ਪੂਰਨ retry;
+	ਬਣਤਰ scsi_cmd *srb = &usb_ccb;
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਬਣਤਰ blk_desc *ਖੰਡ_dev;
+#ਜੇ_ਅੰਤ
 
-	if (blkcnt == 0)
-		return 0;
+	ਜੇ (blkcnt == 0)
+		ਵਾਪਸ 0;
 
 	/* Setup  device */
-#if CONFIG_IS_ENABLED(BLK)
-	block_dev = dev_get_uclass_plat(dev);
-	udev = dev_get_parent_priv(dev_get_parent(dev));
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-#else
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-	udev = usb_dev_desc[block_dev->devnum].priv;
-	if (!udev) {
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	ਖੰਡ_dev = dev_get_uclass_plat(dev);
+	udev = dev_get_ਮਾਪਾ_priv(dev_get_ਮਾਪਾ(dev));
+	debug("\nusb_read: udev %d\n", ਖੰਡ_dev->devnum);
+#ਨਹੀਂਤਾਂ
+	debug("\nusb_read: udev %d\n", ਖੰਡ_dev->devnum);
+	udev = usb_dev_desc[ਖੰਡ_dev->devnum].priv;
+	ਜੇ (!udev) {
 		debug("%s: No device\n", __func__);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-#endif
-	ss = (struct us_data *)udev->privptr;
+#ਜੇ_ਅੰਤ
+	ss = (ਬਣਤਰ us_ਅੰਕੜੇ *)udev->privptr;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
-	usb_lock_async(udev, 1);
+	usb_ਤਾਲਾ_async(udev, 1);
 
-	srb->lun = block_dev->lun;
-	buf_addr = (uintptr_t)buffer;
-	start = blknr;
+	srb->lun = ਖੰਡ_dev->lun;
+	buf_addr = (uintptr_t)ਬਫਰ;
+	ਸ਼ੁਰੂ = blknr;
 	blks = blkcnt;
 
 	debug("\nusb_write: dev %d startblk " LBAF ", blccnt " LBAF " buffer %lx\n",
-	      block_dev->devnum, start, blks, buf_addr);
+	      ਖੰਡ_dev->devnum, ਸ਼ੁਰੂ, blks, buf_addr);
 
-	do {
+	ਕਰੋ {
 		/* If write fails retry for max retry count else
 		 * return with number of blocks written successfully.
 		 */
 		retry = 2;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (blks > ss->max_xfer_blk)
+		srb->pdata = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)buf_addr;
+		ਜੇ (blks > ss->max_xfer_blk)
 			smallblks = ss->max_xfer_blk;
-		else
-			smallblks = (unsigned short) blks;
+		ਨਹੀਂਤਾਂ
+			smallblks = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ) blks;
 retry_it:
-		if (smallblks == ss->max_xfer_blk)
-			usb_show_progress();
-		srb->datalen = block_dev->blksz * smallblks;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (usb_write_10(srb, ss, start, smallblks)) {
+		ਜੇ (smallblks == ss->max_xfer_blk)
+			usb_show_ਤਰੱਕੀ();
+		srb->datalen = ਖੰਡ_dev->blksz * smallblks;
+		srb->pdata = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)buf_addr;
+		ਜੇ (usb_write_10(srb, ss, ਸ਼ੁਰੂ, smallblks)) {
 			debug("Write ERROR\n");
 			ss->flags &= ~USB_READY;
 			usb_request_sense(srb, ss);
-			if (retry--)
-				goto retry_it;
+			ਜੇ (retry--)
+				ਜਾਓ retry_it;
 			blkcnt -= blks;
-			break;
+			ਰੋਕੋ;
 		}
-		start += smallblks;
+		ਸ਼ੁਰੂ += smallblks;
 		blks -= smallblks;
 		buf_addr += srb->datalen;
-	} while (blks != 0);
+	} ਜਦੋਂ (blks != 0);
 
 	debug("usb_write: end startblk " LBAF ", blccnt %x buffer %lx\n",
-	      start, smallblks, buf_addr);
+	      ਸ਼ੁਰੂ, smallblks, buf_addr);
 
-	usb_lock_async(udev, 0);
+	usb_ਤਾਲਾ_async(udev, 0);
 	usb_disable_asynch(0); /* asynch transfer allowed */
-	if (blkcnt >= ss->max_xfer_blk)
+	ਜੇ (blkcnt >= ss->max_xfer_blk)
 		debug("\n");
-	return blkcnt;
+	ਵਾਪਸ blkcnt;
 
 }
 
 /* Probe to see if a new device is actually a Storage device */
-int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
-		      struct us_data *ss)
+ਪੂਰਨ usb_storage_probe(ਬਣਤਰ usb_device *dev, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ifnum,
+		      ਬਣਤਰ us_ਅੰਕੜੇ *ss)
 {
-	struct usb_interface *iface;
-	int i;
-	struct usb_endpoint_descriptor *ep_desc;
-	unsigned int flags = 0;
+	ਬਣਤਰ usb_interface *iface;
+	ਪੂਰਨ i;
+	ਬਣਤਰ usb_endpoint_descriptor *ep_desc;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags = 0;
 
 	/* let's examine the device now */
 	iface = &dev->config.if_desc[ifnum];
 
-	if (dev->descriptor.bDeviceClass != 0 ||
+	ਜੇ (dev->descriptor.bDeviceClass != 0 ||
 			iface->desc.bInterfaceClass != USB_CLASS_MASS_STORAGE ||
 			iface->desc.bInterfaceSubClass < US_SC_MIN ||
 			iface->desc.bInterfaceSubClass > US_SC_MAX) {
 		debug("Not mass storage\n");
 		/* if it's not a mass storage, we go no further */
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	memset(ss, 0, sizeof(struct us_data));
+	memset(ss, 0, ਆਕਾਰ(ਬਣਤਰ us_ਅੰਕੜੇ));
 
 	/* At this point, we know we've got a live one */
 	debug("\n\nUSB Mass Storage device detected\n");
@@ -1337,33 +1337,33 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	ss->flags = flags;
 	ss->ifnum = ifnum;
 	ss->pusb_dev = dev;
-	ss->attention_done = 0;
+	ss->attention_ਪੂਰਾ = 0;
 	ss->subclass = iface->desc.bInterfaceSubClass;
 	ss->protocol = iface->desc.bInterfaceProtocol;
 
 	/* set the handler pointers based on the protocol */
 	debug("Transport: ");
-	switch (ss->protocol) {
-	case US_PR_CB:
+	ਚੋਣ (ss->protocol) {
+	ਹਾਲਤ US_PR_CB:
 		debug("Control/Bulk\n");
 		ss->transport = usb_stor_CB_transport;
 		ss->transport_reset = usb_stor_CB_reset;
-		break;
+		ਰੋਕੋ;
 
-	case US_PR_CBI:
+	ਹਾਲਤ US_PR_CBI:
 		debug("Control/Bulk/Interrupt\n");
 		ss->transport = usb_stor_CB_transport;
 		ss->transport_reset = usb_stor_CB_reset;
-		break;
-	case US_PR_BULK:
+		ਰੋਕੋ;
+	ਹਾਲਤ US_PR_BULK:
 		debug("Bulk/Bulk/Bulk\n");
 		ss->transport = usb_stor_BBB_transport;
 		ss->transport_reset = usb_stor_BBB_reset;
-		break;
-	default:
-		printf("USB Storage Transport unknown / not yet implemented\n");
-		return 0;
-		break;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਲਿਖੋ("USB Storage Transport unknown / not yet implemented\n");
+		ਵਾਪਸ 0;
+		ਰੋਕੋ;
 	}
 
 	/*
@@ -1371,54 +1371,54 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	 * An optional interrupt is OK (necessary for CBI protocol).
 	 * We will ignore any others.
 	 */
-	for (i = 0; i < iface->desc.bNumEndpoints; i++) {
+	ਲਈ (i = 0; i < iface->desc.b_ਅੰਕ_Endpoints; i++) {
 		ep_desc = &iface->ep_desc[i];
 		/* is it an BULK endpoint? */
-		if ((ep_desc->bmAttributes &
-		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_BULK) {
-			if (ep_desc->bEndpointAddress & USB_DIR_IN)
-				ss->ep_in = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
-			else
-				ss->ep_out =
-					ep_desc->bEndpointAddress &
-					USB_ENDPOINT_NUMBER_MASK;
+		ਜੇ ((ep_desc->bm_ਗੁਣ &
+		     USB_ENDPOINT_XFERTYPE_ਨਕਾਬ) == USB_ENDPOINT_XFER_BULK) {
+			ਜੇ (ep_desc->b_Endpoint_ਪਤਾ & USB_DIR_ਵਿੱਚ)
+				ss->ep_ਵਿੱਚ = ep_desc->b_Endpoint_ਪਤਾ &
+						USB_ENDPOINT_ਸੰਖਿਆ_ਨਕਾਬ;
+			ਨਹੀਂਤਾਂ
+				ss->ep_ਬਾਹਰਲਾ =
+					ep_desc->b_Endpoint_ਪਤਾ &
+					USB_ENDPOINT_ਸੰਖਿਆ_ਨਕਾਬ;
 		}
 
 		/* is it an interrupt endpoint? */
-		if ((ep_desc->bmAttributes &
-		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_INT) {
-			ss->ep_int = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
+		ਜੇ ((ep_desc->bm_ਗੁਣ &
+		     USB_ENDPOINT_XFERTYPE_ਨਕਾਬ) == USB_ENDPOINT_XFER_INT) {
+			ss->ep_int = ep_desc->b_Endpoint_ਪਤਾ &
+						USB_ENDPOINT_ਸੰਖਿਆ_ਨਕਾਬ;
 			ss->irqinterval = ep_desc->bInterval;
 		}
 	}
 	debug("Endpoints In %d Out %d Int %d\n",
-	      ss->ep_in, ss->ep_out, ss->ep_int);
+	      ss->ep_ਵਿੱਚ, ss->ep_ਬਾਹਰਲਾ, ss->ep_int);
 
 	/* Do some basic sanity checks, and bail if we find a problem */
-	if (usb_set_interface(dev, iface->desc.bInterfaceNumber, 0) ||
-	    !ss->ep_in || !ss->ep_out ||
+	ਜੇ (usb_ਸੈੱਟ_interface(dev, iface->desc.b_Interface_ਸੰਖਿਆ, 0) ||
+	    !ss->ep_ਵਿੱਚ || !ss->ep_ਬਾਹਰਲਾ ||
 	    (ss->protocol == US_PR_CBI && ss->ep_int == 0)) {
 		debug("Problems with device\n");
-		return 0;
+		ਵਾਪਸ 0;
 	}
 	/* set class specific stuff */
 	/* We only handle certain protocols.  Currently, these are
 	 * the only ones.
 	 * The SFF8070 accepts the requests used in u-boot
 	 */
-	if (ss->subclass != US_SC_UFI && ss->subclass != US_SC_SCSI &&
+	ਜੇ (ss->subclass != US_SC_UFI && ss->subclass != US_SC_SCSI &&
 	    ss->subclass != US_SC_8070) {
-		printf("Sorry, protocol %d not yet supported.\n", ss->subclass);
-		return 0;
+		ਲਿਖੋ("Sorry, protocol %d not yet supported.\n", ss->subclass);
+		ਵਾਪਸ 0;
 	}
 
 	/* UFI uses 12-byte commands (like RBC, unlike SCSI) */
-	if (ss->subclass == US_SC_UFI)
+	ਜੇ (ss->subclass == US_SC_UFI)
 		ss->cmd12 = true;
 
-	if (ss->ep_int) {
+	ਜੇ (ss->ep_int) {
 		/* we had found an interrupt endpoint, prepare irq pipe
 		 * set up the IRQ pipe and handler
 		 */
@@ -1429,30 +1429,30 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	}
 
 	/* Set the maximum transfer size per host controller setting */
-	usb_stor_set_max_xfer_blk(dev, ss);
+	usb_stor_ਸੈੱਟ_max_xfer_blk(dev, ss);
 
-	dev->privptr = (void *)ss;
-	return 1;
+	dev->privptr = (ਖਾਲੀ *)ss;
+	ਵਾਪਸ 1;
 }
 
-int usb_stor_get_info(struct usb_device *dev, struct us_data *ss,
-		      struct blk_desc *dev_desc)
+ਪੂਰਨ usb_stor_get_info(ਬਣਤਰ usb_device *dev, ਬਣਤਰ us_ਅੰਕੜੇ *ss,
+		      ਬਣਤਰ blk_desc *dev_desc)
 {
-	unsigned char perq, modi;
-	ALLOC_CACHE_ALIGN_BUFFER(u32, cap, 2);
-	ALLOC_CACHE_ALIGN_BUFFER(u8, usb_stor_buf, 36);
-	u32 capacity, blksz;
-	struct scsi_cmd *pccb = &usb_ccb;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ perq, modi;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(u32, cap, 2);
+	ALLOC_CACHE_ALIGN_ਬਫਰ(u8, usb_stor_buf, 36);
+	u32 ਸਮਰੱਥਾ, blksz;
+	ਬਣਤਰ scsi_cmd *pccb = &usb_ccb;
 
 	pccb->pdata = usb_stor_buf;
 
-	dev_desc->target = dev->devnum;
+	dev_desc->ਨਿਸ਼ਾਨਾ = dev->devnum;
 	pccb->lun = dev_desc->lun;
-	debug(" address %d\n", dev_desc->target);
+	debug(" address %d\n", dev_desc->ਨਿਸ਼ਾਨਾ);
 
-	if (usb_inquiry(pccb, ss)) {
+	ਜੇ (usb_inquiry(pccb, ss)) {
 		debug("%s: usb_inquiry() failed\n", __func__);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	perq = usb_stor_buf[0];
@@ -1462,80 +1462,80 @@ int usb_stor_get_info(struct usb_device *dev, struct us_data *ss,
 	 * Skip unknown devices (0x1f) and enclosure service devices (0x0d),
 	 * they would not respond to test_unit_ready .
 	 */
-	if (((perq & 0x1f) == 0x1f) || ((perq & 0x1f) == 0x0d)) {
+	ਜੇ (((perq & 0x1f) == 0x1f) || ((perq & 0x1f) == 0x0d)) {
 		debug("%s: unknown/unsupported device\n", __func__);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	if ((modi&0x80) == 0x80) {
+	ਜੇ ((modi&0x80) == 0x80) {
 		/* drive is removable */
 		dev_desc->removable = 1;
 	}
-	memcpy(dev_desc->vendor, (const void *)&usb_stor_buf[8], 8);
-	memcpy(dev_desc->product, (const void *)&usb_stor_buf[16], 16);
-	memcpy(dev_desc->revision, (const void *)&usb_stor_buf[32], 4);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dev_desc->vendor, (ਅਚਲ ਖਾਲੀ *)&usb_stor_buf[8], 8);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dev_desc->ਗੁਣਨਫਲ, (ਅਚਲ ਖਾਲੀ *)&usb_stor_buf[16], 16);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dev_desc->revision, (ਅਚਲ ਖਾਲੀ *)&usb_stor_buf[32], 4);
 	dev_desc->vendor[8] = 0;
-	dev_desc->product[16] = 0;
+	dev_desc->ਗੁਣਨਫਲ[16] = 0;
 	dev_desc->revision[4] = 0;
-#ifdef CONFIG_USB_BIN_FIXUP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_USB_BIN_FIXUP
 	usb_bin_fixup(dev->descriptor, (uchar *)dev_desc->vendor,
-		      (uchar *)dev_desc->product);
-#endif /* CONFIG_USB_BIN_FIXUP */
+		      (uchar *)dev_desc->ਗੁਣਨਫਲ);
+#ਜੇ_ਅੰਤ /* CONFIG_USB_BIN_FIXUP */
 	debug("ISO Vers %X, Response Data %X\n", usb_stor_buf[2],
 	      usb_stor_buf[3]);
-	if (usb_test_unit_ready(pccb, ss)) {
-		printf("Device NOT ready\n"
+	ਜੇ (usb_test_unit_ready(pccb, ss)) {
+		ਲਿਖੋ("Device NOT ready\n"
 		       "   Request Sense returned %02X %02X %02X\n",
 		       pccb->sense_buf[2], pccb->sense_buf[12],
 		       pccb->sense_buf[13]);
-		if (dev_desc->removable == 1)
+		ਜੇ (dev_desc->removable == 1)
 			dev_desc->type = perq;
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	pccb->pdata = (unsigned char *)cap;
+	pccb->pdata = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)cap;
 	memset(pccb->pdata, 0, 8);
-	if (usb_read_capacity(pccb, ss) != 0) {
-		printf("READ_CAP ERROR\n");
+	ਜੇ (usb_read_ਸਮਰੱਥਾ(pccb, ss) != 0) {
+		ਲਿਖੋ("READ_CAP ERROR\n");
 		ss->flags &= ~USB_READY;
 		cap[0] = 2880;
 		cap[1] = 0x200;
 	}
 	debug("Read Capacity returns: 0x%08x, 0x%08x\n", cap[0], cap[1]);
-#if 0
-	if (cap[0] > (0x200000 * 10)) /* greater than 10 GByte */
+#ਜੇ 0
+	ਜੇ (cap[0] > (0x200000 * 10)) /* greater than 10 GByte */
 		cap[0] >>= 16;
 
-	cap[0] = cpu_to_be32(cap[0]);
-	cap[1] = cpu_to_be32(cap[1]);
-#endif
+	cap[0] = cpu_ਮੰਜ਼ਿਲ_be32(cap[0]);
+	cap[1] = cpu_ਮੰਜ਼ਿਲ_be32(cap[1]);
+#ਜੇ_ਅੰਤ
 
-	capacity = be32_to_cpu(cap[0]) + 1;
-	blksz = be32_to_cpu(cap[1]);
+	ਸਮਰੱਥਾ = be32_ਮੰਜ਼ਿਲ_cpu(cap[0]) + 1;
+	blksz = be32_ਮੰਜ਼ਿਲ_cpu(cap[1]);
 
-	debug("Capacity = 0x%08x, blocksz = 0x%08x\n", capacity, blksz);
-	dev_desc->lba = capacity;
+	debug("Capacity = 0x%08x, blocksz = 0x%08x\n", ਸਮਰੱਥਾ, blksz);
+	dev_desc->lba = ਸਮਰੱਥਾ;
 	dev_desc->blksz = blksz;
 	dev_desc->log2blksz = LOG2(dev_desc->blksz);
 	dev_desc->type = perq;
-	debug(" address %d\n", dev_desc->target);
+	debug(" address %d\n", dev_desc->ਨਿਸ਼ਾਨਾ);
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
 
-static int usb_mass_storage_probe(struct udevice *dev)
+ਸਥਿਰ ਪੂਰਨ usb_mass_storage_probe(ਬਣਤਰ udevice *dev)
 {
-	struct usb_device *udev = dev_get_parent_priv(dev);
-	int ret;
+	ਬਣਤਰ usb_device *udev = dev_get_ਮਾਪਾ_priv(dev);
+	ਪੂਰਨ ret;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
 	ret = usb_stor_probe_device(udev);
 	usb_disable_asynch(0); /* asynch transfer allowed */
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static const struct udevice_id usb_mass_storage_ids[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ udevice_id usb_mass_storage_ids[] = {
 	{ .compatible = "usb-mass-storage" },
 	{ }
 };
@@ -1543,11 +1543,11 @@ static const struct udevice_id usb_mass_storage_ids[] = {
 U_BOOT_DRIVER(usb_mass_storage) = {
 	.name	= "usb_mass_storage",
 	.id	= UCLASS_MASS_STORAGE,
-	.of_match = usb_mass_storage_ids,
+	.ਦਾ_ਮੇਲ = usb_mass_storage_ids,
 	.probe = usb_mass_storage_probe,
-#if CONFIG_IS_ENABLED(BLK)
-	.plat_auto	= sizeof(struct us_data),
-#endif
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+	.plat_auto	= ਆਕਾਰ(ਬਣਤਰ us_ਅੰਕੜੇ),
+#ਜੇ_ਅੰਤ
 };
 
 UCLASS_DRIVER(usb_mass_storage) = {
@@ -1555,21 +1555,21 @@ UCLASS_DRIVER(usb_mass_storage) = {
 	.name		= "usb_mass_storage",
 };
 
-static const struct usb_device_id mass_storage_id_table[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ usb_device_id mass_storage_id_ਸਾਰਣੀ[] = {
 	{
-		.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS,
+		.ਮੇਲ_flags = USB_DEVICE_ID_ਮੇਲ_INT_CLASS,
 		.bInterfaceClass = USB_CLASS_MASS_STORAGE
 	},
 	{ }		/* Terminating entry */
 };
 
-U_BOOT_USB_DEVICE(usb_mass_storage, mass_storage_id_table);
-#endif
+U_BOOT_USB_DEVICE(usb_mass_storage, mass_storage_id_ਸਾਰਣੀ);
+#ਜੇ_ਅੰਤ
 
-#if CONFIG_IS_ENABLED(BLK)
-static const struct blk_ops usb_storage_ops = {
-	.read	= usb_stor_read,
-	.write	= usb_stor_write,
+#ਜੇ CONFIG_IS_ENABLED(BLK)
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ blk_ops usb_storage_ops = {
+	.ਪਠ	= usb_stor_read,
+	.ਲਿਖ	= usb_stor_write,
 };
 
 U_BOOT_DRIVER(usb_storage_blk) = {
@@ -1577,11 +1577,11 @@ U_BOOT_DRIVER(usb_storage_blk) = {
 	.id		= UCLASS_BLK,
 	.ops		= &usb_storage_ops,
 };
-#else
+#ਨਹੀਂਤਾਂ
 U_BOOT_LEGACY_BLK(usb) = {
 	.uclass_idname	= "usb",
 	.uclass_id	= UCLASS_USB,
 	.max_devs	= USB_MAX_STOR_DEV,
 	.desc		= usb_dev_desc,
 };
-#endif
+#ਜੇ_ਅੰਤ

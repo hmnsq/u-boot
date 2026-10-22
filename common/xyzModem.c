@@ -21,539 +21,539 @@
  *
  *==========================================================================
  */
-#include <xyzModem.h>
-#include <stdarg.h>
-#include <time.h>
-#include <u-boot/crc.h>
-#include <watchdog.h>
-#include <env.h>
-#include <vsprintf.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <xyzModem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/crc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <watchdog.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <vsprintf.h>
 
 /* Assumption - run xyzModem protocol over the console port */
 
 /* Values magic to the protocol */
-#define SOH 0x01
-#define STX 0x02
-#define ETX 0x03		/* ^C for interrupt */
-#define EOT 0x04
-#define ACK 0x06
-#define BSP 0x08
-#define NAK 0x15
-#define CAN 0x18
-#define EOF 0x1A		/* ^Z for DOS officionados */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOH 0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STX 0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ETX 0x03		/* ^C for interrupt */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EOT 0x04
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ACK 0x06
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BSP 0x08
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NAK 0x15
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAN 0x18
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EOF 0x1A		/* ^Z for DOS officionados */
 
 /* Data & state local to the protocol */
-static struct
+ਸਥਿਰ ਬਣਤਰ
 {
-  int *__chan;
-  unsigned char pkt[1024], *bufp;
-  int pad_pending;	/* trailing ^Z run withheld from the previous block */
-  int pad_deliver;	/* ^Z bytes to emit before the next data */
-  unsigned char blk, cblk, crc1, crc2;
-  unsigned char next_blk;	/* Expected block */
-  int len, mode, total_retries;
-  int total_SOH, total_STX, total_CAN;
-  bool crc_mode, at_eof, tx_ack;
-  bool first_xmodem_packet;
-  ulong initial_time, timeout;
-  unsigned long file_length, read_length;
+  ਪੂਰਨ *__chan;
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ pkt[1024], *bufp;
+  ਪੂਰਨ pad_pending;	/* trailing ^Z run withheld from the previous block */
+  ਪੂਰਨ pad_deliver;	/* ^Z bytes to emit before the next data */
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ blk, cblk, crc1, crc2;
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਅਗਲਾ_blk;	/* Expected block */
+  ਪੂਰਨ len, ਬਹੁਲਕ, ਕੁੱਲ_retries;
+  ਪੂਰਨ ਕੁੱਲ_SOH, ਕੁੱਲ_STX, ਕੁੱਲ_CAN;
+  bool ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ, at_eof, tx_ack;
+  bool ਪਹਿਲਾ_xmodem_packet;
+  ulong initial_ਸਮਾਂ, timeout;
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ file_ਲੰਮਾਈ, read_ਲੰਮਾਈ;
 } xyz;
 
-#define xyzModem_CHAR_TIMEOUT            2000	/* 2 seconds */
-#define xyzModem_MAX_RETRIES             20
-#define xyzModem_MAX_RETRIES_WITH_CRC    10
-#define xyzModem_CAN_COUNT                3	/* Wait for 3 CAN before quitting */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xyzModem_CHAR_TIMEOUT            2000	/* 2 seconds */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xyzModem_MAX_RETRIES             20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xyz_Modem_MAX_RETRIES_WITH_ਚੱਕਰੀ_ਜਾਂਚ    10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xyz_Modem_CAN_ਗਿਣਤੀ                3	/* Wait for 3 CAN before quitting */
 
-typedef int cyg_int32;
-static int
-CYGACC_COMM_IF_GETC_TIMEOUT (char chan, char *c)
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ cyg_int32;
+ਸਥਿਰ ਪੂਰਨ
+CYGACC_COMM_IF_GETC_TIMEOUT (ਅੱਖਰ chan, ਅੱਖਰ *c)
 {
 
   ulong now = get_timer(0);
-  schedule();
-  while (!tstc ())
+  ਸਮਾਂ_ਸਾਰਣੀ();
+  ਜਦੋਂ (!tstc ())
     {
-      if (get_timer(now) > xyzModem_CHAR_TIMEOUT)
-        break;
+      ਜੇ (get_timer(now) > xyzModem_CHAR_TIMEOUT)
+        ਰੋਕੋ;
     }
-  if (tstc ())
+  ਜੇ (tstc ())
     {
       *c = getchar();
-      return 1;
+      ਵਾਪਸ 1;
     }
-  return 0;
+  ਵਾਪਸ 0;
 }
 
-static void
-CYGACC_COMM_IF_PUTC (char x, char y)
+ਸਥਿਰ ਖਾਲੀ
+CYGACC_COMM_IF_PUTC (ਅੱਖਰ x, ਅੱਖਰ y)
 {
   putc (y);
 }
 
 /* Validate a hex character */
-__inline__ static bool
-_is_hex (char c)
+__inline__ ਸਥਿਰ bool
+_is_hex (ਅੱਖਰ c)
 {
-  return (((c >= '0') && (c <= '9')) ||
+  ਵਾਪਸ (((c >= '0') && (c <= '9')) ||
 	  ((c >= 'A') && (c <= 'F')) || ((c >= 'a') && (c <= 'f')));
 }
 
 /* Convert a single hex nibble */
-__inline__ static int
-_from_hex (char c)
+__inline__ ਸਥਿਰ ਪੂਰਨ
+_from_hex (ਅੱਖਰ c)
 {
-  int ret = 0;
+  ਪੂਰਨ ret = 0;
 
-  if ((c >= '0') && (c <= '9'))
+  ਜੇ ((c >= '0') && (c <= '9'))
     {
       ret = (c - '0');
     }
-  else if ((c >= 'a') && (c <= 'f'))
+  ਨਹੀਂਤਾਂ ਜੇ ((c >= 'a') && (c <= 'f'))
     {
       ret = (c - 'a' + 0x0a);
     }
-  else if ((c >= 'A') && (c <= 'F'))
+  ਨਹੀਂਤਾਂ ਜੇ ((c >= 'A') && (c <= 'F'))
     {
       ret = (c - 'A' + 0x0A);
     }
-  return ret;
+  ਵਾਪਸ ret;
 }
 
 /* Convert a character to lower case */
-__inline__ static char
-_tolower (char c)
+__inline__ ਸਥਿਰ ਅੱਖਰ
+_tolower (ਅੱਖਰ c)
 {
-  if ((c >= 'A') && (c <= 'Z'))
+  ਜੇ ((c >= 'A') && (c <= 'Z'))
     {
       c = (c - 'A') + 'a';
     }
-  return c;
+  ਵਾਪਸ c;
 }
 
 /* Parse (scan) a number */
-static bool
-parse_num (char *s, unsigned long *val, char **es, char *delim)
+ਸਥਿਰ bool
+parse_ਅੰਕ (ਅੱਖਰ *s, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *val, ਅੱਖਰ **es, ਅੱਖਰ *delim)
 {
-  bool first = true;
-  int radix = 10;
-  char c;
-  unsigned long result = 0;
-  int digit;
+  bool ਪਹਿਲਾ = true;
+  ਪੂਰਨ radix = 10;
+  ਅੱਖਰ c;
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨਤੀਜਾ = 0;
+  ਪੂਰਨ digit;
 
-  while (*s == ' ')
+  ਜਦੋਂ (*s == ' ')
     s++;
-  while (*s)
+  ਜਦੋਂ (*s)
     {
-      if (first && (s[0] == '0') && (_tolower (s[1]) == 'x'))
+      ਜੇ (ਪਹਿਲਾ && (s[0] == '0') && (_tolower (s[1]) == 'x'))
 	{
 	  radix = 16;
 	  s += 2;
 	}
-      first = false;
+      ਪਹਿਲਾ = false;
       c = *s++;
-      if (_is_hex (c) && ((digit = _from_hex (c)) < radix))
+      ਜੇ (_is_hex (c) && ((digit = _from_hex (c)) < radix))
 	{
 	  /* Valid digit */
-	  result = (result * radix) + digit;
+	  ਨਤੀਜਾ = (ਨਤੀਜਾ * radix) + digit;
 	}
-      else
+      ਨਹੀਂਤਾਂ
 	{
-	  if (delim != (char *) 0)
+	  ਜੇ (delim != (ਅੱਖਰ *) 0)
 	    {
 	      /* See if this character is one of the delimiters */
-	      char *dp = delim;
-	      while (*dp && (c != *dp))
+	      ਅੱਖਰ *dp = delim;
+	      ਜਦੋਂ (*dp && (c != *dp))
 		dp++;
-	      if (*dp)
-		break;		/* Found a good delimiter */
+	      ਜੇ (*dp)
+		ਰੋਕੋ;		/* Found a good delimiter */
 	    }
-	  return false;		/* Malformatted number */
+	  ਵਾਪਸ false;		/* Malformatted number */
 	}
     }
-  *val = result;
-  if (es != (char **) 0)
+  *val = ਨਤੀਜਾ;
+  ਜੇ (es != (ਅੱਖਰ **) 0)
     {
       *es = s;
     }
-  return true;
+  ਵਾਪਸ true;
 }
 
-#if defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
+#ਜੇ defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
 /*
  * Note: this debug setup works by storing the strings in a fixed buffer
  */
-static char zm_debug_buf[8192];
-static char *zm_out = zm_debug_buf;
-static char *zm_out_start = zm_debug_buf;
+ਸਥਿਰ ਅੱਖਰ zm_debug_buf[8192];
+ਸਥਿਰ ਅੱਖਰ *zm_ਬਾਹਰਲਾ = zm_debug_buf;
+ਸਥਿਰ ਅੱਖਰ *zm_ਬਾਹਰਲਾ_ਸ਼ੁਰੂ = zm_debug_buf;
 
-static int
-zm_dprintf(char *fmt, ...)
+ਸਥਿਰ ਪੂਰਨ
+zm_dprintf(ਅੱਖਰ *fmt, ...)
 {
-	int len;
-	va_list args;
+	ਪੂਰਨ len;
+	va_list ਦਲੀਲਾਂ;
 
-	va_start(args, fmt);
-	len = diag_vsprintf(zm_out, fmt, args);
-	va_end(args);
-	zm_out += len;
-	return len;
+	va_ਸ਼ੁਰੂ(ਦਲੀਲਾਂ, fmt);
+	len = diag_vsprintf(zm_ਬਾਹਰਲਾ, fmt, ਦਲੀਲਾਂ);
+	va_ਸਿਰਾ(ਦਲੀਲਾਂ);
+	zm_ਬਾਹਰਲਾ += len;
+	ਵਾਪਸ len;
 }
 
-static void
-zm_flush (void)
+ਸਥਿਰ ਖਾਲੀ
+zm_flush (ਖਾਲੀ)
 {
-  zm_out = zm_out_start;
+  zm_ਬਾਹਰਲਾ = zm_ਬਾਹਰਲਾ_ਸ਼ੁਰੂ;
 }
 
-static void
-zm_dump_buf (void *buf, int len)
+ਸਥਿਰ ਖਾਲੀ
+zm_dump_buf (ਖਾਲੀ *buf, ਪੂਰਨ len)
 {
 
 }
 
-static unsigned char zm_buf[2048];
-static unsigned char *zm_bp;
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ zm_buf[2048];
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *zm_bp;
 
-static void
-zm_new (void)
+ਸਥਿਰ ਖਾਲੀ
+zm_new (ਖਾਲੀ)
 {
   zm_bp = zm_buf;
 }
 
-static void
-zm_save (unsigned char c)
+ਸਥਿਰ ਖਾਲੀ
+zm_save (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c)
 {
   *zm_bp++ = c;
 }
 
-static void
-zm_dump (int line)
+ਸਥਿਰ ਖਾਲੀ
+zm_dump (ਪੂਰਨ ਸਤਰ)
 {
-  zm_dprintf ("Packet at line: %d\n", line);
+  zm_dprintf ("Packet at line: %d\n", ਸਤਰ);
   zm_dump_buf (zm_buf, zm_bp - zm_buf);
 }
 
-#define ZM_DEBUG(x) x
-#else
-#define ZM_DEBUG(x)
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZM_DEBUG(x) x
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZM_DEBUG(x)
+#ਜੇ_ਅੰਤ
 
 /* Wait for the line to go idle */
-static void
-xyzModem_flush (void)
+ਸਥਿਰ ਖਾਲੀ
+xyzModem_flush (ਖਾਲੀ)
 {
-  int res;
-  char c;
-  while (true)
+  ਪੂਰਨ res;
+  ਅੱਖਰ c;
+  ਜਦੋਂ (true)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
-      if (!res)
-	return;
+      ਜੇ (!res)
+	ਵਾਪਸ;
     }
 }
 
-static int
-xyzModem_get_hdr (void)
+ਸਥਿਰ ਪੂਰਨ
+xyzModem_get_hdr (ਖਾਲੀ)
 {
-  char c;
-  int res;
-  bool hdr_found = false;
-  int i, can_total, hdr_chars;
-  unsigned short cksum;
+  ਅੱਖਰ c;
+  ਪੂਰਨ res;
+  bool hdr_ਮਿਲਿਆ = false;
+  ਪੂਰਨ i, can_ਕੁੱਲ, hdr_chars;
+  ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ cksum;
 
   ZM_DEBUG (zm_new ());
   /* Find the start of a header */
-  can_total = 0;
+  can_ਕੁੱਲ = 0;
   hdr_chars = 0;
 
-  if (xyz.tx_ack)
+  ਜੇ (xyz.tx_ack)
     {
       CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
       xyz.tx_ack = false;
     }
-  while (!hdr_found)
+  ਜਦੋਂ (!hdr_ਮਿਲਿਆ)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      ਜੇ (res)
 	{
 	  hdr_chars++;
-	  switch (c)
+	  ਚੋਣ (c)
 	    {
-	    case SOH:
-	      xyz.total_SOH++;
+	    ਹਾਲਤ SOH:
+	      xyz.ਕੁੱਲ_SOH++;
 	      fallthrough;
-	    case STX:
-	      if (c == STX)
-		xyz.total_STX++;
-	      hdr_found = true;
-	      break;
-	    case CAN:
-	    case ETX:
-	      xyz.total_CAN++;
+	    ਹਾਲਤ STX:
+	      ਜੇ (c == STX)
+		xyz.ਕੁੱਲ_STX++;
+	      hdr_ਮਿਲਿਆ = true;
+	      ਰੋਕੋ;
+	    ਹਾਲਤ CAN:
+	    ਹਾਲਤ ETX:
+	      xyz.ਕੁੱਲ_CAN++;
 	      ZM_DEBUG (zm_dump (__LINE__));
-	      if (++can_total == xyzModem_CAN_COUNT)
+	      ਜੇ (++can_ਕੁੱਲ == xyz_Modem_CAN_ਗਿਣਤੀ)
 		{
-		  return xyzModem_cancel;
+		  ਵਾਪਸ xyzModem_cancel;
 		}
-	      else
+	      ਨਹੀਂਤਾਂ
 		{
 		  /* Wait for multiple CAN to avoid early quits */
-		  break;
+		  ਰੋਕੋ;
 		}
-	    case EOT:
+	    ਹਾਲਤ EOT:
 	      /* EOT only supported if no noise */
-	      if (hdr_chars == 1)
+	      ਜੇ (hdr_chars == 1)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK on EOT #%d\n", __LINE__));
 		  ZM_DEBUG (zm_dump (__LINE__));
-		  return xyzModem_eof;
+		  ਵਾਪਸ xyzModem_eof;
 		}
-	    default:
+	    ਮੂਲ:
 	      /* Ignore, waiting for start of header */
 	      ;
 	    }
 	}
-      else
+      ਨਹੀਂਤਾਂ
 	{
 	  /* Data stream timed out */
 	  xyzModem_flush ();	/* Toss any current input */
 	  ZM_DEBUG (zm_dump (__LINE__));
 	  CYGACC_CALL_IF_DELAY_US ((cyg_int32) 250000);
-	  return xyzModem_timeout;
+	  ਵਾਪਸ xyzModem_timeout;
 	}
     }
 
   /* Header found, now read the data */
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.blk);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (ਅੱਖਰ *) &xyz.blk);
   ZM_DEBUG (zm_save (xyz.blk));
-  if (!res)
+  ਜੇ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ਵਾਪਸ xyzModem_timeout;
     }
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.cblk);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (ਅੱਖਰ *) &xyz.cblk);
   ZM_DEBUG (zm_save (xyz.cblk));
-  if (!res)
+  ਜੇ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ਵਾਪਸ xyzModem_timeout;
     }
   xyz.len = (c == SOH) ? 128 : 1024;
   xyz.bufp = xyz.pkt;
-  for (i = 0; i < xyz.len; i++)
+  ਲਈ (i = 0; i < xyz.len; i++)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      ਜੇ (res)
 	{
 	  xyz.pkt[i] = c;
 	}
-      else
+      ਨਹੀਂਤਾਂ
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  ਵਾਪਸ xyzModem_timeout;
 	}
     }
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc1);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (ਅੱਖਰ *) &xyz.crc1);
   ZM_DEBUG (zm_save (xyz.crc1));
-  if (!res)
+  ਜੇ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ਵਾਪਸ xyzModem_timeout;
     }
-  if (xyz.crc_mode)
+  ਜੇ (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ)
     {
-      res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc2);
+      res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (ਅੱਖਰ *) &xyz.crc2);
       ZM_DEBUG (zm_save (xyz.crc2));
-      if (!res)
+      ਜੇ (!res)
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  ਵਾਪਸ xyzModem_timeout;
 	}
     }
   ZM_DEBUG (zm_dump (__LINE__));
   /* Validate the message */
-  if ((xyz.blk ^ xyz.cblk) != (unsigned char) 0xFF)
+  ਜੇ ((xyz.blk ^ xyz.cblk) != (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) 0xFF)
     {
       ZM_DEBUG (zm_dprintf
 		("Framing error - blk: %x/%x/%x\n", xyz.blk, xyz.cblk,
 		 (xyz.blk ^ xyz.cblk)));
       ZM_DEBUG (zm_dump_buf (xyz.pkt, xyz.len));
       xyzModem_flush ();
-      return xyzModem_frame;
+      ਵਾਪਸ xyz_Modem_ਚੌਖਟਾ;
     }
   /* Verify checksum/CRC */
-  if (xyz.crc_mode)
+  ਜੇ (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ)
     {
       cksum = crc16_ccitt(0, xyz.pkt, xyz.len);
-      if (cksum != ((xyz.crc1 << 8) | xyz.crc2))
+      ਜੇ (cksum != ((xyz.crc1 << 8) | xyz.crc2))
 	{
 	  ZM_DEBUG (zm_dprintf ("CRC error - recvd: %02x%02x, computed: %x\n",
 				xyz.crc1, xyz.crc2, cksum & 0xFFFF));
-	  return xyzModem_cksum;
+	  ਵਾਪਸ xyzModem_cksum;
 	}
     }
-  else
+  ਨਹੀਂਤਾਂ
     {
       cksum = 0;
-      for (i = 0; i < xyz.len; i++)
+      ਲਈ (i = 0; i < xyz.len; i++)
 	{
 	  cksum += xyz.pkt[i];
 	}
-      if (xyz.crc1 != (cksum & 0xFF))
+      ਜੇ (xyz.crc1 != (cksum & 0xFF))
 	{
 	  ZM_DEBUG (zm_dprintf
 		    ("Checksum error - recvd: %x, computed: %x\n", xyz.crc1,
 		     cksum & 0xFF));
-	  return xyzModem_cksum;
+	  ਵਾਪਸ xyzModem_cksum;
 	}
     }
   /* If we get here, the message passes [structural] muster */
-  return 0;
+  ਵਾਪਸ 0;
 }
 
-static
+ਸਥਿਰ
 ulong
-xyzModem_get_initial_timeout (void)
+xyzModem_get_initial_timeout (ਖਾਲੀ)
 {
   /* timeout is in seconds, non-positive timeout value is infinity */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-  const char *timeout_str = env_get("loadxy_timeout");
-  if (timeout_str)
-    return 1000 * simple_strtol(timeout_str, NULL, 10);
-#endif
-  return 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
+#ਜੇ CONFIG_IS_ENABLED(ENV_SUPPORT)
+  ਅਚਲ ਅੱਖਰ *timeout_str = env_get("loadxy_timeout");
+  ਜੇ (timeout_str)
+    ਵਾਪਸ 1000 * simple_strtol(timeout_str, ਨਿਰਾ, 10);
+#ਜੇ_ਅੰਤ
+  ਵਾਪਸ 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
 }
 
-int
-xyzModem_stream_open (connection_info_t * info, int *err)
+ਪੂਰਨ
+xyz_Modem_ਧਾਰਾ_open (connection_info_t * info, ਪੂਰਨ *err)
 {
-  int stat = 0;
-  int retries = xyzModem_MAX_RETRIES;
-  int crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
+  ਪੂਰਨ stat = 0;
+  ਪੂਰਨ retries = xyzModem_MAX_RETRIES;
+  ਪੂਰਨ ਚੱਕਰੀ_ਜਾਂਚ_retries = xyz_Modem_MAX_RETRIES_WITH_ਚੱਕਰੀ_ਜਾਂਚ;
 
 /*    ZM_DEBUG(zm_out = zm_out_start); */
-#ifdef xyzModem_zmodem
-  if (info->mode == xyzModem_zmodem)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ xyzModem_zmodem
+  ਜੇ (info->ਬਹੁਲਕ == xyzModem_zmodem)
     {
       *err = xyzModem_noZmodem;
-      return -1;
+      ਵਾਪਸ -1;
     }
-#endif
+#ਜੇ_ਅੰਤ
 
 /* TODO: CHECK ! */
-  int dummy = 0;
+  ਪੂਰਨ dummy = 0;
   xyz.__chan = &dummy;
   xyz.len = 0;
   xyz.pad_pending = 0;
   xyz.pad_deliver = 0;
-  xyz.crc_mode = true;
+  xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ = true;
   xyz.at_eof = false;
   xyz.tx_ack = false;
-  xyz.mode = info->mode;
-  xyz.total_retries = 0;
-  xyz.total_SOH = 0;
-  xyz.total_STX = 0;
-  xyz.total_CAN = 0;
-  xyz.read_length = 0;
-  xyz.file_length = 0;
-  xyz.first_xmodem_packet = false;
-  xyz.initial_time = get_timer(0);
+  xyz.ਬਹੁਲਕ = info->ਬਹੁਲਕ;
+  xyz.ਕੁੱਲ_retries = 0;
+  xyz.ਕੁੱਲ_SOH = 0;
+  xyz.ਕੁੱਲ_STX = 0;
+  xyz.ਕੁੱਲ_CAN = 0;
+  xyz.read_ਲੰਮਾਈ = 0;
+  xyz.file_ਲੰਮਾਈ = 0;
+  xyz.ਪਹਿਲਾ_xmodem_packet = false;
+  xyz.initial_ਸਮਾਂ = get_timer(0);
   xyz.timeout = xyzModem_get_initial_timeout();
 
-  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
+  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ ? 'C' : NAK));
 
-  if (xyz.mode == xyzModem_xmodem)
+  ਜੇ (xyz.ਬਹੁਲਕ == xyzModem_xmodem)
     {
       /* X-modem doesn't have an information header - exit here */
-      xyz.first_xmodem_packet = true;
-      xyz.next_blk = 1;
-      return 0;
+      xyz.ਪਹਿਲਾ_xmodem_packet = true;
+      xyz.ਅਗਲਾ_blk = 1;
+      ਵਾਪਸ 0;
     }
 
-  while (!(xyz.timeout && get_timer(xyz.initial_time) > xyz.timeout))
+  ਜਦੋਂ (!(xyz.timeout && get_timer(xyz.initial_ਸਮਾਂ) > xyz.timeout))
     {
-      if (--retries <= 0)
+      ਜੇ (--retries <= 0)
         {
           retries = xyzModem_MAX_RETRIES;
-          crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
-          xyz.crc_mode = true;
+          ਚੱਕਰੀ_ਜਾਂਚ_retries = xyz_Modem_MAX_RETRIES_WITH_ਚੱਕਰੀ_ਜਾਂਚ;
+          xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ = true;
         }
       stat = xyzModem_get_hdr ();
-      if (stat == 0)
+      ਜੇ (stat == 0)
 	{
 	  /* Y-modem file information header */
-	  if (xyz.blk == 0)
+	  ਜੇ (xyz.blk == 0)
 	    {
 	      /* skip filename */
-	      while (*xyz.bufp++);
+	      ਜਦੋਂ (*xyz.bufp++);
 	      /* get the length */
-	      parse_num ((char *) xyz.bufp, &xyz.file_length, NULL, " ");
+	      parse_ਅੰਕ ((ਅੱਖਰ *) xyz.bufp, &xyz.file_ਲੰਮਾਈ, ਨਿਰਾ, " ");
 	      /* The rest of the file name data block quietly discarded */
 	      xyz.tx_ack = true;
 	    }
-	  xyz.next_blk = 1;
+	  xyz.ਅਗਲਾ_blk = 1;
 	  xyz.len = 0;
-	  return 0;
+	  ਵਾਪਸ 0;
 	}
-      else if (stat == xyzModem_timeout)
+      ਨਹੀਂਤਾਂ ਜੇ (stat == xyzModem_timeout)
 	{
-	  if (--crc_retries <= 0)
-	    xyz.crc_mode = false;
+	  ਜੇ (--ਚੱਕਰੀ_ਜਾਂਚ_retries <= 0)
+	    xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ = false;
 	  CYGACC_CALL_IF_DELAY_US (5 * 100000);	/* Extra delay for startup */
-	  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
-	  xyz.total_retries++;
+	  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ ? 'C' : NAK));
+	  xyz.ਕੁੱਲ_retries++;
 	  ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	}
-      if (stat == xyzModem_cancel)
+      ਜੇ (stat == xyzModem_cancel)
 	{
-	  break;
+	  ਰੋਕੋ;
 	}
     }
   *err = stat;
   ZM_DEBUG (zm_flush ());
-  return -1;
+  ਵਾਪਸ -1;
 }
 
-int
-xyzModem_stream_read (char *buf, int size, int *err)
+ਪੂਰਨ
+xyz_Modem_ਧਾਰਾ_read (ਅੱਖਰ *buf, ਪੂਰਨ ਮਾਪ, ਪੂਰਨ *err)
 {
-  int stat, total, len;
-  int retries;
+  ਪੂਰਨ stat, ਕੁੱਲ, len;
+  ਪੂਰਨ retries;
 
-  total = 0;
+  ਕੁੱਲ = 0;
   stat = xyzModem_cancel;
   /* Try and get 'size' bytes into the buffer */
-  while (!xyz.at_eof && xyz.len >= 0 && (size > 0))
+  ਜਦੋਂ (!xyz.at_eof && xyz.len >= 0 && (ਮਾਪ > 0))
     {
-      if (xyz.len == 0 && xyz.pad_deliver == 0)
+      ਜੇ (xyz.len == 0 && xyz.pad_deliver == 0)
 	{
 	  retries = xyzModem_MAX_RETRIES;
-	  while (retries-- > 0)
+	  ਜਦੋਂ (retries-- > 0)
 	    {
-	      if (xyz.first_xmodem_packet && xyz.timeout &&
-		  get_timer(xyz.initial_time) > xyz.timeout)
+	      ਜੇ (xyz.ਪਹਿਲਾ_xmodem_packet && xyz.timeout &&
+		  get_timer(xyz.initial_ਸਮਾਂ) > xyz.timeout)
 		{
 		  *err = xyzModem_timeout;
 		  xyz.len = -1;
-		  return total;
+		  ਵਾਪਸ ਕੁੱਲ;
 		}
 
 	      stat = xyzModem_get_hdr ();
-	      if (stat == 0)
+	      ਜੇ (stat == 0)
 		{
-		  if (xyz.mode == xyzModem_xmodem && xyz.first_xmodem_packet)
-		    xyz.first_xmodem_packet = false;
-		  if (xyz.blk == xyz.next_blk)
+		  ਜੇ (xyz.ਬਹੁਲਕ == xyzModem_xmodem && xyz.ਪਹਿਲਾ_xmodem_packet)
+		    xyz.ਪਹਿਲਾ_xmodem_packet = false;
+		  ਜੇ (xyz.blk == xyz.ਅਗਲਾ_blk)
 		    {
 		      xyz.tx_ack = true;
 		      ZM_DEBUG (zm_dprintf
 				("ACK block %d (%d)\n", xyz.blk, __LINE__));
-		      xyz.next_blk = (xyz.next_blk + 1) & 0xFF;
+		      xyz.ਅਗਲਾ_blk = (xyz.ਅਗਲਾ_blk + 1) & 0xFF;
 
-		      if (xyz.mode == xyzModem_xmodem || xyz.file_length == 0)
+		      ਜੇ (xyz.ਬਹੁਲਕ == xyzModem_xmodem || xyz.file_ਲੰਮਾਈ == 0)
 			{
 			  /* Without a file length, EOF padding can't be
 			   * distinguished from block data until the next
@@ -561,11 +561,11 @@ xyzModem_stream_read (char *buf, int size, int *err)
 			   */
 			  xyz.pad_deliver = xyz.pad_pending;
 			  xyz.pad_pending = 0;
-			  if ((xyz.bufp[xyz.len - 1] == EOF) &&
+			  ਜੇ ((xyz.bufp[xyz.len - 1] == EOF) &&
 			      (xyz.bufp[xyz.len - 2] == EOF) &&
 			      (xyz.bufp[xyz.len - 3] == EOF))
 			    {
-			      while (xyz.len
+			      ਜਦੋਂ (xyz.len
 				     && (xyz.bufp[xyz.len - 1] == EOF))
 				{
 				  xyz.len--;
@@ -580,116 +580,116 @@ xyzModem_stream_read (char *buf, int size, int *err)
 		       * Only do this for Y-modem (and Z-modem should it ever
 		       * be supported since it can fall back to Y-modem mode).
 		       */
-		      if (xyz.mode != xyzModem_xmodem && 0 != xyz.file_length)
+		      ਜੇ (xyz.ਬਹੁਲਕ != xyzModem_xmodem && 0 != xyz.file_ਲੰਮਾਈ)
 			{
-			  xyz.read_length += xyz.len;
-			  if (xyz.read_length > xyz.file_length)
+			  xyz.read_ਲੰਮਾਈ += xyz.len;
+			  ਜੇ (xyz.read_ਲੰਮਾਈ > xyz.file_ਲੰਮਾਈ)
 			    {
-			      xyz.len -= (xyz.read_length - xyz.file_length);
+			      xyz.len -= (xyz.read_ਲੰਮਾਈ - xyz.file_ਲੰਮਾਈ);
 			    }
 			}
-		      break;
+		      ਰੋਕੋ;
 		    }
-		  else if (xyz.blk == ((xyz.next_blk - 1) & 0xFF))
+		  ਨਹੀਂਤਾਂ ਜੇ (xyz.blk == ((xyz.ਅਗਲਾ_blk - 1) & 0xFF))
 		    {
 		      /* Just re-ACK this so sender will get on with it */
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
-		      continue;	/* Need new header */
+		      ਜਾਰੀ;	/* Need new header */
 		    }
-		  else
+		  ਨਹੀਂਤਾਂ
 		    {
 		      stat = xyzModem_sequence;
 		    }
 		}
-	      if (stat == xyzModem_cancel)
+	      ਜੇ (stat == xyzModem_cancel)
 		{
-		  break;
+		  ਰੋਕੋ;
 		}
-	      if (stat == xyzModem_eof)
+	      ਜੇ (stat == xyzModem_eof)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK (%d)\n", __LINE__));
-		  if (xyz.mode == xyzModem_ymodem)
+		  ਜੇ (xyz.ਬਹੁਲਕ == xyzModem_ymodem)
 		    {
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan,
-					   (xyz.crc_mode ? 'C' : NAK));
-		      xyz.total_retries++;
+					   (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ ? 'C' : NAK));
+		      xyz.ਕੁੱਲ_retries++;
 		      ZM_DEBUG (zm_dprintf ("Reading Final Header\n"));
 		      stat = xyzModem_get_hdr ();
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		      ZM_DEBUG (zm_dprintf ("FINAL ACK (%d)\n", __LINE__));
 		    }
-		  else
+		  ਨਹੀਂਤਾਂ
 		    stat = 0;
 
 		  xyz.pad_pending = 0;	/* EOT: withheld ^Z run was padding */
 		  xyz.at_eof = true;
-		  break;
+		  ਰੋਕੋ;
 		}
-	      CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
-	      xyz.total_retries++;
+	      CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ ? 'C' : NAK));
+	      xyz.ਕੁੱਲ_retries++;
 	      ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	    }
-	  if (stat < 0 && (!xyz.first_xmodem_packet || stat != xyzModem_timeout))
+	  ਜੇ (stat < 0 && (!xyz.ਪਹਿਲਾ_xmodem_packet || stat != xyzModem_timeout))
 	    {
 	      *err = stat;
 	      xyz.len = -1;
-	      return total;
+	      ਵਾਪਸ ਕੁੱਲ;
 	    }
 	}
       /* A ^Z run withheld from the previous block turned out to be data */
-      if (xyz.pad_deliver > 0)
+      ਜੇ (xyz.pad_deliver > 0)
 	{
 	  len = xyz.pad_deliver;
-	  if (size < len)
-	    len = size;
+	  ਜੇ (ਮਾਪ < len)
+	    len = ਮਾਪ;
 	  memset (buf, EOF, len);
-	  size -= len;
+	  ਮਾਪ -= len;
 	  buf += len;
-	  total += len;
+	  ਕੁੱਲ += len;
 	  xyz.pad_deliver -= len;
 	}
       /* Don't "read" data from the EOF protocol package */
-      if (!xyz.at_eof && xyz.len > 0)
+      ਜੇ (!xyz.at_eof && xyz.len > 0)
 	{
 	  len = xyz.len;
-	  if (size < len)
-	    len = size;
-	  memcpy (buf, xyz.bufp, len);
-	  size -= len;
+	  ਜੇ (ਮਾਪ < len)
+	    len = ਮਾਪ;
+	  ਸਮ੍ਰਿਤੀ_ਨਕਲ (buf, xyz.bufp, len);
+	  ਮਾਪ -= len;
 	  buf += len;
-	  total += len;
+	  ਕੁੱਲ += len;
 	  xyz.len -= len;
 	  xyz.bufp += len;
 	}
     }
-  return total;
+  ਵਾਪਸ ਕੁੱਲ;
 }
 
-void
-xyzModem_stream_close (int *err)
+ਖਾਲੀ
+xyz_Modem_ਧਾਰਾ_close (ਪੂਰਨ *err)
 {
   ZM_DEBUG (zm_dprintf
     ("xyzModem - %s mode, %d(SOH)/%d(STX)/%d(CAN) packets, %d retries\n",
-     xyz.crc_mode ? "CRC" : "Cksum", xyz.total_SOH, xyz.total_STX,
-     xyz.total_CAN, xyz.total_retries));
+     xyz.ਚੱਕਰੀ_ਜਾਂਚ_ਬਹੁਲਕ ? "CRC" : "Cksum", xyz.ਕੁੱਲ_SOH, xyz.ਕੁੱਲ_STX,
+     xyz.ਕੁੱਲ_CAN, xyz.ਕੁੱਲ_retries));
   ZM_DEBUG (zm_flush ());
 }
 
 /* Need to be able to clean out the input buffer, so have to take the */
 /* getc */
-void
-xyzModem_stream_terminate (bool abort, int (*getc) (void))
+ਖਾਲੀ
+xyz_Modem_ਧਾਰਾ_terminate (bool abort, ਪੂਰਨ (*getc) (ਖਾਲੀ))
 {
-  int c;
+  ਪੂਰਨ c;
 
-  if (abort)
+  ਜੇ (abort)
     {
       ZM_DEBUG (zm_dprintf ("!!!! TRANSFER ABORT !!!!\n"));
-      switch (xyz.mode)
+      ਚੋਣ (xyz.ਬਹੁਲਕ)
 	{
-	case xyzModem_xmodem:
-	case xyzModem_ymodem:
+	ਹਾਲਤ xyzModem_xmodem:
+	ਹਾਲਤ xyzModem_ymodem:
 	  /* The X/YMODEM Spec seems to suggest that multiple CAN followed by an equal */
 	  /* number of Backspaces is a friendly way to get the other end to abort. */
 	  CYGACC_COMM_IF_PUTC (*xyz.__chan, CAN);
@@ -704,15 +704,15 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
 	  ZM_DEBUG (zm_dprintf ("Flushing serial line.\n"));
 	  xyzModem_flush ();
 	  xyz.at_eof = true;
-	  break;
-#ifdef xyzModem_zmodem
-	case xyzModem_zmodem:
+	  ਰੋਕੋ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ xyzModem_zmodem
+	ਹਾਲਤ xyzModem_zmodem:
 	  /* Might support it some day I suppose. */
-#endif
-	  break;
+#ਜੇ_ਅੰਤ
+	  ਰੋਕੋ;
 	}
     }
-  else
+  ਨਹੀਂਤਾਂ
     {
       ZM_DEBUG (zm_dprintf ("Engaging cleanup mode...\n"));
       /*
@@ -722,7 +722,7 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
        * If we don't eat it now, RedBoot will think the user typed it.
        */
       ZM_DEBUG (zm_dprintf ("Trailing gunk:\n"));
-      while ((c = (*getc) ()) > -1)
+      ਜਦੋਂ ((c = (*getc) ()) > -1)
         ;
       ZM_DEBUG (zm_dprintf ("\n"));
       /*
@@ -734,38 +734,38 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
     }
 }
 
-char *
-xyzModem_error (int err)
+ਅੱਖਰ *
+xyzModem_error (ਪੂਰਨ err)
 {
-  switch (err)
+  ਚੋਣ (err)
     {
-    case xyzModem_access:
-      return "Can't access file";
-      break;
-    case xyzModem_noZmodem:
-      return "Sorry, zModem not available yet";
-      break;
-    case xyzModem_timeout:
-      return "Timed out";
-      break;
-    case xyzModem_eof:
-      return "End of file";
-      break;
-    case xyzModem_cancel:
-      return "Cancelled";
-      break;
-    case xyzModem_frame:
-      return "Invalid framing";
-      break;
-    case xyzModem_cksum:
-      return "CRC/checksum error";
-      break;
-    case xyzModem_sequence:
-      return "Block sequence error";
-      break;
-    default:
-      return "Unknown error";
-      break;
+    ਹਾਲਤ xyzModem_access:
+      ਵਾਪਸ "Can't access file";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_noZmodem:
+      ਵਾਪਸ "Sorry, zModem not available yet";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_timeout:
+      ਵਾਪਸ "Timed out";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_eof:
+      ਵਾਪਸ "End of file";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_cancel:
+      ਵਾਪਸ "Cancelled";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyz_Modem_ਚੌਖਟਾ:
+      ਵਾਪਸ "Invalid framing";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_cksum:
+      ਵਾਪਸ "CRC/checksum error";
+      ਰੋਕੋ;
+    ਹਾਲਤ xyzModem_sequence:
+      ਵਾਪਸ "Block sequence error";
+      ਰੋਕੋ;
+    ਮੂਲ:
+      ਵਾਪਸ "Unknown error";
+      ਰੋਕੋ;
     }
 }
 

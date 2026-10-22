@@ -7,59 +7,59 @@
  * Licensed under the GPL-2 or later.
  */
 
-#include <cpu_func.h>
-#include <kgdb.h>
-#include <serial.h>
-#include <asm/ptrace.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cpu_func.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <kgdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <serial.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/ptrace.h>
 
-int (*debugger_exception_handler)(struct pt_regs *);
+ਪੂਰਨ (*debugger_exception_handler)(ਬਣਤਰ pt_regs *);
 
 __attribute__((weak))
-void kgdb_serial_init(void)
+ਖਾਲੀ kgdb_serial_init(ਖਾਲੀ)
 {
 	puts("[on serial] ");
 }
 
 __attribute__((weak))
-void putDebugChar(int c)
+ਖਾਲੀ putDebugChar(ਪੂਰਨ c)
 {
 	serial_putc(c);
 }
 
 __attribute__((weak))
-void putDebugStr(const char *str)
+ਖਾਲੀ putDebugStr(ਅਚਲ ਅੱਖਰ *str)
 {
-#ifdef DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG
 	serial_puts(str);
-#endif
+#ਜੇ_ਅੰਤ
 }
 
 __attribute__((weak))
-int getDebugChar(void)
+ਪੂਰਨ getDebugChar(ਖਾਲੀ)
 {
-	return serial_getc();
+	ਵਾਪਸ serial_getc();
 }
 
 __attribute__((weak))
-void kgdb_interruptible(int yes)
+ਖਾਲੀ kgdb_interruptible(ਪੂਰਨ yes)
 {
-	return;
+	ਵਾਪਸ;
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_range(void *from, void *to)
+ਖਾਲੀ kgdb_flush_cache_range(ਖਾਲੀ *from, ਖਾਲੀ *ਮੰਜ਼ਿਲ)
 {
-	flush_cache((unsigned long)from, (unsigned long)(to - from));
+	flush_cache((ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)from, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(ਮੰਜ਼ਿਲ - from));
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_all(void)
+ਖਾਲੀ kgdb_flush_cache_all(ਖਾਲੀ)
 {
-	if (dcache_status()) {
+	ਜੇ (dcache_ਸਥਿਤੀ()) {
 		dcache_disable();
 		dcache_enable();
 	}
-	if (icache_status()) {
+	ਜੇ (icache_ਸਥਿਤੀ()) {
 		icache_disable();
 		icache_enable();
 	}

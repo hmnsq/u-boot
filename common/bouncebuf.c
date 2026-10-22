@@ -5,53 +5,53 @@
  * Copyright (C) 2012 Marek Vasut <marex@denx.de>
  */
 
-#include <cpu_func.h>
-#include <log.h>
-#include <malloc.h>
-#include <errno.h>
-#include <bouncebuf.h>
-#include <asm/cache.h>
-#include <linux/dma-mapping.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cpu_func.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bouncebuf.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/cache.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/dma-mapping.h>
 
-static int addr_aligned(struct bounce_buffer *state)
+ਸਥਿਰ ਪੂਰਨ addr_aligned(ਬਣਤਰ bounce_ਬਫਰ *state)
 {
-	const ulong align_mask = ARCH_DMA_MINALIGN - 1;
+	ਅਚਲ ulong align_ਨਕਾਬ = ARCH_DMA_MINALIGN - 1;
 
 	/* Check if start is aligned */
-	if ((ulong)state->user_buffer & align_mask) {
-		debug("Unaligned buffer address %p\n", state->user_buffer);
-		return 0;
+	ਜੇ ((ulong)state->user_ਬਫਰ & align_ਨਕਾਬ) {
+		debug("Unaligned buffer address %p\n", state->user_ਬਫਰ);
+		ਵਾਪਸ 0;
 	}
 
 	/* Check if length is aligned */
-	if (state->len != state->len_aligned) {
+	ਜੇ (state->len != state->len_aligned) {
 		debug("Unaligned buffer length %zu\n", state->len);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* Aligned */
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-int bounce_buffer_start_extalign(struct bounce_buffer *state, void *data,
-				 size_t len, unsigned int flags,
+ਪੂਰਨ bounce_ਬਫਰ_ਸ਼ੁਰੂ_extalign(ਬਣਤਰ bounce_ਬਫਰ *state, ਖਾਲੀ *ਅੰਕੜੇ,
+				 size_t len, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags,
 				 size_t alignment,
-				 int (*addr_is_aligned)(struct bounce_buffer *state))
+				 ਪੂਰਨ (*addr_is_aligned)(ਬਣਤਰ bounce_ਬਫਰ *state))
 {
-	state->user_buffer = data;
-	state->bounce_buffer = data;
+	state->user_ਬਫਰ = ਅੰਕੜੇ;
+	state->bounce_ਬਫਰ = ਅੰਕੜੇ;
 	state->len = len;
 	state->len_aligned = roundup(len, alignment);
 	state->flags = flags;
 
-	if (!addr_is_aligned(state)) {
-		state->bounce_buffer = memalign(alignment,
+	ਜੇ (!addr_is_aligned(state)) {
+		state->bounce_ਬਫਰ = memalign(alignment,
 						state->len_aligned);
-		if (!state->bounce_buffer)
-			return -ENOMEM;
+		ਜੇ (!state->bounce_ਬਫਰ)
+			ਵਾਪਸ -ENOMEM;
 
-		if (state->flags & GEN_BB_READ)
-			memcpy(state->bounce_buffer, state->user_buffer,
+		ਜੇ (state->flags & GEN_BB_READ)
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(state->bounce_ਬਫਰ, state->user_ਬਫਰ,
 				state->len);
 	}
 
@@ -59,37 +59,37 @@ int bounce_buffer_start_extalign(struct bounce_buffer *state, void *data,
 	 * Flush data to RAM so DMA reads can pick it up,
 	 * and any CPU writebacks don't race with DMA writes
 	 */
-	dma_map_single(state->bounce_buffer,
+	dma_map_single(state->bounce_ਬਫਰ,
 		       state->len_aligned,
 		       DMA_BIDIRECTIONAL);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int bounce_buffer_start(struct bounce_buffer *state, void *data,
-			size_t len, unsigned int flags)
+ਪੂਰਨ bounce_ਬਫਰ_ਸ਼ੁਰੂ(ਬਣਤਰ bounce_ਬਫਰ *state, ਖਾਲੀ *ਅੰਕੜੇ,
+			size_t len, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 {
-	return bounce_buffer_start_extalign(state, data, len, flags,
+	ਵਾਪਸ bounce_ਬਫਰ_ਸ਼ੁਰੂ_extalign(state, ਅੰਕੜੇ, len, flags,
 					    ARCH_DMA_MINALIGN,
 					    addr_aligned);
 }
 
-int bounce_buffer_stop(struct bounce_buffer *state)
+ਪੂਰਨ bounce_ਬਫਰ_stop(ਬਣਤਰ bounce_ਬਫਰ *state)
 {
-	if (state->flags & GEN_BB_WRITE) {
+	ਜੇ (state->flags & GEN_BB_WRITE) {
 		/* Invalidate cache so that CPU can see any newly DMA'd data */
-		dma_unmap_single((dma_addr_t)(uintptr_t)state->bounce_buffer,
+		dma_unmap_single((dma_addr_t)(uintptr_t)state->bounce_ਬਫਰ,
 				 state->len_aligned,
 				 DMA_BIDIRECTIONAL);
 	}
 
-	if (state->bounce_buffer == state->user_buffer)
-		return 0;
+	ਜੇ (state->bounce_ਬਫਰ == state->user_ਬਫਰ)
+		ਵਾਪਸ 0;
 
-	if (state->flags & GEN_BB_WRITE)
-		memcpy(state->user_buffer, state->bounce_buffer, state->len);
+	ਜੇ (state->flags & GEN_BB_WRITE)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(state->user_ਬਫਰ, state->bounce_ਬਫਰ, state->len);
 
-	free(state->bounce_buffer);
+	ਮੁਕਤ(state->bounce_ਬਫਰ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }

@@ -5,83 +5,83 @@
  *
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <image.h>
-#include <fs.h>
-#include <asm/cache.h>
-#include <asm/io.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl_load.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fs.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/cache.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/io.h>
 
-struct blk_dev {
-	const char *ifname;
-	const char *filename;
-	char dev_part_str[8];
+ਬਣਤਰ blk_dev {
+	ਅਚਲ ਅੱਖਰ *ifname;
+	ਅਚਲ ਅੱਖਰ *filename;
+	ਅੱਖਰ dev_part_str[8];
 };
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ਸਥਿਰ ulong spl_fit_read(ਬਣਤਰ spl_ਲੱਦੋ_info *ਲੱਦੋ, ulong file_ਵਿੱਥ,
+			  ulong ਮਾਪ, ਖਾਲੀ *buf)
 {
 	loff_t actlen;
-	int ret;
-	struct blk_dev *dev = (struct blk_dev *)load->priv;
+	ਪੂਰਨ ret;
+	ਬਣਤਰ blk_dev *dev = (ਬਣਤਰ blk_dev *)ਲੱਦੋ->priv;
 
-	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	ret = fs_ਸੈੱਟ_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
+	ਜੇ (ret) {
+		ਲਿਖੋ("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
+	ret = fs_read(dev->filename, virt_ਮੰਜ਼ਿਲ_phys(buf), file_ਵਿੱਥ, ਮਾਪ,
 		      &actlen);
-	if (ret < 0) {
-		printf("spl: error reading image %s. Err - %d\n",
+	ਜੇ (ret < 0) {
+		ਲਿਖੋ("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	return actlen;
+	ਵਾਪਸ actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+ਪੂਰਨ spl_blk_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+		       ਬਣਤਰ spl_boot_device *bootdev,
+		       ਗਿਣਤੀ uclass_id uclass_id, ਪੂਰਨ devnum, ਪੂਰਨ partnum)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	struct blk_desc *blk_desc;
+	ਅਚਲ ਅੱਖਰ *filename = CONFIG_SPL_FS_ਲੱਦੋ_PAYLOAD_NAME;
+	ਬਣਤਰ blk_desc *blk_desc;
 	loff_t filesize;
-	struct blk_dev dev;
-	struct spl_load_info load;
-	int ret;
+	ਬਣਤਰ blk_dev dev;
+	ਬਣਤਰ spl_ਲੱਦੋ_info ਲੱਦੋ;
+	ਪੂਰਨ ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
-		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+	ਜੇ (!blk_desc) {
+		ਲਿਖੋ("blk desc for %d %d not found\n", uclass_id, devnum);
+		ਵਾਪਸ -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
 
 	dev.filename = filename;
 	dev.ifname = blk_get_uclass_name(uclass_id);
-	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
+	snprintf(dev.dev_part_str, ਆਕਾਰ(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
-	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	ret = fs_ਸੈੱਟ_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
+	ਜੇ (ret) {
+		ਲਿਖੋ("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	ret = fs_size(filename, &filesize);
-	if (ret) {
-		printf("spl: unable to get file size: %s. Err - %d\n",
+	ret = fs_ਮਾਪ(filename, &filesize);
+	ਜੇ (ret) {
+		ਲਿਖੋ("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	spl_load_init(&load, spl_fit_read, &dev,
+	spl_ਲੱਦੋ_init(&ਲੱਦੋ, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	ਵਾਪਸ spl_ਲੱਦੋ(spl_image, bootdev, &ਲੱਦੋ, filesize, 0);
 }

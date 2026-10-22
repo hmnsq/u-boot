@@ -6,75 +6,75 @@
  * (C) Copyright 2012
  * Ilya Yanok <ilya.yanok@gmail.com>
  */
-#include <env.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <net.h>
-#include <linux/libfdt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl_load.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <net.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/libfdt.h>
 
-#if defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
-static ulong spl_net_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+#ਜੇ defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
+ਸਥਿਰ ulong spl_net_ਲੱਦੋ_read(ਬਣਤਰ spl_ਲੱਦੋ_info *ਲੱਦੋ, ulong sector,
+			       ulong ਗਿਣਤੀ_2, ਖਾਲੀ *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
-	memcpy(buf, map_sysmem(image_load_addr + sector, count), count);
-	return count;
+	      __func__, sector, ਗਿਣਤੀ_2, (ulong)buf);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf, map_sysmem(image_ਲੱਦੋ_addr + sector, ਗਿਣਤੀ_2), ਗਿਣਤੀ_2);
+	ਵਾਪਸ ਗਿਣਤੀ_2;
 }
 
-static int spl_net_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_net_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			      ਬਣਤਰ spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
-	int rv;
+	ਬਣਤਰ spl_ਲੱਦੋ_info ਲੱਦੋ;
+	ਪੂਰਨ rv;
 
 	env_init();
 	env_relocate();
-	env_set("autoload", "yes");
+	env_ਸੈੱਟ("autoload", "yes");
 	rv = eth_initialize();
-	if (rv == 0) {
-		printf("No Ethernet devices found\n");
-		return -ENODEV;
+	ਜੇ (rv == 0) {
+		ਲਿਖੋ("No Ethernet devices found\n");
+		ਵਾਪਸ -ENODEV;
 	}
-	if (bootdev->boot_device_name)
-		env_set("ethact", bootdev->boot_device_name);
+	ਜੇ (bootdev->boot_device_name)
+		env_ਸੈੱਟ("ethact", bootdev->boot_device_name);
 	rv = net_loop(BOOTP);
-	if (rv < 0) {
-		printf("Problem booting with BOOTP\n");
-		return rv;
+	ਜੇ (rv < 0) {
+		ਲਿਖੋ("Problem booting with BOOTP\n");
+		ਵਾਪਸ rv;
 	}
 
-	spl_load_init(&load, spl_net_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, 0);
+	spl_ਲੱਦੋ_init(&ਲੱਦੋ, spl_net_ਲੱਦੋ_read, ਨਿਰਾ, 1);
+	ਵਾਪਸ spl_ਲੱਦੋ(spl_image, bootdev, &ਲੱਦੋ, 0, 0);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SPL_ETH
-int spl_net_load_image_cpgmac(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_ETH
+ਪੂਰਨ spl_net_ਲੱਦੋ_image_cpgmac(ਬਣਤਰ spl_image_info *spl_image,
+			      ਬਣਤਰ spl_boot_device *bootdev)
 {
-#ifdef CONFIG_SPL_ETH_DEVICE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_ETH_DEVICE
 	bootdev->boot_device_name = CONFIG_SPL_ETH_DEVICE;
-#endif
+#ਜੇ_ਅੰਤ
 
-	return spl_net_load_image(spl_image, bootdev);
+	ਵਾਪਸ spl_net_ਲੱਦੋ_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("eth device", 0, BOOT_DEVICE_CPGMAC,
-		      spl_net_load_image_cpgmac);
-#endif
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("eth device", 0, BOOT_DEVICE_CPGMAC,
+		      spl_net_ਲੱਦੋ_image_cpgmac);
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SPL_USB_ETHER
-int spl_net_load_image_usb(struct spl_image_info *spl_image,
-			   struct spl_boot_device *bootdev)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_USB_ETHER
+ਪੂਰਨ spl_net_ਲੱਦੋ_image_usb(ਬਣਤਰ spl_image_info *spl_image,
+			   ਬਣਤਰ spl_boot_device *bootdev)
 {
 	bootdev->boot_device_name = "usb_ether";
-#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB_GADGET)
 	usb_ether_init();
-#endif
-	return spl_net_load_image(spl_image, bootdev);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ spl_net_ਲੱਦੋ_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_load_image_usb);
-#endif
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_ਲੱਦੋ_image_usb);
+#ਜੇ_ਅੰਤ

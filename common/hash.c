@@ -9,226 +9,226 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#ifndef USE_HOSTCC
-#include <command.h>
-#include <dm.h>
-#include <env.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <hw_sha.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/errno.h>
-#include <u-boot/hash.h>
-#else
-#include "mkimage.h"
-#include <linux/compiler_attributes.h>
-#include <time.h>
-#include <linux/kconfig.h>
-#endif /* !USE_HOSTCC*/
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ USE_HOSTCC
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <hw_sha.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/cache.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/io.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/hash.h>
+#ਨਹੀਂਤਾਂ
+#ਅਨ੍ਤਰ੍ਭਾਵ "mkimage.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/compiler_attributes.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/kconfig.h>
+#ਜੇ_ਅੰਤ /* !USE_HOSTCC*/
 
-#include <hash.h>
-#include <image.h>
-#include <u-boot/crc.h>
-#include <u-boot/sha1.h>
-#include <u-boot/sha256.h>
-#include <u-boot/sha512.h>
-#include <u-boot/md5.h>
-#include <u-boot/sm3.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <hash.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/crc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/sha1.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/sha256.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/sha512.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/md5.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/sm3.h>
 
-static int __maybe_unused hash_init_sha1(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_sha1(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	sha1_context *ctx = malloc(sizeof(sha1_context));
+	sha1_context *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(sha1_context));
 	sha1_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_sha1(struct hash_algo *algo, void *ctx,
-					   const void *buf, unsigned int size,
-					   int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_sha1(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					   ਅਚਲ ਖਾਲੀ *buf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ,
+					   ਪੂਰਨ is_ਆਖਰੀ)
 {
-	sha1_update((sha1_context *)ctx, buf, size);
-	return 0;
+	sha1_update((sha1_context *)ctx, buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_sha1(struct hash_algo *algo, void *ctx,
-					   void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_sha1(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					   ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	sha1_finish((sha1_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha1_ਅੰਤ((sha1_context *)ctx, dest_buf);
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_sha256(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_sha256(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	sha256_context *ctx = malloc(sizeof(sha256_context));
+	sha256_context *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(sha256_context));
 	sha256_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_sha256(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_sha256(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਅਚਲ ਖਾਲੀ *buf, uint ਮਾਪ,
+					     ਪੂਰਨ is_ਆਖਰੀ)
 {
-	sha256_update((sha256_context *)ctx, buf, size);
-	return 0;
+	sha256_update((sha256_context *)ctx, buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_sha256(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_sha256(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	sha256_finish((sha256_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha256_ਅੰਤ((sha256_context *)ctx, dest_buf);
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_sha384(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_sha384(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	sha512_context *ctx = malloc(sizeof(sha512_context));
+	sha512_context *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(sha512_context));
 	sha384_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_sha384(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_sha384(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਅਚਲ ਖਾਲੀ *buf, uint ਮਾਪ,
+					     ਪੂਰਨ is_ਆਖਰੀ)
 {
-	sha384_update((sha512_context *)ctx, buf, size);
-	return 0;
+	sha384_update((sha512_context *)ctx, buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_sha384(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_sha384(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	sha384_finish((sha512_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha384_ਅੰਤ((sha512_context *)ctx, dest_buf);
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_sha512(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_sha512(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	sha512_context *ctx = malloc(sizeof(sha512_context));
+	sha512_context *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(sha512_context));
 	sha512_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_sha512(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_sha512(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਅਚਲ ਖਾਲੀ *buf, uint ਮਾਪ,
+					     ਪੂਰਨ is_ਆਖਰੀ)
 {
-	sha512_update((sha512_context *)ctx, buf, size);
-	return 0;
+	sha512_update((sha512_context *)ctx, buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_sha512(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_sha512(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					     ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	sha512_finish((sha512_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha512_ਅੰਤ((sha512_context *)ctx, dest_buf);
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_sm3(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_sm3(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	struct sm3_context *ctx = malloc(sizeof(struct sm3_context));
+	ਬਣਤਰ sm3_context *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(ਬਣਤਰ sm3_context));
 
 	sm3_init(ctx);
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_sm3(struct hash_algo *algo, void *ctx,
-					  const void *buf, uint size,
-					  int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_sm3(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					  ਅਚਲ ਖਾਲੀ *buf, uint ਮਾਪ,
+					  ਪੂਰਨ is_ਆਖਰੀ)
 {
-	sm3_update((struct sm3_context *)ctx, buf, size);
-	return 0;
+	sm3_update((ਬਣਤਰ sm3_context *)ctx, buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_sm3(struct hash_algo *algo, void *ctx,
-					  void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_sm3(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					  ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	sm3_final((struct sm3_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sm3_final((ਬਣਤਰ sm3_context *)ctx, dest_buf);
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_crc16_ccitt(struct hash_algo *algo,
-						void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_crc16_ccitt(ਬਣਤਰ hash_algo *algo,
+						ਖਾਲੀ **ctxp)
 {
-	uint16_t *ctx = malloc(sizeof(uint16_t));
+	uint16_t *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(uint16_t));
 	*ctx = 0;
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_crc16_ccitt(struct hash_algo *algo,
-						  void *ctx, const void *buf,
-						  unsigned int size,
-						  int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_crc16_ccitt(ਬਣਤਰ hash_algo *algo,
+						  ਖਾਲੀ *ctx, ਅਚਲ ਖਾਲੀ *buf,
+						  ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ,
+						  ਪੂਰਨ is_ਆਖਰੀ)
 {
-	*((uint16_t *)ctx) = crc16_ccitt(*((uint16_t *)ctx), buf, size);
-	return 0;
+	*((uint16_t *)ctx) = crc16_ccitt(*((uint16_t *)ctx), buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_crc16_ccitt(struct hash_algo *algo,
-						  void *ctx, void *dest_buf,
-						  int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_crc16_ccitt(ਬਣਤਰ hash_algo *algo,
+						  ਖਾਲੀ *ctx, ਖਾਲੀ *dest_buf,
+						  ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
 	*((uint16_t *)dest_buf) = *((uint16_t *)ctx);
-	free(ctx);
-	return 0;
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_init_crc32(struct hash_algo *algo, void **ctxp)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_init_ਚੱਕਰੀ_ਜਾਂਚ_32(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ **ctxp)
 {
-	uint32_t *ctx = malloc(sizeof(uint32_t));
+	uint32_t *ctx = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(uint32_t));
 	*ctx = 0;
 	*ctxp = ctx;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_update_crc32(struct hash_algo *algo, void *ctx,
-					    const void *buf, unsigned int size,
-					    int is_last)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_update_ਚੱਕਰੀ_ਜਾਂਚ_32(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					    ਅਚਲ ਖਾਲੀ *buf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ,
+					    ਪੂਰਨ is_ਆਖਰੀ)
 {
-	*((uint32_t *)ctx) = crc32(*((uint32_t *)ctx), buf, size);
-	return 0;
+	*((uint32_t *)ctx) = ਚੱਕਰੀ_ਜਾਂਚ_32(*((uint32_t *)ctx), buf, ਮਾਪ);
+	ਵਾਪਸ 0;
 }
 
-static int __maybe_unused hash_finish_crc32(struct hash_algo *algo, void *ctx,
-					    void *dest_buf, int size)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused hash_ਅੰਤ_ਚੱਕਰੀ_ਜਾਂਚ_32(ਬਣਤਰ hash_algo *algo, ਖਾਲੀ *ctx,
+					    ਖਾਲੀ *dest_buf, ਪੂਰਨ ਮਾਪ)
 {
-	if (size < algo->digest_size)
-		return -1;
+	ਜੇ (ਮਾਪ < algo->digest_ਮਾਪ)
+		ਵਾਪਸ -1;
 
 	*((uint32_t *)dest_buf) = *((uint32_t *)ctx);
-	free(ctx);
-	return 0;
+	ਮੁਕਤ(ctx);
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -236,231 +236,231 @@ static int __maybe_unused hash_finish_crc32(struct hash_algo *algo, void *ctx,
  * is enable we will use that, otherwise a software version of the algorithm.
  * Note that algorithm names must be in lower case.
  */
-static struct hash_algo hash_algo[] = {
-#if CONFIG_IS_ENABLED(MD5)
+ਸਥਿਰ ਬਣਤਰ hash_algo hash_algo[] = {
+#ਜੇ CONFIG_IS_ENABLED(MD5)
 	{
 		.name		= "md5",
-		.digest_size	= MD5_SUM_LEN,
-		.chunk_size	= CHUNKSZ_MD5,
+		.digest_ਮਾਪ	= MD5_ਜੋੜ_LEN,
+		.chunk_ਮਾਪ	= CHUNKSZ_MD5,
 		.hash_func_ws	= md5_wd,
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA1)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA1)
 	{
 		.name		= "sha1",
-		.digest_size	= SHA1_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA1,
-#if CONFIG_IS_ENABLED(SHA_HW_ACCEL)
+		.digest_ਮਾਪ	= SHA1_ਜੋੜ_LEN,
+		.chunk_ਮਾਪ	= CHUNKSZ_SHA1,
+#ਜੇ CONFIG_IS_ENABLED(SHA_HW_ACCEL)
 		.hash_func_ws	= hw_sha1,
-#else
+#ਨਹੀਂਤਾਂ
 		.hash_func_ws	= sha1_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_ਅੰਤ	= hw_sha_ਅੰਤ,
+#ਨਹੀਂਤਾਂ
 		.hash_init	= hash_init_sha1,
 		.hash_update	= hash_update_sha1,
-		.hash_finish	= hash_finish_sha1,
-#endif
+		.hash_ਅੰਤ	= hash_ਅੰਤ_sha1,
+#ਜੇ_ਅੰਤ
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA256)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA256)
 	{
 		.name		= "sha256",
-		.digest_size	= SHA256_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA256,
-#if CONFIG_IS_ENABLED(SHA_HW_ACCEL)
+		.digest_ਮਾਪ	= SHA256_ਜੋੜ_LEN,
+		.chunk_ਮਾਪ	= CHUNKSZ_SHA256,
+#ਜੇ CONFIG_IS_ENABLED(SHA_HW_ACCEL)
 		.hash_func_ws	= hw_sha256,
-#else
+#ਨਹੀਂਤਾਂ
 		.hash_func_ws	= sha256_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_ਅੰਤ	= hw_sha_ਅੰਤ,
+#ਨਹੀਂਤਾਂ
 		.hash_init	= hash_init_sha256,
 		.hash_update	= hash_update_sha256,
-		.hash_finish	= hash_finish_sha256,
-#endif
+		.hash_ਅੰਤ	= hash_ਅੰਤ_sha256,
+#ਜੇ_ਅੰਤ
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA384)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA384)
 	{
 		.name		= "sha384",
-		.digest_size	= SHA384_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA384,
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
+		.digest_ਮਾਪ	= SHA384_ਜੋੜ_LEN,
+		.chunk_ਮਾਪ	= CHUNKSZ_SHA384,
+#ਜੇ CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
 		.hash_func_ws	= hw_sha384,
-#else
+#ਨਹੀਂਤਾਂ
 		.hash_func_ws	= sha384_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_ਅੰਤ	= hw_sha_ਅੰਤ,
+#ਨਹੀਂਤਾਂ
 		.hash_init	= hash_init_sha384,
 		.hash_update	= hash_update_sha384,
-		.hash_finish	= hash_finish_sha384,
-#endif
+		.hash_ਅੰਤ	= hash_ਅੰਤ_sha384,
+#ਜੇ_ਅੰਤ
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA512)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA512)
 	{
 		.name		= "sha512",
-		.digest_size	= SHA512_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA512,
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
+		.digest_ਮਾਪ	= SHA512_ਜੋੜ_LEN,
+		.chunk_ਮਾਪ	= CHUNKSZ_SHA512,
+#ਜੇ CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
 		.hash_func_ws	= hw_sha512,
-#else
+#ਨਹੀਂਤਾਂ
 		.hash_func_ws	= sha512_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_ਅੰਤ	= hw_sha_ਅੰਤ,
+#ਨਹੀਂਤਾਂ
 		.hash_init	= hash_init_sha512,
 		.hash_update	= hash_update_sha512,
-		.hash_finish	= hash_finish_sha512,
-#endif
+		.hash_ਅੰਤ	= hash_ਅੰਤ_sha512,
+#ਜੇ_ਅੰਤ
 	},
-#endif
-#if CONFIG_IS_ENABLED(SM3)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(SM3)
 	{
 		.name		= "sm3_256",
-		.digest_size	= SM3_DIGEST_SIZE,
-		.chunk_size	= SM3_BLOCK_SIZE,
+		.digest_ਮਾਪ	= SM3_DIGEST_ਮਾਪ,
+		.chunk_ਮਾਪ	= SM3_ਖੰਡ_ਮਾਪ,
 		.hash_func_ws	= sm3_csum_wd,
 		.hash_init	= hash_init_sm3,
 		.hash_update	= hash_update_sm3,
-		.hash_finish	= hash_finish_sm3,
+		.hash_ਅੰਤ	= hash_ਅੰਤ_sm3,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC16)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(CRC16)
 	{
 		.name		= "crc16-ccitt",
-		.digest_size	= 2,
-		.chunk_size	= CHUNKSZ,
+		.digest_ਮਾਪ	= 2,
+		.chunk_ਮਾਪ	= CHUNKSZ,
 		.hash_func_ws	= crc16_ccitt_wd_buf,
 		.hash_init	= hash_init_crc16_ccitt,
 		.hash_update	= hash_update_crc16_ccitt,
-		.hash_finish	= hash_finish_crc16_ccitt,
+		.hash_ਅੰਤ	= hash_ਅੰਤ_crc16_ccitt,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC8) && IS_ENABLED(CONFIG_HASH_CRC8)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(CRC8) && IS_ENABLED(CONFIG_HASH_CRC8)
 	{
 		.name		= "crc8",
-		.digest_size	= 1,
-		.chunk_size	= CHUNKSZ_CRC32,
+		.digest_ਮਾਪ	= 1,
+		.chunk_ਮਾਪ	= CHUNKSZ_ਚੱਕਰੀ_ਜਾਂਚ_32,
 		.hash_func_ws	= crc8_wd_buf,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC32)
+#ਜੇ_ਅੰਤ
+#ਜੇ CONFIG_IS_ENABLED(ਚੱਕਰੀ_ਜਾਂਚ_32_2)
 	{
 		.name		= "crc32",
-		.digest_size	= 4,
-		.chunk_size	= CHUNKSZ_CRC32,
-		.hash_func_ws	= crc32_wd_buf,
-		.hash_init	= hash_init_crc32,
-		.hash_update	= hash_update_crc32,
-		.hash_finish	= hash_finish_crc32,
+		.digest_ਮਾਪ	= 4,
+		.chunk_ਮਾਪ	= CHUNKSZ_ਚੱਕਰੀ_ਜਾਂਚ_32,
+		.hash_func_ws	= ਚੱਕਰੀ_ਜਾਂਚ_32_wd_buf,
+		.hash_init	= hash_init_ਚੱਕਰੀ_ਜਾਂਚ_32,
+		.hash_update	= hash_update_ਚੱਕਰੀ_ਜਾਂਚ_32,
+		.hash_ਅੰਤ	= hash_ਅੰਤ_ਚੱਕਰੀ_ਜਾਂਚ_32,
 	},
-#endif
+#ਜੇ_ਅੰਤ
 };
 
 /* Try to minimize code size for boards that don't want much hashing */
-#if CONFIG_IS_ENABLED(SHA256) || IS_ENABLED(CONFIG_CMD_SHA1SUM) || \
-	CONFIG_IS_ENABLED(CRC32_VERIFY) || IS_ENABLED(CONFIG_CMD_HASH) || \
+#ਜੇ CONFIG_IS_ENABLED(SHA256) || IS_ENABLED(CONFIG_CMD_SHA1_ਜੋੜ) || \
+	CONFIG_IS_ENABLED(ਚੱਕਰੀ_ਜਾਂਚ_32_VERIFY) || IS_ENABLED(CONFIG_CMD_HASH) || \
 	CONFIG_IS_ENABLED(SHA384) || CONFIG_IS_ENABLED(SHA512) || \
-	IS_ENABLED(CONFIG_CMD_MD5SUM) || CONFIG_IS_ENABLED(SM3)
-#define multi_hash()	1
-#else
-#define multi_hash()	0
-#endif
+	IS_ENABLED(CONFIG_CMD_MD5_ਜੋੜ) || CONFIG_IS_ENABLED(SM3)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ multi_hash()	1
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ multi_hash()	0
+#ਜੇ_ਅੰਤ
 
-int hash_lookup_algo(const char *algo_name, struct hash_algo **algop)
+ਪੂਰਨ hash_lookup_algo(ਅਚਲ ਅੱਖਰ *algo_name, ਬਣਤਰ hash_algo **algop)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < ARRAY_SIZE(hash_algo); i++) {
-		if (!strcmp(algo_name, hash_algo[i].name)) {
+	ਲਈ (i = 0; i < ARRAY_ਮਾਪ(hash_algo); i++) {
+		ਜੇ (!strcmp(algo_name, hash_algo[i].name)) {
 			*algop = &hash_algo[i];
-			return 0;
+			ਵਾਪਸ 0;
 		}
 	}
 
 	debug("Unknown hash algorithm '%s'\n", algo_name);
-	return -EPROTONOSUPPORT;
+	ਵਾਪਸ -EPROTONOSUPPORT;
 }
 
-int hash_progressive_lookup_algo(const char *algo_name,
-				 struct hash_algo **algop)
+ਪੂਰਨ hash_progressive_lookup_algo(ਅਚਲ ਅੱਖਰ *algo_name,
+				 ਬਣਤਰ hash_algo **algop)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < ARRAY_SIZE(hash_algo); i++) {
-		if (!strcmp(algo_name, hash_algo[i].name)) {
-			if (hash_algo[i].hash_init) {
+	ਲਈ (i = 0; i < ARRAY_ਮਾਪ(hash_algo); i++) {
+		ਜੇ (!strcmp(algo_name, hash_algo[i].name)) {
+			ਜੇ (hash_algo[i].hash_init) {
 				*algop = &hash_algo[i];
-				return 0;
+				ਵਾਪਸ 0;
 			}
 		}
 	}
 
 	debug("Unknown hash algorithm '%s'\n", algo_name);
-	return -EPROTONOSUPPORT;
+	ਵਾਪਸ -EPROTONOSUPPORT;
 }
 
-#ifndef USE_HOSTCC
-int hash_parse_string(const char *algo_name, const char *str, uint8_t *result)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ USE_HOSTCC
+ਪੂਰਨ hash_parse_string(ਅਚਲ ਅੱਖਰ *algo_name, ਅਚਲ ਅੱਖਰ *str, uint8_t *ਨਤੀਜਾ)
 {
-	struct hash_algo *algo;
-	int ret;
-	int i;
+	ਬਣਤਰ hash_algo *algo;
+	ਪੂਰਨ ret;
+	ਪੂਰਨ i;
 
 	ret = hash_lookup_algo(algo_name, &algo);
-	if (ret)
-		return ret;
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
-	for (i = 0; i < algo->digest_size; i++) {
-		char chr[3];
+	ਲਈ (i = 0; i < algo->digest_ਮਾਪ; i++) {
+		ਅੱਖਰ chr[3];
 
 		strlcpy(chr, &str[i * 2], 3);
-		result[i] = hextoul(chr, NULL);
+		ਨਤੀਜਾ[i] = hextoul(chr, ਨਿਰਾ);
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int hash_block(const char *algo_name, const void *data, unsigned int len,
-	       uint8_t *output, int *output_size)
+ਪੂਰਨ hash_ਖੰਡ(ਅਚਲ ਅੱਖਰ *algo_name, ਅਚਲ ਖਾਲੀ *ਅੰਕੜੇ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ len,
+	       uint8_t *output, ਪੂਰਨ *output_ਮਾਪ)
 {
-	struct hash_algo *algo;
-	int ret;
+	ਬਣਤਰ hash_algo *algo;
+	ਪੂਰਨ ret;
 
 	ret = hash_lookup_algo(algo_name, &algo);
-	if (ret)
-		return ret;
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
-	if (output_size && *output_size < algo->digest_size) {
+	ਜੇ (output_ਮਾਪ && *output_ਮਾਪ < algo->digest_ਮਾਪ) {
 		debug("Output buffer size %d too small (need %d bytes)",
-		      *output_size, algo->digest_size);
-		return -ENOSPC;
+		      *output_ਮਾਪ, algo->digest_ਮਾਪ);
+		ਵਾਪਸ -ENOSPC;
 	}
-	if (output_size)
-		*output_size = algo->digest_size;
-	algo->hash_func_ws(data, len, output, algo->chunk_size);
+	ਜੇ (output_ਮਾਪ)
+		*output_ਮਾਪ = algo->digest_ਮਾਪ;
+	algo->hash_func_ws(ਅੰਕੜੇ, len, output, algo->chunk_ਮਾਪ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#if !defined(CONFIG_XPL_BUILD) && (defined(CONFIG_CMD_HASH) || \
-	defined(CONFIG_CMD_SHA1SUM) || defined(CONFIG_CMD_CRC32)) || \
-	defined(CONFIG_CMD_MD5SUM)
+#ਜੇ !defined(CONFIG_XPL_BUILD) && (defined(CONFIG_CMD_HASH) || \
+	defined(CONFIG_CMD_SHA1_ਜੋੜ) || defined(CONFIG_CMD_ਚੱਕਰੀ_ਜਾਂਚ_32)) || \
+	defined(CONFIG_CMD_MD5_ਜੋੜ)
 /**
  * store_result: Store the resulting sum to an address or variable
  *
@@ -472,11 +472,11 @@ int hash_block(const char *algo_name, const void *data, unsigned int len,
  * @allow_env_vars:	non-zero to permit storing the result to an
  *			variable environment
  */
-static void store_result(struct hash_algo *algo, const uint8_t *sum,
-			 const char *dest, int allow_env_vars)
+ਸਥਿਰ ਖਾਲੀ store_ਨਤੀਜਾ(ਬਣਤਰ hash_algo *algo, ਅਚਲ uint8_t *ਜੋੜ,
+			 ਅਚਲ ਅੱਖਰ *dest, ਪੂਰਨ allow_env_vars)
 {
-	unsigned int i;
-	int env_var = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
+	ਪੂਰਨ env_var = 0;
 
 	/*
 	 * If environment variables are allowed, then we assume that 'dest'
@@ -484,30 +484,30 @@ static void store_result(struct hash_algo *algo, const uint8_t *sum,
 	 * case we assume it is an address. If not allowed, it is always an
 	 * address. This is to support the crc32 command.
 	 */
-	if (allow_env_vars) {
-		if (*dest == '*')
+	ਜੇ (allow_env_vars) {
+		ਜੇ (*dest == '*')
 			dest++;
-		else
+		ਨਹੀਂਤਾਂ
 			env_var = 1;
 	}
 
-	if (env_var) {
-		char str_output[HASH_MAX_DIGEST_SIZE * 2 + 1];
-		char *str_ptr = str_output;
+	ਜੇ (env_var) {
+		ਅੱਖਰ str_output[HASH_MAX_DIGEST_ਮਾਪ * 2 + 1];
+		ਅੱਖਰ *str_ptr = str_output;
 
-		for (i = 0; i < algo->digest_size; i++) {
-			sprintf(str_ptr, "%02x", sum[i]);
+		ਲਈ (i = 0; i < algo->digest_ਮਾਪ; i++) {
+			sprintf(str_ptr, "%02x", ਜੋੜ[i]);
 			str_ptr += 2;
 		}
 		*str_ptr = '\0';
-		env_set(dest, str_output);
-	} else {
+		env_ਸੈੱਟ(dest, str_output);
+	} ਨਹੀਂਤਾਂ {
 		ulong addr;
-		void *buf;
+		ਖਾਲੀ *buf;
 
-		addr = hextoul(dest, NULL);
-		buf = map_sysmem(addr, algo->digest_size);
-		memcpy(buf, sum, algo->digest_size);
+		addr = hextoul(dest, ਨਿਰਾ);
+		buf = map_sysmem(addr, algo->digest_ਮਾਪ);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf, ਜੋੜ, algo->digest_ਮਾਪ);
 		unmap_sysmem(buf);
 	}
 }
@@ -528,170 +528,170 @@ static void store_result(struct hash_algo *algo, const uint8_t *sum,
  *			address, and the * prefix is not expected.
  * Return: 0 if ok, non-zero on error
  */
-static int parse_verify_sum(struct hash_algo *algo, char *verify_str,
-			    uint8_t *vsum, int allow_env_vars)
+ਸਥਿਰ ਪੂਰਨ parse_verify_ਜੋੜ(ਬਣਤਰ hash_algo *algo, ਅੱਖਰ *verify_str,
+			    uint8_t *vsum, ਪੂਰਨ allow_env_vars)
 {
-	int env_var = 0;
+	ਪੂਰਨ env_var = 0;
 
 	/* See comment above in store_result() */
-	if (allow_env_vars) {
-		if (*verify_str == '*')
+	ਜੇ (allow_env_vars) {
+		ਜੇ (*verify_str == '*')
 			verify_str++;
-		else
+		ਨਹੀਂਤਾਂ
 			env_var = 1;
 	}
 
-	if (!env_var) {
+	ਜੇ (!env_var) {
 		ulong addr;
-		void *buf;
+		ਖਾਲੀ *buf;
 
-		addr = hextoul(verify_str, NULL);
-		buf = map_sysmem(addr, algo->digest_size);
-		memcpy(vsum, buf, algo->digest_size);
-	} else {
-		char *vsum_str;
-		int digits = algo->digest_size * 2;
+		addr = hextoul(verify_str, ਨਿਰਾ);
+		buf = map_sysmem(addr, algo->digest_ਮਾਪ);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(vsum, buf, algo->digest_ਮਾਪ);
+	} ਨਹੀਂਤਾਂ {
+		ਅੱਖਰ *vsum_str;
+		ਪੂਰਨ digits = algo->digest_ਮਾਪ * 2;
 
 		/*
 		 * As with the original code from sha1sum.c, we assume that a
 		 * string which matches the digest size exactly is a hex
 		 * string and not an environment variable.
 		 */
-		if (strlen(verify_str) == digits)
+		ਜੇ (ਲੜੀ_ਲੰਬਾਈ(verify_str) == digits)
 			vsum_str = verify_str;
-		else {
+		ਨਹੀਂਤਾਂ {
 			vsum_str = env_get(verify_str);
-			if (vsum_str == NULL || strlen(vsum_str) != digits) {
-				printf("Expected %d hex digits in env var\n",
+			ਜੇ (vsum_str == ਨਿਰਾ || ਲੜੀ_ਲੰਬਾਈ(vsum_str) != digits) {
+				ਲਿਖੋ("Expected %d hex digits in env var\n",
 				       digits);
-				return 1;
+				ਵਾਪਸ 1;
 			}
 		}
 
 		hash_parse_string(algo->name, vsum_str, vsum);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void hash_show(struct hash_algo *algo, ulong addr, ulong len, uint8_t *output)
+ਸਥਿਰ ਖਾਲੀ hash_show(ਬਣਤਰ hash_algo *algo, ulong addr, ulong len, uint8_t *output)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	printf("%s for %08lx ... %08lx ==> ", algo->name, addr, addr + len - 1);
-	for (i = 0; i < algo->digest_size; i++)
-		printf("%02x", output[i]);
+	ਲਿਖੋ("%s for %08lx ... %08lx ==> ", algo->name, addr, addr + len - 1);
+	ਲਈ (i = 0; i < algo->digest_ਮਾਪ; i++)
+		ਲਿਖੋ("%02x", output[i]);
 }
 
-int hash_command(const char *algo_name, int flags, struct cmd_tbl *cmdtp,
-		 int flag, int argc, char *const argv[])
+ਪੂਰਨ hash_command(ਅਚਲ ਅੱਖਰ *algo_name, ਪੂਰਨ flags, ਬਣਤਰ cmd_tbl *cmdtp,
+		 ਪੂਰਨ flag, ਪੂਰਨ argc, ਅੱਖਰ *ਅਚਲ argv[])
 {
 	ulong addr, len;
 
-	if ((argc < 2) || ((flags & HASH_FLAG_VERIFY) && (argc < 3)))
-		return CMD_RET_USAGE;
+	ਜੇ ((argc < 2) || ((flags & HASH_FLAG_VERIFY) && (argc < 3)))
+		ਵਾਪਸ CMD_RET_USAGE;
 
-	addr = hextoul(*argv++, NULL);
-	len = hextoul(*argv++, NULL);
+	addr = hextoul(*argv++, ਨਿਰਾ);
+	len = hextoul(*argv++, ਨਿਰਾ);
 
-	if (multi_hash()) {
-		struct hash_algo *algo;
+	ਜੇ (multi_hash()) {
+		ਬਣਤਰ hash_algo *algo;
 		u8 *output;
-		uint8_t vsum[HASH_MAX_DIGEST_SIZE];
-		void *buf;
+		uint8_t vsum[HASH_MAX_DIGEST_ਮਾਪ];
+		ਖਾਲੀ *buf;
 
-		if (hash_lookup_algo(algo_name, &algo)) {
-			printf("Unknown hash algorithm '%s'\n", algo_name);
-			return CMD_RET_USAGE;
+		ਜੇ (hash_lookup_algo(algo_name, &algo)) {
+			ਲਿਖੋ("Unknown hash algorithm '%s'\n", algo_name);
+			ਵਾਪਸ CMD_RET_USAGE;
 		}
 		argc -= 2;
 
-		if (algo->digest_size > HASH_MAX_DIGEST_SIZE) {
+		ਜੇ (algo->digest_ਮਾਪ > HASH_MAX_DIGEST_ਮਾਪ) {
 			puts("HASH_MAX_DIGEST_SIZE exceeded\n");
-			return 1;
+			ਵਾਪਸ 1;
 		}
 
 		output = memalign(ARCH_DMA_MINALIGN,
-				  sizeof(uint32_t) * HASH_MAX_DIGEST_SIZE);
-		if (!output)
-			return CMD_RET_FAILURE;
+				  ਆਕਾਰ(uint32_t) * HASH_MAX_DIGEST_ਮਾਪ);
+		ਜੇ (!output)
+			ਵਾਪਸ CMD_RET_FAILURE;
 
 		buf = map_sysmem(addr, len);
-		if (CONFIG_IS_ENABLED(DM_HASH)) {
-			enum HASH_ALGO hash_algo;
-			int ret;
+		ਜੇ (CONFIG_IS_ENABLED(DM_HASH)) {
+			ਗਿਣਤੀ HASH_ALGO hash_algo;
+			ਪੂਰਨ ret;
 
 			hash_algo = hash_algo_lookup_by_name(algo_name);
-			if (hash_algo != HASH_ALGO_INVALID) {
+			ਜੇ (hash_algo != HASH_ALGO_INVALID) {
 				ret = hash_digest_wd_lookup(hash_algo, buf, len,
 							    output,
-							    algo->chunk_size);
-				if (ret && ret != -ENODEV && ret != -EOPNOTSUPP) {
+							    algo->chunk_ਮਾਪ);
+				ਜੇ (ret && ret != -ENODEV && ret != -EOPNOTSUPP) {
 					unmap_sysmem(buf);
-					free(output);
-					return CMD_RET_FAILURE;
+					ਮੁਕਤ(output);
+					ਵਾਪਸ CMD_RET_FAILURE;
 				}
-				if (!ret)
-					goto done;
+				ਜੇ (!ret)
+					ਜਾਓ ਪੂਰਾ;
 			}
 		}
-		algo->hash_func_ws(buf, len, output, algo->chunk_size);
-done:
+		algo->hash_func_ws(buf, len, output, algo->chunk_ਮਾਪ);
+ਪੂਰਾ:
 		unmap_sysmem(buf);
 
 		/* Try to avoid code bloat when verify is not needed */
-#if defined(CONFIG_CRC32_VERIFY) || defined(CONFIG_SHA1SUM_VERIFY) || \
-	defined(CONFIG_MD5SUM_VERIFY) || defined(CONFIG_HASH_VERIFY)
-		if (flags & HASH_FLAG_VERIFY) {
-#else
-		if (0) {
-#endif
-			if (parse_verify_sum(algo, *argv, vsum,
+#ਜੇ defined(CONFIG_ਚੱਕਰੀ_ਜਾਂਚ_32_VERIFY) || defined(CONFIG_SHA1_ਜੋੜ_VERIFY) || \
+	defined(CONFIG_MD5_ਜੋੜ_VERIFY) || defined(CONFIG_HASH_VERIFY)
+		ਜੇ (flags & HASH_FLAG_VERIFY) {
+#ਨਹੀਂਤਾਂ
+		ਜੇ (0) {
+#ਜੇ_ਅੰਤ
+			ਜੇ (parse_verify_ਜੋੜ(algo, *argv, vsum,
 					flags & HASH_FLAG_ENV)) {
-				printf("ERROR: %s does not contain a valid "
+				ਲਿਖੋ("ERROR: %s does not contain a valid "
 					"%s sum\n", *argv, algo->name);
-				free(output);
-				return 1;
+				ਮੁਕਤ(output);
+				ਵਾਪਸ 1;
 			}
-			if (memcmp(output, vsum, algo->digest_size) != 0) {
-				int i;
+			ਜੇ (memcmp(output, vsum, algo->digest_ਮਾਪ) != 0) {
+				ਪੂਰਨ i;
 
 				hash_show(algo, addr, len, output);
-				printf(" != ");
-				for (i = 0; i < algo->digest_size; i++)
-					printf("%02x", vsum[i]);
+				ਲਿਖੋ(" != ");
+				ਲਈ (i = 0; i < algo->digest_ਮਾਪ; i++)
+					ਲਿਖੋ("%02x", vsum[i]);
 				puts(" ** ERROR **\n");
-				free(output);
-				return 1;
+				ਮੁਕਤ(output);
+				ਵਾਪਸ 1;
 			}
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			hash_show(algo, addr, len, output);
-			printf("\n");
+			ਲਿਖੋ("\n");
 
-			if (argc) {
-				store_result(algo, output, *argv,
+			ਜੇ (argc) {
+				store_ਨਤੀਜਾ(algo, output, *argv,
 					flags & HASH_FLAG_ENV);
 			}
 		}
 
-		free(output);
+		ਮੁਕਤ(output);
 
 	/* Horrible code size hack for boards that just want crc32 */
-	} else {
-		ulong crc;
+	} ਨਹੀਂਤਾਂ {
+		ulong ਚੱਕਰੀ_ਜਾਂਚ;
 		ulong *ptr;
 
-		crc = crc32_wd(0, (const uchar *)addr, len, CHUNKSZ_CRC32);
+		ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_wd(0, (ਅਚਲ uchar *)addr, len, CHUNKSZ_ਚੱਕਰੀ_ਜਾਂਚ_32);
 
-		printf("CRC32 for %08lx ... %08lx ==> %08lx\n",
-				addr, addr + len - 1, crc);
+		ਲਿਖੋ("CRC32 for %08lx ... %08lx ==> %08lx\n",
+				addr, addr + len - 1, ਚੱਕਰੀ_ਜਾਂਚ);
 
-		if (argc >= 3) {
-			ptr = (ulong *)hextoul(argv[0], NULL);
-			*ptr = crc;
+		ਜੇ (argc >= 3) {
+			ptr = (ulong *)hextoul(argv[0], ਨਿਰਾ);
+			*ptr = ਚੱਕਰੀ_ਜਾਂਚ;
 		}
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-#endif /* CONFIG_CMD_HASH || CONFIG_CMD_SHA1SUM || CONFIG_CMD_CRC32) */
-#endif /* !USE_HOSTCC */
+#ਜੇ_ਅੰਤ /* CONFIG_CMD_HASH || CONFIG_CMD_SHA1SUM || CONFIG_CMD_CRC32) */
+#ਜੇ_ਅੰਤ /* !USE_HOSTCC */

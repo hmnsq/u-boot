@@ -21,119 +21,119 @@
  * Probes device for being a hub and configurate it
  */
 
-#include <command.h>
-#include <dm.h>
-#include <env.h>
-#include <errno.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <time.h>
-#include <asm/processor.h>
-#include <asm/unaligned.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <asm/byteorder.h>
-#ifdef CONFIG_SANDBOX
-#include <asm/state.h>
-#endif
-#include <asm/unaligned.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <memalign.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/processor.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/unaligned.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/delay.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/list.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/byteorder.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SANDBOX
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/state.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/unaligned.h>
 
-#include <usb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <usb.h>
 
-#define USB_BUFSIZ	512
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USB_BUFSIZ	512
 
-#define HUB_SHORT_RESET_TIME	20
-#define HUB_LONG_RESET_TIME	200
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HUB_SHORT_RESET_ਸਮਾਂ	20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HUB_LONG_RESET_ਸਮਾਂ	200
 
-#define HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
 
-#define PORT_OVERCURRENT_MAX_SCAN_COUNT		3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪੋਰਟ_OVERCURRENT_MAX_ਜਾਂਚ_ਗਿਣਤੀ		3
 
-struct usb_device_scan {
-	struct usb_device *dev;		/* USB hub device to scan */
-	struct usb_hub_device *hub;	/* USB hub struct */
-	int port;			/* USB port to scan */
-	struct list_head list;
+ਬਣਤਰ usb_device_ਜਾਂਚ {
+	ਬਣਤਰ usb_device *dev;		/* USB hub device to scan */
+	ਬਣਤਰ usb_hub_device *hub;	/* USB hub struct */
+	ਪੂਰਨ ਪੋਰਟ;			/* USB port to scan */
+	ਬਣਤਰ list_ਸਿਰ list;
 };
 
-static LIST_HEAD(usb_scan_list);
+ਸਥਿਰ LIST_ਸਿਰ(usb_ਜਾਂਚ_list);
 
-__weak void usb_hub_reset_devices(struct usb_hub_device *hub, int port)
+__weak ਖਾਲੀ usb_hub_reset_devices(ਬਣਤਰ usb_hub_device *hub, ਪੂਰਨ ਪੋਰਟ)
 {
-	return;
+	ਵਾਪਸ;
 }
 
-static inline bool usb_hub_is_superspeed(struct usb_device *hdev)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool usb_hub_is_superspeed(ਬਣਤਰ usb_device *hdev)
 {
-	return hdev->descriptor.bDeviceProtocol == 3;
+	ਵਾਪਸ hdev->descriptor.bDeviceProtocol == 3;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-bool usb_hub_is_root_hub(struct udevice *hub)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
+bool usb_hub_is_ਜੜ੍ਹ_hub(ਬਣਤਰ udevice *hub)
 {
-	if (device_get_uclass_id(hub->parent) != UCLASS_USB_HUB)
-		return true;
+	ਜੇ (device_get_uclass_id(hub->ਮਾਪਾ) != UCLASS_USB_HUB)
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static int usb_set_hub_depth(struct usb_device *dev, int depth)
+ਸਥਿਰ ਪੂਰਨ usb_ਸੈੱਟ_hub_ਡੂੰਘਾਈ(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਡੂੰਘਾਈ)
 {
-	if (depth < 0 || depth > 4)
-		return -EINVAL;
+	ਜੇ (ਡੂੰਘਾਈ < 0 || ਡੂੰਘਾਈ > 4)
+		ਵਾਪਸ -EINVAL;
 
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_HUB_DEPTH, USB_DIR_OUT | USB_RT_HUB,
-		depth, 0, NULL, 0, USB_CNTL_TIMEOUT);
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_ਸੈੱਟ_HUB_ਡੂੰਘਾਈ, USB_DIR_ਬਾਹਰਲਾ | USB_RT_HUB,
+		ਡੂੰਘਾਈ, 0, ਨਿਰਾ, 0, USB_CNTL_TIMEOUT);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static int usb_get_hub_descriptor(struct usb_device *dev, void *data, int size)
+ਸਥਿਰ ਪੂਰਨ usb_get_hub_descriptor(ਬਣਤਰ usb_device *dev, ਖਾਲੀ *ਅੰਕੜੇ, ਪੂਰਨ ਮਾਪ)
 {
-	unsigned short dtype = USB_DT_HUB;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ dtype = USB_DT_HUB;
 
-	if (usb_hub_is_superspeed(dev))
+	ਜੇ (usb_hub_is_superspeed(dev))
 		dtype = USB_DT_SS_HUB;
 
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-		USB_REQ_GET_DESCRIPTOR, USB_DIR_IN | USB_RT_HUB,
-		dtype << 8, 0, data, size, USB_CNTL_TIMEOUT);
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(dev, usb_rcvctrlpipe(dev, 0),
+		USB_REQ_GET_DESCRIPTOR, USB_DIR_ਵਿੱਚ | USB_RT_HUB,
+		dtype << 8, 0, ਅੰਕੜੇ, ਮਾਪ, USB_CNTL_TIMEOUT);
 }
 
-static int usb_clear_port_feature(struct usb_device *dev, int port, int feature)
+ਸਥਿਰ ਪੂਰਨ usb_clear_ਪੋਰਟ_feature(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਪੋਰਟ, ਪੂਰਨ feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_CLEAR_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_CLEAR_FEATURE, USB_RT_ਪੋਰਟ, feature,
+				ਪੋਰਟ, ਨਿਰਾ, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_set_port_feature(struct usb_device *dev, int port, int feature)
+ਸਥਿਰ ਪੂਰਨ usb_ਸੈੱਟ_ਪੋਰਟ_feature(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਪੋਰਟ, ਪੂਰਨ feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_ਸੈੱਟ_FEATURE, USB_RT_ਪੋਰਟ, feature,
+				ਪੋਰਟ, ਨਿਰਾ, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_get_hub_status(struct usb_device *dev, void *data)
+ਸਥਿਰ ਪੂਰਨ usb_get_hub_ਸਥਿਤੀ(ਬਣਤਰ usb_device *dev, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_HUB, 0, 0,
-			data, sizeof(struct usb_hub_status), USB_CNTL_TIMEOUT);
+	ਵਾਪਸ usb_control_ਸੁਨੇਹਾ(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_ਸਥਿਤੀ, USB_DIR_ਵਿੱਚ | USB_RT_HUB, 0, 0,
+			ਅੰਕੜੇ, ਆਕਾਰ(ਬਣਤਰ usb_hub_ਸਥਿਤੀ), USB_CNTL_TIMEOUT);
 }
 
-int usb_get_port_status(struct usb_device *dev, int port, void *data)
+ਪੂਰਨ usb_get_ਪੋਰਟ_ਸਥਿਤੀ(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਪੋਰਟ, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	int ret;
+	ਪੂਰਨ ret;
 
-	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_PORT, 0, port,
-			data, sizeof(struct usb_port_status), USB_CNTL_TIMEOUT);
+	ret = usb_control_ਸੁਨੇਹਾ(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_ਸਥਿਤੀ, USB_DIR_ਵਿੱਚ | USB_RT_ਪੋਰਟ, 0, ਪੋਰਟ,
+			ਅੰਕੜੇ, ਆਕਾਰ(ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ), USB_CNTL_TIMEOUT);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	if (ret < 0)
-		return ret;
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
+	ਜੇ (ret < 0)
+		ਵਾਪਸ ret;
 
 	/*
 	 * Translate the USB 3.0 hub port status field into the old version
@@ -144,51 +144,51 @@ int usb_get_port_status(struct usb_device *dev, int port, void *data)
 	 * Note: this only supports driver model.
 	 */
 
-	if (!usb_hub_is_root_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
-		struct usb_port_status *status = (struct usb_port_status *)data;
-		u16 tmp = le16_to_cpu(status->wPortStatus) &
-			USB_SS_PORT_STAT_MASK;
+	ਜੇ (!usb_hub_is_ਜੜ੍ਹ_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
+		ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ *ਸਥਿਤੀ = (ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ *)ਅੰਕੜੇ;
+		u16 tmp = le16_ਮੰਜ਼ਿਲ_cpu(ਸਥਿਤੀ->w_ਪੋਰਟ_ਸਥਿਤੀ) &
+			USB_SS_ਪੋਰਟ_STAT_ਨਕਾਬ;
 
-		if (status->wPortStatus & USB_SS_PORT_STAT_POWER)
-			tmp |= USB_PORT_STAT_POWER;
-		if ((status->wPortStatus & USB_SS_PORT_STAT_SPEED) ==
-		    USB_SS_PORT_STAT_SPEED_5GBPS)
-			tmp |= USB_PORT_STAT_SUPER_SPEED;
+		ਜੇ (ਸਥਿਤੀ->w_ਪੋਰਟ_ਸਥਿਤੀ & USB_SS_ਪੋਰਟ_STAT_POWER)
+			tmp |= USB_ਪੋਰਟ_STAT_POWER;
+		ਜੇ ((ਸਥਿਤੀ->w_ਪੋਰਟ_ਸਥਿਤੀ & USB_SS_ਪੋਰਟ_STAT_ਰਫਤਾਰ) ==
+		    USB_SS_ਪੋਰਟ_STAT_ਰਫਤਾਰ_5_GBPS)
+			tmp |= USB_ਪੋਰਟ_STAT_SUPER_ਰਫਤਾਰ;
 
-		status->wPortStatus = cpu_to_le16(tmp);
+		ਸਥਿਤੀ->w_ਪੋਰਟ_ਸਥਿਤੀ = cpu_ਮੰਜ਼ਿਲ_le16(tmp);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static void usb_hub_power_on(struct usb_hub_device *hub)
+ਸਥਿਰ ਖਾਲੀ usb_hub_power_on(ਬਣਤਰ usb_hub_device *hub)
 {
-	int i;
-	struct usb_device *dev;
-	unsigned pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
-	const char __maybe_unused *env;
+	ਪੂਰਨ i;
+	ਬਣਤਰ usb_device *dev;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
+	ਅਚਲ ਅੱਖਰ __maybe_unused *env;
 
 	dev = hub->pusb_dev;
 
 	debug("enabling power on all ports\n");
-	for (i = 0; i < dev->maxchild; i++) {
-		if (usb_hub_is_superspeed(dev)) {
-			usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_RESET);
-			debug("Reset : port %d returns %lX\n", i + 1, dev->status);
+	ਲਈ (i = 0; i < dev->maxchild; i++) {
+		ਜੇ (usb_hub_is_superspeed(dev)) {
+			usb_ਸੈੱਟ_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_RESET);
+			debug("Reset : port %d returns %lX\n", i + 1, dev->ਸਥਿਤੀ);
 		}
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		debug("PowerOn : port %d returns %lX\n", i + 1, dev->status);
+		usb_ਸੈੱਟ_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_POWER);
+		debug("PowerOn : port %d returns %lX\n", i + 1, dev->ਸਥਿਤੀ);
 	}
 
-#ifdef CONFIG_SANDBOX
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SANDBOX
 	/*
 	 * Don't set timeout / delay values here. This results
 	 * in these values still being reset to 0.
 	 */
-	if (state_get_skip_delays())
-		return;
-#endif
+	ਜੇ (state_get_skip_delays())
+		ਵਾਪਸ;
+#ਜੇ_ਅੰਤ
 
 	/*
 	 * Wait for power to become stable,
@@ -196,19 +196,19 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 * but allow this time to be increased via env variable as some
 	 * devices break the spec and require longer warm-up times
 	 */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#ਜੇ CONFIG_IS_ENABLED(ENV_SUPPORT)
 	env = env_get("usb_pgood_delay");
-	if (env)
+	ਜੇ (env)
 		pgood_delay = max(pgood_delay,
-			          (unsigned)simple_strtol(env, NULL, 0));
-#endif
+			          (ਬਿਨਾਨਿਸ਼ਾਨੀ)simple_strtol(env, ਨਿਰਾ, 0));
+#ਜੇ_ਅੰਤ
 	debug("pgood_delay=%dms\n", pgood_delay);
 
 	/*
 	 * Do a minimum delay of the larger value of 100ms or pgood_delay
 	 * so that the power can stablize before the devices are queried
 	 */
-	hub->query_delay = get_timer(0) + max(100, (int)pgood_delay);
+	hub->query_delay = get_timer(0) + max(100, (ਪੂਰਨ)pgood_delay);
 
 	/*
 	 * Record the power-on timeout here. The max. delay (timeout)
@@ -217,45 +217,45 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 */
 	hub->connect_timeout = hub->query_delay + HUB_DEBOUNCE_TIMEOUT;
 	debug("devnum=%d poweron: query_delay=%d connect_timeout=%d\n",
-	      dev->devnum, max(100, (int)pgood_delay),
-	      max(100, (int)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
+	      dev->devnum, max(100, (ਪੂਰਨ)pgood_delay),
+	      max(100, (ਪੂਰਨ)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_hub_device hub_dev[USB_MAX_HUB];
-static int usb_hub_index;
+#ਜੇ !CONFIG_IS_ENABLED(DM_USB)
+ਸਥਿਰ ਬਣਤਰ usb_hub_device hub_dev[USB_MAX_HUB];
+ਸਥਿਰ ਪੂਰਨ usb_hub_ਸੂਚਕਾਂਕ;
 
-void usb_hub_reset(void)
+ਖਾਲੀ usb_hub_reset(ਖਾਲੀ)
 {
-	usb_hub_index = 0;
+	usb_hub_ਸੂਚਕਾਂਕ = 0;
 
 	/* Zero out global hub_dev in case its re-used again */
-	memset(hub_dev, 0, sizeof(hub_dev));
+	memset(hub_dev, 0, ਆਕਾਰ(hub_dev));
 }
 
-static struct usb_hub_device *usb_hub_allocate(void)
+ਸਥਿਰ ਬਣਤਰ usb_hub_device *usb_hub_allocate(ਖਾਲੀ)
 {
-	if (usb_hub_index < USB_MAX_HUB)
-		return &hub_dev[usb_hub_index++];
+	ਜੇ (usb_hub_ਸੂਚਕਾਂਕ < USB_MAX_HUB)
+		ਵਾਪਸ &hub_dev[usb_hub_ਸੂਚਕਾਂਕ++];
 
-	printf("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
-	return NULL;
+	ਲਿਖੋ("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
+	ਵਾਪਸ ਨਿਰਾ;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#define MAX_TRIES 5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_TRIES 5
 
-static inline const char *portspeed(int portstatus)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਅੱਖਰ *portspeed(ਪੂਰਨ portstatus)
 {
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		return "5 Gb/s";
-	case USB_PORT_STAT_HIGH_SPEED:
-		return "480 Mb/s";
-	case USB_PORT_STAT_LOW_SPEED:
-		return "1.5 Mb/s";
-	default:
-		return "12 Mb/s";
+	ਚੋਣ (portstatus & USB_ਪੋਰਟ_STAT_ਰਫਤਾਰ_ਨਕਾਬ) {
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_SUPER_ਰਫਤਾਰ:
+		ਵਾਪਸ "5 Gb/s";
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_ਉੱਚਾ_ਰਫਤਾਰ:
+		ਵਾਪਸ "480 Mb/s";
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_ਨੀਵਾਂ_ਰਫਤਾਰ:
+		ਵਾਪਸ "1.5 Mb/s";
+	ਮੂਲ:
+		ਵਾਪਸ "12 Mb/s";
 	}
 }
 
@@ -269,43 +269,43 @@ static inline const char *portspeed(int portstatus)
  * @port:	Port number to reset (note ports are numbered from 0 here)
  * @portstat:	Returns port status
  */
-static int usb_hub_port_reset(struct usb_device *dev, int port,
-			      unsigned short *portstat)
+ਸਥਿਰ ਪੂਰਨ usb_hub_ਪੋਰਟ_reset(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਪੋਰਟ,
+			      ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ *portstat)
 {
-	int err, tries;
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus, portchange;
-	int delay = HUB_SHORT_RESET_TIME; /* start with short reset delay */
+	ਪੂਰਨ err, tries;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ, portsts, 1);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ portstatus, portchange;
+	ਪੂਰਨ delay = HUB_SHORT_RESET_ਸਮਾਂ; /* start with short reset delay */
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
 	debug("%s: resetting '%s' port %d...\n", __func__, dev->dev->name,
-	      port + 1);
-#else
-	debug("%s: resetting port %d...\n", __func__, port + 1);
-#endif
-	for (tries = 0; tries < MAX_TRIES; tries++) {
-		err = usb_set_port_feature(dev, port + 1, USB_PORT_FEAT_RESET);
-		if (err < 0)
-			return err;
+	      ਪੋਰਟ + 1);
+#ਨਹੀਂਤਾਂ
+	debug("%s: resetting port %d...\n", __func__, ਪੋਰਟ + 1);
+#ਜੇ_ਅੰਤ
+	ਲਈ (tries = 0; tries < MAX_TRIES; tries++) {
+		err = usb_ਸੈੱਟ_ਪੋਰਟ_feature(dev, ਪੋਰਟ + 1, USB_ਪੋਰਟ_FEAT_RESET);
+		ਜੇ (err < 0)
+			ਵਾਪਸ err;
 
 		mdelay(delay);
 
-		if (usb_get_port_status(dev, port + 1, portsts) < 0) {
+		ਜੇ (usb_get_ਪੋਰਟ_ਸਥਿਤੀ(dev, ਪੋਰਟ + 1, portsts) < 0) {
 			debug("get_port_status failed status %lX\n",
-			      dev->status);
-			return -1;
+			      dev->ਸਥਿਤੀ);
+			ਵਾਪਸ -1;
 		}
-		portstatus = le16_to_cpu(portsts->wPortStatus);
-		portchange = le16_to_cpu(portsts->wPortChange);
+		portstatus = le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_ਸਥਿਤੀ);
+		portchange = le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_Change);
 
 		debug("portstatus %x, change %x, %s\n", portstatus, portchange,
 							portspeed(portstatus));
 
 		debug("STAT_C_CONNECTION = %d STAT_CONNECTION = %d" \
 		      "  USB_PORT_STAT_ENABLE %d\n",
-		      (portchange & USB_PORT_STAT_C_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_ENABLE) ? 1 : 0);
+		      (portchange & USB_ਪੋਰਟ_STAT_C_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_ਪੋਰਟ_STAT_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_ਪੋਰਟ_STAT_ENABLE) ? 1 : 0);
 
 		/*
 		 * Perhaps we should check for the following here:
@@ -324,78 +324,78 @@ static int usb_hub_port_reset(struct usb_device *dev, int port,
 		 * back after another reset or two.
 		 */
 
-		if (portstatus & USB_PORT_STAT_ENABLE)
-			break;
+		ਜੇ (portstatus & USB_ਪੋਰਟ_STAT_ENABLE)
+			ਰੋਕੋ;
 
 		/* Switch to long reset delay for the next round */
-		delay = HUB_LONG_RESET_TIME;
+		delay = HUB_LONG_RESET_ਸਮਾਂ;
 	}
 
-	if (tries == MAX_TRIES) {
+	ਜੇ (tries == MAX_TRIES) {
 		debug("Cannot enable port %i after %i retries, " \
-		      "disabling port.\n", port + 1, MAX_TRIES);
+		      "disabling port.\n", ਪੋਰਟ + 1, MAX_TRIES);
 		debug("Maybe the USB cable is bad?\n");
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_RESET);
+	usb_clear_ਪੋਰਟ_feature(dev, ਪੋਰਟ + 1, USB_ਪੋਰਟ_FEAT_C_RESET);
 	*portstat = portstatus;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int usb_hub_port_connect_change(struct usb_device *dev, int port)
+ਪੂਰਨ usb_hub_ਪੋਰਟ_connect_change(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ਪੋਰਟ)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	int ret, speed;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ, portsts, 1);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ portstatus;
+	ਪੂਰਨ ret, ਰਫਤਾਰ;
 
 	/* Check status */
-	ret = usb_get_port_status(dev, port + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_ਪੋਰਟ_ਸਥਿਤੀ(dev, ਪੋਰਟ + 1, portsts);
+	ਜੇ (ret < 0) {
 		debug("get_port_status failed\n");
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
+	portstatus = le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_ਸਥਿਤੀ);
 	debug("portstatus %x, change %x, %s\n",
 	      portstatus,
-	      le16_to_cpu(portsts->wPortChange),
+	      le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_Change),
 	      portspeed(portstatus));
 
 	/* Clear the connection change status */
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_CONNECTION);
+	usb_clear_ਪੋਰਟ_feature(dev, ਪੋਰਟ + 1, USB_ਪੋਰਟ_FEAT_C_CONNECTION);
 
 	/* Disconnect any existing devices under this port */
-	if (((!(portstatus & USB_PORT_STAT_CONNECTION)) &&
-	     (!(portstatus & USB_PORT_STAT_ENABLE))) ||
-	    usb_device_has_child_on_port(dev, port)) {
+	ਜੇ (((!(portstatus & USB_ਪੋਰਟ_STAT_CONNECTION)) &&
+	     (!(portstatus & USB_ਪੋਰਟ_STAT_ENABLE))) ||
+	    usb_device_has_ਬੱਚਾ_on_ਪੋਰਟ(dev, ਪੋਰਟ)) {
 		debug("usb_disconnect(&hub->children[port]);\n");
 		/* Return now if nothing is connected */
-		if (!(portstatus & USB_PORT_STAT_CONNECTION))
-			return -ENOTCONN;
+		ਜੇ (!(portstatus & USB_ਪੋਰਟ_STAT_CONNECTION))
+			ਵਾਪਸ -ENOTCONN;
 	}
 
 	/* Reset the port */
-	ret = usb_hub_port_reset(dev, port, &portstatus);
-	if (ret < 0) {
-		if (ret != -ENXIO)
-			printf("cannot reset port %i!?\n", port + 1);
-		return ret;
+	ret = usb_hub_ਪੋਰਟ_reset(dev, ਪੋਰਟ, &portstatus);
+	ਜੇ (ret < 0) {
+		ਜੇ (ret != -ENXIO)
+			ਲਿਖੋ("cannot reset port %i!?\n", ਪੋਰਟ + 1);
+		ਵਾਪਸ ret;
 	}
 
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		speed = USB_SPEED_SUPER;
-		break;
-	case USB_PORT_STAT_HIGH_SPEED:
-		speed = USB_SPEED_HIGH;
-		break;
-	case USB_PORT_STAT_LOW_SPEED:
-		speed = USB_SPEED_LOW;
-		break;
-	default:
-		speed = USB_SPEED_FULL;
-		break;
+	ਚੋਣ (portstatus & USB_ਪੋਰਟ_STAT_ਰਫਤਾਰ_ਨਕਾਬ) {
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_SUPER_ਰਫਤਾਰ:
+		ਰਫਤਾਰ = USB_ਰਫਤਾਰ_SUPER;
+		ਰੋਕੋ;
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_ਉੱਚਾ_ਰਫਤਾਰ:
+		ਰਫਤਾਰ = USB_ਰਫਤਾਰ_ਉੱਚਾ;
+		ਰੋਕੋ;
+	ਹਾਲਤ USB_ਪੋਰਟ_STAT_ਨੀਵਾਂ_ਰਫਤਾਰ:
+		ਰਫਤਾਰ = USB_ਰਫਤਾਰ_ਨੀਵਾਂ;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਰਫਤਾਰ = USB_ਰਫਤਾਰ_ਭਰਿਆ;
+		ਰੋਕੋ;
 	}
 
 	/*
@@ -405,76 +405,76 @@ int usb_hub_port_connect_change(struct usb_device *dev, int port)
 	 */
 	mdelay(10);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	struct udevice *child;
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
+	ਬਣਤਰ udevice *ਬੱਚਾ;
 
-	ret = usb_scan_device(dev->dev, port + 1, speed, &child);
-#else
-	struct usb_device *usb;
+	ret = usb_ਜਾਂਚ_device(dev->dev, ਪੋਰਟ + 1, ਰਫਤਾਰ, &ਬੱਚਾ);
+#ਨਹੀਂਤਾਂ
+	ਬਣਤਰ usb_device *usb;
 
 	ret = usb_alloc_new_device(dev->controller, &usb);
-	if (ret) {
-		printf("cannot create new device: ret=%d", ret);
-		return ret;
+	ਜੇ (ret) {
+		ਲਿਖੋ("cannot create new device: ret=%d", ret);
+		ਵਾਪਸ ret;
 	}
 
-	dev->children[port] = usb;
-	usb->speed = speed;
-	usb->parent = dev;
-	usb->portnr = port + 1;
+	dev->children[ਪੋਰਟ] = usb;
+	usb->ਰਫਤਾਰ = ਰਫਤਾਰ;
+	usb->ਮਾਪਾ = dev;
+	usb->portnr = ਪੋਰਟ + 1;
 	/* Run it through the hoops (find a driver, etc) */
 	ret = usb_new_device(usb);
-	if (ret < 0) {
+	ਜੇ (ret < 0) {
 		/* Woops, disable the port */
 		usb_free_device(dev->controller);
-		dev->children[port] = NULL;
+		dev->children[ਪੋਰਟ] = ਨਿਰਾ;
 	}
-#endif
-	if (ret < 0) {
-		debug("hub: disabling port %d\n", port + 1);
-		usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_ENABLE);
+#ਜੇ_ਅੰਤ
+	ਜੇ (ret < 0) {
+		debug("hub: disabling port %d\n", ਪੋਰਟ + 1);
+		usb_clear_ਪੋਰਟ_feature(dev, ਪੋਰਟ + 1, USB_ਪੋਰਟ_FEAT_ENABLE);
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static int usb_scan_port(struct usb_device_scan *usb_scan)
+ਸਥਿਰ ਪੂਰਨ usb_ਜਾਂਚ_ਪੋਰਟ(ਬਣਤਰ usb_device_ਜਾਂਚ *usb_ਜਾਂਚ)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	unsigned short portchange;
-	struct usb_device *dev;
-	struct usb_hub_device *hub;
-	int ret = 0;
-	int i;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਣਤਰ usb_ਪੋਰਟ_ਸਥਿਤੀ, portsts, 1);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ portstatus;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ portchange;
+	ਬਣਤਰ usb_device *dev;
+	ਬਣਤਰ usb_hub_device *hub;
+	ਪੂਰਨ ret = 0;
+	ਪੂਰਨ i;
 
-	dev = usb_scan->dev;
-	hub = usb_scan->hub;
-	i = usb_scan->port;
+	dev = usb_ਜਾਂਚ->dev;
+	hub = usb_ਜਾਂਚ->hub;
+	i = usb_ਜਾਂਚ->ਪੋਰਟ;
 
 	/*
 	 * Don't talk to the device before the query delay is expired.
 	 * This is needed for voltages to stabalize.
 	 */
-	if (get_timer(0) < hub->query_delay)
-		return 0;
+	ਜੇ (get_timer(0) < hub->query_delay)
+		ਵਾਪਸ 0;
 
-	ret = usb_get_port_status(dev, i + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_ਪੋਰਟ_ਸਥਿਤੀ(dev, i + 1, portsts);
+	ਜੇ (ret < 0) {
 		debug("get_port_status failed\n");
-		if (get_timer(0) >= hub->connect_timeout) {
+		ਜੇ (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_ਜਾਂਚ->list);
+			ਮੁਕਤ(usb_ਜਾਂਚ);
+			ਵਾਪਸ 0;
 		}
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
-	portchange = le16_to_cpu(portsts->wPortChange);
+	portstatus = le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_ਸਥਿਤੀ);
+	portchange = le16_ਮੰਜ਼ਿਲ_cpu(portsts->w_ਪੋਰਟ_Change);
 	debug("Port %d Status %X Change %X\n", i + 1, portstatus, portchange);
 
 	/*
@@ -484,117 +484,117 @@ static int usb_scan_port(struct usb_device_scan *usb_scan)
 	 * device is connected to the port (eg: CCS bit is set but CSC is not
 	 * in the PORTSC register of a root hub), ignore such case.
 	 */
-	if (!(portchange & USB_PORT_STAT_C_CONNECTION) &&
-	    !(portstatus & USB_PORT_STAT_CONNECTION)) {
-		if (get_timer(0) >= hub->connect_timeout) {
+	ਜੇ (!(portchange & USB_ਪੋਰਟ_STAT_C_CONNECTION) &&
+	    !(portstatus & USB_ਪੋਰਟ_STAT_CONNECTION)) {
+		ਜੇ (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_ਜਾਂਚ->list);
+			ਮੁਕਤ(usb_ਜਾਂਚ);
+			ਵਾਪਸ 0;
 		}
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (portchange & USB_PORT_STAT_C_RESET) {
+	ਜੇ (portchange & USB_ਪੋਰਟ_STAT_C_RESET) {
 		debug("port %d reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_RESET);
+		usb_clear_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_C_RESET);
 	}
 
-	if ((portchange & USB_SS_PORT_STAT_C_BH_RESET) &&
+	ਜੇ ((portchange & USB_SS_ਪੋਰਟ_STAT_C_BH_RESET) &&
 	    usb_hub_is_superspeed(dev)) {
 		debug("port %d BH reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_SS_PORT_FEAT_C_BH_RESET);
+		usb_clear_ਪੋਰਟ_feature(dev, i + 1, USB_SS_ਪੋਰਟ_FEAT_C_BH_RESET);
 	}
 
 	/* A new USB device is ready at this point */
 	debug("devnum=%d port=%d: USB dev found\n", dev->devnum, i + 1);
 
-	usb_hub_port_connect_change(dev, i);
+	usb_hub_ਪੋਰਟ_connect_change(dev, i);
 
-	if (portchange & USB_PORT_STAT_C_ENABLE) {
+	ਜੇ (portchange & USB_ਪੋਰਟ_STAT_C_ENABLE) {
 		debug("port %d enable change, status %x\n", i + 1, portstatus);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_ENABLE);
+		usb_clear_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_C_ENABLE);
 		/*
 		 * EM interference sometimes causes bad shielded USB
 		 * devices to be shutdown by the hub, this hack enables
 		 * them again. Works at least with mouse driver
 		 */
-		if (!(portstatus & USB_PORT_STAT_ENABLE) &&
-		    (portstatus & USB_PORT_STAT_CONNECTION) &&
-		    usb_device_has_child_on_port(dev, i)) {
+		ਜੇ (!(portstatus & USB_ਪੋਰਟ_STAT_ENABLE) &&
+		    (portstatus & USB_ਪੋਰਟ_STAT_CONNECTION) &&
+		    usb_device_has_ਬੱਚਾ_on_ਪੋਰਟ(dev, i)) {
 			debug("already running port %i disabled by hub (EMI?), re-enabling...\n",
 			      i + 1);
-			usb_hub_port_connect_change(dev, i);
+			usb_hub_ਪੋਰਟ_connect_change(dev, i);
 		}
 	}
 
-	if (portstatus & USB_PORT_STAT_SUSPEND) {
+	ਜੇ (portstatus & USB_ਪੋਰਟ_STAT_SUSPEND) {
 		debug("port %d suspend change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_SUSPEND);
+		usb_clear_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_SUSPEND);
 	}
 
-	if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
+	ਜੇ (portchange & USB_ਪੋਰਟ_STAT_C_OVERCURRENT) {
 		debug("port %d over-current change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1,
-				       USB_PORT_FEAT_C_OVER_CURRENT);
+		usb_clear_ਪੋਰਟ_feature(dev, i + 1,
+				       USB_ਪੋਰਟ_FEAT_C_OVER_CURRENT);
 		/* Only power-on this one port */
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		hub->overcurrent_count[i]++;
+		usb_ਸੈੱਟ_ਪੋਰਟ_feature(dev, i + 1, USB_ਪੋਰਟ_FEAT_POWER);
+		hub->overcurrent_ਗਿਣਤੀ[i]++;
 
 		/*
 		 * If the max-scan-count is not reached, return without removing
 		 * the device from scan-list. This will re-issue a new scan.
 		 */
-		if (hub->overcurrent_count[i] <=
-		    PORT_OVERCURRENT_MAX_SCAN_COUNT)
-			return 0;
+		ਜੇ (hub->overcurrent_ਗਿਣਤੀ[i] <=
+		    ਪੋਰਟ_OVERCURRENT_MAX_ਜਾਂਚ_ਗਿਣਤੀ)
+			ਵਾਪਸ 0;
 
 		/* Otherwise the device will get removed */
-		printf("Port %d over-current occurred %d times\n", i + 1,
-		       hub->overcurrent_count[i]);
+		ਲਿਖੋ("Port %d over-current occurred %d times\n", i + 1,
+		       hub->overcurrent_ਗਿਣਤੀ[i]);
 	}
 
 	/*
 	 * We're done with this device, so let's remove this device from
 	 * scanning list
 	 */
-	list_del(&usb_scan->list);
-	free(usb_scan);
+	list_del(&usb_ਜਾਂਚ->list);
+	ਮੁਕਤ(usb_ਜਾਂਚ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int usb_device_list_scan(void)
+ਸਥਿਰ ਪੂਰਨ usb_device_list_ਜਾਂਚ(ਖਾਲੀ)
 {
-	struct usb_device_scan *usb_scan;
-	struct usb_device_scan *tmp;
-	static int running;
-	int ret = 0;
+	ਬਣਤਰ usb_device_ਜਾਂਚ *usb_ਜਾਂਚ;
+	ਬਣਤਰ usb_device_ਜਾਂਚ *tmp;
+	ਸਥਿਰ ਪੂਰਨ running;
+	ਪੂਰਨ ret = 0;
 
 	/* Only run this loop once for each controller */
-	if (running)
-		return 0;
+	ਜੇ (running)
+		ਵਾਪਸ 0;
 
 	running = 1;
 
-	while (1) {
+	ਜਦੋਂ (1) {
 		/* We're done, once the list is empty again */
-		if (list_empty(&usb_scan_list))
-			goto out;
+		ਜੇ (list_ਖਾਲੀ_ਥਾਵਾਂ(&usb_ਜਾਂਚ_list))
+			ਜਾਓ ਬਾਹਰਲਾ;
 
-		list_for_each_entry_safe(usb_scan, tmp, &usb_scan_list, list) {
-			int ret;
+		list_for_each_ਇੰਦਰਾਜ_ਸੁਰੱਖਿਅਤ(usb_ਜਾਂਚ, tmp, &usb_ਜਾਂਚ_list, list) {
+			ਪੂਰਨ ret;
 
 			/* Scan this port */
-			ret = usb_scan_port(usb_scan);
-			if (ret)
-				goto out;
+			ret = usb_ਜਾਂਚ_ਪੋਰਟ(usb_ਜਾਂਚ);
+			ਜੇ (ret)
+				ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
 
-out:
+ਬਾਹਰਲਾ:
 	/*
 	 * This USB controller has finished scanning all its connected
 	 * USB devices. Set "running" back to 0, so that other USB controllers
@@ -602,160 +602,160 @@ out:
 	 */
 	running = 0;
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static struct usb_hub_device *usb_get_hub_device(struct usb_device *dev)
+ਸਥਿਰ ਬਣਤਰ usb_hub_device *usb_get_hub_device(ਬਣਤਰ usb_device *dev)
 {
-	struct usb_hub_device *hub;
+	ਬਣਤਰ usb_hub_device *hub;
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#ਜੇ !CONFIG_IS_ENABLED(DM_USB)
 	/* "allocate" Hub device */
 	hub = usb_hub_allocate();
-#else
+#ਨਹੀਂਤਾਂ
 	hub = dev_get_uclass_priv(dev->dev);
-#endif
+#ਜੇ_ਅੰਤ
 
-	return hub;
+	ਵਾਪਸ hub;
 }
 
-static int usb_hub_configure(struct usb_device *dev)
+ਸਥਿਰ ਪੂਰਨ usb_hub_configure(ਬਣਤਰ usb_device *dev)
 {
-	int i, length;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, USB_BUFSIZ);
-	unsigned char *bitmap;
-	short hubCharacteristics;
-	struct usb_hub_descriptor *descriptor;
-	struct usb_hub_device *hub;
-	struct usb_hub_status *hubsts;
-	int ret;
+	ਪੂਰਨ i, ਲੰਮਾਈ;
+	ALLOC_CACHE_ALIGN_ਬਫਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ, ਬਫਰ, USB_BUFSIZ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *bitmap;
+	ਛੋਟਾ hubCharacteristics;
+	ਬਣਤਰ usb_hub_descriptor *descriptor;
+	ਬਣਤਰ usb_hub_device *hub;
+	ਬਣਤਰ usb_hub_ਸਥਿਤੀ *hubsts;
+	ਪੂਰਨ ret;
 
 	hub = usb_get_hub_device(dev);
-	if (hub == NULL)
-		return -ENOMEM;
+	ਜੇ (hub == ਨਿਰਾ)
+		ਵਾਪਸ -ENOMEM;
 	hub->pusb_dev = dev;
 
 	/* Get the the hub descriptor */
-	ret = usb_get_hub_descriptor(dev, buffer, 4);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, ਬਫਰ, 4);
+	ਜੇ (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor, giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor, giving up %lX\n", dev->ਸਥਿਤੀ);
+		ਵਾਪਸ ret;
 	}
-	descriptor = (struct usb_hub_descriptor *)buffer;
+	descriptor = (ਬਣਤਰ usb_hub_descriptor *)ਬਫਰ;
 
-	length = min_t(int, descriptor->bLength,
-		       sizeof(struct usb_hub_descriptor));
+	ਲੰਮਾਈ = min_t(ਪੂਰਨ, descriptor->b_ਲੰਮਾਈ,
+		       ਆਕਾਰ(ਬਣਤਰ usb_hub_descriptor));
 
-	ret = usb_get_hub_descriptor(dev, buffer, length);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, ਬਫਰ, ਲੰਮਾਈ);
+	ਜੇ (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor 2nd giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor 2nd giving up %lX\n", dev->ਸਥਿਤੀ);
+		ਵਾਪਸ ret;
 	}
-	memcpy((unsigned char *)&hub->desc, buffer, length);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)&hub->desc, ਬਫਰ, ਲੰਮਾਈ);
 	/* adjust 16bit values */
-	put_unaligned(le16_to_cpu(get_unaligned(
+	put_unaligned(le16_ਮੰਜ਼ਿਲ_cpu(get_unaligned(
 			&descriptor->wHubCharacteristics)),
 			&hub->desc.wHubCharacteristics);
 	/* set the bitmap */
-	bitmap = (unsigned char *)&hub->desc.u.hs.DeviceRemovable[0];
+	bitmap = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)&hub->desc.u.hs.DeviceRemovable[0];
 	/* devices not removable by default */
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8);
-	bitmap = (unsigned char *)&hub->desc.u.hs.PortPowerCtrlMask[0];
+	bitmap = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)&hub->desc.u.hs.ਪੋਰਟ_Power_Ctrl_ਨਕਾਬ[0];
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8); /* PowerMask = 1B */
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+	ਲਈ (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
 		hub->desc.u.hs.DeviceRemovable[i] =
 			descriptor->u.hs.DeviceRemovable[i];
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
-		hub->desc.u.hs.PortPowerCtrlMask[i] =
-			descriptor->u.hs.PortPowerCtrlMask[i];
+	ਲਈ (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+		hub->desc.u.hs.ਪੋਰਟ_Power_Ctrl_ਨਕਾਬ[i] =
+			descriptor->u.hs.ਪੋਰਟ_Power_Ctrl_ਨਕਾਬ[i];
 
 	dev->maxchild = descriptor->bNbrPorts;
 	debug("%d ports detected\n", dev->maxchild);
 
 	hubCharacteristics = get_unaligned(&hub->desc.wHubCharacteristics);
-	switch (hubCharacteristics & HUB_CHAR_LPSM) {
-	case 0x00:
+	ਚੋਣ (hubCharacteristics & HUB_CHAR_LPSM) {
+	ਹਾਲਤ 0x00:
 		debug("ganged power switching\n");
-		break;
-	case 0x01:
+		ਰੋਕੋ;
+	ਹਾਲਤ 0x01:
 		debug("individual port power switching\n");
-		break;
-	case 0x02:
-	case 0x03:
+		ਰੋਕੋ;
+	ਹਾਲਤ 0x02:
+	ਹਾਲਤ 0x03:
 		debug("unknown reserved power switching mode\n");
-		break;
+		ਰੋਕੋ;
 	}
 
-	if (hubCharacteristics & HUB_CHAR_COMPOUND)
+	ਜੇ (hubCharacteristics & HUB_CHAR_COMPOUND)
 		debug("part of a compound device\n");
-	else
+	ਨਹੀਂਤਾਂ
 		debug("standalone hub\n");
 
-	switch (hubCharacteristics & HUB_CHAR_OCPM) {
-	case 0x00:
+	ਚੋਣ (hubCharacteristics & HUB_CHAR_OCPM) {
+	ਹਾਲਤ 0x00:
 		debug("global over-current protection\n");
-		break;
-	case 0x08:
+		ਰੋਕੋ;
+	ਹਾਲਤ 0x08:
 		debug("individual port over-current protection\n");
-		break;
-	case 0x10:
-	case 0x18:
+		ਰੋਕੋ;
+	ਹਾਲਤ 0x10:
+	ਹਾਲਤ 0x18:
 		debug("no over-current protection\n");
-		break;
+		ਰੋਕੋ;
 	}
 
-	switch (dev->descriptor.bDeviceProtocol) {
-	case USB_HUB_PR_FS:
-		break;
-	case USB_HUB_PR_HS_SINGLE_TT:
+	ਚੋਣ (dev->descriptor.bDeviceProtocol) {
+	ਹਾਲਤ USB_HUB_PR_FS:
+		ਰੋਕੋ;
+	ਹਾਲਤ USB_HUB_PR_HS_SINGLE_TT:
 		debug("Single TT\n");
-		break;
-	case USB_HUB_PR_HS_MULTI_TT:
-		ret = usb_set_interface(dev, 0, 1);
-		if (ret == 0) {
+		ਰੋਕੋ;
+	ਹਾਲਤ USB_HUB_PR_HS_MULTI_TT:
+		ret = usb_ਸੈੱਟ_interface(dev, 0, 1);
+		ਜੇ (ret == 0) {
 			debug("TT per port\n");
 			hub->tt.multi = true;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			debug("Using single TT (err %d)\n", ret);
 		}
-		break;
-	case USB_HUB_PR_SS:
+		ਰੋਕੋ;
+	ਹਾਲਤ USB_HUB_PR_SS:
 		/* USB 3.0 hubs don't have a TT */
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		debug("Unrecognized hub protocol %d\n",
 		      dev->descriptor.bDeviceProtocol);
-		break;
+		ਰੋਕੋ;
 	}
 
 	/* Note 8 FS bit times == (8 bits / 12000000 bps) ~= 666ns */
-	switch (hubCharacteristics & HUB_CHAR_TTTT) {
-	case HUB_TTTT_8_BITS:
-		if (dev->descriptor.bDeviceProtocol != 0) {
-			hub->tt.think_time = 666;
+	ਚੋਣ (hubCharacteristics & HUB_CHAR_TTTT) {
+	ਹਾਲਤ HUB_TTTT_8_ਬਿੱਟ:
+		ਜੇ (dev->descriptor.bDeviceProtocol != 0) {
+			hub->tt.think_ਸਮਾਂ = 666;
 			debug("TT requires at most %d FS bit times (%d ns)\n",
-			      8, hub->tt.think_time);
+			      8, hub->tt.think_ਸਮਾਂ);
 		}
-		break;
-	case HUB_TTTT_16_BITS:
-		hub->tt.think_time = 666 * 2;
+		ਰੋਕੋ;
+	ਹਾਲਤ HUB_TTTT_16_ਬਿੱਟ:
+		hub->tt.think_ਸਮਾਂ = 666 * 2;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      16, hub->tt.think_time);
-		break;
-	case HUB_TTTT_24_BITS:
-		hub->tt.think_time = 666 * 3;
+		      16, hub->tt.think_ਸਮਾਂ);
+		ਰੋਕੋ;
+	ਹਾਲਤ HUB_TTTT_24_ਬਿੱਟ:
+		hub->tt.think_ਸਮਾਂ = 666 * 3;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      24, hub->tt.think_time);
-		break;
-	case HUB_TTTT_32_BITS:
-		hub->tt.think_time = 666 * 4;
+		      24, hub->tt.think_ਸਮਾਂ);
+		ਰੋਕੋ;
+	ਹਾਲਤ HUB_TTTT_32_ਬਿੱਟ:
+		hub->tt.think_ਸਮਾਂ = 666 * 4;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      32, hub->tt.think_time);
-		break;
+		      32, hub->tt.think_ਸਮਾਂ);
+		ਰੋਕੋ;
 	}
 
 	debug("power on to power good time: %dms\n",
@@ -763,46 +763,46 @@ static int usb_hub_configure(struct usb_device *dev)
 	debug("hub controller current requirement: %dmA\n",
 	      descriptor->bHubContrCurrent);
 
-	for (i = 0; i < dev->maxchild; i++)
+	ਲਈ (i = 0; i < dev->maxchild; i++)
 		debug("port %d is%s removable\n", i + 1,
 		      hub->desc.u.hs.DeviceRemovable[(i + 1) / 8] & \
 		      (1 << ((i + 1) % 8)) ? " not" : "");
 
-	if (sizeof(struct usb_hub_status) > USB_BUFSIZ) {
+	ਜੇ (ਆਕਾਰ(ਬਣਤਰ usb_hub_ਸਥਿਤੀ) > USB_BUFSIZ) {
 		debug("usb_hub_configure: failed to get Status - " \
-		      "too long: %d\n", descriptor->bLength);
-		return -EFBIG;
+		      "too long: %d\n", descriptor->b_ਲੰਮਾਈ);
+		ਵਾਪਸ -EFBIG;
 	}
 
-	ret = usb_get_hub_status(dev, buffer);
-	if (ret < 0) {
+	ret = usb_get_hub_ਸਥਿਤੀ(dev, ਬਫਰ);
+	ਜੇ (ret < 0) {
 		debug("usb_hub_configure: failed to get Status %lX\n",
-		      dev->status);
-		return ret;
+		      dev->ਸਥਿਤੀ);
+		ਵਾਪਸ ret;
 	}
 
-	hubsts = (struct usb_hub_status *)buffer;
+	hubsts = (ਬਣਤਰ usb_hub_ਸਥਿਤੀ *)ਬਫਰ;
 
 	debug("get_hub_status returned status %X, change %X\n",
-	      le16_to_cpu(hubsts->wHubStatus),
-	      le16_to_cpu(hubsts->wHubChange));
+	      le16_ਮੰਜ਼ਿਲ_cpu(hubsts->w_Hub_ਸਥਿਤੀ),
+	      le16_ਮੰਜ਼ਿਲ_cpu(hubsts->wHubChange));
 	debug("local power source is %s\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_LOCAL_POWER) ? \
+	      (le16_ਮੰਜ਼ਿਲ_cpu(hubsts->w_Hub_ਸਥਿਤੀ) & HUB_ਸਥਿਤੀ_LOCAL_POWER) ? \
 	      "lost (inactive)" : "good");
 	debug("%sover-current condition exists\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_OVERCURRENT) ? \
+	      (le16_ਮੰਜ਼ਿਲ_cpu(hubsts->w_Hub_ਸਥਿਤੀ) & HUB_ਸਥਿਤੀ_OVERCURRENT) ? \
 	      "" : "no ");
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
 	/*
 	 * Update USB host controller's internal representation of this hub
 	 * after the hub descriptor is fetched.
 	 */
 	ret = usb_update_hub_device(dev);
-	if (ret < 0 && ret != -ENOSYS) {
+	ਜੇ (ret < 0 && ret != -ENOSYS) {
 		debug("%s: failed to update hub device for HCD (%x)\n",
 		      __func__, ret);
-		return ret;
+		ਵਾਪਸ ret;
 	}
 
 	/*
@@ -814,36 +814,36 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * string' to locate the bits it uses to determine the downstream
 	 * port number.
 	 */
-	if (usb_hub_is_root_hub(dev->dev)) {
-		hub->hub_depth = -1;
-	} else {
-		struct udevice *hdev;
-		int depth = 0;
+	ਜੇ (usb_hub_is_ਜੜ੍ਹ_hub(dev->dev)) {
+		hub->hub_ਡੂੰਘਾਈ = -1;
+	} ਨਹੀਂਤਾਂ {
+		ਬਣਤਰ udevice *hdev;
+		ਪੂਰਨ ਡੂੰਘਾਈ = 0;
 
-		hdev = dev->dev->parent;
-		while (!usb_hub_is_root_hub(hdev)) {
-			depth++;
-			hdev = hdev->parent;
+		hdev = dev->dev->ਮਾਪਾ;
+		ਜਦੋਂ (!usb_hub_is_ਜੜ੍ਹ_hub(hdev)) {
+			ਡੂੰਘਾਈ++;
+			hdev = hdev->ਮਾਪਾ;
 		}
 
-		hub->hub_depth = depth;
+		hub->hub_ਡੂੰਘਾਈ = ਡੂੰਘਾਈ;
 
-		if (usb_hub_is_superspeed(dev)) {
-			debug("set hub (%p) depth to %d\n", dev, depth);
+		ਜੇ (usb_hub_is_superspeed(dev)) {
+			debug("set hub (%p) depth to %d\n", dev, ਡੂੰਘਾਈ);
 			/*
 			 * This request sets the value that the hub uses to
 			 * determine the index into the 'route string index'
 			 * for this hub.
 			 */
-			ret = usb_set_hub_depth(dev, depth);
-			if (ret < 0) {
+			ret = usb_ਸੈੱਟ_hub_ਡੂੰਘਾਈ(dev, ਡੂੰਘਾਈ);
+			ਜੇ (ret < 0) {
 				debug("%s: failed to set hub depth (%lX)\n",
-				      __func__, dev->status);
-				return ret;
+				      __func__, dev->ਸਥਿਤੀ);
+				ਵਾਪਸ ret;
 			}
 		}
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
 	usb_hub_power_on(hub);
 
@@ -852,7 +852,7 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * the power.  This is a __weak function.  Resetting of the devices
 	 * should occur in the board file of the device.
 	 */
-	for (i = 0; i < dev->maxchild; i++)
+	ਲਈ (i = 0; i < dev->maxchild; i++)
 		usb_hub_reset_devices(hub, i + 1);
 
 	/*
@@ -862,94 +862,94 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * will get removed from this list. Scanning of the devices on this
 	 * list will continue until all devices are removed.
 	 */
-	for (i = 0; i < dev->maxchild; i++) {
-		struct usb_device_scan *usb_scan;
+	ਲਈ (i = 0; i < dev->maxchild; i++) {
+		ਬਣਤਰ usb_device_ਜਾਂਚ *usb_ਜਾਂਚ;
 
-		usb_scan = calloc(1, sizeof(*usb_scan));
-		if (!usb_scan) {
-			printf("Can't allocate memory for USB device!\n");
-			return -ENOMEM;
+		usb_ਜਾਂਚ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*usb_ਜਾਂਚ));
+		ਜੇ (!usb_ਜਾਂਚ) {
+			ਲਿਖੋ("Can't allocate memory for USB device!\n");
+			ਵਾਪਸ -ENOMEM;
 		}
-		usb_scan->dev = dev;
-		usb_scan->hub = hub;
-		usb_scan->port = i;
-		list_add_tail(&usb_scan->list, &usb_scan_list);
+		usb_ਜਾਂਚ->dev = dev;
+		usb_ਜਾਂਚ->hub = hub;
+		usb_ਜਾਂਚ->ਪੋਰਟ = i;
+		list_ਜੋੜੋ_ਪੂਛ(&usb_ਜਾਂਚ->list, &usb_ਜਾਂਚ_list);
 	}
 
 	/*
 	 * And now call the scanning code which loops over the generated list
 	 */
-	ret = usb_device_list_scan();
+	ret = usb_device_list_ਜਾਂਚ();
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static int usb_hub_check(struct usb_device *dev, int ifnum)
+ਸਥਿਰ ਪੂਰਨ usb_hub_check(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ifnum)
 {
-	struct usb_interface *iface;
-	struct usb_endpoint_descriptor *ep = NULL;
+	ਬਣਤਰ usb_interface *iface;
+	ਬਣਤਰ usb_endpoint_descriptor *ep = ਨਿਰਾ;
 
 	iface = &dev->config.if_desc[ifnum];
 	/* Is it a hub? */
-	if (iface->desc.bInterfaceClass != USB_CLASS_HUB)
-		goto err;
+	ਜੇ (iface->desc.bInterfaceClass != USB_CLASS_HUB)
+		ਜਾਓ err;
 	/* Some hubs have a subclass of 1, which AFAICT according to the */
 	/*  specs is not defined, but it works */
-	if ((iface->desc.bInterfaceSubClass != 0) &&
+	ਜੇ ((iface->desc.bInterfaceSubClass != 0) &&
 	    (iface->desc.bInterfaceSubClass != 1))
-		goto err;
+		ਜਾਓ err;
 	/* Multiple endpoints? What kind of mutant ninja-hub is this? */
-	if (iface->desc.bNumEndpoints != 1)
-		goto err;
+	ਜੇ (iface->desc.b_ਅੰਕ_Endpoints != 1)
+		ਜਾਓ err;
 	ep = &iface->ep_desc[0];
 	/* Output endpoint? Curiousier and curiousier.. */
-	if (!(ep->bEndpointAddress & USB_DIR_IN))
-		goto err;
+	ਜੇ (!(ep->b_Endpoint_ਪਤਾ & USB_DIR_ਵਿੱਚ))
+		ਜਾਓ err;
 	/* If it's not an interrupt endpoint, we'd better punt! */
-	if ((ep->bmAttributes & 3) != 3)
-		goto err;
+	ਜੇ ((ep->bm_ਗੁਣ & 3) != 3)
+		ਜਾਓ err;
 	/* We found a hub */
 	debug("USB hub found\n");
-	return 0;
+	ਵਾਪਸ 0;
 
 err:
 	debug("USB hub not found: bInterfaceClass=%d, bInterfaceSubClass=%d, bNumEndpoints=%d\n",
 	      iface->desc.bInterfaceClass, iface->desc.bInterfaceSubClass,
-	      iface->desc.bNumEndpoints);
-	if (ep) {
+	      iface->desc.b_ਅੰਕ_Endpoints);
+	ਜੇ (ep) {
 		debug("   bEndpointAddress=%#x, bmAttributes=%d",
-		      ep->bEndpointAddress, ep->bmAttributes);
+		      ep->b_Endpoint_ਪਤਾ, ep->bm_ਗੁਣ);
 	}
 
-	return -ENOENT;
+	ਵਾਪਸ -ENOENT;
 }
 
-int usb_hub_probe(struct usb_device *dev, int ifnum)
+ਪੂਰਨ usb_hub_probe(ਬਣਤਰ usb_device *dev, ਪੂਰਨ ifnum)
 {
-	int ret;
+	ਪੂਰਨ ret;
 
 	ret = usb_hub_check(dev, ifnum);
-	if (ret)
-		return 0;
+	ਜੇ (ret)
+		ਵਾਪਸ 0;
 	ret = usb_hub_configure(dev);
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-int usb_hub_scan(struct udevice *hub)
+#ਜੇ CONFIG_IS_ENABLED(DM_USB)
+ਪੂਰਨ usb_hub_ਜਾਂਚ(ਬਣਤਰ udevice *hub)
 {
-	struct usb_device *udev = dev_get_parent_priv(hub);
+	ਬਣਤਰ usb_device *udev = dev_get_ਮਾਪਾ_priv(hub);
 
-	return usb_hub_configure(udev);
+	ਵਾਪਸ usb_hub_configure(udev);
 }
 
-static int usb_hub_post_probe(struct udevice *dev)
+ਸਥਿਰ ਪੂਰਨ usb_hub_post_probe(ਬਣਤਰ udevice *dev)
 {
 	debug("%s\n", __func__);
-	return usb_hub_scan(dev);
+	ਵਾਪਸ usb_hub_ਜਾਂਚ(dev);
 }
 
-static const struct udevice_id usb_hub_ids[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ udevice_id usb_hub_ids[] = {
 	{ .compatible = "usb-hub" },
 	{ }
 };
@@ -957,29 +957,29 @@ static const struct udevice_id usb_hub_ids[] = {
 U_BOOT_DRIVER(usb_generic_hub) = {
 	.name	= "usb_hub",
 	.id	= UCLASS_USB_HUB,
-	.of_match = usb_hub_ids,
+	.ਦਾ_ਮੇਲ = usb_hub_ids,
 	.flags	= DM_FLAG_ALLOC_PRIV_DMA,
 };
 
 UCLASS_DRIVER(usb_hub) = {
 	.id		= UCLASS_USB_HUB,
 	.name		= "usb_hub",
-	.post_bind	= dm_scan_fdt_dev,
+	.post_bind	= dm_ਜਾਂਚ_fdt_dev,
 	.post_probe	= usb_hub_post_probe,
-	.child_pre_probe	= usb_child_pre_probe,
-	.per_child_auto	= sizeof(struct usb_device),
-	.per_child_plat_auto	= sizeof(struct usb_dev_plat),
-	.per_device_auto	= sizeof(struct usb_hub_device),
+	.ਬੱਚਾ_pre_probe	= usb_ਬੱਚਾ_pre_probe,
+	.ਪ੍ਰਤੀ_ਬੱਚਾ_auto	= ਆਕਾਰ(ਬਣਤਰ usb_device),
+	.ਪ੍ਰਤੀ_ਬੱਚਾ_plat_auto	= ਆਕਾਰ(ਬਣਤਰ usb_dev_plat),
+	.ਪ੍ਰਤੀ_device_auto	= ਆਕਾਰ(ਬਣਤਰ usb_hub_device),
 };
 
-static const struct usb_device_id hub_id_table[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ usb_device_id hub_id_ਸਾਰਣੀ[] = {
 	{
-		.match_flags = USB_DEVICE_ID_MATCH_DEV_CLASS,
+		.ਮੇਲ_flags = USB_DEVICE_ID_ਮੇਲ_DEV_CLASS,
 		.bDeviceClass = USB_CLASS_HUB
 	},
 	{ }	/* Terminating entry */
 };
 
-U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_table);
+U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_ਸਾਰਣੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

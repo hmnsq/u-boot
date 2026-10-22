@@ -4,17 +4,17 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY	LOGC_BLOBLIST
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LOG_CATEGORY	LOGC_BLOBLIST
 
-#include <bloblist.h>
-#include <display_options.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <tables_csum.h>
-#include <asm/global_data.h>
-#include <u-boot/crc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bloblist.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <display_options.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <tables_csum.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/crc.h>
 
 /*
  * A bloblist is a single contiguous chunk of memory with a header
@@ -28,21 +28,21 @@
  * of the bloblist itself or the blob header.
  */
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
-static struct tag_name {
-	enum bloblist_tag_t tag;
-	const char *name;
-} tag_name[] = {
+ਸਥਿਰ ਬਣਤਰ ਟੈਗ_name {
+	ਗਿਣਤੀ bloblist_ਟੈਗ_t ਟੈਗ;
+	ਅਚਲ ਅੱਖਰ *name;
+} ਟੈਗ_name[] = {
 	{ BLOBLISTT_VOID, "(void)" },
 
 	/* BLOBLISTT_AREA_FIRMWARE_TOP */
 	{ BLOBLISTT_CONTROL_FDT, "Control FDT" },
-	{ BLOBLISTT_HOB_BLOCK, "HOB block" },
+	{ BLOBLISTT_HOB_ਖੰਡ, "HOB block" },
 	{ BLOBLISTT_HOB_LIST, "HOB list" },
 	{ BLOBLISTT_ACPI_TABLES, "ACPI tables for x86" },
 	{ BLOBLISTT_TPM_EVLOG, "TPM event log defined by TCG EFI" },
-	{ BLOBLISTT_TPM_CRB_BASE, "TPM Command Response Buffer address" },
+	{ BLOBLISTT_TPM_CRB_ਅਧਾਰ, "TPM Command Response Buffer address" },
 	{ BLOBLISTT_FDT_OVERLAY, "DT overlay" },
 
 	/* BLOBLISTT_AREA_FIRMWARE */
@@ -66,243 +66,243 @@ static struct tag_name {
 	/* BLOBLISTT_VENDOR_AREA */
 };
 
-const char *bloblist_tag_name(enum bloblist_tag_t tag)
+ਅਚਲ ਅੱਖਰ *bloblist_ਟੈਗ_name(ਗਿਣਤੀ bloblist_ਟੈਗ_t ਟੈਗ)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < ARRAY_SIZE(tag_name); i++) {
-		if (tag_name[i].tag == tag)
-			return tag_name[i].name;
+	ਲਈ (i = 0; i < ARRAY_ਮਾਪ(ਟੈਗ_name); i++) {
+		ਜੇ (ਟੈਗ_name[i].ਟੈਗ == ਟੈਗ)
+			ਵਾਪਸ ਟੈਗ_name[i].name;
 	}
 
-	return "invalid";
+	ਵਾਪਸ "invalid";
 }
 
-static struct bloblist_rec *bloblist_first_blob(struct bloblist_hdr *hdr)
+ਸਥਿਰ ਬਣਤਰ bloblist_rec *bloblist_ਪਹਿਲਾ_blob(ਬਣਤਰ bloblist_hdr *hdr)
 {
-	if (hdr->used_size <= hdr->hdr_size)
-		return NULL;
-	return (struct bloblist_rec *)((void *)hdr + hdr->hdr_size);
+	ਜੇ (hdr->ਵਰਤਿਆ_ਮਾਪ <= hdr->hdr_ਮਾਪ)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਵਾਪਸ (ਬਣਤਰ bloblist_rec *)((ਖਾਲੀ *)hdr + hdr->hdr_ਮਾਪ);
 }
 
-static inline uint rec_hdr_size(struct bloblist_rec *rec)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint rec_hdr_ਮਾਪ(ਬਣਤਰ bloblist_rec *rec)
 {
-	return (rec->tag_and_hdr_size & BLOBLISTR_HDR_SIZE_MASK) >>
-		BLOBLISTR_HDR_SIZE_SHIFT;
+	ਵਾਪਸ (rec->ਟੈਗ_and_hdr_ਮਾਪ & BLOBLISTR_HDR_ਮਾਪ_ਨਕਾਬ) >>
+		BLOBLISTR_HDR_ਮਾਪ_ਖਿਸਕਾਓ;
 }
 
-static inline uint rec_tag(struct bloblist_rec *rec)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint rec_ਟੈਗ(ਬਣਤਰ bloblist_rec *rec)
 {
-	return (rec->tag_and_hdr_size & BLOBLISTR_TAG_MASK) >>
-		BLOBLISTR_TAG_SHIFT;
+	ਵਾਪਸ (rec->ਟੈਗ_and_hdr_ਮਾਪ & BLOBLISTR_ਟੈਗ_ਨਕਾਬ) >>
+		BLOBLISTR_ਟੈਗ_ਖਿਸਕਾਓ;
 }
 
-static inline void void_blob(struct bloblist_rec *rec)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ void_blob(ਬਣਤਰ bloblist_rec *rec)
 {
-	if (rec_tag(rec) == BLOBLISTT_VOID)
-		return;
-	rec->tag_and_hdr_size = BLOBLISTT_VOID |
-				sizeof(*rec) << BLOBLISTR_HDR_SIZE_SHIFT;
+	ਜੇ (rec_ਟੈਗ(rec) == BLOBLISTT_VOID)
+		ਵਾਪਸ;
+	rec->ਟੈਗ_and_hdr_ਮਾਪ = BLOBLISTT_VOID |
+				ਆਕਾਰ(*rec) << BLOBLISTR_HDR_ਮਾਪ_ਖਿਸਕਾਓ;
 }
 
-static inline struct bloblist_rec *rec_from_blob(void *blob)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ bloblist_rec *rec_from_blob(ਖਾਲੀ *blob)
 {
-	return (blob - sizeof(struct bloblist_rec));
+	ਵਾਪਸ (blob - ਆਕਾਰ(ਬਣਤਰ bloblist_rec));
 }
 
-static ulong bloblist_blob_end_ofs(struct bloblist_hdr *hdr,
-				   struct bloblist_rec *rec)
+ਸਥਿਰ ulong bloblist_blob_ਸਿਰਾ_ofs(ਬਣਤਰ bloblist_hdr *hdr,
+				   ਬਣਤਰ bloblist_rec *rec)
 {
-	ulong offset;
+	ulong ਵਿੱਥ;
 
-	offset = (void *)rec - (void *)hdr;
+	ਵਿੱਥ = (ਖਾਲੀ *)rec - (ਖਾਲੀ *)hdr;
 	/*
 	 * The data section of next TE should start from an address aligned
 	 * to 1 << hdr->align_log2.
 	 */
-	offset += rec_hdr_size(rec) + rec->size;
-	offset = round_up(offset + rec_hdr_size(rec), 1 << hdr->align_log2);
-	offset -= rec_hdr_size(rec);
+	ਵਿੱਥ += rec_hdr_ਮਾਪ(rec) + rec->ਮਾਪ;
+	ਵਿੱਥ = ਗੇੜਾ_ਉੱਪਰ(ਵਿੱਥ + rec_hdr_ਮਾਪ(rec), 1 << hdr->align_log2);
+	ਵਿੱਥ -= rec_hdr_ਮਾਪ(rec);
 
-	return offset;
+	ਵਾਪਸ ਵਿੱਥ;
 }
 
-static struct bloblist_rec *bloblist_next_blob(struct bloblist_hdr *hdr,
-					       struct bloblist_rec *rec)
+ਸਥਿਰ ਬਣਤਰ bloblist_rec *bloblist_ਅਗਲਾ_blob(ਬਣਤਰ bloblist_hdr *hdr,
+					       ਬਣਤਰ bloblist_rec *rec)
 {
-	ulong offset = bloblist_blob_end_ofs(hdr, rec);
+	ulong ਵਿੱਥ = bloblist_blob_ਸਿਰਾ_ofs(hdr, rec);
 
-	if (offset >= hdr->used_size)
-		return NULL;
-	return (struct bloblist_rec *)((void *)hdr + offset);
+	ਜੇ (ਵਿੱਥ >= hdr->ਵਰਤਿਆ_ਮਾਪ)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਵਾਪਸ (ਬਣਤਰ bloblist_rec *)((ਖਾਲੀ *)hdr + ਵਿੱਥ);
 }
 
-#define foreach_rec(_rec, _hdr) \
-	for (_rec = bloblist_first_blob(_hdr); \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ foreach_rec(_rec, _hdr) \
+	ਲਈ (_rec = bloblist_ਪਹਿਲਾ_blob(_hdr); \
 	     _rec; \
-	     _rec = bloblist_next_blob(_hdr, _rec))
+	     _rec = bloblist_ਅਗਲਾ_blob(_hdr, _rec))
 
-static struct bloblist_rec *bloblist_findrec(uint tag)
+ਸਥਿਰ ਬਣਤਰ bloblist_rec *bloblist_findrec(uint ਟੈਗ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	if (!hdr)
-		return NULL;
+	ਜੇ (!hdr)
+		ਵਾਪਸ ਨਿਰਾ;
 
 	foreach_rec(rec, hdr) {
-		if (rec_tag(rec) == tag)
-			return rec;
+		ਜੇ (rec_ਟੈਗ(rec) == ਟੈਗ)
+			ਵਾਪਸ rec;
 	}
 
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static int bloblist_addrec(uint tag, int size, int align_log2,
-			   struct bloblist_rec **recp)
+ਸਥਿਰ ਪੂਰਨ bloblist_addrec(uint ਟੈਗ, ਪੂਰਨ ਮਾਪ, ਪੂਰਨ align_log2,
+			   ਬਣਤਰ bloblist_rec **recp)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
-	phys_addr_t data_start, aligned_start;
-	phys_size_t new_alloced;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_rec *rec;
+	phys_addr_t ਅੰਕੜੇ_ਸ਼ੁਰੂ, aligned_ਸ਼ੁਰੂ;
+	phys_ਮਾਪ_t new_alloced;
 
-	if (!align_log2)
+	ਜੇ (!align_log2)
 		align_log2 = BLOBLIST_BLOB_ALIGN_LOG2;
 
 	/* Figure out where the new data will start */
-	data_start = map_to_sysmem(hdr) + hdr->used_size + sizeof(*rec);
+	ਅੰਕੜੇ_ਸ਼ੁਰੂ = map_ਮੰਜ਼ਿਲ_sysmem(hdr) + hdr->ਵਰਤਿਆ_ਮਾਪ + ਆਕਾਰ(*rec);
 
 	/* Align the address and then calculate the offset from used size */
-	aligned_start = ALIGN(data_start, 1U << align_log2) - data_start;
+	aligned_ਸ਼ੁਰੂ = ALIGN(ਅੰਕੜੇ_ਸ਼ੁਰੂ, 1U << align_log2) - ਅੰਕੜੇ_ਸ਼ੁਰੂ;
 
 	/* If we need to create a dummy record, create it */
-	if (aligned_start) {
-		int void_size = aligned_start - sizeof(*rec);
-		struct bloblist_rec *vrec;
-		int ret;
+	ਜੇ (aligned_ਸ਼ੁਰੂ) {
+		ਪੂਰਨ void_ਮਾਪ = aligned_ਸ਼ੁਰੂ - ਆਕਾਰ(*rec);
+		ਬਣਤਰ bloblist_rec *vrec;
+		ਪੂਰਨ ret;
 
-		ret = bloblist_addrec(BLOBLISTT_VOID, void_size, 0, &vrec);
-		if (ret)
-			return log_msg_ret("void", ret);
+		ret = bloblist_addrec(BLOBLISTT_VOID, void_ਮਾਪ, 0, &vrec);
+		ਜੇ (ret)
+			ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("void", ret);
 
 		/* start the record after that */
-		data_start = map_to_sysmem(hdr) + hdr->used_size + sizeof(*vrec);
+		ਅੰਕੜੇ_ਸ਼ੁਰੂ = map_ਮੰਜ਼ਿਲ_sysmem(hdr) + hdr->ਵਰਤਿਆ_ਮਾਪ + ਆਕਾਰ(*vrec);
 	}
 
 	/* Calculate the new allocated total */
-	new_alloced = data_start - map_to_sysmem(hdr) +
-		ALIGN(size, 1U << align_log2);
+	new_alloced = ਅੰਕੜੇ_ਸ਼ੁਰੂ - map_ਮੰਜ਼ਿਲ_sysmem(hdr) +
+		ALIGN(ਮਾਪ, 1U << align_log2);
 
-	if (new_alloced > hdr->total_size) {
-		log_err("Failed to allocate %x bytes\n", size);
+	ਜੇ (new_alloced > hdr->ਕੁੱਲ_ਮਾਪ) {
+		log_err("Failed to allocate %x bytes\n", ਮਾਪ);
 		log_err("Used size=%x, total size=%x\n",
-			hdr->used_size, hdr->total_size);
-		return log_msg_ret("bloblist add", -ENOSPC);
+			hdr->ਵਰਤਿਆ_ਮਾਪ, hdr->ਕੁੱਲ_ਮਾਪ);
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("bloblist add", -ENOSPC);
 	}
-	rec = (void *)hdr + hdr->used_size;
+	rec = (ਖਾਲੀ *)hdr + hdr->ਵਰਤਿਆ_ਮਾਪ;
 
-	rec->tag_and_hdr_size = tag | sizeof(*rec) << BLOBLISTR_HDR_SIZE_SHIFT;
-	rec->size = size;
+	rec->ਟੈਗ_and_hdr_ਮਾਪ = ਟੈਗ | ਆਕਾਰ(*rec) << BLOBLISTR_HDR_ਮਾਪ_ਖਿਸਕਾਓ;
+	rec->ਮਾਪ = ਮਾਪ;
 
 	/* Zero the record data */
-	memset((void *)rec + rec_hdr_size(rec), '\0', rec->size);
+	memset((ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec), '\0', rec->ਮਾਪ);
 
-	hdr->used_size = new_alloced;
+	hdr->ਵਰਤਿਆ_ਮਾਪ = new_alloced;
 	*recp = rec;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int bloblist_ensurerec(uint tag, struct bloblist_rec **recp, int size,
-			      int align_log2)
+ਸਥਿਰ ਪੂਰਨ bloblist_ensurerec(uint ਟੈਗ, ਬਣਤਰ bloblist_rec **recp, ਪੂਰਨ ਮਾਪ,
+			      ਪੂਰਨ align_log2)
 {
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	rec = bloblist_findrec(tag);
-	if (rec) {
-		if (size && size != rec->size) {
+	rec = bloblist_findrec(ਟੈਗ);
+	ਜੇ (rec) {
+		ਜੇ (ਮਾਪ && ਮਾਪ != rec->ਮਾਪ) {
 			*recp = rec;
-			return -ESPIPE;
+			ਵਾਪਸ -ESPIPE;
 		}
-	} else {
-		int ret;
+	} ਨਹੀਂਤਾਂ {
+		ਪੂਰਨ ret;
 
-		ret = bloblist_addrec(tag, size, align_log2, &rec);
-		if (ret)
-			return ret;
+		ret = bloblist_addrec(ਟੈਗ, ਮਾਪ, align_log2, &rec);
+		ਜੇ (ret)
+			ਵਾਪਸ ret;
 	}
 	*recp = rec;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int bloblist_get_blob_data_offset(uint tag)
+ਸਥਿਰ ਪੂਰਨ bloblist_get_blob_ਅੰਕੜੇ_ਵਿੱਥ(uint ਟੈਗ)
 {
-	switch (tag) {
-	case BLOBLISTT_FDT_OVERLAY:
-		return sizeof(struct dto_blob_hdr);
+	ਚੋਣ (ਟੈਗ) {
+	ਹਾਲਤ BLOBLISTT_FDT_OVERLAY:
+		ਵਾਪਸ ਆਕਾਰ(ਬਣਤਰ dto_blob_hdr);
 	/*
 	 * return the data offset if it is not following the blob
 	 * header immediately.
 	 */
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-void *bloblist_find(uint tag, int size)
+ਖਾਲੀ *bloblist_ਲੱਭੋ(uint ਟੈਗ, ਪੂਰਨ ਮਾਪ)
 {
-	void *blob = NULL;
-	int blob_size;
+	ਖਾਲੀ *blob = ਨਿਰਾ;
+	ਪੂਰਨ blob_ਮਾਪ;
 
-	blob = bloblist_get_blob(tag, &blob_size);
+	blob = bloblist_get_blob(ਟੈਗ, &blob_ਮਾਪ);
 
-	if (size && size != blob_size)
-		return NULL;
+	ਜੇ (ਮਾਪ && ਮਾਪ != blob_ਮਾਪ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return blob;
+	ਵਾਪਸ blob;
 }
 
-void *bloblist_get_blob(uint tag, int *sizep)
+ਖਾਲੀ *bloblist_get_blob(uint ਟੈਗ, ਪੂਰਨ *sizep)
 {
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	rec = bloblist_findrec(tag);
-	if (!rec)
-		return NULL;
+	rec = bloblist_findrec(ਟੈਗ);
+	ਜੇ (!rec)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	*sizep = rec->size;
+	*sizep = rec->ਮਾਪ;
 
-	return (void *)rec + rec_hdr_size(rec);
+	ਵਾਪਸ (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
 }
 
-int bloblist_apply_blobs(uint tag, int (*func)(void **data, int size))
+ਪੂਰਨ bloblist_apply_blobs(uint ਟੈਗ, ਪੂਰਨ (*func)(ਖਾਲੀ **ਅੰਕੜੇ, ਪੂਰਨ ਮਾਪ))
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	if (!func || !hdr)
-		return -ENOENT;
+	ਜੇ (!func || !hdr)
+		ਵਾਪਸ -ENOENT;
 
 	foreach_rec(rec, hdr) {
 		/* Apply all blobs with the specified tag */
-		if (rec_tag(rec) == tag) {
-			int ret;
-			int tag = rec_tag(rec);
-			void *blob = (void *)rec + rec_hdr_size(rec);
-			int dat_off = bloblist_get_blob_data_offset(tag);
+		ਜੇ (rec_ਟੈਗ(rec) == ਟੈਗ) {
+			ਪੂਰਨ ret;
+			ਪੂਰਨ ਟੈਗ = rec_ਟੈਗ(rec);
+			ਖਾਲੀ *blob = (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
+			ਪੂਰਨ dat_off = bloblist_get_blob_ਅੰਕੜੇ_ਵਿੱਥ(ਟੈਗ);
 
 			blob += dat_off;
-			ret = func(&blob, rec->size - dat_off);
-			if (ret) {
+			ret = func(&blob, rec->ਮਾਪ - dat_off);
+			ਜੇ (ret) {
 				log_err("Failed to apply blob with tag %d\n",
-					tag);
-				return ret;
+					ਟੈਗ);
+				ਵਾਪਸ ret;
 			}
 
 			rec = rec_from_blob(blob - dat_off);
-			if (!rec) {
+			ਜੇ (!rec) {
 				log_err("Blob corrupted\n");
-				return -ENOENT;
+				ਵਾਪਸ -ENOENT;
 			}
 
 			/* Mark applied blob record as void */
@@ -310,388 +310,388 @@ int bloblist_apply_blobs(uint tag, int (*func)(void **data, int size))
 		}
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-void *bloblist_add(uint tag, int size, int align_log2)
+ਖਾਲੀ *bloblist_ਜੋੜੋ(uint ਟੈਗ, ਪੂਰਨ ਮਾਪ, ਪੂਰਨ align_log2)
 {
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	if (bloblist_addrec(tag, size, align_log2, &rec))
-		return NULL;
+	ਜੇ (bloblist_addrec(ਟੈਗ, ਮਾਪ, align_log2, &rec))
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return (void *)rec + rec_hdr_size(rec);
+	ਵਾਪਸ (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
 }
 
-int bloblist_ensure_size(uint tag, int size, int align_log2, void **blobp)
+ਪੂਰਨ bloblist_ensure_ਮਾਪ(uint ਟੈਗ, ਪੂਰਨ ਮਾਪ, ਪੂਰਨ align_log2, ਖਾਲੀ **blobp)
 {
-	struct bloblist_rec *rec;
-	int ret;
+	ਬਣਤਰ bloblist_rec *rec;
+	ਪੂਰਨ ret;
 
-	ret = bloblist_ensurerec(tag, &rec, size, align_log2);
-	if (ret)
-		return ret;
-	*blobp = (void *)rec + rec_hdr_size(rec);
+	ret = bloblist_ensurerec(ਟੈਗ, &rec, ਮਾਪ, align_log2);
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
+	*blobp = (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-void *bloblist_ensure(uint tag, int size)
+ਖਾਲੀ *bloblist_ensure(uint ਟੈਗ, ਪੂਰਨ ਮਾਪ)
 {
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	if (bloblist_ensurerec(tag, &rec, size, 0))
-		return NULL;
+	ਜੇ (bloblist_ensurerec(ਟੈਗ, &rec, ਮਾਪ, 0))
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return (void *)rec + rec_hdr_size(rec);
+	ਵਾਪਸ (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
 }
 
-int bloblist_ensure_size_ret(uint tag, int *sizep, void **blobp)
+ਪੂਰਨ bloblist_ensure_ਮਾਪ_ret(uint ਟੈਗ, ਪੂਰਨ *sizep, ਖਾਲੀ **blobp)
 {
-	struct bloblist_rec *rec;
-	int ret;
+	ਬਣਤਰ bloblist_rec *rec;
+	ਪੂਰਨ ret;
 
-	ret = bloblist_ensurerec(tag, &rec, *sizep, 0);
-	if (ret == -ESPIPE)
-		*sizep = rec->size;
-	else if (ret)
-		return ret;
-	*blobp = (void *)rec + rec_hdr_size(rec);
+	ret = bloblist_ensurerec(ਟੈਗ, &rec, *sizep, 0);
+	ਜੇ (ret == -ESPIPE)
+		*sizep = rec->ਮਾਪ;
+	ਨਹੀਂਤਾਂ ਜੇ (ret)
+		ਵਾਪਸ ret;
+	*blobp = (ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int bloblist_resize_rec(struct bloblist_hdr *hdr,
-			       struct bloblist_rec *rec,
-			       int new_size)
+ਸਥਿਰ ਪੂਰਨ bloblist_resize_rec(ਬਣਤਰ bloblist_hdr *hdr,
+			       ਬਣਤਰ bloblist_rec *rec,
+			       ਪੂਰਨ new_ਮਾਪ)
 {
-	int expand_by;	/* Number of bytes to expand by (-ve to contract) */
-	int new_alloced;
-	ulong next_ofs;	/* Offset of the record after @rec */
+	ਪੂਰਨ expand_by;	/* Number of bytes to expand by (-ve to contract) */
+	ਪੂਰਨ new_alloced;
+	ulong ਅਗਲਾ_ofs;	/* Offset of the record after @rec */
 
-	expand_by = ALIGN(new_size - rec->size, BLOBLIST_BLOB_ALIGN);
-	new_alloced = ALIGN(hdr->used_size + expand_by, BLOBLIST_BLOB_ALIGN);
-	if (new_size < 0) {
+	expand_by = ALIGN(new_ਮਾਪ - rec->ਮਾਪ, BLOBLIST_BLOB_ALIGN);
+	new_alloced = ALIGN(hdr->ਵਰਤਿਆ_ਮਾਪ + expand_by, BLOBLIST_BLOB_ALIGN);
+	ਜੇ (new_ਮਾਪ < 0) {
 		log_debug("Attempt to shrink blob size below 0 (%x)\n",
-			  new_size);
-		return log_msg_ret("size", -EINVAL);
+			  new_ਮਾਪ);
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("size", -EINVAL);
 	}
-	if (new_alloced > hdr->total_size) {
-		log_err("Failed to allocate %x bytes\n", new_size);
+	ਜੇ (new_alloced > hdr->ਕੁੱਲ_ਮਾਪ) {
+		log_err("Failed to allocate %x bytes\n", new_ਮਾਪ);
 		log_err("Used size=%x, total size=%x\n",
-			hdr->used_size, hdr->total_size);
-		return log_msg_ret("alloc", -ENOSPC);
+			hdr->ਵਰਤਿਆ_ਮਾਪ, hdr->ਕੁੱਲ_ਮਾਪ);
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("alloc", -ENOSPC);
 	}
 
 	/* Move the following blobs up or down, if this is not the last */
-	next_ofs = bloblist_blob_end_ofs(hdr, rec);
-	if (next_ofs != hdr->used_size) {
-		memmove((void *)hdr + next_ofs + expand_by,
-			(void *)hdr + next_ofs, hdr->used_size - next_ofs);
+	ਅਗਲਾ_ofs = bloblist_blob_ਸਿਰਾ_ofs(hdr, rec);
+	ਜੇ (ਅਗਲਾ_ofs != hdr->ਵਰਤਿਆ_ਮਾਪ) {
+		memmove((ਖਾਲੀ *)hdr + ਅਗਲਾ_ofs + expand_by,
+			(ਖਾਲੀ *)hdr + ਅਗਲਾ_ofs, hdr->ਵਰਤਿਆ_ਮਾਪ - ਅਗਲਾ_ofs);
 	}
-	hdr->used_size = new_alloced;
+	hdr->ਵਰਤਿਆ_ਮਾਪ = new_alloced;
 
 	/* Zero the new part of the blob */
-	if (expand_by > 0) {
-		memset((void *)rec + rec_hdr_size(rec) + rec->size, '\0',
-		       new_size - rec->size);
+	ਜੇ (expand_by > 0) {
+		memset((ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec) + rec->ਮਾਪ, '\0',
+		       new_ਮਾਪ - rec->ਮਾਪ);
 	}
 
 	/* Update the size of this blob */
-	rec->size = new_size;
+	rec->ਮਾਪ = new_ਮਾਪ;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int bloblist_resize(uint tag, int new_size)
+ਪੂਰਨ bloblist_resize(uint ਟੈਗ, ਪੂਰਨ new_ਮਾਪ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
-	int ret;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_rec *rec;
+	ਪੂਰਨ ret;
 
-	rec = bloblist_findrec(tag);
-	if (!rec)
-		return log_msg_ret("find", -ENOENT);
-	ret = bloblist_resize_rec(hdr, rec, new_size);
-	if (ret)
-		return log_msg_ret("resize", ret);
+	rec = bloblist_findrec(ਟੈਗ);
+	ਜੇ (!rec)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("find", -ENOENT);
+	ret = bloblist_resize_rec(hdr, rec, new_ਮਾਪ);
+	ਜੇ (ret)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("resize", ret);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static u32 bloblist_calc_chksum(struct bloblist_hdr *hdr)
+ਸਥਿਰ u32 bloblist_calc_chksum(ਬਣਤਰ bloblist_hdr *hdr)
 {
 	u8 chksum;
 
-	chksum = table_compute_checksum(hdr, hdr->used_size);
+	chksum = ਸਾਰਣੀ_compute_checksum(hdr, hdr->ਵਰਤਿਆ_ਮਾਪ);
 	chksum += hdr->chksum;
 
-	return chksum;
+	ਵਾਪਸ chksum;
 }
 
-int bloblist_new(ulong addr, uint size, uint flags, uint align_log2)
+ਪੂਰਨ bloblist_new(ulong addr, uint ਮਾਪ, uint flags, uint align_log2)
 {
-	struct bloblist_hdr *hdr;
+	ਬਣਤਰ bloblist_hdr *hdr;
 
-	if (size < sizeof(*hdr))
-		return log_ret(-ENOSPC);
-	if (addr & (BLOBLIST_ALIGN - 1))
-		return log_ret(-EFAULT);
-	hdr = map_sysmem(addr, size);
-	memset(hdr, '\0', sizeof(*hdr));
-	hdr->version = BLOBLIST_VERSION;
-	hdr->hdr_size = sizeof(*hdr);
+	ਜੇ (ਮਾਪ < ਆਕਾਰ(*hdr))
+		ਵਾਪਸ log_ret(-ENOSPC);
+	ਜੇ (addr & (BLOBLIST_ALIGN - 1))
+		ਵਾਪਸ log_ret(-EFAULT);
+	hdr = map_sysmem(addr, ਮਾਪ);
+	memset(hdr, '\0', ਆਕਾਰ(*hdr));
+	hdr->version = BLOBLIST_ਸੰਸਕਰਣ;
+	hdr->hdr_ਮਾਪ = ਆਕਾਰ(*hdr);
 	hdr->flags = flags;
 	hdr->magic = BLOBLIST_MAGIC;
-	hdr->used_size = hdr->hdr_size;
-	hdr->total_size = size;
+	hdr->ਵਰਤਿਆ_ਮਾਪ = hdr->hdr_ਮਾਪ;
+	hdr->ਕੁੱਲ_ਮਾਪ = ਮਾਪ;
 	hdr->align_log2 = align_log2 ? align_log2 : BLOBLIST_BLOB_ALIGN_LOG2;
 	hdr->chksum = 0;
 	gd->bloblist = hdr;
 	gd->flags |= GD_FLG_BLOBLIST_HANDOFF;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int bloblist_check(ulong addr, uint size)
+ਪੂਰਨ bloblist_check(ulong addr, uint ਮਾਪ)
 {
-	struct bloblist_hdr *hdr;
+	ਬਣਤਰ bloblist_hdr *hdr;
 	u32 chksum;
 
-	hdr = map_sysmem(addr, sizeof(*hdr));
-	if (hdr->magic != BLOBLIST_MAGIC)
-		return log_msg_ret("Bad magic", -ENOENT);
-	if (hdr->version != BLOBLIST_VERSION)
-		return log_msg_ret("Bad version", -EPROTONOSUPPORT);
-	if (!hdr->total_size || (size && hdr->total_size > size))
-		return log_msg_ret("Bad total size", -EFBIG);
-	if (hdr->used_size > hdr->total_size)
-		return log_msg_ret("Bad used size", -ENOENT);
-	if (hdr->hdr_size != sizeof(struct bloblist_hdr))
-		return log_msg_ret("Bad header size", -ENOENT);
+	hdr = map_sysmem(addr, ਆਕਾਰ(*hdr));
+	ਜੇ (hdr->magic != BLOBLIST_MAGIC)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad magic", -ENOENT);
+	ਜੇ (hdr->version != BLOBLIST_ਸੰਸਕਰਣ)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad version", -EPROTONOSUPPORT);
+	ਜੇ (!hdr->ਕੁੱਲ_ਮਾਪ || (ਮਾਪ && hdr->ਕੁੱਲ_ਮਾਪ > ਮਾਪ))
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad total size", -EFBIG);
+	ਜੇ (hdr->ਵਰਤਿਆ_ਮਾਪ > hdr->ਕੁੱਲ_ਮਾਪ)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad used size", -ENOENT);
+	ਜੇ (hdr->hdr_ਮਾਪ != ਆਕਾਰ(ਬਣਤਰ bloblist_hdr))
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad header size", -ENOENT);
 
 	chksum = bloblist_calc_chksum(hdr);
-	if (hdr->chksum != chksum) {
+	ਜੇ (hdr->chksum != chksum) {
 		log_err("Checksum %x != %x\n", hdr->chksum, chksum);
-		return log_msg_ret("Bad checksum", -EIO);
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("Bad checksum", -EIO);
 	}
 	gd->bloblist = hdr;
 	gd->flags |= GD_FLG_BLOBLIST_HANDOFF;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int bloblist_finish(void)
+ਪੂਰਨ bloblist_ਅੰਤ(ਖਾਲੀ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
 
 	hdr->chksum = bloblist_calc_chksum(hdr);
-	log_debug("Finished bloblist size %lx at %lx\n", (ulong)hdr->used_size,
-		  (ulong)map_to_sysmem(hdr));
+	log_debug("Finished bloblist size %lx at %lx\n", (ulong)hdr->ਵਰਤਿਆ_ਮਾਪ,
+		  (ulong)map_ਮੰਜ਼ਿਲ_sysmem(hdr));
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-ulong bloblist_get_base(void)
+ulong bloblist_get_ਅਧਾਰ(ਖਾਲੀ)
 {
-	return map_to_sysmem(gd->bloblist);
+	ਵਾਪਸ map_ਮੰਜ਼ਿਲ_sysmem(gd->bloblist);
 }
 
-ulong bloblist_get_size(void)
+ulong bloblist_get_ਮਾਪ(ਖਾਲੀ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
 
-	return hdr->used_size;
+	ਵਾਪਸ hdr->ਵਰਤਿਆ_ਮਾਪ;
 }
 
-ulong bloblist_get_total_size(void)
+ulong bloblist_get_ਕੁੱਲ_ਮਾਪ(ਖਾਲੀ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
 
-	return hdr->total_size;
+	ਵਾਪਸ hdr->ਕੁੱਲ_ਮਾਪ;
 }
 
-void bloblist_get_stats(ulong *basep, ulong *tsizep, ulong *usizep)
+ਖਾਲੀ bloblist_get_stats(ulong *basep, ulong *tsizep, ulong *usizep)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
 
-	*basep = map_to_sysmem(gd->bloblist);
-	*tsizep = hdr->total_size;
-	*usizep = hdr->used_size;
+	*basep = map_ਮੰਜ਼ਿਲ_sysmem(gd->bloblist);
+	*tsizep = hdr->ਕੁੱਲ_ਮਾਪ;
+	*usizep = hdr->ਵਰਤਿਆ_ਮਾਪ;
 }
 
-static void show_value(const char *prompt, ulong value)
+ਸਥਿਰ ਖਾਲੀ show_ਮੁੱਲ(ਅਚਲ ਅੱਖਰ *prompt, ulong ਮੁੱਲ)
 {
-	printf("%s:%*s %-5lx  ", prompt, 10 - (int)strlen(prompt), "", value);
-	print_size(value, "\n");
+	ਲਿਖੋ("%s:%*s %-5lx  ", prompt, 10 - (ਪੂਰਨ)ਲੜੀ_ਲੰਬਾਈ(prompt), "", ਮੁੱਲ);
+	print_ਮਾਪ(ਮੁੱਲ, "\n");
 }
 
-void bloblist_show_stats(void)
+ਖਾਲੀ bloblist_show_stats(ਖਾਲੀ)
 {
-	ulong base, tsize, usize;
+	ulong ਅਧਾਰ, tsize, usize;
 
-	bloblist_get_stats(&base, &tsize, &usize);
-	printf("base:       %lx\n", base);
-	show_value("total size", tsize);
-	show_value("used size", usize);
-	show_value("free", tsize - usize);
+	bloblist_get_stats(&ਅਧਾਰ, &tsize, &usize);
+	ਲਿਖੋ("base:       %lx\n", ਅਧਾਰ);
+	show_ਮੁੱਲ("total size", tsize);
+	show_ਮੁੱਲ("used size", usize);
+	show_ਮੁੱਲ("free", tsize - usize);
 }
 
-void bloblist_show_list(void)
+ਖਾਲੀ bloblist_show_list(ਖਾਲੀ)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	ਬਣਤਰ bloblist_hdr *hdr = gd->bloblist;
+	ਬਣਤਰ bloblist_rec *rec;
 
-	printf("%-8s  %8s   Tag Name\n", "Address", "Size");
-	for (rec = bloblist_first_blob(hdr); rec;
-	     rec = bloblist_next_blob(hdr, rec)) {
-		printf("%08lx  %8x  %4x %s\n",
-		       (ulong)map_to_sysmem((void *)rec + rec_hdr_size(rec)),
-		       rec->size, rec_tag(rec),
-		       bloblist_tag_name(rec_tag(rec)));
+	ਲਿਖੋ("%-8s  %8s   Tag Name\n", "Address", "Size");
+	ਲਈ (rec = bloblist_ਪਹਿਲਾ_blob(hdr); rec;
+	     rec = bloblist_ਅਗਲਾ_blob(hdr, rec)) {
+		ਲਿਖੋ("%08lx  %8x  %4x %s\n",
+		       (ulong)map_ਮੰਜ਼ਿਲ_sysmem((ਖਾਲੀ *)rec + rec_hdr_ਮਾਪ(rec)),
+		       rec->ਮਾਪ, rec_ਟੈਗ(rec),
+		       bloblist_ਟੈਗ_name(rec_ਟੈਗ(rec)));
 	}
 }
 
-int bloblist_reloc(void *to, uint to_size)
+ਪੂਰਨ bloblist_reloc(ਖਾਲੀ *ਮੰਜ਼ਿਲ, uint ਮੰਜ਼ਿਲ_ਮਾਪ)
 {
-	struct bloblist_hdr *hdr;
+	ਬਣਤਰ bloblist_hdr *hdr;
 
-	if (!to_size)
-		return 0;
+	ਜੇ (!ਮੰਜ਼ਿਲ_ਮਾਪ)
+		ਵਾਪਸ 0;
 
-	if (to_size < gd->bloblist->total_size)
-		return -ENOSPC;
+	ਜੇ (ਮੰਜ਼ਿਲ_ਮਾਪ < gd->bloblist->ਕੁੱਲ_ਮਾਪ)
+		ਵਾਪਸ -ENOSPC;
 
-	memcpy(to, gd->bloblist, gd->bloblist->total_size);
-	hdr = to;
-	hdr->total_size = to_size;
-	gd->bloblist = to;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਮੰਜ਼ਿਲ, gd->bloblist, gd->bloblist->ਕੁੱਲ_ਮਾਪ);
+	hdr = ਮੰਜ਼ਿਲ;
+	hdr->ਕੁੱਲ_ਮਾਪ = ਮੰਜ਼ਿਲ_ਮਾਪ;
+	gd->bloblist = ਮੰਜ਼ਿਲ;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Weak default function for getting bloblist from boot args.
  */
-int __weak xferlist_from_boot_arg(ulong __always_unused *addr)
+ਪੂਰਨ __weak xferlist_from_boot_arg(ulong __always_unused *addr)
 {
-	return -ENOENT;
+	ਵਾਪਸ -ENOENT;
 }
 
-bool bloblist_exists(void)
+bool bloblist_exists(ਖਾਲੀ)
 {
-	int ret;
+	ਪੂਰਨ ret;
 	ulong addr = 0;
 
 	/* Check if a valid transfer list passed in */
-	if (!xferlist_from_boot_arg(&addr))
-		goto found;
+	ਜੇ (!xferlist_from_boot_arg(&addr))
+		ਜਾਓ ਮਿਲਿਆ;
 
 	/*
 	 * If Firmware Handoff is mandatory but no transfer list is
 	 * observed, report it as an error.
 	 */
-	if (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
-		return false;
+	ਜੇ (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
+		ਵਾਪਸ false;
 
 	/*
 	 * We have checked for a valid transfer list being passed. At this
 	 * point, if we do not have a fixed address for the bloblist, we cannot
 	 * be provided with one.
 	 */
-	if (xpl_is_first_phase() || !IS_ENABLED(CONFIG_BLOBLIST_FIXED))
-		return false;
+	ਜੇ (xpl_is_ਪਹਿਲਾ_phase() || !IS_ENABLED(CONFIG_BLOBLIST_FIXED))
+		ਵਾਪਸ false;
 
 	/*
 	 * Check for a valid list as the configured address.
 	 */
 	addr = IF_ENABLED_INT(CONFIG_BLOBLIST_FIXED,
 			      CONFIG_BLOBLIST_ADDR);
-	ret = bloblist_check(addr, CONFIG_BLOBLIST_SIZE);
-	if (!ret)
-		goto found;
+	ret = bloblist_check(addr, CONFIG_BLOBLIST_ਮਾਪ);
+	ਜੇ (!ret)
+		ਜਾਓ ਮਿਲਿਆ;
 
 	log_debug("Bloblist at %lx not found (err=%d)\n", addr, ret);
-	return false;
+	ਵਾਪਸ false;
 
-found:
-#ifdef DEBUG
+ਮਿਲਿਆ:
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG
 	bloblist_show_stats();
 	bloblist_show_list();
-#endif
-	return true;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ true;
 }
 
-int bloblist_init(void)
+ਪੂਰਨ bloblist_init(ਖਾਲੀ)
 {
-	int ret;
-	ulong addr = 0, size = CONFIG_BLOBLIST_SIZE;
+	ਪੂਰਨ ret;
+	ulong addr = 0, ਮਾਪ = CONFIG_BLOBLIST_ਮਾਪ;
 
-	if (gd->flags & GD_FLG_BLOBLIST_HANDOFF) {
+	ਜੇ (gd->flags & GD_FLG_BLOBLIST_HANDOFF) {
 		log_debug("Found existing bloblist size %x at %p\n",
-			  gd->bloblist->total_size, gd->bloblist);
-		return 0;
+			  gd->bloblist->ਕੁੱਲ_ਮਾਪ, gd->bloblist);
+		ਵਾਪਸ 0;
 	}
 
 	/*
 	 * If Firmware Handoff is mandatory but no transfer list has been
 	 * observed by fdtdec_setup, report it as an error.
 	 */
-	if (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
-		return -ENOENT;
+	ਜੇ (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
+		ਵਾਪਸ -ENOENT;
 
 	/*
 	 * If we don't have an existing bloblist, we either need
 	 * to allocate one now, or initialize the fixed address
 	 * space as a bloblist.
 	 */
-	if (CONFIG_IS_ENABLED(BLOBLIST_ALLOC)) {
-		void *ptr = memalign(BLOBLIST_ALIGN, size);
+	ਜੇ (CONFIG_IS_ENABLED(BLOBLIST_ALLOC)) {
+		ਖਾਲੀ *ptr = memalign(BLOBLIST_ALIGN, ਮਾਪ);
 
-		if (!ptr)
-			return log_msg_ret("alloc", -ENOMEM);
-		addr = map_to_sysmem(ptr);
-	} else
+		ਜੇ (!ptr)
+			ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("alloc", -ENOMEM);
+		addr = map_ਮੰਜ਼ਿਲ_sysmem(ptr);
+	} ਨਹੀਂਤਾਂ
 		addr = IF_ENABLED_INT(CONFIG_BLOBLIST_FIXED,
 				      CONFIG_BLOBLIST_ADDR);
 
-	log_debug("Creating new bloblist size %lx at %lx\n", size,
+	log_debug("Creating new bloblist size %lx at %lx\n", ਮਾਪ,
 		  addr);
-	ret = bloblist_new(addr, size, 0, 0);
-	if (ret)
-		return log_msg_ret("ini", ret);
+	ret = bloblist_new(addr, ਮਾਪ, 0, 0);
+	ਜੇ (ret)
+		ਵਾਪਸ log_ਸੁਨੇਹਾ_ret("ini", ret);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int bloblist_check_reg_conv(ulong rfdt, ulong rzero, ulong rsig, ulong xlist)
+ਪੂਰਨ bloblist_check_reg_conv(ulong rfdt, ulong rzero, ulong rsig, ulong xlist)
 {
 	u64 version = BLOBLIST_REGCONV_VER;
 	ulong sigval;
-	int ret;
+	ਪੂਰਨ ret;
 
-	if ((IS_ENABLED(CONFIG_64BIT) && !IS_ENABLED(CONFIG_SPL_BUILD)) ||
-			(IS_ENABLED(CONFIG_SPL_64BIT) && IS_ENABLED(CONFIG_SPL_BUILD))) {
-		sigval = ((BLOBLIST_MAGIC & ((1ULL << BLOBLIST_REGCONV_SHIFT_64) - 1)) |
-			 ((version  & BLOBLIST_REGCONV_MASK) << BLOBLIST_REGCONV_SHIFT_64));
-	} else {
-		sigval = ((BLOBLIST_MAGIC & ((1UL << BLOBLIST_REGCONV_SHIFT_32) - 1)) |
-			 ((version  & BLOBLIST_REGCONV_MASK) << BLOBLIST_REGCONV_SHIFT_32));
+	ਜੇ ((IS_ENABLED(CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ) && !IS_ENABLED(CONFIG_SPL_BUILD)) ||
+			(IS_ENABLED(CONFIG_SPL_64_ਦੋਆਧਾਰੀ_ਅੰਕ) && IS_ENABLED(CONFIG_SPL_BUILD))) {
+		sigval = ((BLOBLIST_MAGIC & ((1ULL << BLOBLIST_REGCONV_ਖਿਸਕਾਓ_64) - 1)) |
+			 ((version  & BLOBLIST_REGCONV_ਨਕਾਬ) << BLOBLIST_REGCONV_ਖਿਸਕਾਓ_64));
+	} ਨਹੀਂਤਾਂ {
+		sigval = ((BLOBLIST_MAGIC & ((1UL << BLOBLIST_REGCONV_ਖਿਸਕਾਓ_32) - 1)) |
+			 ((version  & BLOBLIST_REGCONV_ਨਕਾਬ) << BLOBLIST_REGCONV_ਖਿਸਕਾਓ_32));
 	}
 
-	if (rzero || rsig != sigval)
-		return -EIO;
+	ਜੇ (rzero || rsig != sigval)
+		ਵਾਪਸ -EIO;
 
 	ret = bloblist_check(xlist, 0);
-	if (ret)
-		return ret;
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
-	if (rfdt != (ulong)bloblist_find(BLOBLISTT_CONTROL_FDT, 0)) {
+	ਜੇ (rfdt != (ulong)bloblist_ਲੱਭੋ(BLOBLISTT_CONTROL_FDT, 0)) {
 		/* Remove this bloblist from gd */
-		gd->bloblist = NULL;
+		gd->bloblist = ਨਿਰਾ;
 		gd->flags &= ~GD_FLG_BLOBLIST_HANDOFF;
-		return -EIO;
+		ਵਾਪਸ -EIO;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }

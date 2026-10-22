@@ -3,117 +3,117 @@
  * Copyright (C) 2020 Stefan Roese <sr@denx.de>
  */
 
-#include <image.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/sections.h>
-#include <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/sections.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
 
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <lzma/LzmaTypes.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <lzma/LzmaDec.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <lzma/LzmaTools.h>
 
-#define LZMA_LEN	(1 << 20)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LZMA_LEN	(1 << 20)
 
-static void spl_parse_legacy_validate(ulong start, ulong size)
+ਸਥਿਰ ਖਾਲੀ spl_parse_legacy_validate(ulong ਸ਼ੁਰੂ, ulong ਮਾਪ)
 {
-	ulong spl_start = (ulong)_start;
-	ulong spl_end = (ulong)&_image_binary_end;
-	ulong end = start + size;
+	ulong spl_ਸ਼ੁਰੂ = (ulong)ਸ਼ੁਰੂ_2;
+	ulong spl_ਸਿਰਾ = (ulong)&image_ਦੁਆਧਾਰੀ_ਸਿਰਾ;
+	ulong ਸਿਰਾ_2 = ਸ਼ੁਰੂ + ਮਾਪ;
 
-	if ((start >= spl_start && start < spl_end) ||
-	    (end > spl_start && end <= spl_end) ||
-	    (start < spl_start && end >= spl_end) ||
-	    (start > end && end > spl_start))
+	ਜੇ ((ਸ਼ੁਰੂ >= spl_ਸ਼ੁਰੂ && ਸ਼ੁਰੂ < spl_ਸਿਰਾ) ||
+	    (ਸਿਰਾ_2 > spl_ਸ਼ੁਰੂ && ਸਿਰਾ_2 <= spl_ਸਿਰਾ) ||
+	    (ਸ਼ੁਰੂ < spl_ਸ਼ੁਰੂ && ਸਿਰਾ_2 >= spl_ਸਿਰਾ) ||
+	    (ਸ਼ੁਰੂ > ਸਿਰਾ_2 && ਸਿਰਾ_2 > spl_ਸ਼ੁਰੂ))
 		panic("SPL: Image overlaps SPL\n");
 
-	if (size > CONFIG_SYS_BOOTM_LEN)
+	ਜੇ (ਮਾਪ > CONFIG_SYS_BOOTM_LEN)
 		panic("SPL: Image too large\n");
 }
 
-int spl_parse_legacy_header(struct spl_image_info *spl_image,
-			    const struct legacy_img_hdr *header)
+ਪੂਰਨ spl_parse_legacy_ਸਿਰਲੇਖ(ਬਣਤਰ spl_image_info *spl_image,
+			    ਅਚਲ ਬਣਤਰ legacy_img_hdr *ਸਿਰਲੇਖ)
 {
-	u32 header_size = sizeof(struct legacy_img_hdr);
+	u32 ਸਿਰਲੇਖ_ਮਾਪ = ਆਕਾਰ(ਬਣਤਰ legacy_img_hdr);
 
 	/* check uImage header CRC */
-	if (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK) &&
-	    !image_check_hcrc(header)) {
+	ਜੇ (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_ਚੱਕਰੀ_ਜਾਂਚ_CHECK) &&
+	    !image_check_hcrc(ਸਿਰਲੇਖ)) {
 		puts("SPL: Image header CRC check failed!\n");
-		return -EINVAL;
+		ਵਾਪਸ -EINVAL;
 	}
 
-	if (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
+	ਜੇ (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
 		/*
 		 * On some system (e.g. powerpc), the load-address and
 		 * entry-point is located at address 0. We can't load
 		 * to 0-0x40. So skip header in this case.
 		 */
-		spl_image->load_addr = image_get_load(header);
-		spl_image->entry_point = image_get_ep(header);
-		spl_image->size = image_get_data_size(header);
-	} else {
-		spl_image->entry_point = image_get_ep(header);
+		spl_image->ਲੱਦੋ_addr = image_get_ਲੱਦੋ(ਸਿਰਲੇਖ);
+		spl_image->ਇੰਦਰਾਜ_ਬਿੰਦੂ = image_get_ep(ਸਿਰਲੇਖ);
+		spl_image->ਮਾਪ = image_get_ਅੰਕੜੇ_ਮਾਪ(ਸਿਰਲੇਖ);
+	} ਨਹੀਂਤਾਂ {
+		spl_image->ਇੰਦਰਾਜ_ਬਿੰਦੂ = image_get_ep(ਸਿਰਲੇਖ);
 		/* Load including the header */
-		spl_image->load_addr = image_get_load(header) -
-			header_size;
-		spl_image->size = image_get_data_size(header) +
-			header_size;
+		spl_image->ਲੱਦੋ_addr = image_get_ਲੱਦੋ(ਸਿਰਲੇਖ) -
+			ਸਿਰਲੇਖ_ਮਾਪ;
+		spl_image->ਮਾਪ = image_get_ਅੰਕੜੇ_ਮਾਪ(ਸਿਰਲੇਖ) +
+			ਸਿਰਲੇਖ_ਮਾਪ;
 	}
 
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_LEGACY_IMAGE_ਚੱਕਰੀ_ਜਾਂਚ_CHECK
 	/* store uImage data length and CRC to check later */
-	spl_image->dcrc_data = image_get_load(header);
-	spl_image->dcrc_length = image_get_data_size(header);
-	spl_image->dcrc = image_get_dcrc(header);
-#endif
+	spl_image->dcrc_ਅੰਕੜੇ = image_get_ਲੱਦੋ(ਸਿਰਲੇਖ);
+	spl_image->dcrc_ਲੰਮਾਈ = image_get_ਅੰਕੜੇ_ਮਾਪ(ਸਿਰਲੇਖ);
+	spl_image->dcrc = image_get_dcrc(ਸਿਰਲੇਖ);
+#ਜੇ_ਅੰਤ
 
-	spl_image->os = image_get_os(header);
-	spl_image->name = image_get_name(header);
+	spl_image->os = image_get_os(ਸਿਰਲੇਖ);
+	spl_image->name = image_get_name(ਸਿਰਲੇਖ);
 	debug(PHASE_PROMPT
 	      "payload image: %32s load addr: 0x%lx size: %d\n",
-	      spl_image->name, spl_image->load_addr, spl_image->size);
+	      spl_image->name, spl_image->ਲੱਦੋ_addr, spl_image->ਮਾਪ);
 
-	spl_parse_legacy_validate(spl_image->load_addr, spl_image->size);
-	spl_parse_legacy_validate(spl_image->entry_point, 0);
+	spl_parse_legacy_validate(spl_image->ਲੱਦੋ_addr, spl_image->ਮਾਪ);
+	spl_parse_legacy_validate(spl_image->ਇੰਦਰਾਜ_ਬਿੰਦੂ, 0);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int spl_load_legacy_lzma(struct spl_image_info *spl_image,
-			 struct spl_load_info *load, ulong offset)
+ਪੂਰਨ spl_ਲੱਦੋ_legacy_lzma(ਬਣਤਰ spl_image_info *spl_image,
+			 ਬਣਤਰ spl_ਲੱਦੋ_info *ਲੱਦੋ, ulong ਵਿੱਥ)
 {
-	SizeT lzma_len = LZMA_LEN;
-	void *src;
-	ulong dataptr, overhead, size;
-	int ret;
+	ਮਾਪ_T lzma_len = LZMA_LEN;
+	ਖਾਲੀ *src;
+	ulong dataptr, overhead, ਮਾਪ;
+	ਪੂਰਨ ret;
 
 	/* dataptr points to compressed payload  */
-	dataptr = ALIGN_DOWN(sizeof(struct legacy_img_hdr),
-			     spl_get_bl_len(load));
-	overhead = sizeof(struct legacy_img_hdr) - dataptr;
-	size = ALIGN(spl_image->size + overhead, spl_get_bl_len(load));
-	dataptr += offset;
+	dataptr = ALIGN_ਥੱਲੇ(ਆਕਾਰ(ਬਣਤਰ legacy_img_hdr),
+			     spl_get_bl_len(ਲੱਦੋ));
+	overhead = ਆਕਾਰ(ਬਣਤਰ legacy_img_hdr) - dataptr;
+	ਮਾਪ = ALIGN(spl_image->ਮਾਪ + overhead, spl_get_bl_len(ਲੱਦੋ));
+	dataptr += ਵਿੱਥ;
 
 	debug("LZMA: Decompressing %08lx to %08lx\n",
-	      dataptr, spl_image->load_addr);
-	src = malloc(size);
-	if (!src) {
-		printf("Unable to allocate %d bytes for LZMA\n",
-		       spl_image->size);
-		return -ENOMEM;
+	      dataptr, spl_image->ਲੱਦੋ_addr);
+	src = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ);
+	ਜੇ (!src) {
+		ਲਿਖੋ("Unable to allocate %d bytes for LZMA\n",
+		       spl_image->ਮਾਪ);
+		ਵਾਪਸ -ENOMEM;
 	}
 
-	load->read(load, dataptr, size, src);
-	ret = lzmaBuffToBuffDecompress(map_sysmem(spl_image->load_addr,
-						  spl_image->size), &lzma_len,
-				       src + overhead, spl_image->size);
-	if (ret) {
-		printf("LZMA decompression error: %d\n", ret);
-		return ret;
+	ਲੱਦੋ->ਪਠ(ਲੱਦੋ, dataptr, ਮਾਪ, src);
+	ret = lzma_Buff_ਮੰਜ਼ਿਲ_Buff_Decompress(map_sysmem(spl_image->ਲੱਦੋ_addr,
+						  spl_image->ਮਾਪ), &lzma_len,
+				       src + overhead, spl_image->ਮਾਪ);
+	ਜੇ (ret) {
+		ਲਿਖੋ("LZMA decompression error: %d\n", ret);
+		ਵਾਪਸ ret;
 	}
 
-	spl_image->size = lzma_len;
-	return 0;
+	spl_image->ਮਾਪ = lzma_len;
+	ਵਾਪਸ 0;
 }

@@ -6,16 +6,16 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <linux/kernel.h>
-#include <linux/string.h>
-#include <eeprom_layout.h>
-#include <eeprom_field.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/kernel.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <eeprom_layout.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <eeprom_field.h>
 
-#define NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
 
-struct eeprom_field layout_unknown[1] = {
-	{ NO_LAYOUT_FIELDS, 256, NULL, eeprom_field_print_bin,
-				       eeprom_field_update_bin },
+ਬਣਤਰ eeprom_ਖੇਤਰ layout_unknown[1] = {
+	{ NO_LAYOUT_FIELDS, 256, ਨਿਰਾ, eeprom_ਖੇਤਰ_print_bin,
+				       eeprom_ਖੇਤਰ_update_bin },
 };
 
 /*
@@ -24,9 +24,9 @@ struct eeprom_field layout_unknown[1] = {
  *
  * Returns: the detected layout version.
  */
-__weak int eeprom_layout_detect(unsigned char *data)
+__weak ਪੂਰਨ eeprom_layout_detect(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅੰਕੜੇ)
 {
-	return LAYOUT_VERSION_UNRECOGNIZED;
+	ਵਾਪਸ LAYOUT_ਸੰਸਕਰਣ_UNRECOGNIZED;
 }
 
 /*
@@ -34,25 +34,25 @@ __weak int eeprom_layout_detect(unsigned char *data)
  * @layout:		A pointer to an existing struct layout.
  * @layout_version:	The version number of the desired layout
  */
-__weak void __eeprom_layout_assign(struct eeprom_layout *layout,
-				   int layout_version)
+__weak ਖਾਲੀ __eeprom_layout_assign(ਬਣਤਰ eeprom_layout *layout,
+				   ਪੂਰਨ layout_ਸੰਸਕਰਣ)
 {
 	layout->fields = layout_unknown;
-	layout->num_of_fields = ARRAY_SIZE(layout_unknown);
+	layout->ਅੰਕ_ਦਾ_fields = ARRAY_ਮਾਪ(layout_unknown);
 }
-void eeprom_layout_assign(struct eeprom_layout *layout, int layout_version) \
+ਖਾਲੀ eeprom_layout_ਸੌਂਪੋ(ਬਣਤਰ eeprom_layout *layout, ਪੂਰਨ layout_ਸੰਸਕਰਣ) \
 		__attribute__((weak, alias("__eeprom_layout_assign")));
 
 /*
  * eeprom_layout_print() - print the layout and the data which is assigned to it
  * @layout: A pointer to an existing struct layout.
  */
-static void eeprom_layout_print(const struct eeprom_layout *layout)
+ਸਥਿਰ ਖਾਲੀ eeprom_layout_print(ਅਚਲ ਬਣਤਰ eeprom_layout *layout)
 {
-	int i;
-	struct eeprom_field *fields = layout->fields;
+	ਪੂਰਨ i;
+	ਬਣਤਰ eeprom_ਖੇਤਰ *fields = layout->fields;
 
-	for (i = 0; i < layout->num_of_fields; i++)
+	ਲਈ (i = 0; i < layout->ਅੰਕ_ਦਾ_fields; i++)
 		fields[i].print(&fields[i]);
 }
 
@@ -64,18 +64,18 @@ static void eeprom_layout_print(const struct eeprom_layout *layout)
  *
  * Returns: a pointer to the found field or NULL on failure.
  */
-struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
-					      char *field_name, bool warn)
+ਬਣਤਰ eeprom_ਖੇਤਰ *eeprom_layout_ਲੱਭੋ_ਖੇਤਰ(ਬਣਤਰ eeprom_layout *layout,
+					      ਅੱਖਰ *ਖੇਤਰ_name, bool warn)
 {
-	for (int i = 0; i < layout->num_of_fields; i++)
-		if (layout->fields[i].name != RESERVED_FIELDS &&
-		    !strcmp(layout->fields[i].name, field_name))
-			return &layout->fields[i];
+	ਲਈ (ਪੂਰਨ i = 0; i < layout->ਅੰਕ_ਦਾ_fields; i++)
+		ਜੇ (layout->fields[i].name != RESERVED_FIELDS &&
+		    !strcmp(layout->fields[i].name, ਖੇਤਰ_name))
+			ਵਾਪਸ &layout->fields[i];
 
-	if (warn)
-		printf("No such field '%s'\n", field_name);
+	ਜੇ (warn)
+		ਲਿਖੋ("No such field '%s'\n", ਖੇਤਰ_name);
 
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 /*
@@ -86,27 +86,27 @@ struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
  *
  * Returns: 0 on success, negative error value on failure.
  */
-static int eeprom_layout_update_field(struct eeprom_layout *layout,
-				      char *field_name, char *new_data)
+ਸਥਿਰ ਪੂਰਨ eeprom_layout_update_ਖੇਤਰ(ਬਣਤਰ eeprom_layout *layout,
+				      ਅੱਖਰ *ਖੇਤਰ_name, ਅੱਖਰ *new_ਅੰਕੜੇ)
 {
-	struct eeprom_field *field;
-	int err;
+	ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ;
+	ਪੂਰਨ err;
 
-	if (new_data == NULL)
-		return 0;
+	ਜੇ (new_ਅੰਕੜੇ == ਨਿਰਾ)
+		ਵਾਪਸ 0;
 
-	if (field_name == NULL)
-		return -1;
+	ਜੇ (ਖੇਤਰ_name == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	field = eeprom_layout_find_field(layout, field_name, true);
-	if (field == NULL)
-		return -1;
+	ਖੇਤਰ = eeprom_layout_ਲੱਭੋ_ਖੇਤਰ(layout, ਖੇਤਰ_name, true);
+	ਜੇ (ਖੇਤਰ == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	err = field->update(field, new_data);
-	if (err)
-		printf("Invalid data for field %s\n", field_name);
+	err = ਖੇਤਰ->update(ਖੇਤਰ, new_ਅੰਕੜੇ);
+	ਜੇ (err)
+		ਲਿਖੋ("Invalid data for field %s\n", ਖੇਤਰ_name);
 
-	return err;
+	ਵਾਪਸ err;
 }
 
 /*
@@ -117,24 +117,24 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
  * @buf_size:	Size of buf in bytes.
  * @layout version: The version number of the layout.
  */
-void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
-			 unsigned int buf_size, int layout_version)
+ਖਾਲੀ eeprom_layout_ਤਿਆਰੀ(ਬਣਤਰ eeprom_layout *layout, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf,
+			 ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ buf_ਮਾਪ, ਪੂਰਨ layout_ਸੰਸਕਰਣ)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (layout_version == LAYOUT_VERSION_AUTODETECT)
-		layout->layout_version = eeprom_layout_detect(buf);
-	else
-		layout->layout_version = layout_version;
+	ਜੇ (layout_ਸੰਸਕਰਣ == LAYOUT_ਸੰਸਕਰਣ_AUTODETECT)
+		layout->layout_ਸੰਸਕਰਣ = eeprom_layout_detect(buf);
+	ਨਹੀਂਤਾਂ
+		layout->layout_ਸੰਸਕਰਣ = layout_ਸੰਸਕਰਣ;
 
-	layout->data_size = buf_size;
+	layout->ਅੰਕੜੇ_ਮਾਪ = buf_ਮਾਪ;
 	layout->print = eeprom_layout_print;
-	layout->update = eeprom_layout_update_field;
+	layout->update = eeprom_layout_update_ਖੇਤਰ;
 
-	eeprom_layout_assign(layout, layout_version);
-	layout->data = buf;
-	for (i = 0; i < layout->num_of_fields; i++) {
+	eeprom_layout_ਸੌਂਪੋ(layout, layout_ਸੰਸਕਰਣ);
+	layout->ਅੰਕੜੇ = buf;
+	ਲਈ (i = 0; i < layout->ਅੰਕ_ਦਾ_fields; i++) {
 		layout->fields[i].buf = buf;
-		buf += layout->fields[i].size;
+		buf += layout->fields[i].ਮਾਪ;
 	}
 }

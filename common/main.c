@@ -6,80 +6,80 @@
 
 /* #define	DEBUG	*/
 
-#include <autoboot.h>
-#include <button.h>
-#include <bootstage.h>
-#include <bootstd.h>
-#include <cli.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <fdtdec.h>
-#include <init.h>
-#include <net.h>
-#include <version_string.h>
-#include <efi_loader.h>
-#include <event.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <autoboot.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <button.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootstage.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootstd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cli.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <console.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fdtdec.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <init.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <net.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <version_string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <efi_loader.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <event.h>
 
-static void run_preboot_environment_command(void)
+ਸਥਿਰ ਖਾਲੀ ਲੜੀਵਾਰ_preboot_environment_command(ਖਾਲੀ)
 {
-	char *p;
+	ਅੱਖਰ *p;
 
 	p = env_get("preboot");
-	if (p != NULL) {
-		int prev = 0;
+	ਜੇ (p != ਨਿਰਾ) {
+		ਪੂਰਨ prev = 0;
 
-		if (IS_ENABLED(CONFIG_AUTOBOOT_KEYED))
+		ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_KEYED))
 			prev = disable_ctrlc(1); /* disable Ctrl-C checking */
 
-		run_command_list(p, -1, 0);
+		ਲੜੀਵਾਰ_command_list(p, -1, 0);
 
-		if (IS_ENABLED(CONFIG_AUTOBOOT_KEYED))
+		ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_KEYED))
 			disable_ctrlc(prev);	/* restore Ctrl-C checking */
 	}
 }
 
 /* We come here after U-Boot is initialised and ready to process commands */
-void main_loop(void)
+ਖਾਲੀ main_loop(ਖਾਲੀ)
 {
-	const char *s;
+	ਅਚਲ ਅੱਖਰ *s;
 
 	bootstage_mark_name(BOOTSTAGE_ID_MAIN_LOOP, "main_loop");
 
-	if (IS_ENABLED(CONFIG_VERSION_VARIABLE))
-		env_set("ver", version_string);  /* set version variable */
+	ਜੇ (IS_ENABLED(CONFIG_ਸੰਸਕਰਣ_VARIABLE))
+		env_ਸੈੱਟ("ver", ਸੰਸਕਰਣ_string);  /* set version variable */
 
 	cli_init();
 
-	if (IS_ENABLED(CONFIG_USE_PREBOOT))
-		run_preboot_environment_command();
+	ਜੇ (IS_ENABLED(CONFIG_USE_PREBOOT))
+		ਲੜੀਵਾਰ_preboot_environment_command();
 
-	if (event_notify_null(EVT_POST_PREBOOT))
-		return;
+	ਜੇ (event_notify_null(EVT_POST_PREBOOT))
+		ਵਾਪਸ;
 
-	if (IS_ENABLED(CONFIG_UPDATE_TFTP))
-		update_tftp(0UL, NULL, NULL);
+	ਜੇ (IS_ENABLED(CONFIG_UPDATE_TFTP))
+		update_tftp(0UL, ਨਿਰਾ, ਨਿਰਾ);
 
-	if (IS_ENABLED(CONFIG_EFI_CAPSULE_ON_DISK_EARLY)) {
+	ਜੇ (IS_ENABLED(CONFIG_EFI_CAPSULE_ON_DISK_EARLY)) {
 		/* efi_init_early() already called */
-		if (efi_init_obj_list() == EFI_SUCCESS)
+		ਜੇ (efi_init_obj_list() == EFI_SUCCESS)
 			efi_launch_capsules();
 	}
 
 	process_button_cmds();
 
 	s = bootdelay_process();
-	if (cli_process_fdt(&s))
+	ਜੇ (cli_process_fdt(&s))
 		cli_secure_boot_cmd(s);
 
 	autoboot_command(s);
 
 	/* if standard boot if enabled, assume that it will be able to boot */
-	if (IS_ENABLED(CONFIG_BOOTSTD_PROG)) {
-		int ret;
+	ਜੇ (IS_ENABLED(CONFIG_BOOTSTD_PROG)) {
+		ਪੂਰਨ ret;
 
 		ret = bootstd_prog_boot();
-		printf("Standard boot failed (err=%dE)\n", ret);
+		ਲਿਖੋ("Standard boot failed (err=%dE)\n", ret);
 		panic("Failed to boot");
 	}
 

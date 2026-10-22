@@ -8,84 +8,84 @@
  * Derived work from spl_usb.c
  */
 
-#include <spl.h>
-#include <sata.h>
-#include <scsi.h>
-#include <errno.h>
-#include <fat.h>
-#include <image.h>
-#include <linux/compiler.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sata.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <scsi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/compiler.h>
 
-static int __maybe_unused spl_sata_load_image_raw(struct spl_image_info *spl_image,
-						  struct spl_boot_device *bootdev,
-						  struct blk_desc *stor_dev,
-						  unsigned long sector)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused spl_sata_ਲੱਦੋ_image_raw(ਬਣਤਰ spl_image_info *spl_image,
+						  ਬਣਤਰ spl_boot_device *bootdev,
+						  ਬਣਤਰ blk_desc *stor_dev,
+						  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sector)
 {
-	struct legacy_img_hdr *header;
-	unsigned long count;
-	u32 image_size_sectors;
-	u32 image_offset_sectors;
-	u32 image_offset;
-	int ret;
+	ਬਣਤਰ legacy_img_hdr *ਸਿਰਲੇਖ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਗਿਣਤੀ_2;
+	u32 image_ਮਾਪ_sectors;
+	u32 image_ਵਿੱਥ_sectors;
+	u32 image_ਵਿੱਥ;
+	ਪੂਰਨ ret;
 
-	header = spl_get_load_buffer(-sizeof(*header), stor_dev->blksz);
-	count = blk_dread(stor_dev, sector, 1, header);
-	if (count == 0)
-		return -EIO;
+	ਸਿਰਲੇਖ = spl_get_ਲੱਦੋ_ਬਫਰ(-ਆਕਾਰ(*ਸਿਰਲੇਖ), stor_dev->blksz);
+	ਗਿਣਤੀ_2 = blk_dread(stor_dev, sector, 1, ਸਿਰਲੇਖ);
+	ਜੇ (ਗਿਣਤੀ_2 == 0)
+		ਵਾਪਸ -EIO;
 
-	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ret = spl_parse_image_ਸਿਰਲੇਖ(spl_image, bootdev, ਸਿਰਲੇਖ);
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
-	image_size_sectors = DIV_ROUND_UP(spl_image->size, stor_dev->blksz);
-	image_offset_sectors = spl_image->offset / stor_dev->blksz;
-	image_offset = spl_image->offset % stor_dev->blksz;
-	count = blk_dread(stor_dev, sector + image_offset_sectors,
-			image_size_sectors,
-			(void *)spl_image->load_addr);
-	if (count != image_size_sectors)
-		return -EIO;
+	image_ਮਾਪ_sectors = DIV_ਗੇੜਾ_ਉੱਪਰ(spl_image->ਮਾਪ, stor_dev->blksz);
+	image_ਵਿੱਥ_sectors = spl_image->ਵਿੱਥ / stor_dev->blksz;
+	image_ਵਿੱਥ = spl_image->ਵਿੱਥ % stor_dev->blksz;
+	ਗਿਣਤੀ_2 = blk_dread(stor_dev, sector + image_ਵਿੱਥ_sectors,
+			image_ਮਾਪ_sectors,
+			(ਖਾਲੀ *)spl_image->ਲੱਦੋ_addr);
+	ਜੇ (ਗਿਣਤੀ_2 != image_ਮਾਪ_sectors)
+		ਵਾਪਸ -EIO;
 
-	if (image_offset)
-		memmove((void *)spl_image->load_addr,
-			(void *)spl_image->load_addr + image_offset,
-			spl_image->size);
+	ਜੇ (image_ਵਿੱਥ)
+		memmove((ਖਾਲੀ *)spl_image->ਲੱਦੋ_addr,
+			(ਖਾਲੀ *)spl_image->ਲੱਦੋ_addr + image_ਵਿੱਥ,
+			spl_image->ਮਾਪ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int spl_sata_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_sata_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			       ਬਣਤਰ spl_boot_device *bootdev)
 {
-	int err = -ENOSYS;
-	struct blk_desc *stor_dev;
+	ਪੂਰਨ err = -ENOSYS;
+	ਬਣਤਰ blk_desc *stor_dev;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_ਜਾਂਚ(false);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_SCSI, 0);
-	if (!stor_dev)
-		return -ENODEV;
+	ਜੇ (!stor_dev)
+		ਵਾਪਸ -ENODEV;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
-	    spl_load_image_fat_os(spl_image, bootdev, stor_dev,
-				  CONFIG_SYS_SATA_FAT_BOOT_PARTITION))
-#endif
+#ਜੇ CONFIG_IS_ENABLED(OS_BOOT)
+	ਜੇ (spl_ਸ਼ੁਰੂ_uboot() ||
+	    spl_ਲੱਦੋ_image_fat_os(spl_image, bootdev, stor_dev,
+				  CONFIG_SYS_SATA_FAT_BOOT_ਹਿੱਸੇ_ਕਰੋ))
+#ਜੇ_ਅੰਤ
 	{
-#ifdef CONFIG_SPL_FS_FAT
-		err = spl_load_image_fat(spl_image, bootdev, stor_dev,
-				CONFIG_SYS_SATA_FAT_BOOT_PARTITION,
-				CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
-#elif defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
-		err = spl_sata_load_image_raw(spl_image, bootdev, stor_dev,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_FS_FAT
+		err = spl_ਲੱਦੋ_image_fat(spl_image, bootdev, stor_dev,
+				CONFIG_SYS_SATA_FAT_BOOT_ਹਿੱਸੇ_ਕਰੋ,
+				CONFIG_SPL_FS_ਲੱਦੋ_PAYLOAD_NAME);
+#ਜਾਂਜੇ defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
+		err = spl_sata_ਲੱਦੋ_image_raw(spl_image, bootdev, stor_dev,
 			CONFIG_SPL_SATA_RAW_U_BOOT_SECTOR);
-#endif
+#ਜੇ_ਅੰਤ
 	}
-	if (err) {
+	ਜੇ (err) {
 		puts("Error loading sata device\n");
-		return err;
+		ਵਾਪਸ err;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-SPL_LOAD_IMAGE_METHOD("SATA", 0, BOOT_DEVICE_SATA, spl_sata_load_image);
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("SATA", 0, BOOT_DEVICE_SATA, spl_sata_ਲੱਦੋ_image);

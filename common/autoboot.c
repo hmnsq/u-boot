@@ -4,60 +4,60 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <config.h>
-#include <ansi.h>
-#include <autoboot.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <errno.h>
-#include <fdtdec.h>
-#include <hash.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <menu.h>
-#include <post.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/delay.h>
-#include <u-boot/sha256.h>
-#include <bootcount.h>
-#include <crypt.h>
-#include <dm/ofnode.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <config.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ansi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <autoboot.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootretry.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cli.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <console.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fdtdec.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <hash.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <memalign.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <menu.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <post.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/delay.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/sha256.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootcount.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <crypt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm/ofnode.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
-#define DELAY_STOP_STR_MAX_LENGTH 64
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DELAY_STOP_STR_MAX_ਲੰਮਾਈ 64
 
-#ifndef DEBUG_BOOTKEYS
-#define DEBUG_BOOTKEYS 0
-#endif
-#define debug_bootkeys(fmt, args...)		\
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ DEBUG_BOOTKEYS
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEBUG_BOOTKEYS 0
+#ਜੇ_ਅੰਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ debug_bootkeys(fmt, ਦਲੀਲਾਂ...)		\
 	debug_cond(DEBUG_BOOTKEYS, fmt, ##args)
 
 /* Stored value of bootdelay, used by autoboot_command() */
-static int stored_bootdelay;
-static int menukey;
+ਸਥਿਰ ਪੂਰਨ stored_bootdelay;
+ਸਥਿਰ ਪੂਰਨ menukey;
 
-#if defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
-#define AUTOBOOT_STOP_STR_CRYPT	CONFIG_AUTOBOOT_STOP_STR_CRYPT
-#else
-#define AUTOBOOT_STOP_STR_CRYPT	""
-#endif
-#if defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
-#define AUTOBOOT_STOP_STR_SHA256	CONFIG_AUTOBOOT_STOP_STR_SHA256
-#else
-#define AUTOBOOT_STOP_STR_SHA256	""
-#endif
+#ਜੇ defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_STOP_STR_CRYPT	CONFIG_AUTOBOOT_STOP_STR_CRYPT
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_STOP_STR_CRYPT	""
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_STOP_STR_SHA256	CONFIG_AUTOBOOT_STOP_STR_SHA256
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_STOP_STR_SHA256	""
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_AUTOBOOT_USE_MENUKEY
-#define AUTOBOOT_MENUKEY CONFIG_AUTOBOOT_MENUKEY
-#else
-#define AUTOBOOT_MENUKEY 0
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_AUTOBOOT_USE_MENUKEY
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_MENUKEY CONFIG_AUTOBOOT_MENUKEY
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AUTOBOOT_MENUKEY 0
+#ਜੇ_ਅੰਤ
 
 /**
  * passwd_abort_crypt() - check for a crypt-style hashed key sequence to abort booting
@@ -77,54 +77,54 @@ static int menukey;
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_crypt(uint64_t etime)
+ਸਥਿਰ ਪੂਰਨ passwd_abort_crypt(uint64_t etime)
 {
-	const char *crypt_env_str = env_get("bootstopkeycrypt");
-	char presskey[DELAY_STOP_STR_MAX_LENGTH];
+	ਅਚਲ ਅੱਖਰ *crypt_env_str = env_get("bootstopkeycrypt");
+	ਅੱਖਰ presskey[DELAY_STOP_STR_MAX_ਲੰਮਾਈ];
 	u_int presskey_len = 0;
-	int abort = 0;
-	int never_timeout = 0;
-	int err;
+	ਪੂਰਨ abort = 0;
+	ਪੂਰਨ never_timeout = 0;
+	ਪੂਰਨ err;
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
 		crypt_env_str = AUTOBOOT_STOP_STR_CRYPT;
 
-	if (!crypt_env_str)
-		return 0;
+	ਜੇ (!crypt_env_str)
+		ਵਾਪਸ 0;
 
 	/* We expect the stop-string to be newline-terminated */
-	do {
-		if (tstc()) {
+	ਕਰੋ {
+		ਜੇ (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= sizeof(presskey))
-				return 0;
+			ਜੇ (presskey_len >= ਆਕਾਰ(presskey))
+				ਵਾਪਸ 0;
 
 			presskey[presskey_len] = getchar();
 
-			if ((presskey[presskey_len] == '\r') ||
+			ਜੇ ((presskey[presskey_len] == '\r') ||
 			    (presskey[presskey_len] == '\n')) {
-				if (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
+				ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
 				    !presskey_len) {
 					never_timeout = 1;
-					continue;
+					ਜਾਰੀ;
 				}
 				presskey[presskey_len] = '\0';
 				err = crypt_compare(crypt_env_str, presskey,
 						    &abort);
-				if (err)
+				ਜੇ (err)
 					debug_bootkeys(
 						"crypt_compare() failed with: %s\n",
 						errno_str(err));
 				/* you had one chance */
-				break;
-			} else {
+				ਰੋਕੋ;
+			} ਨਹੀਂਤਾਂ {
 				presskey_len++;
 			}
 		}
 		udelay(10000);
-	} while (never_timeout || get_ticks() <= etime);
+	} ਜਦੋਂ (never_timeout || get_ticks() <= etime);
 
-	return abort;
+	ਵਾਪਸ abort;
 }
 
 /*
@@ -133,15 +133,15 @@ static int passwd_abort_crypt(uint64_t etime)
  *
  * https://crackstation.net/hashing-security.htm
  */
-static int slow_equals(u8 *a, u8 *b, int len)
+ਸਥਿਰ ਪੂਰਨ slow_equals(u8 *a, u8 *b, ਪੂਰਨ len)
 {
-	int diff = 0;
-	int i;
+	ਪੂਰਨ diff = 0;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < len; i++)
+	ਲਈ (i = 0; i < len; i++)
 		diff |= a[i] ^ b[i];
 
-	return diff == 0;
+	ਵਾਪਸ diff == 0;
 }
 
 /**
@@ -152,30 +152,30 @@ static int slow_equals(u8 *a, u8 *b, int len)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_sha256(uint64_t etime)
+ਸਥਿਰ ਪੂਰਨ passwd_abort_sha256(uint64_t etime)
 {
-	const char *sha_env_str = env_get("bootstopkeysha256");
-	u8 sha_env[SHA256_SUM_LEN];
+	ਅਚਲ ਅੱਖਰ *sha_env_str = env_get("bootstopkeysha256");
+	u8 sha_env[SHA256_ਜੋੜ_LEN];
 	u8 *sha;
-	char *presskey;
-	char *c;
-	const char *algo_name = "sha256";
+	ਅੱਖਰ *presskey;
+	ਅੱਖਰ *c;
+	ਅਚਲ ਅੱਖਰ *algo_name = "sha256";
 	u_int presskey_len = 0;
-	int abort = 0;
-	int size = sizeof(sha);
-	int ret;
+	ਪੂਰਨ abort = 0;
+	ਪੂਰਨ ਮਾਪ = ਆਕਾਰ(sha);
+	ਪੂਰਨ ret;
 
-	if (sha_env_str == NULL)
+	ਜੇ (sha_env_str == ਨਿਰਾ)
 		sha_env_str = AUTOBOOT_STOP_STR_SHA256;
 
-	presskey = malloc_cache_aligned(DELAY_STOP_STR_MAX_LENGTH);
-	if (!presskey)
-		return -ENOMEM;
+	presskey = malloc_cache_aligned(DELAY_STOP_STR_MAX_ਲੰਮਾਈ);
+	ਜੇ (!presskey)
+		ਵਾਪਸ -ENOMEM;
 
-	c = strstr(sha_env_str, ":");
-	if (c && (c - sha_env_str < DELAY_STOP_STR_MAX_LENGTH)) {
+	c = ਲੜੀ_ਖੋਜ(sha_env_str, ":");
+	ਜੇ (c && (c - sha_env_str < DELAY_STOP_STR_MAX_ਲੰਮਾਈ)) {
 		/* preload presskey with salt */
-		memcpy(presskey, sha_env_str, c - sha_env_str);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(presskey, sha_env_str, c - sha_env_str);
 		presskey_len = c - sha_env_str;
 		sha_env_str = c + 1;
 	}
@@ -185,48 +185,48 @@ static int passwd_abort_sha256(uint64_t etime)
 	 * from the user input
 	 */
 	ret = hash_parse_string(algo_name, sha_env_str, sha_env);
-	if (ret) {
-		printf("Hash %s not supported!\n", algo_name);
-		free(presskey);
-		return 0;
+	ਜੇ (ret) {
+		ਲਿਖੋ("Hash %s not supported!\n", algo_name);
+		ਮੁਕਤ(presskey);
+		ਵਾਪਸ 0;
 	}
 
-	sha = malloc_cache_aligned(SHA256_SUM_LEN);
-	if (!sha) {
-		free(presskey);
-		return -ENOMEM;
+	sha = malloc_cache_aligned(SHA256_ਜੋੜ_LEN);
+	ਜੇ (!sha) {
+		ਮੁਕਤ(presskey);
+		ਵਾਪਸ -ENOMEM;
 	}
-	size = SHA256_SUM_LEN;
+	ਮਾਪ = SHA256_ਜੋੜ_LEN;
 	/*
 	 * We don't know how long the stop-string is, so we need to
 	 * generate the sha256 hash upon each input character and
 	 * compare the value with the one saved in the environment
 	 */
-	do {
-		if (tstc()) {
+	ਕਰੋ {
+		ਜੇ (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= DELAY_STOP_STR_MAX_LENGTH) {
-				free(presskey);
-				free(sha);
-				return 0;
+			ਜੇ (presskey_len >= DELAY_STOP_STR_MAX_ਲੰਮਾਈ) {
+				ਮੁਕਤ(presskey);
+				ਮੁਕਤ(sha);
+				ਵਾਪਸ 0;
 			}
 
 			presskey[presskey_len++] = getchar();
 
 			/* Calculate sha256 upon each new char */
-			hash_block(algo_name, (const void *)presskey,
-				   presskey_len, sha, &size);
+			hash_ਖੰਡ(algo_name, (ਅਚਲ ਖਾਲੀ *)presskey,
+				   presskey_len, sha, &ਮਾਪ);
 
 			/* And check if sha matches saved value in env */
-			if (slow_equals(sha, sha_env, SHA256_SUM_LEN))
+			ਜੇ (slow_equals(sha, sha_env, SHA256_ਜੋੜ_LEN))
 				abort = 1;
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} ਜਦੋਂ (!abort && get_ticks() <= etime);
 
-	free(presskey);
-	free(sha);
-	return abort;
+	ਮੁਕਤ(presskey);
+	ਮੁਕਤ(sha);
+	ਵਾਪਸ abort;
 }
 
 /**
@@ -237,38 +237,38 @@ static int passwd_abort_sha256(uint64_t etime)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_key(uint64_t etime)
+ਸਥਿਰ ਪੂਰਨ passwd_abort_ਕੁੰਜੀ(uint64_t etime)
 {
-	int abort = 0;
-	struct {
-		char *str;
+	ਪੂਰਨ abort = 0;
+	ਬਣਤਰ {
+		ਅੱਖਰ *str;
 		u_int len;
-		int retry;
+		ਪੂਰਨ retry;
 	}
 	delaykey[] = {
 		{ .str = env_get("bootdelaykey"),  .retry = 1 },
 		{ .str = env_get("bootstopkey"),   .retry = 0 },
 	};
 
-	char presskey[DELAY_STOP_STR_MAX_LENGTH];
-	int presskey_len = 0;
-	int presskey_max = 0;
-	int i;
+	ਅੱਖਰ presskey[DELAY_STOP_STR_MAX_ਲੰਮਾਈ];
+	ਪੂਰਨ presskey_len = 0;
+	ਪੂਰਨ presskey_max = 0;
+	ਪੂਰਨ i;
 
 #  ifdef CONFIG_AUTOBOOT_DELAY_STR
-	if (delaykey[0].str == NULL)
+	ਜੇ (delaykey[0].str == ਨਿਰਾ)
 		delaykey[0].str = CONFIG_AUTOBOOT_DELAY_STR;
 #  endif
 #  ifdef CONFIG_AUTOBOOT_STOP_STR
-	if (delaykey[1].str == NULL)
+	ਜੇ (delaykey[1].str == ਨਿਰਾ)
 		delaykey[1].str = CONFIG_AUTOBOOT_STOP_STR;
 #  endif
 
-	for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
-		delaykey[i].len = delaykey[i].str == NULL ?
-				    0 : strlen(delaykey[i].str);
-		delaykey[i].len = delaykey[i].len > DELAY_STOP_STR_MAX_LENGTH ?
-				    DELAY_STOP_STR_MAX_LENGTH : delaykey[i].len;
+	ਲਈ (i = 0; i < ਆਕਾਰ(delaykey) / ਆਕਾਰ(delaykey[0]); i++) {
+		delaykey[i].len = delaykey[i].str == ਨਿਰਾ ?
+				    0 : ਲੜੀ_ਲੰਬਾਈ(delaykey[i].str);
+		delaykey[i].len = delaykey[i].len > DELAY_STOP_STR_MAX_ਲੰਮਾਈ ?
+				    DELAY_STOP_STR_MAX_ਲੰਮਾਈ : delaykey[i].len;
 
 		presskey_max = presskey_max > delaykey[i].len ?
 				    presskey_max : delaykey[i].len;
@@ -281,20 +281,20 @@ static int passwd_abort_key(uint64_t etime)
 	/* In order to keep up with incoming data, check timeout only
 	 * when catch up.
 	 */
-	do {
-		if (tstc()) {
-			if (presskey_len < presskey_max) {
+	ਕਰੋ {
+		ਜੇ (tstc()) {
+			ਜੇ (presskey_len < presskey_max) {
 				presskey[presskey_len++] = getchar();
-			} else {
-				for (i = 0; i < presskey_max - 1; i++)
+			} ਨਹੀਂਤਾਂ {
+				ਲਈ (i = 0; i < presskey_max - 1; i++)
 					presskey[i] = presskey[i + 1];
 
 				presskey[i] = getchar();
 			}
 		}
 
-		for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
-			if (delaykey[i].len > 0 &&
+		ਲਈ (i = 0; i < ਆਕਾਰ(delaykey) / ਆਕਾਰ(delaykey[0]); i++) {
+			ਜੇ (delaykey[i].len > 0 &&
 			    presskey_len >= delaykey[i].len &&
 				memcmp(presskey + presskey_len -
 					delaykey[i].len, delaykey[i].str,
@@ -304,15 +304,15 @@ static int passwd_abort_key(uint64_t etime)
 						"stop");
 
 				/* don't retry auto boot */
-				if (!delaykey[i].retry)
+				ਜੇ (!delaykey[i].retry)
 					bootretry_dont_retry();
 				abort = 1;
 			}
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} ਜਦੋਂ (!abort && get_ticks() <= etime);
 
-	return abort;
+	ਵਾਪਸ abort;
 }
 
 /**
@@ -325,195 +325,195 @@ static int passwd_abort_key(uint64_t etime)
  *
  * Return: `false` if we must not fall-back, `true` if plain sha256 should be tried
  */
-static bool fallback_to_sha256(void)
+ਸਥਿਰ bool fallback_ਮੰਜ਼ਿਲ_sha256(ਖਾਲੀ)
 {
-	if (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
-		return env_get_yesno("bootstopusesha256") == 1;
-	else if (IS_ENABLED(CONFIG_CRYPT_PW))
-		return false;
-	else
-		return true;
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
+		ਵਾਪਸ env_get_yesno("bootstopusesha256") == 1;
+	ਨਹੀਂਤਾਂ ਜੇ (IS_ENABLED(CONFIG_CRYPT_PW))
+		ਵਾਪਸ false;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ true;
 }
 
 /***************************************************************************
  * Watch for 'delay' seconds for autoboot stop or autoboot delay string.
  * returns: 0 -  no key string, allow autoboot 1 - got key string, abort
  */
-static int abortboot_key_sequence(int bootdelay)
+ਸਥਿਰ ਪੂਰਨ abortboot_ਕੁੰਜੀ_sequence(ਪੂਰਨ bootdelay)
 {
-	int abort;
+	ਪੂਰਨ abort;
 	uint64_t etime = endtick(bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
 		console_flush_stdin();
 #  ifdef CONFIG_AUTOBOOT_PROMPT
 	/*
 	 * CONFIG_AUTOBOOT_PROMPT includes the %d for all boards.
 	 * To print the bootdelay value upon bootup.
 	 */
-	printf(CONFIG_AUTOBOOT_PROMPT, bootdelay);
+	ਲਿਖੋ(CONFIG_AUTOBOOT_PROMPT, bootdelay);
 #  endif
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
-		if (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_to_sha256())
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
+		ਜੇ (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_ਮੰਜ਼ਿਲ_sha256())
 			abort = passwd_abort_crypt(etime);
-		else
+		ਨਹੀਂਤਾਂ
 			abort = passwd_abort_sha256(etime);
-	} else {
-		abort = passwd_abort_key(etime);
+	} ਨਹੀਂਤਾਂ {
+		abort = passwd_abort_ਕੁੰਜੀ(etime);
 	}
-	if (!abort)
+	ਜੇ (!abort)
 		debug_bootkeys("key timeout\n");
 
-	return abort;
+	ਵਾਪਸ abort;
 }
 
-static void print_boot_delay(int bootdelay)
+ਸਥਿਰ ਖਾਲੀ print_boot_delay(ਪੂਰਨ bootdelay)
 {
-	printf(ANSI_CLEAR_LINE "\rHit any key to stop autoboot: %d", bootdelay);
+	ਲਿਖੋ(ANSI_CLEAR_ਸਤਰ "\rHit any key to stop autoboot: %d", bootdelay);
 }
 
-static int abortboot_single_key(int bootdelay)
+ਸਥਿਰ ਪੂਰਨ abortboot_single_ਕੁੰਜੀ(ਪੂਰਨ bootdelay)
 {
-	int abort = 0;
-	unsigned long ts;
+	ਪੂਰਨ abort = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ts;
 
 	print_boot_delay(bootdelay);
 
 	/*
 	 * Check if key already pressed
 	 */
-	if (tstc()) {	/* we got a key press	*/
+	ਜੇ (tstc()) {	/* we got a key press	*/
 		getchar();	/* consume input	*/
 		print_boot_delay(0);
 		abort = 1;	/* don't auto boot	*/
 	}
 
-	while ((bootdelay > 0) && (!abort)) {
+	ਜਦੋਂ ((bootdelay > 0) && (!abort)) {
 		--bootdelay;
 		/* delay 1000 ms */
 		ts = get_timer(0);
-		do {
-			if (tstc()) {	/* we got a key press	*/
-				int key;
+		ਕਰੋ {
+			ਜੇ (tstc()) {	/* we got a key press	*/
+				ਪੂਰਨ ਕੁੰਜੀ;
 
 				abort  = 1;	/* don't auto boot	*/
 				bootdelay = 0;	/* no more delay	*/
-				key = getchar();/* consume input	*/
-				if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
-					menukey = key;
-				break;
+				ਕੁੰਜੀ = getchar();/* consume input	*/
+				ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
+					menukey = ਕੁੰਜੀ;
+				ਰੋਕੋ;
 			}
 			udelay(10000);
-		} while (!abort && get_timer(ts) < 1000);
+		} ਜਦੋਂ (!abort && get_timer(ts) < 1000);
 
 		print_boot_delay(bootdelay);
 	}
 
 	putc('\n');
 
-	return abort;
+	ਵਾਪਸ abort;
 }
 
-static int abortboot(int bootdelay)
+ਸਥਿਰ ਪੂਰਨ abortboot(ਪੂਰਨ bootdelay)
 {
-	int abort = 0;
+	ਪੂਰਨ abort = 0;
 
-	if (bootdelay >= 0) {
-		if (autoboot_keyed())
-			abort = abortboot_key_sequence(bootdelay);
-		else
-			abort = abortboot_single_key(bootdelay);
+	ਜੇ (bootdelay >= 0) {
+		ਜੇ (autoboot_keyed())
+			abort = abortboot_ਕੁੰਜੀ_sequence(bootdelay);
+		ਨਹੀਂਤਾਂ
+			abort = abortboot_single_ਕੁੰਜੀ(bootdelay);
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
+	ਜੇ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return abort;
+	ਵਾਪਸ abort;
 }
 
-static void process_fdt_options(void)
+ਸਥਿਰ ਖਾਲੀ process_fdt_options(ਖਾਲੀ)
 {
-#ifdef CONFIG_TEXT_BASE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_ਪਾਠ_ਅਧਾਰ
 	ulong addr;
 
 	/* Add an env variable to point to a kernel payload, if available */
 	addr = ofnode_conf_read_int("kernel-offset", 0);
-	if (addr)
-		env_set_addr("kernaddr", (void *)(CONFIG_TEXT_BASE + addr));
+	ਜੇ (addr)
+		env_ਸੈੱਟ_addr("kernaddr", (ਖਾਲੀ *)(CONFIG_ਪਾਠ_ਅਧਾਰ + addr));
 
 	/* Add an env variable to point to a root disk, if available */
 	addr = ofnode_conf_read_int("rootdisk-offset", 0);
-	if (addr)
-		env_set_addr("rootaddr", (void *)(CONFIG_TEXT_BASE + addr));
-#endif /* CONFIG_TEXT_BASE */
+	ਜੇ (addr)
+		env_ਸੈੱਟ_addr("rootaddr", (ਖਾਲੀ *)(CONFIG_ਪਾਠ_ਅਧਾਰ + addr));
+#ਜੇ_ਅੰਤ /* CONFIG_TEXT_BASE */
 }
 
-const char *bootdelay_process(void)
+ਅਚਲ ਅੱਖਰ *bootdelay_process(ਖਾਲੀ)
 {
-	char *s;
-	int bootdelay;
+	ਅੱਖਰ *s;
+	ਪੂਰਨ bootdelay;
 
 	bootcount_inc();
 
 	s = env_get("bootdelay");
-	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
+	bootdelay = s ? (ਪੂਰਨ)simple_strtol(s, ਨਿਰਾ, 10) : CONFIG_BOOTDELAY;
 
 	/*
 	 * Does it really make sense that the devicetree overrides the user
 	 * setting? It is possibly helpful for security since the device tree
 	 * may be signed whereas the environment is often loaded from storage.
 	 */
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	ਜੇ (IS_ENABLED(CONFIG_ਦਾ_CONTROL))
 		bootdelay = ofnode_conf_read_int("bootdelay", bootdelay);
 
 	debug("### main_loop entered: bootdelay=%d\n\n", bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
 		bootdelay = menu_show(bootdelay);
 	bootretry_init_cmd_timeout();
 
-#ifdef CONFIG_POST
-	if (gd->flags & GD_FLG_POSTFAIL) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_POST
+	ਜੇ (gd->flags & GD_FLG_POSTFAIL) {
 		s = env_get("failbootcmd");
-	} else
-#endif /* CONFIG_POST */
-	if (bootcount_error())
+	} ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ /* CONFIG_POST */
+	ਜੇ (bootcount_error())
 		s = env_get("altbootcmd");
-	else
+	ਨਹੀਂਤਾਂ
 		s = env_get("bootcmd");
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	ਜੇ (IS_ENABLED(CONFIG_ਦਾ_CONTROL))
 		process_fdt_options();
 	stored_bootdelay = bootdelay;
 
-	return s;
+	ਵਾਪਸ s;
 }
 
-void autoboot_command(const char *s)
+ਖਾਲੀ autoboot_command(ਅਚਲ ਅੱਖਰ *s)
 {
 	debug("### main_loop: bootcmd=\"%s\"\n", s ? s : "<UNDEFINED>");
 
-	if (s && (stored_bootdelay == -2 ||
+	ਜੇ (s && (stored_bootdelay == -2 ||
 		 (stored_bootdelay != -1 && !abortboot(stored_bootdelay)))) {
-		bool lock;
-		int prev;
+		bool ਤਾਲਾ;
+		ਪੂਰਨ prev;
 
-		lock = autoboot_keyed() &&
+		ਤਾਲਾ = autoboot_keyed() &&
 			!IS_ENABLED(CONFIG_AUTOBOOT_KEYED_CTRLC);
-		if (lock)
+		ਜੇ (ਤਾਲਾ)
 			prev = disable_ctrlc(1); /* disable Ctrl-C checking */
 
-		run_command_list(s, -1, 0);
+		ਲੜੀਵਾਰ_command_list(s, -1, 0);
 
-		if (lock)
+		ਜੇ (ਤਾਲਾ)
 			disable_ctrlc(prev);	/* restore Ctrl-C checking */
 	}
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
+	ਜੇ (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
 	    menukey == AUTOBOOT_MENUKEY) {
 		s = env_get("menucmd");
-		if (s)
-			run_command_list(s, -1, 0);
+		ਜੇ (s)
+			ਲੜੀਵਾਰ_command_list(s, -1, 0);
 	}
 }

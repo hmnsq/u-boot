@@ -3,169 +3,169 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <config.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fdt_support.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <imx_container.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl_load.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/io.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <nand.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/libfdt_env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_ਪੰਨਾ(ਖਾਲੀ)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	ਵਾਪਸ CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#ਜੇ defined(CONFIG_SPL_NAND_RAW_ONLY)
+ਸਥਿਰ ਪੂਰਨ spl_nand_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			ਬਣਤਰ spl_boot_device *bootdev)
 {
 	nand_init();
 
-	printf("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
-	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_SIZE,
+	ਲਿਖੋ("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
+	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_ਮਾਪ,
 	       CFG_SYS_NAND_U_BOOT_DST);
 
-	nand_spl_load_image(spl_nand_get_uboot_raw_page(),
-			    CFG_SYS_NAND_U_BOOT_SIZE,
+	nand_spl_ਲੱਦੋ_image(spl_nand_get_uboot_raw_ਪੰਨਾ(),
+			    CFG_SYS_NAND_U_BOOT_ਮਾਪ,
 			    map_sysmem(CFG_SYS_NAND_U_BOOT_DST,
-				       CFG_SYS_NAND_U_BOOT_SIZE));
-	spl_set_header_raw_uboot(spl_image);
+				       CFG_SYS_NAND_U_BOOT_ਮਾਪ));
+	spl_ਸੈੱਟ_ਸਿਰਲੇਖ_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-#else
+#ਨਹੀਂਤਾਂ
 
-__weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
+__weak u32 nand_spl_adjust_ਵਿੱਥ(u32 sector, u32 offs)
 {
-	return offs;
+	ਵਾਪਸ offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+ਸਥਿਰ ulong spl_nand_read(ਬਣਤਰ spl_ਲੱਦੋ_info *ਲੱਦੋ, ulong offs, ulong ਮਾਪ,
+			   ਖਾਲੀ *dst)
 {
-	int err;
+	ਪੂਰਨ err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
-	      __func__, offs, size, dst);
+	      __func__, offs, ਮਾਪ, dst);
 
-	sector = *(int *)load->priv;
-	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
-	err = nand_spl_load_image(offs, size, dst);
-	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	sector = *(ਪੂਰਨ *)ਲੱਦੋ->priv;
+	offs = sector + nand_spl_adjust_ਵਿੱਥ(sector, offs - sector);
+	err = nand_spl_ਲੱਦੋ_image(offs, ਮਾਪ, dst);
+	spl_ਸੈੱਟ_bl_len(ਲੱਦੋ, nand_ਪੰਨਾ_ਮਾਪ());
+	ਜੇ (err)
+		ਵਾਪਸ 0;
 
-	return size;
+	ਵਾਪਸ ਮਾਪ;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+ਸਥਿਰ ਪੂਰਨ spl_nand_ਲੱਦੋ_element(ਬਣਤਰ spl_image_info *spl_image,
+				 ਬਣਤਰ spl_boot_device *bootdev, ਪੂਰਨ ਵਿੱਥ)
 {
-	struct spl_load_info load;
+	ਬਣਤਰ spl_ਲੱਦੋ_info ਲੱਦੋ;
 
-	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	spl_ਲੱਦੋ_init(&ਲੱਦੋ, spl_nand_read, &ਵਿੱਥ, 1);
+	ਵਾਪਸ spl_ਲੱਦੋ(spl_image, bootdev, &ਲੱਦੋ, 0, ਵਿੱਥ);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#ਜੇ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ਸਥਿਰ ਪੂਰਨ spl_nand_ਲੱਦੋ_image_os(ਬਣਤਰ spl_image_info *spl_image,
+				  ਬਣਤਰ spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	ਪੂਰਨ err;
+	ਬਣਤਰ legacy_img_hdr *ਸਿਰਲੇਖ = spl_get_ਲੱਦੋ_ਬਫਰ(0, ਆਕਾਰ(*ਸਿਰਲੇਖ));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
-	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	nand_spl_ਲੱਦੋ_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, ਆਕਾਰ(*ਸਿਰਲੇਖ),
+			    (ਖਾਲੀ *)ਸਿਰਲੇਖ);
+	err = spl_parse_image_ਸਿਰਲੇਖ(spl_image, bootdev, ਸਿਰਲੇਖ);
+	ਜੇ (err)
+		ਵਾਪਸ err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	ਜੇ (ਸਿਰਲੇਖ->ih_os != IH_OS_LINUX)
+		ਵਾਪਸ -EINVAL;
 
 	/* happy - was a linux */
-	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
-				  spl_image->size,
-				  (void *)spl_image->load_addr);
+	err = nand_spl_ਲੱਦੋ_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
+				  spl_image->ਮਾਪ,
+				  (ਖਾਲੀ *)spl_image->ਲੱਦੋ_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	ਜੇ (err)
+		ਵਾਪਸ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ਜੇ IS_ENABLED(CONFIG_SPL_OS_BOOT_ਦਲੀਲਾਂ)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
-	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+	ਪੂਰਨ *src, *dst;
+	nand_spl_ਲੱਦੋ_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_ਮਾਪ,
+			    (ਖਾਲੀ *)CONFIG_ਪਾਠ_ਅਧਾਰ);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	ਲਈ (dst = (ਪੂਰਨ *)CONFIG_SPL_PAYLOAD_ਦਲੀਲਾਂ_ADDR,
+	    src = (ਪੂਰਨ *)CONFIG_ਪਾਠ_ਅਧਾਰ;
+	     src < (ਪੂਰਨ *)(CONFIG_ਪਾਠ_ਅਧਾਰ + CONFIG_CMD_SPL_WRITE_ਮਾਪ);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_nand_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			       ਬਣਤਰ spl_boot_device *bootdev)
 {
-	int err;
+	ਪੂਰਨ err;
 
-#ifdef CONFIG_SPL_NAND_SOFTECC
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#ਨਹੀਂਤਾਂ
 	debug("spl: nand - using hw ecc\n");
-#endif
+#ਜੇ_ਅੰਤ
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+#ਜੇ CONFIG_IS_ENABLED(OS_BOOT)
+	ਜੇ (!spl_ਸ਼ੁਰੂ_uboot()) {
+		err = spl_nand_ਲੱਦੋ_image_os(spl_image, bootdev);
+		ਜੇ (!err)
+			ਵਾਪਸ 0;
+		ਲਿਖੋ("%s: Failed in falcon boot: %d", __func__, err);
+		ਜੇ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ਵਾਪਸ err;
+		ਲਿਖੋ("Fallback to U-Boot\n");
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_NAND_ENV_DST
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET);
-#ifdef CONFIG_ENV_OFFSET_REDUND
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET_REDUND);
-#endif
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NAND_ENV_DST
+	spl_nand_ਲੱਦੋ_element(spl_image, bootdev, CONFIG_ENV_ਵਿੱਥ);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_ENV_ਵਿੱਥ_REDUND
+	spl_nand_ਲੱਦੋ_element(spl_image, bootdev, CONFIG_ENV_ਵਿੱਥ_REDUND);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 	/* Load u-boot */
-	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
-#ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
-		err = spl_nand_load_element(spl_image, bootdev,
+	err = spl_nand_ਲੱਦੋ_element(spl_image, bootdev, spl_nand_get_uboot_raw_ਪੰਨਾ());
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+#ਜੇ CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	ਜੇ (err)
+		err = spl_nand_ਲੱਦੋ_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
-#endif
-#endif
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 	nand_deselect();
-	return err;
+	ਵਾਪਸ err;
 }
-#endif
+#ਜੇ_ਅੰਤ
 /* Use priorty 1 so that Ubi can override this */
-SPL_LOAD_IMAGE_METHOD("NAND", 1, BOOT_DEVICE_NAND, spl_nand_load_image);
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("NAND", 1, BOOT_DEVICE_NAND, spl_nand_ਲੱਦੋ_image);

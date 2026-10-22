@@ -12,176 +12,176 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>         /* malloc, free, realloc*/
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/ctype.h>    /* isalpha, isdigit */
+#ਅਨ੍ਤਰ੍ਭਾਵ <console.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bootretry.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cli.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cli_hush.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <command.h>        /* find_cmd */
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
  */
-#define BB_VER			"1.37.0.git23da5c4b716b"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BB_VER			"1.37.0.git23da5c4b716b"
 
 /*
  * Define hush features by the names used upstream.
  */
-#define ENABLE_HUSH_INTERACTIVE	1
-#define ENABLE_FEATURE_EDITING	1
-#define ENABLE_HUSH_IF		1
-#define ENABLE_HUSH_LOOPS	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENABLE_HUSH_INTERACTIVE	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENABLE_FEATURE_EDITING	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENABLE_HUSH_IF		1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENABLE_HUSH_LOOPS	1
 /* No MMU in U-Boot */
-#define BB_MMU			0
-#define USE_FOR_NOMMU(...)	__VA_ARGS__
-#define USE_FOR_MMU(...)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BB_MMU			0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USE_FOR_NOMMU(...)	__VA_ARGS__
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USE_FOR_MMU(...)
 
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#ਜੇ CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ smallint;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ smalluint;
+#ਨਹੀਂਤਾਂ
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
-#endif
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ smallint;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ smalluint;
+#ਜੇ_ਅੰਤ
 
 /*
  * Alignment defines used by BusyBox.
  */
-#define ALIGN1			__attribute__((aligned(1)))
-#define ALIGN2			__attribute__((aligned(2)))
-#define ALIGN4			__attribute__((aligned(4)))
-#define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALIGN1			__attribute__((aligned(1)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALIGN2			__attribute__((aligned(2)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALIGN4			__attribute__((aligned(4)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALIGN8			__attribute__((aligned(8)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALIGN_PTR		__attribute__((aligned(ਆਕਾਰ(ਖਾਲੀ*))))
 
 /*
  * Miscellaneous compiler/platform defines.
  */
-#define FAST_FUNC /* not used in U-Boot */
-#define UNUSED_PARAM		__always_unused
-#define ALWAYS_INLINE		__always_inline
-#define NOINLINE		noinline
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FAST_FUNC /* not used in U-Boot */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਅਣਵਰਤਿਆ_PARAM		__always_unused
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALWAYS_INLINE		__always_inline
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOINLINE		noinline
 
 /*
  * Defines to provide equivalents to what libc/BusyBox defines.
  */
-#define EOF			(-1)
-#define EXIT_SUCCESS		0
-#define EXIT_FAILURE		1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EOF			(-1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EXIT_SUCCESS		0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EXIT_FAILURE		1
 
 /*
  * Stubs to provide libc/BusyBox functions based on U-Boot equivalents where it
  * makes sense.
  */
-#define utoa			simple_itoa
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+ਸਥਿਰ ਖਾਲੀ __noreturn xfunc_die(ਖਾਲੀ)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ bb_error_ਸੁਨੇਹਾ_and_die(format, ...) ਕਰੋ { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} ਜਦੋਂ (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ bb_simple_error_ਸੁਨੇਹਾ_and_die(ਸੁਨੇਹਾ) ਕਰੋ { \
+panic_str("HUSH: " ਸੁਨੇਹਾ); \
+} ਜਦੋਂ (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+ਸਥਿਰ ਪੂਰਨ __maybe_unused fdprintf(ਪੂਰਨ fd, ਅਚਲ ਅੱਖਰ *format, ...)
 {
-	va_list args;
+	va_list ਦਲੀਲਾਂ;
 	uint i;
 
-	assert(fd == 2);
+	ਪ੍ਰਤਿਜ੍ਞਾ(fd == 2);
 
-	va_start(args, format);
-	i = vprintf(format, args);
-	va_end(args);
+	va_ਸ਼ੁਰੂ(ਦਲੀਲਾਂ, format);
+	i = vprintf(format, ਦਲੀਲਾਂ);
+	va_ਸਿਰਾ(ਦਲੀਲਾਂ);
 
-	return i;
+	ਵਾਪਸ i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+ਸਥਿਰ ਖਾਲੀ bb_verror_ਸੁਨੇਹਾ(ਅਚਲ ਅੱਖਰ *s, va_list p, ਅਚਲ ਅੱਖਰ* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+ਸਥਿਰ ਖਾਲੀ bb_error_ਸੁਨੇਹਾ(ਅਚਲ ਅੱਖਰ *s, ...)
 {
 	va_list p;
 
-	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
-	va_end(p);
+	va_ਸ਼ੁਰੂ(p, s);
+	bb_verror_ਸੁਨੇਹਾ(s, p, ਨਿਰਾ);
+	va_ਸਿਰਾ(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+ਸਥਿਰ ਖਾਲੀ bb_simple_error_ਸੁਨੇਹਾ(ਅਚਲ ਅੱਖਰ *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_ਸੁਨੇਹਾ("%s", s);
 }
 
-static void *xmalloc(size_t size)
+ਸਥਿਰ ਖਾਲੀ *xmalloc(size_t ਮਾਪ)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	ਖਾਲੀ *p = ਨਿਰਾ;
+	ਜੇ (!(p = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ)))
 		panic("out of memory");
-	return p;
+	ਵਾਪਸ p;
 }
 
-static void *xzalloc(size_t size)
+ਸਥਿਰ ਖਾਲੀ *xzalloc(size_t ਮਾਪ)
 {
-	void *p = xmalloc(size);
-	memset(p, 0, size);
-	return p;
+	ਖਾਲੀ *p = xmalloc(ਮਾਪ);
+	memset(p, 0, ਮਾਪ);
+	ਵਾਪਸ p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+ਸਥਿਰ ਖਾਲੀ *xrealloc(ਖਾਲੀ *ptr, size_t ਮਾਪ)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	ਖਾਲੀ *p = ਨਿਰਾ;
+	ਜੇ (!(p = realloc(ptr, ਮਾਪ)))
 		panic("out of memory");
-	return p;
+	ਵਾਪਸ p;
 }
 
-static void *xmemdup(const void *s, int n)
+ਸਥਿਰ ਖਾਲੀ *xmemdup(ਅਚਲ ਖਾਲੀ *s, ਪੂਰਨ n)
 {
-	return memcpy(xmalloc(n), s, n);
+	ਵਾਪਸ ਸਮ੍ਰਿਤੀ_ਨਕਲ(xmalloc(n), s, n);
 }
 
-#define xstrdup		strdup
-#define xstrndup	strndup
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xstrdup		strdup
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+ਸਥਿਰ ਖਾਲੀ *mempcpy(ਖਾਲੀ *dest, ਅਚਲ ਖਾਲੀ *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	ਵਾਪਸ ਸਮ੍ਰਿਤੀ_ਨਕਲ(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+ਸਥਿਰ ਖਾਲੀ overlapping_strcpy(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	ਜੇ (dst != src) {
+		ਜਦੋਂ ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+ਸਥਿਰ ਅੱਖਰ* skip_whitespace(ਅਚਲ ਅੱਖਰ *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	ਜਦੋਂ (*s == ' ' || (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	ਵਾਪਸ (ਅੱਖਰ *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+ਸਥਿਰ ਅੱਖਰ* skip_non_whitespace(ਅਚਲ ਅੱਖਰ *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	ਜਦੋਂ (*s != '\0' && *s != ' ' && (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	ਵਾਪਸ (ਅੱਖਰ *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ is_name(c)	((c) == '_' || ਅੱਖਰ_ਹੈ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(c)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ is_ਵਿੱਚ_name(c)	((c) == '_' || ਅੱਖਰ_ਜਾਂ_ਅੰਕ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(c)))
 
-static const char* endofname(const char *name)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ* endofname(ਅਚਲ ਅੱਖਰ *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	ਜੇ (!is_name(*name))
+		ਵਾਪਸ name;
+	ਜਦੋਂ (*++name) {
+		ਜੇ (!is_ਵਿੱਚ_name(*name))
+			ਰੋਕੋ;
 	}
-	return name;
+	ਵਾਪਸ name;
 }
 
 /**
@@ -226,98 +226,98 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+ਸਥਿਰ size_t list_ਮਾਪ(ਅੱਖਰ **list)
 {
-	size_t size;
+	size_t ਮਾਪ;
 
-	for (size = 0; list[size] != NULL; size++);
+	ਲਈ (ਮਾਪ = 0; list[ਮਾਪ] != ਨਿਰਾ; ਮਾਪ++);
 
-	return size;
+	ਵਾਪਸ ਮਾਪ;
 }
 
-static int varcmp(const char *p, const char *q)
+ਸਥਿਰ ਪੂਰਨ varcmp(ਅਚਲ ਅੱਖਰ *p, ਅਚਲ ਅੱਖਰ *q)
 {
-	int c, d;
+	ਪੂਰਨ c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	ਜਦੋਂ ((c = *p) == (d = *q)) {
+		ਜੇ (c == '\0' || c == '=')
+			ਜਾਓ ਬਾਹਰਲਾ;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	ਜੇ (c == '=')
 		c = '\0';
-	if (d == '=')
+	ਜੇ (d == '=')
 		d = '\0';
-out:
-	return c - d;
+ਬਾਹਰਲਾ:
+	ਵਾਪਸ c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+ਬਣਤਰ ਵਿੱਚ_str;
+ਸਥਿਰ ਪੂਰਨ u_boot_cli_readline(ਬਣਤਰ ਵਿੱਚ_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+ਬਣਤਰ ਵਿੱਚ_str;
+ਸਥਿਰ ਪੂਰਨ u_boot_cli_readline(ਬਣਤਰ ਵਿੱਚ_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+ਸਥਿਰ uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
-#define defifs (defifsvar + 4)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ defifsvar[] __aligned(1) = "IFS= \t\n";
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
-#define EXIT_RET_CODE -2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EXIT_RET_ਕੋਡ -2
 
 /*
  * This define is used for changes that need be done directly in the upstream
  * sources still. Ideally, its use should be minimized as much as possible.
  */
-#define __U_BOOT__
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __U_BOOT__
 
 /*
  *
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+ਪੂਰਨ u_boot_hush_ਸ਼ੁਰੂ_modern(ਖਾਲੀ)
 {
 	INIT_G();
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+ਸਥਿਰ ਪੂਰਨ u_boot_cli_readline(ਬਣਤਰ ਵਿੱਚ_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	ਅੱਖਰ *prompt;
+	ਅੱਖਰ __maybe_unused *ps_prompt = ਨਿਰਾ;
 
-	if (!G.promptmode)
+	ਜੇ (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
-#ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SYS_PROMPT_HUSH_PS2
+	ਨਹੀਂਤਾਂ
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#ਨਹੀਂਤਾਂ
 	/* TODO: default value? */
-	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
-#endif
+	#ਗਲਤੀ "SYS_PROMPT_HUSH_PS2 is not defined!"
+#ਜੇ_ਅੰਤ
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	ਜੇ (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		ਜੇ (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		ਨਹੀਂਤਾਂ
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		ਜੇ (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	ਵਾਪਸ cli_readline(prompt);
 }

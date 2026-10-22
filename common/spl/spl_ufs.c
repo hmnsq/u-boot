@@ -3,47 +3,47 @@
  * (C) Copyright 2025 Alexey Charkov <alchark@gmail.com>
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <scsi.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/compiler.h>
-#include <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl_load.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <scsi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <image.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/compiler.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
 
-static ulong spl_ufs_load_read(struct spl_load_info *load, ulong off, ulong size, void *buf)
+ਸਥਿਰ ulong spl_ufs_ਲੱਦੋ_read(ਬਣਤਰ spl_ਲੱਦੋ_info *ਲੱਦੋ, ulong off, ulong ਮਾਪ, ਖਾਲੀ *buf)
 {
-	struct blk_desc *bd = load->priv;
+	ਬਣਤਰ blk_desc *bd = ਲੱਦੋ->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t ਗਿਣਤੀ_2 = ਮਾਪ >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	ਵਾਪਸ blk_dread(bd, sector, ਗਿਣਤੀ_2, buf) << bd->log2blksz;
 }
 
-static int spl_ufs_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_ufs_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			      ਬਣਤਰ spl_boot_device *bootdev)
 {
-	unsigned long sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
-	int devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
-	struct spl_load_info load;
-	struct blk_desc *bd;
-	int err;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
+	ਪੂਰਨ devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
+	ਬਣਤਰ spl_ਲੱਦੋ_info ਲੱਦੋ;
+	ਬਣਤਰ blk_desc *bd;
+	ਪੂਰਨ err;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_ਜਾਂਚ(false);
 	bd = blk_get_devnum_by_uclass_id(UCLASS_SCSI, devnum);
-	if (!bd)
-		return -ENODEV;
+	ਜੇ (!bd)
+		ਵਾਪਸ -ENODEV;
 
-	spl_load_init(&load, spl_ufs_load_read, bd, bd->blksz);
-	err = spl_load(spl_image, bootdev, &load, 0, sector << bd->log2blksz);
-	if (err) {
+	spl_ਲੱਦੋ_init(&ਲੱਦੋ, spl_ufs_ਲੱਦੋ_read, bd, bd->blksz);
+	err = spl_ਲੱਦੋ(spl_image, bootdev, &ਲੱਦੋ, 0, sector << bd->log2blksz);
+	ਜੇ (err) {
 		puts("spl_ufs_load_image: ufs block read error\n");
 		log_debug("(error=%d)\n", err);
-		return err;
+		ਵਾਪਸ err;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-SPL_LOAD_IMAGE_METHOD("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_load_image);
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_ਲੱਦੋ_image);

@@ -5,22 +5,22 @@
  *
  */
 
-#include <spl.h>
-#include <nvme.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <nvme.h>
 
-static int spl_nvme_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_nvme_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			       ਬਣਤਰ spl_boot_device *bootdev)
 {
-	int ret;
+	ਪੂਰਨ ret;
 
-	ret = nvme_scan_namespace();
-	if (ret < 0)
-		return ret;
+	ret = nvme_ਜਾਂਚ_namespace();
+	ਜੇ (ret < 0)
+		ਵਾਪਸ ret;
 
-	ret = spl_blk_load_image(spl_image, bootdev, UCLASS_NVME,
+	ret = spl_blk_ਲੱਦੋ_image(spl_image, bootdev, UCLASS_NVME,
 				 CONFIG_SPL_NVME_BOOT_DEVICE,
-				 CONFIG_SYS_NVME_BOOT_PARTITION);
-	return ret;
+				 CONFIG_SYS_NVME_BOOT_ਹਿੱਸੇ_ਕਰੋ);
+	ਵਾਪਸ ret;
 }
 
-SPL_LOAD_IMAGE_METHOD("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_load_image);
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_ਲੱਦੋ_image);

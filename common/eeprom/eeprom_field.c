@@ -6,98 +6,98 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <stdio.h>
-#include <vsprintf.h>
-#include <linux/string.h>
-#include <eeprom_field.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <vsprintf.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+ਸਥਿਰ ਖਾਲੀ __eeprom_field_print_bin(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ,
+				     ਅੱਖਰ *delimiter, bool ਉਲਟ)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	ਪੂਰਨ i;
+	ਪੂਰਨ from = ਉਲਟ ? ਖੇਤਰ->ਮਾਪ - 1 : 0;
+	ਪੂਰਨ ਮੰਜ਼ਿਲ = ਉਲਟ ? 0 : ਖੇਤਰ->ਮਾਪ - 1;
 
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
-		printf("%02x%s", field->buf[i], delimiter);
+	ਲਿਖੋ(PRINT_ਖੇਤਰ_SEGMENT, ਖੇਤਰ->name);
+	ਲਈ (i = from; i != ਮੰਜ਼ਿਲ; ਉਲਟ ? i-- : i++)
+		ਲਿਖੋ("%02x%s", ਖੇਤਰ->buf[i], delimiter);
 
-	printf("%02x\n", field->buf[i]);
+	ਲਿਖੋ("%02x\n", ਖੇਤਰ->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+ਸਥਿਰ ਪੂਰਨ __eeprom_field_update_bin(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ,
+				     ਅਚਲ ਅੱਖਰ *ਮੁੱਲ, bool ਉਲਟ)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	ਪੂਰਨ len = ਲੜੀ_ਲੰਬਾਈ(ਮੁੱਲ);
+	ਪੂਰਨ k, j, i = ਉਲਟ ? len - 1 : 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ byte;
+	ਅੱਖਰ *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	ਜੇ (len > ਖੇਤਰ->ਮਾਪ * 2)
+		ਵਾਪਸ -1;
 
-	memset(field->buf, 0, field->size);
+	memset(ਖੇਤਰ->buf, 0, ਖੇਤਰ->ਮਾਪ);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	ਲਈ (j = 0; j < ਖੇਤਰ->ਮਾਪ; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		ਅੱਖਰ tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		ਜੇ ((ਉਲਟ && i < 0) || (!ਉਲਟ && i >= len))
+			ਰੋਕੋ;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
-				tmp[k] = value[i];
-				break;
+		ਲਈ (k = 0; k < 2; k++) {
+			ਜੇ (ਉਲਟ && i == 0) {
+				tmp[k] = ਮੁੱਲ[i];
+				ਰੋਕੋ;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = ਮੁੱਲ[ਉਲਟ ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		ਜੇ (*endptr != '\0')
+			ਵਾਪਸ -1;
 
-		field->buf[j] = byte;
-		i = reverse ? i - 2 : i + 2;
+		ਖੇਤਰ->buf[j] = byte;
+		i = ਉਲਟ ? i - 2 : i + 2;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+ਸਥਿਰ ਪੂਰਨ __eeprom_field_update_bin_delim(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ,
+					   ਅੱਖਰ *ਮੁੱਲ, ਅੱਖਰ *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	ਪੂਰਨ ਗਿਣਤੀ_2 = 0;
+	ਪੂਰਨ i, val;
+	ਅਚਲ ਅੱਖਰ *tmp = ਮੁੱਲ;
+	ਅੱਖਰ *tok;
+	ਅੱਖਰ *endptr;
 
-	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
-		count++;
+	tmp = ਲੜੀ_ਖੋਜ(tmp, delimiter);
+	ਜਦੋਂ (tmp != ਨਿਰਾ) {
+		ਗਿਣਤੀ_2++;
 		tmp++;
-		tmp = strstr(tmp, delimiter);
+		tmp = ਲੜੀ_ਖੋਜ(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	ਜੇ (ਗਿਣਤੀ_2 > ਖੇਤਰ->ਮਾਪ)
+		ਵਾਪਸ -1;
 
-	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	tok = strtok(ਮੁੱਲ, delimiter);
+	ਲਈ (i = 0; tok && i < ਖੇਤਰ->ਮਾਪ; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		ਜੇ (*endptr != '\0')
+			ਵਾਪਸ -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
-		tok = strtok(NULL, delimiter);
+		ਖੇਤਰ->buf[i] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)val;
+		tok = strtok(ਨਿਰਾ, delimiter);
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -110,9 +110,9 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+ਖਾਲੀ eeprom_ਖੇਤਰ_print_bin(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ)
 {
-	__eeprom_field_print_bin(field, "", false);
+	__eeprom_field_print_bin(ਖੇਤਰ, "", false);
 }
 
 /**
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+ਪੂਰਨ eeprom_ਖੇਤਰ_update_bin(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ, ਅੱਖਰ *ਮੁੱਲ)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	ਵਾਪਸ __eeprom_field_update_bin(ਖੇਤਰ, ਮੁੱਲ, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+ਪੂਰਨ eeprom_ਖੇਤਰ_update_reserved(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ, ਅੱਖਰ *ਮੁੱਲ)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	ਵਾਪਸ __eeprom_field_update_bin_delim(ਖੇਤਰ, ਮੁੱਲ, " ");
 }
 
 /**
@@ -152,9 +152,9 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+ਖਾਲੀ eeprom_ਖੇਤਰ_print_bin_rev(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ)
 {
-	__eeprom_field_print_bin(field, "", true);
+	__eeprom_field_print_bin(ਖੇਤਰ, "", true);
 }
 
 /**
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+ਪੂਰਨ eeprom_ਖੇਤਰ_update_bin_rev(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ, ਅੱਖਰ *ਮੁੱਲ)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	ਵਾਪਸ __eeprom_field_update_bin(ਖੇਤਰ, ਮੁੱਲ, true);
 }
 
 /**
@@ -183,9 +183,9 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+ਖਾਲੀ eeprom_ਖੇਤਰ_print_mac(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ)
 {
-	__eeprom_field_print_bin(field, ":", false);
+	__eeprom_field_print_bin(ਖੇਤਰ, ":", false);
 }
 
 /**
@@ -195,22 +195,22 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+ਪੂਰਨ eeprom_ਖੇਤਰ_update_mac(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ, ਅੱਖਰ *ਮੁੱਲ)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	ਵਾਪਸ __eeprom_field_update_bin_delim(ਖੇਤਰ, ਮੁੱਲ, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+ਖਾਲੀ eeprom_ਖੇਤਰ_print_ascii(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ)
 {
-	char format[8];
+	ਅੱਖਰ format[8];
 
-	sprintf(format, "%%.%ds\n", field->size);
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	printf(format, field->buf);
+	sprintf(format, "%%.%ds\n", ਖੇਤਰ->ਮਾਪ);
+	ਲਿਖੋ(PRINT_ਖੇਤਰ_SEGMENT, ਖੇਤਰ->name);
+	ਲਿਖੋ(format, ਖੇਤਰ->buf);
 }
 
 /**
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+ਪੂਰਨ eeprom_ਖੇਤਰ_update_ascii(ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ, ਅੱਖਰ *ਮੁੱਲ)
 {
-	if (strlen(value) >= field->size) {
-		printf("%s: new data too long\n", field->name);
-		return -1;
+	ਜੇ (ਲੜੀ_ਲੰਬਾਈ(ਮੁੱਲ) >= ਖੇਤਰ->ਮਾਪ) {
+		ਲਿਖੋ("%s: new data too long\n", ਖੇਤਰ->name);
+		ਵਾਪਸ -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
-	field->buf[field->size - 1] = '\0';
+	strncpy((ਅੱਖਰ *)ਖੇਤਰ->buf, ਮੁੱਲ, ਖੇਤਰ->ਮਾਪ - 1);
+	ਖੇਤਰ->buf[ਖੇਤਰ->ਮਾਪ - 1] = '\0';
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+ਖਾਲੀ eeprom_ਖੇਤਰ_print_reserved(ਅਚਲ ਬਣਤਰ eeprom_ਖੇਤਰ *ਖੇਤਰ)
 {
-	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
-	printf("(%d bytes)\n", field->size);
+	ਲਿਖੋ(PRINT_ਖੇਤਰ_SEGMENT, "Reserved fields\t");
+	ਲਿਖੋ("(%d bytes)\n", ਖੇਤਰ->ਮਾਪ);
 }

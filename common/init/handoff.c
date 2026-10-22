@@ -5,34 +5,34 @@
  * Copyright 2018 Google, Inc
  */
 
-#include <handoff.h>
-#include <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <handoff.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
-void handoff_save_dram(struct spl_handoff *ho)
+ਖਾਲੀ handoff_save_dram(ਬਣਤਰ spl_handoff *ho)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	ho->ram_size = gd->ram_size;
+	ho->ram_ਮਾਪ = gd->ram_ਮਾਪ;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-		ho->ram_bank[i].start = gd->dram[i].start;
-		ho->ram_bank[i].size = gd->dram[i].size;
+	ਲਈ (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		ho->ram_bank[i].ਸ਼ੁਰੂ = gd->dram[i].ਸ਼ੁਰੂ;
+		ho->ram_bank[i].ਮਾਪ = gd->dram[i].ਮਾਪ;
 	}
 }
 
-void handoff_load_dram_size(struct spl_handoff *ho)
+ਖਾਲੀ handoff_ਲੱਦੋ_dram_ਮਾਪ(ਬਣਤਰ spl_handoff *ho)
 {
-	gd->ram_size = ho->ram_size;
+	gd->ram_ਮਾਪ = ho->ram_ਮਾਪ;
 }
 
-void handoff_load_dram_banks(struct spl_handoff *ho)
+ਖਾਲੀ handoff_ਲੱਦੋ_dram_banks(ਬਣਤਰ spl_handoff *ho)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-		gd->dram[i].start = ho->ram_bank[i].start;
-		gd->dram[i].size = ho->ram_bank[i].size;
+	ਲਈ (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		gd->dram[i].ਸ਼ੁਰੂ = ho->ram_bank[i].ਸ਼ੁਰੂ;
+		gd->dram[i].ਮਾਪ = ho->ram_bank[i].ਮਾਪ;
 	}
 }

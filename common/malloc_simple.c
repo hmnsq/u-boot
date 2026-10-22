@@ -5,88 +5,88 @@
  * Copyright (c) 2014 Google, Inc
  */
 
-#define LOG_CATEGORY LOGC_ALLOC
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <malloc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/io.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <valgrind/valgrind.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+ਸਥਿਰ ਖਾਲੀ *alloc_simple(size_t ਬਾਈਟਾਂ, ਪੂਰਨ align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	ਖਾਲੀ *ptr;
 
-	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
-	new_ptr = addr + bytes - gd->malloc_base;
-	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
-		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	addr = ALIGN(gd->malloc_ਅਧਾਰ + gd->malloc_ptr, align);
+	new_ptr = addr + ਬਾਈਟਾਂ - gd->malloc_ਅਧਾਰ;
+	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)ਬਾਈਟਾਂ, new_ptr,
+		  gd->malloc_ਹੱਦਬੰਦੀ);
+	ਜੇ (new_ptr > gd->malloc_ਹੱਦਬੰਦੀ) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
-			gd->malloc_limit);
-		return NULL;
+			gd->malloc_ਹੱਦਬੰਦੀ);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	ptr = map_sysmem(addr, ਬਾਈਟਾਂ);
+	gd->malloc_ptr = ALIGN(new_ptr, ਆਕਾਰ(new_ptr));
 
-	return ptr;
+	ਵਾਪਸ ptr;
 }
 
-void *malloc_simple(size_t bytes)
+ਖਾਲੀ *malloc_simple(size_t ਬਾਈਟਾਂ)
 {
-	void *ptr;
+	ਖਾਲੀ *ptr;
 
-	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(ਬਾਈਟਾਂ, 1);
+	ਜੇ (!ptr)
+		ਵਾਪਸ ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_ਖੰਡ(ptr, ਬਾਈਟਾਂ, 0, false);
 
-	return ptr;
+	ਵਾਪਸ ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+ਖਾਲੀ *memalign_simple(size_t align, size_t ਬਾਈਟਾਂ)
 {
-	void *ptr;
+	ਖਾਲੀ *ptr;
 
-	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(ਬਾਈਟਾਂ, align);
+	ਜੇ (!ptr)
+		ਵਾਪਸ ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_ਖੰਡ(ptr, ਬਾਈਟਾਂ, 0, false);
 
-	return ptr;
+	ਵਾਪਸ ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#ਜੇ CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+ਖਾਲੀ *ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(size_t nmemb, size_t elem_ਮਾਪ)
 {
-	size_t size = nmemb * elem_size;
-	void *ptr;
+	size_t ਮਾਪ = nmemb * elem_ਮਾਪ;
+	ਖਾਲੀ *ptr;
 
-	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
-	memset(ptr, '\0', size);
+	ptr = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ);
+	ਜੇ (!ptr)
+		ਵਾਪਸ ptr;
+	memset(ptr, '\0', ਮਾਪ);
 
-	return ptr;
+	ਵਾਪਸ ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#ਜੇ IS_ENABLED(CONFIG_VALGRIND)
+ਖਾਲੀ free_simple(ਖਾਲੀ *ptr)
 {
-	VALGRIND_FREELIKE_BLOCK(ptr, 0);
+	VALGRIND_FREELIKE_ਖੰਡ(ptr, 0);
 }
-#endif
-#endif
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-void malloc_simple_info(void)
+ਖਾਲੀ malloc_simple_info(ਖਾਲੀ)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <scp03.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <tee.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <tee/optee_ta_scp03.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/string.h>
 
-static int scp03_enable(bool provision)
+ਸਥਿਰ ਪੂਰਨ scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	ਅਚਲ ਬਣਤਰ tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	ਬਣਤਰ tee_open_session_arg session;
+	ਬਣਤਰ tee_invoke_arg invoke;
+	ਬਣਤਰ tee_param param;
+	ਬਣਤਰ udevice *tee = ਨਿਰਾ;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_ਲੱਭੋ_device(tee, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ);
+	ਜੇ (!tee)
+		ਵਾਪਸ -ENODEV;
 
-	memset(&session, 0, sizeof(session));
-	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	memset(&session, 0, ਆਕਾਰ(session));
+	tee_optee_ta_uuid_ਮੰਜ਼ਿਲ_octets(session.uuid, &uuid);
+	ਜੇ (tee_open_session(tee, &session, 0, ਨਿਰਾ))
+		ਵਾਪਸ -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, ਆਕਾਰ(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_ਮੁੱਲ_ਨਿਵੇਸ਼;
+	param.u.ਮੁੱਲ.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, ਆਕਾਰ(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ਜੇ (tee_invoke_func(tee, &invoke, 1, &param))
+		ਵਾਪਸ -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int tee_enable_scp03(void)
+ਪੂਰਨ tee_enable_scp03(ਖਾਲੀ)
 {
-	return scp03_enable(false);
+	ਵਾਪਸ scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+ਪੂਰਨ tee_provision_scp03(ਖਾਲੀ)
 {
-	return scp03_enable(true);
+	ਵਾਪਸ scp03_enable(true);
 }

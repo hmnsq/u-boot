@@ -20,19 +20,19 @@
  *
  */
 
-#include <display_options.h>
-#include <env.h>
-#include <splash.h>
-#include <video.h>
-#include <vsprintf.h>
-#include <linux/kernel.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <display_options.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <env.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <splash.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <video.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <vsprintf.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/kernel.h>
 
-static struct splash_location default_splash_locations[] = {
+ਸਥਿਰ ਬਣਤਰ splash_location default_splash_locations[] = {
 	{
 		.name = "sf",
 		.storage = SPLASH_STORAGE_SF,
 		.flags = SPLASH_STORAGE_RAW,
-		.offset = 0x0,
+		.ਵਿੱਥ = 0x0,
 	},
 	{
 		.name = "mmc_fs",
@@ -60,134 +60,134 @@ static struct splash_location default_splash_locations[] = {
 	},
 };
 
-#ifdef CONFIG_VIDEO_LOGO
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_VIDEO_LOGO
 
-#include <bmp_logo_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+ਸਥਿਰ ਪੂਰਨ splash_video_logo_ਲੱਦੋ(ਖਾਲੀ)
 {
-	char *splashimage;
-	ulong bmp_load_addr;
+	ਅੱਖਰ *splashimage;
+	ulong bmp_ਲੱਦੋ_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	ਜੇ (!splashimage)
+		ਵਾਪਸ -ENOENT;
 
-	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
-		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+	bmp_ਲੱਦੋ_addr = hextoul(splashimage, 0);
+	ਜੇ (!bmp_ਲੱਦੋ_addr) {
+		ਲਿਖੋ("Error: bad 'splashimage' address\n");
+		ਵਾਪਸ -EFAULT;
 	}
 
-	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
-	       ARRAY_SIZE(bmp_logo_bitmap));
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ((ਖਾਲੀ *)bmp_ਲੱਦੋ_addr, bmp_logo_bitmap,
+	       ARRAY_ਮਾਪ(bmp_logo_bitmap));
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
-#endif
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ splash_video_logo_ਲੱਦੋ(ਖਾਲੀ) { ਵਾਪਸ -ENOSYS; }
+#ਜੇ_ਅੰਤ
 
-__weak int splash_screen_prepare(void)
+__weak ਪੂਰਨ splash_screen_prepare(ਖਾਲੀ)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
-					  ARRAY_SIZE(default_splash_locations));
+	ਜੇ (CONFIG_IS_ENABLED(SPLASH_ਸਰੋਤ))
+		ਵਾਪਸ splash_ਸਰੋਤ_ਲੱਦੋ(default_splash_locations,
+					  ARRAY_ਮਾਪ(default_splash_locations));
 
-	return splash_video_logo_load();
+	ਵਾਪਸ splash_video_logo_ਲੱਦੋ();
 }
 
-void splash_get_pos(int *x, int *y)
+ਖਾਲੀ splash_get_pos(ਪੂਰਨ *x, ਪੂਰਨ *y)
 {
-	char *s = env_get("splashpos");
+	ਅੱਖਰ *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	ਜੇ (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		ਵਾਪਸ;
 
-	if (s[0] == 'm')
+	ਜੇ (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
-		*x = simple_strtol(s, NULL, 0);
+	ਨਹੀਂਤਾਂ
+		*x = simple_strtol(s, ਨਿਰਾ, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	ਜੇ (s != ਨਿਰਾ) {
+		ਜੇ (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
-			*y = simple_strtol(s + 1, NULL, 0);
+		ਨਹੀਂਤਾਂ
+			*y = simple_strtol(s + 1, ਨਿਰਾ, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#ਜੇ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_ਸੰਸਕਰਣ)
 
-#ifdef CONFIG_VIDEO_LOGO
-#include <bmp_logo.h>
-#endif
-#include <dm.h>
-#include <video_console.h>
-#include <video_font.h>
-#include <video_font_data.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_VIDEO_LOGO
+#ਅਨ੍ਤਰ੍ਭਾਵ <bmp_logo.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <dm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <video_console.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <video_font.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <video_font_data.h>
 
-void splash_display_banner(void)
+ਖਾਲੀ splash_display_banner(ਖਾਲੀ)
 {
-	struct video_fontdata __maybe_unused *fontdata = fonts;
-	struct udevice *dev;
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	ਬਣਤਰ video_fontdata __maybe_unused *fontdata = fonts;
+	ਬਣਤਰ udevice *dev;
+	ਅੱਖਰ buf[DISPLAY_OPTIONS_BANNER_ਲੰਮਾਈ];
+	ਪੂਰਨ ਖਾਨਾ, ਪੰਕਤੀ, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	ਜੇ (ret)
+		ਵਾਪਸ;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
-	col = BMP_LOGO_WIDTH / fontdata->width + 1;
-	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
-	col = 0;
-	row = 0;
-#endif
+#ਜੇ IS_ENABLED(CONFIG_VIDEO_LOGO)
+	ਖਾਨਾ = BMP_LOGO_ਚੌੜਾਈ / fontdata->ਚੌੜਾਈ + 1;
+	ਪੰਕਤੀ = BMP_LOGO_ਉਚਾਈ / fontdata->ਉਚਾਈ + 1;
+#ਨਹੀਂਤਾਂ
+	ਖਾਨਾ = 0;
+	ਪੰਕਤੀ = 0;
+#ਜੇ_ਅੰਤ
 
-	display_options_get_banner(false, buf, sizeof(buf));
-	vidconsole_position_cursor(dev, col, 1);
+	display_options_get_banner(false, buf, ਆਕਾਰ(buf));
+	vidconsole_position_cursor(dev, ਖਾਨਾ, 1);
 	vidconsole_put_string(dev, buf);
-	vidconsole_position_cursor(dev, 0, row);
+	vidconsole_position_cursor(dev, 0, ਪੰਕਤੀ);
 }
-#endif /* CONFIG_VIDEO && !CONFIG_HIDE_LOGO_VERSION */
+#ਜੇ_ਅੰਤ /* CONFIG_VIDEO && !CONFIG_HIDE_LOGO_VERSION */
 
 /*
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+ਪੂਰਨ splash_display(ਖਾਲੀ)
 {
 	ulong addr;
-	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	ਅੱਖਰ *s;
+	ਪੂਰਨ x = 0, y = 0, ret;
+	ਜੇ (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		ਵਾਪਸ -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	ਜੇ (!s)
+		ਵਾਪਸ -EINVAL;
 
-	addr = hextoul(s, NULL);
+	addr = hextoul(s, ਨਿਰਾ);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	ਜੇ (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
-		goto end;
+	ਜੇ (x || y)
+		ਜਾਓ ਸਿਰਾ_2;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#ਜੇ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_ਸੰਸਕਰਣ)
 	splash_display_banner();
-#endif
-end:
-	return ret;
+#ਜੇ_ਅੰਤ
+ਸਿਰਾ_2:
+	ਵਾਪਸ ret;
 }

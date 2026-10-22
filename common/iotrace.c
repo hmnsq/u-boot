@@ -3,16 +3,16 @@
  * Copyright (c) 2014 Google, Inc.
  */
 
-#define IOTRACE_IMPL
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ IOTRACE_IMPL
 
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/bug.h>
-#include <u-boot/crc.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <mapmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/io.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/bug.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <u-boot/crc.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
 /**
  * struct iotrace - current trace status and checksum
@@ -26,20 +26,20 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
-	ulong start;
-	ulong size;
-	ulong needed_size;
-	ulong offset;
-	ulong region_start;
-	ulong region_size;
-	u32 crc32;
+ਸਥਿਰ ਬਣਤਰ iotrace {
+	ulong ਸ਼ੁਰੂ;
+	ulong ਮਾਪ;
+	ulong needed_ਮਾਪ;
+	ulong ਵਿੱਥ;
+	ulong region_ਸ਼ੁਰੂ;
+	ulong region_ਮਾਪ;
+	u32 ਚੱਕਰੀ_ਜਾਂਚ_32;
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+ਸਥਿਰ ਖਾਲੀ ਜੋੜੋ_ਰਿਕਾਰਡ(ਪੂਰਨ flags, ਅਚਲ ਖਾਲੀ *ptr, ulong ਮੁੱਲ)
 {
-	struct iotrace_record srec, *rec = &srec;
+	ਬਣਤਰ iotrace_ਰਿਕਾਰਡ srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,137 +47,137 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	ਜੇ (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		ਵਾਪਸ;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
-		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+	ਜੇ (iotrace.region_ਮਾਪ)
+		ਜੇ ((ulong)ptr < iotrace.region_ਸ਼ੁਰੂ ||
+		    (ulong)ptr > iotrace.region_ਸ਼ੁਰੂ + iotrace.region_ਮਾਪ)
+			ਵਾਪਸ;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
-					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+	ਜੇ (iotrace.ਵਿੱਥ + ਆਕਾਰ(*rec) < iotrace.ਮਾਪ) {
+		rec = (ਬਣਤਰ iotrace_ਰਿਕਾਰਡ *)map_sysmem(
+					iotrace.ਸ਼ੁਰੂ + iotrace.ਵਿੱਥ,
+					ਆਕਾਰ(ਮੁੱਲ));
+	} ਨਹੀਂਤਾਂ {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_ਮਾਪ += ਆਕਾਰ(ਬਣਤਰ iotrace_ਰਿਕਾਰਡ);
+		ਵਾਪਸ;
 	}
 
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
-	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->addr = map_ਮੰਜ਼ਿਲ_sysmem(ptr);
+	rec->ਮੁੱਲ = ਮੁੱਲ;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.ਚੱਕਰੀ_ਜਾਂਚ_32 = ਚੱਕਰੀ_ਜਾਂਚ_32(iotrace.ਚੱਕਰੀ_ਜਾਂਚ_32, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)rec,
+			      ਆਕਾਰ(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_ਮਾਪ += ਆਕਾਰ(ਬਣਤਰ iotrace_ਰਿਕਾਰਡ);
+	iotrace.ਵਿੱਥ += ਆਕਾਰ(ਬਣਤਰ iotrace_ਰਿਕਾਰਡ);
 }
 
-u32 iotrace_readl(const void *ptr)
+u32 iotrace_readl(ਅਚਲ ਖਾਲੀ *ptr)
 {
 	u32 v;
 
 	v = readl(ptr);
-	add_record(IOT_32 | IOT_READ, ptr, v);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	ਵਾਪਸ v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+ਖਾਲੀ iotrace_writel(ulong ਮੁੱਲ, ਖਾਲੀ *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_32 | IOT_WRITE, ptr, ਮੁੱਲ);
+	writel(ਮੁੱਲ, ptr);
 }
 
-u16 iotrace_readw(const void *ptr)
+u16 iotrace_readw(ਅਚਲ ਖਾਲੀ *ptr)
 {
 	u32 v;
 
 	v = readw(ptr);
-	add_record(IOT_16 | IOT_READ, ptr, v);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	ਵਾਪਸ v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+ਖਾਲੀ iotrace_writew(ulong ਮੁੱਲ, ਖਾਲੀ *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_16 | IOT_WRITE, ptr, ਮੁੱਲ);
+	writew(ਮੁੱਲ, ptr);
 }
 
-u8 iotrace_readb(const void *ptr)
+u8 iotrace_readb(ਅਚਲ ਖਾਲੀ *ptr)
 {
 	u32 v;
 
 	v = readb(ptr);
-	add_record(IOT_8 | IOT_READ, ptr, v);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	ਵਾਪਸ v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+ਖਾਲੀ iotrace_writeb(ulong ਮੁੱਲ, ਖਾਲੀ *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	ਜੋੜੋ_ਰਿਕਾਰਡ(IOT_8 | IOT_WRITE, ptr, ਮੁੱਲ);
+	writeb(ਮੁੱਲ, ptr);
 }
 
-void iotrace_reset_checksum(void)
+ਖਾਲੀ iotrace_reset_checksum(ਖਾਲੀ)
 {
-	iotrace.crc32 = 0;
+	iotrace.ਚੱਕਰੀ_ਜਾਂਚ_32 = 0;
 }
 
-u32 iotrace_get_checksum(void)
+u32 iotrace_get_checksum(ਖਾਲੀ)
 {
-	return iotrace.crc32;
+	ਵਾਪਸ iotrace.ਚੱਕਰੀ_ਜਾਂਚ_32;
 }
 
-void iotrace_set_region(ulong start, ulong size)
+ਖਾਲੀ iotrace_ਸੈੱਟ_region(ulong ਸ਼ੁਰੂ, ulong ਮਾਪ)
 {
-	iotrace.region_start = start;
-	iotrace.region_size = size;
+	iotrace.region_ਸ਼ੁਰੂ = ਸ਼ੁਰੂ;
+	iotrace.region_ਮਾਪ = ਮਾਪ;
 }
 
-void iotrace_reset_region(void)
+ਖਾਲੀ iotrace_reset_region(ਖਾਲੀ)
 {
-	iotrace.region_start = 0;
-	iotrace.region_size = 0;
+	iotrace.region_ਸ਼ੁਰੂ = 0;
+	iotrace.region_ਮਾਪ = 0;
 }
 
-void iotrace_get_region(ulong *start, ulong *size)
+ਖਾਲੀ iotrace_get_region(ulong *ਸ਼ੁਰੂ, ulong *ਮਾਪ)
 {
-	*start = iotrace.region_start;
-	*size = iotrace.region_size;
+	*ਸ਼ੁਰੂ = iotrace.region_ਸ਼ੁਰੂ;
+	*ਮਾਪ = iotrace.region_ਮਾਪ;
 }
 
-void iotrace_set_enabled(int enable)
+ਖਾਲੀ iotrace_ਸੈੱਟ_enabled(ਪੂਰਨ enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+ਪੂਰਨ iotrace_get_enabled(ਖਾਲੀ)
 {
-	return iotrace.enabled;
+	ਵਾਪਸ iotrace.enabled;
 }
 
-void iotrace_set_buffer(ulong start, ulong size)
+ਖਾਲੀ iotrace_ਸੈੱਟ_ਬਫਰ(ulong ਸ਼ੁਰੂ, ulong ਮਾਪ)
 {
-	iotrace.start = start;
-	iotrace.size = size;
-	iotrace.offset = 0;
-	iotrace.crc32 = 0;
+	iotrace.ਸ਼ੁਰੂ = ਸ਼ੁਰੂ;
+	iotrace.ਮਾਪ = ਮਾਪ;
+	iotrace.ਵਿੱਥ = 0;
+	iotrace.ਚੱਕਰੀ_ਜਾਂਚ_32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+ਖਾਲੀ iotrace_get_ਬਫਰ(ulong *ਸ਼ੁਰੂ, ulong *ਮਾਪ, ulong *needed_ਮਾਪ, ulong *ਵਿੱਥ, ulong *ਗਿਣਤੀ_2)
 {
-	*start = iotrace.start;
-	*size = iotrace.size;
-	*needed_size = iotrace.needed_size;
-	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*ਸ਼ੁਰੂ = iotrace.ਸ਼ੁਰੂ;
+	*ਮਾਪ = iotrace.ਮਾਪ;
+	*needed_ਮਾਪ = iotrace.needed_ਮਾਪ;
+	*ਵਿੱਥ = iotrace.ਵਿੱਥ;
+	*ਗਿਣਤੀ_2 = iotrace.ਵਿੱਥ / ਆਕਾਰ(ਬਣਤਰ iotrace_ਰਿਕਾਰਡ);
 }

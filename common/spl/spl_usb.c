@@ -8,64 +8,64 @@
  * Derived work from spl_mmc.c
  */
 
-#include <log.h>
-#include <spl.h>
-#include <errno.h>
-#include <usb.h>
-#include <fat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <log.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <spl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <usb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fat.h>
 
-static int usb_stor_curr_dev = -1; /* current device */
+ਸਥਿਰ ਪੂਰਨ usb_stor_curr_dev = -1; /* current device */
 
-int spl_usb_load(struct spl_image_info *spl_image,
-		 struct spl_boot_device *bootdev, int partition,
-		 const char *filename)
+ਪੂਰਨ spl_usb_ਲੱਦੋ(ਬਣਤਰ spl_image_info *spl_image,
+		 ਬਣਤਰ spl_boot_device *bootdev, ਪੂਰਨ ਹਿੱਸੇ_ਕਰੋ,
+		 ਅਚਲ ਅੱਖਰ *filename)
 {
-	int err = 0;
-	struct blk_desc *stor_dev;
-	static bool usb_init_pending = true;
+	ਪੂਰਨ err = 0;
+	ਬਣਤਰ blk_desc *stor_dev;
+	ਸਥਿਰ bool usb_init_pending = true;
 
-	if (usb_init_pending) {
+	ਜੇ (usb_init_pending) {
 		usb_stop();
 		err = usb_init();
 		usb_init_pending = false;
 	}
 
-	if (err) {
-#ifdef CONFIG_SPL_LIBCOMMON_SUPPORT
-		printf("%s: usb init failed: err - %d\n", __func__, err);
-#endif
-		return err;
+	ਜੇ (err) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SPL_LIBCOMMON_SUPPORT
+		ਲਿਖੋ("%s: usb init failed: err - %d\n", __func__, err);
+#ਜੇ_ਅੰਤ
+		ਵਾਪਸ err;
 	}
 
 	/* try to recognize storage devices immediately */
-	usb_stor_curr_dev = usb_stor_scan(1);
+	usb_stor_curr_dev = usb_stor_ਜਾਂਚ(1);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_USB, usb_stor_curr_dev);
-	if (!stor_dev)
-		return -ENODEV;
+	ਜੇ (!stor_dev)
+		ਵਾਪਸ -ENODEV;
 
 	debug("boot mode - FAT\n");
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
-	    spl_load_image_fat_os(spl_image, bootdev, stor_dev, partition))
-#endif
+#ਜੇ CONFIG_IS_ENABLED(OS_BOOT)
+	ਜੇ (spl_ਸ਼ੁਰੂ_uboot() ||
+	    spl_ਲੱਦੋ_image_fat_os(spl_image, bootdev, stor_dev, ਹਿੱਸੇ_ਕਰੋ))
+#ਜੇ_ਅੰਤ
 	{
-		err = spl_load_image_fat(spl_image, bootdev, stor_dev, partition, filename);
+		err = spl_ਲੱਦੋ_image_fat(spl_image, bootdev, stor_dev, ਹਿੱਸੇ_ਕਰੋ, filename);
 	}
 
-	if (err) {
+	ਜੇ (err) {
 		puts("Error loading from USB device\n");
-		return err;
+		ਵਾਪਸ err;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int spl_usb_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ਸਥਿਰ ਪੂਰਨ spl_usb_ਲੱਦੋ_image(ਬਣਤਰ spl_image_info *spl_image,
+			      ਬਣਤਰ spl_boot_device *bootdev)
 {
-	return spl_usb_load(spl_image, bootdev,
-			    CONFIG_SYS_USB_FAT_BOOT_PARTITION,
-			    CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
+	ਵਾਪਸ spl_usb_ਲੱਦੋ(spl_image, bootdev,
+			    CONFIG_SYS_USB_FAT_BOOT_ਹਿੱਸੇ_ਕਰੋ,
+			    CONFIG_SPL_FS_ਲੱਦੋ_PAYLOAD_NAME);
 }
-SPL_LOAD_IMAGE_METHOD("USB", 0, BOOT_DEVICE_USB, spl_usb_load_image);
+SPL_ਲੱਦੋ_IMAGE_ਵਿਧੀ("USB", 0, BOOT_DEVICE_USB, spl_usb_ਲੱਦੋ_image);

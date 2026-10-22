@@ -4,38 +4,38 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <config.h>
-#include <init.h>
-#include <asm/global_data.h>
-#include <cpu_func.h>
-#include <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <config.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <init.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/global_data.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <cpu_func.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ਅੰਕੜੇ_PTR;
 
-#ifdef CONFIG_SYS_CACHELINE_SIZE
-# define MEMSIZE_CACHELINE_SIZE CONFIG_SYS_CACHELINE_SIZE
-#else
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SYS_CACHELINE_ਮਾਪ
+# define MEMSIZE_CACHELINE_ਮਾਪ CONFIG_SYS_CACHELINE_ਮਾਪ
+#ਨਹੀਂਤਾਂ
 /* Just use the greatest cache flush alignment requirement I'm aware of */
-# define MEMSIZE_CACHELINE_SIZE 128
-#endif
+# define MEMSIZE_CACHELINE_ਮਾਪ 128
+#ਜੇ_ਅੰਤ
 
-#ifdef __PPC__
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __PPC__
 /*
  * At least on G2 PowerPC cores, sequential accesses to non-existent
  * memory must be synchronized.
  */
 # include <asm/io.h>	/* for sync() */
-#else
+#ਨਹੀਂਤਾਂ
 # define sync()		/* nothing */
-#endif
+#ਜੇ_ਅੰਤ
 
-static void dcache_flush_invalidate(volatile long *p)
+ਸਥਿਰ ਖਾਲੀ dcache_flush_invalidate(ਅਸਥਿਰ ਲੰਮਾ *p)
 {
-	uintptr_t start, stop;
-	start = ALIGN_DOWN((uintptr_t)p, MEMSIZE_CACHELINE_SIZE);
-	stop = start + MEMSIZE_CACHELINE_SIZE;
-	flush_dcache_range(start, stop);
-	invalidate_dcache_range(start, stop);
+	uintptr_t ਸ਼ੁਰੂ, stop;
+	ਸ਼ੁਰੂ = ALIGN_ਥੱਲੇ((uintptr_t)p, MEMSIZE_CACHELINE_ਮਾਪ);
+	stop = ਸ਼ੁਰੂ + MEMSIZE_CACHELINE_ਮਾਪ;
+	flush_dcache_range(ਸ਼ੁਰੂ, stop);
+	invalidate_dcache_range(ਸ਼ੁਰੂ, stop);
 }
 
 /*
@@ -43,72 +43,72 @@ static void dcache_flush_invalidate(volatile long *p)
  * the actually available RAM size between addresses `base' and
  * `base + maxsize'.
  */
-long get_ram_size(long *base, long maxsize)
+ਲੰਮਾ get_ram_ਮਾਪ(ਲੰਮਾ *ਅਧਾਰ, ਲੰਮਾ maxsize)
 {
-	volatile long *addr;
-	long           save[BITS_PER_LONG - 1];
-	long           save_base;
-	long           cnt;
-	long           val;
-	long           size;
-	int            i = 0;
-	int            dcache_en = 0;
+	ਅਸਥਿਰ ਲੰਮਾ *addr;
+	ਲੰਮਾ           save[ਬਿੱਟ_ਪ੍ਰਤੀ_LONG - 1];
+	ਲੰਮਾ           save_ਅਧਾਰ;
+	ਲੰਮਾ           cnt;
+	ਲੰਮਾ           val;
+	ਲੰਮਾ           ਮਾਪ;
+	ਪੂਰਨ            i = 0;
+	ਪੂਰਨ            dcache_en = 0;
 
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
-		dcache_en = dcache_status();
+	ਜੇ (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+		dcache_en = dcache_ਸਥਿਤੀ();
 
-	for (cnt = (maxsize / sizeof(long)) >> 1; cnt > 0; cnt >>= 1) {
-		addr = base + cnt;	/* pointer arith! */
+	ਲਈ (cnt = (maxsize / ਆਕਾਰ(ਲੰਮਾ)) >> 1; cnt > 0; cnt >>= 1) {
+		addr = ਅਧਾਰ + cnt;	/* pointer arith! */
 		sync();
 		save[i++] = *addr;
 		sync();
 		*addr = ~cnt;
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(addr);
 	}
 
-	addr = base;
+	addr = ਅਧਾਰ;
 	sync();
-	save_base = *addr;
+	save_ਅਧਾਰ = *addr;
 	sync();
 	*addr = 0;
 
 	sync();
-	if (dcache_en)
+	ਜੇ (dcache_en)
 		dcache_flush_invalidate(addr);
 
-	if ((val = *addr) != 0) {
+	ਜੇ ((val = *addr) != 0) {
 		/* Restore the original data before leaving the function. */
 		sync();
-		*base = save_base;
-		for (cnt = 1; cnt < maxsize / sizeof(long); cnt <<= 1) {
-			addr  = base + cnt;
+		*ਅਧਾਰ = save_ਅਧਾਰ;
+		ਲਈ (cnt = 1; cnt < maxsize / ਆਕਾਰ(ਲੰਮਾ); cnt <<= 1) {
+			addr  = ਅਧਾਰ + cnt;
 			sync();
 			*addr = save[--i];
-			if (dcache_en)
+			ਜੇ (dcache_en)
 				dcache_flush_invalidate(addr);
 		}
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	for (cnt = 1; cnt < maxsize / sizeof(long); cnt <<= 1) {
-		addr = base + cnt;	/* pointer arith! */
+	ਲਈ (cnt = 1; cnt < maxsize / ਆਕਾਰ(ਲੰਮਾ); cnt <<= 1) {
+		addr = ਅਧਾਰ + cnt;	/* pointer arith! */
 		val = *addr;
 		*addr = save[--i];
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(addr);
-		if (val != ~cnt) {
-			size = cnt * sizeof(long);
+		ਜੇ (val != ~cnt) {
+			ਮਾਪ = cnt * ਆਕਾਰ(ਲੰਮਾ);
 			/*
 			 * Restore the original data
 			 * before leaving the function.
 			 */
-			for (cnt <<= 1;
-			     cnt < maxsize / sizeof(long);
+			ਲਈ (cnt <<= 1;
+			     cnt < maxsize / ਆਕਾਰ(ਲੰਮਾ);
 			     cnt <<= 1) {
-				addr  = base + cnt;
+				addr  = ਅਧਾਰ + cnt;
 				*addr = save[--i];
-				if (dcache_en)
+				ਜੇ (dcache_en)
 					dcache_flush_invalidate(addr);
 			}
 			/* warning: don't restore save_base in this case,
@@ -117,14 +117,14 @@ long get_ram_size(long *base, long maxsize)
 			 * and *base is saved after *(base+size) modification
 			 * in first loop
 			 */
-			return (size);
+			ਵਾਪਸ (ਮਾਪ);
 		}
 	}
-	*base = save_base;
-	if (dcache_en)
-		dcache_flush_invalidate(base);
+	*ਅਧਾਰ = save_ਅਧਾਰ;
+	ਜੇ (dcache_en)
+		dcache_flush_invalidate(ਅਧਾਰ);
 
-	return (maxsize);
+	ਵਾਪਸ (maxsize);
 }
 
 /**
@@ -142,30 +142,30 @@ long get_ram_size(long *base, long maxsize)
  * Return: The size associated with the first matching entry, or 0 if no match
  * is found.
  */
-long probe_ram_size_by_alias(const struct ram_alias_check *checks)
+ਲੰਮਾ probe_ram_ਮਾਪ_by_alias(ਅਚਲ ਬਣਤਰ ram_alias_check *checks)
 {
-	long save[2];
-	long pat;
-	int dcache_en = 0;
-	long ret = 0;
+	ਲੰਮਾ save[2];
+	ਲੰਮਾ pat;
+	ਪੂਰਨ dcache_en = 0;
+	ਲੰਮਾ ret = 0;
 
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
-		dcache_en = dcache_status();
+	ਜੇ (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+		dcache_en = dcache_ਸਥਿਤੀ();
 
-	while (checks->probe_addr && !ret) {
-		volatile long *d = checks->probe_addr;
-		volatile long *s = checks->alias_addr;
+	ਜਦੋਂ (checks->probe_addr && !ret) {
+		ਅਸਥਿਰ ਲੰਮਾ *d = checks->probe_addr;
+		ਅਸਥਿਰ ਲੰਮਾ *s = checks->alias_addr;
 
 		save[0] = *s;
 		save[1] = *d;
 		/* Ensure s is written and not cached */
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(s);
 
 		pat = ~save[0];
 		*d = pat;
 		sync();
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(d);
 
 		/*
@@ -173,40 +173,40 @@ long probe_ram_size_by_alias(const struct ram_alias_check *checks)
 		 * address before checking whether it is also visible through
 		 * the alias address.
 		 */
-		if (*d != pat) {
+		ਜੇ (*d != pat) {
 			*d = save[1];
 			sync();
-			if (dcache_en)
+			ਜੇ (dcache_en)
 				dcache_flush_invalidate(d);
 			checks++;
-			continue;
+			ਜਾਰੀ;
 		}
 
-		if (*s != pat)
-			ret = checks->size;
+		ਜੇ (*s != pat)
+			ret = checks->ਮਾਪ;
 
 		/* Restore content */
 		*d = save[1];
 		sync();
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(d);
 
 		*s = save[0];
 		sync();
-		if (dcache_en)
+		ਜੇ (dcache_en)
 			dcache_flush_invalidate(s);
 
 		checks++;
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-phys_size_t __weak get_effective_memsize(void)
+phys_ਮਾਪ_t __weak get_effective_memsize(ਖਾਲੀ)
 {
-	phys_size_t ram_size = gd->ram_size;
+	phys_ਮਾਪ_t ram_ਮਾਪ = gd->ram_ਮਾਪ;
 
-#ifdef CONFIG_MPC85xx
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_MPC85xx
 	/*
 	 * Check for overflow and limit ram size to some representable value.
 	 * It is required that ram_base + ram_size must be representable by
@@ -214,15 +214,15 @@ phys_size_t __weak get_effective_memsize(void)
 	 * calculate it from last 4kB sector which should work as alignment
 	 * on any platform.
 	 */
-	if (gd->ram_base + ram_size < gd->ram_base)
-		ram_size = ((phys_size_t)~0xfffULL) - gd->ram_base;
-#endif
+	ਜੇ (gd->ram_ਅਧਾਰ + ram_ਮਾਪ < gd->ram_ਅਧਾਰ)
+		ram_ਮਾਪ = ((phys_ਮਾਪ_t)~0xfffULL) - gd->ram_ਅਧਾਰ;
+#ਜੇ_ਅੰਤ
 
-#ifndef CFG_MAX_MEM_MAPPED
-	return ram_size;
-#else
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CFG_MAX_MEM_MAPPED
+	ਵਾਪਸ ram_ਮਾਪ;
+#ਨਹੀਂਤਾਂ
 	/* limit stack to what we can reasonable map */
-	return ((ram_size > CFG_MAX_MEM_MAPPED) ?
-		CFG_MAX_MEM_MAPPED : ram_size);
-#endif
+	ਵਾਪਸ ((ram_ਮਾਪ > CFG_MAX_MEM_MAPPED) ?
+		CFG_MAX_MEM_MAPPED : ram_ਮਾਪ);
+#ਜੇ_ਅੰਤ
 }
