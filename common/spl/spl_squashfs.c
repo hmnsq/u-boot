@@ -15,53 +15,53 @@
 #include <errno.h>
 #include <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
-	struct legacy_img_hdr *header;
-	char *filename = load->priv;
+	sa_nracanaa legacy_img_hdr *header;
+	var_na *filename = load->priv;
 	loff_t actread;
-	int ret;
+	puur_naa_nka ret;
 
 	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ᮚᮦᮔ᮪ (ret)
+		ᮝᮜᮤ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ᮚᮦᮔ᮪ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (sa_nracanaa legacy_img_hdr *)buf;
+		ᮚᮦᮔ᮪ (image_get_magic(header) != FDT_MAGIC)
+			ᮝᮜᮤ size;
 	}
 
-	return actread;
+	ᮝᮜᮤ actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
-			const char *filename)
+puur_naa_nka spl_load_image_sqfs(sa_nracanaa spl_image_info *spl_image,
+			sa_nracanaa spl_boot_device *bootdev,
+			sa_nracanaa blk_desc *block_dev, puur_naa_nka partition,
+			const var_na *filename)
 {
-	int err;
+	puur_naa_nka err;
 	loff_t size = 0;
-	struct spl_load_info load;
-	struct disk_partition part_info = {};
+	sa_nracanaa spl_load_info load;
+	sa_nracanaa disk_partition part_info = {};
 
 	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
+	ᮚᮦᮔ᮪ (err) {
 		printf("spl: no partition table found\n");
 		goto end;
 	}
 
 	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
+	ᮚᮦᮔ᮪ (err) {
 		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
 		goto end;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	ᮚᮦᮔ᮪ (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = sqfs_size(filename, &size);
-		if (err)
+		ᮚᮦᮔ᮪ (err)
 			goto end;
 	}
 
@@ -70,9 +70,9 @@ int spl_load_image_sqfs(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0)
+	ᮚᮦᮔ᮪ (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	ᮝᮜᮤ err;
 }
