@@ -5,4 +5,4 @@
  * Licensed under the GPL-2 or later.
  */
 
-const char const system_map[] = SYSTEM_MAP;
+ध्रुव वर्ण ध्रुव system_map[] = SYSTEM_MAP;
