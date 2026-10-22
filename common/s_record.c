@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#ಅನ್ತರ್ಭಾವ <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hex1_bin (ವರ್ಣ  c);
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hex2_bin (ವರ್ಣ *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+ಪೂರ್ಣಾಙ್ಕ srec_decode (ವರ್ಣ *ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ *ಎಣಿಕೆ, ulong *addr, ವರ್ಣ *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	ಪೂರ್ಣಾಙ್ಕ	i;
+	ಪೂರ್ಣಾಙ್ಕ	v;				/* conversion buffer	*/
+	ಪೂರ್ಣಾಙ್ಕ	srec_type;			/* S-Record type	*/
+	unsigned ವರ್ಣ chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	ಪ್ರತಿ (; *ಒಳಹರಿವು; ++ಒಳಹರಿವು) {
+		ಯದಿ (*ಒಳಹರಿವು == 'S') {		/* skip 'S' */
+			++ಒಳಹರಿವು;
+			ಭಙ್ಗ;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	ಯದಿ (*ಒಳಹರಿವು == '\0') {			/* no more data?	*/
+		ಪ್ರತ್ಯಾಗಮ (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *ಒಳಹರಿವು++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ಯದಿ ((*ಎಣಿಕೆ = hex2_bin(ಒಳಹರಿವು)) < 0) {
+		ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *ಎಣಿಕೆ;
+	ಒಳಹರಿವು  += 2;
 
-	switch (v) {				/* record type		*/
+	ವಿಕಲ್ಪ (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	ಪಕ್ಷ '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		*ಎಣಿಕೆ   -= 3;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*ಎಣಿಕೆ   -= 3;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*ಎಣಿಕೆ   -= 4;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*ಎಣಿಕೆ   -= 5;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	ಪಕ್ಷ '5':			/* count record, addr field contains */
+		srec_type = SREC_ಎಣಿಕೆ;	/* a 2 byte record counter	*/
+		*ಎಣಿಕೆ    = 0;			/* no data		*/
+		ಭಙ್ಗ;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	ಪಕ್ಷ '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*ಎಣಿಕೆ   -= 5;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*ಎಣಿಕೆ   -= 4;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*ಎಣಿಕೆ   -= 3;			/* - checksum and addr	*/
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ವಿಕಲ್ಪ (v) {
+	ಪಕ್ಷ '3':				/* 4 byte addr field	*/
+	ಪಕ್ಷ '7':
+		ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+			ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ಒಳಹರಿವು  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ಪಕ್ಷ '2':				/* 3 byte addr field	*/
+	ಪಕ್ಷ '8':
+		ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+			ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ಒಳಹರಿವು  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ಪಕ್ಷ '0':				/* 2 byte addr field	*/
+	ಪಕ್ಷ '1':
+	ಪಕ್ಷ '5':
+	ಪಕ್ಷ '9':
+		ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+			ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ಒಳಹರಿವು  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+			ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ಒಳಹರಿವು  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ಪ್ರತಿ (i=0; i < *ಎಣಿಕೆ; ++i) {
+		ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+			ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		ಒಳಹರಿವು  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ಯದಿ ((v = hex2_bin(ಒಳಹರಿವು)) < 0) {
+		ಪ್ರತ್ಯಾಗಮ (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	ಯದಿ ((unsigned ವರ್ಣ)v != (unsigned ವರ್ಣ)~chksum) {
+		ಪ್ರತ್ಯಾಗಮ (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	ಪ್ರತ್ಯಾಗಮ (srec_type);
 }
 
-static int hex1_bin (char c)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hex1_bin (ವರ್ಣ c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	ಯದಿ (c >= '0' && c <= '9')
+		ಪ್ರತ್ಯಾಗಮ (c - '0');
+	ಯದಿ (c >= 'a' && c <= 'f')
+		ಪ್ರತ್ಯಾಗಮ (c + 10 - 'a');
+	ಯದಿ (c >= 'A' && c <= 'F')
+		ಪ್ರತ್ಯಾಗಮ (c + 10 - 'A');
+	ಪ್ರತ್ಯಾಗಮ (-1);
 }
 
-static int hex2_bin (char *s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hex2_bin (ವರ್ಣ *s)
 {
-	int i, j;
+	ಪೂರ್ಣಾಙ್ಕ i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	ಯದಿ ((i = hex1_bin(*s++)) < 0) {
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	ಯದಿ ((j = hex1_bin(*s)) < 0) {
+		ಪ್ರತ್ಯಾಗಮ (-1);
 	}
 
-	return ((i<<4) + j);
+	ಪ್ರತ್ಯಾಗಮ ((i<<4) + j);
 }

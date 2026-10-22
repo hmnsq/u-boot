@@ -9,20 +9,20 @@
 
 #define LOG_CATEGORY	LOGC_EVENT
 
-#include <event.h>
-#include <event_internal.h>
-#include <log.h>
-#include <linker_lists.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <relocate.h>
+#ಅನ್ತರ್ಭಾವ <event.h>
+#ಅನ್ತರ್ಭಾವ <event_internal.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <linker_lists.h>
+#ಅನ್ತರ್ಭಾವ <malloc.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <linux/errno.h>
+#ಅನ್ತರ್ಭಾವ <linux/list.h>
+#ಅನ್ತರ್ಭಾವ <relocate.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#ಯದಿ CONFIG_IS_ENABLED(EVENT_DEBUG)
+ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ type_name[] = {
 	"none",
 	"test",
 
@@ -56,41 +56,41 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
+_Static_assert(ARRAY_SIZE(type_name) == EVT_ಎಣಿಕೆ, "event type_name size");
 #endif
 
-const char *event_type_name(enum event_t type)
+ಧ್ರುವ ವರ್ಣ *event_type_name(ಗಣನಾ event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#ಯದಿ CONFIG_IS_ENABLED(EVENT_DEBUG)
+	ಯದಿ (type < ARRAY_SIZE(type_name))
+		ಪ್ರತ್ಯಾಗಮ type_name[type];
+	ಅನ್ಯಥಾ
+		ಪ್ರತ್ಯಾಗಮ "(unknown)";
+#ಅನ್ಯಥಾ
+	ಪ್ರತ್ಯಾಗಮ "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ notify_static(ಸಂರಚನಾ event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	ಸಂರಚನಾ evspy_info *start =
+		ll_entry_start(ಸಂರಚನಾ evspy_info, evspy_info);
+	ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ n_ents = ll_entry_ಎಣಿಕೆ(ಸಂರಚನಾ evspy_info, evspy_info);
+	ಸಂರಚನಾ evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	ಪ್ರತಿ (spy = start; spy != start + n_ents; spy++) {
+		ಯದಿ (spy->type == ev->type) {
+			ಪೂರ್ಣಾಙ್ಕ ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			ಯದಿ (spy->flags & EVSPYF_SIMPLE) {
+				ಧ್ರುವ ಸಂರಚನಾ evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (ಸಂರಚನಾ evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
-				ret = spy->func(NULL, ev);
+			} ಅನ್ಯಥಾ {
+				ret = spy->func(ರಿಕ್ತ, ev);
 			}
 
 			/*
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			ಯದಿ (ret)
+				ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int notify_dynamic(struct event *ev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ notify_dynamic(ಸಂರಚನಾ event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ಸಂರಚನಾ event_state *state = gd_event_state();
+	ಸಂರಚನಾ event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_ಗಂಟು) {
+		ಯದಿ (spy->type == ev->type) {
+			ಪೂರ್ಣಾಙ್ಕ ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,99 +126,99 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			ಯದಿ (ret)
+				ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+ಪೂರ್ಣಾಙ್ಕ event_notify(ಗಣನಾ event_t type, ಶೂನ್ಯ *data, ಪೂರ್ಣಾಙ್ಕ size)
 {
-	struct event event;
-	int ret;
+	ಸಂರಚನಾ event event;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+	ಯದಿ (size > ಪರಿಮಾಣ(event.data))
+		ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	ಯದಿ (ret)
+		ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	ಯದಿ (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		ಯದಿ (ret)
+			ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("dyn", ret);
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int event_notify_null(enum event_t type)
+ಪೂರ್ಣಾಙ್ಕ event_notify_null(ಗಣನಾ event_t type)
 {
-	return event_notify(type, NULL, 0);
+	ಪ್ರತ್ಯಾಗಮ event_notify(type, ರಿಕ್ತ, 0);
 }
 
-void event_show_spy_list(void)
+ಶೂನ್ಯ event_show_spy_list(ಶೂನ್ಯ)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	ಸಂರಚನಾ evspy_info *start =
+		ll_entry_start(ಸಂರಚನಾ evspy_info, evspy_info);
+	ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ n_ents = ll_entry_ಎಣಿಕೆ(ಸಂರಚನಾ evspy_info, evspy_info);
+	ಸಂರಚನಾ evspy_info *spy;
+	ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ size = ಪರಿಮಾಣ(ulong) * 2;
 
 	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	ಪ್ರತಿ (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
 		       spy->type, event_type_name(spy->type), size, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#ಯದಿ CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+ಸ್ಥಿರ ಶೂನ್ಯ spy_free(ಸಂರಚನಾ event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_ಗಂಟು);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+ಪೂರ್ಣಾಙ್ಕ event_register(ಧ್ರುವ ವರ್ಣ *id, ಗಣನಾ event_t type, event_handler_t func, ಶೂನ್ಯ *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	ಸಂರಚನಾ event_state *state = gd_event_state();
+	ಸಂರಚನಾ event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = malloc(ಪರಿಮಾಣ(*spy));
+	ಯದಿ (!spy)
+		ಪ್ರತ್ಯಾಗಮ log_ಸಂದೇಶ_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_add_tail(&spy->sibling_ಗಂಟು, &state->spy_head);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int event_uninit(void)
+ಪೂರ್ಣಾಙ್ಕ event_uninit(ಶೂನ್ಯ)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ಸಂರಚನಾ event_state *state = gd_event_state();
+	ಸಂರಚನಾ event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_ಗಂಟು)
 		spy_free(spy);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int event_init(void)
+ಪೂರ್ಣಾಙ್ಕ event_init(ಶೂನ್ಯ)
 {
-	struct event_state *state = gd_event_state();
+	ಸಂರಚನಾ event_state *state = gd_event_state();
 
 	INIT_LIST_HEAD(&state->spy_head);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif /* EVENT_DYNAMIC */

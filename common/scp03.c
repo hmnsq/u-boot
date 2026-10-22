@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#ಅನ್ತರ್ಭಾವ <scp03.h>
+#ಅನ್ತರ್ಭಾವ <tee.h>
+#ಅನ್ತರ್ಭಾವ <tee/optee_ta_scp03.h>
+#ಅನ್ತರ್ಭಾವ <linux/errno.h>
+#ಅನ್ತರ್ಭಾವ <linux/string.h>
 
-static int scp03_enable(bool provision)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	ಧ್ರುವ ಸಂರಚನಾ tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	ಸಂರಚನಾ tee_open_session_arg session;
+	ಸಂರಚನಾ tee_invoke_arg invoke;
+	ಸಂರಚನಾ tee_param param;
+	ಸಂರಚನಾ udevice *tee = ರಿಕ್ತ;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_find_device(tee, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ);
+	ಯದಿ (!tee)
+		ಪ್ರತ್ಯಾಗಮ -ENODEV;
 
-	memset(&session, 0, sizeof(session));
+	memset(&session, 0, ಪರಿಮಾಣ(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	ಯದಿ (tee_open_session(tee, &session, 0, ರಿಕ್ತ))
+		ಪ್ರತ್ಯಾಗಮ -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, ಪರಿಮಾಣ(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_ಮೌಲ್ಯ_ಒಳಹರಿವು;
+	param.u.ಮೌಲ್ಯ.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, ಪರಿಮಾಣ(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ಯದಿ (tee_invoke_func(tee, &invoke, 1, &param))
+		ಪ್ರತ್ಯಾಗಮ -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int tee_enable_scp03(void)
+ಪೂರ್ಣಾಙ್ಕ tee_enable_scp03(ಶೂನ್ಯ)
 {
-	return scp03_enable(false);
+	ಪ್ರತ್ಯಾಗಮ scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+ಪೂರ್ಣಾಙ್ಕ tee_provision_scp03(ಶೂನ್ಯ)
 {
-	return scp03_enable(true);
+	ಪ್ರತ್ಯಾಗಮ scp03_enable(true);
 }

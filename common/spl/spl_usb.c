@@ -8,63 +8,63 @@
  * Derived work from spl_mmc.c
  */
 
-#include <log.h>
-#include <spl.h>
-#include <errno.h>
-#include <usb.h>
-#include <fat.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <usb.h>
+#ಅನ್ತರ್ಭಾವ <fat.h>
 
-static int usb_stor_curr_dev = -1; /* current device */
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ usb_stor_curr_dev = -1; /* current device */
 
-int spl_usb_load(struct spl_image_info *spl_image,
-		 struct spl_boot_device *bootdev, int partition,
-		 const char *filename)
+ಪೂರ್ಣಾಙ್ಕ spl_usb_load(ಸಂರಚನಾ spl_image_info *spl_image,
+		 ಸಂರಚನಾ spl_boot_device *bootdev, ಪೂರ್ಣಾಙ್ಕ partition,
+		 ಧ್ರುವ ವರ್ಣ *filename)
 {
-	int err = 0;
-	struct blk_desc *stor_dev;
-	static bool usb_init_pending = true;
+	ಪೂರ್ಣಾಙ್ಕ err = 0;
+	ಸಂರಚನಾ blk_desc *stor_dev;
+	ಸ್ಥಿರ bool usb_init_pending = true;
 
-	if (usb_init_pending) {
+	ಯದಿ (usb_init_pending) {
 		usb_stop();
 		err = usb_init();
 		usb_init_pending = false;
 	}
 
-	if (err) {
+	ಯದಿ (err) {
 #ifdef CONFIG_SPL_LIBCOMMON_SUPPORT
 		printf("%s: usb init failed: err - %d\n", __func__, err);
 #endif
-		return err;
+		ಪ್ರತ್ಯಾಗಮ err;
 	}
 
 	/* try to recognize storage devices immediately */
 	usb_stor_curr_dev = usb_stor_scan(1);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_USB, usb_stor_curr_dev);
-	if (!stor_dev)
-		return -ENODEV;
+	ಯದಿ (!stor_dev)
+		ಪ್ರತ್ಯಾಗಮ -ENODEV;
 
 	debug("boot mode - FAT\n");
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
+#ಯದಿ CONFIG_IS_ENABLED(OS_BOOT)
+	ಯದಿ (spl_start_uboot() ||
 	    spl_load_image_fat_os(spl_image, bootdev, stor_dev, partition))
 #endif
 	{
 		err = spl_load_image_fat(spl_image, bootdev, stor_dev, partition, filename);
 	}
 
-	if (err) {
+	ಯದಿ (err) {
 		puts("Error loading from USB device\n");
-		return err;
+		ಪ್ರತ್ಯಾಗಮ err;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int spl_usb_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_usb_load_image(ಸಂರಚನಾ spl_image_info *spl_image,
+			      ಸಂರಚನಾ spl_boot_device *bootdev)
 {
-	return spl_usb_load(spl_image, bootdev,
+	ಪ್ರತ್ಯಾಗಮ spl_usb_load(spl_image, bootdev,
 			    CONFIG_SYS_USB_FAT_BOOT_PARTITION,
 			    CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
 }

@@ -6,14 +6,14 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <log.h>
-#include <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ log_console_emit(ಸಂರಚನಾ log_device *ldev, ಸಂರಚನಾ log_rec *rec)
 {
-	int fmt = gd->log_fmt;
+	ಪೂರ್ಣಾಙ್ಕ fmt = gd->log_fmt;
 	bool add_space = false;
 
 	/*
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
+	ಯದಿ (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_ಸಂದೇಶ)) {
 		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
+		ಯದಿ (fmt & BIT(LOGF_LEVEL))
 			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
+		ಯದಿ (fmt & BIT(LOGF_CAT))
 			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
+		ಯದಿ (fmt & BIT(LOGF_FILE))
 			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+		ಯದಿ (fmt & BIT(LOGF_ಸಾಲು))
+			printf("%d-", rec->ಸಾಲು);
+		ಯದಿ (fmt & BIT(LOGF_FUNC)) {
+			ಯದಿ (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
 				printf("%s()", rec->func ?: "?");
-			} else {
+			} ಅನ್ಯಥಾ {
 				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	ಯದಿ (fmt & BIT(LOGF_ಸಂದೇಶ))
+		printf("%s%s", add_space ? " " : "", rec->ಸಂದೇಶ);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 LOG_DRIVER(console) = {

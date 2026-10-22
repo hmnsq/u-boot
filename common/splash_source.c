@@ -5,304 +5,304 @@
  * Authors: Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <bmp_layout.h>
-#include <command.h>
-#include <env.h>
-#include <errno.h>
-#include <fs.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <log.h>
-#include <nand.h>
-#include <sata.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <splash.h>
-#include <usb.h>
-#include <virtio.h>
-#include <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <bmp_layout.h>
+#ಅನ್ತರ್ಭಾವ <command.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fs.h>
+#ಅನ್ತರ್ಭಾವ <fdt_support.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <nand.h>
+#ಅನ್ತರ್ಭಾವ <sata.h>
+#ಅನ್ತರ್ಭಾವ <spi.h>
+#ಅನ್ತರ್ಭಾವ <spi_flash.h>
+#ಅನ್ತರ್ಭಾವ <splash.h>
+#ಅನ್ತರ್ಭಾವ <usb.h>
+#ಅನ್ತರ್ಭಾವ <virtio.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef CONFIG_SPI_FLASH
-static struct spi_flash *sf;
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+ಸ್ಥಿರ ಸಂರಚನಾ spi_flash *sf;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_sf_read_raw(ulong bmp_load_addr, ಪೂರ್ಣಾಙ್ಕ offset, size_t read_size)
 {
-	if (!sf) {
+	ಯದಿ (!sf) {
 		sf = spi_flash_probe(CONFIG_SF_DEFAULT_BUS,
 				     CONFIG_SF_DEFAULT_CS,
 				     CONFIG_SF_DEFAULT_SPEED,
 				     CONFIG_SF_DEFAULT_MODE);
-		if (!sf)
-			return -ENODEV;
+		ಯದಿ (!sf)
+			ಪ್ರತ್ಯಾಗಮ -ENODEV;
 	}
 
-	return spi_flash_read(sf, offset, read_size, (void *)(uintptr_t)bmp_load_addr);
+	ಪ್ರತ್ಯಾಗಮ spi_flash_read(sf, offset, read_size, (ಶೂನ್ಯ *)(uintptr_t)bmp_load_addr);
 }
-#else
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_sf_read_raw(ulong bmp_load_addr, ಪೂರ್ಣಾಙ್ಕ offset, size_t read_size)
 {
 	debug("%s: sf support not available\n", __func__);
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_CMD_NAND
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_nand_read_raw(ulong bmp_load_addr, ಪೂರ್ಣಾಙ್ಕ offset, size_t read_size)
 {
-	struct mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
-	return nand_read_skip_bad(mtd, offset,
-				  &read_size, NULL,
+	ಸಂರಚನಾ mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
+	ಪ್ರತ್ಯಾಗಮ nand_read_skip_bad(mtd, offset,
+				  &read_size, ರಿಕ್ತ,
 				  mtd->size,
 				  (u_char *)bmp_load_addr);
 }
-#else
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_nand_read_raw(ulong bmp_load_addr, ಪೂರ್ಣಾಙ್ಕ offset, size_t read_size)
 {
 	debug("%s: nand support not available\n", __func__);
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 #endif
 
-static int splash_mmc_read_raw(ulong bmp_load_addr, struct splash_location *location,
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_mmc_read_raw(ulong bmp_load_addr, ಸಂರಚನಾ splash_location *location,
 			       size_t read_size)
 {
-	struct disk_partition partition;
-	struct blk_desc *desc;
+	ಸಂರಚನಾ disk_partition partition;
+	ಸಂರಚನಾ blk_desc *desc;
 	lbaint_t blkcnt;
-	int ret, n;
+	ಪೂರ್ಣಾಙ್ಕ ret, n;
 
-	if (!IS_ENABLED(CONFIG_CMD_MMC)) {
+	ಯದಿ (!IS_ENABLED(CONFIG_CMD_MMC)) {
 		debug("%s: mmc support not available\n", __func__);
-		return -ENOSYS;
+		ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 	}
 
-	ret = part_get_info_by_dev_and_name_or_num("mmc", location->devpart, &desc,
+	ret = part_get_info_by_dev_and_name_or_ಅಂಕೆ("mmc", location->devpart, &desc,
 						   &partition, 1);
-	if (ret < 0)
-		return ret;
+	ಯದಿ (ret < 0)
+		ಪ್ರತ್ಯಾಗಮ ret;
 
 	blkcnt = DIV_ROUND_UP(read_size, partition.blksz);
-	n = blk_dread(desc, partition.start, blkcnt, (void *)(uintptr_t)bmp_load_addr);
+	n = blk_dread(desc, partition.start, blkcnt, (ಶೂನ್ಯ *)(uintptr_t)bmp_load_addr);
 
-	return (n == blkcnt) ? 0 : -EIO;
+	ಪ್ರತ್ಯಾಗಮ (n == blkcnt) ? 0 : -EIO;
 }
 
-static int splash_storage_read_raw(struct splash_location *location,
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_storage_read_raw(ಸಂರಚನಾ splash_location *location,
 			       ulong bmp_load_addr, size_t read_size)
 {
 	u32 offset;
 
-	if (!location)
-		return -EINVAL;
+	ಯದಿ (!location)
+		ಪ್ರತ್ಯಾಗಮ -EINVAL;
 
 	offset = location->offset;
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
-		return splash_mmc_read_raw(bmp_load_addr, location, read_size);
-	case SPLASH_STORAGE_NAND:
-		return splash_nand_read_raw(bmp_load_addr, offset, read_size);
-	case SPLASH_STORAGE_SF:
-		return splash_sf_read_raw(bmp_load_addr, offset, read_size);
-	default:
+	ವಿಕಲ್ಪ (location->storage) {
+	ಪಕ್ಷ SPLASH_STORAGE_MMC:
+		ಪ್ರತ್ಯಾಗಮ splash_mmc_read_raw(bmp_load_addr, location, read_size);
+	ಪಕ್ಷ SPLASH_STORAGE_NAND:
+		ಪ್ರತ್ಯಾಗಮ splash_nand_read_raw(bmp_load_addr, offset, read_size);
+	ಪಕ್ಷ SPLASH_STORAGE_SF:
+		ಪ್ರತ್ಯಾಗಮ splash_sf_read_raw(bmp_load_addr, offset, read_size);
+	ಸ್ವಭಾವ:
 		printf("Unknown splash location\n");
 	}
 
-	return -EINVAL;
+	ಪ್ರತ್ಯಾಗಮ -EINVAL;
 }
 
-static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_load_raw(ಸಂರಚನಾ splash_location *location, ulong bmp_load_addr)
 {
-	struct bmp_header *bmp_hdr;
-	int res;
-	size_t bmp_size, bmp_header_size = sizeof(struct bmp_header);
+	ಸಂರಚನಾ bmp_header *bmp_hdr;
+	ಪೂರ್ಣಾಙ್ಕ res;
+	size_t bmp_size, bmp_header_size = ಪರಿಮಾಣ(ಸಂರಚನಾ bmp_header);
 
-	if (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	ಯದಿ (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
+		ಗಚ್ಛ splash_address_too_ಮೇಲಿನ;
 
 	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_size);
-	if (res < 0)
-		return res;
+	ಯದಿ (res < 0)
+		ಪ್ರತ್ಯಾಗಮ res;
 
-	bmp_hdr = (struct bmp_header *)(uintptr_t)bmp_load_addr;
+	bmp_hdr = (ಸಂರಚನಾ bmp_header *)(uintptr_t)bmp_load_addr;
 	bmp_size = le32_to_cpu(bmp_hdr->file_size);
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	ಯದಿ (bmp_load_addr + bmp_size >= gd->start_addr_sp)
+		ಗಚ್ಛ splash_address_too_ಮೇಲಿನ;
 
-	return splash_storage_read_raw(location, bmp_load_addr, bmp_size);
+	ಪ್ರತ್ಯಾಗಮ splash_storage_read_raw(location, bmp_load_addr, bmp_size);
 
-splash_address_too_high:
+splash_address_too_ಮೇಲಿನ:
 	printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 
-	return -EFAULT;
+	ಪ್ರತ್ಯಾಗಮ -EFAULT;
 }
 
-static int splash_select_fs_dev(struct splash_location *location)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_select_fs_dev(ಸಂರಚನಾ splash_location *location)
 {
-	int res;
+	ಪೂರ್ಣಾಙ್ಕ res;
 
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
+	ವಿಕಲ್ಪ (location->storage) {
+	ಪಕ್ಷ SPLASH_STORAGE_MMC:
 		res = fs_set_blk_dev("mmc", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_USB:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ SPLASH_STORAGE_USB:
 		res = fs_set_blk_dev("usb", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_SATA:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ SPLASH_STORAGE_SATA:
 		res = fs_set_blk_dev("sata", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_NAND:
-		if (location->ubivol != NULL)
-			res = fs_set_blk_dev("ubi", NULL, FS_TYPE_UBIFS);
-		else
+		ಭಙ್ಗ;
+	ಪಕ್ಷ SPLASH_STORAGE_NAND:
+		ಯದಿ (location->ubivol != ರಿಕ್ತ)
+			res = fs_set_blk_dev("ubi", ರಿಕ್ತ, FS_TYPE_UBIFS);
+		ಅನ್ಯಥಾ
 			res = -ENODEV;
-		break;
-	default:
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		printf("Error: %s: unsupported location storage.\n", __func__);
-		return -ENODEV;
+		ಪ್ರತ್ಯಾಗಮ -ENODEV;
 	}
 
-	if (res)
+	ಯದಿ (res)
 		printf("Error: %s: could not access storage.\n", __func__);
 
-	return res;
+	ಪ್ರತ್ಯಾಗಮ res;
 }
 
 #ifdef CONFIG_USB_STORAGE
-static int splash_init_usb(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_init_usb(ಶೂನ್ಯ)
 {
-	int err;
+	ಪೂರ್ಣಾಙ್ಕ err;
 
 	err = usb_init();
-	if (err)
-		return err;
+	ಯದಿ (err)
+		ಪ್ರತ್ಯಾಗಮ err;
 
 #ifndef CONFIG_DM_USB
 	err = usb_stor_scan(1) < 0 ? -ENODEV : 0;
 #endif
 
-	return err;
+	ಪ್ರತ್ಯಾಗಮ err;
 }
-#else
-static inline int splash_init_usb(void)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ splash_init_usb(ಶೂನ್ಯ)
 {
 	printf("Cannot load splash image: no USB support\n");
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_SATA
-static int splash_init_sata(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_init_sata(ಶೂನ್ಯ)
 {
-	return sata_probe(0);
+	ಪ್ರತ್ಯಾಗಮ sata_probe(0);
 }
-#else
-static inline int splash_init_sata(void)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ splash_init_sata(ಶೂನ್ಯ)
 {
 	printf("Cannot load splash image: no SATA support\n");
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 #endif
 
-static int splash_init_virtio(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_init_virtio(ಶೂನ್ಯ)
 {
-	if (!IS_ENABLED(CONFIG_VIRTIO)) {
+	ಯದಿ (!IS_ENABLED(CONFIG_VIRTIO)) {
 		printf("Cannot load splash image: no virtio support\n");
-		return -ENOSYS;
-	} else {
-		return virtio_init();
+		ಪ್ರತ್ಯಾಗಮ -ENOSYS;
+	} ಅನ್ಯಥಾ {
+		ಪ್ರತ್ಯಾಗಮ virtio_init();
 	}
 }
 
-#if defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
-static int splash_mount_ubifs(struct splash_location *location)
+#ಯದಿ defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_mount_ubifs(ಸಂರಚನಾ splash_location *location)
 {
-	int res;
-	char cmd[32];
+	ಪೂರ್ಣಾಙ್ಕ res;
+	ವರ್ಣ cmd[32];
 
 	sprintf(cmd, "ubi part %s", location->mtdpart);
 	res = run_command(cmd, 0);
-	if (res)
-		return res;
+	ಯದಿ (res)
+		ಪ್ರತ್ಯಾಗಮ res;
 
 	sprintf(cmd, "ubifsmount %s", location->ubivol);
 	res = run_command(cmd, 0);
 
-	return res;
+	ಪ್ರತ್ಯಾಗಮ res;
 }
 
-static inline int splash_umount_ubifs(void)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ splash_umount_ubifs(ಶೂನ್ಯ)
 {
-	return run_command("ubifsumount", 0);
+	ಪ್ರತ್ಯಾಗಮ run_command("ubifsumount", 0);
 }
-#else
-static inline int splash_mount_ubifs(struct splash_location *location)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ splash_mount_ubifs(ಸಂರಚನಾ splash_location *location)
 {
 	printf("Cannot load splash image: no UBIFS support\n");
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 
-static inline int splash_umount_ubifs(void)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ splash_umount_ubifs(ಶೂನ್ಯ)
 {
 	printf("Cannot unmount UBIFS: no UBIFS support\n");
-	return -ENOSYS;
+	ಪ್ರತ್ಯಾಗಮ -ENOSYS;
 }
 #endif
 
 #define SPLASH_SOURCE_DEFAULT_FILE_NAME		"splash.bmp"
 
-static int splash_load_fs(struct splash_location *location, ulong bmp_load_addr)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_load_fs(ಸಂರಚನಾ splash_location *location, ulong bmp_load_addr)
 {
-	int res = 0;
+	ಪೂರ್ಣಾಙ್ಕ res = 0;
 	loff_t bmp_size;
 	loff_t actread;
-	char *splash_file;
+	ವರ್ಣ *splash_file;
 
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	ಯದಿ (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	if (location->storage == SPLASH_STORAGE_USB)
+	ಯದಿ (location->storage == SPLASH_STORAGE_USB)
 		res = splash_init_usb();
 
-	if (location->storage == SPLASH_STORAGE_SATA)
+	ಯದಿ (location->storage == SPLASH_STORAGE_SATA)
 		res = splash_init_sata();
 
-	if (location->storage == SPLASH_STORAGE_VIRTIO)
+	ಯದಿ (location->storage == SPLASH_STORAGE_VIRTIO)
 		res = splash_init_virtio();
 
-	if (location->ubivol != NULL)
+	ಯದಿ (location->ubivol != ರಿಕ್ತ)
 		res = splash_mount_ubifs(location);
 
-	if (res)
-		return res;
+	ಯದಿ (res)
+		ಪ್ರತ್ಯಾಗಮ res;
 
 	res = splash_select_fs_dev(location);
-	if (res)
-		goto out;
+	ಯದಿ (res)
+		ಗಚ್ಛ out;
 
 	res = fs_size(splash_file, &bmp_size);
-	if (res) {
+	ಯದಿ (res) {
 		printf("Error: %s: cannot determine file size (%d)\n",
 		       __func__, res);
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
+	ಯದಿ (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
 		printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 		res = -EFAULT;
-		goto out;
+		ಗಚ್ಛ out;
 	}
 
 	splash_select_fs_dev(location);
 	res = fs_read(splash_file, bmp_load_addr, 0, 0, &actread);
 
 out:
-	if (location->ubivol != NULL)
+	ಯದಿ (location->ubivol != ರಿಕ್ತ)
 		splash_umount_ubifs();
 
-	return res;
+	ಪ್ರತ್ಯಾಗಮ res;
 }
 
 /**
@@ -320,106 +320,106 @@ out:
  *	    If splashsource env variable contains a supported value
  *			return the location selected by splashsource.
  */
-static struct splash_location *select_splash_location(
-			    struct splash_location *locations, uint size)
+ಸ್ಥಿರ ಸಂರಚನಾ splash_location *select_splash_location(
+			    ಸಂರಚನಾ splash_location *locations, uint size)
 {
-	int i;
-	char *env_splashsource;
+	ಪೂರ್ಣಾಙ್ಕ i;
+	ವರ್ಣ *env_splashsource;
 
-	if (!locations || size == 0)
-		return NULL;
+	ಯದಿ (!locations || size == 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
 	env_splashsource = env_get("splashsource");
-	if (env_splashsource == NULL)
-		return &locations[0];
+	ಯದಿ (env_splashsource == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ &locations[0];
 
-	for (i = 0; i < size; i++) {
-		if (!strcmp(locations[i].name, env_splashsource))
-			return &locations[i];
+	ಪ್ರತಿ (i = 0; i < size; i++) {
+		ಯದಿ (!strcmp(locations[i].name, env_splashsource))
+			ಪ್ರತ್ಯಾಗಮ &locations[i];
 	}
 
 	printf("splashsource env variable set to unsupported value\n");
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
 #ifdef CONFIG_FIT
-static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ splash_load_fit(ಸಂರಚನಾ splash_location *location, ulong bmp_load_addr)
 {
-	int res;
-	int node_offset;
-	const char *splash_file;
-	const void *internal_splash_data;
+	ಪೂರ್ಣಾಙ್ಕ res;
+	ಪೂರ್ಣಾಙ್ಕ ಗಂಟು_offset;
+	ಧ್ರುವ ವರ್ಣ *splash_file;
+	ಧ್ರುವ ಶೂನ್ಯ *internal_splash_data;
 	size_t internal_splash_size;
-	int external_splash_addr;
+	ಪೂರ್ಣಾಙ್ಕ external_splash_addr;
 	u32 external_splash_size;
 	bool is_splash_external = false;
-	struct legacy_img_hdr *img_header;
-	const u32 *fit_header;
+	ಸಂರಚನಾ legacy_img_hdr *img_header;
+	ಧ್ರುವ u32 *fit_header;
 	u32 fit_size;
-	const size_t header_size = sizeof(struct legacy_img_hdr);
+	ಧ್ರುವ size_t header_size = ಪರಿಮಾಣ(ಸಂರಚನಾ legacy_img_hdr);
 
 	/* Read in image header */
 	res = splash_storage_read_raw(location, bmp_load_addr, header_size);
-	if (res < 0)
-		return res;
+	ಯದಿ (res < 0)
+		ಪ್ರತ್ಯಾಗಮ res;
 
-	img_header = (struct legacy_img_hdr *)(uintptr_t)bmp_load_addr;
-	if (image_get_magic(img_header) != FDT_MAGIC) {
+	img_header = (ಸಂರಚನಾ legacy_img_hdr *)(uintptr_t)bmp_load_addr;
+	ಯದಿ (image_get_magic(img_header) != FDT_MAGIC) {
 		printf("Could not find FDT magic\n");
-		return -EINVAL;
+		ಪ್ರತ್ಯಾಗಮ -EINVAL;
 	}
 
 	fit_size = fdt_totalsize(img_header);
 
 	/* Read in entire FIT */
-	fit_header = (const u32 *)(bmp_load_addr + header_size);
+	fit_header = (ಧ್ರುವ u32 *)(bmp_load_addr + header_size);
 	res = splash_storage_read_raw(location, (uintptr_t)fit_header, fit_size);
-	if (res < 0)
-		return res;
+	ಯದಿ (res < 0)
+		ಪ್ರತ್ಯಾಗಮ res;
 
 	res = fit_check_format(fit_header, IMAGE_SIZE_INVAL);
-	if (res) {
+	ಯದಿ (res) {
 		debug("Could not find valid FIT image\n");
-		return res;
+		ಪ್ರತ್ಯಾಗಮ res;
 	}
 
 	/* Get the splash image node */
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	ಯದಿ (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	node_offset = fit_image_get_node(fit_header, splash_file);
-	if (node_offset < 0) {
+	ಗಂಟು_offset = fit_image_get_ಗಂಟು(fit_header, splash_file);
+	ಯದಿ (ಗಂಟು_offset < 0) {
 		debug("Could not find splash image '%s' in FIT\n",
 		      splash_file);
-		return -ENOENT;
+		ಪ್ರತ್ಯಾಗಮ -ENOENT;
 	}
 
 	/* Extract the splash data from FIT */
-	if (!fit_image_get_data(fit_header, node_offset, &internal_splash_data,
+	ಯದಿ (!fit_image_get_data(fit_header, ಗಂಟು_offset, &internal_splash_data,
 				&internal_splash_size)) {
-		memmove((void *)(uintptr_t)bmp_load_addr, internal_splash_data,
+		memmove((ಶೂನ್ಯ *)(uintptr_t)bmp_load_addr, internal_splash_data,
 			internal_splash_size);
-	} else {
+	} ಅನ್ಯಥಾ {
 		printf("Failed to get splash image from FIT\n");
-		return -ENODATA;
+		ಪ್ರತ್ಯಾಗಮ -ENODATA;
 	}
 
-	if (is_splash_external) {
-		res = fit_image_get_data_size(fit_header, node_offset, &external_splash_size);
-		if (res < 0) {
+	ಯದಿ (is_splash_external) {
+		res = fit_image_get_data_size(fit_header, ಗಂಟು_offset, &external_splash_size);
+		ಯದಿ (res < 0) {
 			printf("Failed to get size of splash image (err=%d)\n", res);
-			return res;
+			ಪ್ರತ್ಯಾಗಮ res;
 		}
 
 		/* Read in the splash data */
 		location->offset = external_splash_addr;
 		res = splash_storage_read_raw(location, bmp_load_addr, external_splash_size);
-		if (res < 0)
-			return res;
+		ಯದಿ (res < 0)
+			ಪ್ರತ್ಯಾಗಮ res;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif /* CONFIG_FIT */
 
@@ -435,38 +435,38 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
  *
  * @return: 0 on success, negative value on failure.
  */
-int splash_source_load(struct splash_location *locations, uint size)
+ಪೂರ್ಣಾಙ್ಕ splash_source_load(ಸಂರಚನಾ splash_location *locations, uint size)
 {
-	struct splash_location *splash_location;
-	char *env_splashimage_value;
-	char *devpart;
+	ಸಂರಚನಾ splash_location *splash_location;
+	ವರ್ಣ *env_splashimage_ಮೌಲ್ಯ;
+	ವರ್ಣ *devpart;
 	ulong bmp_load_addr;
 
-	env_splashimage_value = env_get("splashimage");
-	if (env_splashimage_value == NULL)
-		return -ENOENT;
+	env_splashimage_ಮೌಲ್ಯ = env_get("splashimage");
+	ಯದಿ (env_splashimage_ಮೌಲ್ಯ == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ -ENOENT;
 
-	bmp_load_addr = hextoul(env_splashimage_value, 0);
-	if (bmp_load_addr == 0) {
+	bmp_load_addr = hextoul(env_splashimage_ಮೌಲ್ಯ, 0);
+	ಯದಿ (bmp_load_addr == 0) {
 		printf("Error: bad splashimage address specified\n");
-		return -EFAULT;
+		ಪ್ರತ್ಯಾಗಮ -EFAULT;
 	}
 
 	splash_location = select_splash_location(locations, size);
-	if (!splash_location)
-		return -EINVAL;
+	ಯದಿ (!splash_location)
+		ಪ್ರತ್ಯಾಗಮ -EINVAL;
 
 	devpart = env_get("splashdevpart");
-	if (devpart)
+	ಯದಿ (devpart)
 		splash_location->devpart = devpart;
 
-	if (splash_location->flags == SPLASH_STORAGE_RAW)
-		return splash_load_raw(splash_location, bmp_load_addr);
-	else if (splash_location->flags == SPLASH_STORAGE_FS)
-		return splash_load_fs(splash_location, bmp_load_addr);
+	ಯದಿ (splash_location->flags == SPLASH_STORAGE_RAW)
+		ಪ್ರತ್ಯಾಗಮ splash_load_raw(splash_location, bmp_load_addr);
+	ಅನ್ಯಥಾ ಯದಿ (splash_location->flags == SPLASH_STORAGE_FS)
+		ಪ್ರತ್ಯಾಗಮ splash_load_fs(splash_location, bmp_load_addr);
 #ifdef CONFIG_FIT
-	else if (splash_location->flags == SPLASH_STORAGE_FIT)
-		return splash_load_fit(splash_location, bmp_load_addr);
+	ಅನ್ಯಥಾ ಯದಿ (splash_location->flags == SPLASH_STORAGE_FIT)
+		ಪ್ರತ್ಯಾಗಮ splash_load_fit(splash_location, bmp_load_addr);
 #endif
-	return -EINVAL;
+	ಪ್ರತ್ಯಾಗಮ -EINVAL;
 }

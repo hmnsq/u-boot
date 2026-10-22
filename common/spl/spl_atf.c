@@ -9,52 +9,52 @@
  * Copyright (C) 2017 Theobroma Systems Design und Consulting GmbH
  */
 
-#include <atf_common.h>
-#include <cpu_func.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <asm/cache.h>
+#ಅನ್ತರ್ಭಾವ <atf_common.h>
+#ಅನ್ತರ್ಭಾವ <cpu_func.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <asm/cache.h>
 
 /* Holds all the structures we need for bl31 parameter passing */
-struct bl2_to_bl31_params_mem {
-	struct bl31_params bl31_params;
-	struct atf_image_info bl31_image_info;
-	struct atf_image_info bl32_image_info;
-	struct atf_image_info bl33_image_info;
-	struct entry_point_info bl33_ep_info;
-	struct entry_point_info bl32_ep_info;
-	struct entry_point_info bl31_ep_info;
+ಸಂರಚನಾ bl2_to_bl31_params_mem {
+	ಸಂರಚನಾ bl31_params bl31_params;
+	ಸಂರಚನಾ atf_image_info bl31_image_info;
+	ಸಂರಚನಾ atf_image_info bl32_image_info;
+	ಸಂರಚನಾ atf_image_info bl33_image_info;
+	ಸಂರಚನಾ entry_point_info bl33_ep_info;
+	ಸಂರಚನಾ entry_point_info bl32_ep_info;
+	ಸಂರಚನಾ entry_point_info bl31_ep_info;
 };
 
-struct bl2_to_bl31_params_mem_v2 {
-	struct bl_params bl_params;
-	struct bl_params_node bl31_params_node;
-	struct bl_params_node bl32_params_node;
-	struct bl_params_node bl33_params_node;
-	struct atf_image_info bl31_image_info;
-	struct atf_image_info bl32_image_info;
-	struct atf_image_info bl33_image_info;
-	struct entry_point_info bl33_ep_info;
-	struct entry_point_info bl32_ep_info;
-	struct entry_point_info bl31_ep_info;
+ಸಂರಚನಾ bl2_to_bl31_params_mem_v2 {
+	ಸಂರಚನಾ bl_params bl_params;
+	ಸಂರಚನಾ bl_params_ಗಂಟು bl31_params_ಗಂಟು;
+	ಸಂರಚನಾ bl_params_ಗಂಟು bl32_params_ಗಂಟು;
+	ಸಂರಚನಾ bl_params_ಗಂಟು bl33_params_ಗಂಟು;
+	ಸಂರಚನಾ atf_image_info bl31_image_info;
+	ಸಂರಚನಾ atf_image_info bl32_image_info;
+	ಸಂರಚನಾ atf_image_info bl33_image_info;
+	ಸಂರಚನಾ entry_point_info bl33_ep_info;
+	ಸಂರಚನಾ entry_point_info bl32_ep_info;
+	ಸಂರಚನಾ entry_point_info bl31_ep_info;
 };
 
-struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
+ಸಂರಚನಾ bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
 						     ulong bl33_entry,
 						     ulong fdt_addr)
 {
-	static struct bl2_to_bl31_params_mem bl31_params_mem;
-	struct bl31_params *bl2_to_bl31_params;
-	struct entry_point_info *bl32_ep_info;
-	struct entry_point_info *bl33_ep_info;
+	ಸ್ಥಿರ ಸಂರಚನಾ bl2_to_bl31_params_mem bl31_params_mem;
+	ಸಂರಚನಾ bl31_params *bl2_to_bl31_params;
+	ಸಂರಚನಾ entry_point_info *bl32_ep_info;
+	ಸಂರಚನಾ entry_point_info *bl33_ep_info;
 
 	/*
 	 * Initialise the memory for all the arguments that needs to
 	 * be passed to BL31
 	 */
-	memset(&bl31_params_mem, 0, sizeof(struct bl2_to_bl31_params_mem));
+	memset(&bl31_params_mem, 0, ಪರಿಮಾಣ(ಸಂರಚನಾ bl2_to_bl31_params_mem));
 
 	/* Assign memory for TF related information */
 	bl2_to_bl31_params = &bl31_params_mem.bl31_params;
@@ -63,7 +63,7 @@ struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
 	/* Fill BL31 related information */
 	bl2_to_bl31_params->bl31_image_info = &bl31_params_mem.bl31_image_info;
 	SET_PARAM_HEAD(bl2_to_bl31_params->bl31_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+		       ATF_PARAM_IMAGE_ದ್ವಿಮಾನ, ATF_VERSION_1, 0);
 
 	/* Fill BL32 related information */
 	bl2_to_bl31_params->bl32_ep_info = &bl31_params_mem.bl32_ep_info;
@@ -79,7 +79,7 @@ struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
 
 	bl2_to_bl31_params->bl32_image_info = &bl31_params_mem.bl32_image_info;
 	SET_PARAM_HEAD(bl2_to_bl31_params->bl32_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+		       ATF_PARAM_IMAGE_ದ್ವಿಮಾನ, ATF_VERSION_1, 0);
 
 	/* Fill BL33 related information */
 	bl2_to_bl31_params->bl33_ep_info = &bl31_params_mem.bl33_ep_info;
@@ -95,146 +95,146 @@ struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
 
 	bl2_to_bl31_params->bl33_image_info = &bl31_params_mem.bl33_image_info;
 	SET_PARAM_HEAD(bl2_to_bl31_params->bl33_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+		       ATF_PARAM_IMAGE_ದ್ವಿಮಾನ, ATF_VERSION_1, 0);
 
-	return bl2_to_bl31_params;
+	ಪ್ರತ್ಯಾಗಮ bl2_to_bl31_params;
 }
 
-__weak struct bl31_params *bl2_plat_get_bl31_params(ulong bl32_entry,
+__weak ಸಂರಚನಾ bl31_params *bl2_plat_get_bl31_params(ulong bl32_entry,
 						    ulong bl33_entry,
 						    ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_default(bl32_entry, bl33_entry,
+	ಪ್ರತ್ಯಾಗಮ bl2_plat_get_bl31_params_default(bl32_entry, bl33_entry,
 						fdt_addr);
 }
 
-struct bl_params *bl2_plat_get_bl31_params_v2_default(ulong bl32_entry,
+ಸಂರಚನಾ bl_params *bl2_plat_get_bl31_params_v2_default(ulong bl32_entry,
 						      ulong bl33_entry,
 						      ulong fdt_addr)
 {
-	static struct bl2_to_bl31_params_mem_v2 bl31_params_mem;
-	struct bl_params *bl_params;
-	struct bl_params_node *bl_params_node;
+	ಸ್ಥಿರ ಸಂರಚನಾ bl2_to_bl31_params_mem_v2 bl31_params_mem;
+	ಸಂರಚನಾ bl_params *bl_params;
+	ಸಂರಚನಾ bl_params_ಗಂಟು *bl_params_ಗಂಟು;
 
 	/*
 	 * Initialise the memory for all the arguments that needs to
 	 * be passed to BL31
 	 */
-	memset(&bl31_params_mem, 0, sizeof(bl31_params_mem));
+	memset(&bl31_params_mem, 0, ಪರಿಮಾಣ(bl31_params_mem));
 
 	/* Assign memory for TF related information */
 	bl_params = &bl31_params_mem.bl_params;
 	SET_PARAM_HEAD(bl_params, ATF_PARAM_BL_PARAMS, ATF_VERSION_2, 0);
-	bl_params->head = &bl31_params_mem.bl31_params_node;
+	bl_params->head = &bl31_params_mem.bl31_params_ಗಂಟು;
 
 	/* Fill BL31 related information */
-	bl_params_node = &bl31_params_mem.bl31_params_node;
-	bl_params_node->image_id = ATF_BL31_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl31_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl31_ep_info;
-	bl_params_node->next_params_info = &bl31_params_mem.bl32_params_node;
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
+	bl_params_ಗಂಟು = &bl31_params_mem.bl31_params_ಗಂಟು;
+	bl_params_ಗಂಟು->image_id = ATF_BL31_IMAGE_ID;
+	bl_params_ಗಂಟು->image_info = &bl31_params_mem.bl31_image_info;
+	bl_params_ಗಂಟು->ep_info = &bl31_params_mem.bl31_ep_info;
+	bl_params_ಗಂಟು->next_params_info = &bl31_params_mem.bl32_params_ಗಂಟು;
+	SET_PARAM_HEAD(bl_params_ಗಂಟು->image_info, ATF_PARAM_IMAGE_ದ್ವಿಮಾನ,
 		       ATF_VERSION_2, 0);
 
 	/* Fill BL32 related information */
-	bl_params_node = &bl31_params_mem.bl32_params_node;
-	bl_params_node->image_id = ATF_BL32_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl32_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl32_ep_info;
-	bl_params_node->next_params_info = &bl31_params_mem.bl33_params_node;
-	SET_PARAM_HEAD(bl_params_node->ep_info, ATF_PARAM_EP,
+	bl_params_ಗಂಟು = &bl31_params_mem.bl32_params_ಗಂಟು;
+	bl_params_ಗಂಟು->image_id = ATF_BL32_IMAGE_ID;
+	bl_params_ಗಂಟು->image_info = &bl31_params_mem.bl32_image_info;
+	bl_params_ಗಂಟು->ep_info = &bl31_params_mem.bl32_ep_info;
+	bl_params_ಗಂಟು->next_params_info = &bl31_params_mem.bl33_params_ಗಂಟು;
+	SET_PARAM_HEAD(bl_params_ಗಂಟು->ep_info, ATF_PARAM_EP,
 		       ATF_VERSION_2, ATF_EP_SECURE);
 
 	/* secure payload is optional, so set pc to 0 if absent */
-	bl_params_node->ep_info->args.arg3 = fdt_addr;
-	bl_params_node->ep_info->pc = bl32_entry ? bl32_entry : 0;
-	bl_params_node->ep_info->spsr = SPSR_64(MODE_EL1, MODE_SP_ELX,
+	bl_params_ಗಂಟು->ep_info->args.arg3 = fdt_addr;
+	bl_params_ಗಂಟು->ep_info->pc = bl32_entry ? bl32_entry : 0;
+	bl_params_ಗಂಟು->ep_info->spsr = SPSR_64(MODE_EL1, MODE_SP_ELX,
 						DISABLE_ALL_EXCEPTIONS);
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
+	SET_PARAM_HEAD(bl_params_ಗಂಟು->image_info, ATF_PARAM_IMAGE_ದ್ವಿಮಾನ,
 		       ATF_VERSION_2, 0);
 
 	/* Fill BL33 related information */
-	bl_params_node = &bl31_params_mem.bl33_params_node;
-	bl_params_node->image_id = ATF_BL33_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl33_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl33_ep_info;
-	bl_params_node->next_params_info = NULL;
-	SET_PARAM_HEAD(bl_params_node->ep_info, ATF_PARAM_EP,
+	bl_params_ಗಂಟು = &bl31_params_mem.bl33_params_ಗಂಟು;
+	bl_params_ಗಂಟು->image_id = ATF_BL33_IMAGE_ID;
+	bl_params_ಗಂಟು->image_info = &bl31_params_mem.bl33_image_info;
+	bl_params_ಗಂಟು->ep_info = &bl31_params_mem.bl33_ep_info;
+	bl_params_ಗಂಟು->next_params_info = ರಿಕ್ತ;
+	SET_PARAM_HEAD(bl_params_ಗಂಟು->ep_info, ATF_PARAM_EP,
 		       ATF_VERSION_2, ATF_EP_NON_SECURE);
 
 	/* BL33 expects to receive the primary CPU MPID (through x0) */
-	bl_params_node->ep_info->args.arg0 = 0xffff & read_mpidr();
-	bl_params_node->ep_info->pc = bl33_entry;
-	bl_params_node->ep_info->spsr = SPSR_64(MODE_EL2, MODE_SP_ELX,
+	bl_params_ಗಂಟು->ep_info->args.arg0 = 0xffff & read_mpidr();
+	bl_params_ಗಂಟು->ep_info->pc = bl33_entry;
+	bl_params_ಗಂಟು->ep_info->spsr = SPSR_64(MODE_EL2, MODE_SP_ELX,
 						DISABLE_ALL_EXCEPTIONS);
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
+	SET_PARAM_HEAD(bl_params_ಗಂಟು->image_info, ATF_PARAM_IMAGE_ದ್ವಿಮಾನ,
 		       ATF_VERSION_2, 0);
 
-	return bl_params;
+	ಪ್ರತ್ಯಾಗಮ bl_params;
 }
 
-__weak struct bl_params *bl2_plat_get_bl31_params_v2(ulong bl32_entry,
+__weak ಸಂರಚನಾ bl_params *bl2_plat_get_bl31_params_v2(ulong bl32_entry,
 						     ulong bl33_entry,
 						     ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_v2_default(bl32_entry, bl33_entry,
+	ಪ್ರತ್ಯಾಗಮ bl2_plat_get_bl31_params_v2_default(bl32_entry, bl33_entry,
 						   fdt_addr);
 }
 
-static inline void raw_write_daif(unsigned int daif)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ raw_write_daif(unsigned ಪೂರ್ಣಾಙ್ಕ daif)
 {
 	__asm__ __volatile__("msr DAIF, %x0\n\t" : : "r" (daif) : "memory");
 }
 
-typedef void __noreturn (*atf_entry_t)(struct bl31_params *params, void *plat_params);
+ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ __noreturn (*atf_entry_t)(ಸಂರಚನಾ bl31_params *params, ಶೂನ್ಯ *plat_params);
 
-static void __noreturn bl31_entry(ulong bl31_entry, ulong bl32_entry,
+ಸ್ಥಿರ ಶೂನ್ಯ __noreturn bl31_entry(ulong bl31_entry, ulong bl32_entry,
 				  ulong bl33_entry, ulong fdt_addr)
 {
 	atf_entry_t  atf_entry = (atf_entry_t)bl31_entry;
-	void *bl31_params;
+	ಶೂನ್ಯ *bl31_params;
 
-	if (CONFIG_IS_ENABLED(ATF_LOAD_IMAGE_V2))
+	ಯದಿ (CONFIG_IS_ENABLED(ATF_LOAD_IMAGE_V2))
 		bl31_params = bl2_plat_get_bl31_params_v2(bl32_entry,
 							  bl33_entry,
 							  fdt_addr);
-	else
+	ಅನ್ಯಥಾ
 		bl31_params = bl2_plat_get_bl31_params(bl32_entry, bl33_entry,
 						       fdt_addr);
 
 	raw_write_daif(SPSR_EXCEPTION_MASK);
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+	ಯದಿ (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
 		dcache_disable();
 
-	atf_entry(bl31_params, (void *)fdt_addr);
+	atf_entry(bl31_params, (ಶೂನ್ಯ *)fdt_addr);
 }
 
-static int spl_fit_images_find(void *blob, int os)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_fit_images_find(ಶೂನ್ಯ *blob, ಪೂರ್ಣಾಙ್ಕ os)
 {
-	int parent, node, ndepth = 0;
-	int found = -FDT_ERR_NOTFOUND;
-	const void *data;
+	ಪೂರ್ಣಾಙ್ಕ parent, ಗಂಟು, ndepth = 0;
+	ಪೂರ್ಣಾಙ್ಕ found = -FDT_ERR_NOTFOUND;
+	ಧ್ರುವ ಶೂನ್ಯ *data;
 	ulong val;
 
-	if (!blob)
-		return -FDT_ERR_BADMAGIC;
+	ಯದಿ (!blob)
+		ಪ್ರತ್ಯಾಗಮ -FDT_ERR_BADMAGIC;
 
 	parent = fdt_path_offset(blob, "/fit-images");
-	if (parent < 0)
-		return -FDT_ERR_NOTFOUND;
+	ಯದಿ (parent < 0)
+		ಪ್ರತ್ಯಾಗಮ -FDT_ERR_NOTFOUND;
 
-	for (node = fdt_next_node(blob, parent, &ndepth);
-	     (node >= 0) && (ndepth > 0);
-	     node = fdt_next_node(blob, node, &ndepth)) {
-		if (ndepth != 1)
-			continue;
+	ಪ್ರತಿ (ಗಂಟು = fdt_next_ಗಂಟು(blob, parent, &ndepth);
+	     (ಗಂಟು >= 0) && (ndepth > 0);
+	     ಗಂಟು = fdt_next_ಗಂಟು(blob, ಗಂಟು, &ndepth)) {
+		ಯದಿ (ndepth != 1)
+			ಅನುವರ್ತ;
 
-		data = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
-		if (!data)
-			continue;
+		data = fdt_getprop(blob, ಗಂಟು, FIT_OS_PROP, ರಿಕ್ತ);
+		ಯದಿ (!data)
+			ಅನುವರ್ತ;
 
-		if (genimg_get_os_id(data) != os)
-			continue;
+		ಯದಿ (genimg_get_os_id(data) != os)
+			ಅನುವರ್ತ;
 
 		/*
 		 * A multi-segment image, e.g. an OP-TEE ELF split by
@@ -242,45 +242,45 @@ static int spl_fit_images_find(void *blob, int os)
 		 * the same os. Only the segment holding the ELF entry
 		 * point carries an entry property, so prefer that node.
 		 */
-		if (!fit_image_get_entry(blob, node, &val))
-			return node;
+		ಯದಿ (!fit_image_get_entry(blob, ಗಂಟು, &val))
+			ಪ್ರತ್ಯಾಗಮ ಗಂಟು;
 
-		if (found < 0)
-			found = node;
+		ಯದಿ (found < 0)
+			found = ಗಂಟು;
 	};
 
-	return found;
+	ಪ್ರತ್ಯಾಗಮ found;
 }
 
-ulong spl_fit_images_get_entry(void *blob, int node)
+ulong spl_fit_images_get_entry(ಶೂನ್ಯ *blob, ಪೂರ್ಣಾಙ್ಕ ಗಂಟು)
 {
 	ulong  val;
-	int ret;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
-	ret = fit_image_get_entry(blob, node, &val);
-	if (ret)
-		ret = fit_image_get_load(blob, node, &val);
+	ret = fit_image_get_entry(blob, ಗಂಟು, &val);
+	ಯದಿ (ret)
+		ret = fit_image_get_load(blob, ಗಂಟು, &val);
 
 	debug("%s: entry point 0x%lx\n", __func__, val);
-	return val;
+	ಪ್ರತ್ಯಾಗಮ val;
 }
 
-void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
+ಶೂನ್ಯ __noreturn spl_invoke_atf(ಸಂರಚನಾ spl_image_info *spl_image)
 {
 	ulong  bl32_entry = 0;
 	ulong  bl33_entry = CONFIG_TEXT_BASE;
-	void *blob = spl_image->fdt_addr;
+	ಶೂನ್ಯ *blob = spl_image->fdt_addr;
 	ulong platform_param = (ulong)blob;
-	int node;
+	ಪೂರ್ಣಾಙ್ಕ ಗಂಟು;
 
 	/*
 	 * Find the OP-TEE binary (in /fit-images) load address or
 	 * entry point (if different) and pass it as the BL3-2 entry
 	 * point, this is optional.
 	 */
-	node = spl_fit_images_find(blob, IH_OS_TEE);
-	if (node >= 0)
-		bl32_entry = spl_fit_images_get_entry(blob, node);
+	ಗಂಟು = spl_fit_images_find(blob, IH_OS_TEE);
+	ಯದಿ (ಗಂಟು >= 0)
+		bl32_entry = spl_fit_images_get_entry(blob, ಗಂಟು);
 
 	/*
 	 * Find the U-Boot binary (in /fit-images) load addreess or
@@ -289,9 +289,9 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * This will need to be extended to support Falcon mode.
 	 */
 
-	node = spl_fit_images_find(blob, IH_OS_U_BOOT);
-	if (node >= 0)
-		bl33_entry = spl_fit_images_get_entry(blob, node);
+	ಗಂಟು = spl_fit_images_find(blob, IH_OS_U_BOOT);
+	ಯದಿ (ಗಂಟು >= 0)
+		bl33_entry = spl_fit_images_get_entry(blob, ಗಂಟು);
 
 	/*
 	 * If ATF_NO_PLATFORM_PARAM is set, we override the platform
@@ -299,7 +299,7 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * older ATF versions that have insufficiently robust (or
 	 * overzealous) argument validation.
 	 */
-	if (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
+	ಯದಿ (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
 		platform_param = 0;
 
 	/*

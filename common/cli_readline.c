@@ -8,51 +8,51 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <hang.h>
-#include <malloc.h>
-#include <time.h>
-#include <watchdog.h>
-#include <linux/errno.h>
-#include <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <bootretry.h>
+#ಅನ್ತರ್ಭಾವ <cli.h>
+#ಅನ್ತರ್ಭಾವ <command.h>
+#ಅನ್ತರ್ಭಾವ <hang.h>
+#ಅನ್ತರ್ಭಾವ <malloc.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <watchdog.h>
+#ಅನ್ತರ್ಭಾವ <linux/errno.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char erase_seq[] = "\b \b";	/* erase sequence */
-static const char   tab_seq[] = "        ";	/* used to expand TABs */
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ erase_seq[] = "\b \b";	/* erase sequence */
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ   tab_seq[] = "        ";	/* used to expand TABs */
 
-char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
+ವರ್ಣ console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+ಸ್ಥಿರ ವರ್ಣ *delete_char (ವರ್ಣ *buffer, ವರ್ಣ *p, ಪೂರ್ಣಾಙ್ಕ *colp, ಪೂರ್ಣಾಙ್ಕ *np, ಪೂರ್ಣಾಙ್ಕ plen)
 {
-	char *s;
+	ವರ್ಣ *s;
 
-	if (*np == 0)
-		return p;
+	ಯದಿ (*np == 0)
+		ಪ್ರತ್ಯಾಗಮ p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	ಯದಿ (*(--p) == '\t') {		/* will retype the whole line */
+		ಯಾವತ್ (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		ಪ್ರತಿ (s = buffer; s < p; ++s) {
+			ಯದಿ (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} ಅನ್ಯಥಾ {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	ಪ್ರತ್ಯಾಗಮ p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,11 +62,11 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (ಪೂರ್ಣಾಙ್ಕ)n, str)
 
 #define CTL_BACKSPACE		('\b')
-#define DEL			((char)255)
-#define DEL7			((char)127)
+#define DEL			((ವರ್ಣ)255)
+#define DEL7			((ವರ್ಣ)127)
 #define CREAD_HIST_CHAR		('!')
 
 #define getcmd_putch(ch)	putc(ch)
@@ -76,390 +76,390 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#ಅನ್ಯಥಾ
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
-static unsigned hist_num;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hist_max;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hist_add_idx;
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hist_cur = -1;
+ಸ್ಥಿರ unsigned hist_ಅಂಕೆ;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-static char hist_data[HIST_MAX][HIST_SIZE + 1];
+ಸ್ಥಿರ ವರ್ಣ hist_data[HIST_MAX][HIST_SIZE + 1];
 #endif
-static char *hist_list[HIST_MAX];
+ಸ್ಥಿರ ವರ್ಣ *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+ಸ್ಥಿರ ಶೂನ್ಯ getcmd_putchars(ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ, ಪೂರ್ಣಾಙ್ಕ ch)
 {
-	int i;
+	ಪೂರ್ಣಾಙ್ಕ i;
 
-	for (i = 0; i < count; i++)
+	ಪ್ರತಿ (i = 0; i < ಎಣಿಕೆ; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ hist_init(ಶೂನ್ಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಙ್ಕ i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	ಪ್ರತಿ (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
-	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+#ಅನ್ಯಥಾ
+	unsigned ವರ್ಣ *hist = calloc(HIST_MAX, HIST_SIZE + 1);
+	ಯದಿ (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	ಪ್ರತಿ (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
 	hist_max = 0;
 	hist_add_idx = 0;
 	hist_cur = -1;
-	hist_num = 0;
+	hist_ಅಂಕೆ = 0;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static void cread_add_to_hist(char *line)
+ಸ್ಥಿರ ಶೂನ್ಯ cread_add_to_hist(ವರ್ಣ *ಸಾಲು)
 {
-	strcpy(hist_list[hist_add_idx], line);
+	strcpy(hist_list[hist_add_idx], ಸಾಲು);
 
-	if (++hist_add_idx >= HIST_MAX)
+	ಯದಿ (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	ಯದಿ (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
-	hist_num++;
+	hist_ಅಂಕೆ++;
 }
 
-static char *hist_prev(void)
+ಸ್ಥಿರ ವರ್ಣ *hist_prev(ಶೂನ್ಯ)
 {
-	char *ret;
-	int old_cur;
+	ವರ್ಣ *ret;
+	ಪೂರ್ಣಾಙ್ಕ old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	ಯದಿ (hist_cur < 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	ಯದಿ (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	ಯದಿ (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
-		ret = NULL;
-	} else {
+		ret = ರಿಕ್ತ;
+	} ಅನ್ಯಥಾ {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-static char *hist_next(void)
+ಸ್ಥಿರ ವರ್ಣ *hist_next(ಶೂನ್ಯ)
 {
-	char *ret;
+	ವರ್ಣ *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	ಯದಿ (hist_cur < 0)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	ಯದಿ (hist_cur == hist_add_idx)
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
-	if (++hist_cur > hist_max)
+	ಯದಿ (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	ಯದಿ (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	ಅನ್ಯಥಾ
 		ret = hist_list[hist_cur];
 
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
-void cread_print_hist_list(void)
+ಶೂನ್ಯ cread_print_hist_list(ಶೂನ್ಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಙ್ಕ i;
 	uint n;
 
-	n = hist_num - hist_max;
+	n = hist_ಅಂಕೆ - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	ಯಾವತ್ (1) {
+		ಯದಿ (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
-			break;
+		ಯದಿ (i == hist_add_idx)
+			ಭಙ್ಗ;
 		printf("%s\n", hist_list[i]);
 		n++;
 		i++;
 	}
 }
 
-#define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+#define BEGINNING_OF_ಸಾಲು() {			\
+	ಯಾವತ್ (cls->ಅಂಕೆ) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
-		cls->num--;			\
+		cls->ಅಂಕೆ--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
-		do {					\
+	ಯದಿ (cls->ಅಂಕೆ < cls->eol_ಅಂಕೆ) {		\
+		printf("%*s", (ಪೂರ್ಣಾಙ್ಕ)(cls->eol_ಅಂಕೆ - cls->ಅಂಕೆ), ""); \
+		ಕುರು {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} ಯಾವತ್ (--cls->eol_ಅಂಕೆ > cls->ಅಂಕೆ);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
-		uint wlen = cls->eol_num - cls->num;	\
-		putnstr(buf + cls->num, wlen);		\
-		cls->num = cls->eol_num;		\
+	ಯದಿ (cls->ಅಂಕೆ < cls->eol_ಅಂಕೆ) {			\
+		uint wlen = cls->eol_ಅಂಕೆ - cls->ಅಂಕೆ;	\
+		putnstr(buf + cls->ಅಂಕೆ, wlen);		\
+		cls->ಅಂಕೆ = cls->eol_ಅಂಕೆ;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
-			   uint *eol_num, char *buf, uint len)
+ಸ್ಥಿರ ಶೂನ್ಯ cread_add_char(ವರ್ಣ ichar, ಪೂರ್ಣಾಙ್ಕ ಸೇರಿಸು, uint *ಅಂಕೆ,
+			   uint *eol_ಅಂಕೆ, ವರ್ಣ *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	ಯದಿ (ಸೇರಿಸು || *ಅಂಕೆ == *eol_ಅಂಕೆ) {
+		ಯದಿ (*eol_ಅಂಕೆ > len - 1) {
 			getcmd_cbeep();
-			return;
+			ಪ್ರತ್ಯಾಗಮ;
 		}
-		(*eol_num)++;
+		(*eol_ಅಂಕೆ)++;
 	}
 
-	if (insert) {
-		wlen = *eol_num - *num;
-		if (wlen > 1)
-			memmove(&buf[*num+1], &buf[*num], wlen-1);
+	ಯದಿ (ಸೇರಿಸು) {
+		wlen = *eol_ಅಂಕೆ - *ಅಂಕೆ;
+		ಯದಿ (wlen > 1)
+			memmove(&buf[*ಅಂಕೆ+1], &buf[*ಅಂಕೆ], wlen-1);
 
-		buf[*num] = ichar;
-		putnstr(buf + *num, wlen);
-		(*num)++;
-		while (--wlen)
+		buf[*ಅಂಕೆ] = ichar;
+		putnstr(buf + *ಅಂಕೆ, wlen);
+		(*ಅಂಕೆ)++;
+		ಯಾವತ್ (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* echo the character */
 		wlen = 1;
-		buf[*num] = ichar;
-		putnstr(buf + *num, wlen);
-		(*num)++;
+		buf[*ಅಂಕೆ] = ichar;
+		putnstr(buf + *ಅಂಕೆ, wlen);
+		(*ಅಂಕೆ)++;
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
-			  uint *num, uint *eol_num, char *buf, uint len)
+ಸ್ಥಿರ ಶೂನ್ಯ cread_add_str(ವರ್ಣ *str, ಪೂರ್ಣಾಙ್ಕ strsize, ಪೂರ್ಣಾಙ್ಕ ಸೇರಿಸು,
+			  uint *ಅಂಕೆ, uint *eol_ಅಂಕೆ, ವರ್ಣ *buf, uint len)
 {
-	while (strsize--) {
-		cread_add_char(*str, insert, num, eol_num, buf, len);
+	ಯಾವತ್ (strsize--) {
+		cread_add_char(*str, ಸೇರಿಸು, ಅಂಕೆ, eol_ಅಂಕೆ, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+ಪೂರ್ಣಾಙ್ಕ cread_ಸಾಲು_process_ch(ಸಂರಚನಾ cli_ಸಾಲು_state *cls, ವರ್ಣ ichar)
 {
-	char *buf = cls->buf;
+	ವರ್ಣ *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	ಯದಿ (!ichar)
+		ಪ್ರತ್ಯಾಗಮ -EAGAIN;
 
-	if (ichar == '\n') {
+	ಯದಿ (ichar == '\n') {
 		putc('\n');
-		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		buf[cls->eol_ಅಂಕೆ] = '\0';	/* terminate the string */
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	switch (ichar) {
-	case CTL_CH('a'):
-		BEGINNING_OF_LINE();
-		break;
-	case CTL_CH('c'):	/* ^C - break */
+	ವಿಕಲ್ಪ (ichar) {
+	ಪಕ್ಷ CTL_CH('a'):
+		BEGINNING_OF_ಸಾಲು();
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
-	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
-			getcmd_putch(buf[cls->num]);
-			cls->num++;
+		ಪ್ರತ್ಯಾಗಮ -EINTR;
+	ಪಕ್ಷ CTL_CH('f'):
+		ಯದಿ (cls->ಅಂಕೆ < cls->eol_ಅಂಕೆ) {
+			getcmd_putch(buf[cls->ಅಂಕೆ]);
+			cls->ಅಂಕೆ++;
 		}
-		break;
-	case CTL_CH('b'):
-		if (cls->num) {
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('b'):
+		ಯದಿ (cls->ಅಂಕೆ) {
 			getcmd_putch(CTL_BACKSPACE);
-			cls->num--;
+			cls->ಅಂಕೆ--;
 		}
-		break;
-	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('d'):
+		ಯದಿ (cls->ಅಂಕೆ < cls->eol_ಅಂಕೆ) {
 			uint wlen;
 
-			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
-				memmove(&buf[cls->num], &buf[cls->num + 1],
+			wlen = cls->eol_ಅಂಕೆ - cls->ಅಂಕೆ - 1;
+			ಯದಿ (wlen) {
+				memmove(&buf[cls->ಅಂಕೆ], &buf[cls->ಅಂಕೆ + 1],
 					wlen);
-				putnstr(buf + cls->num, wlen);
+				putnstr(buf + cls->ಅಂಕೆ, wlen);
 			}
 
 			getcmd_putch(' ');
-			do {
+			ಕುರು {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
-			cls->eol_num--;
+			} ಯಾವತ್ (wlen--);
+			cls->eol_ಅಂಕೆ--;
 		}
-		break;
-	case CTL_CH('k'):
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('k'):
 		ERASE_TO_EOL();
-		break;
-	case CTL_CH('e'):
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('e'):
 		REFRESH_TO_EOL();
-		break;
-	case CTL_CH('o'):
-		cls->insert = !cls->insert;
-		break;
-	case CTL_CH('w'):
-		if (cls->num) {
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('o'):
+		cls->ಸೇರಿಸು = !cls->ಸೇರಿಸು;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('w'):
+		ಯದಿ (cls->ಅಂಕೆ) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			ಪ್ರತಿ (base = cls->ಅಂಕೆ;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			ಪ್ರತಿ (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
-			wlen = cls->num - base;
-			cls->eol_num -= wlen;
-			memmove(&buf[base], &buf[cls->num],
-				cls->eol_num - base + 1);
-			cls->num = base;
+			wlen = cls->ಅಂಕೆ - base;
+			cls->eol_ಅಂಕೆ -= wlen;
+			memmove(&buf[base], &buf[cls->ಅಂಕೆ],
+				cls->eol_ಅಂಕೆ - base + 1);
+			cls->ಅಂಕೆ = base;
 			getcmd_putchars(wlen, CTL_BACKSPACE);
 			puts(buf + base);
 			getcmd_putchars(wlen, ' ');
-			getcmd_putchars(wlen + cls->eol_num - cls->num,
+			getcmd_putchars(wlen + cls->eol_ಅಂಕೆ - cls->ಅಂಕೆ,
 					CTL_BACKSPACE);
 		}
-		break;
-	case CTL_CH('x'):
-	case CTL_CH('u'):
-		BEGINNING_OF_LINE();
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('x'):
+	ಪಕ್ಷ CTL_CH('u'):
+		BEGINNING_OF_ಸಾಲು();
 		ERASE_TO_EOL();
-		break;
-	case DEL:
-	case DEL7:
-	case 8:
-		if (cls->num) {
+		ಭಙ್ಗ;
+	ಪಕ್ಷ DEL:
+	ಪಕ್ಷ DEL7:
+	ಪಕ್ಷ 8:
+		ಯದಿ (cls->ಅಂಕೆ) {
 			uint wlen;
 
-			wlen = cls->eol_num - cls->num;
-			cls->num--;
-			memmove(&buf[cls->num], &buf[cls->num + 1], wlen);
+			wlen = cls->eol_ಅಂಕೆ - cls->ಅಂಕೆ;
+			cls->ಅಂಕೆ--;
+			memmove(&buf[cls->ಅಂಕೆ], &buf[cls->ಅಂಕೆ + 1], wlen);
 			getcmd_putch(CTL_BACKSPACE);
-			putnstr(buf + cls->num, wlen);
+			putnstr(buf + cls->ಅಂಕೆ, wlen);
 			getcmd_putch(' ');
-			do {
+			ಕುರು {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
-			cls->eol_num--;
+			} ಯಾವತ್ (wlen--);
+			cls->eol_ಅಂಕೆ--;
 		}
-		break;
-	case CTL_CH('p'):
-	case CTL_CH('n'):
-		if (cls->history) {
-			char *hline;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CTL_CH('p'):
+	ಪಕ್ಷ CTL_CH('n'):
+		ಯದಿ (cls->history) {
+			ವರ್ಣ *hline;
 
-			if (ichar == CTL_CH('p'))
+			ಯದಿ (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			ಅನ್ಯಥಾ
 				hline = hist_next();
 
-			if (!hline) {
+			ಯದಿ (!hline) {
 				getcmd_cbeep();
-				break;
+				ಭಙ್ಗ;
 			}
 
 			/* nuke the current line */
 			/* first, go home */
-			BEGINNING_OF_LINE();
+			BEGINNING_OF_ಸಾಲು();
 
 			/* erase to end of line */
 			ERASE_TO_EOL();
 
 			/* copy new line into place and display */
 			strcpy(buf, hline);
-			cls->eol_num = strlen(buf);
+			cls->eol_ಅಂಕೆ = strlen(buf);
 			REFRESH_TO_EOL();
-			break;
+			ಭಙ್ಗ;
 		}
-		break;
-	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ '\t':
+		ಯದಿ (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			ಪೂರ್ಣಾಙ್ಕ num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			ಯದಿ (cls->ಅಂಕೆ < cls->eol_ಅಂಕೆ) {
 				getcmd_cbeep();
-				break;
+				ಭಙ್ಗ;
 			}
 
-			buf[cls->num] = '\0';
-			col = strlen(cls->prompt) + cls->eol_num;
-			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
-				col = num2 - cls->num;
-				cls->num += col;
-				cls->eol_num += col;
+			buf[cls->ಅಂಕೆ] = '\0';
+			col = strlen(cls->prompt) + cls->eol_ಅಂಕೆ;
+			num2 = cls->ಅಂಕೆ;
+			ಯದಿ (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+				col = num2 - cls->ಅಂಕೆ;
+				cls->ಅಂಕೆ += col;
+				cls->eol_ಅಂಕೆ += col;
 			}
-			break;
+			ಭಙ್ಗ;
 		}
 		fallthrough;
-	default:
-		cread_add_char(ichar, cls->insert, &cls->num, &cls->eol_num,
+	ಸ್ವಭಾವ:
+		cread_add_char(ichar, cls->ಸೇರಿಸು, &cls->ಅಂಕೆ, &cls->eol_ಅಂಕೆ,
 			       buf, cls->len);
-		break;
+		ಭಙ್ಗ;
 	}
 
 	/*
 	 * keep the string terminated...if we added a char at the end then we
 	 * want a \0 after it
 	 */
-	buf[cls->eol_num] = '\0';
+	buf[cls->eol_ಅಂಕೆ] = '\0';
 
-	return -EAGAIN;
+	ಪ್ರತ್ಯಾಗಮ -EAGAIN;
 }
 
-void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
+ಶೂನ್ಯ cli_cread_init(ಸಂರಚನಾ cli_ಸಾಲು_state *cls, ವರ್ಣ *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	ಪೂರ್ಣಾಙ್ಕ init_len = strlen(buf);
 
-	memset(cls, '\0', sizeof(struct cli_line_state));
-	cls->insert = true;
+	memset(cls, '\0', ಪರಿಮಾಣ(ಸಂರಚನಾ cli_ಸಾಲು_state));
+	cls->ಸೇರಿಸು = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
-		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
+	ಯದಿ (init_len)
+		cread_add_str(buf, init_len, 0, &cls->ಅಂಕೆ, &cls->eol_ಅಂಕೆ, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ cread_ಸಾಲು(ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ prompt, ವರ್ಣ *buf, unsigned ಪೂರ್ಣಾಙ್ಕ *len,
+		      ಪೂರ್ಣಾಙ್ಕ timeout)
 {
-	struct cli_ch_state s_cch, *cch = &s_cch;
-	struct cli_line_state s_cls, *cls = &s_cls;
-	char ichar;
-	int first = 1;
+	ಸಂರಚನಾ cli_ch_state s_cch, *cch = &s_cch;
+	ಸಂರಚನಾ cli_ಸಾಲು_state s_cls, *cls = &s_cls;
+	ವರ್ಣ ichar;
+	ಪೂರ್ಣಾಙ್ಕ first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	ಯಾವತ್ (1) {
+		ಪೂರ್ಣಾಙ್ಕ ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		ಯದಿ (!ichar) {
+			ಯದಿ (bootretry_tstc_timeout())
+				ಪ್ರತ್ಯಾಗಮ -2;	/* timed out */
+			ಯದಿ (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				ಯಾವತ್ (!tstc()) {	/* while no incoming data */
+					ಯದಿ (get_ticks() >= etime)
+						ಪ್ರತ್ಯಾಗಮ -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -491,39 +491,39 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 			ichar = cli_ch_process(cch, ichar);
 		}
 
-		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
-			break;
+		ret = cread_ಸಾಲು_process_ch(cls, ichar);
+		ಯದಿ (ret == -EINTR)
+			ಪ್ರತ್ಯಾಗಮ -1;
+		ಅನ್ಯಥಾ ಯದಿ (!ret)
+			ಭಙ್ಗ;
 	}
-	*len = cls->eol_num;
+	*len = cls->eol_ಅಂಕೆ;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	ಯದಿ (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#ಅನ್ಯಥಾ /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ hist_init(ಶೂನ್ಯ)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ cread_ಸಾಲು(ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ prompt, ವರ್ಣ *buf, unsigned ಪೂರ್ಣಾಙ್ಕ *len,
+		      ಪೂರ್ಣಾಙ್ಕ timeout)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+ಪೂರ್ಣಾಙ್ಕ cli_readline(ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	ಪ್ರತ್ಯಾಗಮ cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ cread_ಸಾಲು_simple(ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ prompt, ವರ್ಣ *p)
 {
-	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	ವರ್ಣ *p_buf = p;
+	ಪೂರ್ಣಾಙ್ಕ n = 0;		/* buffer index */
+	ಪೂರ್ಣಾಙ್ಕ plen = 0;		/* prompt length */
+	ಪೂರ್ಣಾಙ್ಕ col;		/* output column cnt */
+	ಪೂರ್ಣಾಙ್ಕ c;
 
 	/* print prompt */
-	if (prompt) {
+	ಯದಿ (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	ಪ್ರತಿ (;;) {
+		ಯದಿ (bootretry_tstc_timeout())
+			ಪ್ರತ್ಯಾಗಮ -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -568,64 +568,64 @@ static int cread_line_simple(const char *const prompt, char *p)
 		/*
 		 * Special character handling
 		 */
-		switch (c) {
-		case '\r':			/* Enter		*/
-		case '\n':
+		ವಿಕಲ್ಪ (c) {
+		ಪಕ್ಷ '\r':			/* Enter		*/
+		ಪಕ್ಷ '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			ಪ್ರತ್ಯಾಗಮ p - p_buf;
 
-		case '\0':			/* nul			*/
-			continue;
+		ಪಕ್ಷ '\0':			/* nul			*/
+			ಅನುವರ್ತ;
 
-		case 0x03:			/* ^C - break		*/
+		ಪಕ್ಷ 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			ಪ್ರತ್ಯಾಗಮ -1;
 
-		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+		ಪಕ್ಷ 0x15:			/* ^U - erase line	*/
+			ಯಾವತ್ (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
 			p = p_buf;
 			n = 0;
-			continue;
+			ಅನುವರ್ತ;
 
-		case 0x17:			/* ^W - erase word	*/
+		ಪಕ್ಷ 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			ಯಾವತ್ ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
-			continue;
+			ಅನುವರ್ತ;
 
-		case 0x08:			/* ^H  - backspace	*/
-		case 0x7F:			/* DEL - backspace	*/
+		ಪಕ್ಷ 0x08:			/* ^H  - backspace	*/
+		ಪಕ್ಷ 0x7F:			/* DEL - backspace	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			continue;
+			ಅನುವರ್ತ;
 
-		default:
+		ಸ್ವಭಾವ:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			ಯದಿ (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
-				break;
+				ಭಙ್ಗ;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			ಯದಿ (c == '\t') {	/* expand TABs */
+				ಯದಿ (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					ಯದಿ (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
-						continue;
+						ಅನುವರ್ತ;
 					}
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
-				char __maybe_unused buf[2];
+			} ಅನ್ಯಥಾ {
+				ವರ್ಣ __maybe_unused buf[2];
 
 				/*
 				 * Echo input using puts() to force an LCD
@@ -638,18 +638,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 			}
 			*p++ = c;
 			++n;
-			break;
+			ಭಙ್ಗ;
 		}
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+ಪೂರ್ಣಾಙ್ಕ cli_readline_into_buffer(ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ prompt, ವರ್ಣ *buffer,
+			     ಪೂರ್ಣಾಙ್ಕ timeout)
 {
-	char *p = buffer;
+	ವರ್ಣ *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	ಪೂರ್ಣಾಙ್ಕ rc;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	ಯದಿ (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		ಯದಿ (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			ಯದಿ (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		ಯದಿ (prompt)
 			puts(prompt);
 
-		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		rc = cread_ಸಾಲು(prompt, p, &len, timeout);
+		ಪ್ರತ್ಯಾಗಮ rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} ಅನ್ಯಥಾ {
+		ಪ್ರತ್ಯಾಗಮ cread_ಸಾಲು_simple(prompt, p);
 	}
 }

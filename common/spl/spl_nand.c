@@ -3,27 +3,27 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#ಅನ್ತರ್ಭಾವ <config.h>
+#ಅನ್ತರ್ಭಾವ <fdt_support.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <imx_container.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <asm/io.h>
+#ಅನ್ತರ್ಭಾವ <mapmem.h>
+#ಅನ್ತರ್ಭಾವ <nand.h>
+#ಅನ್ತರ್ಭಾವ <linux/libfdt_env.h>
+#ಅನ್ತರ್ಭಾವ <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_page(ಶೂನ್ಯ)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	ಪ್ರತ್ಯಾಗಮ CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#ಯದಿ defined(CONFIG_SPL_NAND_RAW_ONLY)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_nand_load_image(ಸಂರಚನಾ spl_image_info *spl_image,
+			ಸಂರಚನಾ spl_boot_device *bootdev)
 {
 	nand_init();
 
@@ -38,112 +38,112 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	spl_set_header_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
-#else
+#ಅನ್ಯಥಾ
 
 __weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
 {
-	return offs;
+	ಪ್ರತ್ಯಾಗಮ offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+ಸ್ಥಿರ ulong spl_nand_read(ಸಂರಚನಾ spl_load_info *load, ulong offs, ulong size,
+			   ಶೂನ್ಯ *dst)
 {
-	int err;
+	ಪೂರ್ಣಾಙ್ಕ err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
 	      __func__, offs, size, dst);
 
-	sector = *(int *)load->priv;
+	sector = *(ಪೂರ್ಣಾಙ್ಕ *)load->priv;
 	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
 	err = nand_spl_load_image(offs, size, dst);
 	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	ಯದಿ (err)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	return size;
+	ಪ್ರತ್ಯಾಗಮ size;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_nand_load_element(ಸಂರಚನಾ spl_image_info *spl_image,
+				 ಸಂರಚನಾ spl_boot_device *bootdev, ಪೂರ್ಣಾಙ್ಕ offset)
 {
-	struct spl_load_info load;
+	ಸಂರಚನಾ spl_load_info load;
 
 	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	ಪ್ರತ್ಯಾಗಮ spl_load(spl_image, bootdev, &load, 0, offset);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#ಯದಿ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_nand_load_image_os(ಸಂರಚನಾ spl_image_info *spl_image,
+				  ಸಂರಚನಾ spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	ಪೂರ್ಣಾಙ್ಕ err;
+	ಸಂರಚನಾ legacy_img_hdr *header = spl_get_load_buffer(0, ಪರಿಮಾಣ(*header));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
+	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, ಪರಿಮಾಣ(*header),
+			    (ಶೂನ್ಯ *)header);
 	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	ಯದಿ (err)
+		ಪ್ರತ್ಯಾಗಮ err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	ಯದಿ (header->ih_os != IH_OS_LINUX)
+		ಪ್ರತ್ಯಾಗಮ -EINVAL;
 
 	/* happy - was a linux */
 	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
 				  spl_image->size,
-				  (void *)spl_image->load_addr);
+				  (ಶೂನ್ಯ *)spl_image->load_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	ಯದಿ (err)
+		ಪ್ರತ್ಯಾಗಮ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ಯದಿ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
+	ಪೂರ್ಣಾಙ್ಕ *src, *dst;
 	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+			    (ಶೂನ್ಯ *)CONFIG_TEXT_BASE);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	ಪ್ರತಿ (dst = (ಪೂರ್ಣಾಙ್ಕ *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+	    src = (ಪೂರ್ಣಾಙ್ಕ *)CONFIG_TEXT_BASE;
+	     src < (ಪೂರ್ಣಾಙ್ಕ *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
 #endif
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ spl_nand_load_image(ಸಂರಚನಾ spl_image_info *spl_image,
+			       ಸಂರಚನಾ spl_boot_device *bootdev)
 {
-	int err;
+	ಪೂರ್ಣಾಙ್ಕ err;
 
 #ifdef CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#ಅನ್ಯಥಾ
 	debug("spl: nand - using hw ecc\n");
 #endif
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#ಯದಿ CONFIG_IS_ENABLED(OS_BOOT)
+	ಯದಿ (!spl_start_uboot()) {
 		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+		ಯದಿ (!err)
+			ಪ್ರತ್ಯಾಗಮ 0;
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		ಯದಿ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ಪ್ರತ್ಯಾಗಮ err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -157,14 +157,14 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	/* Load u-boot */
 	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
 #ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
+#ಯದಿ CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	ಯದಿ (err)
 		err = spl_nand_load_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
 #endif
 #endif
 	nand_deselect();
-	return err;
+	ಪ್ರತ್ಯಾಗಮ err;
 }
 #endif
 /* Use priorty 1 so that Ubi can override this */

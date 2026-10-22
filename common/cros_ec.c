@@ -8,20 +8,20 @@
  * Software Foundation.
  */
 
-#include <cros_ec.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
+#ಅನ್ತರ್ಭಾವ <cros_ec.h>
+#ಅನ್ತರ್ಭಾವ <dm.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
 
-struct udevice *board_get_cros_ec_dev(void)
+ಸಂರಚನಾ udevice *board_get_cros_ec_dev(ಶೂನ್ಯ)
 {
-	struct udevice *dev;
-	int ret;
+	ಸಂರಚನಾ udevice *dev;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
 	ret = uclass_get_device(UCLASS_CROS_EC, 0, &dev);
-	if (ret) {
+	ಯದಿ (ret) {
 		debug("%s: Error %d\n", __func__, ret);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
-	return dev;
+	ಪ್ರತ್ಯಾಗಮ dev;
 }
