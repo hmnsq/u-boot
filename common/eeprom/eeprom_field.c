@@ -6,98 +6,98 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <stdio.h>
-#include <vsprintf.h>
-#include <linux/string.h>
-#include <eeprom_field.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <vsprintf.h>
+#अन्तर्भाव <linux/string.h>
+#अन्तर्भाव <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+स्थिर शून्य __eeprom_field_print_bin(ध्रुव संरचना eeprom_field *field,
+				     वर्ण *delimiter, bool reverse)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	पूर्णाङ्क i;
+	पूर्णाङ्क from = reverse ? field->size - 1 : 0;
+	पूर्णाङ्क to = reverse ? 0 : field->size - 1;
 
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
-		printf("%02x%s", field->buf[i], delimiter);
+	म_लिखो(PRINT_FIELD_SEGMENT, field->name);
+	प्रति (i = from; i != to; reverse ? i-- : i++)
+		म_लिखो("%02x%s", field->buf[i], delimiter);
 
-	printf("%02x\n", field->buf[i]);
+	म_लिखो("%02x\n", field->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+स्थिर पूर्णाङ्क __eeprom_field_update_bin(संरचना eeprom_field *field,
+				     ध्रुव वर्ण *मूल्य, bool reverse)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	पूर्णाङ्क len = म_माप(मूल्य);
+	पूर्णाङ्क k, j, i = reverse ? len - 1 : 0;
+	अचिन्हित वर्ण byte;
+	वर्ण *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	यदि (len > field->size * 2)
+		प्रत्यागम -1;
 
-	memset(field->buf, 0, field->size);
+	स_रखो(field->buf, 0, field->size);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	प्रति (j = 0; j < field->size; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		वर्ण tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		यदि ((reverse && i < 0) || (!reverse && i >= len))
+			भङ्ग;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
-				tmp[k] = value[i];
-				break;
+		प्रति (k = 0; k < 2; k++) {
+			यदि (reverse && i == 0) {
+				tmp[k] = मूल्य[i];
+				भङ्ग;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = मूल्य[reverse ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		यदि (*endptr != '\0')
+			प्रत्यागम -1;
 
 		field->buf[j] = byte;
 		i = reverse ? i - 2 : i + 2;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+स्थिर पूर्णाङ्क __eeprom_field_update_bin_delim(संरचना eeprom_field *field,
+					   वर्ण *मूल्य, वर्ण *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	पूर्णाङ्क गिनती = 0;
+	पूर्णाङ्क i, val;
+	ध्रुव वर्ण *tmp = मूल्य;
+	वर्ण *tok;
+	वर्ण *endptr;
 
-	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
-		count++;
+	tmp = म_माला(tmp, delimiter);
+	यावत् (tmp != रिक्त) {
+		गिनती++;
 		tmp++;
-		tmp = strstr(tmp, delimiter);
+		tmp = म_माला(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	यदि (गिनती > field->size)
+		प्रत्यागम -1;
 
-	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	tok = म_मोहर(मूल्य, delimiter);
+	प्रति (i = 0; tok && i < field->size; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		यदि (*endptr != '\0')
+			प्रत्यागम -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
-		tok = strtok(NULL, delimiter);
+		field->buf[i] = (अचिन्हित वर्ण)val;
+		tok = म_मोहर(रिक्त, delimiter);
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /**
@@ -110,7 +110,7 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+शून्य eeprom_field_print_bin(ध्रुव संरचना eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", false);
 }
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+पूर्णाङ्क eeprom_field_update_bin(संरचना eeprom_field *field, वर्ण *मूल्य)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	प्रत्यागम __eeprom_field_update_bin(field, मूल्य, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+पूर्णाङ्क eeprom_field_update_reserved(संरचना eeprom_field *field, वर्ण *मूल्य)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	प्रत्यागम __eeprom_field_update_bin_delim(field, मूल्य, " ");
 }
 
 /**
@@ -152,7 +152,7 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+शून्य eeprom_field_print_bin_rev(ध्रुव संरचना eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", true);
 }
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+पूर्णाङ्क eeprom_field_update_bin_rev(संरचना eeprom_field *field, वर्ण *मूल्य)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	प्रत्यागम __eeprom_field_update_bin(field, मूल्य, true);
 }
 
 /**
@@ -183,7 +183,7 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+शून्य eeprom_field_print_mac(ध्रुव संरचना eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, ":", false);
 }
@@ -195,22 +195,22 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+पूर्णाङ्क eeprom_field_update_mac(संरचना eeprom_field *field, वर्ण *मूल्य)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	प्रत्यागम __eeprom_field_update_bin_delim(field, मूल्य, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+शून्य eeprom_field_print_ascii(ध्रुव संरचना eeprom_field *field)
 {
-	char format[8];
+	वर्ण format[8];
 
-	sprintf(format, "%%.%ds\n", field->size);
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	printf(format, field->buf);
+	प्र_लिखो(format, "%%.%ds\n", field->size);
+	म_लिखो(PRINT_FIELD_SEGMENT, field->name);
+	म_लिखो(format, field->buf);
 }
 
 /**
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+पूर्णाङ्क eeprom_field_update_ascii(संरचना eeprom_field *field, वर्ण *मूल्य)
 {
-	if (strlen(value) >= field->size) {
-		printf("%s: new data too long\n", field->name);
-		return -1;
+	यदि (म_माप(मूल्य) >= field->size) {
+		म_लिखो("%s: new data too long\n", field->name);
+		प्रत्यागम -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
+	म_नकलन((वर्ण *)field->buf, मूल्य, field->size - 1);
 	field->buf[field->size - 1] = '\0';
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /**
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+शून्य eeprom_field_print_reserved(ध्रुव संरचना eeprom_field *field)
 {
-	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
-	printf("(%d bytes)\n", field->size);
+	म_लिखो(PRINT_FIELD_SEGMENT, "Reserved fields\t");
+	म_लिखो("(%d bytes)\n", field->size);
 }
