@@ -11,9 +11,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+static puur_naa_nka log_console_emit(sa_nracanaa log_device *ldev, sa_nracanaa log_rec *rec)
 {
-	int fmt = gd->log_fmt;
+	puur_naa_nka fmt = gd->log_fmt;
 	bool add_space = false;
 
 	/*
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
+	ပေႃး (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
 		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
+		ပေႃး (fmt & BIT(LOGF_LEVEL))
 			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
+		ပေႃး (fmt & BIT(LOGF_CAT))
 			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
+		ပေႃး (fmt & BIT(LOGF_FILE))
 			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
+		ပေႃး (fmt & BIT(LOGF_LINE))
 			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+		ပေႃး (fmt & BIT(LOGF_FUNC)) {
+			ပေႃး (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
 				printf("%s()", rec->func ?: "?");
-			} else {
+			} ပေႃးဢမ်ႇ {
 				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
+	ပေႃး (fmt & BIT(LOGF_MSG))
 		printf("%s%s", add_space ? " " : "", rec->msg);
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 LOG_DRIVER(console) = {

@@ -22,31 +22,31 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-enum {
+ga_nanaa {
 	RECORD_COUNT = CONFIG_VAL(BOOTSTAGE_RECORD_COUNT),
 };
 
-struct bootstage_record {
+sa_nracanaa bootstage_record {
 	ulong time_us;
 	uint32_t start_us;
-	const char *name;
-	int flags;		/* see enum bootstage_flags */
-	enum bootstage_id id;
+	const var_na *name;
+	puur_naa_nka flags;		/* see enum bootstage_flags */
+	ga_nanaa bootstage_id id;
 };
 
-struct bootstage_data {
+sa_nracanaa bootstage_data {
 	uint rec_count;
 	uint next_id;
-	struct bootstage_record record[RECORD_COUNT];
+	sa_nracanaa bootstage_record record[RECORD_COUNT];
 };
 
-enum {
+ga_nanaa {
 	BOOTSTAGE_VERSION	= 0,
 	BOOTSTAGE_MAGIC		= 0xb00757a3,
 	BOOTSTAGE_DIGITS	= 9,
 };
 
-struct bootstage_hdr {
+sa_nracanaa bootstage_hdr {
 	u32 version;		/* BOOTSTAGE_VERSION */
 	u32 count;		/* Number of records */
 	u32 size;		/* Total data size (non-zero if valid) */
@@ -54,18 +54,18 @@ struct bootstage_hdr {
 	u32 next_id;		/* Next ID to use for bootstage */
 };
 
-int bootstage_relocate(void *to)
+puur_naa_nka bootstage_relocate(void *to)
 {
-	struct bootstage_data *data;
-	int i;
-	char *ptr;
+	sa_nracanaa bootstage_data *data;
+	puur_naa_nka i;
+	var_na *ptr;
 
 	debug("Copying bootstage from %p to %p\n", gd->bootstage, to);
-	memcpy(to, gd->bootstage, sizeof(struct bootstage_data));
+	memcpy(to, gd->bootstage, parimaa_na(sa_nracanaa bootstage_data));
 	data = gd->bootstage = to;
 
 	/* Figure out where to relocate the strings to */
-	ptr = (char *)(data + 1);
+	ptr = (var_na *)(data + 1);
 
 	/*
 	 * Duplicate all strings.  They may point to an old location in the
@@ -73,74 +73,74 @@ int bootstage_relocate(void *to)
 	 */
 	debug("Relocating %d records\n", data->rec_count);
 	for (i = 0; i < data->rec_count; i++) {
-		const char *from = data->record[i].name;
+		const var_na *from = data->record[i].name;
 
-		if (!from)
+		ပေႃး (!from)
 			continue;
 		strcpy(ptr, from);
 		data->record[i].name = ptr;
 		ptr += strlen(ptr) + 1;
 	}
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-struct bootstage_record *find_id(struct bootstage_data *data,
-				 enum bootstage_id id)
+sa_nracanaa bootstage_record *find_id(sa_nracanaa bootstage_data *data,
+				 ga_nanaa bootstage_id id)
 {
-	struct bootstage_record *rec;
-	struct bootstage_record *end;
+	sa_nracanaa bootstage_record *rec;
+	sa_nracanaa bootstage_record *end;
 
 	for (rec = data->record, end = rec + data->rec_count; rec < end;
 	     rec++) {
-		if (rec->id == id)
-			return rec;
+		ပေႃး (rec->id == id)
+			ပွၵ်ႈ rec;
 	}
 
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
-struct bootstage_record *ensure_id(struct bootstage_data *data,
-				   enum bootstage_id id)
+sa_nracanaa bootstage_record *ensure_id(sa_nracanaa bootstage_data *data,
+				   ga_nanaa bootstage_id id)
 {
-	struct bootstage_record *rec;
+	sa_nracanaa bootstage_record *rec;
 
 	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
+	ပေႃး (!rec && data->rec_count < RECORD_COUNT) {
 		rec = &data->record[data->rec_count++];
 		rec->id = id;
-		return rec;
+		ပွၵ်ႈ rec;
 	}
 
-	return rec;
+	ပွၵ်ႈ rec;
 }
 
-ulong bootstage_add_record(enum bootstage_id id, const char *name,
-			   int flags, ulong mark)
+ulong bootstage_add_record(ga_nanaa bootstage_id id, const var_na *name,
+			   puur_naa_nka flags, ulong mark)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec;
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	sa_nracanaa bootstage_record *rec;
 
 	/*
 	 * initf_bootstage() is called very early during boot but since hang()
 	 * calls bootstage_error() we can be called before bootstage is set up.
 	 * Add a check to avoid this.
 	 */
-	if (!data)
-		return mark;
-	if (flags & BOOTSTAGEF_ALLOC)
+	ပေႃး (!data)
+		ပွၵ်ႈ mark;
+	ပေႃး (flags & BOOTSTAGEF_ALLOC)
 		id = data->next_id++;
 
 	/* Only record the first event for each */
 	rec = find_id(data, id);
-	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
+	ပေႃး (!rec) {
+		ပေႃး (data->rec_count < RECORD_COUNT) {
 			rec = &data->record[data->rec_count++];
 			rec->time_us = mark;
 			rec->name = name;
 			rec->flags = flags;
 			rec->id = id;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			log_warning("Bootstage space exhausted\n");
 		}
 	}
@@ -148,78 +148,78 @@ ulong bootstage_add_record(enum bootstage_id id, const char *name,
 	/* Tell the board about this progress */
 	show_boot_progress(flags & BOOTSTAGEF_ERROR ? -id : id);
 
-	return mark;
+	ပွၵ်ႈ mark;
 }
 
-ulong bootstage_error_name(enum bootstage_id id, const char *name)
+ulong bootstage_error_name(ga_nanaa bootstage_id id, const var_na *name)
 {
-	return bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
+	ပွၵ်ႈ bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
 				    timer_get_boot_us());
 }
 
-ulong bootstage_mark_name(enum bootstage_id id, const char *name)
+ulong bootstage_mark_name(ga_nanaa bootstage_id id, const var_na *name)
 {
-	int flags = 0;
+	puur_naa_nka flags = 0;
 
-	if (id == BOOTSTAGE_ID_ALLOC)
+	ပေႃး (id == BOOTSTAGE_ID_ALLOC)
 		flags = BOOTSTAGEF_ALLOC;
 
-	return bootstage_add_record(id, name, flags, timer_get_boot_us());
+	ပွၵ်ႈ bootstage_add_record(id, name, flags, timer_get_boot_us());
 }
 
-ulong bootstage_mark_code(const char *file, const char *func, int linenum)
+ulong bootstage_mark_code(const var_na *file, const var_na *func, puur_naa_nka linenum)
 {
-	char *str, *p;
-	__maybe_unused char *end;
-	int len = 0;
+	var_na *str, *p;
+	__maybe_unused var_na *end;
+	puur_naa_nka len = 0;
 
 	/* First work out the length we need to allocate */
-	if (linenum != -1)
+	ပေႃး (linenum != -1)
 		len = 11;
-	if (func)
+	ပေႃး (func)
 		len += strlen(func);
-	if (file)
+	ပေႃး (file)
 		len += strlen(file);
 
 	str = malloc(len + 1);
 	p = str;
 	end = p + len;
-	if (file)
+	ပေႃး (file)
 		p += snprintf(p, end - p, "%s,", file);
-	if (linenum != -1)
+	ပေႃး (linenum != -1)
 		p += snprintf(p, end - p, "%d", linenum);
-	if (func)
+	ပေႃး (func)
 		p += snprintf(p, end - p, ": %s", func);
 
-	return bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
+	ပွၵ်ႈ bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
 }
 
-uint32_t bootstage_start(enum bootstage_id id, const char *name)
+uint32_t bootstage_start(ga_nanaa bootstage_id id, const var_na *name)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	sa_nracanaa bootstage_record *rec = ensure_id(data, id);
 	ulong start_us = timer_get_boot_us();
 
-	if (rec) {
+	ပေႃး (rec) {
 		rec->start_us = start_us;
 		rec->name = name;
 	}
 
-	return start_us;
+	ပွၵ်ႈ start_us;
 }
 
-uint32_t bootstage_accum(enum bootstage_id id)
+uint32_t bootstage_accum(ga_nanaa bootstage_id id)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	sa_nracanaa bootstage_record *rec = ensure_id(data, id);
 	uint32_t duration;
 
-	if (!rec)
-		return 0;
+	ပေႃး (!rec)
+		ပွၵ်ႈ 0;
 	duration = (uint32_t)timer_get_boot_us() - rec->start_us;
 	rec->time_us += duration;
 
-	return duration;
+	ပွၵ်ႈ duration;
 }
 
 /**
@@ -230,35 +230,35 @@ uint32_t bootstage_accum(enum bootstage_id id)
  * @param rec	Boot stage record to get the name from
  * Return: pointer to name, either from the record or pointing to buf.
  */
-static const char *get_record_name(char *buf, int len,
-				   const struct bootstage_record *rec)
+static const var_na *get_record_name(var_na *buf, puur_naa_nka len,
+				   const sa_nracanaa bootstage_record *rec)
 {
-	if (rec->name)
-		return rec->name;
-	else if (rec->id >= BOOTSTAGE_ID_USER)
+	ပေႃး (rec->name)
+		ပွၵ်ႈ rec->name;
+	ပေႃးဢမ်ႇ ပေႃး (rec->id >= BOOTSTAGE_ID_USER)
 		snprintf(buf, len, "user_%d", rec->id - BOOTSTAGE_ID_USER);
-	else
+	ပေႃးဢမ်ႇ
 		snprintf(buf, len, "id=%d", rec->id);
 
-	return buf;
+	ပွၵ်ႈ buf;
 }
 
-static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
+static uint32_t print_time_record(sa_nracanaa bootstage_record *rec, uint32_t prev)
 {
-	char buf[20];
+	var_na buf[20];
 
-	if (prev == -1U) {
+	ပေႃး (prev == -1U) {
 		printf("%11s", "");
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-	} else {
-		if (prev > rec->time_us)
+	} ပေႃးဢမ်ႇ {
+		ပေႃး (prev > rec->time_us)
 			prev = 0;
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
 		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
 	}
-	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
+	printf("  %s\n", get_record_name(buf, parimaa_na(buf), rec));
 
-	return rec->time_us;
+	ပွၵ်ႈ rec->time_us;
 }
 
 #ifdef CONFIG_OF_LIBFDT
@@ -268,70 +268,70 @@ static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
  * @param blob	Device tree blob
  * Return: 0 on success, != 0 on failure.
  */
-static int add_bootstages_devicetree(struct fdt_header *blob)
+static puur_naa_nka add_bootstages_devicetree(sa_nracanaa fdt_header *blob)
 {
-	struct bootstage_data *data = gd->bootstage;
-	int bootstage;
-	char buf[20];
-	int recnum;
-	int i;
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	puur_naa_nka bootstage;
+	var_na buf[20];
+	puur_naa_nka recnum;
+	puur_naa_nka i;
 
-	if (!blob)
-		return 0;
+	ပေႃး (!blob)
+		ပွၵ်ႈ 0;
 
 	/*
 	 * Create the node for bootstage.
 	 * The address of flat device tree is set up by the command bootm.
 	 */
 	bootstage = fdt_add_subnode(blob, 0, "bootstage");
-	if (bootstage < 0)
-		return -EINVAL;
+	ပေႃး (bootstage < 0)
+		ပွၵ်ႈ -EINVAL;
 
 	/*
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
 	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
-		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+		sa_nracanaa bootstage_record *rec = &data->record[recnum];
+		puur_naa_nka node;
 
-		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
+		ပေႃး (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
 			continue;
 
 		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
-			break;
+		ပေႃး (node < 0)
+			bha_nga;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
-				       get_record_name(buf, sizeof(buf), rec)))
-			return -EINVAL;
+		ပေႃး (fdt_setprop_string(blob, node, "name",
+				       get_record_name(buf, parimaa_na(buf), rec)))
+			ပွၵ်ႈ -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
+		ပေႃး (fdt_setprop_cell(blob, node,
 				rec->start_us ? "accum" : "mark",
 				rec->time_us))
-			return -EINVAL;
+			ပွၵ်ႈ -EINVAL;
 	}
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int bootstage_fdt_add_report(void)
+puur_naa_nka bootstage_fdt_add_report(void)
 {
-	if (add_bootstages_devicetree(working_fdt))
+	ပေႃး (add_bootstages_devicetree(working_fdt))
 		puts("bootstage: Failed to add to device tree\n");
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 #endif
 
 void bootstage_report(void)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = data->record;
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	sa_nracanaa bootstage_record *rec = data->record;
 	uint32_t prev;
-	int i;
+	puur_naa_nka i;
 
 	printf("Timer summary in microseconds (%d records):\n",
 	       data->rec_count);
@@ -340,17 +340,17 @@ void bootstage_report(void)
 	prev = print_time_record(rec, 0);
 
 	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
-		if (rec->id && !rec->start_us)
+		ပေႃး (rec->id && !rec->start_us)
 			prev = print_time_record(rec, prev);
 	}
-	if (data->rec_count > RECORD_COUNT)
+	ပေႃး (data->rec_count > RECORD_COUNT)
 		printf("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
 		       data->rec_count - RECORD_COUNT);
 
 	puts("\nAccumulated time:\n");
 	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
-		if (rec->start_us)
+		ပေႃး (rec->start_us)
 			prev = print_time_record(rec, -1);
 	}
 }
@@ -366,29 +366,29 @@ void bootstage_report(void)
  * @param data	Data to write to buffer
  * @param size	Size of data
  */
-static void append_data(char **ptrp, char *end, const void *data, int size)
+static void append_data(var_na **ptrp, var_na *end, const void *data, puur_naa_nka size)
 {
-	char *ptr = *ptrp;
+	var_na *ptr = *ptrp;
 
 	*ptrp += size;
-	if (*ptrp > end)
-		return;
+	ပေႃး (*ptrp > end)
+		ပွၵ်ႈ;
 
 	memcpy(ptr, data, size);
 }
 
-int bootstage_stash(void *base, int size)
+puur_naa_nka bootstage_stash(void *base, puur_naa_nka size)
 {
-	const struct bootstage_data *data = gd->bootstage;
-	struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	const struct bootstage_record *rec;
-	char buf[20];
-	char *ptr = base, *end = ptr + size;
-	int i;
+	const sa_nracanaa bootstage_data *data = gd->bootstage;
+	sa_nracanaa bootstage_hdr *hdr = (sa_nracanaa bootstage_hdr *)base;
+	const sa_nracanaa bootstage_record *rec;
+	var_na buf[20];
+	var_na *ptr = base, *end = ptr + size;
+	puur_naa_nka i;
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	ပေႃး (hdr + 1 > (sa_nracanaa bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -ENOSPC;
+		ပွၵ်ႈ -ENOSPC;
 	}
 
 	/* Write an arbitrary version number */
@@ -398,84 +398,84 @@ int bootstage_stash(void *base, int size)
 	hdr->size = 0;
 	hdr->magic = BOOTSTAGE_MAGIC;
 	hdr->next_id = data->next_id;
-	ptr += sizeof(*hdr);
+	ptr += parimaa_na(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
 	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-		append_data(&ptr, end, rec, sizeof(*rec));
+		append_data(&ptr, end, rec, parimaa_na(*rec));
 
 	/* Write the name strings */
 	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
-		const char *name;
+		const var_na *name;
 
-		name = get_record_name(buf, sizeof(buf), rec);
+		name = get_record_name(buf, parimaa_na(buf), rec);
 		append_data(&ptr, end, name, strlen(name) + 1);
 	}
 
 	/* Check for buffer overflow */
-	if (ptr > end) {
+	ပေႃး (ptr > end) {
 		debug("%s: Not enough space for bootstage stash\n", __func__);
-		return -ENOSPC;
+		ပွၵ်ႈ -ENOSPC;
 	}
 
 	/* Update total data size */
-	hdr->size = ptr - (char *)base;
+	hdr->size = ptr - (var_na *)base;
 	debug("Stashed %d records\n", hdr->count);
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int bootstage_unstash(const void *base, int size)
+puur_naa_nka bootstage_unstash(const void *base, puur_naa_nka size)
 {
-	const struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	struct bootstage_data *data = gd->bootstage;
-	const char *ptr = base, *end = ptr + size;
-	struct bootstage_record *rec;
+	const sa_nracanaa bootstage_hdr *hdr = (sa_nracanaa bootstage_hdr *)base;
+	sa_nracanaa bootstage_data *data = gd->bootstage;
+	const var_na *ptr = base, *end = ptr + size;
+	sa_nracanaa bootstage_record *rec;
 	uint rec_size;
-	int i;
+	puur_naa_nka i;
 
-	if (size == -1)
-		end = (char *)(~(uintptr_t)0);
+	ပေႃး (size == -1)
+		end = (var_na *)(~(uintptr_t)0);
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	ပေႃး (hdr + 1 > (sa_nracanaa bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -EPERM;
+		ပွၵ်ႈ -EPERM;
 	}
 
-	if (hdr->magic != BOOTSTAGE_MAGIC) {
+	ပေႃး (hdr->magic != BOOTSTAGE_MAGIC) {
 		debug("%s: Invalid bootstage magic\n", __func__);
-		return -ENOENT;
+		ပွၵ်ႈ -ENOENT;
 	}
 
-	if (ptr + hdr->size > end) {
+	ပေႃး (ptr + hdr->size > end) {
 		debug("%s: Bootstage data runs past buffer end\n", __func__);
-		return -ENOSPC;
+		ပွၵ်ႈ -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	ပေႃး (hdr->count * parimaa_na(*rec) > hdr->size) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
 			"only %d bytes is available\n", __func__, hdr->count,
-		      (ulong)hdr->count * sizeof(*rec), hdr->size);
-		return -ENOSPC;
+		      (ulong)hdr->count * parimaa_na(*rec), hdr->size);
+		ပွၵ်ႈ -ENOSPC;
 	}
 
-	if (hdr->version != BOOTSTAGE_VERSION) {
+	ပေႃး (hdr->version != BOOTSTAGE_VERSION) {
 		debug("%s: Bootstage data version %#0x unrecognised\n",
 		      __func__, hdr->version);
-		return -EINVAL;
+		ပွၵ်ႈ -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	ပေႃး (data->rec_count + hdr->count > RECORD_COUNT) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
 		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
-		return -ENOSPC;
+		ပွၵ်ႈ -ENOSPC;
 	}
 
-	ptr += sizeof(*hdr);
+	ptr += parimaa_na(*hdr);
 
 	/* Read the records */
-	rec_size = hdr->count * sizeof(*data->record);
+	rec_size = hdr->count * parimaa_na(*data->record);
 	memcpy(data->record + data->rec_count, ptr, rec_size);
 
 	/* Read the name strings */
@@ -483,7 +483,7 @@ int bootstage_unstash(const void *base, int size)
 	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
 	     i++, rec++) {
 		rec->name = ptr;
-		if (xpl_phase() == PHASE_SPL)
+		ပေႃး (xpl_phase() == PHASE_SPL)
 			rec->name = strdup(ptr);
 
 		/* Assume no data corruption here */
@@ -495,57 +495,57 @@ int bootstage_unstash(const void *base, int size)
 	data->next_id = hdr->next_id;
 	debug("Unstashed %d records\n", hdr->count);
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-#if IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
-int _bootstage_stash_default(void)
+#ပေႃး IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
+puur_naa_nka _bootstage_stash_default(void)
 {
-	return bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
+	ပွၵ်ႈ bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
 			       CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 
-int _bootstage_unstash_default(void)
+puur_naa_nka _bootstage_unstash_default(void)
 {
 	const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
 				       CONFIG_BOOTSTAGE_STASH_SIZE);
 
-	return bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+	ပွၵ်ႈ bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 #endif
 
-int bootstage_get_size(bool add_strings)
+puur_naa_nka bootstage_get_size(bool add_strings)
 {
-	int size;
+	puur_naa_nka size;
 
-	size = sizeof(struct bootstage_data);
-	if (add_strings) {
-		struct bootstage_data *data = gd->bootstage;
-		struct bootstage_record *rec;
-		int i;
+	size = parimaa_na(sa_nracanaa bootstage_data);
+	ပေႃး (add_strings) {
+		sa_nracanaa bootstage_data *data = gd->bootstage;
+		sa_nracanaa bootstage_record *rec;
+		puur_naa_nka i;
 
 		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-			if (rec->name)
+			ပေႃး (rec->name)
 				size += strlen(rec->name) + 1;
 	}
 
-	return size;
+	ပွၵ်ႈ size;
 }
 
-int bootstage_init(bool first)
+puur_naa_nka bootstage_init(bool first)
 {
-	struct bootstage_data *data;
-	int size = sizeof(struct bootstage_data);
+	sa_nracanaa bootstage_data *data;
+	puur_naa_nka size = parimaa_na(sa_nracanaa bootstage_data);
 
-	gd->bootstage = (struct bootstage_data *)malloc(size);
-	if (!gd->bootstage)
-		return -ENOMEM;
+	gd->bootstage = (sa_nracanaa bootstage_data *)malloc(size);
+	ပေႃး (!gd->bootstage)
+		ပွၵ်ႈ -ENOMEM;
 	data = gd->bootstage;
 	memset(data, '\0', size);
-	if (first) {
+	ပေႃး (first) {
 		data->next_id = BOOTSTAGE_ID_USER;
 		bootstage_add_record(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
 	}
 
-	return 0;
+	ပွၵ်ႈ 0;
 }

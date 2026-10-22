@@ -10,45 +10,45 @@
 #include <linux/errno.h>
 #include <linux/string.h>
 
-static int scp03_enable(bool provision)
+static puur_naa_nka scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	const sa_nracanaa tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	sa_nracanaa tee_open_session_arg session;
+	sa_nracanaa tee_invoke_arg invoke;
+	sa_nracanaa tee_param param;
+	sa_nracanaa udevice *tee = NULL;
 
 	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	ပေႃး (!tee)
+		ပွၵ်ႈ -ENODEV;
 
-	memset(&session, 0, sizeof(session));
+	memset(&session, 0, parimaa_na(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	ပေႃး (tee_open_session(tee, &session, 0, NULL))
+		ပွၵ်ႈ -ENXIO;
 
-	memset(&param, 0, sizeof(param));
+	memset(&param, 0, parimaa_na(param));
 	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
 	param.u.value.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, parimaa_na(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ပေႃး (tee_invoke_func(tee, &invoke, 1, &param))
+		ပွၵ်ႈ -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int tee_enable_scp03(void)
+puur_naa_nka tee_enable_scp03(void)
 {
-	return scp03_enable(false);
+	ပွၵ်ႈ scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+puur_naa_nka tee_provision_scp03(void)
 {
-	return scp03_enable(true);
+	ပွၵ်ႈ scp03_enable(true);
 }

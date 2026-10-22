@@ -12,76 +12,76 @@
 #include <asm/cache.h>
 #include <asm/io.h>
 
-struct blk_dev {
-	const char *ifname;
-	const char *filename;
-	char dev_part_str[8];
+sa_nracanaa blk_dev {
+	const var_na *ifname;
+	const var_na *filename;
+	var_na dev_part_str[8];
 };
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
 	loff_t actlen;
-	int ret;
-	struct blk_dev *dev = (struct blk_dev *)load->priv;
+	puur_naa_nka ret;
+	sa_nracanaa blk_dev *dev = (sa_nracanaa blk_dev *)load->priv;
 
 	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	ပေႃး (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		ပွၵ်ႈ ret;
 	}
 
 	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
 		      &actlen);
-	if (ret < 0) {
+	ပေႃး (ret < 0) {
 		printf("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		ပွၵ်ႈ ret;
 	}
 
-	return actlen;
+	ပွၵ်ႈ actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+puur_naa_nka spl_blk_load_image(sa_nracanaa spl_image_info *spl_image,
+		       sa_nracanaa spl_boot_device *bootdev,
+		       ga_nanaa uclass_id uclass_id, puur_naa_nka devnum, puur_naa_nka partnum)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	struct blk_desc *blk_desc;
+	const var_na *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
+	sa_nracanaa blk_desc *blk_desc;
 	loff_t filesize;
-	struct blk_dev dev;
-	struct spl_load_info load;
-	int ret;
+	sa_nracanaa blk_dev dev;
+	sa_nracanaa spl_load_info load;
+	puur_naa_nka ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
+	ပေႃး (!blk_desc) {
 		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+		ပွၵ်ႈ -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
 
 	dev.filename = filename;
 	dev.ifname = blk_get_uclass_name(uclass_id);
-	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
+	snprintf(dev.dev_part_str, parimaa_na(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
 	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	ပေႃး (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		ပွၵ်ႈ ret;
 	}
 
 	ret = fs_size(filename, &filesize);
-	if (ret) {
+	ပေႃး (ret) {
 		printf("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		ပွၵ်ႈ ret;
 	}
 
 	spl_load_init(&load, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	ပွၵ်ႈ spl_load(spl_image, bootdev, &load, filesize, 0);
 }
