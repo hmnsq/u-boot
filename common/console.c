@@ -4,216 +4,216 @@
  * Paolo Scaffardi, AIRVENT SAM s.p.a - RIMINI(ITALY), arsenio@tin.it
  */
 
-#define LOG_CATEGORY	LOGC_CONSOLE
+#घोषणा LOG_CATEGORY	LOGC_CONSOLE
 
-#include <console.h>
-#include <debug_uart.h>
-#include <display_options.h>
-#include <dm.h>
-#include <env.h>
-#include <stdarg.h>
-#include <iomux.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <os.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <exports.h>
-#include <env_internal.h>
-#include <video_console.h>
-#include <watchdog.h>
-#include <asm/global_data.h>
-#include <linux/delay.h>
+#समावेश <console.h>
+#समावेश <debug_uart.h>
+#समावेश <display_options.h>
+#समावेश <dm.h>
+#समावेश <env.h>
+#समावेश <stdarg.h>
+#समावेश <iomux.h>
+#समावेश <malloc.h>
+#समावेश <mapmem.h>
+#समावेश <os.h>
+#समावेश <serial.h>
+#समावेश <stdio_dev.h>
+#समावेश <exports.h>
+#समावेश <env_internal.h>
+#समावेश <video_console.h>
+#समावेश <watchdog.h>
+#समावेश <asm/global_data.h>
+#समावेश <linux/delay.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_तथ्य_PTR;
 
-#define CSI "\x1b["
+#घोषणा CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
-	int flags)
+अटल पूर्णांक on_console(स्थिर अक्षर *name, स्थिर अक्षर *मूल्य, क्रमागत env_op op,
+	पूर्णांक flags)
 {
-	int console = -1;
+	पूर्णांक console = -1;
 
 	/* Check for console redirection */
-	if (strcmp(name, "stdin") == 0)
-		console = stdin;
-	else if (strcmp(name, "stdout") == 0)
-		console = stdout;
-	else if (strcmp(name, "stderr") == 0)
-		console = stderr;
+	अगर (म_भेद(name, "stdin") == 0)
+		console = मानक_निवेश;
+	अन्यथा अगर (म_भेद(name, "stdout") == 0)
+		console = मानक_निकास;
+	अन्यथा अगर (म_भेद(name, "stderr") == 0)
+		console = मानक_त्रुटि;
 
 	/* if not actually setting a console variable, we don't care */
-	if (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
-		return 0;
+	अगर (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
+		वापस 0;
 
-	switch (op) {
-	case env_op_create:
-	case env_op_overwrite:
+	चयन (op) {
+	हाल env_op_create:
+	हाल env_op_overwrite:
 
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
-				return 1;
-		} else {
+		अगर (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			अगर (iomux_doenv(console, मूल्य))
+				वापस 1;
+		} अन्यथा {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
-				return 1;
+			अगर (console_assign(console, मूल्य) < 0)
+				वापस 1;
 		}
 
-		return 0;
+		वापस 0;
 
-	case env_op_delete:
-		if ((flags & H_FORCE) == 0)
-			printf("Can't delete \"%s\"\n", name);
-		return 1;
+	हाल env_op_delete:
+		अगर ((flags & H_FORCE) == 0)
+			म_लिखो("Can't delete \"%s\"\n", name);
+		वापस 1;
 
-	default:
-		return 0;
+	शेष:
+		वापस 0;
 	}
 }
 U_BOOT_ENV_CALLBACK(console, on_console);
 
-#ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
-	int flags)
+#अगर_घोषित CONFIG_SILENT_CONSOLE
+अटल पूर्णांक on_silent(स्थिर अक्षर *name, स्थिर अक्षर *मूल्य, क्रमागत env_op op,
+	पूर्णांक flags)
 {
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
-		if (flags & H_INTERACTIVE)
-			return 0;
+	अगर (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
+		अगर (flags & H_INTERACTIVE)
+			वापस 0;
 
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
-		if ((flags & H_INTERACTIVE) == 0)
-			return 0;
+	अगर (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
+		अगर ((flags & H_INTERACTIVE) == 0)
+			वापस 0;
 
-	if (value != NULL)
+	अगर (मूल्य != शून्य)
 		gd->flags |= GD_FLG_SILENT;
-	else
+	अन्यथा
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return 0;
+	वापस 0;
 }
 U_BOOT_ENV_CALLBACK(silent, on_silent);
-#endif
+#पूर्ण_अगर
 
-#ifdef CONFIG_CONSOLE_RECORD
+#अगर_घोषित CONFIG_CONSOLE_RECORD
 /* helper function: access to gd->console_out and gd->console_in */
-static void console_record_putc(const char c)
+अटल व्योम console_record_putc(स्थिर अक्षर c)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start &&
-	     !membuf_putbyte((struct membuf *)&gd->console_out, c))
+	अगर (!(gd->flags & GD_FLG_RECORD))
+		वापस;
+	अगर  (gd->console_out.start &&
+	     !membuf_putbyte((काष्ठा membuf *)&gd->console_out, c))
 		gd->flags |= GD_FLG_RECORD_OVF;
 }
 
-static void console_record_puts(const char *s)
+अटल व्योम console_record_puts(स्थिर अक्षर *s)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start) {
-		int len = strlen(s);
+	अगर (!(gd->flags & GD_FLG_RECORD))
+		वापस;
+	अगर  (gd->console_out.start) {
+		पूर्णांक len = म_माप(s);
 
-		if (membuf_put((struct membuf *)&gd->console_out, s, len) !=
+		अगर (membuf_put((काष्ठा membuf *)&gd->console_out, s, len) !=
 		    len)
 			gd->flags |= GD_FLG_RECORD_OVF;
 	}
 }
 
-static int console_record_getc(void)
+अटल पूर्णांक console_record_getc(व्योम)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return -1;
-	if (!gd->console_in.start)
-		return -1;
+	अगर (!(gd->flags & GD_FLG_RECORD))
+		वापस -1;
+	अगर (!gd->console_in.start)
+		वापस -1;
 
-	return membuf_getbyte((struct membuf *)&gd->console_in);
+	वापस membuf_getbyte((काष्ठा membuf *)&gd->console_in);
 }
 
-static int console_record_tstc(void)
+अटल पूर्णांक console_record_tstc(व्योम)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return 0;
-	if (gd->console_in.start) {
-		if (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
-			return 1;
+	अगर (!(gd->flags & GD_FLG_RECORD))
+		वापस 0;
+	अगर (gd->console_in.start) {
+		अगर (membuf_peekbyte((काष्ठा membuf *)&gd->console_in) != -1)
+			वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
-#else
-static void console_record_putc(char c)
+#अन्यथा
+अटल व्योम console_record_putc(अक्षर c)
 {
 }
 
-static void console_record_puts(const char *s)
+अटल व्योम console_record_puts(स्थिर अक्षर *s)
 {
 }
 
-static int console_record_getc(void)
+अटल पूर्णांक console_record_getc(व्योम)
 {
-	return -1;
+	वापस -1;
 }
 
-static int console_record_tstc(void)
+अटल पूर्णांक console_record_tstc(व्योम)
 {
-	return 0;
+	वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#अगर CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /*
  * if overwrite_console returns 1, the stdin, stderr and stdout
  * are switched to the serial port, else the settings in the
  * environment are used
  */
-#ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
-#define OVERWRITE_CONSOLE overwrite_console()
-#else
-#define OVERWRITE_CONSOLE 0
-#endif /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
+#अगर_घोषित CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
+बाह्य पूर्णांक overwrite_console(व्योम);
+#घोषणा OVERWRITE_CONSOLE overwrite_console()
+#अन्यथा
+#घोषणा OVERWRITE_CONSOLE 0
+#पूर्ण_अगर /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
 
-#endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#पूर्ण_अगर /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-static int console_setfile(int file, struct stdio_dev * dev)
+अटल पूर्णांक console_setfile(पूर्णांक file, काष्ठा stdio_dev * dev)
 {
-	int error = 0;
+	पूर्णांक error = 0;
 
-	if (dev == NULL)
-		return -1;
+	अगर (dev == शून्य)
+		वापस -1;
 
-	switch (file) {
-	case stdin:
-	case stdout:
-	case stderr:
+	चयन (file) {
+	हाल मानक_निवेश:
+	हाल मानक_निकास:
+	हाल मानक_त्रुटि:
 		error = console_start(file, dev);
-		if (error)
-			break;
+		अगर (error)
+			अवरोध;
 
 		/* Assign the new device (leaving the existing one started) */
 		stdio_devices[file] = dev;
 
-#ifndef CONFIG_XPL_BUILD
+#अगर_अघोषित CONFIG_XPL_BUILD
 		/*
 		 * Update monitor functions
 		 * (to use the console stuff by other applications)
 		 */
-		switch (file) {
-		case stdin:
-			gd->jt->getc = getchar;
+		चयन (file) {
+		हाल मानक_निवेश:
+			gd->jt->अ_लो = अक्षर_लो;
 			gd->jt->tstc = tstc;
-			break;
-		case stdout:
-			gd->jt->putc  = putc;
-			gd->jt->puts  = puts;
+			अवरोध;
+		हाल मानक_निकास:
+			gd->jt->अ_दो  = अ_दो;
+			gd->jt->माला_दो  = माला_दो;
 			STDIO_DEV_ASSIGN_FLUSH(gd->jt, flush);
-			gd->jt->printf = printf;
-			break;
+			gd->jt->म_लिखो = म_लिखो;
+			अवरोध;
 		}
-#endif
-		break;
-	default:		/* Invalid file ID */
+#पूर्ण_अगर
+		अवरोध;
+	शेष:		/* Invalid file ID */
 		error = -1;
 	}
-	return error;
+	वापस error;
 }
 
 /**
@@ -223,33 +223,33 @@ static int console_setfile(int file, struct stdio_dev * dev)
  * Return: true if this device is in the serial uclass (or for pre-driver-model,
  * whether it is called "serial".
  */
-static bool console_dev_is_serial(struct stdio_dev *sdev)
+अटल bool console_dev_is_serial(काष्ठा stdio_dev *sdev)
 {
 	bool is_serial;
 
-	if (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
-		struct udevice *dev = sdev->priv;
+	अगर (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
+		काष्ठा udevice *dev = sdev->priv;
 
 		is_serial = device_get_uclass_id(dev) == UCLASS_SERIAL;
-	} else {
-		is_serial = !strcmp(sdev->name, "serial");
+	} अन्यथा {
+		is_serial = !म_भेद(sdev->name, "serial");
 	}
 
-	return is_serial;
+	वापस is_serial;
 }
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
+#अगर CONFIG_IS_ENABLED(CONSOLE_MUX)
 /** Console I/O multiplexing *******************************************/
 
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
-static struct stdio_dev *tstcdev;
-struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+अटल काष्ठा stdio_dev *tstcdev;
+काष्ठा stdio_dev **console_devices[MAX_FILES];
+पूर्णांक cd_गिनती[MAX_FILES];
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+अटल व्योम console_devices_set(पूर्णांक file, काष्ठा stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
-	cd_count[file] = 1;
+	cd_गिनती[file] = 1;
 }
 
 /**
@@ -263,18 +263,18 @@ static void console_devices_set(int file, struct stdio_dev *dev)
  * other words, we start console once before first STDIO device wants it and
  * stop after the last is gone.
  */
-static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+अटल bool console_needs_start_stop(पूर्णांक file, काष्ठा stdio_dev *sdev)
 {
-	int i;
+	पूर्णांक i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
-		if (i == file)
-			continue;
+	क्रम (i = 0; i < ARRAY_आकार(cd_गिनती); i++) {
+		अगर (i == file)
+			जारी;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
-			return false;
+		अगर (iomux_match_device(console_devices[i], cd_गिनती[i], sdev) >= 0)
+			वापस false;
 	}
-	return true;
+	वापस true;
 }
 
 /*
@@ -283,52 +283,52 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
  * only from fgetc() which assures it.
  * No attempt is made to demultiplex multiple input sources.
  */
-static int console_getc(int file)
+अटल पूर्णांक console_getc(पूर्णांक file)
 {
-	unsigned char ret;
+	अचिन्हित अक्षर ret;
 
 	/* This is never called with testcdev == NULL */
-	ret = tstcdev->getc(tstcdev);
-	tstcdev = NULL;
-	return ret;
+	ret = tstcdev->अ_लो(tstcdev);
+	tstcdev = शून्य;
+	वापस ret;
 }
 
 /*  Upper layer may have already called tstc(): check the saved result */
-static bool console_has_tstc(void)
+अटल bool console_has_tstc(व्योम)
 {
-	return !!tstcdev;
+	वापस !!tstcdev;
 }
 
-static int console_tstc(int file)
+अटल पूर्णांक console_tstc(पूर्णांक file)
 {
-	int i, ret;
-	struct stdio_dev *dev;
-	int prev;
+	पूर्णांक i, ret;
+	काष्ठा stdio_dev *dev;
+	पूर्णांक पूर्व;
 
-	prev = disable_ctrlc(1);
+	पूर्व = disable_ctrlc(1);
 	for_each_console_dev(i, file, dev) {
-		if (dev->tstc != NULL) {
+		अगर (dev->tstc != शून्य) {
 			ret = dev->tstc(dev);
-			if (ret > 0) {
+			अगर (ret > 0) {
 				tstcdev = dev;
-				disable_ctrlc(prev);
-				return ret;
+				disable_ctrlc(पूर्व);
+				वापस ret;
 			}
 		}
 	}
-	disable_ctrlc(prev);
+	disable_ctrlc(पूर्व);
 
-	return 0;
+	वापस 0;
 }
 
-static void console_putc(int file, const char c)
+अटल व्योम console_putc(पूर्णांक file, स्थिर अक्षर c)
 {
-	int i;
-	struct stdio_dev *dev;
+	पूर्णांक i;
+	काष्ठा stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->putc != NULL)
-			dev->putc(dev, c);
+		अगर (dev->अ_दो != शून्य)
+			dev->अ_दो(dev, c);
 	}
 }
 
@@ -340,709 +340,709 @@ static void console_putc(int file, const char c)
  *	else
  * @s: String to output
  */
-static void console_puts_select(int file, bool serial_only, const char *s)
+अटल व्योम console_puts_select(पूर्णांक file, bool serial_only, स्थिर अक्षर *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	पूर्णांक i;
+	काष्ठा stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
 		bool is_serial = console_dev_is_serial(dev);
 
-		if (dev->puts && serial_only == is_serial)
-			dev->puts(dev, s);
+		अगर (dev->माला_दो && serial_only == is_serial)
+			dev->माला_दो(dev, s);
 	}
 }
 
-void console_puts_select_stderr(bool serial_only, const char *s)
+व्योम console_puts_select_stderr(bool serial_only, स्थिर अक्षर *s)
 {
-	if (gd->flags & GD_FLG_DEVINIT)
-		console_puts_select(stderr, serial_only, s);
+	अगर (gd->flags & GD_FLG_DEVINIT)
+		console_puts_select(मानक_त्रुटि, serial_only, s);
 }
 
-int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
+पूर्णांक console_printf_select_stderr(bool serial_only, स्थिर अक्षर *fmt, ...)
 {
-	char buf[CONFIG_SYS_PBSIZE];
-	va_list args;
-	int ret;
+	अक्षर buf[CONFIG_SYS_PBSIZE];
+	बहु_सूची args;
+	पूर्णांक ret;
 
-	va_start(args, fmt);
+	बहु_शुरू(args, fmt);
 
 	/* For this to work, buf must be larger than anything we ever want to
 	 * print.
 	 */
-	ret = vscnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	ret = vscnprintf(buf, माप(buf), fmt, args);
+	बहु_पूर्ण(args);
 	console_puts_select_stderr(serial_only, buf);
 
-	return ret;
+	वापस ret;
 }
 
-static void console_puts(int file, const char *s)
+अटल व्योम console_puts(पूर्णांक file, स्थिर अक्षर *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	पूर्णांक i;
+	काष्ठा stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->puts != NULL)
-			dev->puts(dev, s);
+		अगर (dev->माला_दो != शून्य)
+			dev->माला_दो(dev, s);
 	}
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void console_flush(int file)
+#अगर_घोषित CONFIG_CONSOLE_FLUSH_SUPPORT
+अटल व्योम console_flush(पूर्णांक file)
 {
-	int i;
-	struct stdio_dev *dev;
+	पूर्णांक i;
+	काष्ठा stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->flush != NULL)
+		अगर (dev->flush != शून्य)
 			dev->flush(dev);
 	}
 }
-#endif
+#पूर्ण_अगर
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#अगर CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+अटल अंतरभूत व्योम console_doenv(पूर्णांक file, काष्ठा stdio_dev *dev)
 {
 	iomux_doenv(file, dev->name);
 }
-#endif
-#else
+#पूर्ण_अगर
+#अन्यथा
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+अटल व्योम console_devices_set(पूर्णांक file, काष्ठा stdio_dev *dev)
 {
 }
 
-static inline bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+अटल अंतरभूत bool console_needs_start_stop(पूर्णांक file, काष्ठा stdio_dev *sdev)
 {
-	return true;
+	वापस true;
 }
 
-static inline int console_getc(int file)
+अटल अंतरभूत पूर्णांक console_getc(पूर्णांक file)
 {
-	return stdio_devices[file]->getc(stdio_devices[file]);
+	वापस stdio_devices[file]->अ_लो(stdio_devices[file]);
 }
 
-static bool console_has_tstc(void)
+अटल bool console_has_tstc(व्योम)
 {
-	return false;
+	वापस false;
 }
 
-static inline int console_tstc(int file)
+अटल अंतरभूत पूर्णांक console_tstc(पूर्णांक file)
 {
-	return stdio_devices[file]->tstc(stdio_devices[file]);
+	वापस stdio_devices[file]->tstc(stdio_devices[file]);
 }
 
-static inline void console_putc(int file, const char c)
+अटल अंतरभूत व्योम console_putc(पूर्णांक file, स्थिर अक्षर c)
 {
-	stdio_devices[file]->putc(stdio_devices[file], c);
+	stdio_devices[file]->अ_दो(stdio_devices[file], c);
 }
 
-void console_puts_select(int file, bool serial_only, const char *s)
+व्योम console_puts_select(पूर्णांक file, bool serial_only, स्थिर अक्षर *s)
 {
-	if ((gd->flags & GD_FLG_DEVINIT) &&
+	अगर ((gd->flags & GD_FLG_DEVINIT) &&
 	    serial_only == console_dev_is_serial(stdio_devices[file]))
-		stdio_devices[file]->puts(stdio_devices[file], s);
+		stdio_devices[file]->माला_दो(stdio_devices[file], s);
 }
 
-static inline void console_puts(int file, const char *s)
+अटल अंतरभूत व्योम console_puts(पूर्णांक file, स्थिर अक्षर *s)
 {
-	stdio_devices[file]->puts(stdio_devices[file], s);
+	stdio_devices[file]->माला_दो(stdio_devices[file], s);
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static inline void console_flush(int file)
+#अगर_घोषित CONFIG_CONSOLE_FLUSH_SUPPORT
+अटल अंतरभूत व्योम console_flush(पूर्णांक file)
 {
-	if (stdio_devices[file]->flush)
+	अगर (stdio_devices[file]->flush)
 		stdio_devices[file]->flush(stdio_devices[file]);
 }
-#endif
+#पूर्ण_अगर
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#अगर CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+अटल अंतरभूत व्योम console_doenv(पूर्णांक file, काष्ठा stdio_dev *dev)
 {
 	console_setfile(file, dev);
 }
-#endif
-#endif /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
+#पूर्ण_अगर
+#पूर्ण_अगर /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
 
-static void __maybe_unused console_setfile_and_devices(int file, struct stdio_dev *dev)
+अटल व्योम __maybe_unused console_setfile_and_devices(पूर्णांक file, काष्ठा stdio_dev *dev)
 {
 	console_setfile(file, dev);
 	console_devices_set(file, dev);
 }
 
-int console_start(int file, struct stdio_dev *sdev)
+पूर्णांक console_start(पूर्णांक file, काष्ठा stdio_dev *sdev)
 {
-	int error;
+	पूर्णांक error;
 
-	if (!console_needs_start_stop(file, sdev))
-		return 0;
+	अगर (!console_needs_start_stop(file, sdev))
+		वापस 0;
 
 	/* Start new device */
-	if (sdev->start) {
+	अगर (sdev->start) {
 		error = sdev->start(sdev);
 		/* If it's not started don't use it */
-		if (error < 0)
-			return error;
+		अगर (error < 0)
+			वापस error;
 	}
-	return 0;
+	वापस 0;
 }
 
-void console_stop(int file, struct stdio_dev *sdev)
+व्योम console_stop(पूर्णांक file, काष्ठा stdio_dev *sdev)
 {
-	if (!console_needs_start_stop(file, sdev))
-		return;
+	अगर (!console_needs_start_stop(file, sdev))
+		वापस;
 
-	if (sdev->stop)
+	अगर (sdev->stop)
 		sdev->stop(sdev);
 }
 
 /** U-Boot INITIAL CONSOLE-NOT COMPATIBLE FUNCTIONS *************************/
 
-int serial_printf(const char *fmt, ...)
+पूर्णांक serial_printf(स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	अक्षर printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	बहु_शुरू(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, माप(printbuffer), fmt, args);
+	बहु_पूर्ण(args);
 
 	serial_puts(printbuffer);
-	return i;
+	वापस i;
 }
 
-int fgetc(int file)
+पूर्णांक ख_अक्षर_लो(पूर्णांक file)
 {
-	if ((unsigned int)file < MAX_FILES) {
+	अगर ((अचिन्हित पूर्णांक)file < MAX_FILES) {
 		/*
 		 * Effectively poll for input wherever it may be available.
 		 */
-		for (;;) {
+		क्रम (;;) {
 			schedule();
-			if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			अगर (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 				/*
 				 * Upper layer may have already called tstc() so
 				 * check for that first.
 				 */
-				if (console_has_tstc())
-					return console_getc(file);
+				अगर (console_has_tstc())
+					वापस console_getc(file);
 				console_tstc(file);
-			} else {
-				if (console_tstc(file))
-					return console_getc(file);
+			} अन्यथा {
+				अगर (console_tstc(file))
+					वापस console_getc(file);
 			}
 
 			/*
 			 * If the watchdog must be rate-limited then it should
 			 * already be handled in board-specific code.
 			 */
-			if (IS_ENABLED(CONFIG_WATCHDOG))
+			अगर (IS_ENABLED(CONFIG_WATCHDOG))
 				udelay(1);
 		}
 	}
 
-	return -1;
+	वापस -1;
 }
 
-int ftstc(int file)
+पूर्णांक ftstc(पूर्णांक file)
 {
-	if ((unsigned int)file < MAX_FILES)
-		return console_tstc(file);
+	अगर ((अचिन्हित पूर्णांक)file < MAX_FILES)
+		वापस console_tstc(file);
 
-	return -1;
+	वापस -1;
 }
 
-void fputc(int file, const char c)
+व्योम ख_अक्षर_दो(पूर्णांक file, स्थिर अक्षर c)
 {
-	if ((unsigned int)file < MAX_FILES)
+	अगर ((अचिन्हित पूर्णांक)file < MAX_FILES)
 		console_putc(file, c);
 }
 
-void fputs(int file, const char *s)
+व्योम ख_माला_दो(पूर्णांक file, स्थिर अक्षर *s)
 {
-	if ((unsigned int)file < MAX_FILES)
+	अगर ((अचिन्हित पूर्णांक)file < MAX_FILES)
 		console_puts(file, s);
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void fflush(int file)
+#अगर_घोषित CONFIG_CONSOLE_FLUSH_SUPPORT
+व्योम ख_साफ(पूर्णांक file)
 {
-	if ((unsigned int)file < MAX_FILES)
+	अगर ((अचिन्हित पूर्णांक)file < MAX_FILES)
 		console_flush(file);
 }
-#endif
+#पूर्ण_अगर
 
-int fprintf(int file, const char *fmt, ...)
+पूर्णांक ख_लिखो(पूर्णांक file, स्थिर अक्षर *fmt, ...)
 {
-	va_list args;
+	बहु_सूची args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	अक्षर printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	बहु_शुरू(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, माप(printbuffer), fmt, args);
+	बहु_पूर्ण(args);
 
 	/* Send to desired file */
-	fputs(file, printbuffer);
-	return i;
+	ख_माला_दो(file, printbuffer);
+	वापस i;
 }
 
 /** U-Boot INITIAL CONSOLE-COMPATIBLE FUNCTION *****************************/
 
-int getchar(void)
+पूर्णांक अक्षर_लो(व्योम)
 {
-	int ch;
+	पूर्णांक ch;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	अगर (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		वापस 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	अगर (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		वापस 0;
 
 	ch = console_record_getc();
-	if (ch != -1)
-		return ch;
+	अगर (ch != -1)
+		वापस ch;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	अगर (gd->flags & GD_FLG_DEVINIT) {
 		/* Get from the standard input */
-		return fgetc(stdin);
+		वापस ख_अक्षर_लो(मानक_निवेश);
 	}
 
 	/* Send directly to the handler */
-	return serial_getc();
+	वापस serial_getc();
 }
 
-int tstc(void)
+पूर्णांक tstc(व्योम)
 {
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	अगर (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		वापस 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	अगर (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		वापस 0;
 
-	if (console_record_tstc())
-		return 1;
+	अगर (console_record_tstc())
+		वापस 1;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	अगर (gd->flags & GD_FLG_DEVINIT) {
 		/* Test the standard input */
-		return ftstc(stdin);
+		वापस ftstc(मानक_निवेश);
 	}
 
 	/* Send directly to the handler */
-	return serial_tstc();
+	वापस serial_tstc();
 }
 
 /**
  * console_flush_stdin() - drops all pending characters from stdin
  */
-void console_flush_stdin(void)
+व्योम console_flush_stdin(व्योम)
 {
-	while (tstc())
-		(void)getchar();
+	जबतक (tstc())
+		(व्योम)अक्षर_लो();
 }
 
-#define PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
-#define PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
+#घोषणा PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
+#घोषणा PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
 
-#if CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-#define CIRC_BUF_IDX(idx) ((idx) % (unsigned long)CONFIG_VAL(PRE_CON_BUF_SZ))
+#अगर CONFIG_IS_ENABLED(PRE_CONSOLE_बफर)
+#घोषणा CIRC_BUF_IDX(idx) ((idx) % (अचिन्हित दीर्घ)CONFIG_VAL(PRE_CON_BUF_SZ))
 
-static void pre_console_putc(const char c)
+अटल व्योम pre_console_putc(स्थिर अक्षर c)
 {
-	char *buffer;
+	अक्षर *बफर;
 
-	if (gd->precon_buf_idx < 0)
-		return;
+	अगर (gd->precon_buf_idx < 0)
+		वापस;
 
-	buffer = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
+	बफर = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
 
-	buffer[CIRC_BUF_IDX(gd->precon_buf_idx++)] = c;
+	बफर[CIRC_BUF_IDX(gd->precon_buf_idx++)] = c;
 
-	unmap_sysmem(buffer);
+	unmap_sysmem(बफर);
 }
 
-static void pre_console_puts(const char *s)
+अटल व्योम pre_console_puts(स्थिर अक्षर *s)
 {
-	if (gd->precon_buf_idx < 0)
-		return;
+	अगर (gd->precon_buf_idx < 0)
+		वापस;
 
-	while (*s)
+	जबतक (*s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+अटल व्योम print_pre_console_बफर(पूर्णांक flushpoint)
 {
-	long in = 0, out = 0;
-	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
-	char *buf_in;
+	दीर्घ in = 0, out = 0;
+	अक्षर buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
+	अक्षर *buf_in;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	अगर (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		वापस;
 
 	buf_in = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
-	if (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
+	अगर (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
 		in = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
 
-	while (in < gd->precon_buf_idx)
+	जबतक (in < gd->precon_buf_idx)
 		buf_out[out++] = buf_in[CIRC_BUF_IDX(in++)];
 	unmap_sysmem(buf_in);
 
 	buf_out[out] = 0;
 
 	gd->precon_buf_idx = -1;
-	switch (flushpoint) {
-	case PRE_CONSOLE_FLUSHPOINT1_SERIAL:
-		puts(buf_out);
-		break;
-	case PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
-		console_puts_select(stdout, false, buf_out);
-		break;
+	चयन (flushpoint) {
+	हाल PRE_CONSOLE_FLUSHPOINT1_SERIAL:
+		माला_दो(buf_out);
+		अवरोध;
+	हाल PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
+		console_puts_select(मानक_निकास, false, buf_out);
+		अवरोध;
 	}
 	gd->precon_buf_idx = in;
 }
-#else
-static inline void pre_console_putc(const char c) {}
-static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
-#endif
+#अन्यथा
+अटल अंतरभूत व्योम pre_console_putc(स्थिर अक्षर c) {}
+अटल अंतरभूत व्योम pre_console_puts(स्थिर अक्षर *s) {}
+अटल अंतरभूत व्योम print_pre_console_बफर(पूर्णांक flushpoint) {}
+#पूर्ण_अगर
 
-void putc(const char c)
+व्योम अ_दो(स्थिर अक्षर c)
 {
-	if (!gd)
-		return;
+	अगर (!gd)
+		वापस;
 
 	console_record_putc(c);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	अगर (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_putc(c);
-		return;
+		वापस;
 	}
 
 	/* if we don't have a console yet, use the debug UART */
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	अगर (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printch(c);
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	अगर (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		अगर (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_putc(c);
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	अगर (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		वापस;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_putc(c);
+	अगर (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		वापस pre_console_putc(c);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	अगर (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
-		fputc(stdout, c);
-	} else {
+		ख_अक्षर_दो(मानक_निकास, c);
+	} अन्यथा {
 		/* Send directly to the handler */
 		pre_console_putc(c);
 		serial_putc(c);
 	}
 }
 
-void puts(const char *s)
+व्योम माला_दो(स्थिर अक्षर *s)
 {
-	if (!gd)
-		return;
+	अगर (!gd)
+		वापस;
 
 	console_record_puts(s);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	अगर (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_puts(s);
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	अगर (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printascii(s);
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	अगर (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		अगर (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_puts(s);
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	अगर (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		वापस;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_puts(s);
+	अगर (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		वापस pre_console_puts(s);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	अगर (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
-		fputs(stdout, s);
-	} else {
+		ख_माला_दो(मानक_निकास, s);
+	} अन्यथा {
 		/* Send directly to the handler */
 		pre_console_puts(s);
 		serial_puts(s);
 	}
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void flush(void)
+#अगर_घोषित CONFIG_CONSOLE_FLUSH_SUPPORT
+व्योम flush(व्योम)
 {
-	if (!gd)
-		return;
+	अगर (!gd)
+		वापस;
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	अगर (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_flush();
-		return;
+		वापस;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
-		return;
+	अगर (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
+		वापस;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	अगर (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		वापस;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	अगर (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		वापस;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return;
+	अगर (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		वापस;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	अगर (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
-		fflush(stdout);
-	} else {
+		ख_साफ(मानक_निकास);
+	} अन्यथा {
 		/* Send directly to the handler */
 		serial_flush();
 	}
 }
-#endif
+#पूर्ण_अगर
 
-#ifdef CONFIG_CONSOLE_RECORD
-int console_record_init(void)
+#अगर_घोषित CONFIG_CONSOLE_RECORD
+पूर्णांक console_record_init(व्योम)
 {
-	int ret;
+	पूर्णांक ret;
 
-	ret = membuf_new((struct membuf *)&gd->console_out,
+	ret = membuf_new((काष्ठा membuf *)&gd->console_out,
 			 gd->flags & GD_FLG_RELOC ?
-				CONFIG_CONSOLE_RECORD_OUT_SIZE :
-				CONFIG_CONSOLE_RECORD_OUT_SIZE_F);
-	if (ret)
-		return ret;
-	ret = membuf_new((struct membuf *)&gd->console_in,
-			 CONFIG_CONSOLE_RECORD_IN_SIZE);
+				CONFIG_CONSOLE_RECORD_OUT_आकार :
+				CONFIG_CONSOLE_RECORD_OUT_आकार_F);
+	अगर (ret)
+		वापस ret;
+	ret = membuf_new((काष्ठा membuf *)&gd->console_in,
+			 CONFIG_CONSOLE_RECORD_IN_आकार);
 
 	/* Start recording from the beginning */
 	gd->flags |= GD_FLG_RECORD;
 
-	return ret;
+	वापस ret;
 }
 
-void console_record_reset(void)
+व्योम console_record_reset(व्योम)
 {
-	membuf_purge((struct membuf *)&gd->console_out);
-	membuf_purge((struct membuf *)&gd->console_in);
+	membuf_purge((काष्ठा membuf *)&gd->console_out);
+	membuf_purge((काष्ठा membuf *)&gd->console_in);
 	gd->flags &= ~GD_FLG_RECORD_OVF;
 }
 
-int console_record_reset_enable(void)
+पूर्णांक console_record_reset_enable(व्योम)
 {
 	console_record_reset();
 	gd->flags |= GD_FLG_RECORD;
 
-	return 0;
+	वापस 0;
 }
 
-int console_record_readline(char *str, int maxlen)
+पूर्णांक console_record_readline(अक्षर *str, पूर्णांक maxlen)
 {
-	if (gd->flags & GD_FLG_RECORD_OVF)
-		return -ENOSPC;
-	if (console_record_isempty())
-		return -ENOENT;
+	अगर (gd->flags & GD_FLG_RECORD_OVF)
+		वापस -ENOSPC;
+	अगर (console_record_isempty())
+		वापस -ENOENT;
 
-	return membuf_readline((struct membuf *)&gd->console_out, str,
+	वापस membuf_readline((काष्ठा membuf *)&gd->console_out, str,
 				maxlen, '\0', false);
 }
 
-int console_record_avail(void)
+पूर्णांक console_record_avail(व्योम)
 {
-	return membuf_avail((struct membuf *)&gd->console_out);
+	वापस membuf_avail((काष्ठा membuf *)&gd->console_out);
 }
 
-bool console_record_isempty(void)
+bool console_record_isempty(व्योम)
 {
-	return membuf_isempty((struct membuf *)&gd->console_out);
+	वापस membuf_isempty((काष्ठा membuf *)&gd->console_out);
 }
 
-int console_in_puts(const char *str)
+पूर्णांक console_in_puts(स्थिर अक्षर *str)
 {
-	return membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
+	वापस membuf_put((काष्ठा membuf *)&gd->console_in, str, म_माप(str));
 }
 
-#endif
+#पूर्ण_अगर
 
 /* test if ctrl-c was pressed */
-static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
-int ctrlc(void)
+अटल पूर्णांक ctrlc_disabled = 0;	/* see disable_ctrl() */
+अटल पूर्णांक ctrlc_was_pressed = 0;
+पूर्णांक ctrlc(व्योम)
 {
-	if (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
-		if (tstc()) {
-			switch (getchar()) {
-			case 0x03:		/* ^C - Control C */
+	अगर (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
+		अगर (tstc()) {
+			चयन (अक्षर_लो()) {
+			हाल 0x03:		/* ^C - Control C */
 				ctrlc_was_pressed = 1;
-				return 1;
-			default:
-				break;
+				वापस 1;
+			शेष:
+				अवरोध;
 			}
 		}
 	}
 
-	return 0;
+	वापस 0;
 }
 /* Reads user's confirmation.
    Returns 1 if user's input is "y", "Y", "yes" or "YES"
 */
-int confirm_yesno(void)
+पूर्णांक confirm_yesno(व्योम)
 {
-	int i;
-	char str_input[5];
+	पूर्णांक i;
+	अक्षर str_निवेश[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
-		str_input[i] = getchar();
-		putc(str_input[i]);
-		if (str_input[i] == '\r')
-			break;
+	जबतक (i < माप(str_निवेश)) {
+		str_निवेश[i] = अक्षर_लो();
+		अ_दो(str_निवेश[i]);
+		अगर (str_निवेश[i] == '\r')
+			अवरोध;
 		i++;
 	}
-	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
-	    strncmp(str_input, "Y\r", 2) == 0 ||
-	    strncmp(str_input, "yes\r", 4) == 0 ||
-	    strncmp(str_input, "YES\r", 4) == 0)
-		return 1;
-	return 0;
+	अ_दो('\n');
+	अगर (म_भेदन(str_निवेश, "y\r", 2) == 0 ||
+	    म_भेदन(str_निवेश, "Y\r", 2) == 0 ||
+	    म_भेदन(str_निवेश, "yes\r", 4) == 0 ||
+	    म_भेदन(str_निवेश, "YES\r", 4) == 0)
+		वापस 1;
+	वापस 0;
 }
 /* pass 1 to disable ctrlc() checking, 0 to enable.
  * returns previous state
  */
-int disable_ctrlc(int disable)
+पूर्णांक disable_ctrlc(पूर्णांक disable)
 {
-	int prev = ctrlc_disabled;	/* save previous state */
+	पूर्णांक पूर्व = ctrlc_disabled;	/* save previous state */
 
 	ctrlc_disabled = disable;
-	return prev;
+	वापस पूर्व;
 }
 
-int had_ctrlc (void)
+पूर्णांक had_ctrlc (व्योम)
 {
-	return ctrlc_was_pressed;
+	वापस ctrlc_was_pressed;
 }
 
-void clear_ctrlc(void)
+व्योम clear_ctrlc(व्योम)
 {
 	ctrlc_was_pressed = 0;
 }
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+काष्ठा stdio_dev *console_खोज_dev(पूर्णांक flags, स्थिर अक्षर *name)
 {
-	struct stdio_dev *dev;
+	काष्ठा stdio_dev *dev;
 
 	dev = stdio_get_by_name(name);
-	if (dev && (dev->flags & flags))
-		return dev;
+	अगर (dev && (dev->flags & flags))
+		वापस dev;
 
-	return NULL;
+	वापस शून्य;
 }
 
-int console_assign(int file, const char *devname)
+पूर्णांक console_assign(पूर्णांक file, स्थिर अक्षर *devname)
 {
-	int flag;
-	struct stdio_dev *dev;
+	पूर्णांक flag;
+	काष्ठा stdio_dev *dev;
 
 	/* Check for valid file */
 	flag = stdio_file_to_flags(file);
-	if (flag < 0)
-		return flag;
+	अगर (flag < 0)
+		वापस flag;
 
 	/* Check for valid device name */
 
-	dev = console_search_dev(flag, devname);
+	dev = console_खोज_dev(flag, devname);
 
-	if (dev)
-		return console_setfile(file, dev);
+	अगर (dev)
+		वापस console_setfile(file, dev);
 
-	return -1;
+	वापस -1;
 }
 
 /* return true if the 'silent' flag is removed */
-static bool console_update_silent(void)
+अटल bool console_update_silent(व्योम)
 {
-	unsigned long flags = gd->flags;
+	अचिन्हित दीर्घ flags = gd->flags;
 
-	if (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
-		return false;
+	अगर (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
+		वापस false;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
+	अगर (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		वापस false;
 	}
 
-	if (env_get("silent")) {
+	अगर (env_get("silent")) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		वापस false;
 	}
 
 	gd->flags &= ~GD_FLG_SILENT;
 
-	return !!(flags & GD_FLG_SILENT);
+	वापस !!(flags & GD_FLG_SILENT);
 }
 
-int console_announce_r(void)
+पूर्णांक console_announce_r(व्योम)
 {
-#if !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+#अगर !CONFIG_IS_ENABLED(PRE_CONSOLE_बफर)
+	अक्षर buf[DISPLAY_OPTIONS_BANNER_लंबाई];
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, माप(buf));
 
-	console_puts_select(stdout, false, buf);
-#endif
+	console_puts_select(मानक_निकास, false, buf);
+#पूर्ण_अगर
 
-	return 0;
+	वापस 0;
 }
 
 /* Called before relocation - use serial functions */
-int console_init_f(void)
+पूर्णांक console_init_f(व्योम)
 {
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
 	console_update_silent();
 
-	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
+	print_pre_console_बफर(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
-	return 0;
+	वापस 0;
 }
 
-int console_clear(void)
+पूर्णांक console_clear(व्योम)
 {
 	/*
 	 * Send clear screen and home
@@ -1051,37 +1051,37 @@ int console_clear(void)
 	 * through an API and only be written to serial terminals, not video
 	 * displays
 	 */
-	printf(CSI "2J" CSI "1;1H");
-	if (IS_ENABLED(CONFIG_VIDEO_ANSI))
-		return 0;
+	म_लिखो(CSI "2J" CSI "1;1H");
+	अगर (IS_ENABLED(CONFIG_VIDEO_ANSI))
+		वापस 0;
 
-	if (IS_ENABLED(CONFIG_VIDEO)) {
-		struct udevice *dev;
-		int ret;
+	अगर (IS_ENABLED(CONFIG_VIDEO)) {
+		काष्ठा udevice *dev;
+		पूर्णांक ret;
 
 		ret = uclass_first_device_err(UCLASS_VIDEO_CONSOLE, &dev);
-		if (ret)
-			return ret;
+		अगर (ret)
+			वापस ret;
 		ret = vidconsole_clear_and_reset(dev);
-		if (ret)
-			return ret;
+		अगर (ret)
+			वापस ret;
 	}
 
-	return 0;
+	वापस 0;
 }
 
-static char *get_stdio(const u8 std)
+अटल अक्षर *get_stdio(स्थिर u8 std)
 {
-	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
+	वापस stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
-static void stdio_print_current_devices(void)
+अटल व्योम stdio_print_current_devices(व्योम)
 {
-	char *stdinname = NULL;
-	char *stdoutname = NULL;
-	char *stderrname = NULL;
+	अक्षर *stdinname = शून्य;
+	अक्षर *stdoutname = शून्य;
+	अक्षर *stderrname = शून्य;
 
-	if (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
+	अगर (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
 	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)) {
 		/* stdin stdout and stderr are in environment */
 		stdinname  = env_get("stdin");
@@ -1089,43 +1089,43 @@ static void stdio_print_current_devices(void)
 		stderrname = env_get("stderr");
 	}
 
-	stdinname = stdinname ? : get_stdio(stdin);
-	stdoutname = stdoutname ? : get_stdio(stdout);
-	stderrname = stderrname ? : get_stdio(stderr);
+	stdinname = stdinname ? : get_stdio(मानक_निवेश);
+	stdoutname = stdoutname ? : get_stdio(मानक_निकास);
+	stderrname = stderrname ? : get_stdio(मानक_त्रुटि);
 
 	/* Print information */
-	puts("In:    ");
-	printf("%s\n", stdinname);
+	माला_दो("In:    ");
+	म_लिखो("%s\n", stdinname);
 
-	puts("Out:   ");
-	printf("%s\n", stdoutname);
+	माला_दो("Out:   ");
+	म_लिखो("%s\n", stdoutname);
 
-	puts("Err:   ");
-	printf("%s\n", stderrname);
+	माला_दो("Err:   ");
+	म_लिखो("%s\n", stderrname);
 }
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#अगर CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+पूर्णांक console_init_r(व्योम)
 {
-	char *stdinname, *stdoutname, *stderrname;
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL, *errdev = NULL;
-	int i;
-	int iomux_err = 0;
-	int flushpoint;
+	अक्षर *stdinname, *stdoutname, *stderrname;
+	काष्ठा stdio_dev *inputdev = शून्य, *outputdev = शून्य, *errdev = शून्य;
+	पूर्णांक i;
+	पूर्णांक iomux_err = 0;
+	पूर्णांक flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	अगर (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	अन्यथा
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/* set default handlers at first */
-	gd->jt->getc  = serial_getc;
+	gd->jt->अ_लो  = serial_getc;
 	gd->jt->tstc  = serial_tstc;
-	gd->jt->putc  = serial_putc;
-	gd->jt->puts  = serial_puts;
-	gd->jt->printf = serial_printf;
+	gd->jt->अ_दो  = serial_putc;
+	gd->jt->माला_दो  = serial_puts;
+	gd->jt->म_लिखो = serial_printf;
 
 	/* stdin stdout and stderr are in environment */
 	/* scan for it */
@@ -1133,76 +1133,76 @@ int console_init_r(void)
 	stdoutname = env_get("stdout");
 	stderrname = env_get("stderr");
 
-	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			iomux_err = iomux_doenv(stdin, stdinname);
-			iomux_err += iomux_doenv(stdout, stdoutname);
-			iomux_err += iomux_doenv(stderr, stderrname);
-			if (!iomux_err)
+	अगर (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
+		inputdev  = console_खोज_dev(DEV_FLAGS_निवेश,  stdinname);
+		outputdev = console_खोज_dev(DEV_FLAGS_OUTPUT, stdoutname);
+		errdev    = console_खोज_dev(DEV_FLAGS_OUTPUT, stderrname);
+		अगर (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			iomux_err = iomux_doenv(मानक_निवेश, stdinname);
+			iomux_err += iomux_doenv(मानक_निकास, stdoutname);
+			iomux_err += iomux_doenv(मानक_त्रुटि, stderrname);
+			अगर (!iomux_err)
 				/* Successful, so skip all the code below. */
-				goto done;
+				जाओ done;
 		}
 	}
 	/* if the devices are overwritten or not found, use default device */
-	if (inputdev == NULL) {
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
+	अगर (inputdev == शून्य) {
+		inputdev  = console_खोज_dev(DEV_FLAGS_निवेश,  "serial");
 	}
-	if (outputdev == NULL) {
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	अगर (outputdev == शून्य) {
+		outputdev = console_खोज_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
-	if (errdev == NULL) {
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	अगर (errdev == शून्य) {
+		errdev    = console_खोज_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	अगर (outputdev != शून्य) {
 		/* need to set a console if not done above. */
-		console_doenv(stdout, outputdev);
+		console_doenv(मानक_निकास, outputdev);
 	}
-	if (errdev != NULL) {
+	अगर (errdev != शून्य) {
 		/* need to set a console if not done above. */
-		console_doenv(stderr, errdev);
+		console_doenv(मानक_त्रुटि, errdev);
 	}
-	if (inputdev != NULL) {
+	अगर (inputdev != शून्य) {
 		/* need to set a console if not done above. */
-		console_doenv(stdin, inputdev);
+		console_doenv(मानक_निवेश, inputdev);
 	}
 
 done:
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	अगर (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
-	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
+	अगर (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
-		for (i = 0; i < MAX_FILES; i++)
+		क्रम (i = 0; i < MAX_FILES; i++)
 			env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
-	return 0;
+	print_pre_console_बफर(flushpoint);
+	वापस 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#अन्यथा /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+पूर्णांक console_init_r(व्योम)
 {
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL;
-	int i;
-	struct list_head *list = stdio_get_list();
-	struct list_head *pos;
-	struct stdio_dev *dev;
-	int flushpoint;
+	काष्ठा stdio_dev *inputdev = शून्य, *outputdev = शून्य;
+	पूर्णांक i;
+	काष्ठा list_शीर्ष *list = stdio_get_list();
+	काष्ठा list_शीर्ष *pos;
+	काष्ठा stdio_dev *dev;
+	पूर्णांक flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	अगर (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	अन्यथा
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/*
@@ -1211,84 +1211,84 @@ int console_init_r(void)
 	 * console to serial console in this case or suppress it if
 	 * "silent" mode was requested.
 	 */
-	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
-		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
+	अगर (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
+		अगर (!(gd->flags & GD_FLG_SILENT))
+			outputdev = console_खोज_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
 	/* Scan devices looking for input and output devices */
 	list_for_each(pos, list) {
-		dev = list_entry(pos, struct stdio_dev, list);
+		dev = list_entry(pos, काष्ठा stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		अगर ((dev->flags & DEV_FLAGS_निवेश) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
-		if ((dev->flags & DEV_FLAGS_OUTPUT) &&
+		अगर ((dev->flags & DEV_FLAGS_OUTPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !outputdev))
 			outputdev = dev;
 
 		/* The current serial console is the preferred stdio. */
-		if (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
-			break;
+		अगर (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
+			अवरोध;
 	}
 
 	/* Initializes output console first */
-	if (outputdev != NULL) {
-		console_setfile_and_devices(stdout, outputdev);
-		console_setfile_and_devices(stderr, outputdev);
+	अगर (outputdev != शून्य) {
+		console_setfile_and_devices(मानक_निकास, outputdev);
+		console_setfile_and_devices(मानक_त्रुटि, outputdev);
 	}
 
 	/* Initializes input console */
-	if (inputdev != NULL)
-		console_setfile_and_devices(stdin, inputdev);
+	अगर (inputdev != शून्य)
+		console_setfile_and_devices(मानक_निवेश, inputdev);
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	अगर (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
 	/* Setting environment variables */
-	for (i = 0; i < MAX_FILES; i++) {
+	क्रम (i = 0; i < MAX_FILES; i++) {
 		env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
-	return 0;
+	print_pre_console_बफर(flushpoint);
+	वापस 0;
 }
 
-#endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#पूर्ण_अगर /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-int console_remove_by_name(const char *name)
+पूर्णांक console_remove_by_name(स्थिर अक्षर *name)
 {
-	int err = 0;
+	पूर्णांक err = 0;
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	int fnum;
+#अगर CONFIG_IS_ENABLED(CONSOLE_MUX)
+	पूर्णांक fnum;
 
 	log_debug("removing console device %s\n", name);
-	for (fnum = 0; fnum < MAX_FILES; fnum++) {
-		struct stdio_dev **src, **dest;
-		int i;
+	क्रम (fnum = 0; fnum < MAX_FILES; fnum++) {
+		काष्ठा stdio_dev **src, **dest;
+		पूर्णांक i;
 
-		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
+		log_debug("file %d: %d devices: ", fnum, cd_गिनती[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
-			struct stdio_dev *sdev = *src;
-			int ret = 0;
+		क्रम (i = 0; i < cd_गिनती[fnum]; i++, src++) {
+			काष्ठा stdio_dev *sdev = *src;
+			पूर्णांक ret = 0;
 
-			if (!strcmp(sdev->name, name))
+			अगर (!म_भेद(sdev->name, name))
 				ret = stdio_deregister_dev(sdev, true);
-			else
+			अन्यथा
 				*dest++ = *src;
-			if (ret && !err)
+			अगर (ret && !err)
 				err = ret;
 		}
-		cd_count[fnum] = dest - console_devices[fnum];
-		log_debug("now %d\n", cd_count[fnum]);
+		cd_गिनती[fnum] = dest - console_devices[fnum];
+		log_debug("now %d\n", cd_गिनती[fnum]);
 	}
-#endif /* CONSOLE_MUX */
+#पूर्ण_अगर /* CONSOLE_MUX */
 
-	return err;
+	वापस err;
 }

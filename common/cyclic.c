@@ -8,59 +8,59 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#समावेश <cyclic.h>
+#समावेश <log.h>
+#समावेश <malloc.h>
+#समावेश <time.h>
+#समावेश <linux/errno.h>
+#समावेश <linux/list.h>
+#समावेश <asm/global_data.h>
+#समावेश <u-boot/schedule.h>
+#समावेश <uthread.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_तथ्य_PTR;
 
-void hw_watchdog_reset(void);
+व्योम hw_watchdog_reset(व्योम);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+अटल bool cyclic_is_registered(स्थिर काष्ठा cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	स्थिर काष्ठा cyclic_info *c;
 
 	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+		अगर (c == cyclic)
+			वापस true;
 	}
 
-	return false;
+	वापस false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+व्योम cyclic_register(काष्ठा cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, स्थिर अक्षर *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	स_रखो(cyclic, 0, माप(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
 	cyclic->name = name;
 	cyclic->delay_us = delay_us;
 	cyclic->start_time_us = get_timer_us(0);
-	hlist_add_head(&cyclic->list, &gd->cyclic_list);
+	hlist_add_शीर्ष(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+व्योम cyclic_unregister(काष्ठा cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	अगर (!cyclic_is_registered(cyclic))
+		वापस;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+अटल व्योम cyclic_run(व्योम)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	काष्ठा cyclic_info *cyclic;
+	काष्ठा hlist_गाँठ *tmp;
 	u64 now, after, cpu_time;
 
 	/*
@@ -73,12 +73,12 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	अगर (hlist_empty(&gd->cyclic_list))
+		वापस;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	अगर (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		वापस;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
@@ -87,9 +87,9 @@ static void cyclic_run(void)
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		अगर (time_after_eq64(now, cyclic->अग्र_call)) {
 			/* Call cyclic function and account it's cpu-time */
-			cyclic->next_call = now + cyclic->delay_us;
+			cyclic->अग्र_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
 			after = get_timer_us(0);
 			cyclic->run_cnt++;
@@ -98,7 +98,7 @@ static void cyclic_run(void)
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			अगर ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
 				       cyclic->name, cpu_time,
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+व्योम schedule(व्योम)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	अगर (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
+	अगर (gd)
 		cyclic_run();
 
 	uthread_schedule();
 }
 
-int cyclic_unregister_all(void)
+पूर्णांक cyclic_unregister_all(व्योम)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	काष्ठा cyclic_info *cyclic;
+	काष्ठा hlist_गाँठ *tmp;
 
 	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	वापस 0;
 }

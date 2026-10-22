@@ -3,48 +3,48 @@
  * Copyright (C) 2020 Stefan Roese <sr@denx.de>
  */
 
-#include <image.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/sections.h>
-#include <spl.h>
+#समावेश <image.h>
+#समावेश <log.h>
+#समावेश <malloc.h>
+#समावेश <mapmem.h>
+#समावेश <asm/sections.h>
+#समावेश <spl.h>
 
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
+#समावेश <lzma/LzmaTypes.h>
+#समावेश <lzma/LzmaDec.h>
+#समावेश <lzma/LzmaTools.h>
 
-#define LZMA_LEN	(1 << 20)
+#घोषणा LZMA_LEN	(1 << 20)
 
-static void spl_parse_legacy_validate(ulong start, ulong size)
+अटल व्योम spl_parse_legacy_validate(ulong start, ulong आकार)
 {
 	ulong spl_start = (ulong)_start;
-	ulong spl_end = (ulong)&_image_binary_end;
-	ulong end = start + size;
+	ulong spl_end = (ulong)&image_द्विआधारी_end;
+	ulong end = start + आकार;
 
-	if ((start >= spl_start && start < spl_end) ||
+	अगर ((start >= spl_start && start < spl_end) ||
 	    (end > spl_start && end <= spl_end) ||
 	    (start < spl_start && end >= spl_end) ||
 	    (start > end && end > spl_start))
 		panic("SPL: Image overlaps SPL\n");
 
-	if (size > CONFIG_SYS_BOOTM_LEN)
+	अगर (आकार > CONFIG_SYS_BOOTM_LEN)
 		panic("SPL: Image too large\n");
 }
 
-int spl_parse_legacy_header(struct spl_image_info *spl_image,
-			    const struct legacy_img_hdr *header)
+पूर्णांक spl_parse_legacy_header(काष्ठा spl_image_info *spl_image,
+			    स्थिर काष्ठा legacy_img_hdr *header)
 {
-	u32 header_size = sizeof(struct legacy_img_hdr);
+	u32 header_आकार = माप(काष्ठा legacy_img_hdr);
 
 	/* check uImage header CRC */
-	if (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK) &&
+	अगर (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK) &&
 	    !image_check_hcrc(header)) {
-		puts("SPL: Image header CRC check failed!\n");
-		return -EINVAL;
+		माला_दो("SPL: Image header CRC check failed!\n");
+		वापस -EINVAL;
 	}
 
-	if (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
+	अगर (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
 		/*
 		 * On some system (e.g. powerpc), the load-address and
 		 * entry-point is located at address 0. We can't load
@@ -52,68 +52,68 @@ int spl_parse_legacy_header(struct spl_image_info *spl_image,
 		 */
 		spl_image->load_addr = image_get_load(header);
 		spl_image->entry_point = image_get_ep(header);
-		spl_image->size = image_get_data_size(header);
-	} else {
+		spl_image->आकार = image_get_तथ्य_आकार(header);
+	} अन्यथा {
 		spl_image->entry_point = image_get_ep(header);
 		/* Load including the header */
 		spl_image->load_addr = image_get_load(header) -
-			header_size;
-		spl_image->size = image_get_data_size(header) +
-			header_size;
+			header_आकार;
+		spl_image->आकार = image_get_तथ्य_आकार(header) +
+			header_आकार;
 	}
 
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
+#अगर_घोषित CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
 	/* store uImage data length and CRC to check later */
-	spl_image->dcrc_data = image_get_load(header);
-	spl_image->dcrc_length = image_get_data_size(header);
+	spl_image->dcrc_तथ्य = image_get_load(header);
+	spl_image->dcrc_लंबाई = image_get_तथ्य_आकार(header);
 	spl_image->dcrc = image_get_dcrc(header);
-#endif
+#पूर्ण_अगर
 
 	spl_image->os = image_get_os(header);
 	spl_image->name = image_get_name(header);
 	debug(PHASE_PROMPT
 	      "payload image: %32s load addr: 0x%lx size: %d\n",
-	      spl_image->name, spl_image->load_addr, spl_image->size);
+	      spl_image->name, spl_image->load_addr, spl_image->आकार);
 
-	spl_parse_legacy_validate(spl_image->load_addr, spl_image->size);
+	spl_parse_legacy_validate(spl_image->load_addr, spl_image->आकार);
 	spl_parse_legacy_validate(spl_image->entry_point, 0);
 
-	return 0;
+	वापस 0;
 }
 
-int spl_load_legacy_lzma(struct spl_image_info *spl_image,
-			 struct spl_load_info *load, ulong offset)
+पूर्णांक spl_load_legacy_lzma(काष्ठा spl_image_info *spl_image,
+			 काष्ठा spl_load_info *load, ulong offset)
 {
-	SizeT lzma_len = LZMA_LEN;
-	void *src;
-	ulong dataptr, overhead, size;
-	int ret;
+	आकार_T lzma_len = LZMA_LEN;
+	व्योम *src;
+	ulong dataptr, overhead, आकार;
+	पूर्णांक ret;
 
 	/* dataptr points to compressed payload  */
-	dataptr = ALIGN_DOWN(sizeof(struct legacy_img_hdr),
+	dataptr = ALIGN_DOWN(माप(काष्ठा legacy_img_hdr),
 			     spl_get_bl_len(load));
-	overhead = sizeof(struct legacy_img_hdr) - dataptr;
-	size = ALIGN(spl_image->size + overhead, spl_get_bl_len(load));
+	overhead = माप(काष्ठा legacy_img_hdr) - dataptr;
+	आकार = ALIGN(spl_image->आकार + overhead, spl_get_bl_len(load));
 	dataptr += offset;
 
 	debug("LZMA: Decompressing %08lx to %08lx\n",
 	      dataptr, spl_image->load_addr);
-	src = malloc(size);
-	if (!src) {
-		printf("Unable to allocate %d bytes for LZMA\n",
-		       spl_image->size);
-		return -ENOMEM;
+	src = दो_स्मृति(आकार);
+	अगर (!src) {
+		म_लिखो("Unable to allocate %d bytes for LZMA\n",
+		       spl_image->आकार);
+		वापस -ENOMEM;
 	}
 
-	load->read(load, dataptr, size, src);
+	load->पढ़ो(load, dataptr, आकार, src);
 	ret = lzmaBuffToBuffDecompress(map_sysmem(spl_image->load_addr,
-						  spl_image->size), &lzma_len,
-				       src + overhead, spl_image->size);
-	if (ret) {
-		printf("LZMA decompression error: %d\n", ret);
-		return ret;
+						  spl_image->आकार), &lzma_len,
+				       src + overhead, spl_image->आकार);
+	अगर (ret) {
+		म_लिखो("LZMA decompression error: %d\n", ret);
+		वापस ret;
 	}
 
-	spl_image->size = lzma_len;
-	return 0;
+	spl_image->आकार = lzma_len;
+	वापस 0;
 }

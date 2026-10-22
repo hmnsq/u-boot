@@ -6,7 +6,7 @@
 #include <linux/linkage.h>
 #include <asm/assembler.h>
 
-ENTRY(spl_optee_entry)
+प्रथम(spl_optee_entry)
 	ldr lr, =CONFIG_TEXT_BASE
 	mov pc, r3
 ENDPROC(spl_optee_entry)

@@ -8,170 +8,170 @@
  * FAT Image Functions copied from spl_mmc.c
  */
 
-#include <env.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <fat.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/libfdt.h>
-#include <asm/cache.h>
+#समावेश <env.h>
+#समावेश <log.h>
+#समावेश <spl.h>
+#समावेश <spl_load.h>
+#समावेश <fat.h>
+#समावेश <errno.h>
+#समावेश <image.h>
+#समावेश <linux/libfdt.h>
+#समावेश <asm/cache.h>
 
-static int fat_registered;
+अटल पूर्णांक fat_registered;
 
-void spl_fat_force_reregister(void)
+व्योम spl_fat_force_reregister(व्योम)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+अटल पूर्णांक spl_register_fat_device(काष्ठा blk_desc *block_dev, पूर्णांक partition)
 {
-	int err = 0;
+	पूर्णांक err = 0;
 
-	if (fat_registered)
-		return err;
+	अगर (fat_registered)
+		वापस err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
-		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+	अगर (err) {
+		म_लिखो("%s: fat register err - %d\n", __func__, err);
+		वापस err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	वापस err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+अटल ulong spl_fit_read(काष्ठा spl_load_info *load, ulong file_offset,
+			  ulong आकार, व्योम *buf)
 {
-	struct legacy_img_hdr *header;
+	काष्ठा legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	पूर्णांक ret;
+	अक्षर *filename = load->priv;
 
-	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ret = fat_read_file(filename, buf, file_offset, आकार, &actread);
+	अगर (ret)
+		वापस ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	अगर (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (काष्ठा legacy_img_hdr *)buf;
+		अगर (image_get_magic(header) != FDT_MAGIC)
+			वापस आकार;
 	}
 
-	return actread;
+	वापस actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+पूर्णांक spl_load_image_fat(काष्ठा spl_image_info *spl_image,
+		       काष्ठा spl_boot_device *bootdev,
+		       काष्ठा blk_desc *block_dev, पूर्णांक partition,
+		       स्थिर अक्षर *filename)
 {
-	int err;
-	loff_t size;
-	struct spl_load_info load;
+	पूर्णांक err;
+	loff_t आकार;
+	काष्ठा spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		goto end;
+	अगर (err)
+		जाओ end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
-		err = fat_size(filename, &size);
-		if (err)
-			goto end;
-	} else {
-		size = 0;
+	अगर (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+		err = fat_आकार(filename, &आकार);
+		अगर (err)
+			जाओ end;
+	} अन्यथा {
+		आकार = 0;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename,
+	spl_load_init(&load, spl_fit_read, (व्योम *)filename,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
 
-	err = spl_load(spl_image, bootdev, &load, size, 0);
+	err = spl_load(spl_image, bootdev, &load, आकार, 0);
 
 end:
-	if (err < 0) {
+	अगर (err < 0) {
 		spl_fat_force_reregister();
-		printf("%s: error reading image %s, err - %d\n",
+		म_लिखो("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	वापस err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#अगर CONFIG_IS_ENABLED(OS_BOOT)
+पूर्णांक spl_load_image_fat_os(काष्ठा spl_image_info *spl_image,
+			  काष्ठा spl_boot_device *bootdev,
+			  काष्ठा blk_desc *block_dev, पूर्णांक partition)
 {
-	int err;
-	__maybe_unused char *file;
+	पूर्णांक err;
+	__maybe_unused अक्षर *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	अगर (err)
+		वापस err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	अगर (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		जाओ defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	अगर (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
-			puts("spl: falling back to default\n");
-			goto defaults;
+		अगर (err != 0) {
+			माला_दो("spl: falling back to default\n");
+			जाओ defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#अगर IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		अगर (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
-				printf("spl: error reading args %s, err - %d, falling back to default\n",
+				file, (व्योम *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+			अगर (err <= 0) {
+				म_लिखो("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				जाओ defaults;
 			}
-			return 0;
-		} else
-			puts("spl: falcon_args_file not set in environment, falling back to default\n");
-#endif
+			वापस 0;
+		} अन्यथा
+			माला_दो("spl: falcon_args_file not set in environment, falling back to default\n");
+#पूर्ण_अगर
 
-	} else
-		puts("spl: falcon_image_file not set in environment, falling back to default\n");
+	} अन्यथा
+		माला_दो("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
 
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	अगर (err)
+		वापस err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#अगर IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
-		printf("%s: error reading image %s, err - %d\n",
+			    (व्योम *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+	अगर (err <= 0) {
+		म_लिखो("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		वापस -1;
 	}
-#endif
+#पूर्ण_अगर
 
-	return 0;
+	वापस 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#अन्यथा
+पूर्णांक spl_load_image_fat_os(काष्ठा spl_image_info *spl_image,
+			  काष्ठा spl_boot_device *bootdev,
+			  काष्ठा blk_desc *block_dev, पूर्णांक partition)
 {
-	return -ENOSYS;
+	वापस -ENOSYS;
 }
-#endif
+#पूर्ण_अगर

@@ -5,83 +5,83 @@
  *
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <image.h>
-#include <fs.h>
-#include <asm/cache.h>
-#include <asm/io.h>
+#समावेश <spl.h>
+#समावेश <spl_load.h>
+#समावेश <image.h>
+#समावेश <fs.h>
+#समावेश <asm/cache.h>
+#समावेश <asm/io.h>
 
-struct blk_dev {
-	const char *ifname;
-	const char *filename;
-	char dev_part_str[8];
+काष्ठा blk_dev {
+	स्थिर अक्षर *ifname;
+	स्थिर अक्षर *filename;
+	अक्षर dev_part_str[8];
 };
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+अटल ulong spl_fit_read(काष्ठा spl_load_info *load, ulong file_offset,
+			  ulong आकार, व्योम *buf)
 {
 	loff_t actlen;
-	int ret;
-	struct blk_dev *dev = (struct blk_dev *)load->priv;
+	पूर्णांक ret;
+	काष्ठा blk_dev *dev = (काष्ठा blk_dev *)load->priv;
 
 	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	अगर (ret) {
+		म_लिखो("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		वापस ret;
 	}
 
-	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
+	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, आकार,
 		      &actlen);
-	if (ret < 0) {
-		printf("spl: error reading image %s. Err - %d\n",
+	अगर (ret < 0) {
+		म_लिखो("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		वापस ret;
 	}
 
-	return actlen;
+	वापस actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+पूर्णांक spl_blk_load_image(काष्ठा spl_image_info *spl_image,
+		       काष्ठा spl_boot_device *bootdev,
+		       क्रमागत uclass_id uclass_id, पूर्णांक devnum, पूर्णांक partnum)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	struct blk_desc *blk_desc;
+	स्थिर अक्षर *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
+	काष्ठा blk_desc *blk_desc;
 	loff_t filesize;
-	struct blk_dev dev;
-	struct spl_load_info load;
-	int ret;
+	काष्ठा blk_dev dev;
+	काष्ठा spl_load_info load;
+	पूर्णांक ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
-		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+	अगर (!blk_desc) {
+		म_लिखो("blk desc for %d %d not found\n", uclass_id, devnum);
+		वापस -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
 
 	dev.filename = filename;
 	dev.ifname = blk_get_uclass_name(uclass_id);
-	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
+	snprintf(dev.dev_part_str, माप(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
 	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	अगर (ret) {
+		म_लिखो("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		वापस ret;
 	}
 
-	ret = fs_size(filename, &filesize);
-	if (ret) {
-		printf("spl: unable to get file size: %s. Err - %d\n",
+	ret = fs_आकार(filename, &filesize);
+	अगर (ret) {
+		म_लिखो("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		वापस ret;
 	}
 
 	spl_load_init(&load, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	वापस spl_load(spl_image, bootdev, &load, filesize, 0);
 }

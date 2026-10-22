@@ -1,23 +1,23 @@
-#include <command.h>
-#include <exports.h>
-#include <malloc.h>
-#include <spi.h>
-#include <i2c.h>
-#include <asm/global_data.h>
+#समावेश <command.h>
+#समावेश <exports.h>
+#समावेश <malloc.h>
+#समावेश <spi.h>
+#समावेश <i2c.h>
+#समावेश <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_तथ्य_PTR;
 
-unsigned long get_version(void)
+अचिन्हित दीर्घ get_version(व्योम)
 {
-	return XF_VERSION;
+	वापस XF_VERSION;
 }
 
-#define EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
+#घोषणा EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
 
-int jumptable_init(void)
+पूर्णांक jumptable_init(व्योम)
 {
-	gd->jt = malloc(sizeof(struct jt_funcs));
-#include <_exports.h>
+	gd->jt = दो_स्मृति(माप(काष्ठा jt_funcs));
+#समावेश <_exports.h>
 
-	return 0;
+	वापस 0;
 }

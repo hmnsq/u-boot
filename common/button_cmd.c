@@ -4,19 +4,19 @@
  *   Author: Casey Connolly <casey.connolly@linaro.org>
  */
 
-#include <button.h>
-#include <command.h>
-#include <env.h>
-#include <log.h>
-#include <stdio.h>
+#समावेश <button.h>
+#समावेश <command.h>
+#समावेश <env.h>
+#समावेश <log.h>
+#समावेश <stdio.h>
 
 /* Some sane limit "just in case" */
-#define MAX_BTN_CMDS 32
+#घोषणा MAX_BTN_CMDS 32
 
-struct button_cmd {
+काष्ठा button_cmd {
 	bool pressed;
-	const char *btn_name;
-	const char *cmd;
+	स्थिर अक्षर *btn_name;
+	स्थिर अक्षर *cmd;
 };
 
 /*
@@ -30,54 +30,54 @@ struct button_cmd {
  *
  * Returns 1 if a command was found, 0 otherwise.
  */
-static int get_button_cmd(int n, struct button_cmd *cmd)
+अटल पूर्णांक get_button_cmd(पूर्णांक n, काष्ठा button_cmd *cmd)
 {
-	const char *cmd_str;
-	struct udevice *btn = NULL;
-	char buf[24];
+	स्थिर अक्षर *cmd_str;
+	काष्ठा udevice *btn = शून्य;
+	अक्षर buf[24];
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d_name", n);
+	snprintf(buf, माप(buf), "button_cmd_%d_name", n);
 	cmd->btn_name = env_get(buf);
-	if (!cmd->btn_name)
-		return 0;
+	अगर (!cmd->btn_name)
+		वापस 0;
 
 	button_get_by_label(cmd->btn_name, &btn);
-	if (!btn) {
+	अगर (!btn) {
 		log_err("No button labelled '%s'\n", cmd->btn_name);
-		return 0;
+		वापस 0;
 	}
 
 	cmd->pressed = button_get_state(btn) == BUTTON_ON;
 	/* If the button isn't pressed then cmd->cmd will be unused so don't waste
 	 * cycles reading it
 	 */
-	if (!cmd->pressed)
-		return 1;
+	अगर (!cmd->pressed)
+		वापस 1;
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d", n);
+	snprintf(buf, माप(buf), "button_cmd_%d", n);
 	cmd_str = env_get(buf);
-	if (!cmd_str) {
+	अगर (!cmd_str) {
 		log_err("No command set for button '%s'\n", cmd->btn_name);
-		return 0;
+		वापस 0;
 	}
 
 	cmd->cmd = cmd_str;
 
-	return 1;
+	वापस 1;
 }
 
-void process_button_cmds(void)
+व्योम process_button_cmds(व्योम)
 {
-	struct button_cmd cmd = {0};
-	int i = 0;
+	काष्ठा button_cmd cmd = {0};
+	पूर्णांक i = 0;
 
-	while (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
-		if (!cmd.pressed)
-			continue;
+	जबतक (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
+		अगर (!cmd.pressed)
+			जारी;
 
 		log_info("BTN '%s'> %s\n", cmd.btn_name, cmd.cmd);
 		run_command(cmd.cmd, CMD_FLAG_ENV);
 		/* Don't run commands for multiple buttons */
-		return;
+		वापस;
 	}
 }

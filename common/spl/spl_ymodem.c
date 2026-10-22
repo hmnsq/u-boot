@@ -8,14 +8,14 @@
  *
  * Matt Porter <mporter@ti.com>
  */
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <xyzModem.h>
-#include <linux/libfdt.h>
+#समावेश <gzip.h>
+#समावेश <image.h>
+#समावेश <log.h>
+#समावेश <spl.h>
+#समावेश <xyzModem.h>
+#समावेश <linux/libfdt.h>
 
-#define BUF_SIZE 1024
+#घोषणा BUF_आकार 1024
 
 /*
  * Information required to load image using ymodem.
@@ -23,142 +23,142 @@
  * @image_read: Now of bytes read from the image.
  * @buf: pointer to the previous read block.
  */
-struct ymodem_fit_info {
-	int image_read;
-	char *buf;
+काष्ठा ymodem_fit_info {
+	पूर्णांक image_read;
+	अक्षर *buf;
 };
 
-static int getcymodem(void) {
-	if (tstc())
-		return (getchar());
-	return -1;
+अटल पूर्णांक getcymodem(व्योम) {
+	अगर (tstc())
+		वापस (अक्षर_लो());
+	वापस -1;
 }
 
-static ulong ymodem_read_fit(struct spl_load_info *load, ulong offset,
-			     ulong size, void *addr)
+अटल ulong ymodem_read_fit(काष्ठा spl_load_info *load, ulong offset,
+			     ulong आकार, व्योम *addr)
 {
-	int res, err, buf_offset;
-	struct ymodem_fit_info *info = load->priv;
-	char *buf = info->buf;
-	ulong copy_size = size;
+	पूर्णांक res, err, buf_offset;
+	काष्ठा ymodem_fit_info *info = load->priv;
+	अक्षर *buf = info->buf;
+	ulong copy_आकार = आकार;
 
-	while (info->image_read < offset) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	जबतक (info->image_read < offset) {
+		res = xyzModem_stream_read(buf, BUF_आकार, &err);
+		अगर (res <= 0)
+			अवरोध;
 
 		info->image_read += res;
 	}
 
-	if (info->image_read > offset) {
+	अगर (info->image_read > offset) {
 		res = info->image_read - offset;
-		if (info->image_read % BUF_SIZE)
-			buf_offset = (info->image_read % BUF_SIZE);
-		else
-			buf_offset = BUF_SIZE;
+		अगर (info->image_read % BUF_आकार)
+			buf_offset = (info->image_read % BUF_आकार);
+		अन्यथा
+			buf_offset = BUF_आकार;
 
-		if (res > copy_size) {
-			memcpy(addr, &buf[buf_offset - res], copy_size);
-			goto done;
+		अगर (res > copy_आकार) {
+			स_नकल(addr, &buf[buf_offset - res], copy_आकार);
+			जाओ done;
 		}
-		memcpy(addr, &buf[buf_offset - res], res);
+		स_नकल(addr, &buf[buf_offset - res], res);
 		addr = addr + res;
-		copy_size -= res;
+		copy_आकार -= res;
 	}
 
-	while (info->image_read < offset + size) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	जबतक (info->image_read < offset + आकार) {
+		res = xyzModem_stream_read(buf, BUF_आकार, &err);
+		अगर (res <= 0)
+			अवरोध;
 
 		info->image_read += res;
-		if (res > copy_size) {
-			memcpy(addr, buf, copy_size);
-			goto done;
+		अगर (res > copy_आकार) {
+			स_नकल(addr, buf, copy_आकार);
+			जाओ done;
 		}
-		memcpy(addr, buf, res);
+		स_नकल(addr, buf, res);
 		addr += res;
-		copy_size -= res;
+		copy_आकार -= res;
 	}
 
 done:
-	return size;
+	वापस आकार;
 }
 
-int spl_ymodem_load_image(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev)
+पूर्णांक spl_ymodem_load_image(काष्ठा spl_image_info *spl_image,
+			  काष्ठा spl_boot_device *bootdev)
 {
-	ulong size = 0;
-	int err;
-	int res;
-	int ret;
+	ulong आकार = 0;
+	पूर्णांक err;
+	पूर्णांक res;
+	पूर्णांक ret;
 	connection_info_t info;
-	char buf[BUF_SIZE];
-	struct legacy_img_hdr *ih = NULL;
+	अक्षर buf[BUF_आकार];
+	काष्ठा legacy_img_hdr *ih = शून्य;
 	ulong addr = 0;
 
 	info.mode = xyzModem_ymodem;
 	ret = xyzModem_stream_open(&info, &err);
-	if (ret) {
-		printf("spl: ymodem err - %s\n", xyzModem_error(err));
-		return ret;
+	अगर (ret) {
+		म_लिखो("spl: ymodem err - %s\n", xyzModem_error(err));
+		वापस ret;
 	}
 
-	res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-	if (res <= 0)
-		goto end_stream;
+	res = xyzModem_stream_read(buf, BUF_आकार, &err);
+	अगर (res <= 0)
+		जाओ end_stream;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
+	अगर (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL) &&
+	    image_get_magic((काष्ठा legacy_img_hdr *)buf) == FDT_MAGIC) {
 		addr = CONFIG_SYS_LOAD_ADDR;
-		ih = (struct legacy_img_hdr *)addr;
+		ih = (काष्ठा legacy_img_hdr *)addr;
 
-		memcpy((void *)addr, buf, res);
-		size += res;
+		स_नकल((व्योम *)addr, buf, res);
+		आकार += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		जबतक ((res = xyzModem_stream_read(buf, BUF_आकार, &err)) > 0) {
+			स_नकल((व्योम *)addr, buf, res);
+			आकार += res;
 			addr += res;
 		}
 
 		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			return ret;
-	} else if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
-		struct spl_load_info load;
-		struct ymodem_fit_info info;
+		अगर (ret)
+			वापस ret;
+	} अन्यथा अगर (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
+	    image_get_magic((काष्ठा legacy_img_hdr *)buf) == FDT_MAGIC) {
+		काष्ठा spl_load_info load;
+		काष्ठा ymodem_fit_info info;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, ymodem_read_fit, (void *)&info, 1);
+		spl_load_init(&load, ymodem_read_fit, (व्योम *)&info, 1);
 		info.buf = buf;
-		info.image_read = BUF_SIZE;
-		ret = spl_load_simple_fit(spl_image, &load, 0, (void *)buf);
-		size = info.image_read;
+		info.image_read = BUF_आकार;
+		ret = spl_load_simple_fit(spl_image, &load, 0, (व्योम *)buf);
+		आकार = info.image_read;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0)
-			size += res;
-	} else {
-		ih = (struct legacy_img_hdr *)buf;
+		जबतक ((res = xyzModem_stream_read(buf, BUF_आकार, &err)) > 0)
+			आकार += res;
+	} अन्यथा {
+		ih = (काष्ठा legacy_img_hdr *)buf;
 		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			goto end_stream;
-#ifdef CONFIG_SPL_GZIP
-		if (ih->ih_comp == IH_COMP_GZIP)
+		अगर (ret)
+			जाओ end_stream;
+#अगर_घोषित CONFIG_SPL_GZIP
+		अगर (ih->ih_comp == IH_COMP_GZIP)
 			addr = CONFIG_SYS_LOAD_ADDR;
-		else
-#endif
+		अन्यथा
+#पूर्ण_अगर
 			addr = spl_image->load_addr;
-		memcpy((void *)addr, buf, res);
-		ih = (struct legacy_img_hdr *)addr;
-		size += res;
+		स_नकल((व्योम *)addr, buf, res);
+		ih = (काष्ठा legacy_img_hdr *)addr;
+		आकार += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		जबतक ((res = xyzModem_stream_read(buf, BUF_आकार, &err)) > 0) {
+			स_नकल((व्योम *)addr, buf, res);
+			आकार += res;
 			addr += res;
 		}
 	}
@@ -167,22 +167,22 @@ end_stream:
 	xyzModem_stream_close(&err);
 	xyzModem_stream_terminate(false, &getcymodem);
 
-	printf("Loaded %lu bytes\n", size);
+	म_लिखो("Loaded %lu bytes\n", आकार);
 
-#ifdef CONFIG_SPL_GZIP
-	if (!(IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	      image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) &&
+#अगर_घोषित CONFIG_SPL_GZIP
+	अगर (!(IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
+	      image_get_magic((काष्ठा legacy_img_hdr *)buf) == FDT_MAGIC) &&
 	    (ih->ih_comp == IH_COMP_GZIP)) {
-		if (gunzip((void *)(spl_image->load_addr + sizeof(*ih)),
+		अगर (gunzip((व्योम *)(spl_image->load_addr + माप(*ih)),
 			   CONFIG_SYS_BOOTM_LEN,
-			   (void *)(CONFIG_SYS_LOAD_ADDR + sizeof(*ih)),
-			   &size)) {
-			puts("Uncompressing error\n");
-			return -EIO;
+			   (व्योम *)(CONFIG_SYS_LOAD_ADDR + माप(*ih)),
+			   &आकार)) {
+			माला_दो("Uncompressing error\n");
+			वापस -EIO;
 		}
 	}
-#endif
+#पूर्ण_अगर
 
-	return ret;
+	वापस ret;
 }
 SPL_LOAD_IMAGE_METHOD("UART", 0, BOOT_DEVICE_UART, spl_ymodem_load_image);

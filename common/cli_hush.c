@@ -73,65 +73,65 @@
  *      (eventually) remove all the printf's
  */
 
-#define __U_BOOT__
-#ifdef __U_BOOT__
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <vsprintf.h>
-#endif
-#ifndef __U_BOOT__
-#include <ctype.h>     /* isalpha, isdigit */
-#include <unistd.h>    /* getpid */
-#include <stdlib.h>    /* getenv, atoi */
-#include <string.h>    /* strchr */
-#include <stdio.h>     /* popen etc. */
-#include <glob.h>      /* glob, of course */
-#include <stdarg.h>    /* va_list */
-#include <errno.h>
-#include <fcntl.h>
-#include <getopt.h>    /* should be pretty obvious */
+#घोषणा __U_BOOT__
+#अगर_घोषित __U_BOOT__
+#समावेश <env.h>
+#समावेश <malloc.h>         /* malloc, free, realloc*/
+#समावेश <linux/ctype.h>    /* isalpha, isdigit */
+#समावेश <console.h>
+#समावेश <bootretry.h>
+#समावेश <cli.h>
+#समावेश <cli_hush.h>
+#समावेश <command.h>        /* find_cmd */
+#समावेश <vsprintf.h>
+#पूर्ण_अगर
+#अगर_अघोषित __U_BOOT__
+#समावेश <ctype.h>     /* isalpha, isdigit */
+#समावेश <unistd.h>    /* getpid */
+#समावेश <stdlib.h>    /* getenv, atoi */
+#समावेश <string.h>    /* strchr */
+#समावेश <stdio.h>     /* popen etc. */
+#समावेश <glob.h>      /* glob, of course */
+#समावेश <stdarg.h>    /* va_list */
+#समावेश <errno.h>
+#समावेश <fcntl.h>
+#समावेश <getopt.h>    /* should be pretty obvious */
 
-#include <sys/stat.h>  /* ulimit */
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <signal.h>
+#समावेश <sys/stat.h>  /* ulimit */
+#समावेश <sys/types.h>
+#समावेश <sys/wait.h>
+#समावेश <signal.h>
 
 /* #include <dmalloc.h> */
 
-#if 1
-#include "busybox.h"
-#include "cmdedit.h"
-#else
-#define applet_name "hush"
-#include "standalone.h"
-#define hush_main main
-#define BB_BANNER
-#endif
-#endif
-#define SPECIAL_VAR_SYMBOL 03
-#define SUBSTED_VAR_SYMBOL 04
-#ifndef __U_BOOT__
-#define FLAG_EXIT_FROM_LOOP 1
-#define FLAG_PARSE_SEMICOLON (1 << 1)		/* symbol ';' is special for parser */
-#define FLAG_REPARSING       (1 << 2)		/* >= 2nd pass */
+#अगर 1
+#समावेश "busybox.h"
+#समावेश "cmdedit.h"
+#अन्यथा
+#घोषणा applet_name "hush"
+#समावेश "standalone.h"
+#घोषणा hush_main मुख्य
+#घोषणा BB_BANNER
+#पूर्ण_अगर
+#पूर्ण_अगर
+#घोषणा SPECIAL_VAR_प्रतीक 03
+#घोषणा SUBSTED_VAR_प्रतीक 04
+#अगर_अघोषित __U_BOOT__
+#घोषणा FLAG_EXIT_FROM_LOOP 1
+#घोषणा FLAG_PARSE_SEMICOLON (1 << 1)		/* symbol ';' is special for parser */
+#घोषणा FLAG_REPARSING       (1 << 2)		/* >= 2nd pass */
 
-#endif
+#पूर्ण_अगर
 
-#ifdef __U_BOOT__
-#define EXIT_SUCCESS 0
-#define EOF -1
-#define syntax() syntax_err()
-#define xstrdup strdup
-#define error_msg printf
-#else
-typedef enum {
-	REDIRECT_INPUT     = 1,
+#अगर_घोषित __U_BOOT__
+#घोषणा निकास_सफल 0
+#घोषणा खातापूर्ण -1
+#घोषणा syntax() syntax_err()
+#घोषणा xstrdup strdup
+#घोषणा error_संदेश म_लिखो
+#अन्यथा
+प्रकार क्रमागत {
+	REDIRECT_निवेश     = 1,
 	REDIRECT_OVERWRITE = 2,
 	REDIRECT_APPEND    = 3,
 	REDIRECT_HEREIS    = 4,
@@ -140,7 +140,7 @@ typedef enum {
 
 /* The descrip member of this structure is only used to make debugging
  * output pretty */
-struct {int mode; int default_fd; char *descrip;} redir_table[] = {
+काष्ठा {पूर्णांक mode; पूर्णांक default_fd; अक्षर *descrip;} redir_table[] = {
 	{ 0,                         0, "()" },
 	{ O_RDONLY,                  0, "<"  },
 	{ O_CREAT|O_TRUNC|O_WRONLY,  1, ">"  },
@@ -148,9 +148,9 @@ struct {int mode; int default_fd; char *descrip;} redir_table[] = {
 	{ O_RDONLY,                 -1, "<<" },
 	{ O_RDWR,                    1, "<>" }
 };
-#endif
+#पूर्ण_अगर
 
-typedef enum {
+प्रकार क्रमागत {
 	PIPE_SEQ = 1,
 	PIPE_AND = 2,
 	PIPE_OR  = 3,
@@ -158,7 +158,7 @@ typedef enum {
 } pipe_style;
 
 /* might eventually control execution */
-typedef enum {
+प्रकार क्रमागत {
 	RES_NONE  = 0,
 	RES_IF    = 1,
 	RES_THEN  = 2,
@@ -174,329 +174,329 @@ typedef enum {
 	RES_IN    = 12,
 	RES_SNTX  = 13
 } reserved_style;
-#define FLAG_END   (1<<RES_NONE)
-#define FLAG_IF    (1<<RES_IF)
-#define FLAG_THEN  (1<<RES_THEN)
-#define FLAG_ELIF  (1<<RES_ELIF)
-#define FLAG_ELSE  (1<<RES_ELSE)
-#define FLAG_FI    (1<<RES_FI)
-#define FLAG_FOR   (1<<RES_FOR)
-#define FLAG_WHILE (1<<RES_WHILE)
-#define FLAG_UNTIL (1<<RES_UNTIL)
-#define FLAG_DO    (1<<RES_DO)
-#define FLAG_DONE  (1<<RES_DONE)
-#define FLAG_IN    (1<<RES_IN)
-#define FLAG_START (1<<RES_XXXX)
+#घोषणा FLAG_END   (1<<RES_NONE)
+#घोषणा FLAG_IF    (1<<RES_IF)
+#घोषणा FLAG_THEN  (1<<RES_THEN)
+#घोषणा FLAG_ELIF  (1<<RES_ELIF)
+#घोषणा FLAG_ELSE  (1<<RES_ELSE)
+#घोषणा FLAG_FI    (1<<RES_FI)
+#घोषणा FLAG_FOR   (1<<RES_FOR)
+#घोषणा FLAG_WHILE (1<<RES_WHILE)
+#घोषणा FLAG_UNTIL (1<<RES_UNTIL)
+#घोषणा FLAG_DO    (1<<RES_DO)
+#घोषणा FLAG_DONE  (1<<RES_DONE)
+#घोषणा FLAG_IN    (1<<RES_IN)
+#घोषणा FLAG_START (1<<RES_XXXX)
 
 /* This holds pointers to the various results of parsing */
-struct p_context {
-	struct child_prog *child;
-	struct pipe *list_head;
-	struct pipe *pipe;
-#ifndef __U_BOOT__
-	struct redir_struct *pending_redirect;
-#endif
+काष्ठा p_context {
+	काष्ठा child_prog *child;
+	काष्ठा pipe *list_शीर्ष;
+	काष्ठा pipe *pipe;
+#अगर_अघोषित __U_BOOT__
+	काष्ठा redir_struct *pending_redirect;
+#पूर्ण_अगर
 	reserved_style w;
-	int old_flag;				/* for figuring out valid reserved words */
-	struct p_context *stack;
-	int type;			/* define type of parser : ";$" common or special symbol */
+	पूर्णांक old_flag;				/* for figuring out valid reserved words */
+	काष्ठा p_context *ढेर;
+	पूर्णांक type;			/* define type of parser : ";$" common or special symbol */
 	/* How about quoting status? */
 };
 
-#ifndef __U_BOOT__
-struct redir_struct {
+#अगर_अघोषित __U_BOOT__
+काष्ठा redir_struct {
 	redir_type type;			/* type of redirection */
-	int fd;						/* file descriptor being redirected */
-	int dup;					/* -1, or file descriptor being duplicated */
-	struct redir_struct *next;	/* pointer to the next redirect in the list */
+	पूर्णांक fd;						/* file descriptor being redirected */
+	पूर्णांक dup;					/* -1, or file descriptor being duplicated */
+	काष्ठा redir_struct *अग्र;	/* pointer to the next redirect in the list */
 	glob_t word;				/* *word.gl_pathv is the filename */
 };
-#endif
+#पूर्ण_अगर
 
-struct child_prog {
-#ifndef __U_BOOT__
+काष्ठा child_prog {
+#अगर_अघोषित __U_BOOT__
 	pid_t pid;					/* 0 if exited */
-#endif
-	char **argv;				/* program name and arguments */
+#पूर्ण_अगर
+	अक्षर **argv;				/* program name and arguments */
 	/* was quoted when parsed; copy of struct o_string.nonnull field */
-	int *argv_nonnull;
-#ifdef __U_BOOT__
-	int    argc;                            /* number of program arguments */
-#endif
-	struct pipe *group;			/* if non-NULL, first in group or subshell */
-#ifndef __U_BOOT__
-	int subshell;				/* flag, non-zero if group must be forked */
-	struct redir_struct *redirects;	/* I/O redirections */
-	glob_t glob_result;			/* result of parameter globbing */
-	int is_stopped;				/* is the program currently running? */
-	struct pipe *family;		/* pointer back to the child's parent pipe */
-#endif
-	int sp;				/* number of SPECIAL_VAR_SYMBOL */
-	int type;
+	पूर्णांक *argv_nonnull;
+#अगर_घोषित __U_BOOT__
+	पूर्णांक    argc;                            /* number of program arguments */
+#पूर्ण_अगर
+	काष्ठा pipe *group;			/* if non-NULL, first in group or subshell */
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक subshell;				/* flag, non-zero if group must be forked */
+	काष्ठा redir_struct *redirects;	/* I/O redirections */
+	glob_t glob_परिणाम;			/* result of parameter globbing */
+	पूर्णांक is_stopped;				/* is the program currently running? */
+	काष्ठा pipe *family;		/* pointer back to the child's parent pipe */
+#पूर्ण_अगर
+	पूर्णांक sp;				/* number of SPECIAL_VAR_SYMBOL */
+	पूर्णांक type;
 };
 
-struct pipe {
-#ifndef __U_BOOT__
-	int jobid;					/* job number */
-#endif
-	int num_progs;				/* total number of programs in job */
-#ifndef __U_BOOT__
-	int running_progs;			/* number of programs running */
-	char *text;					/* name of job */
-	char *cmdbuf;				/* buffer various argv's point into */
+काष्ठा pipe {
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक jobid;					/* job number */
+#पूर्ण_अगर
+	पूर्णांक अंक_progs;				/* total number of programs in job */
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक running_progs;			/* number of programs running */
+	अक्षर *text;					/* name of job */
+	अक्षर *cmdbuf;				/* buffer various argv's point into */
 	pid_t pgrp;					/* process group ID for the job */
-#endif
-	struct child_prog *progs;	/* array of commands in pipe */
-	struct pipe *next;			/* to track background commands */
-#ifndef __U_BOOT__
-	int stopped_progs;			/* number of programs alive, but stopped */
-	int job_context;			/* bitmask defining current context */
-#endif
+#पूर्ण_अगर
+	काष्ठा child_prog *progs;	/* array of commands in pipe */
+	काष्ठा pipe *अग्र;			/* to track background commands */
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक stopped_progs;			/* number of programs alive, but stopped */
+	पूर्णांक job_context;			/* bitmask defining current context */
+#पूर्ण_अगर
 	pipe_style followup;		/* PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND */
 	reserved_style r_mode;		/* supports if, for, while, until */
 };
 
-#ifndef __U_BOOT__
-struct close_me {
-	int fd;
-	struct close_me *next;
+#अगर_अघोषित __U_BOOT__
+काष्ठा close_me {
+	पूर्णांक fd;
+	काष्ठा close_me *अग्र;
 };
-#endif
+#पूर्ण_अगर
 
-struct variables {
-	char *name;
-	char *value;
-	int flg_export;
-	int flg_read_only;
-	struct variables *next;
+काष्ठा variables {
+	अक्षर *name;
+	अक्षर *मूल्य;
+	पूर्णांक flg_export;
+	पूर्णांक flg_read_only;
+	काष्ठा variables *अग्र;
 };
 
 /* globals, connect us to the outside world
  * the first three support $?, $#, and $1 */
-#ifndef __U_BOOT__
-char **global_argv;
-unsigned int global_argc;
-#endif
-static unsigned int last_return_code;
-#ifndef __U_BOOT__
-extern char **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
-#endif
+#अगर_अघोषित __U_BOOT__
+अक्षर **global_argv;
+अचिन्हित पूर्णांक global_argc;
+#पूर्ण_अगर
+अटल अचिन्हित पूर्णांक last_return_code;
+#अगर_अघोषित __U_BOOT__
+बाह्य अक्षर **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
+#पूर्ण_अगर
 
 /* "globals" within this file */
-static uchar *ifs;
-static char map[256];
-#ifndef __U_BOOT__
-static int fake_mode;
-static int interactive;
-static struct close_me *close_me_head;
-static const char *cwd;
-static struct pipe *job_list;
-static unsigned int last_bg_pid;
-static unsigned int last_jobid;
-static unsigned int shell_terminal;
-static char *PS1;
-static char *PS2;
-struct variables shell_ver = { "HUSH_VERSION", "0.01", 1, 1, 0 };
-struct variables *top_vars = &shell_ver;
-#else
-static int flag_repeat = 0;
-static int do_repeat = 0;
-static struct variables *top_vars = NULL ;
-#endif /*__U_BOOT__ */
+अटल uchar *ifs;
+अटल अक्षर map[256];
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक fake_mode;
+अटल पूर्णांक interactive;
+अटल काष्ठा close_me *close_me_शीर्ष;
+अटल स्थिर अक्षर *cwd;
+अटल काष्ठा pipe *job_list;
+अटल अचिन्हित पूर्णांक last_bg_pid;
+अटल अचिन्हित पूर्णांक last_jobid;
+अटल अचिन्हित पूर्णांक shell_terminal;
+अटल अक्षर *PS1;
+अटल अक्षर *PS2;
+काष्ठा variables shell_ver = { "HUSH_VERSION", "0.01", 1, 1, 0 };
+काष्ठा variables *शीर्ष_vars = &shell_ver;
+#अन्यथा
+अटल पूर्णांक flag_repeat = 0;
+अटल पूर्णांक do_repeat = 0;
+अटल काष्ठा variables *शीर्ष_vars = शून्य ;
+#पूर्ण_अगर /*__U_BOOT__ */
 
-#define B_CHUNK (100)
-#define B_NOSPAC 1
+#घोषणा B_CHUNK (100)
+#घोषणा B_NOSPAC 1
 
-typedef struct {
-	char *data;
-	int length;
-	int maxlen;
-	int quote;
-	int nonnull;
+प्रकार काष्ठा {
+	अक्षर *तथ्य;
+	पूर्णांक लंबाई;
+	पूर्णांक maxlen;
+	पूर्णांक quote;
+	पूर्णांक nonnull;
 } o_string;
-#define NULL_O_STRING {NULL,0,0,0,0}
+#घोषणा NULL_O_STRING {शून्य,0,0,0,0}
 /* used for initialization:
 	o_string foo = NULL_O_STRING; */
 
 /* I can almost use ordinary FILE *.  Is open_memstream() universally
  * available?  Where is it documented? */
-struct in_str {
-	const unsigned char *p;
-#ifndef __U_BOOT__
-	char peek_buf[2];
-#endif
-	int __promptme;
-	int promptmode;
-#ifndef __U_BOOT__
-	FILE *file;
-#endif
-	int (*get) (struct in_str *);
-	int (*peek) (struct in_str *);
+काष्ठा in_str {
+	स्थिर अचिन्हित अक्षर *p;
+#अगर_अघोषित __U_BOOT__
+	अक्षर peek_buf[2];
+#पूर्ण_अगर
+	पूर्णांक __promptme;
+	पूर्णांक promptmode;
+#अगर_अघोषित __U_BOOT__
+	खाता *file;
+#पूर्ण_अगर
+	पूर्णांक (*get) (काष्ठा in_str *);
+	पूर्णांक (*peek) (काष्ठा in_str *);
 };
-#define b_getch(input) ((input)->get(input))
-#define b_peek(input) ((input)->peek(input))
+#घोषणा b_getch(निवेश) ((निवेश)->get(निवेश))
+#घोषणा b_peek(निवेश) ((निवेश)->peek(निवेश))
 
-#ifndef __U_BOOT__
-#define JOB_STATUS_FORMAT "[%d] %-22s %.40s\n"
+#अगर_अघोषित __U_BOOT__
+#घोषणा JOB_STATUS_FORMAT "[%d] %-22s %.40s\n"
 
-struct built_in_command {
-	char *cmd;					/* name */
-	char *descr;				/* description */
-	int (*function) (struct child_prog *);	/* function ptr */
+काष्ठा built_in_command {
+	अक्षर *cmd;					/* name */
+	अक्षर *descr;				/* description */
+	पूर्णांक (*function) (काष्ठा child_prog *);	/* function ptr */
 };
-#endif
+#पूर्ण_अगर
 
 /* define DEBUG_SHELL for debugging output (obviously ;-)) */
-#if 0
-#define DEBUG_SHELL
-#endif
+#अगर 0
+#घोषणा DEBUG_SHELL
+#पूर्ण_अगर
 
 /* This should be in utility.c */
-#ifdef DEBUG_SHELL
-#ifndef __U_BOOT__
-static void debug_printf(const char *format, ...)
+#अगर_घोषित DEBUG_SHELL
+#अगर_अघोषित __U_BOOT__
+अटल व्योम debug_printf(स्थिर अक्षर *format, ...)
 {
-	va_list args;
-	va_start(args, format);
-	vfprintf(stderr, format, args);
-	va_end(args);
+	बहु_सूची args;
+	बहु_शुरू(args, format);
+	भख_लिखो(मानक_त्रुटि, format, args);
+	बहु_पूर्ण(args);
 }
-#else
-#define debug_printf(fmt,args...)	printf (fmt ,##args)
-#endif
-#else
-static inline void debug_printf(const char *format, ...) { }
-#endif
-#define final_printf debug_printf
+#अन्यथा
+#घोषणा debug_printf(fmt,args...)	म_लिखो (fmt ,##args)
+#पूर्ण_अगर
+#अन्यथा
+अटल अंतरभूत व्योम debug_printf(स्थिर अक्षर *format, ...) { }
+#पूर्ण_अगर
+#घोषणा final_printf debug_printf
 
-#ifdef __U_BOOT__
-static void syntax_err(void) {
-	 printf("syntax error\n");
+#अगर_घोषित __U_BOOT__
+अटल व्योम syntax_err(व्योम) {
+	 म_लिखो("syntax error\n");
 }
-#else
-static void __syntax(char *file, int line) {
-	error_msg("syntax error %s:%d", file, line);
+#अन्यथा
+अटल व्योम __syntax(अक्षर *file, पूर्णांक पंक्ति) {
+	error_संदेश("syntax error %s:%d", file, पंक्ति);
 }
-#define syntax() __syntax(__FILE__, __LINE__)
-#endif
+#घोषणा syntax() __syntax(__खाता__, __LINE__)
+#पूर्ण_अगर
 
-#ifdef __U_BOOT__
-static void *xmalloc(size_t size);
-static void *xrealloc(void *ptr, size_t size);
-#else
+#अगर_घोषित __U_BOOT__
+अटल व्योम *xmalloc(माप_प्रकार आकार);
+अटल व्योम *xrealloc(व्योम *ptr, माप_प्रकार आकार);
+#अन्यथा
 /* Index of subroutines: */
 /*   function prototypes for builtins */
-static int builtin_cd(struct child_prog *child);
-static int builtin_env(struct child_prog *child);
-static int builtin_eval(struct child_prog *child);
-static int builtin_exec(struct child_prog *child);
-static int builtin_exit(struct child_prog *child);
-static int builtin_export(struct child_prog *child);
-static int builtin_fg_bg(struct child_prog *child);
-static int builtin_help(struct child_prog *child);
-static int builtin_jobs(struct child_prog *child);
-static int builtin_pwd(struct child_prog *child);
-static int builtin_read(struct child_prog *child);
-static int builtin_set(struct child_prog *child);
-static int builtin_shift(struct child_prog *child);
-static int builtin_source(struct child_prog *child);
-static int builtin_umask(struct child_prog *child);
-static int builtin_unset(struct child_prog *child);
-static int builtin_not_written(struct child_prog *child);
-#endif
+अटल पूर्णांक builtin_cd(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_env(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_eval(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_exec(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_exit(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_export(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_fg_bg(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_help(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_jobs(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_pwd(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_read(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_set(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_shift(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_source(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_umask(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_unset(काष्ठा child_prog *child);
+अटल पूर्णांक builtin_not_written(काष्ठा child_prog *child);
+#पूर्ण_अगर
 /*   o_string manipulation: */
-static int b_check_space(o_string *o, int len);
-static int b_addchr(o_string *o, int ch);
-static void b_reset(o_string *o);
-static int b_addqchr(o_string *o, int ch, int quote);
-#ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i);
-#endif
+अटल पूर्णांक b_check_space(o_string *o, पूर्णांक len);
+अटल पूर्णांक b_addchr(o_string *o, पूर्णांक ch);
+अटल व्योम b_reset(o_string *o);
+अटल पूर्णांक b_addqchr(o_string *o, पूर्णांक ch, पूर्णांक quote);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक b_adduint(o_string *o, अचिन्हित पूर्णांक i);
+#पूर्ण_अगर
 /*  in_str manipulations: */
-static int static_get(struct in_str *i);
-static int static_peek(struct in_str *i);
-static int file_get(struct in_str *i);
-static int file_peek(struct in_str *i);
-#ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, FILE *f);
-#else
-static void setup_file_in_str(struct in_str *i);
-#endif
-static void setup_string_in_str(struct in_str *i, const char *s);
-#ifndef __U_BOOT__
+अटल पूर्णांक static_get(काष्ठा in_str *i);
+अटल पूर्णांक static_peek(काष्ठा in_str *i);
+अटल पूर्णांक file_get(काष्ठा in_str *i);
+अटल पूर्णांक file_peek(काष्ठा in_str *i);
+#अगर_अघोषित __U_BOOT__
+अटल व्योम setup_file_in_str(काष्ठा in_str *i, खाता *f);
+#अन्यथा
+अटल व्योम setup_file_in_str(काष्ठा in_str *i);
+#पूर्ण_अगर
+अटल व्योम setup_string_in_str(काष्ठा in_str *i, स्थिर अक्षर *s);
+#अगर_अघोषित __U_BOOT__
 /*  close_me manipulations: */
-static void mark_open(int fd);
-static void mark_closed(int fd);
-static void close_all(void);
-#endif
+अटल व्योम mark_open(पूर्णांक fd);
+अटल व्योम mark_closed(पूर्णांक fd);
+अटल व्योम close_all(व्योम);
+#पूर्ण_अगर
 /*  "run" the final data structures: */
-static char *indenter(int i);
-static int free_pipe_list(struct pipe *head, int indent);
-static int free_pipe(struct pipe *pi, int indent);
+अटल अक्षर *indenter(पूर्णांक i);
+अटल पूर्णांक free_pipe_list(काष्ठा pipe *शीर्ष_2, पूर्णांक indent);
+अटल पूर्णांक free_pipe(काष्ठा pipe *pi, पूर्णांक indent);
 /*  really run the final data structures: */
-#ifndef __U_BOOT__
-static int setup_redirects(struct child_prog *prog, int squirrel[]);
-#endif
-static int run_list_real(struct pipe *pi);
-#ifndef __U_BOOT__
-static void pseudo_exec(struct child_prog *child) __attribute__ ((noreturn));
-#endif
-static int run_pipe_real(struct pipe *pi);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक setup_redirects(काष्ठा child_prog *prog, पूर्णांक squirrel[]);
+#पूर्ण_अगर
+अटल पूर्णांक run_list_real(काष्ठा pipe *pi);
+#अगर_अघोषित __U_BOOT__
+अटल व्योम pseudo_exec(काष्ठा child_prog *child) __attribute__ ((noreturn));
+#पूर्ण_अगर
+अटल पूर्णांक run_pipe_real(काष्ठा pipe *pi);
 /*   extended glob support: */
-#ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob);
-static int glob_needed(const char *s);
-static int xglob(o_string *dest, int flags, glob_t *pglob);
-#endif
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक globhack(स्थिर अक्षर *src, पूर्णांक flags, glob_t *pglob);
+अटल पूर्णांक glob_needed(स्थिर अक्षर *s);
+अटल पूर्णांक xglob(o_string *dest, पूर्णांक flags, glob_t *pglob);
+#पूर्ण_अगर
 /*   variable assignment: */
-static int is_assignment(const char *s);
+अटल पूर्णांक is_assignment(स्थिर अक्षर *s);
 /*   data structure manipulation: */
-#ifndef __U_BOOT__
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style, struct in_str *input);
-#endif
-static void initialize_context(struct p_context *ctx);
-static int done_word(o_string *dest, struct p_context *ctx);
-static int done_command(struct p_context *ctx);
-static int done_pipe(struct p_context *ctx, pipe_style type);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक setup_redirect(काष्ठा p_context *ctx, पूर्णांक fd, redir_type style, काष्ठा in_str *निवेश);
+#पूर्ण_अगर
+अटल व्योम initialize_context(काष्ठा p_context *ctx);
+अटल पूर्णांक done_word(o_string *dest, काष्ठा p_context *ctx);
+अटल पूर्णांक done_command(काष्ठा p_context *ctx);
+अटल पूर्णांक done_pipe(काष्ठा p_context *ctx, pipe_style type);
 /*   primary string parsing: */
-#ifndef __U_BOOT__
-static int redirect_dup_num(struct in_str *input);
-static int redirect_opt_num(o_string *o);
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end);
-static int parse_group(o_string *dest, struct p_context *ctx, struct in_str *input, int ch);
-#endif
-static char *lookup_param(char *src);
-static char *make_string(char **inp, int *nonnull);
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input);
-#ifndef __U_BOOT__
-static int parse_string(o_string *dest, struct p_context *ctx, const char *src);
-#endif
-static int parse_stream(o_string *dest, struct p_context *ctx, struct in_str *input0, int end_trigger);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक redirect_dup_अंक(काष्ठा in_str *निवेश);
+अटल पूर्णांक redirect_opt_अंक(o_string *o);
+अटल पूर्णांक process_command_subs(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *निवेश, पूर्णांक subst_end);
+अटल पूर्णांक parse_group(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *निवेश, पूर्णांक ch);
+#पूर्ण_अगर
+अटल अक्षर *lookup_param(अक्षर *src);
+अटल अक्षर *make_string(अक्षर **inp, पूर्णांक *nonnull);
+अटल पूर्णांक handle_dollar(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *निवेश);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक parse_string(o_string *dest, काष्ठा p_context *ctx, स्थिर अक्षर *src);
+#पूर्ण_अगर
+अटल पूर्णांक parse_stream(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *input0, पूर्णांक end_trigger);
 /*   setup: */
-static int parse_stream_outer(struct in_str *inp, int flag);
-#ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag);
-static int parse_file_outer(FILE *f);
-#endif
-#ifndef __U_BOOT__
+अटल पूर्णांक parse_stream_outer(काष्ठा in_str *inp, पूर्णांक flag);
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक parse_string_outer(स्थिर अक्षर *s, पूर्णांक flag);
+अटल पूर्णांक parse_file_outer(खाता *f);
+#पूर्ण_अगर
+#अगर_अघोषित __U_BOOT__
 /*   job management: */
-static int checkjobs(struct pipe* fg_pipe);
-static void insert_bg_job(struct pipe *pi);
-static void remove_bg_job(struct pipe *pi);
-#endif
+अटल पूर्णांक checkjobs(काष्ठा pipe* fg_pipe);
+अटल व्योम जोड़ो_bg_job(काष्ठा pipe *pi);
+अटल व्योम remove_bg_job(काष्ठा pipe *pi);
+#पूर्ण_अगर
 /*     local variable support */
-static char **make_list_in(char **inp, char *name);
-static char *insert_var_value(char *inp);
-static char *insert_var_value_sub(char *inp, int tag_subst);
+अटल अक्षर **make_list_in(अक्षर **inp, अक्षर *name);
+अटल अक्षर *जोड़ो_var_मूल्य(अक्षर *inp);
+अटल अक्षर *जोड़ो_var_मूल्य_sub(अक्षर *inp, पूर्णांक tag_subst);
 
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 /* Table of built-in functions.  They can be forked or not, depending on
  * context: within pipes, they fork.  As simple commands, they do not.
  * When used in non-forking context, they can change global variables
  * in the parent shell process.  If forked, of course they can not.
  * For example, 'unset foo | whatever' will parse and run, but foo will
  * still be set at the end. */
-static struct built_in_command bltins[] = {
+अटल काष्ठा built_in_command bltins[] = {
 	{"bg", "Resume a job in the background", builtin_fg_bg},
 	{"break", "Exit for, while or until loop", builtin_not_written},
 	{"cd", "Change working directory", builtin_cd},
@@ -520,646 +520,646 @@ static struct built_in_command bltins[] = {
 	{"unset", "Unset environment variable", builtin_unset},
 	{".", "Source-in and run commands in a file", builtin_source},
 	{"help", "List shell built-in commands", builtin_help},
-	{NULL, NULL, NULL}
+	{शून्य, शून्य, शून्य}
 };
 
-static const char *set_cwd(void)
+अटल स्थिर अक्षर *set_cwd(व्योम)
 {
-	if(cwd==unknown)
-		cwd = NULL;     /* xgetcwd(arg) called free(arg) */
-	cwd = xgetcwd((char *)cwd);
-	if (!cwd)
+	अगर(cwd==unknown)
+		cwd = शून्य;     /* xgetcwd(arg) called free(arg) */
+	cwd = xgetcwd((अक्षर *)cwd);
+	अगर (!cwd)
 		cwd = unknown;
-	return cwd;
+	वापस cwd;
 }
 
 /* built-in 'eval' handler */
-static int builtin_eval(struct child_prog *child)
+अटल पूर्णांक builtin_eval(काष्ठा child_prog *child)
 {
-	char *str = NULL;
-	int rcode = EXIT_SUCCESS;
+	अक्षर *str = शून्य;
+	पूर्णांक rcode = निकास_सफल;
 
-	if (child->argv[1]) {
+	अगर (child->argv[1]) {
 		str = make_string(child->argv + 1);
 		parse_string_outer(str, FLAG_EXIT_FROM_LOOP |
 					FLAG_PARSE_SEMICOLON);
-		free(str);
+		मुक्त(str);
 		rcode = last_return_code;
 	}
-	return rcode;
+	वापस rcode;
 }
 
 /* built-in 'cd <path>' handler */
-static int builtin_cd(struct child_prog *child)
+अटल पूर्णांक builtin_cd(काष्ठा child_prog *child)
 {
-	char *newdir;
-	if (child->argv[1] == NULL)
+	अक्षर *newdir;
+	अगर (child->argv[1] == शून्य)
 		newdir = env_get("HOME");
-	else
+	अन्यथा
 		newdir = child->argv[1];
-	if (chdir(newdir)) {
-		printf("cd: %s: %s\n", newdir, strerror(errno));
-		return EXIT_FAILURE;
+	अगर (स_बदलो(newdir)) {
+		म_लिखो("cd: %s: %s\n", newdir, म_त्रुटि(त्रुटि_सं));
+		वापस निकास_त्रुटि;
 	}
 	set_cwd();
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
 /* built-in 'env' handler */
-static int builtin_env(struct child_prog *dummy)
+अटल पूर्णांक builtin_env(काष्ठा child_prog *dummy)
 {
-	char **e = environ;
-	if (e == NULL) return EXIT_FAILURE;
-	for (; *e; e++) {
-		puts(*e);
+	अक्षर **e = environ;
+	अगर (e == शून्य) वापस निकास_त्रुटि;
+	क्रम (; *e; e++) {
+		माला_दो(*e);
 	}
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
 /* built-in 'exec' handler */
-static int builtin_exec(struct child_prog *child)
+अटल पूर्णांक builtin_exec(काष्ठा child_prog *child)
 {
-	if (child->argv[1] == NULL)
-		return EXIT_SUCCESS;   /* Really? */
+	अगर (child->argv[1] == शून्य)
+		वापस निकास_सफल;   /* Really? */
 	child->argv++;
 	pseudo_exec(child);
 	/* never returns */
 }
 
 /* built-in 'exit' handler */
-static int builtin_exit(struct child_prog *child)
+अटल पूर्णांक builtin_exit(काष्ठा child_prog *child)
 {
-	if (child->argv[1] == NULL)
-		exit(last_return_code);
-	exit (atoi(child->argv[1]));
+	अगर (child->argv[1] == शून्य)
+		निकास(last_return_code);
+	निकास (म_से_प(child->argv[1]));
 }
 
 /* built-in 'export VAR=value' handler */
-static int builtin_export(struct child_prog *child)
+अटल पूर्णांक builtin_export(काष्ठा child_prog *child)
 {
-	int res = 0;
-	char *name = child->argv[1];
+	पूर्णांक res = 0;
+	अक्षर *name = child->argv[1];
 
-	if (name == NULL) {
-		return (builtin_env(child));
+	अगर (name == शून्य) {
+		वापस (builtin_env(child));
 	}
 
 	name = strdup(name);
 
-	if(name) {
-		char *value = strchr(name, '=');
+	अगर(name) {
+		अक्षर *मूल्य = म_अक्षर(name, '=');
 
-		if (!value) {
-			char *tmp;
+		अगर (!मूल्य) {
+			अक्षर *tmp;
 			/* They are exporting something without an =VALUE */
 
-			value = get_local_var(name);
-			if (value) {
-				size_t ln = strlen(name);
+			मूल्य = get_local_var(name);
+			अगर (मूल्य) {
+				माप_प्रकार ln = म_माप(name);
 
-				tmp = realloc(name, ln+strlen(value)+2);
-				if(tmp==NULL)
+				tmp = पुनः_स्मृति(name, ln+म_माप(मूल्य)+2);
+				अगर(tmp==शून्य)
 					res = -1;
-				else {
-					sprintf(tmp+ln, "=%s", value);
+				अन्यथा {
+					प्र_लिखो(tmp+ln, "=%s", मूल्य);
 					name = tmp;
 				}
-			} else {
+			} अन्यथा {
 				/* bash does not return an error when trying to export
 				 * an undefined variable.  Do likewise. */
 				res = 1;
 			}
 		}
 	}
-	if (res<0)
-		perror_msg("export");
-	else if(res==0)
+	अगर (res<0)
+		perror_संदेश("export");
+	अन्यथा अगर(res==0)
 		res = set_local_var(name, 1);
-	else
+	अन्यथा
 		res = 0;
-	free(name);
-	return res;
+	मुक्त(name);
+	वापस res;
 }
 
 /* built-in 'fg' and 'bg' handler */
-static int builtin_fg_bg(struct child_prog *child)
+अटल पूर्णांक builtin_fg_bg(काष्ठा child_prog *child)
 {
-	int i, jobnum;
-	struct pipe *pi=NULL;
+	पूर्णांक i, jobnum;
+	काष्ठा pipe *pi=शून्य;
 
-	if (!interactive)
-		return EXIT_FAILURE;
+	अगर (!interactive)
+		वापस निकास_त्रुटि;
 	/* If they gave us no args, assume they want the last backgrounded task */
-	if (!child->argv[1]) {
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == last_jobid) {
-				break;
+	अगर (!child->argv[1]) {
+		क्रम (pi = job_list; pi; pi = pi->अग्र) {
+			अगर (pi->jobid == last_jobid) {
+				अवरोध;
 			}
 		}
-		if (!pi) {
-			error_msg("%s: no current job", child->argv[0]);
-			return EXIT_FAILURE;
+		अगर (!pi) {
+			error_संदेश("%s: no current job", child->argv[0]);
+			वापस निकास_त्रुटि;
 		}
-	} else {
-		if (sscanf(child->argv[1], "%%%d", &jobnum) != 1) {
-			error_msg("%s: bad argument '%s'", child->argv[0], child->argv[1]);
-			return EXIT_FAILURE;
+	} अन्यथा {
+		अगर (माला_पूछो(child->argv[1], "%%%d", &jobnum) != 1) {
+			error_संदेश("%s: bad argument '%s'", child->argv[0], child->argv[1]);
+			वापस निकास_त्रुटि;
 		}
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == jobnum) {
-				break;
+		क्रम (pi = job_list; pi; pi = pi->अग्र) {
+			अगर (pi->jobid == jobnum) {
+				अवरोध;
 			}
 		}
-		if (!pi) {
-			error_msg("%s: %d: no such job", child->argv[0], jobnum);
-			return EXIT_FAILURE;
+		अगर (!pi) {
+			error_संदेश("%s: %d: no such job", child->argv[0], jobnum);
+			वापस निकास_त्रुटि;
 		}
 	}
 
-	if (*child->argv[0] == 'f') {
+	अगर (*child->argv[0] == 'f') {
 		/* Put the job into the foreground.  */
 		tcsetpgrp(shell_terminal, pi->pgrp);
 	}
 
 	/* Restart the processes in the job */
-	for (i = 0; i < pi->num_progs; i++)
+	क्रम (i = 0; i < pi->अंक_progs; i++)
 		pi->progs[i].is_stopped = 0;
 
-	if ( (i=kill(- pi->pgrp, SIGCONT)) < 0) {
-		if (i == ESRCH) {
+	अगर ( (i=समाप्त(- pi->pgrp, SIGCONT)) < 0) {
+		अगर (i == ESRCH) {
 			remove_bg_job(pi);
-		} else {
-			perror_msg("kill (SIGCONT)");
+		} अन्यथा {
+			perror_संदेश("kill (SIGCONT)");
 		}
 	}
 
 	pi->stopped_progs = 0;
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
 /* built-in 'help' handler */
-static int builtin_help(struct child_prog *dummy)
+अटल पूर्णांक builtin_help(काष्ठा child_prog *dummy)
 {
-	struct built_in_command *x;
+	काष्ठा built_in_command *x;
 
-	printf("\nBuilt-in commands:\n");
-	printf("-------------------\n");
-	for (x = bltins; x->cmd; x++) {
-		if (x->descr==NULL)
-			continue;
-		printf("%s\t%s\n", x->cmd, x->descr);
+	म_लिखो("\nBuilt-in commands:\n");
+	म_लिखो("-------------------\n");
+	क्रम (x = bltins; x->cmd; x++) {
+		अगर (x->descr==शून्य)
+			जारी;
+		म_लिखो("%s\t%s\n", x->cmd, x->descr);
 	}
-	printf("\n\n");
-	return EXIT_SUCCESS;
+	म_लिखो("\n\n");
+	वापस निकास_सफल;
 }
 
 /* built-in 'jobs' handler */
-static int builtin_jobs(struct child_prog *child)
+अटल पूर्णांक builtin_jobs(काष्ठा child_prog *child)
 {
-	struct pipe *job;
-	char *status_string;
+	काष्ठा pipe *job;
+	अक्षर *status_string;
 
-	for (job = job_list; job; job = job->next) {
-		if (job->running_progs == job->stopped_progs)
+	क्रम (job = job_list; job; job = job->अग्र) {
+		अगर (job->running_progs == job->stopped_progs)
 			status_string = "Stopped";
-		else
+		अन्यथा
 			status_string = "Running";
 
-		printf(JOB_STATUS_FORMAT, job->jobid, status_string, job->text);
+		म_लिखो(JOB_STATUS_FORMAT, job->jobid, status_string, job->text);
 	}
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
 /* built-in 'pwd' handler */
-static int builtin_pwd(struct child_prog *dummy)
+अटल पूर्णांक builtin_pwd(काष्ठा child_prog *dummy)
 {
-	puts(set_cwd());
-	return EXIT_SUCCESS;
+	माला_दो(set_cwd());
+	वापस निकास_सफल;
 }
 
 /* built-in 'read VAR' handler */
-static int builtin_read(struct child_prog *child)
+अटल पूर्णांक builtin_read(काष्ठा child_prog *child)
 {
-	int res;
+	पूर्णांक res;
 
-	if (child->argv[1]) {
-		char string[BUFSIZ];
-		char *var = 0;
+	अगर (child->argv[1]) {
+		अक्षर string[बफ_मान];
+		अक्षर *var = 0;
 
 		string[0] = 0;  /* In case stdin has only EOF */
 		/* read string */
-		fgets(string, sizeof(string), stdin);
+		ख_माला_लो(string, माप(string), मानक_निवेश);
 		chomp(string);
-		var = malloc(strlen(child->argv[1])+strlen(string)+2);
-		if(var) {
-			sprintf(var, "%s=%s", child->argv[1], string);
+		var = दो_स्मृति(म_माप(child->argv[1])+म_माप(string)+2);
+		अगर(var) {
+			प्र_लिखो(var, "%s=%s", child->argv[1], string);
 			res = set_local_var(var, 0);
-		} else
+		} अन्यथा
 			res = -1;
-		if (res)
-			fprintf(stderr, "read: %m\n");
-		free(var);      /* So not move up to avoid breaking errno */
-		return res;
-	} else {
-		do res=getchar(); while(res!='\n' && res!=EOF);
-		return 0;
+		अगर (res)
+			ख_लिखो(मानक_त्रुटि, "read: %m\n");
+		मुक्त(var);      /* So not move up to avoid breaking errno */
+		वापस res;
+	} अन्यथा {
+		करो res=अक्षर_लो(); जबतक(res!='\n' && res!=खातापूर्ण);
+		वापस 0;
 	}
 }
 
 /* built-in 'set VAR=value' handler */
-static int builtin_set(struct child_prog *child)
+अटल पूर्णांक builtin_set(काष्ठा child_prog *child)
 {
-	char *temp = child->argv[1];
-	struct variables *e;
+	अक्षर *अस्थायी = child->argv[1];
+	काष्ठा variables *e;
 
-	if (temp == NULL)
-		for(e = top_vars; e; e=e->next)
-			printf("%s=%s\n", e->name, e->value);
-	else
-		set_local_var(temp, 0);
+	अगर (अस्थायी == शून्य)
+		क्रम(e = शीर्ष_vars; e; e=e->अग्र)
+			म_लिखो("%s=%s\n", e->name, e->मूल्य);
+	अन्यथा
+		set_local_var(अस्थायी, 0);
 
-		return EXIT_SUCCESS;
+		वापस निकास_सफल;
 }
 
 /* Built-in 'shift' handler */
-static int builtin_shift(struct child_prog *child)
+अटल पूर्णांक builtin_shift(काष्ठा child_prog *child)
 {
-	int n=1;
-	if (child->argv[1]) {
-		n=atoi(child->argv[1]);
+	पूर्णांक n=1;
+	अगर (child->argv[1]) {
+		n=म_से_प(child->argv[1]);
 	}
-	if (n>=0 && n<global_argc) {
+	अगर (n>=0 && n<global_argc) {
 		/* XXX This probably breaks $0 */
 		global_argc -= n;
 		global_argv += n;
-		return EXIT_SUCCESS;
-	} else {
-		return EXIT_FAILURE;
+		वापस निकास_सफल;
+	} अन्यथा {
+		वापस निकास_त्रुटि;
 	}
 }
 
 /* Built-in '.' handler (read-in and execute commands from file) */
-static int builtin_source(struct child_prog *child)
+अटल पूर्णांक builtin_source(काष्ठा child_prog *child)
 {
-	FILE *input;
-	int status;
+	खाता *निवेश;
+	पूर्णांक status;
 
-	if (child->argv[1] == NULL)
-		return EXIT_FAILURE;
+	अगर (child->argv[1] == शून्य)
+		वापस निकास_त्रुटि;
 
 	/* XXX search through $PATH is missing */
-	input = fopen(child->argv[1], "r");
-	if (!input) {
-		error_msg("Couldn't open file '%s'", child->argv[1]);
-		return EXIT_FAILURE;
+	निवेश = ख_खोलो(child->argv[1], "r");
+	अगर (!निवेश) {
+		error_संदेश("Couldn't open file '%s'", child->argv[1]);
+		वापस निकास_त्रुटि;
 	}
 
 	/* Now run the file */
 	/* XXX argv and argc are broken; need to save old global_argv
 	 * (pointer only is OK!) on this stack frame,
 	 * set global_argv=child->argv+1, recurse, and restore. */
-	mark_open(fileno(input));
-	status = parse_file_outer(input);
-	mark_closed(fileno(input));
-	fclose(input);
-	return (status);
+	mark_open(fileno(निवेश));
+	status = parse_file_outer(निवेश);
+	mark_closed(fileno(निवेश));
+	ख_बंद(निवेश);
+	वापस (status);
 }
 
-static int builtin_umask(struct child_prog *child)
+अटल पूर्णांक builtin_umask(काष्ठा child_prog *child)
 {
 	mode_t new_umask;
-	const char *arg = child->argv[1];
-	char *end;
-	if (arg) {
-		new_umask=strtoul(arg, &end, 8);
-		if (*end!='\0' || end == arg) {
-			return EXIT_FAILURE;
+	स्थिर अक्षर *arg = child->argv[1];
+	अक्षर *end;
+	अगर (arg) {
+		new_umask=म_से_अदीर्घ(arg, &end, 8);
+		अगर (*end!='\0' || end == arg) {
+			वापस निकास_त्रुटि;
 		}
-	} else {
-		printf("%.3o\n", (unsigned int) (new_umask=umask(0)));
+	} अन्यथा {
+		म_लिखो("%.3o\n", (अचिन्हित पूर्णांक) (new_umask=umask(0)));
 	}
 	umask(new_umask);
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
 /* built-in 'unset VAR' handler */
-static int builtin_unset(struct child_prog *child)
+अटल पूर्णांक builtin_unset(काष्ठा child_prog *child)
 {
 	/* bash returned already true */
 	unset_local_var(child->argv[1]);
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }
 
-static int builtin_not_written(struct child_prog *child)
+अटल पूर्णांक builtin_not_written(काष्ठा child_prog *child)
 {
-	printf("builtin_%s not written\n",child->argv[0]);
-	return EXIT_FAILURE;
+	म_लिखो("builtin_%s not written\n",child->argv[0]);
+	वापस निकास_त्रुटि;
 }
-#endif
+#पूर्ण_अगर
 
-static int b_check_space(o_string *o, int len)
+अटल पूर्णांक b_check_space(o_string *o, पूर्णांक len)
 {
 	/* It would be easy to drop a more restrictive policy
 	 * in here, such as setting a maximum string length */
-	if (o->length + len > o->maxlen) {
-		char *old_data = o->data;
+	अगर (o->लंबाई + len > o->maxlen) {
+		अक्षर *old_तथ्य = o->तथ्य;
 		/* assert (data == NULL || o->maxlen != 0); */
 		o->maxlen += max(2*len, B_CHUNK);
-		o->data = realloc(o->data, 1 + o->maxlen);
-		if (o->data == NULL) {
-			free(old_data);
+		o->तथ्य = पुनः_स्मृति(o->तथ्य, 1 + o->maxlen);
+		अगर (o->तथ्य == शून्य) {
+			मुक्त(old_तथ्य);
 		}
 	}
-	return o->data == NULL;
+	वापस o->तथ्य == शून्य;
 }
 
-static int b_addchr(o_string *o, int ch)
+अटल पूर्णांक b_addchr(o_string *o, पूर्णांक ch)
 {
-	debug_printf("b_addchr: %c %d %p\n", ch, o->length, o);
-	if (b_check_space(o, 1)) return B_NOSPAC;
-	o->data[o->length] = ch;
-	o->length++;
-	o->data[o->length] = '\0';
-	return 0;
+	debug_printf("b_addchr: %c %d %p\n", ch, o->लंबाई, o);
+	अगर (b_check_space(o, 1)) वापस B_NOSPAC;
+	o->तथ्य[o->लंबाई] = ch;
+	o->लंबाई++;
+	o->तथ्य[o->लंबाई] = '\0';
+	वापस 0;
 }
 
-static void b_reset(o_string *o)
+अटल व्योम b_reset(o_string *o)
 {
-	o->length = 0;
+	o->लंबाई = 0;
 	o->nonnull = 0;
-	if (o->data != NULL) *o->data = '\0';
+	अगर (o->तथ्य != शून्य) *o->तथ्य = '\0';
 }
 
-static void b_free(o_string *o)
+अटल व्योम b_free(o_string *o)
 {
 	b_reset(o);
-	free(o->data);
-	o->data = NULL;
+	मुक्त(o->तथ्य);
+	o->तथ्य = शून्य;
 	o->maxlen = 0;
 }
 
 /* My analysis of quoting semantics tells me that state information
  * is associated with a destination, not a source.
  */
-static int b_addqchr(o_string *o, int ch, int quote)
+अटल पूर्णांक b_addqchr(o_string *o, पूर्णांक ch, पूर्णांक quote)
 {
-	if (quote && strchr("*?[\\",ch)) {
-		int rc;
+	अगर (quote && म_अक्षर("*?[\\",ch)) {
+		पूर्णांक rc;
 		rc = b_addchr(o, '\\');
-		if (rc) return rc;
+		अगर (rc) वापस rc;
 	}
-	return b_addchr(o, ch);
+	वापस b_addchr(o, ch);
 }
 
-#ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i)
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक b_adduint(o_string *o, अचिन्हित पूर्णांक i)
 {
-	int r;
-	char *p = simple_itoa(i);
+	पूर्णांक r;
+	अक्षर *p = simple_itoa(i);
 	/* no escape checking necessary */
-	do r=b_addchr(o, *p++); while (r==0 && *p);
-	return r;
+	करो r=b_addchr(o, *p++); जबतक (r==0 && *p);
+	वापस r;
 }
-#endif
+#पूर्ण_अगर
 
-static int static_get(struct in_str *i)
+अटल पूर्णांक static_get(काष्ठा in_str *i)
 {
-	int ch = *i->p++;
-	if (ch=='\0') return EOF;
-	return ch;
-}
-
-static int static_peek(struct in_str *i)
-{
-	return *i->p;
+	पूर्णांक ch = *i->p++;
+	अगर (ch=='\0') वापस खातापूर्ण;
+	वापस ch;
 }
 
-#ifndef __U_BOOT__
-static inline void cmdedit_set_initial_prompt(void)
+अटल पूर्णांक static_peek(काष्ठा in_str *i)
 {
-#ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
-	PS1 = NULL;
-#else
+	वापस *i->p;
+}
+
+#अगर_अघोषित __U_BOOT__
+अटल अंतरभूत व्योम cmdedit_set_initial_prompt(व्योम)
+{
+#अगर_अघोषित CONFIG_FEATURE_SH_FANCY_PROMPT
+	PS1 = शून्य;
+#अन्यथा
 	PS1 = env_get("PS1");
-	if(PS1==0)
+	अगर(PS1==0)
 		PS1 = "\\w \\$ ";
-#endif
+#पूर्ण_अगर
 }
 
-static inline void setup_prompt_string(int promptmode, char **prompt_str)
+अटल अंतरभूत व्योम setup_prompt_string(पूर्णांक promptmode, अक्षर **prompt_str)
 {
 	debug_printf("setup_prompt_string %d ",promptmode);
-#ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
+#अगर_अघोषित CONFIG_FEATURE_SH_FANCY_PROMPT
 	/* Set up the prompt */
-	if (promptmode == 1) {
-		free(PS1);
-		PS1=xmalloc(strlen(cwd)+4);
-		sprintf(PS1, "%s %s", cwd, ( geteuid() != 0 ) ?  "$ ":"# ");
+	अगर (promptmode == 1) {
+		मुक्त(PS1);
+		PS1=xmalloc(म_माप(cwd)+4);
+		प्र_लिखो(PS1, "%s %s", cwd, ( geteuid() != 0 ) ?  "$ ":"# ");
 		*prompt_str = PS1;
-	} else {
+	} अन्यथा {
 		*prompt_str = PS2;
 	}
-#else
+#अन्यथा
 	*prompt_str = (promptmode==1)? PS1 : PS2;
-#endif
+#पूर्ण_अगर
 	debug_printf("result %s\n",*prompt_str);
 }
-#endif
+#पूर्ण_अगर
 
-#ifdef __U_BOOT__
-static int uboot_cli_readline(struct in_str *i)
+#अगर_घोषित __U_BOOT__
+अटल पूर्णांक uboot_cli_readline(काष्ठा in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	अक्षर *prompt;
+	अक्षर __maybe_unused *ps_prompt = शून्य;
 
-	if (i->promptmode == 1)
+	अगर (i->promptmode == 1)
 		prompt = CONFIG_SYS_PROMPT;
-	else
+	अन्यथा
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
 
-#ifdef CONFIG_CMDLINE_PS_SUPPORT
-	if (i->promptmode == 1)
+#अगर_घोषित CONFIG_CMDLINE_PS_SUPPORT
+	अगर (i->promptmode == 1)
 		ps_prompt = env_get("PS1");
-	else
+	अन्यथा
 		ps_prompt = env_get("PS2");
-	if (ps_prompt)
+	अगर (ps_prompt)
 		prompt = ps_prompt;
-#endif
+#पूर्ण_अगर
 
-	return cli_readline(prompt);
+	वापस cli_readline(prompt);
 }
-#endif
+#पूर्ण_अगर
 
-static void get_user_input(struct in_str *i)
+अटल व्योम get_user_निवेश(काष्ठा in_str *i)
 {
-#ifndef __U_BOOT__
-	char *prompt_str;
-	static char the_command[BUFSIZ];
+#अगर_अघोषित __U_BOOT__
+	अक्षर *prompt_str;
+	अटल अक्षर the_command[बफ_मान];
 
 	setup_prompt_string(i->promptmode, &prompt_str);
-#ifdef CONFIG_FEATURE_COMMAND_EDITING
+#अगर_घोषित CONFIG_FEATURE_COMMAND_EDITING
 	/*
 	 ** enable command line editing only while a command line
 	 ** is actually being read; otherwise, we'll end up bequeathing
 	 ** atexit() handlers and other unwanted stuff to our
 	 ** child processes (rob@sysgo.de)
 	 */
-	cmdedit_read_input(prompt_str, the_command);
-#else
-	fputs(prompt_str, stdout);
-	fflush(stdout);
-	the_command[0]=fgetc(i->file);
+	cmdedit_read_निवेश(prompt_str, the_command);
+#अन्यथा
+	ख_माला_दो(prompt_str, मानक_निकास);
+	ख_साफ(मानक_निकास);
+	the_command[0]=ख_अक्षर_लो(i->file);
 	the_command[1]='\0';
-#endif
-	fflush(stdout);
+#पूर्ण_अगर
+	ख_साफ(मानक_निकास);
 	i->p = the_command;
-#else
-	int n;
-	static char the_command[CONFIG_SYS_CBSIZE + 1];
+#अन्यथा
+	पूर्णांक n;
+	अटल अक्षर the_command[CONFIG_SYS_CBSIZE + 1];
 
 	bootretry_reset_cmd_timeout();
 	i->__promptme = 1;
 	n = uboot_cli_readline(i);
 
-#ifdef CONFIG_BOOT_RETRY_TIME
-	if (n == -2) {
-	  puts("\nTimeout waiting for command\n");
+#अगर_घोषित CONFIG_BOOT_RETRY_TIME
+	अगर (n == -2) {
+	  माला_दो("\nTimeout waiting for command\n");
 #  ifdef CONFIG_RESET_TO_RETRY
-	  do_reset(NULL, 0, 0, NULL);
+	  do_reset(शून्य, 0, 0, शून्य);
 #  elif IS_ENABLED(CONFIG_RETRY_BOOTCMD)
-	strcpy(console_buffer, "run bootcmd\n");
-# else
+	म_नकल(console_बफर, "run bootcmd\n");
+# अन्यथा
 #	error "This only works with CONFIG_RESET_TO_RETRY or CONFIG_BOOT_RETRY_COMMAND enabled"
 #  endif
 	}
-#endif
-	if (n == -1 ) {
+#पूर्ण_अगर
+	अगर (n == -1 ) {
 		flag_repeat = 0;
 		i->__promptme = 0;
 	}
-	n = strlen(console_buffer);
-	console_buffer[n] = '\n';
-	console_buffer[n+1]= '\0';
-	if (had_ctrlc()) flag_repeat = 0;
+	n = म_माप(console_बफर);
+	console_बफर[n] = '\n';
+	console_बफर[n+1]= '\0';
+	अगर (had_ctrlc()) flag_repeat = 0;
 	clear_ctrlc();
 	do_repeat = 0;
-	if (i->promptmode == 1) {
-		if (console_buffer[0] == '\n'&& flag_repeat == 0) {
-			strcpy(the_command,console_buffer);
+	अगर (i->promptmode == 1) {
+		अगर (console_बफर[0] == '\n'&& flag_repeat == 0) {
+			म_नकल(the_command,console_बफर);
 		}
-		else {
-			if (console_buffer[0] != '\n') {
-				strcpy(the_command,console_buffer);
+		अन्यथा {
+			अगर (console_बफर[0] != '\n') {
+				म_नकल(the_command,console_बफर);
 				flag_repeat = 1;
 			}
-			else {
+			अन्यथा {
 				do_repeat = 1;
 			}
 		}
 		i->p = the_command;
 	}
-	else {
-		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer)
+	अन्यथा {
+		अगर (console_बफर[0] != '\n') {
+			अगर (म_माप(the_command) + म_माप(console_बफर)
 			    < CONFIG_SYS_CBSIZE) {
-				n = strlen(the_command);
+				n = म_माप(the_command);
 				the_command[n-1] = ' ';
-				strcpy(&the_command[n],console_buffer);
+				म_नकल(&the_command[n],console_बफर);
 			}
-			else {
+			अन्यथा {
 				the_command[0] = '\n';
 				the_command[1] = '\0';
 				flag_repeat = 0;
 			}
 		}
-		if (i->__promptme == 0) {
+		अगर (i->__promptme == 0) {
 			the_command[0] = '\n';
 			the_command[1] = '\0';
 		}
-		i->p = console_buffer;
+		i->p = console_बफर;
 	}
-#endif
+#पूर्ण_अगर
 }
 
 /* This is the magic location that prints prompts
  * and gets data back from the user */
-static int file_get(struct in_str *i)
+अटल पूर्णांक file_get(काष्ठा in_str *i)
 {
-	int ch;
+	पूर्णांक ch;
 
 	ch = 0;
 	/* If there is data waiting, eat it up */
-	if (i->p && *i->p) {
+	अगर (i->p && *i->p) {
 		ch = *i->p++;
-	} else {
+	} अन्यथा {
 		/* need to double check i->file because we might be doing something
 		 * more complicated by now, like sourcing or substituting. */
-#ifndef __U_BOOT__
-		if (i->__promptme && interactive && i->file == stdin) {
-			while(! i->p || (interactive && strlen(i->p)==0) ) {
-#else
-			while(! i->p  || strlen(i->p)==0 ) {
-#endif
-				get_user_input(i);
+#अगर_अघोषित __U_BOOT__
+		अगर (i->__promptme && interactive && i->file == मानक_निवेश) {
+			जबतक(! i->p || (interactive && म_माप(i->p)==0) ) {
+#अन्यथा
+			जबतक(! i->p  || म_माप(i->p)==0 ) {
+#पूर्ण_अगर
+				get_user_निवेश(i);
 			}
 			i->promptmode=2;
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 			i->__promptme = 0;
-#endif
-			if (i->p && *i->p) {
+#पूर्ण_अगर
+			अगर (i->p && *i->p) {
 				ch = *i->p++;
 			}
-#ifndef __U_BOOT__
-		} else {
-			ch = fgetc(i->file);
+#अगर_अघोषित __U_BOOT__
+		} अन्यथा {
+			ch = ख_अक्षर_लो(i->file);
 		}
 
-#endif
+#पूर्ण_अगर
 		debug_printf("b_getch: got a %d\n", ch);
 	}
-#ifndef __U_BOOT__
-	if (ch == '\n') i->__promptme=1;
-#endif
-	return ch;
+#अगर_अघोषित __U_BOOT__
+	अगर (ch == '\n') i->__promptme=1;
+#पूर्ण_अगर
+	वापस ch;
 }
 
 /* All the callers guarantee this routine will never be
  * used right after a newline, so prompting is not needed.
  */
-static int file_peek(struct in_str *i)
+अटल पूर्णांक file_peek(काष्ठा in_str *i)
 {
-#ifndef __U_BOOT__
-	if (i->p && *i->p) {
-#endif
-		return *i->p;
-#ifndef __U_BOOT__
-	} else {
-		i->peek_buf[0] = fgetc(i->file);
+#अगर_अघोषित __U_BOOT__
+	अगर (i->p && *i->p) {
+#पूर्ण_अगर
+		वापस *i->p;
+#अगर_अघोषित __U_BOOT__
+	} अन्यथा {
+		i->peek_buf[0] = ख_अक्षर_लो(i->file);
 		i->peek_buf[1] = '\0';
 		i->p = i->peek_buf;
 		debug_printf("b_peek: got a %d\n", *i->p);
-		return *i->p;
+		वापस *i->p;
 	}
-#endif
+#पूर्ण_अगर
 }
 
-#ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, FILE *f)
-#else
-static void setup_file_in_str(struct in_str *i)
-#endif
+#अगर_अघोषित __U_BOOT__
+अटल व्योम setup_file_in_str(काष्ठा in_str *i, खाता *f)
+#अन्यथा
+अटल व्योम setup_file_in_str(काष्ठा in_str *i)
+#पूर्ण_अगर
 {
 	i->peek = file_peek;
 	i->get = file_get;
 	i->__promptme=1;
 	i->promptmode=1;
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 	i->file = f;
-#endif
-	i->p = NULL;
+#पूर्ण_अगर
+	i->p = शून्य;
 }
 
-static void setup_string_in_str(struct in_str *i, const char *s)
+अटल व्योम setup_string_in_str(काष्ठा in_str *i, स्थिर अक्षर *s)
 {
 	i->peek = static_peek;
 	i->get = static_get;
@@ -1168,85 +1168,85 @@ static void setup_string_in_str(struct in_str *i, const char *s)
 	i->p = s;
 }
 
-#ifndef __U_BOOT__
-static void mark_open(int fd)
+#अगर_अघोषित __U_BOOT__
+अटल व्योम mark_open(पूर्णांक fd)
 {
-	struct close_me *new = xmalloc(sizeof(struct close_me));
+	काष्ठा close_me *new = xmalloc(माप(काष्ठा close_me));
 	new->fd = fd;
-	new->next = close_me_head;
-	close_me_head = new;
+	new->अग्र = close_me_शीर्ष;
+	close_me_शीर्ष = new;
 }
 
-static void mark_closed(int fd)
+अटल व्योम mark_closed(पूर्णांक fd)
 {
-	struct close_me *tmp;
-	if (close_me_head == NULL || close_me_head->fd != fd)
-		error_msg_and_die("corrupt close_me");
-	tmp = close_me_head;
-	close_me_head = close_me_head->next;
-	free(tmp);
+	काष्ठा close_me *tmp;
+	अगर (close_me_शीर्ष == शून्य || close_me_शीर्ष->fd != fd)
+		error_संदेश_and_die("corrupt close_me");
+	tmp = close_me_शीर्ष;
+	close_me_शीर्ष = close_me_शीर्ष->अग्र;
+	मुक्त(tmp);
 }
 
-static void close_all(void)
+अटल व्योम close_all(व्योम)
 {
-	struct close_me *c;
-	for (c=close_me_head; c; c=c->next) {
-		close(c->fd);
+	काष्ठा close_me *c;
+	क्रम (c=close_me_शीर्ष; c; c=c->अग्र) {
+		बंद(c->fd);
 	}
-	close_me_head = NULL;
+	close_me_शीर्ष = शून्य;
 }
 
 /* squirrel != NULL means we squirrel away copies of stdin, stdout,
  * and stderr if they are redirected. */
-static int setup_redirects(struct child_prog *prog, int squirrel[])
+अटल पूर्णांक setup_redirects(काष्ठा child_prog *prog, पूर्णांक squirrel[])
 {
-	int openfd, mode;
-	struct redir_struct *redir;
+	पूर्णांक openfd, mode;
+	काष्ठा redir_struct *redir;
 
-	for (redir=prog->redirects; redir; redir=redir->next) {
-		if (redir->dup == -1 && redir->word.gl_pathv == NULL) {
+	क्रम (redir=prog->redirects; redir; redir=redir->अग्र) {
+		अगर (redir->dup == -1 && redir->word.gl_pathv == शून्य) {
 			/* something went wrong in the parse.  Pretend it didn't happen */
-			continue;
+			जारी;
 		}
-		if (redir->dup == -1) {
+		अगर (redir->dup == -1) {
 			mode=redir_table[redir->type].mode;
-			openfd = open(redir->word.gl_pathv[0], mode, 0666);
-			if (openfd < 0) {
+			openfd = खोलो(redir->word.gl_pathv[0], mode, 0666);
+			अगर (openfd < 0) {
 			/* this could get lost if stderr has been redirected, but
 			   bash and ash both lose it as well (though zsh doesn't!) */
-				perror_msg("error opening %s", redir->word.gl_pathv[0]);
-				return 1;
+				perror_संदेश("error opening %s", redir->word.gl_pathv[0]);
+				वापस 1;
 			}
-		} else {
+		} अन्यथा {
 			openfd = redir->dup;
 		}
 
-		if (openfd != redir->fd) {
-			if (squirrel && redir->fd < 3) {
+		अगर (openfd != redir->fd) {
+			अगर (squirrel && redir->fd < 3) {
 				squirrel[redir->fd] = dup(redir->fd);
 			}
-			if (openfd == -3) {
-				close(openfd);
-			} else {
+			अगर (openfd == -3) {
+				बंद(openfd);
+			} अन्यथा {
 				dup2(openfd, redir->fd);
-				if (redir->dup == -1)
-					close (openfd);
+				अगर (redir->dup == -1)
+					बंद (openfd);
 			}
 		}
 	}
-	return 0;
+	वापस 0;
 }
 
-static void restore_redirects(int squirrel[])
+अटल व्योम restore_redirects(पूर्णांक squirrel[])
 {
-	int i, fd;
-	for (i=0; i<3; i++) {
+	पूर्णांक i, fd;
+	क्रम (i=0; i<3; i++) {
 		fd = squirrel[i];
-		if (fd != -1) {
+		अगर (fd != -1) {
 			/* No error checking.  I sure wouldn't know what
 			 * to do with an error if I found one! */
 			dup2(fd, i);
-			close(fd);
+			बंद(fd);
 		}
 	}
 }
@@ -1255,17 +1255,17 @@ static void restore_redirects(int squirrel[])
 /* XXX no exit() here.  If you don't exec, use _exit instead.
  * The at_exit handlers apparently confuse the calling process,
  * in particular stdin handling.  Not sure why? */
-static void pseudo_exec(struct child_prog *child)
+अटल व्योम pseudo_exec(काष्ठा child_prog *child)
 {
-	int i, rcode;
-	char *p;
-	struct built_in_command *x;
-	if (child->argv) {
-		for (i=0; is_assignment(child->argv[i]); i++) {
+	पूर्णांक i, rcode;
+	अक्षर *p;
+	काष्ठा built_in_command *x;
+	अगर (child->argv) {
+		क्रम (i=0; is_assignment(child->argv[i]); i++) {
 			debug_printf("pid %d environment modification: %s\n",getpid(),child->argv[i]);
-			p = insert_var_value(child->argv[i]);
+			p = जोड़ो_var_मूल्य(child->argv[i]);
 			putenv(strdup(p));
-			if (p != child->argv[i]) free(p);
+			अगर (p != child->argv[i]) मुक्त(p);
 		}
 		child->argv+=i;  /* XXX this hack isn't so horrible, since we are about
 					to exit, and therefore don't need to keep data
@@ -1273,8 +1273,8 @@ static void pseudo_exec(struct child_prog *child)
 		/* If a variable is assigned in a forest, and nobody listens,
 		 * was it ever really set?
 		 */
-		if (child->argv[0] == NULL) {
-			_exit(EXIT_SUCCESS);
+		अगर (child->argv[0] == शून्य) {
+			_निकास(निकास_सफल);
 		}
 
 		/*
@@ -1283,12 +1283,12 @@ static void pseudo_exec(struct child_prog *child)
 		 * easier to waste a few CPU cycles than it is to figure out
 		 * if this is one of those cases.
 		 */
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[0], x->cmd) == 0 ) {
+		क्रम (x = bltins; x->cmd; x++) {
+			अगर (म_भेद(child->argv[0], x->cmd) == 0 ) {
 				debug_printf("builtin exec %s\n", child->argv[0]);
 				rcode = x->function(child);
-				fflush(stdout);
-				_exit(rcode);
+				ख_साफ(मानक_निकास);
+				_निकास(rcode);
 			}
 		}
 
@@ -1301,13 +1301,13 @@ static void pseudo_exec(struct child_prog *child)
 		 * really dislike relying on /proc for things.  We could exec ourself
 		 * from global_argv[0], but if we are in a chroot, we may not be able
 		 * to find ourself... */
-#ifdef CONFIG_FEATURE_SH_STANDALONE_SHELL
+#अगर_घोषित CONFIG_FEATURE_SH_STANDALONE_SHELL
 		{
-			int argc_l;
-			char** argv_l=child->argv;
-			char *name = child->argv[0];
+			पूर्णांक argc_l;
+			अक्षर** argv_l=child->argv;
+			अक्षर *name = child->argv[0];
 
-#ifdef CONFIG_FEATURE_SH_APPLETS_ALWAYS_WIN
+#अगर_घोषित CONFIG_FEATURE_SH_APPLETS_ALWAYS_WIN
 			/* Following discussions from November 2000 on the busybox mailing
 			 * list, the default configuration, (without
 			 * get_last_path_component()) lets the user force use of an
@@ -1318,171 +1318,171 @@ static void pseudo_exec(struct child_prog *child)
 			 * filesystem and is _not_ busybox.  Some systems may want this,
 			 * most do not.  */
 			name = get_last_path_component(name);
-#endif
+#पूर्ण_अगर
 			/* Count argc for use in a second... */
-			for(argc_l=0;*argv_l!=NULL; argv_l++, argc_l++);
+			क्रम(argc_l=0;*argv_l!=शून्य; argv_l++, argc_l++);
 			optind = 1;
 			debug_printf("running applet %s\n", name);
 			run_applet_by_name(name, argc_l, child->argv);
 		}
-#endif
+#पूर्ण_अगर
 		debug_printf("exec of %s\n",child->argv[0]);
 		execvp(child->argv[0],child->argv);
-		perror_msg("couldn't exec: %s",child->argv[0]);
-		_exit(1);
-	} else if (child->group) {
+		perror_संदेश("couldn't exec: %s",child->argv[0]);
+		_निकास(1);
+	} अन्यथा अगर (child->group) {
 		debug_printf("runtime nesting to group\n");
 		interactive=0;    /* crucial!!!! */
 		rcode = run_list_real(child->group);
 		/* OK to leak memory by not calling free_pipe_list,
 		 * since this process is about to exit */
-		_exit(rcode);
-	} else {
+		_निकास(rcode);
+	} अन्यथा {
 		/* Can happen.  See what bash does with ">foo" by itself. */
 		debug_printf("trying to pseudo_exec null command\n");
-		_exit(EXIT_SUCCESS);
+		_निकास(निकास_सफल);
 	}
 }
 
-static void insert_bg_job(struct pipe *pi)
+अटल व्योम जोड़ो_bg_job(काष्ठा pipe *pi)
 {
-	struct pipe *thejob;
+	काष्ठा pipe *thejob;
 
 	/* Linear search for the ID of the job to use */
 	pi->jobid = 1;
-	for (thejob = job_list; thejob; thejob = thejob->next)
-		if (thejob->jobid >= pi->jobid)
+	क्रम (thejob = job_list; thejob; thejob = thejob->अग्र)
+		अगर (thejob->jobid >= pi->jobid)
 			pi->jobid = thejob->jobid + 1;
 
 	/* add thejob to the list of running jobs */
-	if (!job_list) {
-		thejob = job_list = xmalloc(sizeof(*thejob));
-	} else {
-		for (thejob = job_list; thejob->next; thejob = thejob->next) /* nothing */;
-		thejob->next = xmalloc(sizeof(*thejob));
-		thejob = thejob->next;
+	अगर (!job_list) {
+		thejob = job_list = xmalloc(माप(*thejob));
+	} अन्यथा {
+		क्रम (thejob = job_list; thejob->अग्र; thejob = thejob->अग्र) /* nothing */;
+		thejob->अग्र = xmalloc(माप(*thejob));
+		thejob = thejob->अग्र;
 	}
 
 	/* physically copy the struct job */
-	memcpy(thejob, pi, sizeof(struct pipe));
-	thejob->next = NULL;
-	thejob->running_progs = thejob->num_progs;
+	स_नकल(thejob, pi, माप(काष्ठा pipe));
+	thejob->अग्र = शून्य;
+	thejob->running_progs = thejob->अंक_progs;
 	thejob->stopped_progs = 0;
-	thejob->text = xmalloc(BUFSIZ); /* cmdedit buffer size */
+	thejob->text = xmalloc(बफ_मान); /* cmdedit buffer size */
 
 	/*if (pi->progs[0] && pi->progs[0].argv && pi->progs[0].argv[0]) */
 	{
-		char *bar=thejob->text;
-		char **foo=pi->progs[0].argv;
-		while(foo && *foo) {
-			bar += sprintf(bar, "%s ", *foo++);
+		अक्षर *bar=thejob->text;
+		अक्षर **foo=pi->progs[0].argv;
+		जबतक(foo && *foo) {
+			bar += प्र_लिखो(bar, "%s ", *foo++);
 		}
 	}
 
 	/* we don't wait for background thejobs to return -- append it
 	   to the list of backgrounded thejobs and leave it alone */
-	printf("[%d] %d\n", thejob->jobid, thejob->progs[0].pid);
+	म_लिखो("[%d] %d\n", thejob->jobid, thejob->progs[0].pid);
 	last_bg_pid = thejob->progs[0].pid;
 	last_jobid = thejob->jobid;
 }
 
 /* remove a backgrounded job */
-static void remove_bg_job(struct pipe *pi)
+अटल व्योम remove_bg_job(काष्ठा pipe *pi)
 {
-	struct pipe *prev_pipe;
+	काष्ठा pipe *पूर्व_pipe;
 
-	if (pi == job_list) {
-		job_list = pi->next;
-	} else {
-		prev_pipe = job_list;
-		while (prev_pipe->next != pi)
-			prev_pipe = prev_pipe->next;
-		prev_pipe->next = pi->next;
+	अगर (pi == job_list) {
+		job_list = pi->अग्र;
+	} अन्यथा {
+		पूर्व_pipe = job_list;
+		जबतक (पूर्व_pipe->अग्र != pi)
+			पूर्व_pipe = पूर्व_pipe->अग्र;
+		पूर्व_pipe->अग्र = pi->अग्र;
 	}
-	if (job_list)
+	अगर (job_list)
 		last_jobid = job_list->jobid;
-	else
+	अन्यथा
 		last_jobid = 0;
 
 	pi->stopped_progs = 0;
 	free_pipe(pi, 0);
-	free(pi);
+	मुक्त(pi);
 }
 
 /* Checks to see if any processes have exited -- if they
    have, figure out why and see if a job has completed */
-static int checkjobs(struct pipe* fg_pipe)
+अटल पूर्णांक checkjobs(काष्ठा pipe* fg_pipe)
 {
-	int attributes;
-	int status;
-	int prognum = 0;
-	struct pipe *pi;
+	पूर्णांक attributes;
+	पूर्णांक status;
+	पूर्णांक prognum = 0;
+	काष्ठा pipe *pi;
 	pid_t childpid;
 
 	attributes = WUNTRACED;
-	if (fg_pipe==NULL) {
+	अगर (fg_pipe==शून्य) {
 		attributes |= WNOHANG;
 	}
 
-	while ((childpid = waitpid(-1, &status, attributes)) > 0) {
-		if (fg_pipe) {
-			int i, rcode = 0;
-			for (i=0; i < fg_pipe->num_progs; i++) {
-				if (fg_pipe->progs[i].pid == childpid) {
-					if (i==fg_pipe->num_progs-1)
+	जबतक ((childpid = waitpid(-1, &status, attributes)) > 0) {
+		अगर (fg_pipe) {
+			पूर्णांक i, rcode = 0;
+			क्रम (i=0; i < fg_pipe->अंक_progs; i++) {
+				अगर (fg_pipe->progs[i].pid == childpid) {
+					अगर (i==fg_pipe->अंक_progs-1)
 						rcode=WEXITSTATUS(status);
-					(fg_pipe->num_progs)--;
-					return(rcode);
+					(fg_pipe->अंक_progs)--;
+					वापस(rcode);
 				}
 			}
 		}
 
-		for (pi = job_list; pi; pi = pi->next) {
+		क्रम (pi = job_list; pi; pi = pi->अग्र) {
 			prognum = 0;
-			while (prognum < pi->num_progs && pi->progs[prognum].pid != childpid) {
+			जबतक (prognum < pi->अंक_progs && pi->progs[prognum].pid != childpid) {
 				prognum++;
 			}
-			if (prognum < pi->num_progs)
-				break;
+			अगर (prognum < pi->अंक_progs)
+				अवरोध;
 		}
 
-		if(pi==NULL) {
+		अगर(pi==शून्य) {
 			debug_printf("checkjobs: pid %d was not in our list!\n", childpid);
-			continue;
+			जारी;
 		}
 
-		if (WIFEXITED(status) || WIFSIGNALED(status)) {
+		अगर (WIFEXITED(status) || WIFSIGNALED(status)) {
 			/* child exited */
 			pi->running_progs--;
 			pi->progs[prognum].pid = 0;
 
-			if (!pi->running_progs) {
-				printf(JOB_STATUS_FORMAT, pi->jobid, "Done", pi->text);
+			अगर (!pi->running_progs) {
+				म_लिखो(JOB_STATUS_FORMAT, pi->jobid, "Done", pi->text);
 				remove_bg_job(pi);
 			}
-		} else {
+		} अन्यथा {
 			/* child stopped */
 			pi->stopped_progs++;
 			pi->progs[prognum].is_stopped = 1;
 
-#if 0
+#अगर 0
 			/* Printing this stuff is a pain, since it tends to
 			 * overwrite the prompt an inconveinient moments.  So
 			 * don't do that.  */
-			if (pi->stopped_progs == pi->num_progs) {
-				printf("\n"JOB_STATUS_FORMAT, pi->jobid, "Stopped", pi->text);
+			अगर (pi->stopped_progs == pi->अंक_progs) {
+				म_लिखो("\n"JOB_STATUS_FORMAT, pi->jobid, "Stopped", pi->text);
 			}
-#endif
+#पूर्ण_अगर
 		}
 	}
 
-	if (childpid == -1 && errno != ECHILD)
-		perror_msg("waitpid");
+	अगर (childpid == -1 && त्रुटि_सं != ECHILD)
+		perror_संदेश("waitpid");
 
 	/* move the shell to the foreground */
 	/*if (interactive && tcsetpgrp(shell_terminal, getpgid(0))) */
 	/*	perror_msg("tcsetpgrp-2"); */
-	return -1;
+	वापस -1;
 }
 
 /* Figure out our controlling tty, checking in order stderr,
@@ -1490,25 +1490,25 @@ static int checkjobs(struct pipe* fg_pipe)
  * we belong to the foreground process group associated with
  * that tty.  The value of shell_terminal is needed in order to call
  * tcsetpgrp(shell_terminal, ...); */
-void controlling_tty(int check_pgrp)
+व्योम controlling_tty(पूर्णांक check_pgrp)
 {
 	pid_t curpgrp;
 
-	if ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
+	अगर ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 0)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 1)) < 0)
-		goto shell_terminal_error;
+		जाओ shell_terminal_error;
 
-	if (check_pgrp && curpgrp != getpgid(0))
-		goto shell_terminal_error;
+	अगर (check_pgrp && curpgrp != getpgid(0))
+		जाओ shell_terminal_error;
 
-	return;
+	वापस;
 
 shell_terminal_error:
 		shell_terminal = -1;
-		return;
+		वापस;
 }
-#endif
+#पूर्ण_अगर
 
 /* run_pipe_real() starts all the jobs, but doesn't wait for anything
  * to finish.  See checkjobs().
@@ -1526,67 +1526,67 @@ shell_terminal_error:
  * now has its stdout directed to the input of the appropriate pipe,
  * so this routine is noticeably simpler.
  */
-static int run_pipe_real(struct pipe *pi)
+अटल पूर्णांक run_pipe_real(काष्ठा pipe *pi)
 {
-	int i;
-#ifndef __U_BOOT__
-	int nextin, nextout;
-	int pipefds[2];				/* pipefds[0] is for reading */
-	struct child_prog *child;
-	struct built_in_command *x;
-	char *p;
-# if __GNUC__
+	पूर्णांक i;
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक nextin, nextout;
+	पूर्णांक pipefds[2];				/* pipefds[0] is for reading */
+	काष्ठा child_prog *child;
+	काष्ठा built_in_command *x;
+	अक्षर *p;
+# अगर __GNUC__
 	/* Avoid longjmp clobbering */
-	(void) &i;
-	(void) &nextin;
-	(void) &nextout;
-	(void) &child;
+	(व्योम) &i;
+	(व्योम) &nextin;
+	(व्योम) &nextout;
+	(व्योम) &child;
 # endif
-#else
-	int nextin;
-	int flag = do_repeat ? CMD_FLAG_REPEAT : 0;
-	struct child_prog *child;
-	char *p;
-# if __GNUC__
+#अन्यथा
+	पूर्णांक nextin;
+	पूर्णांक flag = do_repeat ? CMD_FLAG_REPEAT : 0;
+	काष्ठा child_prog *child;
+	अक्षर *p;
+# अगर __GNUC__
 	/* Avoid longjmp clobbering */
-	(void) &i;
-	(void) &nextin;
-	(void) &child;
+	(व्योम) &i;
+	(व्योम) &nextin;
+	(व्योम) &child;
 # endif
-#endif	/* __U_BOOT__ */
+#पूर्ण_अगर	/* __U_BOOT__ */
 
 	nextin = 0;
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 	pi->pgrp = -1;
-#endif
+#पूर्ण_अगर
 
 	/* Check if this is a simple builtin (not part of a pipe).
 	 * Builtins within pipes have to fork anyway, and are handled in
 	 * pseudo_exec.  "echo foo | read bar" doesn't work on bash, either.
 	 */
-	if (pi->num_progs == 1) child = & (pi->progs[0]);
-#ifndef __U_BOOT__
-	if (pi->num_progs == 1 && child->group && child->subshell == 0) {
-		int squirrel[] = {-1, -1, -1};
-		int rcode;
+	अगर (pi->अंक_progs == 1) child = & (pi->progs[0]);
+#अगर_अघोषित __U_BOOT__
+	अगर (pi->अंक_progs == 1 && child->group && child->subshell == 0) {
+		पूर्णांक squirrel[] = {-1, -1, -1};
+		पूर्णांक rcode;
 		debug_printf("non-subshell grouping\n");
 		setup_redirects(child, squirrel);
 		/* XXX could we merge code with following builtin case,
 		 * by creating a pseudo builtin that calls run_list_real? */
 		rcode = run_list_real(child->group);
 		restore_redirects(squirrel);
-#else
-		if (pi->num_progs == 1 && child->group) {
-		int rcode;
+#अन्यथा
+		अगर (pi->अंक_progs == 1 && child->group) {
+		पूर्णांक rcode;
 		debug_printf("non-subshell grouping\n");
 		rcode = run_list_real(child->group);
-#endif
-		return rcode;
-	} else if (pi->num_progs == 1 && pi->progs[0].argv != NULL) {
-		for (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
-		if (i!=0 && child->argv[i]==NULL) {
+#पूर्ण_अगर
+		वापस rcode;
+	} अन्यथा अगर (pi->अंक_progs == 1 && pi->progs[0].argv != शून्य) {
+		क्रम (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
+		अगर (i!=0 && child->argv[i]==शून्य) {
 			/* assignments, but no command: set the local environment */
-			for (i=0; child->argv[i]!=NULL; i++) {
+			क्रम (i=0; child->argv[i]!=शून्य; i++) {
 
 				/* Ok, this case is tricky.  We have to decide if this is a
 				 * local variable, or an already exported variable.  If it is
@@ -1594,55 +1594,55 @@ static int run_pipe_real(struct pipe *pi)
 				 * not exported, we need only set this as a local variable.
 				 * This junk is all to decide whether or not to export this
 				 * variable. */
-				int export_me=0;
-				char *name, *value;
+				पूर्णांक export_me=0;
+				अक्षर *name, *मूल्य;
 				name = xstrdup(child->argv[i]);
 				debug_printf("Local environment set: %s\n", name);
-				value = strchr(name, '=');
-				if (value)
-					*value=0;
-#ifndef __U_BOOT__
-				if ( get_local_var(name)) {
+				मूल्य = म_अक्षर(name, '=');
+				अगर (मूल्य)
+					*मूल्य=0;
+#अगर_अघोषित __U_BOOT__
+				अगर ( get_local_var(name)) {
 					export_me=1;
 				}
-#endif
-				free(name);
-				p = insert_var_value(child->argv[i]);
+#पूर्ण_अगर
+				मुक्त(name);
+				p = जोड़ो_var_मूल्य(child->argv[i]);
 				set_local_var(p, export_me);
-				if (p != child->argv[i]) free(p);
+				अगर (p != child->argv[i]) मुक्त(p);
 			}
-			return EXIT_SUCCESS;   /* don't worry about errors in set_local_var() yet */
+			वापस निकास_सफल;   /* don't worry about errors in set_local_var() yet */
 		}
-		for (i = 0; is_assignment(child->argv[i]); i++) {
-			p = insert_var_value(child->argv[i]);
-#ifndef __U_BOOT__
+		क्रम (i = 0; is_assignment(child->argv[i]); i++) {
+			p = जोड़ो_var_मूल्य(child->argv[i]);
+#अगर_अघोषित __U_BOOT__
 			putenv(strdup(p));
-#else
+#अन्यथा
 			set_local_var(p, 0);
-#endif
-			if (p != child->argv[i]) {
+#पूर्ण_अगर
+			अगर (p != child->argv[i]) {
 				child->sp--;
-				free(p);
+				मुक्त(p);
 			}
 		}
-		if (child->sp) {
-			char * str = NULL;
+		अगर (child->sp) {
+			अक्षर * str = शून्य;
 
 			str = make_string(child->argv + i,
 					  child->argv_nonnull + i);
 			parse_string_outer(str, FLAG_EXIT_FROM_LOOP | FLAG_REPARSING);
-			free(str);
-			return last_return_code;
+			मुक्त(str);
+			वापस last_return_code;
 		}
-#ifndef __U_BOOT__
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[i], x->cmd) == 0 ) {
-				int squirrel[] = {-1, -1, -1};
-				int rcode;
-				if (x->function == builtin_exec && child->argv[i+1]==NULL) {
+#अगर_अघोषित __U_BOOT__
+		क्रम (x = bltins; x->cmd; x++) {
+			अगर (म_भेद(child->argv[i], x->cmd) == 0 ) {
+				पूर्णांक squirrel[] = {-1, -1, -1};
+				पूर्णांक rcode;
+				अगर (x->function == builtin_exec && child->argv[i+1]==शून्य) {
 					debug_printf("magic exec\n");
-					setup_redirects(child,NULL);
-					return EXIT_SUCCESS;
+					setup_redirects(child,शून्य);
+					वापस निकास_सफल;
 				}
 				debug_printf("builtin inline %s\n", child->argv[0]);
 				/* XXX setup_redirects acts on file descriptors, not FILEs.
@@ -1657,72 +1657,72 @@ static int run_pipe_real(struct pipe *pi)
 				child->argv -= i;
 				restore_redirects(squirrel);
 			}
-			return rcode;
+			वापस rcode;
 		}
-#else
+#अन्यथा
 		/* check ";", because ,example , argv consist from
 		 * "help;flinfo" must not execute
 		 */
-		if (strchr(child->argv[i], ';')) {
-			printf("Unknown command '%s' - try 'help' or use "
+		अगर (म_अक्षर(child->argv[i], ';')) {
+			म_लिखो("Unknown command '%s' - try 'help' or use "
 					"'run' command\n", child->argv[i]);
-			return -1;
+			वापस -1;
 		}
 		/* Process the command */
-		return cmd_process(flag, child->argc - i, child->argv + i,
-				   &flag_repeat, NULL);
-#endif
+		वापस cmd_process(flag, child->argc - i, child->argv + i,
+				   &flag_repeat, शून्य);
+#पूर्ण_अगर
 	}
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 
-	for (i = 0; i < pi->num_progs; i++) {
+	क्रम (i = 0; i < pi->अंक_progs; i++) {
 		child = & (pi->progs[i]);
 
 		/* pipes are inserted between pairs of commands */
-		if ((i + 1) < pi->num_progs) {
-			if (pipe(pipefds)<0) perror_msg_and_die("pipe");
+		अगर ((i + 1) < pi->अंक_progs) {
+			अगर (pipe(pipefds)<0) perror_संदेश_and_die("pipe");
 			nextout = pipefds[1];
-		} else {
+		} अन्यथा {
 			nextout=1;
 			pipefds[0] = -1;
 		}
 
 		/* XXX test for failed fork()? */
-		if (!(child->pid = fork())) {
+		अगर (!(child->pid = विभाजन())) {
 			/* Set the handling for job control signals back to the default.  */
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			signal(SIGTERM, SIG_DFL);
-			signal(SIGTSTP, SIG_DFL);
-			signal(SIGTTIN, SIG_DFL);
-			signal(SIGTTOU, SIG_DFL);
-			signal(SIGCHLD, SIG_DFL);
+			संकेत(संक_विघ्न, संक_पूर्व);
+			संकेत(SIGQUIT, संक_पूर्व);
+			संकेत(संक_इति, संक_पूर्व);
+			संकेत(SIGTSTP, संक_पूर्व);
+			संकेत(SIGTTIN, संक_पूर्व);
+			संकेत(SIGTTOU, संक_पूर्व);
+			संकेत(SIGCHLD, संक_पूर्व);
 
 			close_all();
 
-			if (nextin != 0) {
+			अगर (nextin != 0) {
 				dup2(nextin, 0);
-				close(nextin);
+				बंद(nextin);
 			}
-			if (nextout != 1) {
+			अगर (nextout != 1) {
 				dup2(nextout, 1);
-				close(nextout);
+				बंद(nextout);
 			}
-			if (pipefds[0]!=-1) {
-				close(pipefds[0]);  /* opposite end of our output pipe */
+			अगर (pipefds[0]!=-1) {
+				बंद(pipefds[0]);  /* opposite end of our output pipe */
 			}
 
 			/* Like bash, explicit redirects override pipes,
 			 * and the pipe fd is available for dup'ing. */
-			setup_redirects(child,NULL);
+			setup_redirects(child,शून्य);
 
-			if (interactive && pi->followup!=PIPE_BG) {
+			अगर (interactive && pi->followup!=PIPE_BG) {
 				/* If we (the child) win the race, put ourselves in the process
 				 * group whose leader is the first process in this pipe. */
-				if (pi->pgrp < 0) {
+				अगर (pi->pgrp < 0) {
 					pi->pgrp = getpid();
 				}
-				if (setpgid(0, pi->pgrp) == 0) {
+				अगर (setpgid(0, pi->pgrp) == 0) {
 					tcsetpgrp(2, pi->pgrp);
 				}
 			}
@@ -1732,297 +1732,297 @@ static int run_pipe_real(struct pipe *pi)
 
 		/* put our child in the process group whose leader is the
 		   first process in this pipe */
-		if (pi->pgrp < 0) {
+		अगर (pi->pgrp < 0) {
 			pi->pgrp = child->pid;
 		}
 		/* Don't check for errors.  The child may be dead already,
 		 * in which case setpgid returns error code EACCES. */
 		setpgid(child->pid, pi->pgrp);
 
-		if (nextin != 0)
-			close(nextin);
-		if (nextout != 1)
-			close(nextout);
+		अगर (nextin != 0)
+			बंद(nextin);
+		अगर (nextout != 1)
+			बंद(nextout);
 
 		/* If there isn't another process, nextin is garbage
 		   but it doesn't matter */
 		nextin = pipefds[0];
 	}
-#endif
-	return -1;
+#पूर्ण_अगर
+	वापस -1;
 }
 
-static int run_list_real(struct pipe *pi)
+अटल पूर्णांक run_list_real(काष्ठा pipe *pi)
 {
-	char *save_name = NULL;
-	char **list = NULL;
-	char **save_list = NULL;
-	struct pipe *rpipe;
-	int flag_rep = 0;
-#ifndef __U_BOOT__
-	int save_num_progs;
-#endif
-	int rcode=0, flag_skip=1;
-	int flag_restore = 0;
-	int if_code=0, next_if_code=0;  /* need double-buffer to handle elif */
+	अक्षर *save_name = शून्य;
+	अक्षर **list = शून्य;
+	अक्षर **save_list = शून्य;
+	काष्ठा pipe *rpipe;
+	पूर्णांक flag_rep = 0;
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक save_अंक_progs;
+#पूर्ण_अगर
+	पूर्णांक rcode=0, flag_skip=1;
+	पूर्णांक flag_restore = 0;
+	पूर्णांक if_code=0, अग्र_if_code=0;  /* need double-buffer to handle elif */
 	reserved_style rmode, skip_more_in_this_rmode=RES_XXXX;
 	/* check syntax for "for" */
-	for (rpipe = pi; rpipe; rpipe = rpipe->next) {
-		if ((rpipe->r_mode == RES_IN ||
+	क्रम (rpipe = pi; rpipe; rpipe = rpipe->अग्र) {
+		अगर ((rpipe->r_mode == RES_IN ||
 		    rpipe->r_mode == RES_FOR) &&
-		    (rpipe->next == NULL)) {
+		    (rpipe->अग्र == शून्य)) {
 				syntax();
-#ifdef __U_BOOT__
+#अगर_घोषित __U_BOOT__
 				flag_repeat = 0;
-#endif
-				return 1;
+#पूर्ण_अगर
+				वापस 1;
 		}
-		if ((rpipe->r_mode == RES_IN &&
-			(rpipe->next->r_mode == RES_IN &&
-			rpipe->next->progs->argv != NULL))||
+		अगर ((rpipe->r_mode == RES_IN &&
+			(rpipe->अग्र->r_mode == RES_IN &&
+			rpipe->अग्र->progs->argv != शून्य))||
 			(rpipe->r_mode == RES_FOR &&
-			rpipe->next->r_mode != RES_IN)) {
+			rpipe->अग्र->r_mode != RES_IN)) {
 				syntax();
-#ifdef __U_BOOT__
+#अगर_घोषित __U_BOOT__
 				flag_repeat = 0;
-#endif
-				return 1;
+#पूर्ण_अगर
+				वापस 1;
 		}
 	}
-	for (; pi; pi = (flag_restore != 0) ? rpipe : pi->next) {
-		if (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
+	क्रम (; pi; pi = (flag_restore != 0) ? rpipe : pi->अग्र) {
+		अगर (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
 			pi->r_mode == RES_FOR) {
-#ifdef __U_BOOT__
+#अगर_घोषित __U_BOOT__
 				/* check Ctrl-C */
 				ctrlc();
-				if ((had_ctrlc())) {
-					return 1;
+				अगर ((had_ctrlc())) {
+					वापस 1;
 				}
-#endif
+#पूर्ण_अगर
 				flag_restore = 0;
-				if (!rpipe) {
+				अगर (!rpipe) {
 					flag_rep = 0;
 					rpipe = pi;
 				}
 		}
 		rmode = pi->r_mode;
-		debug_printf("rmode=%d  if_code=%d  next_if_code=%d skip_more=%d\n", rmode, if_code, next_if_code, skip_more_in_this_rmode);
-		if (rmode == skip_more_in_this_rmode && flag_skip) {
-			if (pi->followup == PIPE_SEQ) flag_skip=0;
-			continue;
+		debug_printf("rmode=%d  if_code=%d  next_if_code=%d skip_more=%d\n", rmode, if_code, अग्र_if_code, skip_more_in_this_rmode);
+		अगर (rmode == skip_more_in_this_rmode && flag_skip) {
+			अगर (pi->followup == PIPE_SEQ) flag_skip=0;
+			जारी;
 		}
 		flag_skip = 1;
 		skip_more_in_this_rmode = RES_XXXX;
-		if (rmode == RES_THEN || rmode == RES_ELSE) if_code = next_if_code;
-		if (rmode == RES_THEN &&  if_code) continue;
-		if (rmode == RES_ELSE && !if_code) continue;
-		if (rmode == RES_ELIF && !if_code) break;
-		if (rmode == RES_FOR && pi->num_progs) {
-			if (!list) {
+		अगर (rmode == RES_THEN || rmode == RES_ELSE) if_code = अग्र_if_code;
+		अगर (rmode == RES_THEN &&  if_code) जारी;
+		अगर (rmode == RES_ELSE && !if_code) जारी;
+		अगर (rmode == RES_ELIF && !if_code) अवरोध;
+		अगर (rmode == RES_FOR && pi->अंक_progs) {
+			अगर (!list) {
 				/* if no variable values after "in" we skip "for" */
-				if (!pi->next->progs->argv) continue;
+				अगर (!pi->अग्र->progs->argv) जारी;
 				/* create list of variable values */
-				list = make_list_in(pi->next->progs->argv,
+				list = make_list_in(pi->अग्र->progs->argv,
 					pi->progs->argv[0]);
 				save_list = list;
 				save_name = pi->progs->argv[0];
-				pi->progs->argv[0] = NULL;
+				pi->progs->argv[0] = शून्य;
 				flag_rep = 1;
 			}
-			if (!(*list)) {
-				free(pi->progs->argv[0]);
-				free(save_list);
-				list = NULL;
+			अगर (!(*list)) {
+				मुक्त(pi->progs->argv[0]);
+				मुक्त(save_list);
+				list = शून्य;
 				flag_rep = 0;
 				pi->progs->argv[0] = save_name;
-#ifndef __U_BOOT__
-				pi->progs->glob_result.gl_pathv[0] =
+#अगर_अघोषित __U_BOOT__
+				pi->progs->glob_परिणाम.gl_pathv[0] =
 					pi->progs->argv[0];
-#endif
-				continue;
-			} else {
+#पूर्ण_अगर
+				जारी;
+			} अन्यथा {
 				/* insert new value from list for variable */
-				free(pi->progs->argv[0]);
+				मुक्त(pi->progs->argv[0]);
 				pi->progs->argv[0] = *list++;
-#ifndef __U_BOOT__
-				pi->progs->glob_result.gl_pathv[0] =
+#अगर_अघोषित __U_BOOT__
+				pi->progs->glob_परिणाम.gl_pathv[0] =
 					pi->progs->argv[0];
-#endif
+#पूर्ण_अगर
 			}
 		}
-		if (rmode == RES_IN) continue;
-		if (rmode == RES_DO) {
-			if (!flag_rep) continue;
+		अगर (rmode == RES_IN) जारी;
+		अगर (rmode == RES_DO) {
+			अगर (!flag_rep) जारी;
 		}
-		if (rmode == RES_DONE) {
-			if (flag_rep) {
+		अगर (rmode == RES_DONE) {
+			अगर (flag_rep) {
 				flag_restore = 1;
-			} else {
-				rpipe = NULL;
+			} अन्यथा {
+				rpipe = शून्य;
 			}
 		}
-		if (pi->num_progs == 0) continue;
-#ifndef __U_BOOT__
-		save_num_progs = pi->num_progs; /* save number of programs */
-#endif
+		अगर (pi->अंक_progs == 0) जारी;
+#अगर_अघोषित __U_BOOT__
+		save_अंक_progs = pi->अंक_progs; /* save number of programs */
+#पूर्ण_अगर
 		rcode = run_pipe_real(pi);
 		debug_printf("run_pipe_real returned %d\n",rcode);
-#ifndef __U_BOOT__
-		if (rcode!=-1) {
+#अगर_अघोषित __U_BOOT__
+		अगर (rcode!=-1) {
 			/* We only ran a builtin: rcode was set by the return value
 			 * of run_pipe_real(), and we don't need to wait for anything. */
-		} else if (pi->followup==PIPE_BG) {
+		} अन्यथा अगर (pi->followup==PIPE_BG) {
 			/* XXX check bash's behavior with nontrivial pipes */
 			/* XXX compute jobid */
 			/* XXX what does bash do with attempts to background builtins? */
-			insert_bg_job(pi);
-			rcode = EXIT_SUCCESS;
-		} else {
-			if (interactive) {
+			जोड़ो_bg_job(pi);
+			rcode = निकास_सफल;
+		} अन्यथा {
+			अगर (interactive) {
 				/* move the new process group into the foreground */
-				if (tcsetpgrp(shell_terminal, pi->pgrp) && errno != ENOTTY)
-					perror_msg("tcsetpgrp-3");
+				अगर (tcsetpgrp(shell_terminal, pi->pgrp) && त्रुटि_सं != ENOTTY)
+					perror_संदेश("tcsetpgrp-3");
 				rcode = checkjobs(pi);
 				/* move the shell to the foreground */
-				if (tcsetpgrp(shell_terminal, getpgid(0)) && errno != ENOTTY)
-					perror_msg("tcsetpgrp-4");
-			} else {
+				अगर (tcsetpgrp(shell_terminal, getpgid(0)) && त्रुटि_सं != ENOTTY)
+					perror_संदेश("tcsetpgrp-4");
+			} अन्यथा {
 				rcode = checkjobs(pi);
 			}
 			debug_printf("checkjobs returned %d\n",rcode);
 		}
 		last_return_code=rcode;
-#else
-		if (rcode < -1) {
+#अन्यथा
+		अगर (rcode < -1) {
 			last_return_code = -rcode - 2;
-			return -2;	/* exit */
+			वापस -2;	/* exit */
 		}
 		last_return_code = rcode;
-#endif
-#ifndef __U_BOOT__
-		pi->num_progs = save_num_progs; /* restore number of programs */
-#endif
-		if ( rmode == RES_IF || rmode == RES_ELIF )
-			next_if_code=rcode;  /* can be overwritten a number of times */
-		if (rmode == RES_WHILE)
+#पूर्ण_अगर
+#अगर_अघोषित __U_BOOT__
+		pi->अंक_progs = save_अंक_progs; /* restore number of programs */
+#पूर्ण_अगर
+		अगर ( rmode == RES_IF || rmode == RES_ELIF )
+			अग्र_if_code=rcode;  /* can be overwritten a number of times */
+		अगर (rmode == RES_WHILE)
 			flag_rep = !last_return_code;
-		if (rmode == RES_UNTIL)
+		अगर (rmode == RES_UNTIL)
 			flag_rep = last_return_code;
-		if ( (rcode==EXIT_SUCCESS && pi->followup==PIPE_OR) ||
-		     (rcode!=EXIT_SUCCESS && pi->followup==PIPE_AND) )
+		अगर ( (rcode==निकास_सफल && pi->followup==PIPE_OR) ||
+		     (rcode!=निकास_सफल && pi->followup==PIPE_AND) )
 			skip_more_in_this_rmode=rmode;
-#ifndef __U_BOOT__
-		checkjobs(NULL);
-#endif
+#अगर_अघोषित __U_BOOT__
+		checkjobs(शून्य);
+#पूर्ण_अगर
 	}
-	return rcode;
+	वापस rcode;
 }
 
 /* broken, of course, but OK for testing */
-static char *indenter(int i)
+अटल अक्षर *indenter(पूर्णांक i)
 {
-	static char blanks[]="                                    ";
-	return &blanks[sizeof(blanks)-i-1];
+	अटल अक्षर blanks[]="                                    ";
+	वापस &blanks[माप(blanks)-i-1];
 }
 
 /* return code is the exit status of the pipe */
-static int free_pipe(struct pipe *pi, int indent)
+अटल पूर्णांक free_pipe(काष्ठा pipe *pi, पूर्णांक indent)
 {
-	char **p;
-	struct child_prog *child;
-#ifndef __U_BOOT__
-	struct redir_struct *r, *rnext;
-#endif
-	int a, i, ret_code=0;
-	char *ind = indenter(indent);
+	अक्षर **p;
+	काष्ठा child_prog *child;
+#अगर_अघोषित __U_BOOT__
+	काष्ठा redir_struct *r, *rnext;
+#पूर्ण_अगर
+	पूर्णांक a, i, ret_code=0;
+	अक्षर *ind = indenter(indent);
 
-#ifndef __U_BOOT__
-	if (pi->stopped_progs > 0)
-		return ret_code;
+#अगर_अघोषित __U_BOOT__
+	अगर (pi->stopped_progs > 0)
+		वापस ret_code;
 	final_printf("%s run pipe: (pid %d)\n",ind,getpid());
-#endif
-	for (i=0; i<pi->num_progs; i++) {
+#पूर्ण_अगर
+	क्रम (i=0; i<pi->अंक_progs; i++) {
 		child = &pi->progs[i];
 		final_printf("%s  command %d:\n",ind,i);
-		if (child->argv) {
-			for (a=0,p=child->argv; *p; a++,p++) {
+		अगर (child->argv) {
+			क्रम (a=0,p=child->argv; *p; a++,p++) {
 				final_printf("%s   argv[%d] = %s\n",ind,a,*p);
 			}
-#ifndef __U_BOOT__
-			globfree(&child->glob_result);
-#else
-			for (a = 0; a < child->argc; a++) {
-				free(child->argv[a]);
+#अगर_अघोषित __U_BOOT__
+			globfree(&child->glob_परिणाम);
+#अन्यथा
+			क्रम (a = 0; a < child->argc; a++) {
+				मुक्त(child->argv[a]);
 			}
-			free(child->argv);
-			free(child->argv_nonnull);
+			मुक्त(child->argv);
+			मुक्त(child->argv_nonnull);
 			child->argc = 0;
-#endif
-			child->argv=NULL;
-		} else if (child->group) {
-#ifndef __U_BOOT__
+#पूर्ण_अगर
+			child->argv=शून्य;
+		} अन्यथा अगर (child->group) {
+#अगर_अघोषित __U_BOOT__
 			final_printf("%s   begin group (subshell:%d)\n",ind, child->subshell);
-#endif
+#पूर्ण_अगर
 			ret_code = free_pipe_list(child->group,indent+3);
 			final_printf("%s   end group\n",ind);
-		} else {
+		} अन्यथा {
 			final_printf("%s   (nil)\n",ind);
 		}
-#ifndef __U_BOOT__
-		for (r=child->redirects; r; r=rnext) {
+#अगर_अघोषित __U_BOOT__
+		क्रम (r=child->redirects; r; r=rnext) {
 			final_printf("%s   redirect %d%s", ind, r->fd, redir_table[r->type].descrip);
-			if (r->dup == -1) {
+			अगर (r->dup == -1) {
 				/* guard against the case >$FOO, where foo is unset or blank */
-				if (r->word.gl_pathv) {
+				अगर (r->word.gl_pathv) {
 					final_printf(" %s\n", *r->word.gl_pathv);
 					globfree(&r->word);
 				}
-			} else {
+			} अन्यथा {
 				final_printf("&%d\n", r->dup);
 			}
-			rnext=r->next;
-			free(r);
+			rnext=r->अग्र;
+			मुक्त(r);
 		}
-		child->redirects=NULL;
-#endif
+		child->redirects=शून्य;
+#पूर्ण_अगर
 	}
-	free(pi->progs);   /* children are an array, they get freed all at once */
-	pi->progs=NULL;
-	return ret_code;
+	मुक्त(pi->progs);   /* children are an array, they get freed all at once */
+	pi->progs=शून्य;
+	वापस ret_code;
 }
 
-static int free_pipe_list(struct pipe *head, int indent)
+अटल पूर्णांक free_pipe_list(काष्ठा pipe *शीर्ष_2, पूर्णांक indent)
 {
-	int rcode=0;   /* if list has no members */
-	struct pipe *pi, *next;
-	char *ind = indenter(indent);
-	for (pi=head; pi; pi=next) {
+	पूर्णांक rcode=0;   /* if list has no members */
+	काष्ठा pipe *pi, *अग्र;
+	अक्षर *ind = indenter(indent);
+	क्रम (pi=शीर्ष_2; pi; pi=अग्र) {
 		final_printf("%s pipe reserved mode %d\n", ind, pi->r_mode);
 		rcode = free_pipe(pi, indent);
 		final_printf("%s pipe followup code %d\n", ind, pi->followup);
-		next=pi->next;
-		pi->next=NULL;
-		free(pi);
+		अग्र=pi->अग्र;
+		pi->अग्र=शून्य;
+		मुक्त(pi);
 	}
-	return rcode;
+	वापस rcode;
 }
 
 /* Select which version we will use */
-static int run_list(struct pipe *pi)
+अटल पूर्णांक run_list(काष्ठा pipe *pi)
 {
-	int rcode=0;
-#ifndef __U_BOOT__
-	if (fake_mode==0) {
-#endif
+	पूर्णांक rcode=0;
+#अगर_अघोषित __U_BOOT__
+	अगर (fake_mode==0) {
+#पूर्ण_अगर
 		rcode = run_list_real(pi);
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 	}
-#endif
+#पूर्ण_अगर
 	/* free_pipe_list has the side effect of clearing memory
 	 * In the long run that function can be merged with run_list_real,
 	 * but doing that now would hobble the debugging effort. */
 	free_pipe_list(pi,0);
-	return rcode;
+	वापस rcode;
 }
 
 /* The API for glob is arguably broken.  This routine pushes a non-matching
@@ -2032,276 +2032,276 @@ static int run_list(struct pipe *pi)
  * Return code (0 vs. GLOB_NOSPACE) matches glob(3).
  * XXX broken if the last character is '\\', check that before calling.
  */
-#ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob)
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक globhack(स्थिर अक्षर *src, पूर्णांक flags, glob_t *pglob)
 {
-	int cnt=0, pathc;
-	const char *s;
-	char *dest;
-	for (cnt=1, s=src; s && *s; s++) {
-		if (*s == '\\') s++;
+	पूर्णांक cnt=0, pathc;
+	स्थिर अक्षर *s;
+	अक्षर *dest;
+	क्रम (cnt=1, s=src; s && *s; s++) {
+		अगर (*s == '\\') s++;
 		cnt++;
 	}
-	dest = malloc(cnt);
-	if (!dest) return GLOB_NOSPACE;
-	if (!(flags & GLOB_APPEND)) {
-		pglob->gl_pathv=NULL;
+	dest = दो_स्मृति(cnt);
+	अगर (!dest) वापस GLOB_NOSPACE;
+	अगर (!(flags & GLOB_APPEND)) {
+		pglob->gl_pathv=शून्य;
 		pglob->gl_pathc=0;
 		pglob->gl_offs=0;
 		pglob->gl_offs=0;
 	}
 	pathc = ++pglob->gl_pathc;
-	pglob->gl_pathv = realloc(pglob->gl_pathv, (pathc+1)*sizeof(*pglob->gl_pathv));
-	if (pglob->gl_pathv == NULL) return GLOB_NOSPACE;
+	pglob->gl_pathv = पुनः_स्मृति(pglob->gl_pathv, (pathc+1)*माप(*pglob->gl_pathv));
+	अगर (pglob->gl_pathv == शून्य) वापस GLOB_NOSPACE;
 	pglob->gl_pathv[pathc-1]=dest;
-	pglob->gl_pathv[pathc]=NULL;
-	for (s=src; s && *s; s++, dest++) {
-		if (*s == '\\') s++;
+	pglob->gl_pathv[pathc]=शून्य;
+	क्रम (s=src; s && *s; s++, dest++) {
+		अगर (*s == '\\') s++;
 		*dest = *s;
 	}
 	*dest='\0';
-	return 0;
+	वापस 0;
 }
 
 /* XXX broken if the last character is '\\', check that before calling */
-static int glob_needed(const char *s)
+अटल पूर्णांक glob_needed(स्थिर अक्षर *s)
 {
-	for (; *s; s++) {
-		if (*s == '\\') s++;
-		if (strchr("*[?",*s)) return 1;
+	क्रम (; *s; s++) {
+		अगर (*s == '\\') s++;
+		अगर (म_अक्षर("*[?",*s)) वापस 1;
 	}
-	return 0;
+	वापस 0;
 }
 
-#if 0
-static void globprint(glob_t *pglob)
+#अगर 0
+अटल व्योम globprint(glob_t *pglob)
 {
-	int i;
+	पूर्णांक i;
 	debug_printf("glob_t at %p:\n", pglob);
 	debug_printf("  gl_pathc=%d  gl_pathv=%p  gl_offs=%d  gl_flags=%d\n",
 		pglob->gl_pathc, pglob->gl_pathv, pglob->gl_offs, pglob->gl_flags);
-	for (i=0; i<pglob->gl_pathc; i++)
+	क्रम (i=0; i<pglob->gl_pathc; i++)
 		debug_printf("pglob->gl_pathv[%d] = %p = %s\n", i,
 			pglob->gl_pathv[i], pglob->gl_pathv[i]);
 }
-#endif
+#पूर्ण_अगर
 
-static int xglob(o_string *dest, int flags, glob_t *pglob)
+अटल पूर्णांक xglob(o_string *dest, पूर्णांक flags, glob_t *pglob)
 {
-	int gr;
+	पूर्णांक gr;
 
 	/* short-circuit for null word */
 	/* we can code this better when the debug_printf's are gone */
-	if (dest->length == 0) {
-		if (dest->nonnull) {
+	अगर (dest->लंबाई == 0) {
+		अगर (dest->nonnull) {
 			/* bash man page calls this an "explicit" null */
-			gr = globhack(dest->data, flags, pglob);
+			gr = globhack(dest->तथ्य, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
-		} else {
-			return 0;
+		} अन्यथा {
+			वापस 0;
 		}
-	} else if (glob_needed(dest->data)) {
-		gr = glob(dest->data, flags, NULL, pglob);
+	} अन्यथा अगर (glob_needed(dest->तथ्य)) {
+		gr = glob(dest->तथ्य, flags, शून्य, pglob);
 		debug_printf("glob returned %d\n",gr);
-		if (gr == GLOB_NOMATCH) {
+		अगर (gr == GLOB_NOMATCH) {
 			/* quote removal, or more accurately, backslash removal */
-			gr = globhack(dest->data, flags, pglob);
+			gr = globhack(dest->तथ्य, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
 		}
-	} else {
-		gr = globhack(dest->data, flags, pglob);
+	} अन्यथा {
+		gr = globhack(dest->तथ्य, flags, pglob);
 		debug_printf("globhack returned %d\n",gr);
 	}
-	if (gr == GLOB_NOSPACE)
-		error_msg_and_die("out of memory during glob");
-	if (gr != 0) { /* GLOB_ABORTED ? */
-		error_msg("glob(3) error %d",gr);
+	अगर (gr == GLOB_NOSPACE)
+		error_संदेश_and_die("out of memory during glob");
+	अगर (gr != 0) { /* GLOB_ABORTED ? */
+		error_संदेश("glob(3) error %d",gr);
 	}
 	/* globprint(glob_target); */
-	return gr;
+	वापस gr;
 }
-#endif
+#पूर्ण_अगर
 
-#ifdef __U_BOOT__
-static char *get_dollar_var(char ch);
-#endif
+#अगर_घोषित __U_BOOT__
+अटल अक्षर *get_dollar_var(अक्षर ch);
+#पूर्ण_अगर
 
 /* This is used to get/check local shell variables */
-char *get_local_var(const char *s)
+अक्षर *get_local_var(स्थिर अक्षर *s)
 {
-	struct variables *cur;
+	काष्ठा variables *cur;
 
-	if (!s)
-		return NULL;
+	अगर (!s)
+		वापस शून्य;
 
-#ifdef __U_BOOT__
-	if (*s == '$')
-		return get_dollar_var(s[1]);
-#endif
+#अगर_घोषित __U_BOOT__
+	अगर (*s == '$')
+		वापस get_dollar_var(s[1]);
+#पूर्ण_अगर
 
-	for (cur = top_vars; cur; cur=cur->next)
-		if(strcmp(cur->name, s)==0)
-			return cur->value;
-	return NULL;
+	क्रम (cur = शीर्ष_vars; cur; cur=cur->अग्र)
+		अगर(म_भेद(cur->name, s)==0)
+			वापस cur->मूल्य;
+	वापस शून्य;
 }
 
 /* This is used to set local shell variables
    flg_export==0 if only local (not exporting) variable
    flg_export==1 if "new" exporting environ
    flg_export>1  if current startup environ (not call putenv()) */
-int set_local_var(const char *s, int flg_export)
+पूर्णांक set_local_var(स्थिर अक्षर *s, पूर्णांक flg_export)
 {
-	char *name, *value;
-	int result=0;
-	struct variables *cur;
+	अक्षर *name, *मूल्य;
+	पूर्णांक परिणाम=0;
+	काष्ठा variables *cur;
 
-#ifdef __U_BOOT__
+#अगर_घोषित __U_BOOT__
 	/* might be possible! */
-	if (!isalpha(*s))
-		return -1;
-#endif
+	अगर (!है_अक्षर(*s))
+		वापस -1;
+#पूर्ण_अगर
 
 	name=strdup(s);
 
 	/* Assume when we enter this function that we are already in
 	 * NAME=VALUE format.  So the first order of business is to
 	 * split 's' on the '=' into 'name' and 'value' */
-	value = strchr(name, '=');
-	if (!value) {
-		free(name);
-		return -1;
+	मूल्य = म_अक्षर(name, '=');
+	अगर (!मूल्य) {
+		मुक्त(name);
+		वापस -1;
 	}
-	*value++ = 0;
+	*मूल्य++ = 0;
 
-	if (!*value) {
+	अगर (!*मूल्य) {
 		unset_local_var(name);
-		free(name);
-		return 0;
+		मुक्त(name);
+		वापस 0;
 	}
 
-	for(cur = top_vars; cur; cur = cur->next) {
-		if(strcmp(cur->name, name)==0)
-			break;
+	क्रम(cur = शीर्ष_vars; cur; cur = cur->अग्र) {
+		अगर(म_भेद(cur->name, name)==0)
+			अवरोध;
 	}
 
-	if(cur) {
-		if(strcmp(cur->value, value)==0) {
-			if(flg_export>0 && cur->flg_export==0)
+	अगर(cur) {
+		अगर(म_भेद(cur->मूल्य, मूल्य)==0) {
+			अगर(flg_export>0 && cur->flg_export==0)
 				cur->flg_export=flg_export;
-			else
-				result++;
-		} else {
-			if(cur->flg_read_only) {
-				error_msg("%s: readonly variable", name);
-				result = -1;
-			} else {
-				if(flg_export>0 || cur->flg_export>1)
+			अन्यथा
+				परिणाम++;
+		} अन्यथा {
+			अगर(cur->flg_read_only) {
+				error_संदेश("%s: readonly variable", name);
+				परिणाम = -1;
+			} अन्यथा {
+				अगर(flg_export>0 || cur->flg_export>1)
 					cur->flg_export=1;
-				free(cur->value);
+				मुक्त(cur->मूल्य);
 
-				cur->value = strdup(value);
+				cur->मूल्य = strdup(मूल्य);
 			}
 		}
-	} else {
-		cur = malloc(sizeof(struct variables));
-		if(!cur) {
-			result = -1;
-		} else {
+	} अन्यथा {
+		cur = दो_स्मृति(माप(काष्ठा variables));
+		अगर(!cur) {
+			परिणाम = -1;
+		} अन्यथा {
 			cur->name = strdup(name);
-			if (cur->name == NULL) {
-				free(cur);
-				result = -1;
-			} else {
-				struct variables *bottom = top_vars;
-				cur->value = strdup(value);
-				cur->next = NULL;
+			अगर (cur->name == शून्य) {
+				मुक्त(cur);
+				परिणाम = -1;
+			} अन्यथा {
+				काष्ठा variables *bottom = शीर्ष_vars;
+				cur->मूल्य = strdup(मूल्य);
+				cur->अग्र = शून्य;
 				cur->flg_export = flg_export;
 				cur->flg_read_only = 0;
-				while(bottom->next) bottom=bottom->next;
-				bottom->next = cur;
+				जबतक(bottom->अग्र) bottom=bottom->अग्र;
+				bottom->अग्र = cur;
 			}
 		}
 	}
 
-#ifndef __U_BOOT__
-	if(result==0 && cur->flg_export==1) {
-		*(value-1) = '=';
-		result = putenv(name);
-	} else {
-#endif
-		free(name);
-#ifndef __U_BOOT__
-		if(result>0)            /* equivalent to previous set */
-			result = 0;
+#अगर_अघोषित __U_BOOT__
+	अगर(परिणाम==0 && cur->flg_export==1) {
+		*(मूल्य-1) = '=';
+		परिणाम = putenv(name);
+	} अन्यथा {
+#पूर्ण_अगर
+		मुक्त(name);
+#अगर_अघोषित __U_BOOT__
+		अगर(परिणाम>0)            /* equivalent to previous set */
+			परिणाम = 0;
 	}
-#endif
-	return result;
+#पूर्ण_अगर
+	वापस परिणाम;
 }
 
-void unset_local_var(const char *name)
+व्योम unset_local_var(स्थिर अक्षर *name)
 {
-	struct variables *cur;
+	काष्ठा variables *cur;
 
-	if (name) {
-		for (cur = top_vars; cur; cur=cur->next) {
-			if(strcmp(cur->name, name)==0)
-				break;
+	अगर (name) {
+		क्रम (cur = शीर्ष_vars; cur; cur=cur->अग्र) {
+			अगर(म_भेद(cur->name, name)==0)
+				अवरोध;
 		}
-		if (cur != NULL) {
-			struct variables *next = top_vars;
-			if(cur->flg_read_only) {
-				error_msg("%s: readonly variable", name);
-				return;
-			} else {
-#ifndef __U_BOOT__
-				if(cur->flg_export)
+		अगर (cur != शून्य) {
+			काष्ठा variables *अग्र = शीर्ष_vars;
+			अगर(cur->flg_read_only) {
+				error_संदेश("%s: readonly variable", name);
+				वापस;
+			} अन्यथा {
+#अगर_अघोषित __U_BOOT__
+				अगर(cur->flg_export)
 					unenv_set(cur->name);
-#endif
-				free(cur->name);
-				free(cur->value);
-				while (next->next != cur)
-					next = next->next;
-				next->next = cur->next;
+#पूर्ण_अगर
+				मुक्त(cur->name);
+				मुक्त(cur->मूल्य);
+				जबतक (अग्र->अग्र != cur)
+					अग्र = अग्र->अग्र;
+				अग्र->अग्र = cur->अग्र;
 			}
-			free(cur);
+			मुक्त(cur);
 		}
 	}
 }
 
-static int is_assignment(const char *s)
+अटल पूर्णांक is_assignment(स्थिर अक्षर *s)
 {
-	if (s == NULL)
-		return 0;
+	अगर (s == शून्य)
+		वापस 0;
 
-	if (!isalpha(*s)) return 0;
+	अगर (!है_अक्षर(*s)) वापस 0;
 	++s;
-	while(isalnum(*s) || *s=='_') ++s;
-	return *s=='=';
+	जबतक(है_अक्षर_अंक(*s) || *s=='_') ++s;
+	वापस *s=='=';
 }
 
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 /* the src parameter allows us to peek forward to a possible &n syntax
  * for file descriptor duplication, e.g., "2>&1".
  * Return code is 0 normally, 1 if a syntax error is detected in src.
  * Resource errors (in xmalloc) cause the process to exit */
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
-	struct in_str *input)
+अटल पूर्णांक setup_redirect(काष्ठा p_context *ctx, पूर्णांक fd, redir_type style,
+	काष्ठा in_str *निवेश)
 {
-	struct child_prog *child=ctx->child;
-	struct redir_struct *redir = child->redirects;
-	struct redir_struct *last_redir=NULL;
+	काष्ठा child_prog *child=ctx->child;
+	काष्ठा redir_struct *redir = child->redirects;
+	काष्ठा redir_struct *last_redir=शून्य;
 
 	/* Create a new redir_struct and drop it onto the end of the linked list */
-	while(redir) {
+	जबतक(redir) {
 		last_redir=redir;
-		redir=redir->next;
+		redir=redir->अग्र;
 	}
-	redir = xmalloc(sizeof(struct redir_struct));
-	redir->next=NULL;
-	redir->word.gl_pathv=NULL;
-	if (last_redir) {
-		last_redir->next=redir;
-	} else {
+	redir = xmalloc(माप(काष्ठा redir_struct));
+	redir->अग्र=शून्य;
+	redir->word.gl_pathv=शून्य;
+	अगर (last_redir) {
+		last_redir->अग्र=redir;
+	} अन्यथा {
 		child->redirects=redir;
 	}
 
@@ -2311,14 +2311,14 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 	debug_printf("Redirect type %d%s\n", redir->fd, redir_table[style].descrip);
 
 	/* Check for a '2>&1' type redirect */
-	redir->dup = redirect_dup_num(input);
-	if (redir->dup == -2) return 1;  /* syntax error */
-	if (redir->dup != -1) {
+	redir->dup = redirect_dup_अंक(निवेश);
+	अगर (redir->dup == -2) वापस 1;  /* syntax error */
+	अगर (redir->dup != -1) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
 		debug_printf("Duplicating redirect '%d>&%d'\n", redir->fd, redir->dup);
-	} else {
+	} अन्यथा {
 		/* We do _not_ try to open the file that src points to,
 		 * since we need to return and let src be expanded first.
 		 * Set ctx->pending_redirect, so we know what to do at the
@@ -2326,36 +2326,36 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 		 */
 		ctx->pending_redirect = redir;
 	}
-	return 0;
+	वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-static struct pipe *new_pipe(void)
+अटल काष्ठा pipe *new_pipe(व्योम)
 {
-	struct pipe *pi;
-	pi = xmalloc(sizeof(struct pipe));
-	pi->num_progs = 0;
-	pi->progs = NULL;
-	pi->next = NULL;
+	काष्ठा pipe *pi;
+	pi = xmalloc(माप(काष्ठा pipe));
+	pi->अंक_progs = 0;
+	pi->progs = शून्य;
+	pi->अग्र = शून्य;
 	pi->followup = 0;  /* invalid */
 	pi->r_mode = RES_NONE;
-	return pi;
+	वापस pi;
 }
 
-static void initialize_context(struct p_context *ctx)
+अटल व्योम initialize_context(काष्ठा p_context *ctx)
 {
-	ctx->pipe=NULL;
-#ifndef __U_BOOT__
-	ctx->pending_redirect=NULL;
-#endif
-	ctx->child=NULL;
-	ctx->list_head=new_pipe();
-	ctx->pipe=ctx->list_head;
+	ctx->pipe=शून्य;
+#अगर_अघोषित __U_BOOT__
+	ctx->pending_redirect=शून्य;
+#पूर्ण_अगर
+	ctx->child=शून्य;
+	ctx->list_शीर्ष=new_pipe();
+	ctx->pipe=ctx->list_शीर्ष;
 	ctx->w=RES_NONE;
-	ctx->stack=NULL;
-#ifdef __U_BOOT__
+	ctx->ढेर=शून्य;
+#अगर_घोषित __U_BOOT__
 	ctx->old_flag=0;
-#endif
+#पूर्ण_अगर
 	done_command(ctx);   /* creates the memory for working child */
 }
 
@@ -2364,17 +2364,17 @@ static void initialize_context(struct p_context *ctx)
  * should handle if, then, elif, else, fi, for, while, until, do, done.
  * case, function, and select are obnoxious, save those for later.
  */
-struct reserved_combo {
-	char *literal;
-	int code;
-	long flag;
+काष्ठा reserved_combo {
+	अक्षर *literal;
+	पूर्णांक code;
+	दीर्घ flag;
 };
 /* Mostly a list of accepted follow-up reserved words.
  * FLAG_END means we are done with the sequence, and are ready
  * to turn the compound list into a command.
  * FLAG_START means the word must start a new compound list.
  */
-static struct reserved_combo reserved_list[] = {
+अटल काष्ठा reserved_combo reserved_list[] = {
 	{ "if",    RES_IF,    FLAG_THEN | FLAG_START },
 	{ "then",  RES_THEN,  FLAG_ELIF | FLAG_ELSE | FLAG_FI },
 	{ "elif",  RES_ELIF,  FLAG_THEN },
@@ -2387,239 +2387,239 @@ static struct reserved_combo reserved_list[] = {
 	{ "do",    RES_DO,    FLAG_DONE },
 	{ "done",  RES_DONE,  FLAG_END  }
 };
-#define NRES (sizeof(reserved_list)/sizeof(struct reserved_combo))
+#घोषणा NRES (माप(reserved_list)/माप(काष्ठा reserved_combo))
 
-static int reserved_word(o_string *dest, struct p_context *ctx)
+अटल पूर्णांक reserved_word(o_string *dest, काष्ठा p_context *ctx)
 {
-	struct reserved_combo *r;
-	for (r=reserved_list;
+	काष्ठा reserved_combo *r;
+	क्रम (r=reserved_list;
 		r<reserved_list+NRES; r++) {
-		if (strcmp(dest->data, r->literal) == 0) {
+		अगर (म_भेद(dest->तथ्य, r->literal) == 0) {
 			debug_printf("found reserved word %s, code %d\n",r->literal,r->code);
-			if (r->flag & FLAG_START) {
-				struct p_context *new = xmalloc(sizeof(struct p_context));
+			अगर (r->flag & FLAG_START) {
+				काष्ठा p_context *new = xmalloc(माप(काष्ठा p_context));
 				debug_printf("push stack\n");
-				if (ctx->w == RES_IN || ctx->w == RES_FOR) {
+				अगर (ctx->w == RES_IN || ctx->w == RES_FOR) {
 					syntax();
-					free(new);
+					मुक्त(new);
 					ctx->w = RES_SNTX;
 					b_reset(dest);
-					return 1;
+					वापस 1;
 				}
 				*new = *ctx;   /* physical copy */
 				initialize_context(ctx);
-				ctx->stack=new;
-			} else if ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
+				ctx->ढेर=new;
+			} अन्यथा अगर ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
 				syntax();
 				ctx->w = RES_SNTX;
 				b_reset(dest);
-				return 1;
+				वापस 1;
 			}
 			ctx->w=r->code;
 			ctx->old_flag = r->flag;
-			if (ctx->old_flag & FLAG_END) {
-				struct p_context *old;
+			अगर (ctx->old_flag & FLAG_END) {
+				काष्ठा p_context *old;
 				debug_printf("pop stack\n");
 				done_pipe(ctx,PIPE_SEQ);
-				old = ctx->stack;
-				old->child->group = ctx->list_head;
-#ifndef __U_BOOT__
+				old = ctx->ढेर;
+				old->child->group = ctx->list_शीर्ष;
+#अगर_अघोषित __U_BOOT__
 				old->child->subshell = 0;
-#endif
+#पूर्ण_अगर
 				*ctx = *old;   /* physical copy */
-				free(old);
+				मुक्त(old);
 			}
 			b_reset (dest);
-			return 1;
+			वापस 1;
 		}
 	}
-	return 0;
+	वापस 0;
 }
 
 /* normal return is 0.
  * Syntax or xglob errors return 1. */
-static int done_word(o_string *dest, struct p_context *ctx)
+अटल पूर्णांक done_word(o_string *dest, काष्ठा p_context *ctx)
 {
-	struct child_prog *child=ctx->child;
-#ifndef __U_BOOT__
+	काष्ठा child_prog *child=ctx->child;
+#अगर_अघोषित __U_BOOT__
 	glob_t *glob_target;
-	int gr, flags = 0;
-#else
-	char *str, *s;
-	int argc, cnt;
-#endif
+	पूर्णांक gr, flags = 0;
+#अन्यथा
+	अक्षर *str, *s;
+	पूर्णांक argc, cnt;
+#पूर्ण_अगर
 
-	debug_printf("done_word: %s %p\n", dest->data, child);
-	if (dest->length == 0 && !dest->nonnull) {
+	debug_printf("done_word: %s %p\n", dest->तथ्य, child);
+	अगर (dest->लंबाई == 0 && !dest->nonnull) {
 		debug_printf("  true null, ignored\n");
-		return 0;
+		वापस 0;
 	}
-#ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+#अगर_अघोषित __U_BOOT__
+	अगर (ctx->pending_redirect) {
 		glob_target = &ctx->pending_redirect->word;
-	} else {
-#endif
-		if (child->group) {
+	} अन्यथा {
+#पूर्ण_अगर
+		अगर (child->group) {
 			syntax();
-			return 1;  /* syntax error, groups and arglists don't mix */
+			वापस 1;  /* syntax error, groups and arglists don't mix */
 		}
-		if (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
-			debug_printf("checking %s for reserved-ness\n",dest->data);
-			if (reserved_word(dest,ctx)) return ctx->w==RES_SNTX;
+		अगर (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
+			debug_printf("checking %s for reserved-ness\n",dest->तथ्य);
+			अगर (reserved_word(dest,ctx)) वापस ctx->w==RES_SNTX;
 		}
-#ifndef __U_BOOT__
-		glob_target = &child->glob_result;
-		if (child->argv) flags |= GLOB_APPEND;
-#else
-		for (cnt = 1, s = dest->data; s && *s; s++) {
-			if (*s == '\\') s++;
+#अगर_अघोषित __U_BOOT__
+		glob_target = &child->glob_परिणाम;
+		अगर (child->argv) flags |= GLOB_APPEND;
+#अन्यथा
+		क्रम (cnt = 1, s = dest->तथ्य; s && *s; s++) {
+			अगर (*s == '\\') s++;
 			cnt++;
 		}
-		str = malloc(cnt);
-		if (!str) return 1;
-		if ( child->argv == NULL) {
+		str = दो_स्मृति(cnt);
+		अगर (!str) वापस 1;
+		अगर ( child->argv == शून्य) {
 			child->argc=0;
 		}
 		argc = ++child->argc;
-		child->argv = realloc(child->argv, (argc+1)*sizeof(*child->argv));
-		if (child->argv == NULL) {
-			free(str);
-			return 1;
+		child->argv = पुनः_स्मृति(child->argv, (argc+1)*माप(*child->argv));
+		अगर (child->argv == शून्य) {
+			मुक्त(str);
+			वापस 1;
 		}
-		child->argv_nonnull = realloc(child->argv_nonnull,
-					(argc+1)*sizeof(*child->argv_nonnull));
-		if (child->argv_nonnull == NULL) {
-			free(str);
-			return 1;
+		child->argv_nonnull = पुनः_स्मृति(child->argv_nonnull,
+					(argc+1)*माप(*child->argv_nonnull));
+		अगर (child->argv_nonnull == शून्य) {
+			मुक्त(str);
+			वापस 1;
 		}
 		child->argv[argc-1]=str;
 		child->argv_nonnull[argc-1] = dest->nonnull;
-		child->argv[argc]=NULL;
+		child->argv[argc]=शून्य;
 		child->argv_nonnull[argc] = 0;
-		for (s = dest->data; s && *s; s++,str++) {
-			if (*s == '\\') s++;
+		क्रम (s = dest->तथ्य; s && *s; s++,str++) {
+			अगर (*s == '\\') s++;
 			*str = *s;
 		}
 		*str = '\0';
-#endif
-#ifndef __U_BOOT__
+#पूर्ण_अगर
+#अगर_अघोषित __U_BOOT__
 	}
 	gr = xglob(dest, flags, glob_target);
-	if (gr != 0) return 1;
-#endif
+	अगर (gr != 0) वापस 1;
+#पूर्ण_अगर
 
 	b_reset(dest);
-#ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
-		ctx->pending_redirect=NULL;
-		if (glob_target->gl_pathc != 1) {
-			error_msg("ambiguous redirect");
-			return 1;
+#अगर_अघोषित __U_BOOT__
+	अगर (ctx->pending_redirect) {
+		ctx->pending_redirect=शून्य;
+		अगर (glob_target->gl_pathc != 1) {
+			error_संदेश("ambiguous redirect");
+			वापस 1;
 		}
-	} else {
+	} अन्यथा {
 		child->argv = glob_target->gl_pathv;
 	}
-#endif
-	if (ctx->w == RES_FOR) {
+#पूर्ण_अगर
+	अगर (ctx->w == RES_FOR) {
 		done_word(dest,ctx);
 		done_pipe(ctx,PIPE_SEQ);
 	}
-	return 0;
+	वापस 0;
 }
 
 /* The only possible error here is out of memory, in which case
  * xmalloc exits. */
-static int done_command(struct p_context *ctx)
+अटल पूर्णांक done_command(काष्ठा p_context *ctx)
 {
 	/* The child is really already in the pipe structure, so
 	 * advance the pipe counter and make a new, null child.
 	 * Only real trickiness here is that the uncommitted
 	 * child structure, to which ctx->child points, is not
 	 * counted in pi->num_progs. */
-	struct pipe *pi=ctx->pipe;
-	struct child_prog *prog=ctx->child;
+	काष्ठा pipe *pi=ctx->pipe;
+	काष्ठा child_prog *prog=ctx->child;
 
-	if (prog && prog->group == NULL
-		 && prog->argv == NULL
-#ifndef __U_BOOT__
-		 && prog->redirects == NULL) {
-#else
+	अगर (prog && prog->group == शून्य
+		 && prog->argv == शून्य
+#अगर_अघोषित __U_BOOT__
+		 && prog->redirects == शून्य) {
+#अन्यथा
 										) {
-#endif
+#पूर्ण_अगर
 		debug_printf("done_command: skipping null command\n");
-		return 0;
-	} else if (prog) {
-		pi->num_progs++;
-		debug_printf("done_command: num_progs incremented to %d\n",pi->num_progs);
-	} else {
+		वापस 0;
+	} अन्यथा अगर (prog) {
+		pi->अंक_progs++;
+		debug_printf("done_command: num_progs incremented to %d\n",pi->अंक_progs);
+	} अन्यथा {
 		debug_printf("done_command: initializing\n");
 	}
-	pi->progs = xrealloc(pi->progs, sizeof(*pi->progs) * (pi->num_progs+1));
+	pi->progs = xrealloc(pi->progs, माप(*pi->progs) * (pi->अंक_progs+1));
 
-	prog = pi->progs + pi->num_progs;
-#ifndef __U_BOOT__
-	prog->redirects = NULL;
-#endif
-	prog->argv = NULL;
-	prog->argv_nonnull = NULL;
-#ifndef __U_BOOT__
+	prog = pi->progs + pi->अंक_progs;
+#अगर_अघोषित __U_BOOT__
+	prog->redirects = शून्य;
+#पूर्ण_अगर
+	prog->argv = शून्य;
+	prog->argv_nonnull = शून्य;
+#अगर_अघोषित __U_BOOT__
 	prog->is_stopped = 0;
-#endif
-	prog->group = NULL;
-#ifndef __U_BOOT__
-	prog->glob_result.gl_pathv = NULL;
+#पूर्ण_अगर
+	prog->group = शून्य;
+#अगर_अघोषित __U_BOOT__
+	prog->glob_परिणाम.gl_pathv = शून्य;
 	prog->family = pi;
-#endif
+#पूर्ण_अगर
 	prog->sp = 0;
 	ctx->child = prog;
 	prog->type = ctx->type;
 
 	/* but ctx->pipe and ctx->list_head remain unchanged */
-	return 0;
+	वापस 0;
 }
 
-static int done_pipe(struct p_context *ctx, pipe_style type)
+अटल पूर्णांक done_pipe(काष्ठा p_context *ctx, pipe_style type)
 {
-	struct pipe *new_p;
+	काष्ठा pipe *new_p;
 	done_command(ctx);  /* implicit closure of previous command */
 	debug_printf("done_pipe, type %d\n", type);
 	ctx->pipe->followup = type;
 	ctx->pipe->r_mode = ctx->w;
 	new_p=new_pipe();
-	ctx->pipe->next = new_p;
+	ctx->pipe->अग्र = new_p;
 	ctx->pipe = new_p;
-	ctx->child = NULL;
+	ctx->child = शून्य;
 	done_command(ctx);  /* set up new pipe to accept commands */
-	return 0;
+	वापस 0;
 }
 
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 /* peek ahead in the in_str to find out if we have a "&n" construct,
  * as in "2>&1", that represents duplicating a file descriptor.
  * returns either -2 (syntax error), -1 (no &), or the number found.
  */
-static int redirect_dup_num(struct in_str *input)
+अटल पूर्णांक redirect_dup_अंक(काष्ठा in_str *निवेश)
 {
-	int ch, d=0, ok=0;
-	ch = b_peek(input);
-	if (ch != '&') return -1;
+	पूर्णांक ch, d=0, ok=0;
+	ch = b_peek(निवेश);
+	अगर (ch != '&') वापस -1;
 
-	b_getch(input);  /* get the & */
-	ch=b_peek(input);
-	if (ch == '-') {
-		b_getch(input);
-		return -3;  /* "-" represents "close me" */
+	b_getch(निवेश);  /* get the & */
+	ch=b_peek(निवेश);
+	अगर (ch == '-') {
+		b_getch(निवेश);
+		वापस -3;  /* "-" represents "close me" */
 	}
-	while (isdigit(ch)) {
+	जबतक (है_अंक(ch)) {
 		d = d*10+(ch-'0');
 		ok=1;
-		b_getch(input);
-		ch = b_peek(input);
+		b_getch(निवेश);
+		ch = b_peek(निवेश);
 	}
-	if (ok) return d;
+	अगर (ok) वापस d;
 
-	error_msg("ambiguous redirect");
-	return -2;
+	error_संदेश("ambiguous redirect");
+	वापस -2;
 }
 
 /* If a redirect is immediately preceded by a number, that number is
@@ -2633,77 +2633,77 @@ static int redirect_dup_num(struct in_str *input)
  * A -1 output from this program means no valid number was found, so the
  * caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+अटल पूर्णांक redirect_opt_अंक(o_string *o)
 {
-	int num;
+	पूर्णांक अंक;
 
-	if (o->length==0) return -1;
-	for(num=0; num<o->length; num++) {
-		if (!isdigit(*(o->data+num))) {
-			return -1;
+	अगर (o->लंबाई==0) वापस -1;
+	क्रम(अंक=0; अंक<o->लंबाई; अंक++) {
+		अगर (!है_अंक(*(o->तथ्य+अंक))) {
+			वापस -1;
 		}
 	}
 	/* reuse num (and save an int) */
-	num=atoi(o->data);
+	अंक=म_से_प(o->तथ्य);
 	b_reset(o);
-	return num;
+	वापस अंक;
 }
 
-FILE *generate_stream_from_list(struct pipe *head)
+खाता *generate_stream_from_list(काष्ठा pipe *शीर्ष_2)
 {
-	FILE *pf;
-#if 1
-	int pid, channel[2];
-	if (pipe(channel)<0) perror_msg_and_die("pipe");
-	pid=fork();
-	if (pid<0) {
-		perror_msg_and_die("fork");
-	} else if (pid==0) {
-		close(channel[0]);
-		if (channel[1] != 1) {
+	खाता *pf;
+#अगर 1
+	पूर्णांक pid, channel[2];
+	अगर (pipe(channel)<0) perror_संदेश_and_die("pipe");
+	pid=विभाजन();
+	अगर (pid<0) {
+		perror_संदेश_and_die("fork");
+	} अन्यथा अगर (pid==0) {
+		बंद(channel[0]);
+		अगर (channel[1] != 1) {
 			dup2(channel[1],1);
-			close(channel[1]);
+			बंद(channel[1]);
 		}
-#if 0
-#define SURROGATE "surrogate response"
-		write(1,SURROGATE,sizeof(SURROGATE));
-		_exit(run_list(head));
-#else
-		_exit(run_list_real(head));   /* leaks memory */
-#endif
+#अगर 0
+#घोषणा SURROGATE "surrogate response"
+		ग_लिखो(1,SURROGATE,माप(SURROGATE));
+		_निकास(run_list(शीर्ष_2));
+#अन्यथा
+		_निकास(run_list_real(शीर्ष_2));   /* leaks memory */
+#पूर्ण_अगर
 	}
 	debug_printf("forked child %d\n",pid);
-	close(channel[1]);
+	बंद(channel[1]);
 	pf = fdopen(channel[0],"r");
 	debug_printf("pipe on FILE *%p\n",pf);
-#else
-	free_pipe_list(head,0);
+#अन्यथा
+	free_pipe_list(शीर्ष_2,0);
 	pf=popen("echo surrogate response","r");
 	debug_printf("started fake pipe on FILE *%p\n",pf);
-#endif
-	return pf;
+#पूर्ण_अगर
+	वापस pf;
 }
 
 /* this version hacked for testing purposes */
 /* return code is exit status of the process that is run. */
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end)
+अटल पूर्णांक process_command_subs(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *निवेश, पूर्णांक subst_end)
 {
-	int retcode;
-	o_string result=NULL_O_STRING;
-	struct p_context inner;
-	FILE *p;
-	struct in_str pipe_str;
+	पूर्णांक retcode;
+	o_string परिणाम=NULL_O_STRING;
+	काष्ठा p_context inner;
+	खाता *p;
+	काष्ठा in_str pipe_str;
 	initialize_context(&inner);
 
 	/* recursion to generate command */
-	retcode = parse_stream(&result, &inner, input, subst_end);
-	if (retcode != 0) return retcode;  /* syntax error or EOF */
-	done_word(&result, &inner);
+	retcode = parse_stream(&परिणाम, &inner, निवेश, subst_end);
+	अगर (retcode != 0) वापस retcode;  /* syntax error or EOF */
+	done_word(&परिणाम, &inner);
 	done_pipe(&inner, PIPE_SEQ);
-	b_free(&result);
+	b_free(&परिणाम);
 
-	p=generate_stream_from_list(inner.list_head);
-	if (p==NULL) return 1;
+	p=generate_stream_from_list(inner.list_शीर्ष);
+	अगर (p==शून्य) वापस 1;
 	mark_open(fileno(p));
 	setup_file_in_str(&pipe_str, p);
 
@@ -2711,8 +2711,8 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	retcode = parse_stream(dest, ctx, &pipe_str, '\0');
 	/* XXX In case of a syntax error, should we try to kill the child?
 	 * That would be tough to do right, so just read until EOF. */
-	if (retcode == 1) {
-		while (b_getch(&pipe_str)!=EOF) { /* discard */ };
+	अगर (retcode == 1) {
+		जबतक (b_getch(&pipe_str)!=खातापूर्ण) { /* discard */ };
 	}
 
 	debug_printf("done reading from pipe, pclose()ing\n");
@@ -2723,200 +2723,200 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	 * to the KISS philosophy of this program. */
 	mark_closed(fileno(p));
 	retcode=pclose(p);
-	free_pipe_list(inner.list_head,0);
+	free_pipe_list(inner.list_शीर्ष,0);
 	debug_printf("pclosed, retcode=%d\n",retcode);
 	/* XXX this process fails to trim a single trailing newline */
-	return retcode;
+	वापस retcode;
 }
 
-static int parse_group(o_string *dest, struct p_context *ctx,
-	struct in_str *input, int ch)
+अटल पूर्णांक parse_group(o_string *dest, काष्ठा p_context *ctx,
+	काष्ठा in_str *निवेश, पूर्णांक ch)
 {
-	int rcode, endch=0;
-	struct p_context sub;
-	struct child_prog *child = ctx->child;
-	if (child->argv) {
+	पूर्णांक rcode, endch=0;
+	काष्ठा p_context sub;
+	काष्ठा child_prog *child = ctx->child;
+	अगर (child->argv) {
 		syntax();
-		return 1;  /* syntax error, groups and arglists don't mix */
+		वापस 1;  /* syntax error, groups and arglists don't mix */
 	}
 	initialize_context(&sub);
-	switch(ch) {
-		case '(': endch=')'; child->subshell=1; break;
-		case '{': endch='}'; break;
-		default: syntax();   /* really logic error */
+	चयन(ch) {
+		हाल '(': endch=')'; child->subshell=1; अवरोध;
+		हाल '{': endch='}'; अवरोध;
+		शेष: syntax();   /* really logic error */
 	}
-	rcode=parse_stream(dest,&sub,input,endch);
+	rcode=parse_stream(dest,&sub,निवेश,endch);
 	done_word(dest,&sub); /* finish off the final word in the subcontext */
 	done_pipe(&sub, PIPE_SEQ);  /* and the final command there, too */
-	child->group = sub.list_head;
-	return rcode;
+	child->group = sub.list_शीर्ष;
+	वापस rcode;
 	/* child remains "open", available for possible redirects */
 }
-#endif
+#पूर्ण_अगर
 
 /* basically useful version until someone wants to get fancier,
  * see the bash man page under "Parameter Expansion" */
-static char *lookup_param(char *src)
+अटल अक्षर *lookup_param(अक्षर *src)
 {
-	char *p;
-	char *sep;
-	char *default_val = NULL;
-	int assign = 0;
-	int expand_empty = 0;
+	अक्षर *p;
+	अक्षर *sep;
+	अक्षर *default_val = शून्य;
+	पूर्णांक assign = 0;
+	पूर्णांक expand_empty = 0;
 
-	if (!src)
-		return NULL;
+	अगर (!src)
+		वापस शून्य;
 
-	sep = strchr(src, ':');
+	sep = म_अक्षर(src, ':');
 
-	if (sep) {
+	अगर (sep) {
 		*sep = '\0';
-		if (*(sep + 1) == '-')
+		अगर (*(sep + 1) == '-')
 			default_val = sep+2;
-		if (*(sep + 1) == '=') {
+		अगर (*(sep + 1) == '=') {
 			default_val = sep+2;
 			assign = 1;
 		}
-		if (*(sep + 1) == '+') {
+		अगर (*(sep + 1) == '+') {
 			default_val = sep+2;
 			expand_empty = 1;
 		}
 	}
 
 	p = env_get(src);
-	if (!p)
+	अगर (!p)
 		p = get_local_var(src);
 
-	if (!p || strlen(p) == 0) {
+	अगर (!p || म_माप(p) == 0) {
 		p = default_val;
-		if (assign) {
-			char *var = malloc(strlen(src)+strlen(default_val)+2);
-			if (var) {
-				sprintf(var, "%s=%s", src, default_val);
+		अगर (assign) {
+			अक्षर *var = दो_स्मृति(म_माप(src)+म_माप(default_val)+2);
+			अगर (var) {
+				प्र_लिखो(var, "%s=%s", src, default_val);
 				set_local_var(var, 0);
 			}
-			free(var);
+			मुक्त(var);
 		}
-	} else if (expand_empty) {
-		p += strlen(p);
+	} अन्यथा अगर (expand_empty) {
+		p += म_माप(p);
 	}
 
-	if (sep)
+	अगर (sep)
 		*sep = ':';
 
-	return p;
+	वापस p;
 }
 
-#ifdef __U_BOOT__
-static char *get_dollar_var(char ch)
+#अगर_घोषित __U_BOOT__
+अटल अक्षर *get_dollar_var(अक्षर ch)
 {
-	static char buf[40];
+	अटल अक्षर buf[40];
 
 	buf[0] = '\0';
-	switch (ch) {
-		case '?':
-			sprintf(buf, "%u", (unsigned int)last_return_code);
-			break;
-		default:
-			return NULL;
+	चयन (ch) {
+		हाल '?':
+			प्र_लिखो(buf, "%u", (अचिन्हित पूर्णांक)last_return_code);
+			अवरोध;
+		शेष:
+			वापस शून्य;
 	}
-	return buf;
+	वापस buf;
 }
-#endif
+#पूर्ण_अगर
 
 /* return code: 0 for OK, 1 for syntax error */
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input)
+अटल पूर्णांक handle_dollar(o_string *dest, काष्ठा p_context *ctx, काष्ठा in_str *निवेश)
 {
-#ifndef __U_BOOT__
-	int i, advance=0;
-#else
-	int advance=0;
-#endif
-#ifndef __U_BOOT__
-	char sep[]=" ";
-#endif
-	int ch = input->peek(input);  /* first character after the $ */
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक i, advance=0;
+#अन्यथा
+	पूर्णांक advance=0;
+#पूर्ण_अगर
+#अगर_अघोषित __U_BOOT__
+	अक्षर sep[]=" ";
+#पूर्ण_अगर
+	पूर्णांक ch = निवेश->peek(निवेश);  /* first character after the $ */
 	debug_printf("handle_dollar: ch=%c\n",ch);
-	if (isalpha(ch)) {
-		b_addchr(dest, SPECIAL_VAR_SYMBOL);
+	अगर (है_अक्षर(ch)) {
+		b_addchr(dest, SPECIAL_VAR_प्रतीक);
 		ctx->child->sp++;
-		while(ch=b_peek(input),isalnum(ch) || ch=='_') {
-			b_getch(input);
+		जबतक(ch=b_peek(निवेश),है_अक्षर_अंक(ch) || ch=='_') {
+			b_getch(निवेश);
 			b_addchr(dest,ch);
 		}
-		b_addchr(dest, SPECIAL_VAR_SYMBOL);
-#ifndef __U_BOOT__
-	} else if (isdigit(ch)) {
+		b_addchr(dest, SPECIAL_VAR_प्रतीक);
+#अगर_अघोषित __U_BOOT__
+	} अन्यथा अगर (है_अंक(ch)) {
 		i = ch-'0';  /* XXX is $0 special? */
-		if (i<global_argc) {
+		अगर (i<global_argc) {
 			parse_string(dest, ctx, global_argv[i]); /* recursion */
 		}
 		advance = 1;
-#endif
-	} else switch (ch) {
-#ifndef __U_BOOT__
-		case '$':
+#पूर्ण_अगर
+	} अन्यथा चयन (ch) {
+#अगर_अघोषित __U_BOOT__
+		हाल '$':
 			b_adduint(dest,getpid());
 			advance = 1;
-			break;
-		case '!':
-			if (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
+			अवरोध;
+		हाल '!':
+			अगर (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
 			advance = 1;
-			break;
-#endif
-		case '?':
-#ifndef __U_BOOT__
+			अवरोध;
+#पूर्ण_अगर
+		हाल '?':
+#अगर_अघोषित __U_BOOT__
 			b_adduint(dest,last_return_code);
-#else
+#अन्यथा
 			ctx->child->sp++;
-			b_addchr(dest, SPECIAL_VAR_SYMBOL);
+			b_addchr(dest, SPECIAL_VAR_प्रतीक);
 			b_addchr(dest, '$');
 			b_addchr(dest, '?');
-			b_addchr(dest, SPECIAL_VAR_SYMBOL);
-#endif
+			b_addchr(dest, SPECIAL_VAR_प्रतीक);
+#पूर्ण_अगर
 			advance = 1;
-			break;
-#ifndef __U_BOOT__
-		case '#':
+			अवरोध;
+#अगर_अघोषित __U_BOOT__
+		हाल '#':
 			b_adduint(dest,global_argc ? global_argc-1 : 0);
 			advance = 1;
-			break;
-#endif
-		case '{':
-			b_addchr(dest, SPECIAL_VAR_SYMBOL);
+			अवरोध;
+#पूर्ण_अगर
+		हाल '{':
+			b_addchr(dest, SPECIAL_VAR_प्रतीक);
 			ctx->child->sp++;
-			b_getch(input);
+			b_getch(निवेश);
 			/* XXX maybe someone will try to escape the '}' */
-			while(ch=b_getch(input),ch!=EOF && ch!='}') {
+			जबतक(ch=b_getch(निवेश),ch!=खातापूर्ण && ch!='}') {
 				b_addchr(dest,ch);
 			}
-			if (ch != '}') {
+			अगर (ch != '}') {
 				syntax();
-				return 1;
+				वापस 1;
 			}
-			b_addchr(dest, SPECIAL_VAR_SYMBOL);
-			break;
-#ifndef __U_BOOT__
-		case '(':
-			b_getch(input);
-			process_command_subs(dest, ctx, input, ')');
-			break;
-		case '*':
+			b_addchr(dest, SPECIAL_VAR_प्रतीक);
+			अवरोध;
+#अगर_अघोषित __U_BOOT__
+		हाल '(':
+			b_getch(निवेश);
+			process_command_subs(dest, ctx, निवेश, ')');
+			अवरोध;
+		हाल '*':
 			sep[0]=ifs[0];
-			for (i=1; i<global_argc; i++) {
+			क्रम (i=1; i<global_argc; i++) {
 				parse_string(dest, ctx, global_argv[i]);
-				if (i+1 < global_argc) parse_string(dest, ctx, sep);
+				अगर (i+1 < global_argc) parse_string(dest, ctx, sep);
 			}
-			break;
-		case '@':
-		case '-':
-		case '_':
+			अवरोध;
+		हाल '@':
+		हाल '-':
+		हाल '_':
 			/* still unhandled, but should be eventually */
-			error_msg("unhandled syntax: $%c",ch);
-			return 1;
-			break;
-#endif
-		default:
+			error_संदेश("unhandled syntax: $%c",ch);
+			वापस 1;
+			अवरोध;
+#पूर्ण_अगर
+		शेष:
 			b_addqchr(dest,'$',dest->quote);
 	}
 	/* Eat the character if the flag was set.  If the compiler
@@ -2924,204 +2924,204 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 	 * for all the "advance = 1;" above, and also end up with
 	 * a nice size-optimized program.  Hah!  That'll be the day.
 	 */
-	if (advance) b_getch(input);
-	return 0;
+	अगर (advance) b_getch(निवेश);
+	वापस 0;
 }
 
-#ifndef __U_BOOT__
-int parse_string(o_string *dest, struct p_context *ctx, const char *src)
+#अगर_अघोषित __U_BOOT__
+पूर्णांक parse_string(o_string *dest, काष्ठा p_context *ctx, स्थिर अक्षर *src)
 {
-	struct in_str foo;
+	काष्ठा in_str foo;
 	setup_string_in_str(&foo, src);
-	return parse_stream(dest, ctx, &foo, '\0');
+	वापस parse_stream(dest, ctx, &foo, '\0');
 }
-#endif
+#पूर्ण_अगर
 
 /* return code is 0 for normal exit, 1 for syntax error */
-static int parse_stream(o_string *dest, struct p_context *ctx,
-			struct in_str *input, int end_trigger)
+अटल पूर्णांक parse_stream(o_string *dest, काष्ठा p_context *ctx,
+			काष्ठा in_str *निवेश, पूर्णांक end_trigger)
 {
-	unsigned int ch, m;
-#ifndef __U_BOOT__
-	int redir_fd;
+	अचिन्हित पूर्णांक ch, m;
+#अगर_अघोषित __U_BOOT__
+	पूर्णांक redir_fd;
 	redir_type redir_style;
-#endif
-	int next;
+#पूर्ण_अगर
+	पूर्णांक अग्र;
 
 	/* Only double-quote state is handled in the state variable dest->quote.
 	 * A single-quote triggers a bypass of the main loop until its mate is
 	 * found.  When recursing, quote state is passed in via dest->quote. */
 
 	debug_printf("parse_stream, end_trigger=%d\n",end_trigger);
-	while ((ch=b_getch(input))!=EOF) {
+	जबतक ((ch=b_getch(निवेश))!=खातापूर्ण) {
 		m = map[ch];
-#ifdef __U_BOOT__
-		if (input->__promptme == 0) return 1;
-#endif
-		next = (ch == '\n') ? 0 : b_peek(input);
+#अगर_घोषित __U_BOOT__
+		अगर (निवेश->__promptme == 0) वापस 1;
+#पूर्ण_अगर
+		अग्र = (ch == '\n') ? 0 : b_peek(निवेश);
 
 		debug_printf("parse_stream: ch=%c (%d) m=%d quote=%d - %c\n",
 			ch >= ' ' ? ch : '.', ch, m,
-			dest->quote, ctx->stack == NULL ? '*' : '.');
+			dest->quote, ctx->ढेर == शून्य ? '*' : '.');
 
-		if (m==0 || ((m==1 || m==2) && dest->quote)) {
+		अगर (m==0 || ((m==1 || m==2) && dest->quote)) {
 			b_addqchr(dest, ch, dest->quote);
-		} else {
-			if (m==2) {  /* unquoted IFS */
-				if (done_word(dest, ctx)) {
-					return 1;
+		} अन्यथा {
+			अगर (m==2) {  /* unquoted IFS */
+				अगर (done_word(dest, ctx)) {
+					वापस 1;
 				}
 				/* If we aren't performing a substitution, treat a newline as a
 				 * command separator.  */
-				if (end_trigger != '\0' && ch=='\n')
+				अगर (end_trigger != '\0' && ch=='\n')
 					done_pipe(ctx,PIPE_SEQ);
 			}
-			if (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
+			अगर (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
 				debug_printf("leaving parse_stream (triggered)\n");
-				return 0;
+				वापस 0;
 			}
-#if 0
-			if (ch=='\n') {
+#अगर 0
+			अगर (ch=='\n') {
 				/* Yahoo!  Time to run with it! */
 				done_pipe(ctx,PIPE_SEQ);
-				run_list(ctx->list_head);
+				run_list(ctx->list_शीर्ष);
 				initialize_context(ctx);
 			}
-#endif
-			if (m!=2) switch (ch) {
-		case '#':
-			if (dest->length == 0 && !dest->quote) {
-				while(ch=b_peek(input),ch!=EOF && ch!='\n') { b_getch(input); }
-			} else {
+#पूर्ण_अगर
+			अगर (m!=2) चयन (ch) {
+		हाल '#':
+			अगर (dest->लंबाई == 0 && !dest->quote) {
+				जबतक(ch=b_peek(निवेश),ch!=खातापूर्ण && ch!='\n') { b_getch(निवेश); }
+			} अन्यथा {
 				b_addqchr(dest, ch, dest->quote);
 			}
-			break;
-		case '\\':
-			if (next == EOF) {
+			अवरोध;
+		हाल '\\':
+			अगर (अग्र == खातापूर्ण) {
 				syntax();
-				return 1;
+				वापस 1;
 			}
 			b_addqchr(dest, '\\', dest->quote);
-			b_addqchr(dest, b_getch(input), dest->quote);
-			break;
-		case '$':
-			if (handle_dollar(dest, ctx, input)!=0) return 1;
-			break;
-		case '\'':
+			b_addqchr(dest, b_getch(निवेश), dest->quote);
+			अवरोध;
+		हाल '$':
+			अगर (handle_dollar(dest, ctx, निवेश)!=0) वापस 1;
+			अवरोध;
+		हाल '\'':
 			dest->nonnull = 1;
-			while(ch=b_getch(input),ch!=EOF && ch!='\'') {
-#ifdef __U_BOOT__
-				if(input->__promptme == 0) return 1;
-#endif
+			जबतक(ch=b_getch(निवेश),ch!=खातापूर्ण && ch!='\'') {
+#अगर_घोषित __U_BOOT__
+				अगर(निवेश->__promptme == 0) वापस 1;
+#पूर्ण_अगर
 				b_addchr(dest,ch);
 			}
-			if (ch==EOF) {
+			अगर (ch==खातापूर्ण) {
 				syntax();
-				return 1;
+				वापस 1;
 			}
-			break;
-		case '"':
+			अवरोध;
+		हाल '"':
 			dest->nonnull = 1;
 			dest->quote = !dest->quote;
-			break;
-#ifndef __U_BOOT__
-		case '`':
-			process_command_subs(dest, ctx, input, '`');
-			break;
-		case '>':
-			redir_fd = redirect_opt_num(dest);
+			अवरोध;
+#अगर_अघोषित __U_BOOT__
+		हाल '`':
+			process_command_subs(dest, ctx, निवेश, '`');
+			अवरोध;
+		हाल '>':
+			redir_fd = redirect_opt_अंक(dest);
 			done_word(dest, ctx);
 			redir_style=REDIRECT_OVERWRITE;
-			if (next == '>') {
+			अगर (अग्र == '>') {
 				redir_style=REDIRECT_APPEND;
-				b_getch(input);
-			} else if (next == '(') {
+				b_getch(निवेश);
+			} अन्यथा अगर (अग्र == '(') {
 				syntax();   /* until we support >(list) Process Substitution */
-				return 1;
+				वापस 1;
 			}
-			setup_redirect(ctx, redir_fd, redir_style, input);
-			break;
-		case '<':
-			redir_fd = redirect_opt_num(dest);
+			setup_redirect(ctx, redir_fd, redir_style, निवेश);
+			अवरोध;
+		हाल '<':
+			redir_fd = redirect_opt_अंक(dest);
 			done_word(dest, ctx);
-			redir_style=REDIRECT_INPUT;
-			if (next == '<') {
+			redir_style=REDIRECT_निवेश;
+			अगर (अग्र == '<') {
 				redir_style=REDIRECT_HEREIS;
-				b_getch(input);
-			} else if (next == '>') {
+				b_getch(निवेश);
+			} अन्यथा अगर (अग्र == '>') {
 				redir_style=REDIRECT_IO;
-				b_getch(input);
-			} else if (next == '(') {
+				b_getch(निवेश);
+			} अन्यथा अगर (अग्र == '(') {
 				syntax();   /* until we support <(list) Process Substitution */
-				return 1;
+				वापस 1;
 			}
-			setup_redirect(ctx, redir_fd, redir_style, input);
-			break;
-#endif
-		case ';':
+			setup_redirect(ctx, redir_fd, redir_style, निवेश);
+			अवरोध;
+#पूर्ण_अगर
+		हाल ';':
 			done_word(dest, ctx);
 			done_pipe(ctx,PIPE_SEQ);
-			break;
-		case '&':
+			अवरोध;
+		हाल '&':
 			done_word(dest, ctx);
-			if (next=='&') {
-				b_getch(input);
+			अगर (अग्र=='&') {
+				b_getch(निवेश);
 				done_pipe(ctx,PIPE_AND);
-			} else {
-#ifndef __U_BOOT__
+			} अन्यथा {
+#अगर_अघोषित __U_BOOT__
 				done_pipe(ctx,PIPE_BG);
-#else
+#अन्यथा
 				syntax_err();
-				return 1;
-#endif
+				वापस 1;
+#पूर्ण_अगर
 			}
-			break;
-		case '|':
+			अवरोध;
+		हाल '|':
 			done_word(dest, ctx);
-			if (next=='|') {
-				b_getch(input);
+			अगर (अग्र=='|') {
+				b_getch(निवेश);
 				done_pipe(ctx,PIPE_OR);
-			} else {
+			} अन्यथा {
 				/* we could pick up a file descriptor choice here
 				 * with redirect_opt_num(), but bash doesn't do it.
 				 * "echo foo 2| cat" yields "foo 2". */
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 				done_command(ctx);
-#else
+#अन्यथा
 				syntax_err();
-				return 1;
-#endif
+				वापस 1;
+#पूर्ण_अगर
 			}
-			break;
-#ifndef __U_BOOT__
-		case '(':
-		case '{':
-			if (parse_group(dest, ctx, input, ch)!=0) return 1;
-			break;
-		case ')':
-		case '}':
+			अवरोध;
+#अगर_अघोषित __U_BOOT__
+		हाल '(':
+		हाल '{':
+			अगर (parse_group(dest, ctx, निवेश, ch)!=0) वापस 1;
+			अवरोध;
+		हाल ')':
+		हाल '}':
 			syntax();   /* Proper use of this character caught by end_trigger */
-			return 1;
-			break;
-#endif
-		case SUBSTED_VAR_SYMBOL:
+			वापस 1;
+			अवरोध;
+#पूर्ण_अगर
+		हाल SUBSTED_VAR_प्रतीक:
 			dest->nonnull = 1;
-			while (ch = b_getch(input), ch != EOF &&
-			    ch != SUBSTED_VAR_SYMBOL) {
+			जबतक (ch = b_getch(निवेश), ch != खातापूर्ण &&
+			    ch != SUBSTED_VAR_प्रतीक) {
 				debug_printf("subst, pass=%d\n", ch);
-				if (input->__promptme == 0)
-					return 1;
+				अगर (निवेश->__promptme == 0)
+					वापस 1;
 				b_addchr(dest, ch);
 			}
 			debug_printf("subst, term=%d\n", ch);
-			if (ch == EOF) {
+			अगर (ch == खातापूर्ण) {
 				syntax();
-				return 1;
+				वापस 1;
 			}
-			break;
-		default:
+			अवरोध;
+		शेष:
 			syntax();   /* this is really an internal logic error */
-			return 1;
+			वापस 1;
 			}
 		}
 	}
@@ -3134,84 +3134,84 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 	 * one before the EOF.  Can't use the standard "syntax error" return code,
 	 * so that parse_stream_outer can distinguish the EOF and exit smoothly. */
 	debug_printf("leaving parse_stream (EOF)\n");
-	if (end_trigger != '\0') return -1;
-	return 0;
+	अगर (end_trigger != '\0') वापस -1;
+	वापस 0;
 }
 
-static void mapset(const unsigned char *set, int code)
+अटल व्योम mapset(स्थिर अचिन्हित अक्षर *set, पूर्णांक code)
 {
-	const unsigned char *s;
-	for (s=set; *s; s++) map[*s] = code;
+	स्थिर अचिन्हित अक्षर *s;
+	क्रम (s=set; *s; s++) map[*s] = code;
 }
 
-static void update_ifs_map(void)
+अटल व्योम update_ifs_map(व्योम)
 {
 	/* char *ifs and char map[256] are both globals. */
 	ifs = (uchar *)env_get("IFS");
-	if (ifs == NULL) ifs=(uchar *)" \t\n";
+	अगर (ifs == शून्य) ifs=(uchar *)" \t\n";
 	/* Precompute a list of 'flow through' behavior so it can be treated
 	 * quickly up front.  Computation is necessary because of IFS.
 	 * Special case handling of IFS == " \t\n" is not implemented.
 	 * The map[] array only really needs two bits each, and on most machines
 	 * that would be faster because of the reduced L1 cache footprint.
 	 */
-	memset(map,0,sizeof(map)); /* most characters flow through always */
-#ifndef __U_BOOT__
+	स_रखो(map,0,माप(map)); /* most characters flow through always */
+#अगर_अघोषित __U_BOOT__
 	mapset((uchar *)"\\$'\"`", 3);      /* never flow through */
 	mapset((uchar *)"<>;&|(){}#", 1);   /* flow through if quoted */
-#else
+#अन्यथा
 	{
-		uchar subst[2] = {SUBSTED_VAR_SYMBOL, 0};
+		uchar subst[2] = {SUBSTED_VAR_प्रतीक, 0};
 		mapset(subst, 3);       /* never flow through */
 	}
 	mapset((uchar *)"\\$'\"", 3);       /* never flow through */
 	mapset((uchar *)";&|#", 1);         /* flow through if quoted */
-#endif
+#पूर्ण_अगर
 	mapset(ifs, 2);            /* also flow through if quoted */
 }
 
 /* most recursion does not come through here, the exeception is
  * from builtin_source() */
-static int parse_stream_outer(struct in_str *inp, int flag)
+अटल पूर्णांक parse_stream_outer(काष्ठा in_str *inp, पूर्णांक flag)
 {
 
-	struct p_context ctx;
-	o_string temp=NULL_O_STRING;
-	int rcode;
-#ifdef __U_BOOT__
-	int code = 1;
-#endif
-	do {
+	काष्ठा p_context ctx;
+	o_string अस्थायी=NULL_O_STRING;
+	पूर्णांक rcode;
+#अगर_घोषित __U_BOOT__
+	पूर्णांक code = 1;
+#पूर्ण_अगर
+	करो {
 		ctx.type = flag;
 		initialize_context(&ctx);
 		update_ifs_map();
-		if (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
+		अगर (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
 		inp->promptmode=1;
-		rcode = parse_stream(&temp, &ctx, inp,
+		rcode = parse_stream(&अस्थायी, &ctx, inp,
 				     flag & FLAG_CONT_ON_NEWLINE ? -1 : '\n');
-#ifdef __U_BOOT__
-		if (rcode == 1) flag_repeat = 0;
-#endif
-		if (rcode != 1 && ctx.old_flag != 0) {
+#अगर_घोषित __U_BOOT__
+		अगर (rcode == 1) flag_repeat = 0;
+#पूर्ण_अगर
+		अगर (rcode != 1 && ctx.old_flag != 0) {
 			syntax();
-#ifdef __U_BOOT__
+#अगर_घोषित __U_BOOT__
 			flag_repeat = 0;
-#endif
+#पूर्ण_अगर
 		}
-		if (rcode != 1 && ctx.old_flag == 0) {
-			done_word(&temp, &ctx);
+		अगर (rcode != 1 && ctx.old_flag == 0) {
+			done_word(&अस्थायी, &ctx);
 			done_pipe(&ctx,PIPE_SEQ);
-#ifndef __U_BOOT__
-			run_list(ctx.list_head);
-#else
-			code = run_list(ctx.list_head);
-			if (code == -2) {	/* exit */
-				b_free(&temp);
+#अगर_अघोषित __U_BOOT__
+			run_list(ctx.list_शीर्ष);
+#अन्यथा
+			code = run_list(ctx.list_शीर्ष);
+			अगर (code == -2) {	/* exit */
+				b_free(&अस्थायी);
 				code = 0;
 				/* XXX hackish way to not allow exit from main loop */
-				if (inp->peek == file_peek) {
-					printf("exit not allowed from main input shell.\n");
-					continue;
+				अगर (inp->peek == file_peek) {
+					म_लिखो("exit not allowed from main input shell.\n");
+					जारी;
 				}
 				/*
 				 * DANGER
@@ -3221,141 +3221,141 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 				 * stored in 'last_return_code' variable!
 				 * DANGER
 				 */
-				return -2;
+				वापस -2;
 			}
-			if (code == -1)
+			अगर (code == -1)
 			    flag_repeat = 0;
-#endif
-		} else {
-			if (ctx.old_flag != 0) {
-				free(ctx.stack);
-				b_reset(&temp);
+#पूर्ण_अगर
+		} अन्यथा {
+			अगर (ctx.old_flag != 0) {
+				मुक्त(ctx.ढेर);
+				b_reset(&अस्थायी);
 			}
-#ifdef __U_BOOT__
-			if (inp->__promptme == 0) printf("<INTERRUPT>\n");
+#अगर_घोषित __U_BOOT__
+			अगर (inp->__promptme == 0) म_लिखो("<INTERRUPT>\n");
 			inp->__promptme = 1;
-#endif
-			temp.nonnull = 0;
-			temp.quote = 0;
-			inp->p = NULL;
-			free_pipe_list(ctx.list_head,0);
+#पूर्ण_अगर
+			अस्थायी.nonnull = 0;
+			अस्थायी.quote = 0;
+			inp->p = शून्य;
+			free_pipe_list(ctx.list_शीर्ष,0);
 		}
-		b_free(&temp);
+		b_free(&अस्थायी);
 	/* loop on syntax errors, return on EOF */
-	} while (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
+	} जबतक (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
 		(inp->peek != static_peek || b_peek(inp)));
-#ifndef __U_BOOT__
-	return 0;
-#else
-	return (code != 0) ? 1 : 0;
-#endif /* __U_BOOT__ */
+#अगर_अघोषित __U_BOOT__
+	वापस 0;
+#अन्यथा
+	वापस (code != 0) ? 1 : 0;
+#पूर्ण_अगर /* __U_BOOT__ */
 }
 
-#ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag)
-#else
-int parse_string_outer(const char *s, int flag)
-#endif	/* __U_BOOT__ */
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक parse_string_outer(स्थिर अक्षर *s, पूर्णांक flag)
+#अन्यथा
+पूर्णांक parse_string_outer(स्थिर अक्षर *s, पूर्णांक flag)
+#पूर्ण_अगर	/* __U_BOOT__ */
 {
-	struct in_str input;
-	int rcode;
-#ifdef __U_BOOT__
-	char *p = NULL;
-	if (!s)
-		return 1;
-	if (!*s)
-		return 0;
-	if (!(p = strchr(s, '\n')) || *++p) {
-		p = xmalloc(strlen(s) + 2);
-		strcpy(p, s);
-		strcat(p, "\n");
-		setup_string_in_str(&input, p);
-		rcode = parse_stream_outer(&input, flag);
-		free(p);
-		return rcode == -2 ? last_return_code : rcode;
-	} else {
-#endif
-	setup_string_in_str(&input, s);
-	rcode = parse_stream_outer(&input, flag);
-	return rcode == -2 ? last_return_code : rcode;
-#ifdef __U_BOOT__
+	काष्ठा in_str निवेश;
+	पूर्णांक rcode;
+#अगर_घोषित __U_BOOT__
+	अक्षर *p = शून्य;
+	अगर (!s)
+		वापस 1;
+	अगर (!*s)
+		वापस 0;
+	अगर (!(p = म_अक्षर(s, '\n')) || *++p) {
+		p = xmalloc(म_माप(s) + 2);
+		म_नकल(p, s);
+		म_जोड़ो(p, "\n");
+		setup_string_in_str(&निवेश, p);
+		rcode = parse_stream_outer(&निवेश, flag);
+		मुक्त(p);
+		वापस rcode == -2 ? last_return_code : rcode;
+	} अन्यथा {
+#पूर्ण_अगर
+	setup_string_in_str(&निवेश, s);
+	rcode = parse_stream_outer(&निवेश, flag);
+	वापस rcode == -2 ? last_return_code : rcode;
+#अगर_घोषित __U_BOOT__
 	}
-#endif
+#पूर्ण_अगर
 }
 
-#ifndef __U_BOOT__
-static int parse_file_outer(FILE *f)
-#else
-int parse_file_outer(void)
-#endif
+#अगर_अघोषित __U_BOOT__
+अटल पूर्णांक parse_file_outer(खाता *f)
+#अन्यथा
+पूर्णांक parse_file_outer(व्योम)
+#पूर्ण_अगर
 {
-	int rcode;
-	struct in_str input;
-#ifndef __U_BOOT__
-	setup_file_in_str(&input, f);
-#else
-	setup_file_in_str(&input);
-#endif
-	rcode = parse_stream_outer(&input, FLAG_PARSE_SEMICOLON);
-	return rcode == -2 ? last_return_code : rcode;
+	पूर्णांक rcode;
+	काष्ठा in_str निवेश;
+#अगर_अघोषित __U_BOOT__
+	setup_file_in_str(&निवेश, f);
+#अन्यथा
+	setup_file_in_str(&निवेश);
+#पूर्ण_अगर
+	rcode = parse_stream_outer(&निवेश, FLAG_PARSE_SEMICOLON);
+	वापस rcode == -2 ? last_return_code : rcode;
 }
 
-#ifdef __U_BOOT__
-int u_boot_hush_start(void)
+#अगर_घोषित __U_BOOT__
+पूर्णांक u_boot_hush_start(व्योम)
 {
-	if (top_vars == NULL) {
-		top_vars = malloc(sizeof(struct variables));
-		top_vars->name = "HUSH_VERSION";
-		top_vars->value = "0.01";
-		top_vars->next = NULL;
-		top_vars->flg_export = 0;
-		top_vars->flg_read_only = 1;
+	अगर (शीर्ष_vars == शून्य) {
+		शीर्ष_vars = दो_स्मृति(माप(काष्ठा variables));
+		शीर्ष_vars->name = "HUSH_VERSION";
+		शीर्ष_vars->मूल्य = "0.01";
+		शीर्ष_vars->अग्र = शून्य;
+		शीर्ष_vars->flg_export = 0;
+		शीर्ष_vars->flg_read_only = 1;
 	}
-	return 0;
+	वापस 0;
 }
 
-static void *xmalloc(size_t size)
+अटल व्योम *xmalloc(माप_प्रकार आकार)
 {
-	void *p = NULL;
+	व्योम *p = शून्य;
 
-	if (!(p = malloc(size))) {
-	    printf("ERROR : xmalloc failed\n");
-	    for(;;);
+	अगर (!(p = दो_स्मृति(आकार))) {
+	    म_लिखो("ERROR : xmalloc failed\n");
+	    क्रम(;;);
 	}
-	return p;
+	वापस p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+अटल व्योम *xrealloc(व्योम *ptr, माप_प्रकार आकार)
 {
-	void *p = NULL;
+	व्योम *p = शून्य;
 
-	if (!(p = realloc(ptr, size))) {
-	    printf("ERROR : xrealloc failed\n");
-	    for(;;);
+	अगर (!(p = पुनः_स्मृति(ptr, आकार))) {
+	    म_लिखो("ERROR : xrealloc failed\n");
+	    क्रम(;;);
 	}
-	return p;
+	वापस p;
 }
-#endif /* __U_BOOT__ */
+#पूर्ण_अगर /* __U_BOOT__ */
 
-#ifndef __U_BOOT__
+#अगर_अघोषित __U_BOOT__
 /* Make sure we have a controlling tty.  If we get started under a job
  * aware app (like bash for example), make sure we are now in charge so
  * we don't fight over who gets the foreground */
-static void setup_job_control(void)
+अटल व्योम setup_job_control(व्योम)
 {
-	static pid_t shell_pgrp;
+	अटल pid_t shell_pgrp;
 	/* Loop until we are in the foreground.  */
-	while (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
-		kill (- shell_pgrp, SIGTTIN);
+	जबतक (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
+		समाप्त (- shell_pgrp, SIGTTIN);
 
 	/* Ignore interactive and job-control signals.  */
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-	signal(SIGTTIN, SIG_IGN);
-	signal(SIGTTOU, SIG_IGN);
-	signal(SIGCHLD, SIG_IGN);
+	संकेत(संक_विघ्न, संक_छोड़ो);
+	संकेत(SIGQUIT, संक_छोड़ो);
+	संकेत(संक_इति, संक_छोड़ो);
+	संकेत(SIGTSTP, संक_छोड़ो);
+	संकेत(SIGTTIN, संक_छोड़ो);
+	संकेत(SIGTTOU, संक_छोड़ो);
+	संकेत(SIGCHLD, संक_छोड़ो);
 
 	/* Put ourselves in our own process group.  */
 	setsid();
@@ -3366,11 +3366,11 @@ static void setup_job_control(void)
 	tcsetpgrp(shell_terminal, shell_pgrp);
 }
 
-int hush_main(int argc, char * const *argv)
+पूर्णांक hush_main(पूर्णांक argc, अक्षर * स्थिर *argv)
 {
-	int opt;
-	FILE *input;
-	char **e = environ;
+	पूर्णांक opt;
+	खाता *निवेश;
+	अक्षर **e = environ;
 
 	/* XXX what should these be while sourcing /etc/profile? */
 	global_argc = argc;
@@ -3379,68 +3379,68 @@ int hush_main(int argc, char * const *argv)
 	/* (re?) initialize globals.  Sometimes hush_main() ends up calling
 	 * hush_main(), therefore we cannot rely on the BSS to zero out this
 	 * stuff.  Reset these to 0 every time. */
-	ifs = NULL;
+	ifs = शून्य;
 	/* map[] is taken care of with call to update_ifs_map() */
 	fake_mode = 0;
 	interactive = 0;
-	close_me_head = NULL;
+	close_me_शीर्ष = शून्य;
 	last_bg_pid = 0;
-	job_list = NULL;
+	job_list = शून्य;
 	last_jobid = 0;
 
 	/* Initialize some more globals to non-zero values */
 	set_cwd();
-#ifdef CONFIG_FEATURE_COMMAND_EDITING
+#अगर_घोषित CONFIG_FEATURE_COMMAND_EDITING
 	cmdedit_set_initial_prompt();
-#else
-	PS1 = NULL;
-#endif
+#अन्यथा
+	PS1 = शून्य;
+#पूर्ण_अगर
 	PS2 = "> ";
 
 	/* initialize our shell local variables with the values
 	 * currently living in the environment */
-	if (e) {
-		for (; *e; e++)
+	अगर (e) {
+		क्रम (; *e; e++)
 			set_local_var(*e, 2);   /* without call putenv() */
 	}
 
-	last_return_code=EXIT_SUCCESS;
+	last_return_code=निकास_सफल;
 
-	if (argv[0] && argv[0][0] == '-') {
+	अगर (argv[0] && argv[0][0] == '-') {
 		debug_printf("\nsourcing /etc/profile\n");
-		if ((input = fopen("/etc/profile", "r")) != NULL) {
-			mark_open(fileno(input));
-			parse_file_outer(input);
-			mark_closed(fileno(input));
-			fclose(input);
+		अगर ((निवेश = ख_खोलो("/etc/profile", "r")) != शून्य) {
+			mark_open(fileno(निवेश));
+			parse_file_outer(निवेश);
+			mark_closed(fileno(निवेश));
+			ख_बंद(निवेश);
 		}
 	}
-	input=stdin;
+	निवेश=मानक_निवेश;
 
-	while ((opt = getopt(argc, argv, "c:xif")) > 0) {
-		switch (opt) {
-			case 'c':
+	जबतक ((opt = getopt(argc, argv, "c:xif")) > 0) {
+		चयन (opt) {
+			हाल 'c':
 				{
 					global_argv = argv+optind;
 					global_argc = argc-optind;
 					opt = parse_string_outer(optarg, FLAG_PARSE_SEMICOLON);
-					goto final_return;
+					जाओ final_return;
 				}
-				break;
-			case 'i':
+				अवरोध;
+			हाल 'i':
 				interactive++;
-				break;
-			case 'f':
+				अवरोध;
+			हाल 'f':
 				fake_mode++;
-				break;
-			default:
-#ifndef BB_VER
-				fprintf(stderr, "Usage: sh [FILE]...\n"
+				अवरोध;
+			शेष:
+#अगर_अघोषित BB_VER
+				ख_लिखो(मानक_त्रुटि, "Usage: sh [FILE]...\n"
 						"   or: sh -c command [args]...\n\n");
-				exit(EXIT_FAILURE);
-#else
+				निकास(निकास_त्रुटि);
+#अन्यथा
 				show_usage();
-#endif
+#पूर्ण_अगर
 		}
 	}
 	/* A shell is interactive if the `-i' flag was given, or if all of
@@ -3450,161 +3450,161 @@ int hush_main(int argc, char * const *argv)
 	 *    standard input is a terminal
 	 *    standard output is a terminal
 	 *    Refer to Posix.2, the description of the `sh' utility. */
-	if (argv[optind]==NULL && input==stdin &&
-			isatty(fileno(stdin)) && isatty(fileno(stdout))) {
+	अगर (argv[optind]==शून्य && निवेश==मानक_निवेश &&
+			isatty(fileno(मानक_निवेश)) && isatty(fileno(मानक_निकास))) {
 		interactive++;
 	}
 
 	debug_printf("\ninteractive=%d\n", interactive);
-	if (interactive) {
+	अगर (interactive) {
 		/* Looks like they want an interactive shell */
-#ifndef CONFIG_FEATURE_SH_EXTRA_QUIET
-		printf( "\n\n" BB_BANNER " hush - the humble shell v0.01 (testing)\n");
-		printf( "Enter 'help' for a list of built-in commands.\n\n");
-#endif
+#अगर_अघोषित CONFIG_FEATURE_SH_EXTRA_QUIET
+		म_लिखो( "\n\n" BB_BANNER " hush - the humble shell v0.01 (testing)\n");
+		म_लिखो( "Enter 'help' for a list of built-in commands.\n\n");
+#पूर्ण_अगर
 		setup_job_control();
 	}
 
-	if (argv[optind]==NULL) {
-		opt=parse_file_outer(stdin);
-		goto final_return;
+	अगर (argv[optind]==शून्य) {
+		opt=parse_file_outer(मानक_निवेश);
+		जाओ final_return;
 	}
 
 	debug_printf("\nrunning script '%s'\n", argv[optind]);
 	global_argv = argv+optind;
 	global_argc = argc-optind;
-	input = xfopen(argv[optind], "r");
-	opt = parse_file_outer(input);
+	निवेश = xfopen(argv[optind], "r");
+	opt = parse_file_outer(निवेश);
 
-#ifdef CONFIG_FEATURE_CLEAN_UP
-	fclose(input);
-	if (cwd && cwd != unknown)
-		free((char*)cwd);
+#अगर_घोषित CONFIG_FEATURE_CLEAN_UP
+	ख_बंद(निवेश);
+	अगर (cwd && cwd != unknown)
+		मुक्त((अक्षर*)cwd);
 	{
-		struct variables *cur, *tmp;
-		for(cur = top_vars; cur; cur = tmp) {
-			tmp = cur->next;
-			if (!cur->flg_read_only) {
-				free(cur->name);
-				free(cur->value);
-				free(cur);
+		काष्ठा variables *cur, *tmp;
+		क्रम(cur = शीर्ष_vars; cur; cur = tmp) {
+			tmp = cur->अग्र;
+			अगर (!cur->flg_read_only) {
+				मुक्त(cur->name);
+				मुक्त(cur->मूल्य);
+				मुक्त(cur);
 			}
 		}
 	}
-#endif
+#पूर्ण_अगर
 
 final_return:
-	return(opt?opt:last_return_code);
+	वापस(opt?opt:last_return_code);
 }
-#endif
+#पूर्ण_अगर
 
-static char *insert_var_value(char *inp)
+अटल अक्षर *जोड़ो_var_मूल्य(अक्षर *inp)
 {
-	return insert_var_value_sub(inp, 0);
+	वापस जोड़ो_var_मूल्य_sub(inp, 0);
 }
 
-static char *insert_var_value_sub(char *inp, int tag_subst)
+अटल अक्षर *जोड़ो_var_मूल्य_sub(अक्षर *inp, पूर्णांक tag_subst)
 {
-	int res_str_len = 0;
-	int len;
-	int done = 0;
-	char *p, *p1, *res_str = NULL;
+	पूर्णांक res_str_len = 0;
+	पूर्णांक len;
+	पूर्णांक done = 0;
+	अक्षर *p, *p1, *res_str = शून्य;
 
-	while ((p = strchr(inp, SPECIAL_VAR_SYMBOL))) {
+	जबतक ((p = म_अक्षर(inp, SPECIAL_VAR_प्रतीक))) {
 		/* check the beginning of the string for normal characters */
-		if (p != inp) {
+		अगर (p != inp) {
 			/* copy any characters to the result string */
 			len = p - inp;
 			res_str = xrealloc(res_str, (res_str_len + len));
-			strncpy((res_str + res_str_len), inp, len);
+			म_नकलन((res_str + res_str_len), inp, len);
 			res_str_len += len;
 		}
 		inp = ++p;
 		/* find the ending marker */
-		p = strchr(inp, SPECIAL_VAR_SYMBOL);
+		p = म_अक्षर(inp, SPECIAL_VAR_प्रतीक);
 		*p = '\0';
 		/* look up the value to substitute */
-		if ((p1 = lookup_param(inp))) {
-			if (tag_subst)
-				len = res_str_len + strlen(p1) + 2;
-			else
-				len = res_str_len + strlen(p1);
+		अगर ((p1 = lookup_param(inp))) {
+			अगर (tag_subst)
+				len = res_str_len + म_माप(p1) + 2;
+			अन्यथा
+				len = res_str_len + म_माप(p1);
 			res_str = xrealloc(res_str, (1 + len));
-			if (tag_subst) {
+			अगर (tag_subst) {
 				/*
 				 * copy the variable value to the result
 				 * string
 				 */
-				strcpy((res_str + res_str_len + 1), p1);
+				म_नकल((res_str + res_str_len + 1), p1);
 
 				/*
 				 * mark the replaced text to be accepted as
 				 * is
 				 */
-				res_str[res_str_len] = SUBSTED_VAR_SYMBOL;
-				res_str[res_str_len + 1 + strlen(p1)] =
-					SUBSTED_VAR_SYMBOL;
-			} else
+				res_str[res_str_len] = SUBSTED_VAR_प्रतीक;
+				res_str[res_str_len + 1 + म_माप(p1)] =
+					SUBSTED_VAR_प्रतीक;
+			} अन्यथा
 				/*
 				 * copy the variable value to the result
 				 * string
 				 */
-				strcpy((res_str + res_str_len), p1);
+				म_नकल((res_str + res_str_len), p1);
 
 			res_str_len = len;
 		}
-		*p = SPECIAL_VAR_SYMBOL;
+		*p = SPECIAL_VAR_प्रतीक;
 		inp = ++p;
 		done = 1;
 	}
-	if (done) {
-		res_str = xrealloc(res_str, (1 + res_str_len + strlen(inp)));
-		strcpy((res_str + res_str_len), inp);
-		while ((p = strchr(res_str, '\n'))) {
+	अगर (done) {
+		res_str = xrealloc(res_str, (1 + res_str_len + म_माप(inp)));
+		म_नकल((res_str + res_str_len), inp);
+		जबतक ((p = म_अक्षर(res_str, '\n'))) {
 			*p = ' ';
 		}
 	}
-	return (res_str == NULL) ? inp : res_str;
+	वापस (res_str == शून्य) ? inp : res_str;
 }
 
-static char **make_list_in(char **inp, char *name)
+अटल अक्षर **make_list_in(अक्षर **inp, अक्षर *name)
 {
-	int len, i;
-	int name_len = strlen(name);
-	int n = 0;
-	char **list;
-	char *p1, *p2, *p3;
+	पूर्णांक len, i;
+	पूर्णांक name_len = म_माप(name);
+	पूर्णांक n = 0;
+	अक्षर **list;
+	अक्षर *p1, *p2, *p3;
 
 	/* create list of variable values */
-	list = xmalloc(sizeof(*list));
-	for (i = 0; inp[i]; i++) {
-		p3 = insert_var_value(inp[i]);
+	list = xmalloc(माप(*list));
+	क्रम (i = 0; inp[i]; i++) {
+		p3 = जोड़ो_var_मूल्य(inp[i]);
 		p1 = p3;
-		while (*p1) {
-			if (*p1 == ' ') {
+		जबतक (*p1) {
+			अगर (*p1 == ' ') {
 				p1++;
-				continue;
+				जारी;
 			}
-			if ((p2 = strchr(p1, ' '))) {
+			अगर ((p2 = म_अक्षर(p1, ' '))) {
 				len = p2 - p1;
-			} else {
-				len = strlen(p1);
+			} अन्यथा {
+				len = म_माप(p1);
 				p2 = p1 + len;
 			}
 			/* we use n + 2 in realloc for list,because we add
 			 * new element and then we will add NULL element */
-			list = xrealloc(list, sizeof(*list) * (n + 2));
+			list = xrealloc(list, माप(*list) * (n + 2));
 			list[n] = xmalloc(2 + name_len + len);
-			strcpy(list[n], name);
-			strcat(list[n], "=");
-			strncat(list[n], p1, len);
+			म_नकल(list[n], name);
+			म_जोड़ो(list[n], "=");
+			म_जोड़न(list[n], p1, len);
 			list[n++][name_len + len + 1] = '\0';
 			p1 = p2;
 		}
-		if (p3 != inp[i]) free(p3);
+		अगर (p3 != inp[i]) मुक्त(p3);
 	}
-	list[n] = NULL;
-	return list;
+	list[n] = शून्य;
+	वापस list;
 }
 
 /*
@@ -3612,84 +3612,84 @@ static char **make_list_in(char **inp, char *name)
  * inp     - array of argument strings to flatten
  * nonnull - indicates argument was quoted when originally parsed
  */
-static char *make_string(char **inp, int *nonnull)
+अटल अक्षर *make_string(अक्षर **inp, पूर्णांक *nonnull)
 {
-	char *p;
-	char *str = NULL;
-	int n;
-	int len = 2;
-	char *noeval_str;
-	int noeval = 0;
+	अक्षर *p;
+	अक्षर *str = शून्य;
+	पूर्णांक n;
+	पूर्णांक len = 2;
+	अक्षर *noeval_str;
+	पूर्णांक noeval = 0;
 
 	noeval_str = get_local_var("HUSH_NO_EVAL");
-	if (noeval_str != NULL && *noeval_str != '0' && *noeval_str != '\0')
+	अगर (noeval_str != शून्य && *noeval_str != '0' && *noeval_str != '\0')
 		noeval = 1;
-	for (n = 0; inp[n]; n++) {
-		p = insert_var_value_sub(inp[n], noeval);
-		char *new_str = xrealloc(str, (len + strlen(p) + (2 * nonnull[n])));
-		if (!new_str) {
-			free(str);
-			if (p != inp[n]) free(p);
-			return NULL;
+	क्रम (n = 0; inp[n]; n++) {
+		p = जोड़ो_var_मूल्य_sub(inp[n], noeval);
+		अक्षर *new_str = xrealloc(str, (len + म_माप(p) + (2 * nonnull[n])));
+		अगर (!new_str) {
+			मुक्त(str);
+			अगर (p != inp[n]) मुक्त(p);
+			वापस शून्य;
 		}
 		str = new_str;
-		if (n) {
-			strcat(str, " ");
-		} else {
+		अगर (n) {
+			म_जोड़ो(str, " ");
+		} अन्यथा {
 			*str = '\0';
 		}
-		if (nonnull[n])
-			strcat(str, "'");
-		strcat(str, p);
-		if (nonnull[n])
-			strcat(str, "'");
-		len = strlen(str) + 3;
-		if (p != inp[n]) free(p);
+		अगर (nonnull[n])
+			म_जोड़ो(str, "'");
+		म_जोड़ो(str, p);
+		अगर (nonnull[n])
+			म_जोड़ो(str, "'");
+		len = म_माप(str) + 3;
+		अगर (p != inp[n]) मुक्त(p);
 	}
-	len = strlen(str);
+	len = म_माप(str);
 	*(str + len) = '\n';
 	*(str + len + 1) = '\0';
-	return str;
+	वापस str;
 }
 
-#ifdef __U_BOOT__
-static int do_showvar(struct cmd_tbl *cmdtp, int flag, int argc,
-		      char *const argv[])
+#अगर_घोषित __U_BOOT__
+अटल पूर्णांक do_showvar(काष्ठा cmd_tbl *cmdtp, पूर्णांक flag, पूर्णांक argc,
+		      अक्षर *स्थिर argv[])
 {
-	int i, k;
-	int rcode = 0;
-	struct variables *cur;
+	पूर्णांक i, k;
+	पूर्णांक rcode = 0;
+	काष्ठा variables *cur;
 
-	if (argc == 1) {		/* Print all env variables	*/
-		for (cur = top_vars; cur; cur = cur->next) {
-			printf ("%s=%s\n", cur->name, cur->value);
-			if (ctrlc ()) {
-				puts ("\n ** Abort\n");
-				return 1;
+	अगर (argc == 1) {		/* Print all env variables	*/
+		क्रम (cur = शीर्ष_vars; cur; cur = cur->अग्र) {
+			म_लिखो ("%s=%s\n", cur->name, cur->मूल्य);
+			अगर (ctrlc ()) {
+				माला_दो ("\n ** Abort\n");
+				वापस 1;
 			}
 		}
-		return 0;
+		वापस 0;
 	}
-	for (i = 1; i < argc; ++i) {	/* print single env variables	*/
-		char *name = argv[i];
+	क्रम (i = 1; i < argc; ++i) {	/* print single env variables	*/
+		अक्षर *name = argv[i];
 
 		k = -1;
-		for (cur = top_vars; cur; cur = cur->next) {
-			if(strcmp (cur->name, name) == 0) {
+		क्रम (cur = शीर्ष_vars; cur; cur = cur->अग्र) {
+			अगर(म_भेद (cur->name, name) == 0) {
 				k = 0;
-				printf ("%s=%s\n", cur->name, cur->value);
+				म_लिखो ("%s=%s\n", cur->name, cur->मूल्य);
 			}
-			if (ctrlc ()) {
-				puts ("\n ** Abort\n");
-				return 1;
+			अगर (ctrlc ()) {
+				माला_दो ("\n ** Abort\n");
+				वापस 1;
 			}
 		}
-		if (k < 0) {
-			printf ("## Error: \"%s\" not defined\n", name);
+		अगर (k < 0) {
+			म_लिखो ("## Error: \"%s\" not defined\n", name);
 			rcode ++;
 		}
 	}
-	return rcode;
+	वापस rcode;
 }
 
 U_BOOT_CMD(
@@ -3700,5 +3700,5 @@ U_BOOT_CMD(
 	"    - print value of hushshell variable 'name'"
 );
 
-#endif
+#पूर्ण_अगर
 /****************************************************************************/

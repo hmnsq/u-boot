@@ -5,88 +5,88 @@
  * Copyright (c) 2014 Google, Inc
  */
 
-#define LOG_CATEGORY LOGC_ALLOC
+#घोषणा LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#समावेश <log.h>
+#समावेश <malloc.h>
+#समावेश <mapmem.h>
+#समावेश <asm/global_data.h>
+#समावेश <asm/io.h>
+#समावेश <valgrind/valgrind.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_तथ्य_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+अटल व्योम *alloc_simple(माप_प्रकार bytes, पूर्णांक align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	व्योम *ptr;
 
 	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
 	new_ptr = addr + bytes - gd->malloc_base;
 	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
 		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	अगर (new_ptr > gd->malloc_limit) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
 			gd->malloc_limit);
-		return NULL;
+		वापस शून्य;
 	}
 
 	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	gd->malloc_ptr = ALIGN(new_ptr, माप(new_ptr));
 
-	return ptr;
+	वापस ptr;
 }
 
-void *malloc_simple(size_t bytes)
+व्योम *malloc_simple(माप_प्रकार bytes)
 {
-	void *ptr;
+	व्योम *ptr;
 
 	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	अगर (!ptr)
+		वापस ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	वापस ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+व्योम *memalign_simple(माप_प्रकार align, माप_प्रकार bytes)
 {
-	void *ptr;
+	व्योम *ptr;
 
 	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	अगर (!ptr)
+		वापस ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	वापस ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#अगर CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+व्योम *सुस्मृति(माप_प्रकार nmemb, माप_प्रकार elem_आकार)
 {
-	size_t size = nmemb * elem_size;
-	void *ptr;
+	माप_प्रकार आकार = nmemb * elem_आकार;
+	व्योम *ptr;
 
-	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
-	memset(ptr, '\0', size);
+	ptr = दो_स्मृति(आकार);
+	अगर (!ptr)
+		वापस ptr;
+	स_रखो(ptr, '\0', आकार);
 
-	return ptr;
+	वापस ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#अगर IS_ENABLED(CONFIG_VALGRIND)
+व्योम free_simple(व्योम *ptr)
 {
 	VALGRIND_FREELIKE_BLOCK(ptr, 0);
 }
-#endif
-#endif
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-void malloc_simple_info(void)
+व्योम malloc_simple_info(व्योम)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

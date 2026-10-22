@@ -6,102 +6,102 @@
  *             Bartlomiej Sieka <tur@semihalf.com>
  */
 
-#include <cpu_func.h>
-#include <image.h>
-#include <linux/printk.h>
+#समावेश <cpu_func.h>
+#समावेश <image.h>
+#समावेश <linux/printk.h>
 
-#include <command.h>
-#include <env.h>
-#include <net.h>
-#include <net/tftp.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <dfu.h>
-#include <errno.h>
+#समावेश <command.h>
+#समावेश <env.h>
+#समावेश <net.h>
+#समावेश <net/tftp.h>
+#समावेश <malloc.h>
+#समावेश <mapmem.h>
+#समावेश <dfu.h>
+#समावेश <errno.h>
 
-#if defined(CONFIG_DFU_TFTP) || defined(CONFIG_UPDATE_TFTP)
+#अगर defined(CONFIG_DFU_TFTP) || defined(CONFIG_UPDATE_TFTP)
 /* env variable holding the location of the update file */
-#define UPDATE_FILE_ENV		"updatefile"
+#घोषणा UPDATE_FILE_ENV		"updatefile"
 
-extern ulong tftp_timeout_ms;
-extern int tftp_timeout_count_max;
-#ifdef CONFIG_MTD_NOR_FLASH
-#include <flash.h>
-#include <mtd/cfi_flash.h>
-static uchar *saved_prot_info;
-#endif
-static int update_load(char *filename, ulong msec_max, int cnt_max, ulong addr)
+बाह्य ulong tftp_timeout_ms;
+बाह्य पूर्णांक tftp_timeout_गिनती_max;
+#अगर_घोषित CONFIG_MTD_NOR_FLASH
+#समावेश <flash.h>
+#समावेश <mtd/cfi_flash.h>
+अटल uchar *saved_prot_info;
+#पूर्ण_अगर
+अटल पूर्णांक update_load(अक्षर *filename, ulong msec_max, पूर्णांक cnt_max, ulong addr)
 {
-	int rv, ret;
+	पूर्णांक rv, ret;
 	ulong saved_timeout_msecs;
-	int saved_timeout_count;
-	char *saved_netretry, *saved_bootfile;
+	पूर्णांक saved_timeout_गिनती;
+	अक्षर *saved_netretry, *saved_bootfile;
 
 	rv = 0;
 	/* save used globals and env variable */
 	saved_timeout_msecs = tftp_timeout_ms;
-	saved_timeout_count = tftp_timeout_count_max;
+	saved_timeout_गिनती = tftp_timeout_गिनती_max;
 	saved_netretry = strdup(env_get("netretry"));
 	saved_bootfile = strdup(net_boot_file_name);
 
 	/* set timeouts for auto-update */
 	tftp_timeout_ms = msec_max;
-	tftp_timeout_count_max = cnt_max;
+	tftp_timeout_गिनती_max = cnt_max;
 
 	/* we don't want to retry the connection if errors occur */
 	env_set("netretry", "no");
 
 	/* download the update file */
 	image_load_addr = addr;
-	copy_filename(net_boot_file_name, filename, sizeof(net_boot_file_name));
+	copy_filename(net_boot_file_name, filename, माप(net_boot_file_name));
 	ret = net_loop(TFTPGET);
 
-	if (ret < 0)
+	अगर (ret < 0)
 		rv = 1;
-	else
-		flush_cache(addr, net_boot_file_size);
+	अन्यथा
+		flush_cache(addr, net_boot_file_आकार);
 
 	/* restore changed globals and env variable */
 	tftp_timeout_ms = saved_timeout_msecs;
-	tftp_timeout_count_max = saved_timeout_count;
+	tftp_timeout_गिनती_max = saved_timeout_गिनती;
 
 	env_set("netretry", saved_netretry);
-	if (saved_netretry != NULL)
-		free(saved_netretry);
+	अगर (saved_netretry != शून्य)
+		मुक्त(saved_netretry);
 
-	if (saved_bootfile != NULL) {
+	अगर (saved_bootfile != शून्य) {
 		copy_filename(net_boot_file_name, saved_bootfile,
-			      sizeof(net_boot_file_name));
-		free(saved_bootfile);
+			      माप(net_boot_file_name));
+		मुक्त(saved_bootfile);
 	}
 
-	return rv;
+	वापस rv;
 }
 
-#ifdef CONFIG_MTD_NOR_FLASH
-static int update_flash_protect(int prot, ulong addr_first, ulong addr_last)
+#अगर_घोषित CONFIG_MTD_NOR_FLASH
+अटल पूर्णांक update_flash_protect(पूर्णांक prot, ulong addr_first, ulong addr_last)
 {
 	uchar *sp_info_ptr;
 	ulong s;
-	int i, bank, cnt;
+	पूर्णांक i, bank, cnt;
 	flash_info_t *info;
 
-	sp_info_ptr = NULL;
+	sp_info_ptr = शून्य;
 
-	if (prot == 0) {
+	अगर (prot == 0) {
 		saved_prot_info =
-			calloc(CFI_FLASH_BANKS * CONFIG_SYS_MAX_FLASH_SECT, 1);
-		if (!saved_prot_info)
-			return 1;
+			सुस्मृति(CFI_FLASH_BANKS * CONFIG_SYS_MAX_FLASH_SECT, 1);
+		अगर (!saved_prot_info)
+			वापस 1;
 	}
 
-	for (bank = 0; bank < CFI_FLASH_BANKS; ++bank) {
+	क्रम (bank = 0; bank < CFI_FLASH_BANKS; ++bank) {
 		cnt = 0;
 		info = &flash_info[bank];
 
 		/* Nothing to do if the bank doesn't exist */
-		if (info->sector_count == 0)
-			return 0;
+		अगर (info->sector_गिनती == 0)
+			वापस 0;
 
 		/* Point to current bank protection information */
 		sp_info_ptr = saved_prot_info + (bank * CONFIG_SYS_MAX_FLASH_SECT);
@@ -113,213 +113,213 @@ static int update_flash_protect(int prot, ulong addr_first, ulong addr_last)
 		 * succeed. Banks must also be numbered in correct order,
 		 * according to increasing addresses.
 		 */
-		if (addr_last > info->start[0] + info->size - 1)
-			addr_last = info->start[0] + info->size - 1;
-		if (addr_first < info->start[0])
+		अगर (addr_last > info->start[0] + info->आकार - 1)
+			addr_last = info->start[0] + info->आकार - 1;
+		अगर (addr_first < info->start[0])
 			addr_first = info->start[0];
 
-		for (i = 0; i < info->sector_count; i++) {
+		क्रम (i = 0; i < info->sector_गिनती; i++) {
 			/* Save current information about protected sectors */
-			if (prot == 0) {
+			अगर (prot == 0) {
 				s = info->start[i];
-				if ((s >= addr_first) && (s <= addr_last))
+				अगर ((s >= addr_first) && (s <= addr_last))
 					sp_info_ptr[i] = info->protect[i];
 
 			}
 
 			/* Protect/unprotect sectors */
-			if (sp_info_ptr[i] == 1) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
-				if (flash_real_protect(info, i, prot))
-					return 1;
-#else
+			अगर (sp_info_ptr[i] == 1) {
+#अगर defined(CONFIG_SYS_FLASH_PROTECTION)
+				अगर (flash_real_protect(info, i, prot))
+					वापस 1;
+#अन्यथा
 				info->protect[i] = prot;
-#endif
+#पूर्ण_अगर
 				cnt++;
 			}
 		}
 
-		if (cnt) {
-			printf("%sProtected %d sectors\n",
+		अगर (cnt) {
+			म_लिखो("%sProtected %d sectors\n",
 						prot ? "": "Un-", cnt);
 		}
 	}
 
-	if((prot == 1) && saved_prot_info)
-		free(saved_prot_info);
+	अगर((prot == 1) && saved_prot_info)
+		मुक्त(saved_prot_info);
 
-	return 0;
+	वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-static int update_flash(ulong addr_source, ulong addr_first, ulong size)
+अटल पूर्णांक update_flash(ulong addr_source, ulong addr_first, ulong आकार)
 {
-#ifdef CONFIG_MTD_NOR_FLASH
-	ulong addr_last = addr_first + size - 1;
+#अगर_घोषित CONFIG_MTD_NOR_FLASH
+	ulong addr_last = addr_first + आकार - 1;
 
 	/* round last address to the sector boundary */
-	if (flash_sect_roundb(&addr_last) > 0)
-		return 1;
+	अगर (flash_sect_roundb(&addr_last) > 0)
+		वापस 1;
 
-	if (addr_first >= addr_last) {
-		printf("Error: end address exceeds addressing space\n");
-		return 1;
+	अगर (addr_first >= addr_last) {
+		म_लिखो("Error: end address exceeds addressing space\n");
+		वापस 1;
 	}
 
 	/* remove protection on processed sectors */
-	if (update_flash_protect(0, addr_first, addr_last) > 0) {
-		printf("Error: could not unprotect flash sectors\n");
-		return 1;
+	अगर (update_flash_protect(0, addr_first, addr_last) > 0) {
+		म_लिखो("Error: could not unprotect flash sectors\n");
+		वापस 1;
 	}
 
-	printf("Erasing 0x%08lx - 0x%08lx", addr_first, addr_last);
-	if (flash_sect_erase(addr_first, addr_last) > 0) {
-		printf("Error: could not erase flash\n");
-		return 1;
+	म_लिखो("Erasing 0x%08lx - 0x%08lx", addr_first, addr_last);
+	अगर (flash_sect_erase(addr_first, addr_last) > 0) {
+		म_लिखो("Error: could not erase flash\n");
+		वापस 1;
 	}
 
-	printf("Copying to flash...");
-	if (flash_write((char *)addr_source, addr_first, size) > 0) {
-		printf("Error: could not copy to flash\n");
-		return 1;
+	म_लिखो("Copying to flash...");
+	अगर (flash_write((अक्षर *)addr_source, addr_first, आकार) > 0) {
+		म_लिखो("Error: could not copy to flash\n");
+		वापस 1;
 	}
-	printf("done\n");
+	म_लिखो("done\n");
 
 	/* enable protection on processed sectors */
-	if (update_flash_protect(1, addr_first, addr_last) > 0) {
-		printf("Error: could not protect flash sectors\n");
-		return 1;
+	अगर (update_flash_protect(1, addr_first, addr_last) > 0) {
+		म_लिखो("Error: could not protect flash sectors\n");
+		वापस 1;
 	}
-#endif
-	return 0;
+#पूर्ण_अगर
+	वापस 0;
 }
-#endif /* CONFIG_DFU_TFTP || CONFIG_UPDATE_TFTP */
+#पूर्ण_अगर /* CONFIG_DFU_TFTP || CONFIG_UPDATE_TFTP */
 
-static int update_fit_getparams(const void *fit, int noffset, ulong *addr,
-						ulong *fladdr, ulong *size)
+अटल पूर्णांक update_fit_getparams(स्थिर व्योम *fit, पूर्णांक noffset, ulong *addr,
+						ulong *fladdr, ulong *आकार)
 {
-	const void *data;
+	स्थिर व्योम *तथ्य;
 
-	if (fit_image_get_data(fit, noffset, &data, (size_t *)size))
-		return 1;
+	अगर (fit_image_get_तथ्य(fit, noffset, &तथ्य, (माप_प्रकार *)आकार))
+		वापस 1;
 
-	if (fit_image_get_load(fit, noffset, (ulong *)fladdr))
-		return 1;
+	अगर (fit_image_get_load(fit, noffset, (ulong *)fladdr))
+		वापस 1;
 
-	*addr = (ulong)data;
+	*addr = (ulong)तथ्य;
 
-	return 0;
+	वापस 0;
 }
 
-#if defined(CONFIG_DFU_TFTP) || defined(CONFIG_UPDATE_TFTP)
-int update_tftp(ulong addr, char *interface, char *devstring)
+#अगर defined(CONFIG_DFU_TFTP) || defined(CONFIG_UPDATE_TFTP)
+पूर्णांक update_tftp(ulong addr, अक्षर *interface, अक्षर *devstring)
 {
-	char *filename, *env_addr, *fit_image_name;
-	ulong update_addr, update_fladdr, update_size;
-	int images_noffset, ndepth, noffset;
+	अक्षर *filename, *env_addr, *fit_image_name;
+	ulong update_addr, update_fladdr, update_आकार;
+	पूर्णांक images_noffset, ndepth, noffset;
 	bool update_tftp_dfu;
-	int ret = 0;
-	void *fit;
+	पूर्णांक ret = 0;
+	व्योम *fit;
 
-	if (interface == NULL && devstring == NULL) {
+	अगर (interface == शून्य && devstring == शून्य) {
 		update_tftp_dfu = false;
-	} else if (interface && devstring) {
+	} अन्यथा अगर (interface && devstring) {
 		update_tftp_dfu = true;
-	} else {
+	} अन्यथा {
 		pr_err("Interface: %s and devstring: %s not supported!\n",
 		      interface, devstring);
-		return -EINVAL;
+		वापस -EINVAL;
 	}
 
 	/* use already present image */
-	if (addr)
-		goto got_update_file;
+	अगर (addr)
+		जाओ got_update_file;
 
-	printf("Auto-update from TFTP: ");
+	म_लिखो("Auto-update from TFTP: ");
 
 	/* get the file name of the update file */
 	filename = env_get(UPDATE_FILE_ENV);
-	if (filename == NULL) {
-		printf("failed, env. variable '%s' not found\n",
+	अगर (filename == शून्य) {
+		म_लिखो("failed, env. variable '%s' not found\n",
 							UPDATE_FILE_ENV);
-		return 1;
+		वापस 1;
 	}
 
-	printf("trying update file '%s'\n", filename);
+	म_लिखो("trying update file '%s'\n", filename);
 
 	/* get load address of downloaded update file */
 	env_addr = env_get("loadaddr");
-	if (env_addr)
-		addr = hextoul(env_addr, NULL);
-	else
+	अगर (env_addr)
+		addr = hextoul(env_addr, शून्य);
+	अन्यथा
 		addr = CONFIG_UPDATE_LOAD_ADDR;
 
-	if (update_load(filename, CONFIG_UPDATE_TFTP_MSEC_MAX,
+	अगर (update_load(filename, CONFIG_UPDATE_TFTP_MSEC_MAX,
 					CONFIG_UPDATE_TFTP_CNT_MAX, addr)) {
-		printf("Can't load update file, aborting auto-update\n");
-		return 1;
+		म_लिखो("Can't load update file, aborting auto-update\n");
+		वापस 1;
 	}
 
 got_update_file:
 	fit = map_sysmem(addr, 0);
 
-	if (fit_check_format((void *)fit, IMAGE_SIZE_INVAL)) {
-		printf("Bad FIT format of the update file, aborting "
+	अगर (fit_check_format((व्योम *)fit, IMAGE_आकार_INVAL)) {
+		म_लिखो("Bad FIT format of the update file, aborting "
 							"auto-update\n");
-		return 1;
+		वापस 1;
 	}
 
 	/* process updates */
 	images_noffset = fdt_path_offset(fit, FIT_IMAGES_PATH);
 
 	ndepth = 0;
-	noffset = fdt_next_node(fit, images_noffset, &ndepth);
-	while (noffset >= 0 && ndepth > 0) {
-		if (ndepth != 1)
-			goto next_node;
+	noffset = fdt_अग्र_गाँठ(fit, images_noffset, &ndepth);
+	जबतक (noffset >= 0 && ndepth > 0) {
+		अगर (ndepth != 1)
+			जाओ अग्र_गाँठ;
 
-		fit_image_name = (char *)fit_get_name(fit, noffset, NULL);
-		printf("Processing update '%s' :", fit_image_name);
+		fit_image_name = (अक्षर *)fit_get_name(fit, noffset, शून्य);
+		म_लिखो("Processing update '%s' :", fit_image_name);
 
-		if (!fit_image_verify(fit, noffset)) {
-			printf("Error: invalid update hash, aborting\n");
+		अगर (!fit_image_verify(fit, noffset)) {
+			म_लिखो("Error: invalid update hash, aborting\n");
 			ret = 1;
-			goto next_node;
+			जाओ अग्र_गाँठ;
 		}
 
-		printf("\n");
-		if (update_fit_getparams(fit, noffset, &update_addr,
-					&update_fladdr, &update_size)) {
-			printf("Error: can't get update parameters, aborting\n");
+		म_लिखो("\n");
+		अगर (update_fit_getparams(fit, noffset, &update_addr,
+					&update_fladdr, &update_आकार)) {
+			म_लिखो("Error: can't get update parameters, aborting\n");
 			ret = 1;
-			goto next_node;
+			जाओ अग्र_गाँठ;
 		}
 
-		if (!update_tftp_dfu) {
-			if (update_flash(update_addr, update_fladdr,
-					 update_size)) {
-				printf("Error: can't flash update, aborting\n");
+		अगर (!update_tftp_dfu) {
+			अगर (update_flash(update_addr, update_fladdr,
+					 update_आकार)) {
+				म_लिखो("Error: can't flash update, aborting\n");
 				ret = 1;
-				goto next_node;
+				जाओ अग्र_गाँठ;
 			}
-		} else if (fit_image_check_type(fit, noffset,
+		} अन्यथा अगर (fit_image_check_type(fit, noffset,
 						IH_TYPE_FIRMWARE)) {
 			ret = dfu_write_by_name(fit_image_name,
-						(void *)update_addr,
-						update_size, interface,
+						(व्योम *)update_addr,
+						update_आकार, interface,
 						devstring);
-			if (ret)
-				return ret;
+			अगर (ret)
+				वापस ret;
 		}
-next_node:
-		noffset = fdt_next_node(fit, noffset, &ndepth);
+अग्र_गाँठ:
+		noffset = fdt_अग्र_गाँठ(fit, noffset, &ndepth);
 	}
 
-	return ret;
+	वापस ret;
 }
-#endif /* CONFIG_DFU_UPDATE || CONFIG_UPDATE_TFTP */
+#पूर्ण_अगर /* CONFIG_DFU_UPDATE || CONFIG_UPDATE_TFTP */
 
-#ifdef CONFIG_UPDATE_FIT
+#अगर_घोषित CONFIG_UPDATE_FIT
 /**
  * fit_update - update storage with FIT image
  * @fit:	Pointer to FIT image
@@ -330,58 +330,58 @@ next_node:
  *
  * Return:      0 - on success, non-zero - otherwise
  */
-int fit_update(const void *fit)
+पूर्णांक fit_update(स्थिर व्योम *fit)
 {
-	char *fit_image_name;
-	ulong update_addr, update_fladdr, update_size;
-	int images_noffset, ndepth, noffset;
-	int ret = 0;
+	अक्षर *fit_image_name;
+	ulong update_addr, update_fladdr, update_आकार;
+	पूर्णांक images_noffset, ndepth, noffset;
+	पूर्णांक ret = 0;
 
-	if (!fit)
-		return -EINVAL;
+	अगर (!fit)
+		वापस -EINVAL;
 
-	if (fit_check_format((void *)fit, IMAGE_SIZE_INVAL)) {
-		printf("Bad FIT format of the update file, aborting auto-update\n");
-		return -EINVAL;
+	अगर (fit_check_format((व्योम *)fit, IMAGE_आकार_INVAL)) {
+		म_लिखो("Bad FIT format of the update file, aborting auto-update\n");
+		वापस -EINVAL;
 	}
 
 	/* process updates */
 	images_noffset = fdt_path_offset(fit, FIT_IMAGES_PATH);
 
 	ndepth = 0;
-	noffset = fdt_next_node(fit, images_noffset, &ndepth);
-	while (noffset >= 0 && ndepth > 0) {
-		if (ndepth != 1)
-			goto next_node;
+	noffset = fdt_अग्र_गाँठ(fit, images_noffset, &ndepth);
+	जबतक (noffset >= 0 && ndepth > 0) {
+		अगर (ndepth != 1)
+			जाओ अग्र_गाँठ;
 
-		fit_image_name = (char *)fit_get_name(fit, noffset, NULL);
-		printf("Processing update '%s' :", fit_image_name);
+		fit_image_name = (अक्षर *)fit_get_name(fit, noffset, शून्य);
+		म_लिखो("Processing update '%s' :", fit_image_name);
 
-		if (!fit_image_verify(fit, noffset)) {
-			printf("Error: invalid update hash, aborting\n");
+		अगर (!fit_image_verify(fit, noffset)) {
+			म_लिखो("Error: invalid update hash, aborting\n");
 			ret = 1;
-			goto next_node;
+			जाओ अग्र_गाँठ;
 		}
 
-		printf("\n");
-		if (update_fit_getparams(fit, noffset, &update_addr,
-					 &update_fladdr, &update_size)) {
-			printf("Error: can't get update parameters, aborting\n");
+		म_लिखो("\n");
+		अगर (update_fit_getparams(fit, noffset, &update_addr,
+					 &update_fladdr, &update_आकार)) {
+			म_लिखो("Error: can't get update parameters, aborting\n");
 			ret = 1;
-			goto next_node;
+			जाओ अग्र_गाँठ;
 		}
 
-		if (fit_image_check_type(fit, noffset, IH_TYPE_FIRMWARE)) {
+		अगर (fit_image_check_type(fit, noffset, IH_TYPE_FIRMWARE)) {
 			ret = dfu_write_by_name(fit_image_name,
-						(void *)update_addr,
-						update_size, NULL, NULL);
-			if (ret)
-				return ret;
+						(व्योम *)update_addr,
+						update_आकार, शून्य, शून्य);
+			अगर (ret)
+				वापस ret;
 		}
-next_node:
-		noffset = fdt_next_node(fit, noffset, &ndepth);
+अग्र_गाँठ:
+		noffset = fdt_अग्र_गाँठ(fit, noffset, &ndepth);
 	}
 
-	return ret;
+	वापस ret;
 }
-#endif /* CONFIG_UPDATE_FIT */
+#पूर्ण_अगर /* CONFIG_UPDATE_FIT */
