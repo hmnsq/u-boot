@@ -12,15 +12,15 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#અન્તર્ભાવ <env.h>
+#અન્તર્ભાવ <malloc.h>         /* malloc, free, realloc*/
+#અન્તર્ભાવ <linux/ctype.h>    /* isalpha, isdigit */
+#અન્તર્ભાવ <console.h>
+#અન્તર્ભાવ <bootretry.h>
+#અન્તર્ભાવ <cli.h>
+#અન્તર્ભાવ <cli_hush.h>
+#અન્તર્ભાવ <command.h>        /* find_cmd */
+#અન્તર્ભાવ <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
@@ -42,14 +42,14 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#જો CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+પ્રકારવ્યાખ્યા signed અક્ષર smallint;
+પ્રકારવ્યાખ્યા unsigned અક્ષર smalluint;
+#નહીંતર
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
+પ્રકારવ્યાખ્યા પૂર્ણાંક smallint;
+પ્રકારવ્યાખ્યા unsigned smalluint;
 #endif
 
 /*
@@ -59,7 +59,7 @@ typedef unsigned smalluint;
 #define ALIGN2			__attribute__((aligned(2)))
 #define ALIGN4			__attribute__((aligned(4)))
 #define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#define ALIGN_PTR		__attribute__((aligned(કદ(શૂન્ય*))))
 
 /*
  * Miscellaneous compiler/platform defines.
@@ -82,106 +82,106 @@ typedef unsigned smalluint;
  */
 #define utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+સ્થિર શૂન્ય __noreturn xfunc_die(શૂન્ય)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#define bb_error_સંદેશ_and_die(format, ...) કરો { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} જ્યારે (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#define bb_simple_error_સંદેશ_and_die(સંદેશ) કરો { \
+panic_str("HUSH: " સંદેશ); \
+} જ્યારે (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+સ્થિર પૂર્ણાંક __maybe_unused fdprintf(પૂર્ણાંક fd, અચલ અક્ષર *format, ...)
 {
 	va_list args;
 	uint i;
 
-	assert(fd == 2);
+	પ્રતિજ્ઞા(fd == 2);
 
 	va_start(args, format);
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	પાછા i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+સ્થિર શૂન્ય bb_verror_સંદેશ(અચલ અક્ષર *s, va_list p, અચલ અક્ષર* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+સ્થિર શૂન્ય bb_error_સંદેશ(અચલ અક્ષર *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
+	bb_verror_સંદેશ(s, p, ખાલી);
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+સ્થિર શૂન્ય bb_simple_error_સંદેશ(અચલ અક્ષર *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_સંદેશ("%s", s);
 }
 
-static void *xmalloc(size_t size)
+સ્થિર શૂન્ય *xmalloc(size_t size)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	શૂન્ય *p = ખાલી;
+	જો (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	પાછા p;
 }
 
-static void *xzalloc(size_t size)
+સ્થિર શૂન્ય *xzalloc(size_t size)
 {
-	void *p = xmalloc(size);
+	શૂન્ય *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	પાછા p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+સ્થિર શૂન્ય *xrealloc(શૂન્ય *ptr, size_t size)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	શૂન્ય *p = ખાલી;
+	જો (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	પાછા p;
 }
 
-static void *xmemdup(const void *s, int n)
+સ્થિર શૂન્ય *xmemdup(અચલ શૂન્ય *s, પૂર્ણાંક n)
 {
-	return memcpy(xmalloc(n), s, n);
+	પાછા memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
 #define xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+સ્થિર શૂન્ય *mempcpy(શૂન્ય *dest, અચલ શૂન્ય *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	પાછા memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+સ્થિર શૂન્ય overlapping_strcpy(અક્ષર *dst, અચલ અક્ષર *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	જો (dst != src) {
+		જ્યારે ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+સ્થિર અક્ષર* skip_whitespace(અચલ અક્ષર *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	જ્યારે (*s == ' ' || (unsigned અક્ષર)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	પાછા (અક્ષર *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+સ્થિર અક્ષર* skip_non_whitespace(અચલ અક્ષર *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	જ્યારે (*s != '\0' && *s != ' ' && (unsigned અક્ષર)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	પાછા (અક્ષર *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#define is_name(c)	((c) == '_' || isalpha((unsigned અક્ષર)(c)))
+#define is_in_name(c)	((c) == '_' || isalnum((unsigned અક્ષર)(c)))
 
-static const char* endofname(const char *name)
+સ્થિર અચલ અક્ષર* endofname(અચલ અક્ષર *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	જો (!is_name(*name))
+		પાછા name;
+	જ્યારે (*++name) {
+		જો (!is_in_name(*name))
+			તોડો;
 	}
-	return name;
+	પાછા name;
 }
 
 /**
@@ -226,45 +226,45 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+સ્થિર size_t list_size(અક્ષર **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	માટે (size = 0; list[size] != ખાલી; size++);
 
-	return size;
+	પાછા size;
 }
 
-static int varcmp(const char *p, const char *q)
+સ્થિર પૂર્ણાંક varcmp(અચલ અક્ષર *p, અચલ અક્ષર *q)
 {
-	int c, d;
+	પૂર્ણાંક c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	જ્યારે ((c = *p) == (d = *q)) {
+		જો (c == '\0' || c == '=')
+			જાઓ out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	જો (c == '=')
 		c = '\0';
-	if (d == '=')
+	જો (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	પાછા c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+સંરચના in_str;
+સ્થિર પૂર્ણાંક u_boot_cli_readline(સંરચના in_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+સંરચના in_str;
+સ્થિર પૂર્ણાંક u_boot_cli_readline(સંરચના in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+સ્થિર uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
+સ્થિર અચલ અક્ષર defifsvar[] __aligned(1) = "IFS= \t\n";
 #define defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
@@ -281,43 +281,43 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#અન્તર્ભાવ "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+પૂર્ણાંક u_boot_hush_start_modern(શૂન્ય)
 {
 	INIT_G();
-	return 0;
+	પાછા 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+સ્થિર પૂર્ણાંક u_boot_cli_readline(સંરચના in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	અક્ષર *prompt;
+	અક્ષર __maybe_unused *ps_prompt = ખાલી;
 
-	if (!G.promptmode)
+	જો (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	નહીંતર
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#નહીંતર
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	જો (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		જો (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		નહીંતર
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		જો (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	પાછા cli_readline(prompt);
 }

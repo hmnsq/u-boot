@@ -1,131 +1,131 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <ext4fs.h>
-#include <errno.h>
-#include <image.h>
+#અન્તર્ભાવ <env.h>
+#અન્તર્ભાવ <part.h>
+#અન્તર્ભાવ <spl.h>
+#અન્તર્ભાવ <spl_load.h>
+#અન્તર્ભાવ <ext4fs.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+સ્થિર ulong spl_fit_read(સંરચના spl_load_info *load, ulong file_offset,
+			  ulong size, શૂન્ય *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	સંરચના legacy_img_hdr *header;
+	પૂર્ણાંક ret;
 	loff_t actlen;
 
 	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	જો (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (સંરચના legacy_img_hdr *)buf;
+		જો (image_get_magic(header) != FDT_MAGIC)
+			પાછા size;
 	}
 
-	return actlen;
+	પાછા actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+પૂર્ણાંક spl_load_image_ext(સંરચના spl_image_info *spl_image,
+		       સંરચના spl_boot_device *bootdev,
+		       સંરચના blk_desc *block_dev, પૂર્ણાંક partition,
+		       અચલ અક્ષર *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	સંરચના disk_partition part_info = {};
+	સંરચના spl_load_info load;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	જો (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		પાછા -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	જો (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		પાછા -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	જો (err < 0) {
 		puts("spl: ext4fs_open failed\n");
-		goto end;
+		જાઓ end;
 	}
 
-	spl_load_init(&load, spl_fit_read, NULL, 1);
+	spl_load_init(&load, spl_fit_read, ખાલી, 1);
 	err = spl_load(spl_image, bootdev, &load, filelen, 0);
 
 end:
-	if (err < 0)
+	જો (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	પાછા err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#જો CONFIG_IS_ENABLED(OS_BOOT)
+પૂર્ણાંક spl_load_image_ext_os(સંરચના spl_image_info *spl_image,
+			  સંરચના spl_boot_device *bootdev,
+			  સંરચના blk_desc *block_dev, પૂર્ણાંક partition)
 {
-	int err;
+	પૂર્ણાંક err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	સંરચના disk_partition part_info = {};
+	__maybe_unused અક્ષર *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	જો (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		પાછા -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	જો (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		પાછા -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	જો (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		જાઓ defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	જો (file) {
 		err = spl_load_image_ext(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		જો (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			જાઓ defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#જો IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		ext4fs_set_blk_dev(block_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		જો (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			જો (err < 0) {
 				puts("spl: ext4fs_open failed\n");
-				goto defaults;
+				જાઓ defaults;
 			}
-			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+			err = ext4fs_read((શૂન્ય *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
+			જો (err < 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				જાઓ defaults;
 			}
-			return 0;
-		} else {
+			પાછા 0;
+		} નહીંતર {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
 #endif
-	} else {
+	} નહીંતર {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
@@ -134,31 +134,31 @@ defaults:
 	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	જો (err)
+		પાછા err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#જો IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	ext4fs_set_blk_dev(block_dev, &part_info);
 	ext4fs_mount();
 	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	જો (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
-	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
+	err = ext4fs_read((શૂન્ય *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
+	જો (err < 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		પાછા -1;
 	}
 #endif
 
-	return 0;
+	પાછા 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#નહીંતર
+પૂર્ણાંક spl_load_image_ext_os(સંરચના spl_image_info *spl_image,
+			  સંરચના spl_boot_device *bootdev,
+			  સંરચના blk_desc *block_dev, પૂર્ણાંક partition)
 {
-	return -ENOSYS;
+	પાછા -ENOSYS;
 }
 #endif

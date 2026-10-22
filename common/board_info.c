@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <dm.h>
-#include <init.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <linux/libfdt.h>
-#include <linux/compiler.h>
+#અન્તર્ભાવ <dm.h>
+#અન્તર્ભાવ <init.h>
+#અન્તર્ભાવ <sysinfo.h>
+#અન્તર્ભાવ <asm/global_data.h>
+#અન્તર્ભાવ <linux/libfdt.h>
+#અન્તર્ભાવ <linux/compiler.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-int __weak checkboard(void)
+પૂર્ણાંક __weak checkboard(શૂન્ય)
 {
-	return 0;
+	પાછા 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
+સ્થિર અચલ સંરચના to_show {
+	અચલ અક્ષર *name;
+	ગણના sysinfo_id id;
 } to_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
 	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+સ્થિર પૂર્ણાંક try_sysinfo(શૂન્ય)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	સંરચના udevice *dev;
+	અક્ષર str[80];
+	પૂર્ણાંક ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, કદ(str), str);
+	જો (ret)
+		પાછા ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	જો (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		અચલ સંરચના to_show *item;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+		માટે (item = to_show; item->id; item++) {
+			ret = sysinfo_get_str(dev, item->id, કદ(str), str);
+			જો (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	પાછા 0;
 }
 
-int show_board_info(void)
+પૂર્ણાંક show_board_info(શૂન્ય)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	જો (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		પૂર્ણાંક ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		જો (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		જો (ret) {
+			અચલ અક્ષર *model;
 
-			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			model = fdt_getprop(gd->fdt_blob, 0, "model", ખાલી);
+			જો (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	પાછા checkboard();
 }

@@ -4,13 +4,13 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <timestamp.h>
-#include <version.h>
-#include <version_string.h>
+#અન્તર્ભાવ <timestamp.h>
+#અન્તર્ભાવ <version.h>
+#અન્તર્ભાવ <version_string.h>
 
 #define U_BOOT_VERSION_STRING U_BOOT_VERSION " (" U_BOOT_DATE " - " \
 	U_BOOT_TIME " " U_BOOT_TZ ")" CONFIG_IDENT_STRING
 
-const char version_string[] = U_BOOT_VERSION_STRING;
-const unsigned short version_num = U_BOOT_VERSION_NUM;
-const unsigned char version_num_patch = U_BOOT_VERSION_NUM_PATCH;
+અચલ અક્ષર version_string[] = U_BOOT_VERSION_STRING;
+અચલ unsigned short version_અંક = U_BOOT_VERSION_અંક;
+અચલ unsigned અક્ષર version_અંક_patch = U_BOOT_VERSION_અંક_PATCH;

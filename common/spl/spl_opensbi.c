@@ -5,59 +5,59 @@
  *
  * Based on common/spl/spl_atf.c
  */
-#include <cpu_func.h>
-#include <errno.h>
-#include <hang.h>
-#include <image.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <asm/smp.h>
-#include <opensbi.h>
-#include <linux/libfdt.h>
-#include <linux/printk.h>
-#include <mapmem.h>
+#અન્તર્ભાવ <cpu_func.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <hang.h>
+#અન્તર્ભાવ <image.h>
+#અન્તર્ભાવ <spl.h>
+#અન્તર્ભાવ <asm/global_data.h>
+#અન્તર્ભાવ <asm/smp.h>
+#અન્તર્ભાવ <opensbi.h>
+#અન્તર્ભાવ <linux/libfdt.h>
+#અન્તર્ભાવ <linux/printk.h>
+#અન્તર્ભાવ <mapmem.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct fw_dynamic_info opensbi_info;
+સંરચના fw_dynamic_info opensbi_info;
 
-static int spl_opensbi_find_os_node(void *blob, int *uboot_node, int os_type)
+સ્થિર પૂર્ણાંક spl_opensbi_find_os_ગાંઠ(શૂન્ય *blob, પૂર્ણાંક *uboot_ગાંઠ, પૂર્ણાંક os_type)
 {
-	int fit_images_node, node;
-	const char *fit_os;
+	પૂર્ણાંક fit_images_ગાંઠ, ગાંઠ;
+	અચલ અક્ષર *fit_os;
 
-	fit_images_node = fdt_path_offset(blob, "/fit-images");
-	if (fit_images_node < 0)
-		return -ENODEV;
+	fit_images_ગાંઠ = fdt_path_offset(blob, "/fit-images");
+	જો (fit_images_ગાંઠ < 0)
+		પાછા -ENODEV;
 
-	fdt_for_each_subnode(node, blob, fit_images_node) {
-		fit_os = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
-		if (!fit_os)
-			continue;
+	fdt_for_each_subnode(ગાંઠ, blob, fit_images_ગાંઠ) {
+		fit_os = fdt_getprop(blob, ગાંઠ, FIT_OS_PROP, ખાલી);
+		જો (!fit_os)
+			ચાલુ;
 
-		if (genimg_get_os_id(fit_os) == os_type) {
-			*uboot_node = node;
-			return 0;
+		જો (genimg_get_os_id(fit_os) == os_type) {
+			*uboot_ગાંઠ = ગાંઠ;
+			પાછા 0;
 		}
 	}
 
-	return -ENODEV;
+	પાછા -ENODEV;
 }
 
-void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
+શૂન્ય __noreturn spl_invoke_opensbi(સંરચના spl_image_info *spl_image)
 {
-	int ret, os_node;
+	પૂર્ણાંક ret, os_ગાંઠ;
 	ulong os_entry;
-	int os_type;
-	typedef void __noreturn (*opensbi_entry_t)(ulong hartid, ulong dtb, ulong info);
+	પૂર્ણાંક os_type;
+	પ્રકારવ્યાખ્યા શૂન્ય __noreturn (*opensbi_entry_t)(ulong hartid, ulong dtb, ulong info);
 	opensbi_entry_t opensbi_entry;
 
-	if (!spl_image->fdt_addr) {
+	જો (!spl_image->fdt_addr) {
 		pr_err("No device tree specified in SPL image\n");
 		hang();
 	}
 
-	if (!IS_ALIGNED((uintptr_t)spl_image->fdt_addr, 8)) {
+	જો (!IS_ALIGNED((uintptr_t)spl_image->fdt_addr, 8)) {
 		pr_err("SPL image loaded an improperly-aligned device tree\n");
 		hang();
 	}
@@ -69,9 +69,9 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	 * causing the DTB to be cleared by kernel BSS initializtion.
 	 * Moving DTB in front of the kernel can avoid the error.
 	 */
-#if CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT) && \
+#જો CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT) && \
     CONFIG_VAL(PAYLOAD_ARGS_ADDR)
-	memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, spl_image->fdt_addr,
+	memcpy((શૂન્ય *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, spl_image->fdt_addr,
 	       fdt_totalsize(spl_image->fdt_addr));
 	spl_image->fdt_addr = map_sysmem(CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
 #endif
@@ -81,25 +81,25 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	 * The next os image default is u-boot proper, once enable
 	 * OpenSBI OS boot mode, the OS image should be linux.
 	 */
-	if (CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT))
+	જો (CONFIG_IS_ENABLED(LOAD_FIT_OPENSBI_OS_BOOT))
 		os_type = IH_OS_LINUX;
-	else
+	નહીંતર
 		os_type = IH_OS_U_BOOT;
 
-	ret = spl_opensbi_find_os_node(spl_image->fdt_addr, &os_node, os_type);
-	if (ret) {
+	ret = spl_opensbi_find_os_ગાંઠ(spl_image->fdt_addr, &os_ગાંઠ, os_type);
+	જો (ret) {
 		pr_err("Can't find %s node for opensbi, %d\n",
 		       genimg_get_os_name(os_type), ret);
 		hang();
 	}
 
 	/* Get U-Boot entry point */
-	ret = fit_image_get_entry(spl_image->fdt_addr, os_node, &os_entry);
-	if (ret)
-		ret = fit_image_get_load(spl_image->fdt_addr, os_node, &os_entry);
+	ret = fit_image_get_entry(spl_image->fdt_addr, os_ગાંઠ, &os_entry);
+	જો (ret)
+		ret = fit_image_get_load(spl_image->fdt_addr, os_ગાંઠ, &os_entry);
 
 	/* Prepare opensbi_info object */
-	opensbi_info.magic = FW_DYNAMIC_INFO_MAGIC_VALUE;
+	opensbi_info.magic = FW_DYNAMIC_INFO_MAGIC_કિંમત;
 	opensbi_info.version = FW_DYNAMIC_INFO_VERSION;
 	opensbi_info.next_addr = os_entry;
 	opensbi_info.next_mode = FW_DYNAMIC_INFO_NEXT_MODE_S;
@@ -123,7 +123,7 @@ void __noreturn spl_invoke_opensbi(struct spl_image_info *spl_image)
 	ret = smp_call_function((ulong)spl_image->entry_point,
 				(ulong)spl_image->fdt_addr,
 				(ulong)&opensbi_info, 1);
-	if (ret)
+	જો (ret)
 		hang();
 #endif
 	opensbi_entry(gd->arch.boot_hart, (ulong)spl_image->fdt_addr,

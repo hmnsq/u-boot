@@ -8,66 +8,66 @@
  * Derived work from spl_usb.c
  */
 
-#include <spl.h>
-#include <sata.h>
-#include <scsi.h>
-#include <errno.h>
-#include <fat.h>
-#include <image.h>
-#include <linux/compiler.h>
+#અન્તર્ભાવ <spl.h>
+#અન્તર્ભાવ <sata.h>
+#અન્તર્ભાવ <scsi.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fat.h>
+#અન્તર્ભાવ <image.h>
+#અન્તર્ભાવ <linux/compiler.h>
 
-static int __maybe_unused spl_sata_load_image_raw(struct spl_image_info *spl_image,
-						  struct spl_boot_device *bootdev,
-						  struct blk_desc *stor_dev,
+સ્થિર પૂર્ણાંક __maybe_unused spl_sata_load_image_raw(સંરચના spl_image_info *spl_image,
+						  સંરચના spl_boot_device *bootdev,
+						  સંરચના blk_desc *stor_dev,
 						  unsigned long sector)
 {
-	struct legacy_img_hdr *header;
-	unsigned long count;
+	સંરચના legacy_img_hdr *header;
+	unsigned long ગણતરી;
 	u32 image_size_sectors;
 	u32 image_offset_sectors;
 	u32 image_offset;
-	int ret;
+	પૂર્ણાંક ret;
 
-	header = spl_get_load_buffer(-sizeof(*header), stor_dev->blksz);
-	count = blk_dread(stor_dev, sector, 1, header);
-	if (count == 0)
-		return -EIO;
+	header = spl_get_load_buffer(-કદ(*header), stor_dev->blksz);
+	ગણતરી = blk_dread(stor_dev, sector, 1, header);
+	જો (ગણતરી == 0)
+		પાછા -EIO;
 
 	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
 	image_size_sectors = DIV_ROUND_UP(spl_image->size, stor_dev->blksz);
 	image_offset_sectors = spl_image->offset / stor_dev->blksz;
 	image_offset = spl_image->offset % stor_dev->blksz;
-	count = blk_dread(stor_dev, sector + image_offset_sectors,
+	ગણતરી = blk_dread(stor_dev, sector + image_offset_sectors,
 			image_size_sectors,
-			(void *)spl_image->load_addr);
-	if (count != image_size_sectors)
-		return -EIO;
+			(શૂન્ય *)spl_image->load_addr);
+	જો (ગણતરી != image_size_sectors)
+		પાછા -EIO;
 
-	if (image_offset)
-		memmove((void *)spl_image->load_addr,
-			(void *)spl_image->load_addr + image_offset,
+	જો (image_offset)
+		memmove((શૂન્ય *)spl_image->load_addr,
+			(શૂન્ય *)spl_image->load_addr + image_offset,
 			spl_image->size);
 
-	return 0;
+	પાછા 0;
 }
 
-static int spl_sata_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+સ્થિર પૂર્ણાંક spl_sata_load_image(સંરચના spl_image_info *spl_image,
+			       સંરચના spl_boot_device *bootdev)
 {
-	int err = -ENOSYS;
-	struct blk_desc *stor_dev;
+	પૂર્ણાંક err = -ENOSYS;
+	સંરચના blk_desc *stor_dev;
 
 	/* try to recognize storage devices immediately */
 	scsi_scan(false);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_SCSI, 0);
-	if (!stor_dev)
-		return -ENODEV;
+	જો (!stor_dev)
+		પાછા -ENODEV;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
+#જો CONFIG_IS_ENABLED(OS_BOOT)
+	જો (spl_start_uboot() ||
 	    spl_load_image_fat_os(spl_image, bootdev, stor_dev,
 				  CONFIG_SYS_SATA_FAT_BOOT_PARTITION))
 #endif
@@ -76,16 +76,16 @@ static int spl_sata_load_image(struct spl_image_info *spl_image,
 		err = spl_load_image_fat(spl_image, bootdev, stor_dev,
 				CONFIG_SYS_SATA_FAT_BOOT_PARTITION,
 				CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
-#elif defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
+#અથવાજો defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
 		err = spl_sata_load_image_raw(spl_image, bootdev, stor_dev,
 			CONFIG_SPL_SATA_RAW_U_BOOT_SECTOR);
 #endif
 	}
-	if (err) {
+	જો (err) {
 		puts("Error loading sata device\n");
-		return err;
+		પાછા err;
 	}
 
-	return 0;
+	પાછા 0;
 }
 SPL_LOAD_IMAGE_METHOD("SATA", 0, BOOT_DEVICE_SATA, spl_sata_load_image);

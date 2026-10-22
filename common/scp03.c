@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#અન્તર્ભાવ <scp03.h>
+#અન્તર્ભાવ <tee.h>
+#અન્તર્ભાવ <tee/optee_ta_scp03.h>
+#અન્તર્ભાવ <linux/errno.h>
+#અન્તર્ભાવ <linux/string.h>
 
-static int scp03_enable(bool provision)
+સ્થિર પૂર્ણાંક scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	અચલ સંરચના tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	સંરચના tee_open_session_arg session;
+	સંરચના tee_invoke_arg invoke;
+	સંરચના tee_param param;
+	સંરચના udevice *tee = ખાલી;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_find_device(tee, ખાલી, ખાલી, ખાલી);
+	જો (!tee)
+		પાછા -ENODEV;
 
-	memset(&session, 0, sizeof(session));
+	memset(&session, 0, કદ(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	જો (tee_open_session(tee, &session, 0, ખાલી))
+		પાછા -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, કદ(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_કિંમત_આગત;
+	param.u.કિંમત.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, કદ(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	જો (tee_invoke_func(tee, &invoke, 1, &param))
+		પાછા -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	પાછા 0;
 }
 
-int tee_enable_scp03(void)
+પૂર્ણાંક tee_enable_scp03(શૂન્ય)
 {
-	return scp03_enable(false);
+	પાછા scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+પૂર્ણાંક tee_provision_scp03(શૂન્ય)
 {
-	return scp03_enable(true);
+	પાછા scp03_enable(true);
 }

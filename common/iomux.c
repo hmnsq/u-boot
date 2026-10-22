@@ -4,42 +4,42 @@
  * Gary Jennejohn, DENX Software Engineering GmbH, garyj@denx.de.
  */
 
-#include <console.h>
-#include <serial.h>
-#include <malloc.h>
+#અન્તર્ભાવ <console.h>
+#અન્તર્ભાવ <serial.h>
+#અન્તર્ભાવ <malloc.h>
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-void iomux_printdevs(const int console)
+#જો CONFIG_IS_ENABLED(CONSOLE_MUX)
+શૂન્ય iomux_printdevs(અચલ પૂર્ણાંક console)
 {
-	int i;
-	struct stdio_dev *dev;
+	પૂર્ણાંક i;
+	સંરચના stdio_dev *dev;
 
 	for_each_console_dev(i, console, dev)
 		printf("%s ", dev->name);
 	printf("\n");
 }
 
-int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sdev)
+પૂર્ણાંક iomux_match_device(સંરચના stdio_dev **set, અચલ પૂર્ણાંક n, સંરચના stdio_dev *sdev)
 {
-	int i;
+	પૂર્ણાંક i;
 
-	for (i = 0; i < n; i++)
-		if (sdev == set[i])
-			return i;
-	return -ENOENT;
+	માટે (i = 0; i < n; i++)
+		જો (sdev == set[i])
+			પાછા i;
+	પાછા -ENOENT;
 }
 
 /* This tries to preserve the old list if an error occurs. */
-int iomux_doenv(const int console, const char *arg)
+પૂર્ણાંક iomux_doenv(અચલ પૂર્ણાંક console, અચલ અક્ષર *arg)
 {
-	char *console_args, *temp, **start;
-	int i, j, io_flag, cs_idx, repeat;
-	struct stdio_dev **cons_set, **old_set;
-	struct stdio_dev *dev;
+	અક્ષર *console_args, *temp, **start;
+	પૂર્ણાંક i, j, io_flag, cs_idx, repeat;
+	સંરચના stdio_dev **cons_set, **old_set;
+	સંરચના stdio_dev *dev;
 
 	console_args = strdup(arg);
-	if (console_args == NULL)
-		return 1;
+	જો (console_args == ખાલી)
+		પાછા 1;
 	/*
 	 * Check whether a comma separated list of devices was
 	 * entered and count how many devices were entered.
@@ -51,117 +51,117 @@ int iomux_doenv(const int console, const char *arg)
 	 */
 	i = 0;
 	temp = console_args;
-	for (;;) {
+	માટે (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
 
 		temp = strchr(temp, ',');
-		if (temp == NULL)
-			break;
+		જો (temp == ખાલી)
+			તોડો;
 
 		temp++;
 	}
-	start = (char **)malloc(i * sizeof(char *));
-	if (start == NULL) {
-		free(console_args);
-		return 1;
+	start = (અક્ષર **)malloc(i * કદ(અક્ષર *));
+	જો (start == ખાલી) {
+		મુક્ત(console_args);
+		પાછા 1;
 	}
 	i = 0;
 	start[0] = console_args;
-	for (;;) {
+	માટે (;;) {
 		temp = strchr(start[i++], ',');
-		if (temp == NULL)
-			break;
+		જો (temp == ખાલી)
+			તોડો;
 		*temp = '\0';
 		start[i] = temp + 1;
 	}
-	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
-	if (cons_set == NULL) {
-		free(start);
-		free(console_args);
-		return 1;
+	cons_set = (સંરચના stdio_dev **)calloc(i, કદ(સંરચના stdio_dev *));
+	જો (cons_set == ખાલી) {
+		મુક્ત(start);
+		મુક્ત(console_args);
+		પાછા 1;
 	}
 
 	io_flag = stdio_file_to_flags(console);
-	if (io_flag < 0) {
-		free(start);
-		free(console_args);
-		free(cons_set);
-		return 1;
+	જો (io_flag < 0) {
+		મુક્ત(start);
+		મુક્ત(console_args);
+		મુક્ત(cons_set);
+		પાછા 1;
 	}
 
 	cs_idx = 0;
-	for (j = 0; j < i; j++) {
+	માટે (j = 0; j < i; j++) {
 		/*
 		 * Check whether the device exists and is valid.
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
-		dev = console_search_dev(io_flag, start[j]);
-		if (dev == NULL)
-			continue;
+		dev = console_શોધ_dev(io_flag, start[j]);
+		જો (dev == ખાલી)
+			ચાલુ;
 		/*
 		 * Prevent multiple entries for a device.
 		 */
 		 repeat = iomux_match_device(cons_set, cs_idx, dev);
-		 if (repeat >= 0)
-			continue;
+		 જો (repeat >= 0)
+			ચાલુ;
 		/*
 		 * Try assigning the specified device.
 		 * This could screw up the console settings for apps.
 		 */
-		if (console_assign(console, start[j]) < 0)
-			continue;
+		જો (console_assign(console, start[j]) < 0)
+			ચાલુ;
 		cons_set[cs_idx++] = dev;
 	}
-	free(console_args);
-	free(start);
+	મુક્ત(console_args);
+	મુક્ત(start);
 	/* failed to set any console */
-	if (cs_idx == 0) {
-		free(cons_set);
-		return 1;
+	જો (cs_idx == 0) {
+		મુક્ત(cons_set);
+		પાછા 1;
 	}
 
 	old_set = console_devices[console];
-	repeat = cd_count[console];
+	repeat = cd_ગણતરી[console];
 
 	console_devices[console] = cons_set;
-	cd_count[console] = cs_idx;
+	cd_ગણતરી[console] = cs_idx;
 
 	/* Stop dropped consoles */
-	for (i = 0; i < repeat; i++) {
+	માટે (i = 0; i < repeat; i++) {
 		j = iomux_match_device(cons_set, cs_idx, old_set[i]);
-		if (j == -ENOENT)
+		જો (j == -ENOENT)
 			console_stop(console, old_set[i]);
 	}
 
-	free(old_set);
-	return 0;
+	મુક્ત(old_set);
+	પાછા 0;
 }
 
-int iomux_replace_device(const int console, const char *old, const char *new)
+પૂર્ણાંક iomux_replace_device(અચલ પૂર્ણાંક console, અચલ અક્ષર *old, અચલ અક્ષર *new)
 {
-	struct stdio_dev *dev;
-	char *arg = NULL;	/* Initial empty list */
-	int size = 1;		/* For NUL terminator */
-	int i, ret;
+	સંરચના stdio_dev *dev;
+	અક્ષર *arg = ખાલી;	/* Initial empty list */
+	પૂર્ણાંક size = 1;		/* For NUL terminator */
+	પૂર્ણાંક i, ret;
 
 	for_each_console_dev(i, console, dev) {
-		const char *name = strcmp(dev->name, old) ? dev->name : new;
-		char *tmp;
+		અચલ અક્ષર *name = strcmp(dev->name, old) ? dev->name : new;
+		અક્ષર *tmp;
 
 		/* Append name with a ',' (comma) separator */
 		tmp = realloc(arg, size + strlen(name) + 1);
-		if (!tmp) {
-			free(arg);
-			return -ENOMEM;
+		જો (!tmp) {
+			મુક્ત(arg);
+			પાછા -ENOMEM;
 		}
 
-		if (arg) {
+		જો (arg) {
 			strcat(tmp, ",");
 			strcat(tmp, name);
 		}
-		else
+		નહીંતર
 			strcpy(tmp, name);
 
 		arg = tmp;
@@ -169,10 +169,10 @@ int iomux_replace_device(const int console, const char *old, const char *new)
 	}
 
 	ret = iomux_doenv(console, arg);
-	if (ret)
+	જો (ret)
 		ret = -EINVAL;
 
-	free(arg);
-	return ret;
+	મુક્ત(arg);
+	પાછા ret;
 }
 #endif /* CONSOLE_MUX */

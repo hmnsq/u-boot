@@ -8,17 +8,17 @@
  *  Command Processor Table
  */
 
-#include <config.h>
-#include <compiler.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/ctype.h>
+#અન્તર્ભાવ <config.h>
+#અન્તર્ભાવ <compiler.h>
+#અન્તર્ભાવ <command.h>
+#અન્તર્ભાવ <console.h>
+#અન્તર્ભાવ <env.h>
+#અન્તર્ભાવ <image.h>
+#અન્તર્ભાવ <log.h>
+#અન્તર્ભાવ <mapmem.h>
+#અન્તર્ભાવ <time.h>
+#અન્તર્ભાવ <asm/global_data.h>
+#અન્તર્ભાવ <linux/ctype.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -27,204 +27,204 @@ DECLARE_GLOBAL_DATA_PTR;
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+પૂર્ણાંક _do_help(સંરચના cmd_tbl *cmd_start, પૂર્ણાંક cmd_વસ્તુઓ, સંરચના cmd_tbl *cmdtp,
+	     પૂર્ણાંક flag, પૂર્ણાંક argc, અક્ષર *અચલ argv[])
 {
-	int i;
-	int rcode = 0;
+	પૂર્ણાંક i;
+	પૂર્ણાંક rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+	જો (argc == 1) {	/* show list of commands */
+		સંરચના cmd_tbl *cmd_array[cmd_વસ્તુઓ];
+		પૂર્ણાંક i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
 		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		માટે (i = 0; i < cmd_વસ્તુઓ; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		માટે (i = cmd_વસ્તુઓ - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			માટે (j = 0; j < i; ++j) {
+				જો (strcmp(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
-					struct cmd_tbl *tmp;
+					સંરચના cmd_tbl *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
 					cmd_array[j + 1] = tmp;
 					++swaps;
 				}
 			}
-			if (!swaps)
-				break;
+			જો (!swaps)
+				તોડો;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
-			const char *usage = cmd_array[i]->usage;
+		માટે (i = 0; i < cmd_વસ્તુઓ; i++) {
+			અચલ અક્ષર *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
-				continue;
+			જો (ctrlc())
+				પાછા 1;
+			જો (usage == ખાલી)
+				ચાલુ;
 			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		પાછા 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+	માટે (i = 1; i < argc; ++i) {
+		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_વસ્તુઓ);
+		જો (cmdtp != ખાલી) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
+		} નહીંતર {
 			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	પાછા rcode;
 }
 
 /* find command table entry for a command */
-struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+સંરચના cmd_tbl *find_cmd_tbl(અચલ અક્ષર *cmd, સંરચના cmd_tbl *table,
+			     પૂર્ણાંક table_len)
 {
 #ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
-	const char *p;
-	int len;
-	int n_found = 0;
+	સંરચના cmd_tbl *cmdtp;
+	સંરચના cmd_tbl *cmdtp_temp = table;	/* Init value */
+	અચલ અક્ષર *p;
+	પૂર્ણાંક len;
+	પૂર્ણાંક n_found = 0;
 
-	if (!cmd)
-		return NULL;
+	જો (!cmd)
+		પાછા ખાલી;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == ખાલી) ? strlen (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	માટે (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
+		જો (strncmp(cmd, cmdtp->name, len) == 0) {
+			જો (len == strlen(cmdtp->name))
+				પાછા cmdtp;	/* full match */
 
 			cmdtp_temp = cmdtp;	/* abbreviated command ? */
 			n_found++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	જો (n_found == 1) {			/* exactly one match */
+		પાછા cmdtp_temp;
 	}
 #endif /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	પાછા ખાલી;	/* not found or ambiguous command */
 }
 
-struct cmd_tbl *find_cmd(const char *cmd)
+સંરચના cmd_tbl *find_cmd(અચલ અક્ષર *cmd)
 {
-	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	સંરચના cmd_tbl *start = ll_entry_start(સંરચના cmd_tbl, cmd);
+	અચલ પૂર્ણાંક len = ll_entry_ગણતરી(સંરચના cmd_tbl, cmd);
+	પાછા find_cmd_tbl(cmd, start, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+પૂર્ણાંક cmd_usage(અચલ સંરચના cmd_tbl *cmdtp)
 {
 	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
 #ifdef	CONFIG_SYS_LONGHELP
 	printf("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
+	જો (!cmdtp->help) {
 		puts ("- No additional help available.\n");
-		return 1;
+		પાછા 1;
 	}
 
 	puts(cmdtp->help);
 	putc('\n');
 #endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+	પાછા 1;
 }
 
 #ifdef CONFIG_AUTO_COMPLETE
-static char env_complete_buf[512];
+સ્થિર અક્ષર env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
-		 char *cmdv[])
+પૂર્ણાંક var_complete(પૂર્ણાંક argc, અક્ષર *અચલ argv[], અક્ષર last_char, પૂર્ણાંક maxv,
+		 અક્ષર *cmdv[])
 {
-	int space;
+	પૂર્ણાંક space;
 
 	space = last_char == '\0' || isblank(last_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	જો (space && argc == 1)
+		પાછા env_complete("", maxv, cmdv, કદ(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
-				    sizeof(env_complete_buf),
+	જો (!space && argc == 2)
+		પાછા env_complete(argv[1], maxv, cmdv,
+				    કદ(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	પાછા 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+સ્થિર પૂર્ણાંક dollar_complete(પૂર્ણાંક argc, અક્ષર *અચલ argv[], અક્ષર last_char,
+			   પૂર્ણાંક maxv, અક્ષર *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
+	જો (argc < 1 || argv[argc - 1][0] != '$' ||
 	    last_char == '\0' || isblank(last_char))
-		return 0;
+		પાછા 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	પાછા env_complete(argv[argc - 1], maxv, cmdv, કદ(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
-		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+પૂર્ણાંક complete_subcmdv(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક ગણતરી, પૂર્ણાંક argc,
+		     અક્ષર *અચલ argv[], અક્ષર last_char,
+		     પૂર્ણાંક maxv, અક્ષર *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
-	const char *p;
-	int len, clen;
-	int n_found = 0;
-	const char *cmd;
+	અચલ સંરચના cmd_tbl *cmdend = cmdtp + ગણતરી;
+	અચલ અક્ષર *p;
+	પૂર્ણાંક len, clen;
+	પૂર્ણાંક n_found = 0;
+	અચલ અક્ષર *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	જો (maxv < 2)
+		પાછા -2;
 
-	cmdv[0] = NULL;
+	cmdv[0] = ખાલી;
 
-	if (argc == 0) {
+	જો (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
+		માટે (; cmdtp != cmdend; cmdtp++) {
+			જો (n_found >= maxv - 2) {
 				cmdv[n_found++] = "...";
-				break;
+				તોડો;
 			}
 			cmdv[n_found++] = cmdtp->name;
 		}
-		cmdv[n_found] = NULL;
-		return n_found;
+		cmdv[n_found] = ખાલી;
+		પાછા n_found;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
-			cmdv[0] = NULL;
-			return 0;
+	જો (argc > 1 || last_char == '\0' || isblank(last_char)) {
+		cmdtp = find_cmd_tbl(argv[0], cmdtp, ગણતરી);
+		જો (cmdtp == ખાલી || cmdtp->complete == ખાલી) {
+			cmdv[0] = ખાલી;
+			પાછા 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		પાછા (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,100 +233,100 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
+	જો (p == ખાલી)
 		len = strlen(cmd);
-	else
+	નહીંતર
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	માટે (; cmdtp != cmdend; cmdtp++) {
 
 		clen = strlen(cmdtp->name);
-		if (clen < len)
-			continue;
+		જો (clen < len)
+			ચાલુ;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
-			continue;
+		જો (memcmp(cmd, cmdtp->name, len) != 0)
+			ચાલુ;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
+		જો (n_found >= maxv - 2) {
 			cmdv[n_found++] = "...";
-			break;
+			તોડો;
 		}
 
 		cmdv[n_found++] = cmdtp->name;
 	}
 
-	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
+	cmdv[n_found] = ખાલી;
+	પાછા n_found;
+#નહીંતર
+	પાછા 0;
 #endif
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+સ્થિર પૂર્ણાંક complete_cmdv(પૂર્ણાંક argc, અક્ષર *અચલ argv[], અક્ષર last_char,
+			 પૂર્ણાંક maxv, અક્ષર *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
+	પાછા complete_subcmdv(ll_entry_start(સંરચના cmd_tbl, cmd),
+				ll_entry_ગણતરી(સંરચના cmd_tbl, cmd), argc, argv,
 				last_char, maxv, cmdv);
-#else
-	return 0;
+#નહીંતર
+	પાછા 0;
 #endif
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+સ્થિર પૂર્ણાંક make_argv(અક્ષર *s, પૂર્ણાંક argvsz, અક્ષર *argv[])
 {
-	int argc = 0;
+	પૂર્ણાંક argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	જ્યારે (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		જ્યારે (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
-			break;
+		જો (*s == '\0')	/* end of s, no more args	*/
+			તોડો;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		જ્યારે (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
-			break;
+		જો (*s == '\0')		/* end of s, no more args	*/
+			તોડો;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
-	argv[argc] = NULL;
+	argv[argc] = ખાલી;
 
-	return argc;
+	પાછા argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+સ્થિર શૂન્ય print_argv(અચલ અક્ષર *banner, અચલ અક્ષર *leader, અચલ અક્ષર *sep,
+		       પૂર્ણાંક linemax, અક્ષર *અચલ argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	પૂર્ણાંક ll = leader != ખાલી ? strlen(leader) : 0;
+	પૂર્ણાંક sl = sep != ખાલી ? strlen(sep) : 0;
+	પૂર્ણાંક len, i;
 
-	if (banner) {
+	જો (banner) {
 		puts("\n");
 		puts(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
+	જ્યારે (*argv != ખાલી) {
 		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
+		જો (i + len >= linemax) {
 			puts("\n");
-			if (leader)
+			જો (leader)
 				puts(leader);
 			i = ll - sl;
-		} else if (sep)
+		} નહીંતર જો (sep)
 			puts(sep);
 		puts(*argv++);
 		i += len;
@@ -334,236 +334,236 @@ static void print_argv(const char *banner, const char *leader, const char *sep,
 	printf("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+સ્થિર પૂર્ણાંક find_common_prefix(અક્ષર *અચલ argv[])
 {
-	int i, len;
-	char *anchor, *s, *t;
+	પૂર્ણાંક i, len;
+	અક્ષર *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	જો (*argv == ખાલી)
+		પાછા 0;
 
 	/* begin with max */
 	anchor = *argv++;
 	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	જ્યારે ((t = *argv++) != ખાલી) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
-				break;
+		માટે (i = 0; i < len; i++, t++, s++) {
+			જો (*t != *s)
+				તોડો;
 		}
 		len = s - anchor;
 	}
-	return len;
+	પાછા len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+પૂર્ણાંક cmd_auto_complete(અચલ અક્ષર *અચલ prompt, અક્ષર *buf, પૂર્ણાંક *np, પૂર્ણાંક *colp)
 {
-	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
-	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
-	char *cmdv[20];
-	char *s, *t;
-	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
-	char last_char;
-	const char *ps_prompt;
+	અક્ષર tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
+	પૂર્ણાંક n = *np, col = *colp;
+	અક્ષર *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
+	અક્ષર *cmdv[20];
+	અક્ષર *s, *t;
+	અચલ અક્ષર *sep;
+	પૂર્ણાંક i, j, k, len, seplen, argc;
+	પૂર્ણાંક cnt;
+	અક્ષર last_char;
+	અચલ અક્ષર *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	જો (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		જો (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} નહીંતર
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	જો (strcmp(prompt, ps_prompt) != 0)
+		પાછા 0;	/* not in normal console */
 
 	cnt = strlen(buf);
-	if (cnt >= 1)
+	જો (cnt >= 1)
 		last_char = buf[cnt - 1];
-	else
+	નહીંતર
 		last_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
 	strcpy(tmp_buf, buf);
 
 	/* separate into argv */
-	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);
+	argc = make_argv(tmp_buf, કદ(argv)/કદ(argv[0]), argv);
 
 	/* first try a $ completion */
 	i = dollar_complete(argc, argv, last_char,
-			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+			    કદ(cmdv) / કદ(cmdv[0]), cmdv);
+	જો (!i) {
 		/* do the completion and return the possible completions */
 		i = complete_cmdv(argc, argv, last_char,
-				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
+				  કદ(cmdv) / કદ(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	જો (i == 0) {
+		જો (argc > 1)	/* allow tab for non command */
+			પાછા 0;
 		putc('\a');
-		return 1;
+		પાછા 1;
 	}
 
-	s = NULL;
+	s = ખાલી;
 	len = 0;
-	sep = NULL;
+	sep = ખાલી;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
+	જો (i == 1) { /* one match; perfect */
+		જો (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		નહીંતર
 			k = 0;
 
 		s = cmdv[0] + k;
 		len = strlen(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
+	} નહીંતર જો (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
+		જો (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		નહીંતર
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		જો (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	જો (s != ખાલી) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		જો (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			પાછા 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		માટે (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		જો (sep != ખાલી)
+			માટે (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
 		col += k;
 		puts(t - k);
-		if (sep == NULL)
+		જો (sep == ખાલી)
 			putc('\a');
 		*np = n;
 		*colp = col;
-	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+	} નહીંતર {
+		print_argv(ખાલી, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);
 	}
-	return 1;
+	પાછા 1;
 }
 
 #endif
 
 #ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+પૂર્ણાંક cmd_get_data_size(અચલ અક્ષર *arg, પૂર્ણાંક default_size)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
-		switch (arg[len-1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return CMD_DATA_SIZE_STR;
-		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+	પૂર્ણાંક len = strlen(arg);
+	જો (len >= 2 && arg[len-2] == '.') {
+		પસંદગી (arg[len-1]) {
+		સ્થિતિ 'b':
+			પાછા 1;
+		સ્થિતિ 'w':
+			પાછા 2;
+		સ્થિતિ 'l':
+			પાછા 4;
+		સ્થિતિ 's':
+			પાછા CMD_DATA_SIZE_STR;
+		સ્થિતિ 'q':
+			જો (MEM_SUPPORT_64BIT_DATA)
+				પાછા 8;
 			fallthrough;
-		default:
-			return CMD_DATA_SIZE_ERR;
+		મૂળભૂત:
+			પાછા CMD_DATA_SIZE_ERR;
 		}
 	}
-	return default_size;
+	પાછા default_size;
 }
 #endif
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+શૂન્ય fixup_cmdtable(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક size)
 {
-	int	i;
+	પૂર્ણાંક	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	જો (gd->reloc_off == 0)
+		પાછા;
 
-	for (i = 0; i < size; i++) {
+	માટે (i = 0; i < size; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(પૂર્ણાંક (*)(સંરચના cmd_tbl *, પૂર્ણાંક, પૂર્ણાંક,
+				 અક્ષર * અચલ [], પૂર્ણાંક *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
 #ifdef DEBUG_COMMANDS
 		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
 #endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
-				      char *const []))addr;
+		cmdtp->cmd = (પૂર્ણાંક (*)(સંરચના cmd_tbl *, પૂર્ણાંક, પૂર્ણાંક,
+				      અક્ષર *અચલ []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		cmdtp->name = (અક્ષર *)addr;
+		જો (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
+			cmdtp->usage = (અક્ષર *)addr;
 		}
 #ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+		જો (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
+			cmdtp->help = (અક્ષર *)addr;
 		}
 #endif
 #ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+		જો (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(પૂર્ણાંક (*)(પૂર્ણાંક, અક્ષર * અચલ [], અક્ષર, પૂર્ણાંક, અક્ષર * []))addr;
 		}
 #endif
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+પૂર્ણાંક cmd_always_repeatable(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક flag, પૂર્ણાંક argc,
+			  અક્ષર *અચલ argv[], પૂર્ણાંક *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	પાછા cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+પૂર્ણાંક cmd_never_repeatable(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક flag, પૂર્ણાંક argc,
+			 અક્ષર *અચલ argv[], પૂર્ણાંક *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	પાછા cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			   char *const argv[])
+પૂર્ણાંક cmd_discard_repeatable(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક flag, પૂર્ણાંક argc,
+			   અક્ષર *અચલ argv[])
 {
-	int repeatable;
+	પૂર્ણાંક repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	પાછા cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,30 +578,30 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+સ્થિર પૂર્ણાંક cmd_call(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક flag, પૂર્ણાંક argc,
+		    અક્ષર *અચલ argv[], પૂર્ણાંક *repeatable)
 {
-	int result;
+	પૂર્ણાંક result;
 
 	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
+	જો (result)
 		debug("Command failed, result=%d\n", result);
-	return result;
+	પાછા result;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+ગણના command_ret_t cmd_process(પૂર્ણાંક flag, પૂર્ણાંક argc, અક્ષર *અચલ argv[],
+			       પૂર્ણાંક *repeatable, ulong *ticks)
 {
-	enum command_ret_t rc = CMD_RET_SUCCESS;
-	struct cmd_tbl *cmdtp;
+	ગણના command_ret_t rc = CMD_RET_SUCCESS;
+	સંરચના cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
-	char *xtrace;
+#જો defined(CONFIG_SYS_XTRACE)
+	અક્ષર *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
+	જો (xtrace) {
 		puts("+");
-		for (int i = 0; i < argc; i++) {
+		માટે (પૂર્ણાંક i = 0; i < argc; i++) {
 			puts(" ");
 			puts(argv[i]);
 		}
@@ -611,69 +611,69 @@ enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
 
 	/* Look up command in command table */
 	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
+	જો (cmdtp == ખાલી) {
 		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+		પાછા 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	જો (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#જો defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
+	નહીંતર જો (cmdtp->cmd == do_bootd) {
+		જો (flag & CMD_FLAG_BOOTD) {
 			puts("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} નહીંતર {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
 #endif
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	જો (!rc) {
+		પૂર્ણાંક newrep;
 
-		if (ticks)
+		જો (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		જો (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	જો (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	પાછા rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+પૂર્ણાંક cmd_process_error(સંરચના cmd_tbl *cmdtp, પૂર્ણાંક err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	જો (err == CMD_RET_USAGE)
+		પાછા CMD_RET_USAGE;
 
-	if (err) {
+	જો (err) {
 		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+		પાછા CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	પાછા CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+પૂર્ણાંક cmd_source_script(ulong addr, અચલ અક્ષર *fit_uname, અચલ અક્ષર *confname)
 {
-	char *data;
-	void *buf;
+	અક્ષર *data;
+	શૂન્ય *buf;
 	uint len;
-	int ret;
+	પૂર્ણાંક ret;
 
 	buf = map_sysmem(addr, 0);
 	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	જો (ret)
+		પાછા CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	પાછા run_command_list(data, len, 0);
 }
