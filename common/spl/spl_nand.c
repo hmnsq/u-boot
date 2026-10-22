@@ -18,11 +18,11 @@
 
 uint32_t __weak spl_nand_get_uboot_raw_page(void)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	반환 CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
+#만약 defined(CONFIG_SPL_NAND_RAW_ONLY)
+static 정수 spl_nand_load_image(struct spl_image_info *spl_image,
 			struct spl_boot_device *bootdev)
 {
 	nand_init();
@@ -38,59 +38,59 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	spl_set_header_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	반환 0;
 }
-#else
+#아니면
 
 __weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
 {
-	return offs;
+	반환 offs;
 }
 
 static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
 			   void *dst)
 {
-	int err;
+	정수 err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
 	      __func__, offs, size, dst);
 
-	sector = *(int *)load->priv;
+	sector = *(정수 *)load->priv;
 	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
 	err = nand_spl_load_image(offs, size, dst);
 	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	만약 (err)
+		반환 0;
 
-	return size;
+	반환 size;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+static 정수 spl_nand_load_element(struct spl_image_info *spl_image,
+				 struct spl_boot_device *bootdev, 정수 offset)
 {
 	struct spl_load_info load;
 
 	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	반환 spl_load(spl_image, bootdev, &load, 0, offset);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT)
+static 정수 spl_nand_load_image_os(struct spl_image_info *spl_image,
 				  struct spl_boot_device *bootdev)
 {
-	int err;
+	정수 err;
 	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
 
 	/* load linux */
 	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
 			    (void *)header);
 	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	만약 (header->ih_os != IH_OS_LINUX)
+		반환 -EINVAL;
 
 	/* happy - was a linux */
 	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
@@ -98,52 +98,52 @@ static int spl_nand_load_image_os(struct spl_image_info *spl_image,
 				  (void *)spl_image->load_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
+	정수 *src, *dst;
 	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
 			    (void *)CONFIG_TEXT_BASE);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	위해 (dst = (정수 *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+	    src = (정수 *)CONFIG_TEXT_BASE;
+	     src < (정수 *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
 #endif
 
-	return 0;
+	반환 0;
 }
 #endif
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
+static 정수 spl_nand_load_image(struct spl_image_info *spl_image,
 			       struct spl_boot_device *bootdev)
 {
-	int err;
+	정수 err;
 
 #ifdef CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#아니면
 	debug("spl: nand - using hw ecc\n");
 #endif
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#만약 CONFIG_IS_ENABLED(OS_BOOT)
+	만약 (!spl_start_uboot()) {
 		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+		만약 (!err)
+			반환 0;
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		만약 (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			반환 err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -157,14 +157,14 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	/* Load u-boot */
 	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
 #ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
+#만약 CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	만약 (err)
 		err = spl_nand_load_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
 #endif
 #endif
 	nand_deselect();
-	return err;
+	반환 err;
 }
 #endif
 /* Use priorty 1 so that Ubi can override this */

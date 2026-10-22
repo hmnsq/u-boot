@@ -43,46 +43,46 @@
 
 #define USB_BUFSIZ	512
 
-static int asynch_allowed;
+static 정수 asynch_allowed;
 bool usb_started; /* flag for the started/stopped USB status */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#만약 !CONFIG_IS_ENABLED(DM_USB)
 static struct usb_device usb_dev[USB_MAX_DEVICE];
-static int dev_index;
+static 정수 dev_index;
 
 /***************************************************************************
  * Init USB Device
  */
-int usb_init(void)
+정수 usb_init(void)
 {
 	void *ctrl;
 	struct usb_device *dev;
-	int i, start_index = 0;
-	int controllers_initialized = 0;
-	int ret;
+	정수 i, start_index = 0;
+	정수 controllers_initialized = 0;
+	정수 ret;
 
 	dev_index = 0;
 	asynch_allowed = 1;
 	usb_hub_reset();
 
 	/* first make all devices unknown */
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
+	위해 (i = 0; i < USB_MAX_DEVICE; i++) {
 		memset(&usb_dev[i], 0, sizeof(struct usb_device));
 		usb_dev[i].devnum = -1;
 	}
 
 	/* init low_level USB */
-	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+	위해 (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
 		/* init low_level USB */
 		printf("USB%d:   ", i);
 		ret = usb_lowlevel_init(i, USB_INIT_HOST, &ctrl);
-		if (ret == -ENODEV) {	/* No such device. */
+		만약 (ret == -ENODEV) {	/* No such device. */
 			puts("Port not available.\n");
 			controllers_initialized++;
 			continue;
 		}
 
-		if (ret) {		/* Other error. */
+		만약 (ret) {		/* Other error. */
 			puts("lowlevel init failed\n");
 			continue;
 		}
@@ -94,7 +94,7 @@ int usb_init(void)
 		start_index = dev_index;
 		printf("scanning bus %d for devices... ", i);
 		ret = usb_alloc_new_device(ctrl, &dev);
-		if (ret)
+		만약 (ret)
 			break;
 
 		/*
@@ -102,13 +102,13 @@ int usb_init(void)
 		 * (root hub, so let it analyze)
 		 */
 		ret = usb_new_device(dev);
-		if (ret)
+		만약 (ret)
 			usb_free_device(dev->controller);
 
-		if (start_index == dev_index) {
+		만약 (start_index == dev_index) {
 			puts("No USB Device found\n");
 			continue;
-		} else {
+		} 아니면 {
 			printf("%d USB Device(s) found\n",
 				dev_index - start_index);
 		}
@@ -118,63 +118,63 @@ int usb_init(void)
 
 	debug("scan end\n");
 	/* if we were not able to find at least one working bus, bail out */
-	if (controllers_initialized == 0)
+	만약 (controllers_initialized == 0)
 		puts("USB error: all controllers failed lowlevel init\n");
 
-	return usb_started ? 0 : -ENODEV;
+	반환 usb_started ? 0 : -ENODEV;
 }
 
 /******************************************************************************
  * Stop USB this stops the LowLevel Part and deregisters USB devices.
  */
-int usb_stop(void)
+정수 usb_stop(void)
 {
-	int i;
+	정수 i;
 
-	if (usb_started) {
+	만약 (usb_started) {
 		asynch_allowed = 1;
 		usb_started = 0;
 		usb_hub_reset();
 
-		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
-			if (usb_lowlevel_stop(i))
+		위해 (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+			만약 (usb_lowlevel_stop(i))
 				printf("failed to stop USB controller %d\n", i);
 		}
 	}
 
-	return 0;
+	반환 0;
 }
 
 /******************************************************************************
  * Detect if a USB device has been plugged or unplugged.
  */
-int usb_detect_change(void)
+정수 usb_detect_change(void)
 {
-	int i, j;
-	int change = 0;
+	정수 i, j;
+	정수 change = 0;
 
-	for (j = 0; j < USB_MAX_DEVICE; j++) {
-		for (i = 0; i < usb_dev[j].maxchild; i++) {
+	위해 (j = 0; j < USB_MAX_DEVICE; j++) {
+		위해 (i = 0; i < usb_dev[j].maxchild; i++) {
 			struct usb_port_status status;
 
-			if (usb_get_port_status(&usb_dev[j], i + 1,
+			만약 (usb_get_port_status(&usb_dev[j], i + 1,
 						&status) < 0)
 				/* USB request failed */
 				continue;
 
-			if (le16_to_cpu(status.wPortChange) &
+			만약 (le16_to_cpu(status.wPortChange) &
 			    USB_PORT_STAT_C_CONNECTION)
 				change++;
 		}
 	}
 
-	return change;
+	반환 change;
 }
 
 /* Lock or unlock async schedule on the controller */
-__weak int usb_lock_async(struct usb_device *dev, int lock)
+__weak 정수 usb_lock_async(struct usb_device *dev, 정수 lock)
 {
-	return 0;
+	반환 0;
 }
 
 /*
@@ -182,12 +182,12 @@ __weak int usb_lock_async(struct usb_device *dev, int lock)
  * transfers that uses the exclusiv access to the control and bulk messages.
  * Returns the old value so it can be restored later.
  */
-int usb_disable_asynch(int disable)
+정수 usb_disable_asynch(정수 disable)
 {
-	int old_value = asynch_allowed;
+	정수 old_value = asynch_allowed;
 
 	asynch_allowed = !disable;
-	return old_value;
+	반환 old_value;
 }
 #endif /* !CONFIG_IS_ENABLED(DM_USB) */
 
@@ -201,10 +201,10 @@ int usb_disable_asynch(int disable)
  * polling: when non-block is true and the device is not responding return
  * -EAGAIN instead of waiting for device to respond.
  */
-int usb_int_msg(struct usb_device *dev, unsigned long pipe,
-		void *buffer, int transfer_len, int interval, bool nonblock)
+정수 usb_int_msg(struct usb_device *dev, unsigned long pipe,
+		void *buffer, 정수 transfer_len, 정수 interval, bool nonblock)
 {
-	return submit_int_msg(dev, pipe, buffer, transfer_len, interval,
+	반환 submit_int_msg(dev, pipe, buffer, transfer_len, interval,
 			      nonblock);
 }
 
@@ -218,17 +218,17 @@ int usb_int_msg(struct usb_device *dev, unsigned long pipe,
  * transferred length and the current status are stored in the dev->act_len and
  * dev->status.
  */
-int usb_control_msg(struct usb_device *dev, unsigned int pipe,
+정수 usb_control_msg(struct usb_device *dev, unsigned 정수 pipe,
 			unsigned char request, unsigned char requesttype,
 			unsigned short value, unsigned short index,
-			void *data, unsigned short size, int timeout)
+			void *data, unsigned short size, 정수 timeout)
 {
 	ALLOC_CACHE_ALIGN_BUFFER(struct devrequest, setup_packet, 1);
-	int err;
+	정수 err;
 
-	if ((timeout == 0) && (!asynch_allowed)) {
+	만약 ((timeout == 0) && (!asynch_allowed)) {
 		/* request for a asynch control pipe is not allowed */
-		return -EINVAL;
+		반환 -EINVAL;
 	}
 
 	/* set setup command */
@@ -243,29 +243,29 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
 
 	err = submit_control_msg(dev, pipe, data, size, setup_packet);
-	if (err < 0)
-		return err;
-	if (timeout == 0)
-		return (int)size;
+	만약 (err < 0)
+		반환 err;
+	만약 (timeout == 0)
+		반환 (정수)size;
 
 	/*
 	 * Wait for status to update until timeout expires, USB driver
 	 * interrupt handler may set the status when the USB operation has
 	 * been completed.
 	 */
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
+	동안 (timeout--) {
+		만약 (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
 			break;
 		mdelay(1);
 	}
 
-	if (timeout == 0)
-		return -ETIMEDOUT;
+	만약 (timeout == 0)
+		반환 -ETIMEDOUT;
 
-	if (dev->status)
-		return -1;
+	만약 (dev->status)
+		반환 -1;
 
-	return dev->act_len;
+	반환 dev->act_len;
 }
 
 /*-------------------------------------------------------------------
@@ -273,24 +273,24 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
  * negative if Error.
  * synchronous behavior
  */
-int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
-			void *data, int len, int *actual_length, int timeout)
+정수 usb_bulk_msg(struct usb_device *dev, unsigned 정수 pipe,
+			void *data, 정수 len, 정수 *actual_length, 정수 timeout)
 {
-	if (len < 0)
-		return -EINVAL;
+	만약 (len < 0)
+		반환 -EINVAL;
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
-	if (submit_bulk_msg(dev, pipe, data, len) < 0)
-		return -EIO;
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
+	만약 (submit_bulk_msg(dev, pipe, data, len) < 0)
+		반환 -EIO;
+	동안 (timeout--) {
+		만약 (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
 			break;
 		mdelay(1);
 	}
 	*actual_length = dev->act_len;
-	if (dev->status == 0)
-		return 0;
-	else
-		return -EIO;
+	만약 (dev->status == 0)
+		반환 0;
+	아니면
+		반환 -EIO;
 }
 
 /*-------------------------------------------------------------------
@@ -301,13 +301,13 @@ int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
  * returns the max packet size, depending on the pipe direction and
  * the configurations values
  */
-int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
+정수 usb_maxpacket(struct usb_device *dev, unsigned long pipe)
 {
 	/* direction is out -> use emaxpacket out */
-	if ((pipe & USB_DIR_IN) == 0)
-		return dev->epmaxpacketout[((pipe>>15) & 0xf)];
-	else
-		return dev->epmaxpacketin[((pipe>>15) & 0xf)];
+	만약 ((pipe & USB_DIR_IN) == 0)
+		반환 dev->epmaxpacketout[((pipe>>15) & 0xf)];
+	아니면
+		반환 dev->epmaxpacketin[((pipe>>15) & 0xf)];
 }
 
 /*
@@ -322,9 +322,9 @@ int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
  * NOTE: Similar behaviour was observed with GCC4.6 on ARMv5.
  */
 static void noinline
-usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
+usb_set_maxpacket_ep(struct usb_device *dev, 정수 if_idx, 정수 ep_idx)
 {
-	int b;
+	정수 b;
 	struct usb_endpoint_descriptor *ep;
 	u16 ep_wMaxPacketSize;
 
@@ -333,24 +333,24 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 	b = ep->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
 	ep_wMaxPacketSize = get_unaligned(&ep->wMaxPacketSize);
 
-	if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
+	만약 ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
 						USB_ENDPOINT_XFER_CONTROL) {
 		/* Control => bidirectional */
 		dev->epmaxpacketout[b] = ep_wMaxPacketSize;
 		dev->epmaxpacketin[b] = ep_wMaxPacketSize;
 		debug("##Control EP epmaxpacketout/in[%d] = %d\n",
 		      b, dev->epmaxpacketin[b]);
-	} else {
-		if ((ep->bEndpointAddress & 0x80) == 0) {
+	} 아니면 {
+		만약 ((ep->bEndpointAddress & 0x80) == 0) {
 			/* OUT Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
+			만약 (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
 				dev->epmaxpacketout[b] = ep_wMaxPacketSize;
 				debug("##EP epmaxpacketout[%d] = %d\n",
 				      b, dev->epmaxpacketout[b]);
 			}
-		} else {
+		} 아니면 {
 			/* IN Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
+			만약 (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
 				dev->epmaxpacketin[b] = ep_wMaxPacketSize;
 				debug("##EP epmaxpacketin[%d] = %d\n",
 				      b, dev->epmaxpacketin[b]);
@@ -362,15 +362,15 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 /*
  * set the max packed value of all endpoints in the given configuration
  */
-static int usb_set_maxpacket(struct usb_device *dev)
+static 정수 usb_set_maxpacket(struct usb_device *dev)
 {
-	int i, ii;
+	정수 i, ii;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++)
-		for (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
+	위해 (i = 0; i < dev->config.desc.bNumInterfaces; i++)
+		위해 (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
 			usb_set_maxpacket_ep(dev, i, ii);
 
-	return 0;
+	반환 0;
 }
 
 /*******************************************************************************
@@ -378,11 +378,11 @@ static int usb_set_maxpacket(struct usb_device *dev)
  * Note that all little/big endian swapping are done automatically.
  * (wTotalLength has already been swapped and sanitized when it was read.)
  */
-static int usb_parse_config(struct usb_device *dev,
-			unsigned char *buffer, int cfgno)
+static 정수 usb_parse_config(struct usb_device *dev,
+			unsigned char *buffer, 정수 cfgno)
 {
 	struct usb_descriptor_header *head;
-	int index, ifno, epno, curr_if_num;
+	정수 index, ifno, epno, curr_if_num;
 	u16 ep_wMaxPacketSize;
 	struct usb_interface *if_desc = NULL;
 
@@ -392,14 +392,14 @@ static int usb_parse_config(struct usb_device *dev,
 
 	dev->configno = cfgno;
 	head = (struct usb_descriptor_header *) &buffer[0];
-	if (head->bDescriptorType != USB_DT_CONFIG) {
+	만약 (head->bDescriptorType != USB_DT_CONFIG) {
 		printf(" ERROR: NOT USB_CONFIG_DESC %x\n",
 			head->bDescriptorType);
-		return -EINVAL;
+		반환 -EINVAL;
 	}
-	if (head->bLength != USB_DT_CONFIG_SIZE) {
+	만약 (head->bLength != USB_DT_CONFIG_SIZE) {
 		printf("ERROR: Invalid USB CFG length (%d)\n", head->bLength);
-		return -EINVAL;
+		반환 -EINVAL;
 	}
 	memcpy(&dev->config, head, USB_DT_CONFIG_SIZE);
 	dev->config.no_of_if = 0;
@@ -408,27 +408,27 @@ static int usb_parse_config(struct usb_device *dev,
 	/* Ok the first entry must be a configuration entry,
 	 * now process the others */
 	head = (struct usb_descriptor_header *) &buffer[index];
-	while (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
+	동안 (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
 		switch (head->bDescriptorType) {
 		case USB_DT_INTERFACE:
-			if (head->bLength != USB_DT_INTERFACE_SIZE) {
+			만약 (head->bLength != USB_DT_INTERFACE_SIZE) {
 				printf("ERROR: Invalid USB IF length (%d)\n",
 					head->bLength);
 				break;
 			}
-			if (index + USB_DT_INTERFACE_SIZE >
+			만약 (index + USB_DT_INTERFACE_SIZE >
 			    dev->config.desc.wTotalLength) {
 				puts("USB IF descriptor overflowed buffer!\n");
 				break;
 			}
-			if (((struct usb_interface_descriptor *) \
+			만약 (((struct usb_interface_descriptor *) \
 			     head)->bInterfaceNumber != curr_if_num) {
 				/* this is a new interface, copy new desc */
 				ifno = dev->config.no_of_if;
-				if (ifno >= USB_MAXINTERFACES) {
+				만약 (ifno >= USB_MAXINTERFACES) {
 					puts("Too many USB interfaces!\n");
 					/* try to go on with what we have */
-					return -EINVAL;
+					반환 -EINVAL;
 				}
 				if_desc = &dev->config.if_desc[ifno];
 				dev->config.no_of_if++;
@@ -438,36 +438,36 @@ static int usb_parse_config(struct usb_device *dev,
 				if_desc->num_altsetting = 1;
 				curr_if_num =
 				     if_desc->desc.bInterfaceNumber;
-			} else {
+			} 아니면 {
 				/* found alternate setting for the interface */
-				if (ifno >= 0) {
+				만약 (ifno >= 0) {
 					if_desc = &dev->config.if_desc[ifno];
 					if_desc->num_altsetting++;
 				}
 			}
 			break;
 		case USB_DT_ENDPOINT:
-			if (head->bLength != USB_DT_ENDPOINT_SIZE &&
+			만약 (head->bLength != USB_DT_ENDPOINT_SIZE &&
 			    head->bLength != USB_DT_ENDPOINT_AUDIO_SIZE) {
 				printf("ERROR: Invalid USB EP length (%d)\n",
 					head->bLength);
 				break;
 			}
-			if (index + head->bLength >
+			만약 (index + head->bLength >
 			    dev->config.desc.wTotalLength) {
 				puts("USB EP descriptor overflowed buffer!\n");
 				break;
 			}
-			if (ifno < 0) {
+			만약 (ifno < 0) {
 				puts("Endpoint descriptor out of order!\n");
 				break;
 			}
 			epno = dev->config.if_desc[ifno].no_of_ep;
 			if_desc = &dev->config.if_desc[ifno];
-			if (epno >= USB_MAXENDPOINTS) {
+			만약 (epno >= USB_MAXENDPOINTS) {
 				printf("Interface %d has too many endpoints!\n",
 					if_desc->desc.bInterfaceNumber);
-				return -EINVAL;
+				반환 -EINVAL;
 			}
 			/* found an endpoint */
 			if_desc->no_of_ep++;
@@ -485,17 +485,17 @@ static int usb_parse_config(struct usb_device *dev,
 			debug("if %d, ep %d\n", ifno, epno);
 			break;
 		case USB_DT_SS_ENDPOINT_COMP:
-			if (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
+			만약 (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
 				printf("ERROR: Invalid USB EPC length (%d)\n",
 					head->bLength);
 				break;
 			}
-			if (index + USB_DT_SS_EP_COMP_SIZE >
+			만약 (index + USB_DT_SS_EP_COMP_SIZE >
 			    dev->config.desc.wTotalLength) {
 				puts("USB EPC descriptor overflowed buffer!\n");
 				break;
 			}
-			if (ifno < 0 || epno < 0) {
+			만약 (ifno < 0 || epno < 0) {
 				puts("EPC descriptor out of order!\n");
 				break;
 			}
@@ -504,8 +504,8 @@ static int usb_parse_config(struct usb_device *dev,
 				USB_DT_SS_EP_COMP_SIZE);
 			break;
 		default:
-			if (head->bLength == 0)
-				return -EINVAL;
+			만약 (head->bLength == 0)
+				반환 -EINVAL;
 
 			debug("unknown Description Type : %x\n",
 			      head->bDescriptorType);
@@ -513,9 +513,9 @@ static int usb_parse_config(struct usb_device *dev,
 #ifdef DEBUG
 			{
 				unsigned char *ch = (unsigned char *)head;
-				int i;
+				정수 i;
 
-				for (i = 0; i < head->bLength; i++)
+				위해 (i = 0; i < head->bLength; i++)
 					debug("%02X ", *ch++);
 				debug("\n\n\n");
 			}
@@ -525,7 +525,7 @@ static int usb_parse_config(struct usb_device *dev,
 		index += head->bLength;
 		head = (struct usb_descriptor_header *)&buffer[index];
 	}
-	return 0;
+	반환 0;
 }
 
 /***********************************************************************
@@ -533,18 +533,18 @@ static int usb_parse_config(struct usb_device *dev,
  * endp: endpoint number in bits 0-3;
  * direction flag in bit 7 (1 = IN, 0 = OUT)
  */
-int usb_clear_halt(struct usb_device *dev, int pipe)
+정수 usb_clear_halt(struct usb_device *dev, 정수 pipe)
 {
-	int result;
-	int endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
+	정수 result;
+	정수 endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
 
 	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 				 USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
 				 endp, NULL, 0, USB_CNTL_TIMEOUT * 3);
 
 	/* don't clear if failed */
-	if (result < 0)
-		return result;
+	만약 (result < 0)
+		반환 result;
 
 	/*
 	 * NOTE: we do not get status and verify reset was successful
@@ -555,70 +555,70 @@ int usb_clear_halt(struct usb_device *dev, int pipe)
 
 	/* toggle is reset on clear */
 	usb_settoggle(dev, usb_pipeendpoint(pipe), usb_pipeout(pipe), 0);
-	return 0;
+	반환 0;
 }
 
 /**********************************************************************
  * get_descriptor type
  */
-static int usb_get_descriptor(struct usb_device *dev, unsigned char type,
-			unsigned char index, void *buf, int size)
+static 정수 usb_get_descriptor(struct usb_device *dev, unsigned char type,
+			unsigned char index, void *buf, 정수 size)
 {
-	int i;
-	int result;
+	정수 i;
+	정수 result;
 
-	if (size <= 0)		/* No point in asking for no data */
-		return -EINVAL;
+	만약 (size <= 0)		/* No point in asking for no data */
+		반환 -EINVAL;
 
 	memset(buf, 0, size);	/* Make sure we parse really received data */
 
-	for (i = 0; i < 3; ++i) {
+	위해 (i = 0; i < 3; ++i) {
 		/* retry on length 0 or error; some devices are flakey */
 		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
 					 USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 					 (type << 8) + index, 0, buf, size,
 					 USB_CNTL_TIMEOUT);
-		if (result <= 0 && result != -ETIMEDOUT)
+		만약 (result <= 0 && result != -ETIMEDOUT)
 			continue;
-		if (result > 1 && ((u8 *)buf)[1] != type) {
+		만약 (result > 1 && ((u8 *)buf)[1] != type) {
 			result = -ENODATA;
 			continue;
 		}
 		break;
 	}
-	return result;
+	반환 result;
 }
 
 /**********************************************************************
  * gets len of configuration cfgno
  */
-int usb_get_configuration_len(struct usb_device *dev, int cfgno)
+정수 usb_get_configuration_len(struct usb_device *dev, 정수 cfgno)
 {
-	int result;
+	정수 result;
 	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, 9);
 	struct usb_config_descriptor *config;
 
 	config = (struct usb_config_descriptor *)&buffer[0];
 	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, 9);
-	if (result < 9) {
-		if (result < 0)
+	만약 (result < 9) {
+		만약 (result < 0)
 			printf("unable to get descriptor, error %lX\n",
 				dev->status);
-		else
+		아니면
 			printf("config descriptor too short " \
 				"(expected %i, got %i)\n", 9, result);
-		return -EIO;
+		반환 -EIO;
 	}
-	return le16_to_cpu(config->wTotalLength);
+	반환 le16_to_cpu(config->wTotalLength);
 }
 
 /**********************************************************************
  * gets configuration cfgno and store it in the buffer
  */
-int usb_get_configuration_no(struct usb_device *dev, int cfgno,
-			     unsigned char *buffer, int length)
+정수 usb_get_configuration_no(struct usb_device *dev, 정수 cfgno,
+			     unsigned char *buffer, 정수 length)
 {
-	int result;
+	정수 result;
 	struct usb_config_descriptor *config;
 
 	config = (struct usb_config_descriptor *)&buffer[0];
@@ -627,38 +627,38 @@ int usb_get_configuration_no(struct usb_device *dev, int cfgno,
 	      le16_to_cpu(config->wTotalLength));
 	config->wTotalLength = result; /* validated, with CPU byte order */
 
-	return result;
+	반환 result;
 }
 
 /********************************************************************
  * set address of a device to the value in dev->devnum.
  * This can only be done by addressing the device via the default address (0)
  */
-static int usb_set_address(struct usb_device *dev)
+static 정수 usb_set_address(struct usb_device *dev)
 {
 	debug("set address %d\n", dev->devnum);
 
-	return usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
+	반환 usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
 			       0, (dev->devnum), 0, NULL, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set interface number to interface
  */
-int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+정수 usb_set_interface(struct usb_device *dev, 정수 interface, 정수 alternate)
 {
 	struct usb_interface *if_face = NULL;
-	int ret, i;
+	정수 ret, i;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
-		if (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
+	위해 (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
+		만약 (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
 			if_face = &dev->config.if_desc[i];
 			break;
 		}
 	}
-	if (!if_face) {
+	만약 (!if_face) {
 		printf("selecting invalid interface %d", interface);
-		return -EINVAL;
+		반환 -EINVAL;
 	}
 	/*
 	 * We should return now for devices with only one alternate setting.
@@ -667,45 +667,45 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	 * some USB sticks timeouting during initialization and then being
 	 * unusable in U-Boot.
 	 */
-	if (if_face->num_altsetting == 1)
-		return 0;
+	만약 (if_face->num_altsetting == 1)
+		반환 0;
 
 	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_INTERFACE, USB_RECIP_INTERFACE,
 				alternate, interface, NULL, 0,
 				USB_CNTL_TIMEOUT * 5);
-	if (ret < 0)
-		return ret;
+	만약 (ret < 0)
+		반환 ret;
 
-	return 0;
+	반환 0;
 }
 
 /********************************************************************
  * set configuration number to configuration
  */
-static int usb_set_configuration(struct usb_device *dev, int configuration)
+static 정수 usb_set_configuration(struct usb_device *dev, 정수 configuration)
 {
-	int res;
+	정수 res;
 	debug("set configuration %d\n", configuration);
 	/* set setup command */
 	res = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_CONFIGURATION, 0,
 				configuration, 0,
 				NULL, 0, USB_CNTL_TIMEOUT);
-	if (res == 0) {
+	만약 (res == 0) {
 		dev->toggle[0] = 0;
 		dev->toggle[1] = 0;
-		return 0;
-	} else
-		return -EIO;
+		반환 0;
+	} 아니면
+		반환 -EIO;
 }
 
 /********************************************************************
  * set protocol to protocol
  */
-int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
+정수 usb_set_protocol(struct usb_device *dev, 정수 ifnum, 정수 protocol)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	반환 usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 		protocol, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
 }
@@ -713,9 +713,9 @@ int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
 /********************************************************************
  * set idle
  */
-int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
+정수 usb_set_idle(struct usb_device *dev, 정수 ifnum, 정수 duration, 정수 report_id)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	반환 usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 		(duration << 8) | report_id, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
 }
@@ -723,10 +723,10 @@ int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
 /********************************************************************
  * get report
  */
-int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
-		   unsigned char id, void *buf, int size)
+정수 usb_get_report(struct usb_device *dev, 정수 ifnum, unsigned char type,
+		   unsigned char id, void *buf, 정수 size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	반환 usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_REPORT,
 			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 			(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
@@ -735,10 +735,10 @@ int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
 /********************************************************************
  * get class descriptor
  */
-int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
-		unsigned char type, unsigned char id, void *buf, int size)
+정수 usb_get_class_descriptor(struct usb_device *dev, 정수 ifnum,
+		unsigned char type, unsigned char id, void *buf, 정수 size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	반환 usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
 		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_IN,
 		(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
 }
@@ -746,44 +746,44 @@ int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
 /********************************************************************
  * get string index in buffer
  */
-static int usb_get_string(struct usb_device *dev, unsigned short langid,
-		   unsigned char index, void *buf, int size)
+static 정수 usb_get_string(struct usb_device *dev, unsigned short langid,
+		   unsigned char index, void *buf, 정수 size)
 {
-	int i;
-	int result;
+	정수 i;
+	정수 result;
 
-	for (i = 0; i < 3; ++i) {
+	위해 (i = 0; i < 3; ++i) {
 		/* some devices are flaky */
 		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 			(USB_DT_STRING << 8) + index, langid, buf, size,
 			USB_CNTL_TIMEOUT);
 
-		if (result > 0)
+		만약 (result > 0)
 			break;
 	}
 
-	return result;
+	반환 result;
 }
 
-static void usb_try_string_workarounds(unsigned char *buf, int *length)
+static void usb_try_string_workarounds(unsigned char *buf, 정수 *length)
 {
-	int newlength, oldlength = *length;
+	정수 newlength, oldlength = *length;
 
-	for (newlength = 2; newlength + 1 < oldlength; newlength += 2)
-		if (!isprint(buf[newlength]) || buf[newlength + 1])
+	위해 (newlength = 2; newlength + 1 < oldlength; newlength += 2)
+		만약 (!isprint(buf[newlength]) || buf[newlength + 1])
 			break;
 
-	if (newlength > 2) {
+	만약 (newlength > 2) {
 		buf[0] = newlength;
 		*length = newlength;
 	}
 }
 
-static int usb_string_sub(struct usb_device *dev, unsigned int langid,
-		unsigned int index, unsigned char *buf)
+static 정수 usb_string_sub(struct usb_device *dev, unsigned 정수 langid,
+		unsigned 정수 index, unsigned char *buf)
 {
-	int rc;
+	정수 rc;
 
 	/* Try to read the string descriptor by asking for the maximum
 	 * possible number of bytes */
@@ -791,27 +791,27 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
 
 	/* If that failed try to read the descriptor length, then
 	 * ask for just that many bytes */
-	if (rc < 2) {
+	만약 (rc < 2) {
 		rc = usb_get_string(dev, langid, index, buf, 2);
-		if (rc == 2)
+		만약 (rc == 2)
 			rc = usb_get_string(dev, langid, index, buf, buf[0]);
 	}
 
-	if (rc >= 2) {
-		if (!buf[0] && !buf[1])
+	만약 (rc >= 2) {
+		만약 (!buf[0] && !buf[1])
 			usb_try_string_workarounds(buf, &rc);
 
 		/* There might be extra junk at the end of the descriptor */
-		if (buf[0] < rc)
+		만약 (buf[0] < rc)
 			rc = buf[0];
 
 		rc = rc - (rc & 1); /* force a multiple of two */
 	}
 
-	if (rc < 2)
+	만약 (rc < 2)
 		rc = -EINVAL;
 
-	return rc;
+	반환 rc;
 }
 
 /********************************************************************
@@ -819,29 +819,29 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
  * Get string index and translate it to ascii.
  * returns string length (> 0) or error (< 0)
  */
-int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
+정수 usb_string(struct usb_device *dev, 정수 index, char *buf, size_t size)
 {
 	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, mybuf, USB_BUFSIZ);
 	unsigned char *tbuf;
-	int err;
-	unsigned int u, idx;
+	정수 err;
+	unsigned 정수 u, idx;
 
-	if (size <= 0 || !buf || !index)
-		return -EINVAL;
+	만약 (size <= 0 || !buf || !index)
+		반환 -EINVAL;
 	buf[0] = 0;
 	tbuf = &mybuf[0];
 
 	/* get langid for strings if it's not yet known */
-	if (!dev->have_langid) {
+	만약 (!dev->have_langid) {
 		err = usb_string_sub(dev, 0, 0, tbuf);
-		if (err < 0) {
+		만약 (err < 0) {
 			debug("error getting string descriptor 0 " \
 			      "(error=%lx)\n", dev->status);
-			return -EIO;
-		} else if (tbuf[0] < 4) {
+			반환 -EIO;
+		} 아니면 만약 (tbuf[0] < 4) {
 			debug("string descriptor 0 too short\n");
-			return -EIO;
-		} else {
+			반환 -EIO;
+		} 아니면 {
 			dev->have_langid = -1;
 			dev->string_langid = tbuf[2] | (tbuf[3] << 8);
 				/* always use the first langid listed */
@@ -852,21 +852,21 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
 	}
 
 	err = usb_string_sub(dev, dev->string_langid, index, tbuf);
-	if (err < 0)
-		return err;
+	만약 (err < 0)
+		반환 err;
 
 	size--;		/* leave room for trailing NULL char in output buffer */
-	for (idx = 0, u = 2; u < err; u += 2) {
-		if (idx >= size)
+	위해 (idx = 0, u = 2; u < err; u += 2) {
+		만약 (idx >= size)
 			break;
-		if (tbuf[u+1])			/* high byte */
+		만약 (tbuf[u+1])			/* high byte */
 			buf[idx++] = '?';  /* non-ASCII character */
-		else
+		아니면
 			buf[idx++] = tbuf[u];
 	}
 	buf[idx] = 0;
 	err = idx;
-	return err;
+	반환 err;
 }
 
 /********************************************************************
@@ -874,38 +874,38 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
  * the USB device are static allocated [USB_MAX_DEVICE].
  */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#만약 !CONFIG_IS_ENABLED(DM_USB)
 
 /* returns a pointer to the device with the index [index].
  * if the device is not assigned (dev->devnum==-1) returns NULL
  */
-struct usb_device *usb_get_dev_index(int index)
+struct usb_device *usb_get_dev_index(정수 index)
 {
-	if (usb_dev[index].devnum == -1)
-		return NULL;
-	else
-		return &usb_dev[index];
+	만약 (usb_dev[index].devnum == -1)
+		반환 NULL;
+	아니면
+		반환 &usb_dev[index];
 }
 
-int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
+정수 usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
 {
-	int i;
+	정수 i;
 	debug("New Device %d\n", dev_index);
-	if (dev_index == USB_MAX_DEVICE) {
+	만약 (dev_index == USB_MAX_DEVICE) {
 		printf("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
-		return -ENOSPC;
+		반환 -ENOSPC;
 	}
 	/* default Address is 0, real addresses start with 1 */
 	usb_dev[dev_index].devnum = dev_index + 1;
 	usb_dev[dev_index].maxchild = 0;
-	for (i = 0; i < USB_MAXCHILDREN; i++)
+	위해 (i = 0; i < USB_MAXCHILDREN; i++)
 		usb_dev[dev_index].children[i] = NULL;
 	usb_dev[dev_index].parent = NULL;
 	usb_dev[dev_index].controller = controller;
 	dev_index++;
 	*devp = &usb_dev[dev_index - 1];
 
-	return 0;
+	반환 0;
 }
 
 /*
@@ -927,46 +927,46 @@ void usb_free_device(struct udevice *controller)
  * function for the purpose, so that XHCI overrides it
  * and EHCI/OHCI just work out of the box.
  */
-__weak int usb_alloc_device(struct usb_device *udev)
+__weak 정수 usb_alloc_device(struct usb_device *udev)
 {
-	return 0;
+	반환 0;
 }
 #endif /* !CONFIG_IS_ENABLED(DM_USB) */
 
-static int usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
+static 정수 usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
 {
-	if (!hub)
+	만약 (!hub)
 		usb_reset_root_port(dev);
 
-	return 0;
+	반환 0;
 }
 
-static int get_descriptor_len(struct usb_device *dev, int len, int expect_len)
+static 정수 get_descriptor_len(struct usb_device *dev, 정수 len, 정수 expect_len)
 {
 	__maybe_unused struct usb_device_descriptor *desc;
 	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, tmpbuf, USB_BUFSIZ);
-	int err;
+	정수 err;
 
 	desc = (struct usb_device_descriptor *)tmpbuf;
 
 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0, desc, len);
-	if (err < expect_len) {
-		if (err < 0) {
+	만약 (err < expect_len) {
+		만약 (err < 0) {
 			printf("unable to get device descriptor (error=%d)\n",
 				err);
-			return err;
-		} else {
+			반환 err;
+		} 아니면 {
 			printf("USB device descriptor short read (expected %i, got %i)\n",
 				expect_len, err);
-			return -EIO;
+			반환 -EIO;
 		}
 	}
 	memcpy(&dev->descriptor, tmpbuf, sizeof(dev->descriptor));
 
-	return 0;
+	반환 0;
 }
 
-static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
+static 정수 usb_setup_descriptor(struct usb_device *dev, bool do_read)
 {
 	/*
 	 * This is a Windows scheme of initialization sequence, with double
@@ -984,18 +984,18 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 	 * some more, or keeps on retransmitting the 8 byte header.
 	 */
 
-	if (dev->speed == USB_SPEED_LOW) {
+	만약 (dev->speed == USB_SPEED_LOW) {
 		dev->descriptor.bMaxPacketSize0 = 8;
 		dev->maxpacketsize = PACKET_SIZE_8;
-	} else {
+	} 아니면 {
 		dev->descriptor.bMaxPacketSize0 = 64;
 		dev->maxpacketsize = PACKET_SIZE_64;
 	}
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
 
-	if (do_read && dev->speed == USB_SPEED_FULL) {
-		int err;
+	만약 (do_read && dev->speed == USB_SPEED_FULL) {
+		정수 err;
 
 		/*
 		 * Validate we've received only at least 8 bytes, not that
@@ -1014,8 +1014,8 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 		 * as 64 (above) yields a request for 1 packet.
 		 */
 		err = get_descriptor_len(dev, 64, 8);
-		if (err)
-			return err;
+		만약 (err)
+			반환 err;
 
 		/*
 		 * Logitech Unifying Receiver 046d:c52b bcdDevice 12.10 seems
@@ -1046,16 +1046,16 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 		break;
 	default:
 		printf("%s: invalid max packet size\n", __func__);
-		return -EIO;
+		반환 -EIO;
 	}
 
-	return 0;
+	반환 0;
 }
 
-static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
+static 정수 usb_prepare_device(struct usb_device *dev, 정수 addr, bool do_read,
 			      struct usb_device *parent)
 {
-	int err;
+	정수 err;
 
 	/*
 	 * Allocate usb 3.0 device context.
@@ -1064,25 +1064,25 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * Refer to sec 4.3.2 in xHCI spec rev1.0
 	 */
 	err = usb_alloc_device(dev);
-	if (err) {
+	만약 (err) {
 		printf("Cannot allocate device context to get SLOT_ID\n");
-		return err;
+		반환 err;
 	}
 	err = usb_setup_descriptor(dev, do_read);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 	err = usb_hub_port_reset(dev, parent);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
 	dev->devnum = addr;
 
 	err = usb_set_address(dev); /* set address */
 
-	if (err < 0) {
+	만약 (err < 0) {
 		printf("\n      USB device not accepting new address " \
 			"(error=%lX)\n", dev->status);
-		return err;
+		반환 err;
 	}
 
 	mdelay(10);	/* Let the SET_ADDRESS settle */
@@ -1092,41 +1092,41 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * after device is assigned an address. This is only applicable
 	 * to xHCI so far.
 	 */
-	if (!do_read) {
+	만약 (!do_read) {
 		err = usb_setup_descriptor(dev, true);
-		if (err)
-			return err;
+		만약 (err)
+			반환 err;
 	}
 
-	return 0;
+	반환 0;
 }
 
-static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
+static 정수 usb_device_is_ignored(u16 id_vendor, u16 id_product)
 {
 	ulong vid, pid;
 	char *end;
 	const char *cur = NULL;
 
 	/* ignore list depends on env support */
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		return 0;
+	만약 (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		반환 0;
 
 	cur = env_get("usb_ignorelist");
 
 	/* parse "usb_ignorelist" strictly */
-	while (cur && cur[0] != '\0') {
+	동안 (cur && cur[0] != '\0') {
 		vid = simple_strtoul(cur, &end, 0);
 		/*
 		 * If strtoul did not parse a single digit or the next char is
 		 * not ':' the ignore list is malformed.
 		 */
-		if (cur == end || end[0] != ':')
-			return -EINVAL;
+		만약 (cur == end || end[0] != ':')
+			반환 -EINVAL;
 
 		cur = end + 1;
 		pid = simple_strtoul(cur, &end, 0);
 		/* Consider '*' as wildcard for the product ID */
-		if (cur == end && end[0] == '*') {
+		만약 (cur == end && end[0] == '*') {
 			pid = U16_MAX + 1;
 			end++;
 		}
@@ -1135,28 +1135,28 @@ static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
 		 * parsed or entries are not separated by ',' or terminated with
 		 * '\0'.
 		 */
-		if (cur == end || (end[0] != ',' && end[0] != '\0'))
-			return -EINVAL;
+		만약 (cur == end || (end[0] != ',' && end[0] != '\0'))
+			반환 -EINVAL;
 
-		if (id_vendor == vid && (pid > U16_MAX || id_product == pid))
-			return -ENODEV;
+		만약 (id_vendor == vid && (pid > U16_MAX || id_product == pid))
+			반환 -ENODEV;
 
-		if (end[0] == '\0')
+		만약 (end[0] == '\0')
 			break;
 		cur = end + 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
-int usb_select_config(struct usb_device *dev)
+정수 usb_select_config(struct usb_device *dev)
 {
 	unsigned char *tmpbuf = NULL;
-	int err;
+	정수 err;
 
 	err = get_descriptor_len(dev, USB_DT_DEVICE_SIZE, USB_DT_DEVICE_SIZE);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
 	/* correct le values */
 	le16_to_cpus(&dev->descriptor.bcdUSB);
@@ -1167,11 +1167,11 @@ int usb_select_config(struct usb_device *dev)
 	/* ignore devices from usb_ignorelist */
 	err = usb_device_is_ignored(dev->descriptor.idVendor,
 				    dev->descriptor.idProduct);
-	if (err == -ENODEV) {
+	만약 (err == -ENODEV) {
 		debug("Ignoring USB device 0x%x:0x%x\n",
 			dev->descriptor.idVendor, dev->descriptor.idProduct);
-		return err;
-	} else if (err == -EINVAL) {
+		반환 err;
+	} 아니면 만약 (err == -EINVAL) {
 		/*
 		 * Continue on "usb_ignorelist" parsing errors. The list is
 		 * parsed for each device returning the error would result in
@@ -1181,8 +1181,8 @@ int usb_select_config(struct usb_device *dev)
 		 */
 		printf("usb_ignorelist parse error in \"%s\"\n",
 		       env_get("usb_ignorelist"));
-	} else if (err < 0) {
-		return err;
+	} 아니면 만약 (err < 0) {
+		반환 err;
 	}
 
 	/*
@@ -1195,19 +1195,19 @@ int usb_select_config(struct usb_device *dev)
 
 	/* only support for one config for now */
 	err = usb_get_configuration_len(dev, 0);
-	if (err >= 0) {
+	만약 (err >= 0) {
 		tmpbuf = (unsigned char *)malloc_cache_aligned(err);
-		if (!tmpbuf)
+		만약 (!tmpbuf)
 			err = -ENOMEM;
-		else
+		아니면
 			err = usb_get_configuration_no(dev, 0, tmpbuf, err);
 	}
-	if (err < 0) {
+	만약 (err < 0) {
 		printf("usb_new_device: Cannot read configuration, " \
 		       "skipping device %04x:%04x\n",
 		       dev->descriptor.idVendor, dev->descriptor.idProduct);
 		free(tmpbuf);
-		return err;
+		반환 err;
 	}
 	usb_parse_config(dev, tmpbuf, 0);
 	free(tmpbuf);
@@ -1218,10 +1218,10 @@ int usb_select_config(struct usb_device *dev)
 	 * it will need to select itself.
 	 */
 	err = usb_set_configuration(dev, dev->config.desc.bConfigurationValue);
-	if (err < 0) {
+	만약 (err < 0) {
 		printf("failed to set default configuration " \
 			"len %d, status %lX\n", dev->act_len, dev->status);
-		return err;
+		반환 err;
 	}
 
 	/*
@@ -1237,41 +1237,41 @@ int usb_select_config(struct usb_device *dev)
 	memset(dev->mf, 0, sizeof(dev->mf));
 	memset(dev->prod, 0, sizeof(dev->prod));
 	memset(dev->serial, 0, sizeof(dev->serial));
-	if (dev->descriptor.iManufacturer)
+	만약 (dev->descriptor.iManufacturer)
 		usb_string(dev, dev->descriptor.iManufacturer,
 			   dev->mf, sizeof(dev->mf));
-	if (dev->descriptor.iProduct)
+	만약 (dev->descriptor.iProduct)
 		usb_string(dev, dev->descriptor.iProduct,
 			   dev->prod, sizeof(dev->prod));
-	if (dev->descriptor.iSerialNumber)
+	만약 (dev->descriptor.iSerialNumber)
 		usb_string(dev, dev->descriptor.iSerialNumber,
 			   dev->serial, sizeof(dev->serial));
 	debug("Manufacturer %s\n", dev->mf);
 	debug("Product      %s\n", dev->prod);
 	debug("SerialNumber %s\n", dev->serial);
 
-	return 0;
+	반환 0;
 }
 
-int usb_setup_device(struct usb_device *dev, bool do_read,
+정수 usb_setup_device(struct usb_device *dev, bool do_read,
 		     struct usb_device *parent)
 {
-	int addr;
-	int ret;
+	정수 addr;
+	정수 ret;
 
 	/* We still haven't set the Address yet */
 	addr = dev->devnum;
 	dev->devnum = 0;
 
 	ret = usb_prepare_device(dev, addr, do_read, parent);
-	if (ret)
-		return ret;
+	만약 (ret)
+		반환 ret;
 	ret = usb_select_config(dev);
 
-	return ret;
+	반환 ret;
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#만약 !CONFIG_IS_ENABLED(DM_USB)
 /*
  * By the time we get here, the device has gotten a new device ID
  * and is in the default state. We need to identify the thing and
@@ -1279,10 +1279,10 @@ int usb_setup_device(struct usb_device *dev, bool do_read,
  *
  * Returns 0 for success, != 0 for error.
  */
-int usb_new_device(struct usb_device *dev)
+정수 usb_new_device(struct usb_device *dev)
 {
 	bool do_read = true;
-	int err;
+	정수 err;
 
 	/*
 	 * XHCI needs to issue a Address device command to setup
@@ -1294,40 +1294,40 @@ int usb_new_device(struct usb_device *dev)
 	do_read = false;
 #endif
 	err = usb_setup_device(dev, do_read, dev->parent);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
 	/* Now probe if the device is a hub */
 	err = usb_hub_probe(dev, 0);
-	if (err < 0)
-		return err;
+	만약 (err < 0)
+		반환 err;
 
-	return 0;
+	반환 0;
 }
 #endif
 
 __weak
-int board_usb_init(int index, enum usb_init_type init)
+정수 board_usb_init(정수 index, enum usb_init_type init)
 {
-	return 0;
+	반환 0;
 }
 
 __weak
-int board_usb_cleanup(int index, enum usb_init_type init)
+정수 board_usb_cleanup(정수 index, enum usb_init_type init)
 {
-	return 0;
+	반환 0;
 }
 
-bool usb_device_has_child_on_port(struct usb_device *parent, int port)
+bool usb_device_has_child_on_port(struct usb_device *parent, 정수 port)
 {
-#if CONFIG_IS_ENABLED(DM_USB)
-	return false;
-#else
-	return parent->children[port] != NULL;
+#만약 CONFIG_IS_ENABLED(DM_USB)
+	반환 false;
+#아니면
+	반환 parent->children[port] != NULL;
 #endif
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#만약 CONFIG_IS_ENABLED(DM_USB)
 void usb_find_usb2_hub_address_port(struct usb_device *udev,
 			       uint8_t *hub_address, uint8_t *hub_port)
 {
@@ -1345,14 +1345,14 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	parent = udev->dev;
 	uparent = dev_get_parent_priv(parent);
 
-	while (uparent->speed != USB_SPEED_HIGH) {
+	동안 (uparent->speed != USB_SPEED_HIGH) {
 		struct udevice *dev = parent;
 
-		if (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
+		만약 (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
 			printf("Error: Cannot find high speed parent of usb-1 device\n");
 			*hub_address = 0;
 			*hub_port = 0;
-			return;
+			반환;
 		}
 
 		ttdev = dev_get_parent_priv(dev);
@@ -1362,18 +1362,18 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	*hub_address = uparent->devnum;
 	*hub_port = ttdev->portnr;
 }
-#else
+#아니면
 void usb_find_usb2_hub_address_port(struct usb_device *udev,
 			       uint8_t *hub_address, uint8_t *hub_port)
 {
 	/* Find out the nearest parent which is high speed */
-	while (udev->parent->parent != NULL)
-		if (udev->parent->speed != USB_SPEED_HIGH) {
+	동안 (udev->parent->parent != NULL)
+		만약 (udev->parent->speed != USB_SPEED_HIGH) {
 			udev = udev->parent;
-		} else {
+		} 아니면 {
 			*hub_address = udev->parent->devnum;
 			*hub_port = udev->portnr;
-			return;
+			반환;
 		}
 
 	printf("Error: Cannot find high speed parent of usb-1 device\n");

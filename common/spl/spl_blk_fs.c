@@ -22,42 +22,42 @@ static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
 	loff_t actlen;
-	int ret;
+	정수 ret;
 	struct blk_dev *dev = (struct blk_dev *)load->priv;
 
 	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	만약 (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		반환 ret;
 	}
 
 	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
 		      &actlen);
-	if (ret < 0) {
+	만약 (ret < 0) {
 		printf("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		반환 ret;
 	}
 
-	return actlen;
+	반환 actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
+정수 spl_blk_load_image(struct spl_image_info *spl_image,
 		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+		       enum uclass_id uclass_id, 정수 devnum, 정수 partnum)
 {
 	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
 	struct blk_desc *blk_desc;
 	loff_t filesize;
 	struct blk_dev dev;
 	struct spl_load_info load;
-	int ret;
+	정수 ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
+	만약 (!blk_desc) {
 		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+		반환 -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
@@ -67,21 +67,21 @@ int spl_blk_load_image(struct spl_image_info *spl_image,
 	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
 	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	만약 (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		반환 ret;
 	}
 
 	ret = fs_size(filename, &filesize);
-	if (ret) {
+	만약 (ret) {
 		printf("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		반환 ret;
 	}
 
 	spl_load_init(&load, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	반환 spl_load(spl_image, bootdev, &load, filesize, 0);
 }

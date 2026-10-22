@@ -26,7 +26,7 @@
 #undef debug
 #ifdef MII_DEBUG
 #define debug(fmt, args...)	printf(fmt, ##args)
-#else
+#아니면
 #define debug(fmt, args...)
 #endif /* MII_DEBUG */
 
@@ -41,18 +41,18 @@ struct mii_dev *miiphy_get_dev_by_name(const char *devname)
 	struct list_head *entry;
 	struct mii_dev *dev;
 
-	if (!devname) {
+	만약 (!devname) {
 		printf("NULL device name!\n");
-		return NULL;
+		반환 NULL;
 	}
 
 	list_for_each(entry, &mii_devs) {
 		dev = list_entry(entry, struct mii_dev, link);
-		if (strcmp(dev->name, devname) == 0)
-			return dev;
+		만약 (strcmp(dev->name, devname) == 0)
+			반환 dev;
 	}
 
-	return NULL;
+	반환 NULL;
 }
 
 struct mii_dev *mdio_alloc(void)
@@ -60,15 +60,15 @@ struct mii_dev *mdio_alloc(void)
 	struct mii_dev *bus;
 
 	bus = malloc(sizeof(*bus));
-	if (!bus)
-		return bus;
+	만약 (!bus)
+		반환 bus;
 
 	memset(bus, 0, sizeof(*bus));
 
 	/* initialize mii_dev struct fields */
 	INIT_LIST_HEAD(&bus->link);
 
-	return bus;
+	반환 bus;
 }
 
 void mdio_free(struct mii_dev *bus)
@@ -76,51 +76,51 @@ void mdio_free(struct mii_dev *bus)
 	free(bus);
 }
 
-int mdio_register(struct mii_dev *bus)
+정수 mdio_register(struct mii_dev *bus)
 {
-	if (!bus || !bus->read || !bus->write)
-		return -1;
+	만약 (!bus || !bus->read || !bus->write)
+		반환 -1;
 
 	/* check if we have unique name */
-	if (miiphy_get_dev_by_name(bus->name)) {
+	만약 (miiphy_get_dev_by_name(bus->name)) {
 		printf("mdio_register: non unique device name '%s'\n",
 			bus->name);
-		return -1;
+		반환 -1;
 	}
 
 	/* add it to the list */
 	list_add_tail(&bus->link, &mii_devs);
 
-	if (!current_mii)
+	만약 (!current_mii)
 		current_mii = bus;
 
-	return 0;
+	반환 0;
 }
 
-int mdio_register_seq(struct mii_dev *bus, int seq)
+정수 mdio_register_seq(struct mii_dev *bus, 정수 seq)
 {
-	int ret;
+	정수 ret;
 
 	/* Setup a unique name for each mdio bus */
 	ret = snprintf(bus->name, MDIO_NAME_LEN, "eth%d", seq);
-	if (ret < 0)
-		return ret;
+	만약 (ret < 0)
+		반환 ret;
 
-	return mdio_register(bus);
+	반환 mdio_register(bus);
 }
 
-int mdio_unregister(struct mii_dev *bus)
+정수 mdio_unregister(struct mii_dev *bus)
 {
-	if (!bus)
-		return 0;
+	만약 (!bus)
+		반환 0;
 
 	/* delete it from the list */
 	list_del(&bus->link);
 
-	if (current_mii == bus)
+	만약 (current_mii == bus)
 		current_mii = NULL;
 
-	return 0;
+	반환 0;
 }
 
 void mdio_list_devices(void)
@@ -128,49 +128,49 @@ void mdio_list_devices(void)
 	struct list_head *entry;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
+		정수 i;
 		struct mii_dev *bus = list_entry(entry, struct mii_dev, link);
 
 		printf("%s:\n", bus->name);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
+		위해 (i = 0; i < PHY_MAX_ADDR; i++) {
 			struct phy_device *phydev = bus->phymap[i];
 
-			if (phydev) {
+			만약 (phydev) {
 				printf("%x - %s", i, phydev->drv->name);
 
-				if (phydev->dev)
+				만약 (phydev->dev)
 					printf(" <--> %s\n", phydev->dev->name);
-				else
+				아니면
 					printf("\n");
 			}
 		}
 	}
 }
 
-int miiphy_set_current_dev(const char *devname)
+정수 miiphy_set_current_dev(const char *devname)
 {
 	struct mii_dev *dev;
 
 	dev = miiphy_get_dev_by_name(devname);
-	if (dev) {
+	만약 (dev) {
 		current_mii = dev;
-		return 0;
+		반환 0;
 	}
 
 	printf("No such device: %s\n", devname);
 
-	return 1;
+	반환 1;
 }
 
 struct mii_dev *mdio_get_current_dev(void)
 {
-	return current_mii;
+	반환 current_mii;
 }
 
 struct list_head *mdio_get_list_head(void)
 {
-	return &mii_devs;
+	반환 &mii_devs;
 }
 
 struct phy_device *mdio_phydev_for_ethname(const char *ethname)
@@ -179,42 +179,42 @@ struct phy_device *mdio_phydev_for_ethname(const char *ethname)
 	struct mii_dev *bus;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
+		정수 i;
 		bus = list_entry(entry, struct mii_dev, link);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
-			if (!bus->phymap[i] || !bus->phymap[i]->dev)
+		위해 (i = 0; i < PHY_MAX_ADDR; i++) {
+			만약 (!bus->phymap[i] || !bus->phymap[i]->dev)
 				continue;
 
-			if (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
-				return bus->phymap[i];
+			만약 (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
+				반환 bus->phymap[i];
 		}
 	}
 
 	printf("%s is not a known ethernet\n", ethname);
-	return NULL;
+	반환 NULL;
 }
 
 const char *miiphy_get_current_dev(void)
 {
-	if (current_mii)
-		return current_mii->name;
+	만약 (current_mii)
+		반환 current_mii->name;
 
-	return NULL;
+	반환 NULL;
 }
 
 static struct mii_dev *miiphy_get_active_dev(const char *devname)
 {
 	/* If the current mii is the one we want, return it */
-	if (current_mii)
-		if (strcmp(current_mii->name, devname) == 0)
-			return current_mii;
+	만약 (current_mii)
+		만약 (strcmp(current_mii->name, devname) == 0)
+			반환 current_mii;
 
 	/* Otherwise, set the active one to the one we want */
-	if (miiphy_set_current_dev(devname))
-		return NULL;
-	else
-		return current_mii;
+	만약 (miiphy_set_current_dev(devname))
+		반환 NULL;
+	아니면
+		반환 current_mii;
 }
 
 /*****************************************************************************
@@ -227,22 +227,22 @@ static struct mii_dev *miiphy_get_active_dev(const char *devname)
  * Returns:
  *   0 on success
  */
-int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
+정수 miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
 		 unsigned short *value)
 {
 	struct mii_dev *bus;
-	int ret;
+	정수 ret;
 
 	bus = miiphy_get_active_dev(devname);
-	if (!bus)
-		return 1;
+	만약 (!bus)
+		반환 1;
 
 	ret = bus->read(bus, addr, MDIO_DEVAD_NONE, reg);
-	if (ret < 0)
-		return 1;
+	만약 (ret < 0)
+		반환 1;
 
 	*value = (unsigned short)ret;
-	return 0;
+	반환 0;
 }
 
 /*****************************************************************************
@@ -255,16 +255,16 @@ int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
  * Returns:
  *   0 on success
  */
-int miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
+정수 miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
 		  unsigned short value)
 {
 	struct mii_dev *bus;
 
 	bus = miiphy_get_active_dev(devname);
-	if (bus)
-		return bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
+	만약 (bus)
+		반환 bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
 
-	return 1;
+	반환 1;
 }
 
 /*****************************************************************************
@@ -283,7 +283,7 @@ void miiphy_listdev(void)
 	}
 	puts("\n");
 
-	if (current_mii)
+	만약 (current_mii)
 		printf("Current device: '%s'\n", current_mii->name);
 }
 
@@ -300,28 +300,28 @@ void miiphy_listdev(void)
  * Returns:
  *   0 on success
  */
-int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
+정수 miiphy_info(const char *devname, unsigned char addr, unsigned 정수 *oui,
 		 unsigned char *model, unsigned char *rev)
 {
-	unsigned int reg = 0;
+	unsigned 정수 reg = 0;
 	unsigned short tmp;
 
-	if (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
+	만약 (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
 		debug("PHY ID register 2 read failed\n");
-		return -1;
+		반환 -1;
 	}
 	reg = tmp;
 
 	debug("MII_PHYSID2 @ 0x%x = 0x%04x\n", addr, reg);
 
-	if (reg == 0xFFFF) {
+	만약 (reg == 0xFFFF) {
 		/* No physical device present at this address */
-		return -1;
+		반환 -1;
 	}
 
-	if (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
+	만약 (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
 		debug("PHY ID register 1 read failed\n");
-		return -1;
+		반환 -1;
 	}
 	reg |= tmp << 16;
 	debug("PHY_PHYIDR[1,2] @ 0x%x = 0x%08x\n", addr, reg);
@@ -329,7 +329,7 @@ int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
 	*oui = (reg >> 10);
 	*model = (unsigned char)((reg >> 4) & 0x0000003F);
 	*rev = (unsigned char)(reg & 0x0000000F);
-	return 0;
+	반환 0;
 }
 
 #ifndef CONFIG_PHYLIB
@@ -342,20 +342,20 @@ int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
  * Returns:
  *   0 on success
  */
-int miiphy_reset(const char *devname, unsigned char addr)
+정수 miiphy_reset(const char *devname, unsigned char addr)
 {
 	unsigned short reg;
-	int timeout = 500;
+	정수 timeout = 500;
 
-	if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	만약 (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 		debug("PHY status read failed\n");
-		return -1;
+		반환 -1;
 	}
-	if (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
+	만약 (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
 		debug("PHY reset failed\n");
-		return -1;
+		반환 -1;
 	}
-#if CONFIG_PHY_RESET_DELAY > 0
+#만약 CONFIG_PHY_RESET_DELAY > 0
 	udelay(CONFIG_PHY_RESET_DELAY);	/* Intel LXT971A needs this */
 #endif
 	/*
@@ -364,20 +364,20 @@ int miiphy_reset(const char *devname, unsigned char addr)
 	 * IEEE spec.
 	 */
 	reg = 0x8000;
-	while (((reg & 0x8000) != 0) && timeout--) {
-		if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	동안 (((reg & 0x8000) != 0) && timeout--) {
+		만약 (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 			debug("PHY status read failed\n");
-			return -1;
+			반환 -1;
 		}
 		udelay(1000);
 	}
-	if ((reg & 0x8000) == 0) {
-		return 0;
-	} else {
+	만약 ((reg & 0x8000) == 0) {
+		반환 0;
+	} 아니면 {
 		puts("PHY reset timed out\n");
-		return -1;
+		반환 -1;
 	}
-	return 0;
+	반환 0;
 }
 #endif /* !PHYLIB */
 
@@ -385,75 +385,75 @@ int miiphy_reset(const char *devname, unsigned char addr)
  *
  * Determine the ethernet speed (10/100/1000).  Return 10 on error.
  */
-int miiphy_speed(const char *devname, unsigned char addr)
+정수 miiphy_speed(const char *devname, unsigned char addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#만약 defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/*
 	 * Check for 1000BASE-X.  If it is supported, then assume that the speed
 	 * is 1000.
 	 */
-	if (miiphy_is_1000base_x(devname, addr))
-		return _1000BASET;
+	만약 (miiphy_is_1000base_x(devname, addr))
+		반환 _1000BASET;
 
 	/*
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	만약 (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
 		goto miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF &&
+	만약 (btsr != 0xFFFF &&
 			(btsr & (PHY_1000BTSR_1000FD | PHY_1000BTSR_1000HD)))
-		return _1000BASET;
+		반환 _1000BASET;
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	만약 (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		printf("PHY speed");
 		goto miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	만약 (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		만약 (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("PHY AN speed");
 			goto miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		만약 (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv speed");
 			goto miiphy_read_failed;
 		}
-		return ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
+		반환 ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
+	반환 (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
 
 miiphy_read_failed:
 	printf(" read failed, assuming 10BASE-T\n");
-	return _10BASET;
+	반환 _10BASET;
 }
 
 /*****************************************************************************
  *
  * Determine full/half duplex.  Return half on error.
  */
-int miiphy_duplex(const char *devname, unsigned char addr)
+정수 miiphy_duplex(const char *devname, unsigned char addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#만약 defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/* Check for 1000BASE-X. */
-	if (miiphy_is_1000base_x(devname, addr)) {
+	만약 (miiphy_is_1000base_x(devname, addr)) {
 		/* 1000BASE-X */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		만약 (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("1000BASE-X PHY AN duplex");
 			goto miiphy_read_failed;
 		}
@@ -462,45 +462,45 @@ int miiphy_duplex(const char *devname, unsigned char addr)
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	만약 (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
 		goto miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF) {
-		if (btsr & PHY_1000BTSR_1000FD) {
-			return FULL;
-		} else if (btsr & PHY_1000BTSR_1000HD) {
-			return HALF;
+	만약 (btsr != 0xFFFF) {
+		만약 (btsr & PHY_1000BTSR_1000FD) {
+			반환 FULL;
+		} 아니면 만약 (btsr & PHY_1000BTSR_1000HD) {
+			반환 HALF;
 		}
 	}
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	만약 (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		puts("PHY duplex");
 		goto miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	만약 (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		만약 (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			puts("PHY AN duplex");
 			goto miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		만약 (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv duplex");
 			goto miiphy_read_failed;
 		}
-		return ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
+		반환 ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
 		    FULL : HALF;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
+	반환 (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
 
 miiphy_read_failed:
 	printf(" read failed, assuming half duplex\n");
-	return HALF;
+	반환 HALF;
 }
 
 /*****************************************************************************
@@ -508,18 +508,18 @@ miiphy_read_failed:
  * Return 1 if PHY supports 1000BASE-X, 0 if PHY supports 10BASE-T/100BASE-TX/
  * 1000BASE-T, or on error.
  */
-int miiphy_is_1000base_x(const char *devname, unsigned char addr)
+정수 miiphy_is_1000base_x(const char *devname, unsigned char addr)
 {
-#if defined(CONFIG_PHY_GIGE)
+#만약 defined(CONFIG_PHY_GIGE)
 	u16 exsr;
 
-	if (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
+	만약 (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
 		printf("PHY extended status read failed, assuming no "
 			"1000BASE-X\n");
-		return 0;
+		반환 0;
 	}
-	return 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
-#else
-	return 0;
+	반환 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
+#아니면
+	반환 0;
 #endif
 }

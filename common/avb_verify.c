@@ -13,7 +13,7 @@
 #include <tee/optee_ta_avb.h>
 #include <u-boot/sha256.h>
 
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
+#만약 CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
 static const unsigned char avb_root_pub[1032] = {
 	0x0, 0x0, 0x10, 0x0, 0x55, 0xd9, 0x4, 0xad, 0xd8, 0x4,
 	0xaf, 0xe3, 0xd3, 0x84, 0x6c, 0x7e, 0xd, 0x89, 0x3d, 0xc2,
@@ -126,23 +126,23 @@ const char *str_avb_io_error(AvbIOResult res)
 {
 	switch (res) {
 	case AVB_IO_RESULT_OK:
-		return "Requested operation was successful";
+		반환 "Requested operation was successful";
 	case AVB_IO_RESULT_ERROR_IO:
-		return "Underlying hardware encountered an I/O error";
+		반환 "Underlying hardware encountered an I/O error";
 	case AVB_IO_RESULT_ERROR_OOM:
-		return "Unable to allocate memory";
+		반환 "Unable to allocate memory";
 	case AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION:
-		return "Requested partition does not exist";
+		반환 "Requested partition does not exist";
 	case AVB_IO_RESULT_ERROR_RANGE_OUTSIDE_PARTITION:
-		return "Bytes requested is outside the range of partition";
+		반환 "Bytes requested is outside the range of partition";
 	case AVB_IO_RESULT_ERROR_NO_SUCH_VALUE:
-		return "Named persistent value does not exist";
+		반환 "Named persistent value does not exist";
 	case AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE:
-		return "Named persistent value size is not supported";
+		반환 "Named persistent value size is not supported";
 	case AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE:
-		return "Buffer is too small for the requested operation";
+		반환 "Buffer is too small for the requested operation";
 	default:
-		return "Unknown AVB error";
+		반환 "Unknown AVB error";
 	}
 }
 
@@ -150,25 +150,25 @@ const char *str_avb_slot_error(AvbSlotVerifyResult res)
 {
 	switch (res) {
 	case AVB_SLOT_VERIFY_RESULT_OK:
-		return "Verification passed successfully";
+		반환 "Verification passed successfully";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_OOM:
-		return "Allocation of memory failed";
+		반환 "Allocation of memory failed";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_IO:
-		return "I/O error occurred while trying to load data";
+		반환 "I/O error occurred while trying to load data";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_VERIFICATION:
-		return "Digest didn't match or signature checks failed";
+		반환 "Digest didn't match or signature checks failed";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_ROLLBACK_INDEX:
-		return "Rollback index is less than its stored value";
+		반환 "Rollback index is less than its stored value";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_PUBLIC_KEY_REJECTED:
-		return "Public keys are not accepted";
+		반환 "Public keys are not accepted";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_METADATA:
-		return "Metadata is invalid or inconsistent";
+		반환 "Metadata is invalid or inconsistent";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_UNSUPPORTED_VERSION:
-		return "Metadata requires a newer version of libavb";
+		반환 "Metadata requires a newer version of libavb";
 	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_ARGUMENT:
-		return "Invalid arguments are used";
+		반환 "Invalid arguments are used";
 	default:
-		return "Unknown AVB slot verification error";
+		반환 "Unknown AVB slot verification error";
 	}
 }
 /**
@@ -181,12 +181,12 @@ char *avb_set_state(AvbOps *ops, enum avb_boot_state boot_state)
 	struct AvbOpsData *data;
 	char *cmdline = NULL;
 
-	if (!ops)
-		return NULL;
+	만약 (!ops)
+		반환 NULL;
 
 	data = (struct AvbOpsData *)ops->user_data;
-	if (!data)
-		return NULL;
+	만약 (!data)
+		반환 NULL;
 
 	data->boot_state = boot_state;
 	switch (boot_state) {
@@ -203,81 +203,81 @@ char *avb_set_state(AvbOps *ops, enum avb_boot_state boot_state)
 		break;
 	}
 
-	return cmdline;
+	반환 cmdline;
 }
 
 char *append_cmd_line(char *cmdline_orig, char *cmdline_new)
 {
 	char *cmd_line;
 
-	if (!cmdline_new)
-		return cmdline_orig;
+	만약 (!cmdline_new)
+		반환 cmdline_orig;
 
-	if (cmdline_orig)
+	만약 (cmdline_orig)
 		cmd_line = cmdline_orig;
-	else
+	아니면
 		cmd_line = " ";
 
 	cmd_line = avb_strdupv(cmd_line, " ", cmdline_new, NULL);
 
-	return cmd_line;
+	반환 cmd_line;
 }
 
-static int avb_find_dm_args(char **args, char *str)
+static 정수 avb_find_dm_args(char **args, char *str)
 {
-	int i;
+	정수 i;
 
-	if (!str)
-		return -1;
+	만약 (!str)
+		반환 -1;
 
-	for (i = 0; i < AVB_MAX_ARGS && args[i]; ++i) {
-		if (strstr(args[i], str))
-			return i;
+	위해 (i = 0; i < AVB_MAX_ARGS && args[i]; ++i) {
+		만약 (strstr(args[i], str))
+			반환 i;
 	}
 
-	return -1;
+	반환 -1;
 }
 
 static char *avb_set_enforce_option(const char *cmdline, const char *option)
 {
 	char *cmdarg[AVB_MAX_ARGS];
 	char *newargs = NULL;
-	int i = 0;
-	int total_args;
+	정수 i = 0;
+	정수 total_args;
 
 	memset(cmdarg, 0, sizeof(cmdarg));
 	cmdarg[i++] = strtok((char *)cmdline, " ");
 
 	do {
 		cmdarg[i] = strtok(NULL, " ");
-		if (!cmdarg[i])
+		만약 (!cmdarg[i])
 			break;
 
-		if (++i >= AVB_MAX_ARGS) {
+		만약 (++i >= AVB_MAX_ARGS) {
 			printf("%s: Can't handle more then %d args\n",
 			       __func__, i);
-			return NULL;
+			반환 NULL;
 		}
-	} while (true);
+	} 동안 (true);
 
 	total_args = i;
 	i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_LOGGING);
-	if (i >= 0) {
+	만약 (i >= 0) {
 		cmdarg[i] = (char *)option;
-	} else {
+	} 아니면 {
 		i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_RESTART);
-		if (i < 0) {
+		만약 (i < 0) {
 			printf("%s: No verity options found\n", __func__);
-			return NULL;
+			반환 NULL;
 		}
 
 		cmdarg[i] = (char *)option;
 	}
 
-	for (i = 0; i <= total_args; i++)
+	위해 (i = 0; i <= total_args; i++)
 		newargs = append_cmd_line(newargs, cmdarg[i]);
 
-	return newargs;
+	반환 newargs;
 }
 
 char *avb_set_ignore_corruption(const char *cmdline)
@@ -285,11 +285,11 @@ char *avb_set_ignore_corruption(const char *cmdline)
 	char *newargs = NULL;
 
 	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_LOGGING);
-	if (newargs)
+	만약 (newargs)
 		newargs = append_cmd_line(newargs,
 					  "androidboot.veritymode=eio");
 
-	return newargs;
+	반환 newargs;
 }
 
 char *avb_set_enforce_verity(const char *cmdline)
@@ -297,10 +297,10 @@ char *avb_set_enforce_verity(const char *cmdline)
 	char *newargs;
 
 	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_RESTART);
-	if (newargs)
+	만약 (newargs)
 		newargs = append_cmd_line(newargs,
 					  "androidboot.veritymode=enforcing");
-	return newargs;
+	반환 newargs;
 }
 
 /**
@@ -318,11 +318,11 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	size_t buf_size;
 	bool unaligned = is_buf_unaligned(buffer);
 
-	if (start < part->info.start) {
+	만약 (start < part->info.start) {
 		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+		반환 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
+	만약 ((start + sectors) > (part->info.start + part->info.size)) {
 		sectors = part->info.start + part->info.size - start;
 		printf("%s: read sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
@@ -332,14 +332,14 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	 * Reading fails on unaligned buffers, so we have to
 	 * use aligned temporary buffer and then copy to destination
 	 */
-	if (unaligned) {
+	만약 (unaligned) {
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
 		      __func__, buffer);
 		tmp_buf = get_sector_buf();
 		buf_size = get_sector_buf_size();
-		if (sectors > buf_size / part->info.blksz)
+		만약 (sectors > buf_size / part->info.blksz)
 			sectors = buf_size / part->info.blksz;
-	} else {
+	} 아니면 {
 		tmp_buf = buffer;
 	}
 
@@ -348,10 +348,10 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	/* flush cache after read */
 	flush_cache((ulong)tmp_buf, sectors * part->info.blksz);
 
-	if (unaligned)
+	만약 (unaligned)
 		memcpy(buffer, tmp_buf, sectors * part->info.blksz);
 
-	return blks;
+	반환 blks;
 }
 
 static unsigned long mmc_write(struct mmc_part *part, lbaint_t start,
@@ -361,61 +361,61 @@ static unsigned long mmc_write(struct mmc_part *part, lbaint_t start,
 	size_t buf_size;
 	bool unaligned = is_buf_unaligned(buffer);
 
-	if (start < part->info.start) {
+	만약 (start < part->info.start) {
 		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+		반환 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
+	만약 ((start + sectors) > (part->info.start + part->info.size)) {
 		sectors = part->info.start + part->info.size - start;
 		printf("%s: sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
 	}
-	if (unaligned) {
+	만약 (unaligned) {
 		tmp_buf = get_sector_buf();
 		buf_size = get_sector_buf_size();
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
 		      __func__, buffer);
-		if (sectors > buf_size / part->info.blksz)
+		만약 (sectors > buf_size / part->info.blksz)
 			sectors = buf_size / part->info.blksz;
 
 		memcpy(tmp_buf, buffer, sectors * part->info.blksz);
-	} else {
+	} 아니면 {
 		tmp_buf = buffer;
 	}
 
-	return blk_dwrite(part->mmc_blk,
+	반환 blk_dwrite(part->mmc_blk,
 			  start, sectors, tmp_buf);
 }
 
 static struct mmc_part *get_partition(AvbOps *ops, const char *partition)
 {
-	int ret;
+	정수 ret;
 	u8 dev_num;
-	int part_num = 0;
+	정수 part_num = 0;
 	struct mmc_part *part;
 	struct blk_desc *mmc_blk;
 
 	part = malloc(sizeof(struct mmc_part));
-	if (!part)
-		return NULL;
+	만약 (!part)
+		반환 NULL;
 
 	dev_num = get_boot_device(ops);
 	part->mmc = find_mmc_device(dev_num);
-	if (!part->mmc) {
+	만약 (!part->mmc) {
 		printf("%s: no MMC device at slot %x\n", __func__, dev_num);
 		goto err;
 	}
 
 	ret = mmc_init(part->mmc);
-	if (ret) {
+	만약 (ret) {
 		printf("%s: MMC initialization failed, err = %d\n",
 		       __func__, ret);
 		goto err;
 	}
 
-	if (IS_MMC(part->mmc)) {
+	만약 (IS_MMC(part->mmc)) {
 		ret = mmc_switch_part(part->mmc, part_num);
-		if (ret) {
+		만약 (ret) {
 			printf("%s: MMC part switch failed, err = %d\n",
 			       __func__, ret);
 			goto err;
@@ -423,13 +423,13 @@ static struct mmc_part *get_partition(AvbOps *ops, const char *partition)
 	}
 
 	mmc_blk = mmc_get_blk_desc(part->mmc);
-	if (!mmc_blk) {
+	만약 (!mmc_blk) {
 		printf("%s: failed to obtain block descriptor\n", __func__);
 		goto err;
 	}
 
 	ret = part_get_info_by_name(mmc_blk, partition, &part->info);
-	if (ret < 0) {
+	만약 (ret < 0) {
 		printf("%s: can't find partition '%s'\n", __func__, partition);
 		goto err;
 	}
@@ -437,10 +437,10 @@ static struct mmc_part *get_partition(AvbOps *ops, const char *partition)
 	part->dev_num = dev_num;
 	part->mmc_blk = mmc_blk;
 
-	return part;
+	반환 part;
 err:
 	free(part);
-	return NULL;
+	반환 NULL;
 }
 
 static AvbIOResult mmc_byte_io(AvbOps *ops,
@@ -458,42 +458,42 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 	size_t io_cnt = 0;
 	AvbIOResult io_ret = AVB_IO_RESULT_OK;
 
-	if (!partition || !buffer || io_type > IO_WRITE)
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (!partition || !buffer || io_type > IO_WRITE)
+		반환 AVB_IO_RESULT_ERROR_IO;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	만약 (!part)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
-	if (!part->info.blksz) {
+	만약 (!part->info.blksz) {
 		io_ret = AVB_IO_RESULT_ERROR_IO;
 		goto out;
 	}
 
 	start_offset = calc_offset(part, offset);
-	while (num_bytes) {
+	동안 (num_bytes) {
 		start_sector = start_offset / part->info.blksz;
 		sectors = num_bytes / part->info.blksz;
 		/* handle non block-aligned reads */
-		if (start_offset % part->info.blksz ||
+		만약 (start_offset % part->info.blksz ||
 		    num_bytes < part->info.blksz) {
 			tmp_buf = get_sector_buf();
-			if (start_offset % part->info.blksz) {
+			만약 (start_offset % part->info.blksz) {
 				residue = part->info.blksz -
 					(start_offset % part->info.blksz);
-				if (residue > num_bytes)
+				만약 (residue > num_bytes)
 					residue = num_bytes;
-			} else {
+			} 아니면 {
 				residue = num_bytes;
 			}
 
-			if (io_type == IO_READ) {
+			만약 (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
+				만약 (ret != 1) {
 					printf("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
@@ -505,13 +505,13 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 				 */
 				tmp_buf += (start_offset % part->info.blksz);
 				memcpy(buffer, (void *)tmp_buf, residue);
-			} else {
+			} 아니면 {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
+				만약 (ret != 1) {
 					printf("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
@@ -523,7 +523,7 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 
 				ret = mmc_write(part, part->info.start +
 						start_sector, 1, tmp_buf);
-				if (ret != 1) {
+				만약 (ret != 1) {
 					printf("%s: write error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
@@ -538,20 +538,20 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 			continue;
 		}
 
-		if (sectors) {
-			if (io_type == IO_READ) {
+		만약 (sectors) {
+			만약 (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 sectors, buffer);
-			} else {
+			} 아니면 {
 				ret = mmc_write(part,
 						part->info.start +
 						start_sector,
 						sectors, buffer);
 			}
 
-			if (!ret) {
+			만약 (!ret) {
 				printf("%s: sector read error\n", __func__);
 				io_ret = AVB_IO_RESULT_ERROR_IO;
 				goto out;
@@ -565,12 +565,12 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 	}
 
 	/* Set counter for read operation */
-	if (io_type == IO_READ && out_num_read)
+	만약 (io_type == IO_READ && out_num_read)
 		*out_num_read = io_cnt;
 
 out:
 	free(part);
-	return io_ret;
+	반환 io_ret;
 }
 
 /**
@@ -604,7 +604,7 @@ static AvbIOResult read_from_partition(AvbOps *ops,
 				       void *buffer,
 				       size_t *out_num_read)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
+	반환 mmc_byte_io(ops, partition_name, offset_from_partition,
 			   num_bytes, buffer, out_num_read, IO_READ);
 }
 
@@ -631,7 +631,7 @@ static AvbIOResult write_to_partition(AvbOps *ops,
 				      size_t num_bytes,
 				      const void *buffer)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
+	반환 mmc_byte_io(ops, partition_name, offset_from_partition,
 			   num_bytes, (void *)buffer, NULL, IO_WRITE);
 }
 
@@ -662,8 +662,8 @@ static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
 	u8 trusted_digest[SHA256_SUM_LEN];
 	AvbIOResult rc;
 
-	if (!public_key_length || !public_key_data || !out_key_is_trusted)
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (!public_key_length || !public_key_data || !out_key_is_trusted)
+		반환 AVB_IO_RESULT_ERROR_IO;
 
 	/* Default deny: only flip to trusted on a positive digest match. */
 	*out_key_is_trusted = false;
@@ -674,40 +674,40 @@ static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
 
 	/* Digest of the trusted root key from the configured source. */
 	rc = avb_read_root_key_digest(ops, trusted_digest);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	만약 (rc != AVB_IO_RESULT_OK)
+		반환 rc;
 
-	if (avb_safe_memcmp(key_digest, trusted_digest, sizeof(key_digest)) == 0)
+	만약 (avb_safe_memcmp(key_digest, trusted_digest, sizeof(key_digest)) == 0)
 		*out_key_is_trusted = true;
 
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 }
 
 #ifdef CONFIG_OPTEE_TA_AVB
-static int get_open_session(struct AvbOpsData *ops_data)
+static 정수 get_open_session(struct AvbOpsData *ops_data)
 {
 	struct udevice *tee = NULL;
 
-	while (!ops_data->tee) {
+	동안 (!ops_data->tee) {
 		const struct tee_optee_ta_uuid uuid = TA_AVB_UUID;
 		struct tee_open_session_arg arg;
-		int rc;
+		정수 rc;
 
 		tee = tee_find_device(tee, NULL, NULL, NULL);
-		if (!tee)
-			return -ENODEV;
+		만약 (!tee)
+			반환 -ENODEV;
 
 		memset(&arg, 0, sizeof(arg));
 		tee_optee_ta_uuid_to_octets(arg.uuid, &uuid);
 		rc = tee_open_session(tee, &arg, 0, NULL);
-		if (rc || arg.ret)
+		만약 (rc || arg.ret)
 			continue;
 
 		ops_data->tee = tee;
 		ops_data->session = arg.session;
 	}
 
-	return 0;
+	반환 0;
 }
 
 static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
@@ -715,24 +715,24 @@ static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
 {
 	struct tee_invoke_arg arg;
 
-	if (get_open_session(ops_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (get_open_session(ops_data))
+		반환 AVB_IO_RESULT_ERROR_IO;
 
 	memset(&arg, 0, sizeof(arg));
 	arg.func = func;
 	arg.session = ops_data->session;
 
-	if (tee_invoke_func(ops_data->tee, &arg, num_param, param))
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (tee_invoke_func(ops_data->tee, &arg, num_param, param))
+		반환 AVB_IO_RESULT_ERROR_IO;
 	switch (arg.ret) {
 	case TEE_SUCCESS:
-		return AVB_IO_RESULT_OK;
+		반환 AVB_IO_RESULT_OK;
 	case TEE_ERROR_OUT_OF_MEMORY:
-		return AVB_IO_RESULT_ERROR_OOM;
+		반환 AVB_IO_RESULT_ERROR_OOM;
 	case TEE_ERROR_STORAGE_NO_SPACE:
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
+		반환 AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
 	case TEE_ERROR_ITEM_NOT_FOUND:
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 	case TEE_ERROR_TARGET_DEAD:
 		/*
 		 * The TA has paniced, close the session to reload the TA
@@ -740,9 +740,9 @@ static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
 		 */
 		tee_close_session(ops_data->tee, ops_data->session);
 		ops_data->tee = NULL;
-		return AVB_IO_RESULT_ERROR_IO;
+		반환 AVB_IO_RESULT_ERROR_IO;
 	default:
-		return AVB_IO_RESULT_ERROR_IO;
+		반환 AVB_IO_RESULT_ERROR_IO;
 	}
 }
 #endif
@@ -766,16 +766,16 @@ static AvbIOResult read_rollback_index(AvbOps *ops,
 	/* For now we always return 0 as the stored rollback index. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	if (out_rollback_index)
+	만약 (out_rollback_index)
 		*out_rollback_index = 0;
 
-	return AVB_IO_RESULT_OK;
-#else
+	반환 AVB_IO_RESULT_OK;
+#아니면
 	AvbIOResult rc;
 	struct tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	만약 (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
 	memset(param, 0, sizeof(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
@@ -784,12 +784,12 @@ static AvbIOResult read_rollback_index(AvbOps *ops,
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_ROLLBACK_INDEX,
 			 ARRAY_SIZE(param), param);
-	if (rc)
-		return rc;
+	만약 (rc)
+		반환 rc;
 
 	*out_rollback_index = (u64)param[1].u.value.a << 32 |
 			      (u32)param[1].u.value.b;
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 #endif
 }
 
@@ -812,12 +812,12 @@ static AvbIOResult write_rollback_index(AvbOps *ops,
 	/* For now this is a no-op. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	return AVB_IO_RESULT_OK;
-#else
+	반환 AVB_IO_RESULT_OK;
+#아니면
 	struct tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	만약 (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
 	memset(param, 0, sizeof(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
@@ -826,7 +826,7 @@ static AvbIOResult write_rollback_index(AvbOps *ops,
 	param[1].u.value.a = (u32)(rollback_index >> 32);
 	param[1].u.value.b = (u32)rollback_index;
 
-	return invoke_func(ops->user_data, TA_AVB_CMD_WRITE_ROLLBACK_INDEX,
+	반환 invoke_func(ops->user_data, TA_AVB_CMD_WRITE_ROLLBACK_INDEX,
 			   ARRAY_SIZE(param), param);
 #endif
 }
@@ -850,16 +850,16 @@ static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
 
 	*out_is_unlocked = true;
 
-	return AVB_IO_RESULT_OK;
-#else
+	반환 AVB_IO_RESULT_OK;
+#아니면
 	AvbIOResult rc;
 	struct tee_param param = { .attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT };
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_LOCK_STATE, 1, &param);
-	if (rc)
-		return rc;
+	만약 (rc)
+		반환 rc;
 	*out_is_unlocked = !param.u.value.a;
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 #endif
 }
 
@@ -888,20 +888,20 @@ static AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
 	size_t uuid_size;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	만약 (!part)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
 	uuid_size = sizeof(part->info.uuid);
-	if (uuid_size > guid_buf_size) {
+	만약 (uuid_size > guid_buf_size) {
 		free(part);
-		return AVB_IO_RESULT_ERROR_IO;
+		반환 AVB_IO_RESULT_ERROR_IO;
 	}
 
 	memcpy(guid_buf, part->info.uuid, uuid_size);
 	guid_buf[uuid_size - 1] = 0;
 
 	free(part);
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 }
 
 /**
@@ -923,17 +923,17 @@ static AvbIOResult get_size_of_partition(AvbOps *ops,
 {
 	struct mmc_part *part;
 
-	if (!out_size_num_bytes)
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
+	만약 (!out_size_num_bytes)
+		반환 AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	만약 (!part)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
 	*out_size_num_bytes = part->info.blksz * part->info.size;
 	free(part);
 
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 }
 
 #ifdef CONFIG_OPTEE_TA_AVB
@@ -950,19 +950,19 @@ static AvbIOResult read_persistent_value(AvbOps *ops,
 	struct udevice *tee;
 	size_t name_size = strlen(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (get_open_session(ops->user_data))
+		반환 AVB_IO_RESULT_ERROR_IO;
 
 	tee = ((struct AvbOpsData *)ops->user_data)->tee;
 
 	rc = tee_shm_alloc(tee, name_size,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	만약 (rc)
+		반환 AVB_IO_RESULT_ERROR_OOM;
 
 	rc = tee_shm_alloc(tee, buffer_size,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
+	만약 (rc) {
 		rc = AVB_IO_RESULT_ERROR_OOM;
 		goto free_name;
 	}
@@ -979,10 +979,10 @@ static AvbIOResult read_persistent_value(AvbOps *ops,
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_PERSIST_VALUE,
 			 2, param);
-	if (rc)
+	만약 (rc)
 		goto out;
 
-	if (param[1].u.memref.size > buffer_size) {
+	만약 (param[1].u.memref.size > buffer_size) {
 		rc = AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 		goto out;
 	}
@@ -996,7 +996,7 @@ out:
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	반환 rc;
 }
 
 static AvbIOResult write_persistent_value(AvbOps *ops,
@@ -1011,22 +1011,22 @@ static AvbIOResult write_persistent_value(AvbOps *ops,
 	struct udevice *tee;
 	size_t name_size = strlen(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	만약 (get_open_session(ops->user_data))
+		반환 AVB_IO_RESULT_ERROR_IO;
 
 	tee = ((struct AvbOpsData *)ops->user_data)->tee;
 
-	if (!value_size)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	만약 (!value_size)
+		반환 AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
 	rc = tee_shm_alloc(tee, name_size,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	만약 (rc)
+		반환 AVB_IO_RESULT_ERROR_OOM;
 
 	rc = tee_shm_alloc(tee, value_size,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
+	만약 (rc) {
 		rc = AVB_IO_RESULT_ERROR_OOM;
 		goto free_name;
 	}
@@ -1044,7 +1044,7 @@ static AvbIOResult write_persistent_value(AvbOps *ops,
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_WRITE_PERSIST_VALUE,
 			 2, param);
-	if (rc)
+	만약 (rc)
 		goto out;
 
 out:
@@ -1052,7 +1052,7 @@ out:
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	반환 rc;
 }
 #endif
 
@@ -1061,13 +1061,13 @@ free_name:
  * AVB root key digest providers (selected via CONFIG_AVB_ROOT_KEY_*)
  * ============================================================================
  */
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
+#만약 CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
 AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 {
 	sha256_csum_wd(avb_root_pub, sizeof(avb_root_pub), digest,
 		       CHUNKSZ_SHA256);
 
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 }
 #elif CONFIG_IS_ENABLED(AVB_ROOT_KEY_TEE)
 /*
@@ -1084,15 +1084,15 @@ AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 
 	rc = read_persistent_value(ops, CONFIG_AVB_ROOT_KEY_TEE_NAME,
 				   SHA256_SUM_LEN, digest, &num_read);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	만약 (rc != AVB_IO_RESULT_OK)
+		반환 rc;
 
-	if (num_read != SHA256_SUM_LEN)
-		return AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE;
+	만약 (num_read != SHA256_SUM_LEN)
+		반환 AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE;
 
-	return AVB_IO_RESULT_OK;
+	반환 AVB_IO_RESULT_OK;
 }
-#else /* CONFIG_AVB_ROOT_KEY_BOARD */
+#아니면 /* CONFIG_AVB_ROOT_KEY_BOARD */
 /*
  * Weak, fail-closed default. A board/SoC selecting CONFIG_AVB_ROOT_KEY_BOARD
  * must provide a strong avb_read_root_key_digest() (e.g. reading a hash fused
@@ -1103,7 +1103,7 @@ __weak AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 {
 	printf("%s: board root key provider not implemented\n", __func__);
 
-	return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	반환 AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 }
 #endif
 
@@ -1112,13 +1112,13 @@ __weak AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
  * AVB2.0 AvbOps alloc/initialisation/free
  * ============================================================================
  */
-AvbOps *avb_ops_alloc(int boot_device)
+AvbOps *avb_ops_alloc(정수 boot_device)
 {
 	struct AvbOpsData *ops_data;
 
 	ops_data = avb_calloc(sizeof(struct AvbOpsData));
-	if (!ops_data)
-		return NULL;
+	만약 (!ops_data)
+		반환 NULL;
 
 	ops_data->ops.user_data = ops_data;
 
@@ -1137,21 +1137,21 @@ AvbOps *avb_ops_alloc(int boot_device)
 	ops_data->ops.get_size_of_partition = get_size_of_partition;
 	ops_data->mmc_dev = boot_device;
 
-	return &ops_data->ops;
+	반환 &ops_data->ops;
 }
 
 void avb_ops_free(AvbOps *ops)
 {
 	struct AvbOpsData *ops_data;
 
-	if (!ops)
-		return;
+	만약 (!ops)
+		반환;
 
 	ops_data = ops->user_data;
 
-	if (ops_data) {
+	만약 (ops_data) {
 #ifdef CONFIG_OPTEE_TA_AVB
-		if (ops_data->tee)
+		만약 (ops_data->tee)
 			tee_close_session(ops_data->tee, ops_data->session);
 #endif
 		avb_free(ops_data);

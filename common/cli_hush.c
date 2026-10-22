@@ -104,10 +104,10 @@
 
 /* #include <dmalloc.h> */
 
-#if 1
+#만약 1
 #include "busybox.h"
 #include "cmdedit.h"
-#else
+#아니면
 #define applet_name "hush"
 #include "standalone.h"
 #define hush_main main
@@ -129,7 +129,7 @@
 #define syntax() syntax_err()
 #define xstrdup strdup
 #define error_msg printf
-#else
+#아니면
 typedef enum {
 	REDIRECT_INPUT     = 1,
 	REDIRECT_OVERWRITE = 2,
@@ -140,7 +140,7 @@ typedef enum {
 
 /* The descrip member of this structure is only used to make debugging
  * output pretty */
-struct {int mode; int default_fd; char *descrip;} redir_table[] = {
+struct {정수 mode; 정수 default_fd; char *descrip;} redir_table[] = {
 	{ 0,                         0, "()" },
 	{ O_RDONLY,                  0, "<"  },
 	{ O_CREAT|O_TRUNC|O_WRONLY,  1, ">"  },
@@ -197,17 +197,17 @@ struct p_context {
 	struct redir_struct *pending_redirect;
 #endif
 	reserved_style w;
-	int old_flag;				/* for figuring out valid reserved words */
+	정수 old_flag;				/* for figuring out valid reserved words */
 	struct p_context *stack;
-	int type;			/* define type of parser : ";$" common or special symbol */
+	정수 type;			/* define type of parser : ";$" common or special symbol */
 	/* How about quoting status? */
 };
 
 #ifndef __U_BOOT__
 struct redir_struct {
 	redir_type type;			/* type of redirection */
-	int fd;						/* file descriptor being redirected */
-	int dup;					/* -1, or file descriptor being duplicated */
+	정수 fd;						/* file descriptor being redirected */
+	정수 dup;					/* -1, or file descriptor being duplicated */
 	struct redir_struct *next;	/* pointer to the next redirect in the list */
 	glob_t word;				/* *word.gl_pathv is the filename */
 };
@@ -219,29 +219,29 @@ struct child_prog {
 #endif
 	char **argv;				/* program name and arguments */
 	/* was quoted when parsed; copy of struct o_string.nonnull field */
-	int *argv_nonnull;
+	정수 *argv_nonnull;
 #ifdef __U_BOOT__
-	int    argc;                            /* number of program arguments */
+	정수    argc;                            /* number of program arguments */
 #endif
 	struct pipe *group;			/* if non-NULL, first in group or subshell */
 #ifndef __U_BOOT__
-	int subshell;				/* flag, non-zero if group must be forked */
+	정수 subshell;				/* flag, non-zero if group must be forked */
 	struct redir_struct *redirects;	/* I/O redirections */
 	glob_t glob_result;			/* result of parameter globbing */
-	int is_stopped;				/* is the program currently running? */
+	정수 is_stopped;				/* is the program currently running? */
 	struct pipe *family;		/* pointer back to the child's parent pipe */
 #endif
-	int sp;				/* number of SPECIAL_VAR_SYMBOL */
-	int type;
+	정수 sp;				/* number of SPECIAL_VAR_SYMBOL */
+	정수 type;
 };
 
 struct pipe {
 #ifndef __U_BOOT__
-	int jobid;					/* job number */
+	정수 jobid;					/* job number */
 #endif
-	int num_progs;				/* total number of programs in job */
+	정수 num_progs;				/* total number of programs in job */
 #ifndef __U_BOOT__
-	int running_progs;			/* number of programs running */
+	정수 running_progs;			/* number of programs running */
 	char *text;					/* name of job */
 	char *cmdbuf;				/* buffer various argv's point into */
 	pid_t pgrp;					/* process group ID for the job */
@@ -249,8 +249,8 @@ struct pipe {
 	struct child_prog *progs;	/* array of commands in pipe */
 	struct pipe *next;			/* to track background commands */
 #ifndef __U_BOOT__
-	int stopped_progs;			/* number of programs alive, but stopped */
-	int job_context;			/* bitmask defining current context */
+	정수 stopped_progs;			/* number of programs alive, but stopped */
+	정수 job_context;			/* bitmask defining current context */
 #endif
 	pipe_style followup;		/* PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND */
 	reserved_style r_mode;		/* supports if, for, while, until */
@@ -258,7 +258,7 @@ struct pipe {
 
 #ifndef __U_BOOT__
 struct close_me {
-	int fd;
+	정수 fd;
 	struct close_me *next;
 };
 #endif
@@ -266,8 +266,8 @@ struct close_me {
 struct variables {
 	char *name;
 	char *value;
-	int flg_export;
-	int flg_read_only;
+	정수 flg_export;
+	정수 flg_read_only;
 	struct variables *next;
 };
 
@@ -275,9 +275,9 @@ struct variables {
  * the first three support $?, $#, and $1 */
 #ifndef __U_BOOT__
 char **global_argv;
-unsigned int global_argc;
+unsigned 정수 global_argc;
 #endif
-static unsigned int last_return_code;
+static unsigned 정수 last_return_code;
 #ifndef __U_BOOT__
 extern char **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
 #endif
@@ -286,21 +286,21 @@ extern char **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
 static uchar *ifs;
 static char map[256];
 #ifndef __U_BOOT__
-static int fake_mode;
-static int interactive;
+static 정수 fake_mode;
+static 정수 interactive;
 static struct close_me *close_me_head;
 static const char *cwd;
 static struct pipe *job_list;
-static unsigned int last_bg_pid;
-static unsigned int last_jobid;
-static unsigned int shell_terminal;
+static unsigned 정수 last_bg_pid;
+static unsigned 정수 last_jobid;
+static unsigned 정수 shell_terminal;
 static char *PS1;
 static char *PS2;
 struct variables shell_ver = { "HUSH_VERSION", "0.01", 1, 1, 0 };
 struct variables *top_vars = &shell_ver;
-#else
-static int flag_repeat = 0;
-static int do_repeat = 0;
+#아니면
+static 정수 flag_repeat = 0;
+static 정수 do_repeat = 0;
 static struct variables *top_vars = NULL ;
 #endif /*__U_BOOT__ */
 
@@ -309,10 +309,10 @@ static struct variables *top_vars = NULL ;
 
 typedef struct {
 	char *data;
-	int length;
-	int maxlen;
-	int quote;
-	int nonnull;
+	정수 length;
+	정수 maxlen;
+	정수 quote;
+	정수 nonnull;
 } o_string;
 #define NULL_O_STRING {NULL,0,0,0,0}
 /* used for initialization:
@@ -325,13 +325,13 @@ struct in_str {
 #ifndef __U_BOOT__
 	char peek_buf[2];
 #endif
-	int __promptme;
-	int promptmode;
+	정수 __promptme;
+	정수 promptmode;
 #ifndef __U_BOOT__
 	FILE *file;
 #endif
-	int (*get) (struct in_str *);
-	int (*peek) (struct in_str *);
+	정수 (*get) (struct in_str *);
+	정수 (*peek) (struct in_str *);
 };
 #define b_getch(input) ((input)->get(input))
 #define b_peek(input) ((input)->peek(input))
@@ -342,12 +342,12 @@ struct in_str {
 struct built_in_command {
 	char *cmd;					/* name */
 	char *descr;				/* description */
-	int (*function) (struct child_prog *);	/* function ptr */
+	정수 (*function) (struct child_prog *);	/* function ptr */
 };
 #endif
 
 /* define DEBUG_SHELL for debugging output (obviously ;-)) */
-#if 0
+#만약 0
 #define DEBUG_SHELL
 #endif
 
@@ -361,10 +361,10 @@ static void debug_printf(const char *format, ...)
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
-#else
+#아니면
 #define debug_printf(fmt,args...)	printf (fmt ,##args)
 #endif
-#else
+#아니면
 static inline void debug_printf(const char *format, ...) { }
 #endif
 #define final_printf debug_printf
@@ -373,8 +373,8 @@ static inline void debug_printf(const char *format, ...) { }
 static void syntax_err(void) {
 	 printf("syntax error\n");
 }
-#else
-static void __syntax(char *file, int line) {
+#아니면
+static void __syntax(char *file, 정수 line) {
 	error_msg("syntax error %s:%d", file, line);
 }
 #define syntax() __syntax(__FILE__, __LINE__)
@@ -383,111 +383,111 @@ static void __syntax(char *file, int line) {
 #ifdef __U_BOOT__
 static void *xmalloc(size_t size);
 static void *xrealloc(void *ptr, size_t size);
-#else
+#아니면
 /* Index of subroutines: */
 /*   function prototypes for builtins */
-static int builtin_cd(struct child_prog *child);
-static int builtin_env(struct child_prog *child);
-static int builtin_eval(struct child_prog *child);
-static int builtin_exec(struct child_prog *child);
-static int builtin_exit(struct child_prog *child);
-static int builtin_export(struct child_prog *child);
-static int builtin_fg_bg(struct child_prog *child);
-static int builtin_help(struct child_prog *child);
-static int builtin_jobs(struct child_prog *child);
-static int builtin_pwd(struct child_prog *child);
-static int builtin_read(struct child_prog *child);
-static int builtin_set(struct child_prog *child);
-static int builtin_shift(struct child_prog *child);
-static int builtin_source(struct child_prog *child);
-static int builtin_umask(struct child_prog *child);
-static int builtin_unset(struct child_prog *child);
-static int builtin_not_written(struct child_prog *child);
+static 정수 builtin_cd(struct child_prog *child);
+static 정수 builtin_env(struct child_prog *child);
+static 정수 builtin_eval(struct child_prog *child);
+static 정수 builtin_exec(struct child_prog *child);
+static 정수 builtin_exit(struct child_prog *child);
+static 정수 builtin_export(struct child_prog *child);
+static 정수 builtin_fg_bg(struct child_prog *child);
+static 정수 builtin_help(struct child_prog *child);
+static 정수 builtin_jobs(struct child_prog *child);
+static 정수 builtin_pwd(struct child_prog *child);
+static 정수 builtin_read(struct child_prog *child);
+static 정수 builtin_set(struct child_prog *child);
+static 정수 builtin_shift(struct child_prog *child);
+static 정수 builtin_source(struct child_prog *child);
+static 정수 builtin_umask(struct child_prog *child);
+static 정수 builtin_unset(struct child_prog *child);
+static 정수 builtin_not_written(struct child_prog *child);
 #endif
 /*   o_string manipulation: */
-static int b_check_space(o_string *o, int len);
-static int b_addchr(o_string *o, int ch);
+static 정수 b_check_space(o_string *o, 정수 len);
+static 정수 b_addchr(o_string *o, 정수 ch);
 static void b_reset(o_string *o);
-static int b_addqchr(o_string *o, int ch, int quote);
+static 정수 b_addqchr(o_string *o, 정수 ch, 정수 quote);
 #ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i);
+static 정수 b_adduint(o_string *o, unsigned 정수 i);
 #endif
 /*  in_str manipulations: */
-static int static_get(struct in_str *i);
-static int static_peek(struct in_str *i);
-static int file_get(struct in_str *i);
-static int file_peek(struct in_str *i);
+static 정수 static_get(struct in_str *i);
+static 정수 static_peek(struct in_str *i);
+static 정수 file_get(struct in_str *i);
+static 정수 file_peek(struct in_str *i);
 #ifndef __U_BOOT__
 static void setup_file_in_str(struct in_str *i, FILE *f);
-#else
+#아니면
 static void setup_file_in_str(struct in_str *i);
 #endif
 static void setup_string_in_str(struct in_str *i, const char *s);
 #ifndef __U_BOOT__
 /*  close_me manipulations: */
-static void mark_open(int fd);
-static void mark_closed(int fd);
+static void mark_open(정수 fd);
+static void mark_closed(정수 fd);
 static void close_all(void);
 #endif
 /*  "run" the final data structures: */
-static char *indenter(int i);
-static int free_pipe_list(struct pipe *head, int indent);
-static int free_pipe(struct pipe *pi, int indent);
+static char *indenter(정수 i);
+static 정수 free_pipe_list(struct pipe *head, 정수 indent);
+static 정수 free_pipe(struct pipe *pi, 정수 indent);
 /*  really run the final data structures: */
 #ifndef __U_BOOT__
-static int setup_redirects(struct child_prog *prog, int squirrel[]);
+static 정수 setup_redirects(struct child_prog *prog, 정수 squirrel[]);
 #endif
-static int run_list_real(struct pipe *pi);
+static 정수 run_list_real(struct pipe *pi);
 #ifndef __U_BOOT__
 static void pseudo_exec(struct child_prog *child) __attribute__ ((noreturn));
 #endif
-static int run_pipe_real(struct pipe *pi);
+static 정수 run_pipe_real(struct pipe *pi);
 /*   extended glob support: */
 #ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob);
-static int glob_needed(const char *s);
-static int xglob(o_string *dest, int flags, glob_t *pglob);
+static 정수 globhack(const char *src, 정수 flags, glob_t *pglob);
+static 정수 glob_needed(const char *s);
+static 정수 xglob(o_string *dest, 정수 flags, glob_t *pglob);
 #endif
 /*   variable assignment: */
-static int is_assignment(const char *s);
+static 정수 is_assignment(const char *s);
 /*   data structure manipulation: */
 #ifndef __U_BOOT__
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style, struct in_str *input);
+static 정수 setup_redirect(struct p_context *ctx, 정수 fd, redir_type style, struct in_str *input);
 #endif
 static void initialize_context(struct p_context *ctx);
-static int done_word(o_string *dest, struct p_context *ctx);
-static int done_command(struct p_context *ctx);
-static int done_pipe(struct p_context *ctx, pipe_style type);
+static 정수 done_word(o_string *dest, struct p_context *ctx);
+static 정수 done_command(struct p_context *ctx);
+static 정수 done_pipe(struct p_context *ctx, pipe_style type);
 /*   primary string parsing: */
 #ifndef __U_BOOT__
-static int redirect_dup_num(struct in_str *input);
-static int redirect_opt_num(o_string *o);
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end);
-static int parse_group(o_string *dest, struct p_context *ctx, struct in_str *input, int ch);
+static 정수 redirect_dup_num(struct in_str *input);
+static 정수 redirect_opt_num(o_string *o);
+static 정수 process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, 정수 subst_end);
+static 정수 parse_group(o_string *dest, struct p_context *ctx, struct in_str *input, 정수 ch);
 #endif
 static char *lookup_param(char *src);
-static char *make_string(char **inp, int *nonnull);
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input);
+static char *make_string(char **inp, 정수 *nonnull);
+static 정수 handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input);
 #ifndef __U_BOOT__
-static int parse_string(o_string *dest, struct p_context *ctx, const char *src);
+static 정수 parse_string(o_string *dest, struct p_context *ctx, const char *src);
 #endif
-static int parse_stream(o_string *dest, struct p_context *ctx, struct in_str *input0, int end_trigger);
+static 정수 parse_stream(o_string *dest, struct p_context *ctx, struct in_str *input0, 정수 end_trigger);
 /*   setup: */
-static int parse_stream_outer(struct in_str *inp, int flag);
+static 정수 parse_stream_outer(struct in_str *inp, 정수 flag);
 #ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag);
-static int parse_file_outer(FILE *f);
+static 정수 parse_string_outer(const char *s, 정수 flag);
+static 정수 parse_file_outer(FILE *f);
 #endif
 #ifndef __U_BOOT__
 /*   job management: */
-static int checkjobs(struct pipe* fg_pipe);
+static 정수 checkjobs(struct pipe* fg_pipe);
 static void insert_bg_job(struct pipe *pi);
 static void remove_bg_job(struct pipe *pi);
 #endif
 /*     local variable support */
 static char **make_list_in(char **inp, char *name);
 static char *insert_var_value(char *inp);
-static char *insert_var_value_sub(char *inp, int tag_subst);
+static char *insert_var_value_sub(char *inp, 정수 tag_subst);
 
 #ifndef __U_BOOT__
 /* Table of built-in functions.  They can be forked or not, depending on
@@ -525,224 +525,224 @@ static struct built_in_command bltins[] = {
 
 static const char *set_cwd(void)
 {
-	if(cwd==unknown)
+	만약(cwd==unknown)
 		cwd = NULL;     /* xgetcwd(arg) called free(arg) */
 	cwd = xgetcwd((char *)cwd);
-	if (!cwd)
+	만약 (!cwd)
 		cwd = unknown;
-	return cwd;
+	반환 cwd;
 }
 
 /* built-in 'eval' handler */
-static int builtin_eval(struct child_prog *child)
+static 정수 builtin_eval(struct child_prog *child)
 {
 	char *str = NULL;
-	int rcode = EXIT_SUCCESS;
+	정수 rcode = EXIT_SUCCESS;
 
-	if (child->argv[1]) {
+	만약 (child->argv[1]) {
 		str = make_string(child->argv + 1);
 		parse_string_outer(str, FLAG_EXIT_FROM_LOOP |
 					FLAG_PARSE_SEMICOLON);
 		free(str);
 		rcode = last_return_code;
 	}
-	return rcode;
+	반환 rcode;
 }
 
 /* built-in 'cd <path>' handler */
-static int builtin_cd(struct child_prog *child)
+static 정수 builtin_cd(struct child_prog *child)
 {
 	char *newdir;
-	if (child->argv[1] == NULL)
+	만약 (child->argv[1] == NULL)
 		newdir = env_get("HOME");
-	else
+	아니면
 		newdir = child->argv[1];
-	if (chdir(newdir)) {
+	만약 (chdir(newdir)) {
 		printf("cd: %s: %s\n", newdir, strerror(errno));
-		return EXIT_FAILURE;
+		반환 EXIT_FAILURE;
 	}
 	set_cwd();
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'env' handler */
-static int builtin_env(struct child_prog *dummy)
+static 정수 builtin_env(struct child_prog *dummy)
 {
 	char **e = environ;
-	if (e == NULL) return EXIT_FAILURE;
-	for (; *e; e++) {
+	만약 (e == NULL) 반환 EXIT_FAILURE;
+	위해 (; *e; e++) {
 		puts(*e);
 	}
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'exec' handler */
-static int builtin_exec(struct child_prog *child)
+static 정수 builtin_exec(struct child_prog *child)
 {
-	if (child->argv[1] == NULL)
-		return EXIT_SUCCESS;   /* Really? */
+	만약 (child->argv[1] == NULL)
+		반환 EXIT_SUCCESS;   /* Really? */
 	child->argv++;
 	pseudo_exec(child);
 	/* never returns */
 }
 
 /* built-in 'exit' handler */
-static int builtin_exit(struct child_prog *child)
+static 정수 builtin_exit(struct child_prog *child)
 {
-	if (child->argv[1] == NULL)
+	만약 (child->argv[1] == NULL)
 		exit(last_return_code);
 	exit (atoi(child->argv[1]));
 }
 
 /* built-in 'export VAR=value' handler */
-static int builtin_export(struct child_prog *child)
+static 정수 builtin_export(struct child_prog *child)
 {
-	int res = 0;
+	정수 res = 0;
 	char *name = child->argv[1];
 
-	if (name == NULL) {
-		return (builtin_env(child));
+	만약 (name == NULL) {
+		반환 (builtin_env(child));
 	}
 
 	name = strdup(name);
 
-	if(name) {
+	만약(name) {
 		char *value = strchr(name, '=');
 
-		if (!value) {
+		만약 (!value) {
 			char *tmp;
 			/* They are exporting something without an =VALUE */
 
 			value = get_local_var(name);
-			if (value) {
+			만약 (value) {
 				size_t ln = strlen(name);
 
 				tmp = realloc(name, ln+strlen(value)+2);
-				if(tmp==NULL)
+				만약(tmp==NULL)
 					res = -1;
-				else {
+				아니면 {
 					sprintf(tmp+ln, "=%s", value);
 					name = tmp;
 				}
-			} else {
+			} 아니면 {
 				/* bash does not return an error when trying to export
 				 * an undefined variable.  Do likewise. */
 				res = 1;
 			}
 		}
 	}
-	if (res<0)
+	만약 (res<0)
 		perror_msg("export");
-	else if(res==0)
+	아니면 만약(res==0)
 		res = set_local_var(name, 1);
-	else
+	아니면
 		res = 0;
 	free(name);
-	return res;
+	반환 res;
 }
 
 /* built-in 'fg' and 'bg' handler */
-static int builtin_fg_bg(struct child_prog *child)
+static 정수 builtin_fg_bg(struct child_prog *child)
 {
-	int i, jobnum;
+	정수 i, jobnum;
 	struct pipe *pi=NULL;
 
-	if (!interactive)
-		return EXIT_FAILURE;
+	만약 (!interactive)
+		반환 EXIT_FAILURE;
 	/* If they gave us no args, assume they want the last backgrounded task */
-	if (!child->argv[1]) {
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == last_jobid) {
+	만약 (!child->argv[1]) {
+		위해 (pi = job_list; pi; pi = pi->next) {
+			만약 (pi->jobid == last_jobid) {
 				break;
 			}
 		}
-		if (!pi) {
+		만약 (!pi) {
 			error_msg("%s: no current job", child->argv[0]);
-			return EXIT_FAILURE;
+			반환 EXIT_FAILURE;
 		}
-	} else {
-		if (sscanf(child->argv[1], "%%%d", &jobnum) != 1) {
+	} 아니면 {
+		만약 (sscanf(child->argv[1], "%%%d", &jobnum) != 1) {
 			error_msg("%s: bad argument '%s'", child->argv[0], child->argv[1]);
-			return EXIT_FAILURE;
+			반환 EXIT_FAILURE;
 		}
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == jobnum) {
+		위해 (pi = job_list; pi; pi = pi->next) {
+			만약 (pi->jobid == jobnum) {
 				break;
 			}
 		}
-		if (!pi) {
+		만약 (!pi) {
 			error_msg("%s: %d: no such job", child->argv[0], jobnum);
-			return EXIT_FAILURE;
+			반환 EXIT_FAILURE;
 		}
 	}
 
-	if (*child->argv[0] == 'f') {
+	만약 (*child->argv[0] == 'f') {
 		/* Put the job into the foreground.  */
 		tcsetpgrp(shell_terminal, pi->pgrp);
 	}
 
 	/* Restart the processes in the job */
-	for (i = 0; i < pi->num_progs; i++)
+	위해 (i = 0; i < pi->num_progs; i++)
 		pi->progs[i].is_stopped = 0;
 
-	if ( (i=kill(- pi->pgrp, SIGCONT)) < 0) {
-		if (i == ESRCH) {
+	만약 ( (i=kill(- pi->pgrp, SIGCONT)) < 0) {
+		만약 (i == ESRCH) {
 			remove_bg_job(pi);
-		} else {
+		} 아니면 {
 			perror_msg("kill (SIGCONT)");
 		}
 	}
 
 	pi->stopped_progs = 0;
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'help' handler */
-static int builtin_help(struct child_prog *dummy)
+static 정수 builtin_help(struct child_prog *dummy)
 {
 	struct built_in_command *x;
 
 	printf("\nBuilt-in commands:\n");
 	printf("-------------------\n");
-	for (x = bltins; x->cmd; x++) {
-		if (x->descr==NULL)
+	위해 (x = bltins; x->cmd; x++) {
+		만약 (x->descr==NULL)
 			continue;
 		printf("%s\t%s\n", x->cmd, x->descr);
 	}
 	printf("\n\n");
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'jobs' handler */
-static int builtin_jobs(struct child_prog *child)
+static 정수 builtin_jobs(struct child_prog *child)
 {
 	struct pipe *job;
 	char *status_string;
 
-	for (job = job_list; job; job = job->next) {
-		if (job->running_progs == job->stopped_progs)
+	위해 (job = job_list; job; job = job->next) {
+		만약 (job->running_progs == job->stopped_progs)
 			status_string = "Stopped";
-		else
+		아니면
 			status_string = "Running";
 
 		printf(JOB_STATUS_FORMAT, job->jobid, status_string, job->text);
 	}
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'pwd' handler */
-static int builtin_pwd(struct child_prog *dummy)
+static 정수 builtin_pwd(struct child_prog *dummy)
 {
 	puts(set_cwd());
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'read VAR' handler */
-static int builtin_read(struct child_prog *child)
+static 정수 builtin_read(struct child_prog *child)
 {
-	int res;
+	정수 res;
 
-	if (child->argv[1]) {
+	만약 (child->argv[1]) {
 		char string[BUFSIZ];
 		char *var = 0;
 
@@ -751,67 +751,67 @@ static int builtin_read(struct child_prog *child)
 		fgets(string, sizeof(string), stdin);
 		chomp(string);
 		var = malloc(strlen(child->argv[1])+strlen(string)+2);
-		if(var) {
+		만약(var) {
 			sprintf(var, "%s=%s", child->argv[1], string);
 			res = set_local_var(var, 0);
-		} else
+		} 아니면
 			res = -1;
-		if (res)
+		만약 (res)
 			fprintf(stderr, "read: %m\n");
 		free(var);      /* So not move up to avoid breaking errno */
-		return res;
-	} else {
-		do res=getchar(); while(res!='\n' && res!=EOF);
-		return 0;
+		반환 res;
+	} 아니면 {
+		do res=getchar(); 동안(res!='\n' && res!=EOF);
+		반환 0;
 	}
 }
 
 /* built-in 'set VAR=value' handler */
-static int builtin_set(struct child_prog *child)
+static 정수 builtin_set(struct child_prog *child)
 {
 	char *temp = child->argv[1];
 	struct variables *e;
 
-	if (temp == NULL)
-		for(e = top_vars; e; e=e->next)
+	만약 (temp == NULL)
+		위해(e = top_vars; e; e=e->next)
 			printf("%s=%s\n", e->name, e->value);
-	else
+	아니면
 		set_local_var(temp, 0);
 
-		return EXIT_SUCCESS;
+		반환 EXIT_SUCCESS;
 }
 
 /* Built-in 'shift' handler */
-static int builtin_shift(struct child_prog *child)
+static 정수 builtin_shift(struct child_prog *child)
 {
-	int n=1;
-	if (child->argv[1]) {
+	정수 n=1;
+	만약 (child->argv[1]) {
 		n=atoi(child->argv[1]);
 	}
-	if (n>=0 && n<global_argc) {
+	만약 (n>=0 && n<global_argc) {
 		/* XXX This probably breaks $0 */
 		global_argc -= n;
 		global_argv += n;
-		return EXIT_SUCCESS;
-	} else {
-		return EXIT_FAILURE;
+		반환 EXIT_SUCCESS;
+	} 아니면 {
+		반환 EXIT_FAILURE;
 	}
 }
 
 /* Built-in '.' handler (read-in and execute commands from file) */
-static int builtin_source(struct child_prog *child)
+static 정수 builtin_source(struct child_prog *child)
 {
 	FILE *input;
-	int status;
+	정수 status;
 
-	if (child->argv[1] == NULL)
-		return EXIT_FAILURE;
+	만약 (child->argv[1] == NULL)
+		반환 EXIT_FAILURE;
 
 	/* XXX search through $PATH is missing */
 	input = fopen(child->argv[1], "r");
-	if (!input) {
+	만약 (!input) {
 		error_msg("Couldn't open file '%s'", child->argv[1]);
-		return EXIT_FAILURE;
+		반환 EXIT_FAILURE;
 	}
 
 	/* Now run the file */
@@ -822,72 +822,72 @@ static int builtin_source(struct child_prog *child)
 	status = parse_file_outer(input);
 	mark_closed(fileno(input));
 	fclose(input);
-	return (status);
+	반환 (status);
 }
 
-static int builtin_umask(struct child_prog *child)
+static 정수 builtin_umask(struct child_prog *child)
 {
 	mode_t new_umask;
 	const char *arg = child->argv[1];
 	char *end;
-	if (arg) {
+	만약 (arg) {
 		new_umask=strtoul(arg, &end, 8);
-		if (*end!='\0' || end == arg) {
-			return EXIT_FAILURE;
+		만약 (*end!='\0' || end == arg) {
+			반환 EXIT_FAILURE;
 		}
-	} else {
-		printf("%.3o\n", (unsigned int) (new_umask=umask(0)));
+	} 아니면 {
+		printf("%.3o\n", (unsigned 정수) (new_umask=umask(0)));
 	}
 	umask(new_umask);
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
 /* built-in 'unset VAR' handler */
-static int builtin_unset(struct child_prog *child)
+static 정수 builtin_unset(struct child_prog *child)
 {
 	/* bash returned already true */
 	unset_local_var(child->argv[1]);
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
 
-static int builtin_not_written(struct child_prog *child)
+static 정수 builtin_not_written(struct child_prog *child)
 {
 	printf("builtin_%s not written\n",child->argv[0]);
-	return EXIT_FAILURE;
+	반환 EXIT_FAILURE;
 }
 #endif
 
-static int b_check_space(o_string *o, int len)
+static 정수 b_check_space(o_string *o, 정수 len)
 {
 	/* It would be easy to drop a more restrictive policy
 	 * in here, such as setting a maximum string length */
-	if (o->length + len > o->maxlen) {
+	만약 (o->length + len > o->maxlen) {
 		char *old_data = o->data;
 		/* assert (data == NULL || o->maxlen != 0); */
 		o->maxlen += max(2*len, B_CHUNK);
 		o->data = realloc(o->data, 1 + o->maxlen);
-		if (o->data == NULL) {
+		만약 (o->data == NULL) {
 			free(old_data);
 		}
 	}
-	return o->data == NULL;
+	반환 o->data == NULL;
 }
 
-static int b_addchr(o_string *o, int ch)
+static 정수 b_addchr(o_string *o, 정수 ch)
 {
 	debug_printf("b_addchr: %c %d %p\n", ch, o->length, o);
-	if (b_check_space(o, 1)) return B_NOSPAC;
+	만약 (b_check_space(o, 1)) 반환 B_NOSPAC;
 	o->data[o->length] = ch;
 	o->length++;
 	o->data[o->length] = '\0';
-	return 0;
+	반환 0;
 }
 
 static void b_reset(o_string *o)
 {
 	o->length = 0;
 	o->nonnull = 0;
-	if (o->data != NULL) *o->data = '\0';
+	만약 (o->data != NULL) *o->data = '\0';
 }
 
 static void b_free(o_string *o)
@@ -901,37 +901,37 @@ static void b_free(o_string *o)
 /* My analysis of quoting semantics tells me that state information
  * is associated with a destination, not a source.
  */
-static int b_addqchr(o_string *o, int ch, int quote)
+static 정수 b_addqchr(o_string *o, 정수 ch, 정수 quote)
 {
-	if (quote && strchr("*?[\\",ch)) {
-		int rc;
+	만약 (quote && strchr("*?[\\",ch)) {
+		정수 rc;
 		rc = b_addchr(o, '\\');
-		if (rc) return rc;
+		만약 (rc) 반환 rc;
 	}
-	return b_addchr(o, ch);
+	반환 b_addchr(o, ch);
 }
 
 #ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i)
+static 정수 b_adduint(o_string *o, unsigned 정수 i)
 {
-	int r;
+	정수 r;
 	char *p = simple_itoa(i);
 	/* no escape checking necessary */
-	do r=b_addchr(o, *p++); while (r==0 && *p);
-	return r;
+	do r=b_addchr(o, *p++); 동안 (r==0 && *p);
+	반환 r;
 }
 #endif
 
-static int static_get(struct in_str *i)
+static 정수 static_get(struct in_str *i)
 {
-	int ch = *i->p++;
-	if (ch=='\0') return EOF;
-	return ch;
+	정수 ch = *i->p++;
+	만약 (ch=='\0') 반환 EOF;
+	반환 ch;
 }
 
-static int static_peek(struct in_str *i)
+static 정수 static_peek(struct in_str *i)
 {
-	return *i->p;
+	반환 *i->p;
 }
 
 #ifndef __U_BOOT__
@@ -939,27 +939,27 @@ static inline void cmdedit_set_initial_prompt(void)
 {
 #ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
 	PS1 = NULL;
-#else
+#아니면
 	PS1 = env_get("PS1");
-	if(PS1==0)
+	만약(PS1==0)
 		PS1 = "\\w \\$ ";
 #endif
 }
 
-static inline void setup_prompt_string(int promptmode, char **prompt_str)
+static inline void setup_prompt_string(정수 promptmode, char **prompt_str)
 {
 	debug_printf("setup_prompt_string %d ",promptmode);
 #ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
 	/* Set up the prompt */
-	if (promptmode == 1) {
+	만약 (promptmode == 1) {
 		free(PS1);
 		PS1=xmalloc(strlen(cwd)+4);
 		sprintf(PS1, "%s %s", cwd, ( geteuid() != 0 ) ?  "$ ":"# ");
 		*prompt_str = PS1;
-	} else {
+	} 아니면 {
 		*prompt_str = PS2;
 	}
-#else
+#아니면
 	*prompt_str = (promptmode==1)? PS1 : PS2;
 #endif
 	debug_printf("result %s\n",*prompt_str);
@@ -967,26 +967,26 @@ static inline void setup_prompt_string(int promptmode, char **prompt_str)
 #endif
 
 #ifdef __U_BOOT__
-static int uboot_cli_readline(struct in_str *i)
+static 정수 uboot_cli_readline(struct in_str *i)
 {
 	char *prompt;
 	char __maybe_unused *ps_prompt = NULL;
 
-	if (i->promptmode == 1)
+	만약 (i->promptmode == 1)
 		prompt = CONFIG_SYS_PROMPT;
-	else
+	아니면
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
 
 #ifdef CONFIG_CMDLINE_PS_SUPPORT
-	if (i->promptmode == 1)
+	만약 (i->promptmode == 1)
 		ps_prompt = env_get("PS1");
-	else
+	아니면
 		ps_prompt = env_get("PS2");
-	if (ps_prompt)
+	만약 (ps_prompt)
 		prompt = ps_prompt;
 #endif
 
-	return cli_readline(prompt);
+	반환 cli_readline(prompt);
 }
 #endif
 
@@ -1005,7 +1005,7 @@ static void get_user_input(struct in_str *i)
 	 ** child processes (rob@sysgo.de)
 	 */
 	cmdedit_read_input(prompt_str, the_command);
-#else
+#아니면
 	fputs(prompt_str, stdout);
 	fflush(stdout);
 	the_command[0]=fgetc(i->file);
@@ -1013,8 +1013,8 @@ static void get_user_input(struct in_str *i)
 #endif
 	fflush(stdout);
 	i->p = the_command;
-#else
-	int n;
+#아니면
+	정수 n;
 	static char the_command[CONFIG_SYS_CBSIZE + 1];
 
 	bootretry_reset_cmd_timeout();
@@ -1022,57 +1022,57 @@ static void get_user_input(struct in_str *i)
 	n = uboot_cli_readline(i);
 
 #ifdef CONFIG_BOOT_RETRY_TIME
-	if (n == -2) {
+	만약 (n == -2) {
 	  puts("\nTimeout waiting for command\n");
 #  ifdef CONFIG_RESET_TO_RETRY
 	  do_reset(NULL, 0, 0, NULL);
 #  elif IS_ENABLED(CONFIG_RETRY_BOOTCMD)
 	strcpy(console_buffer, "run bootcmd\n");
-# else
+# 아니면
 #	error "This only works with CONFIG_RESET_TO_RETRY or CONFIG_BOOT_RETRY_COMMAND enabled"
 #  endif
 	}
 #endif
-	if (n == -1 ) {
+	만약 (n == -1 ) {
 		flag_repeat = 0;
 		i->__promptme = 0;
 	}
 	n = strlen(console_buffer);
 	console_buffer[n] = '\n';
 	console_buffer[n+1]= '\0';
-	if (had_ctrlc()) flag_repeat = 0;
+	만약 (had_ctrlc()) flag_repeat = 0;
 	clear_ctrlc();
 	do_repeat = 0;
-	if (i->promptmode == 1) {
-		if (console_buffer[0] == '\n'&& flag_repeat == 0) {
+	만약 (i->promptmode == 1) {
+		만약 (console_buffer[0] == '\n'&& flag_repeat == 0) {
 			strcpy(the_command,console_buffer);
 		}
-		else {
-			if (console_buffer[0] != '\n') {
+		아니면 {
+			만약 (console_buffer[0] != '\n') {
 				strcpy(the_command,console_buffer);
 				flag_repeat = 1;
 			}
-			else {
+			아니면 {
 				do_repeat = 1;
 			}
 		}
 		i->p = the_command;
 	}
-	else {
-		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer)
+	아니면 {
+		만약 (console_buffer[0] != '\n') {
+			만약 (strlen(the_command) + strlen(console_buffer)
 			    < CONFIG_SYS_CBSIZE) {
 				n = strlen(the_command);
 				the_command[n-1] = ' ';
 				strcpy(&the_command[n],console_buffer);
 			}
-			else {
+			아니면 {
 				the_command[0] = '\n';
 				the_command[1] = '\0';
 				flag_repeat = 0;
 			}
 		}
-		if (i->__promptme == 0) {
+		만약 (i->__promptme == 0) {
 			the_command[0] = '\n';
 			the_command[1] = '\0';
 		}
@@ -1083,22 +1083,22 @@ static void get_user_input(struct in_str *i)
 
 /* This is the magic location that prints prompts
  * and gets data back from the user */
-static int file_get(struct in_str *i)
+static 정수 file_get(struct in_str *i)
 {
-	int ch;
+	정수 ch;
 
 	ch = 0;
 	/* If there is data waiting, eat it up */
-	if (i->p && *i->p) {
+	만약 (i->p && *i->p) {
 		ch = *i->p++;
-	} else {
+	} 아니면 {
 		/* need to double check i->file because we might be doing something
 		 * more complicated by now, like sourcing or substituting. */
 #ifndef __U_BOOT__
-		if (i->__promptme && interactive && i->file == stdin) {
-			while(! i->p || (interactive && strlen(i->p)==0) ) {
-#else
-			while(! i->p  || strlen(i->p)==0 ) {
+		만약 (i->__promptme && interactive && i->file == stdin) {
+			동안(! i->p || (interactive && strlen(i->p)==0) ) {
+#아니면
+			동안(! i->p  || strlen(i->p)==0 ) {
 #endif
 				get_user_input(i);
 			}
@@ -1106,11 +1106,11 @@ static int file_get(struct in_str *i)
 #ifndef __U_BOOT__
 			i->__promptme = 0;
 #endif
-			if (i->p && *i->p) {
+			만약 (i->p && *i->p) {
 				ch = *i->p++;
 			}
 #ifndef __U_BOOT__
-		} else {
+		} 아니면 {
 			ch = fgetc(i->file);
 		}
 
@@ -1118,34 +1118,34 @@ static int file_get(struct in_str *i)
 		debug_printf("b_getch: got a %d\n", ch);
 	}
 #ifndef __U_BOOT__
-	if (ch == '\n') i->__promptme=1;
+	만약 (ch == '\n') i->__promptme=1;
 #endif
-	return ch;
+	반환 ch;
 }
 
 /* All the callers guarantee this routine will never be
  * used right after a newline, so prompting is not needed.
  */
-static int file_peek(struct in_str *i)
+static 정수 file_peek(struct in_str *i)
 {
 #ifndef __U_BOOT__
-	if (i->p && *i->p) {
+	만약 (i->p && *i->p) {
 #endif
-		return *i->p;
+		반환 *i->p;
 #ifndef __U_BOOT__
-	} else {
+	} 아니면 {
 		i->peek_buf[0] = fgetc(i->file);
 		i->peek_buf[1] = '\0';
 		i->p = i->peek_buf;
 		debug_printf("b_peek: got a %d\n", *i->p);
-		return *i->p;
+		반환 *i->p;
 	}
 #endif
 }
 
 #ifndef __U_BOOT__
 static void setup_file_in_str(struct in_str *i, FILE *f)
-#else
+#아니면
 static void setup_file_in_str(struct in_str *i)
 #endif
 {
@@ -1169,7 +1169,7 @@ static void setup_string_in_str(struct in_str *i, const char *s)
 }
 
 #ifndef __U_BOOT__
-static void mark_open(int fd)
+static void mark_open(정수 fd)
 {
 	struct close_me *new = xmalloc(sizeof(struct close_me));
 	new->fd = fd;
@@ -1177,10 +1177,10 @@ static void mark_open(int fd)
 	close_me_head = new;
 }
 
-static void mark_closed(int fd)
+static void mark_closed(정수 fd)
 {
 	struct close_me *tmp;
-	if (close_me_head == NULL || close_me_head->fd != fd)
+	만약 (close_me_head == NULL || close_me_head->fd != fd)
 		error_msg_and_die("corrupt close_me");
 	tmp = close_me_head;
 	close_me_head = close_me_head->next;
@@ -1190,7 +1190,7 @@ static void mark_closed(int fd)
 static void close_all(void)
 {
 	struct close_me *c;
-	for (c=close_me_head; c; c=c->next) {
+	위해 (c=close_me_head; c; c=c->next) {
 		close(c->fd);
 	}
 	close_me_head = NULL;
@@ -1198,51 +1198,51 @@ static void close_all(void)
 
 /* squirrel != NULL means we squirrel away copies of stdin, stdout,
  * and stderr if they are redirected. */
-static int setup_redirects(struct child_prog *prog, int squirrel[])
+static 정수 setup_redirects(struct child_prog *prog, 정수 squirrel[])
 {
-	int openfd, mode;
+	정수 openfd, mode;
 	struct redir_struct *redir;
 
-	for (redir=prog->redirects; redir; redir=redir->next) {
-		if (redir->dup == -1 && redir->word.gl_pathv == NULL) {
+	위해 (redir=prog->redirects; redir; redir=redir->next) {
+		만약 (redir->dup == -1 && redir->word.gl_pathv == NULL) {
 			/* something went wrong in the parse.  Pretend it didn't happen */
 			continue;
 		}
-		if (redir->dup == -1) {
+		만약 (redir->dup == -1) {
 			mode=redir_table[redir->type].mode;
 			openfd = open(redir->word.gl_pathv[0], mode, 0666);
-			if (openfd < 0) {
+			만약 (openfd < 0) {
 			/* this could get lost if stderr has been redirected, but
 			   bash and ash both lose it as well (though zsh doesn't!) */
 				perror_msg("error opening %s", redir->word.gl_pathv[0]);
-				return 1;
+				반환 1;
 			}
-		} else {
+		} 아니면 {
 			openfd = redir->dup;
 		}
 
-		if (openfd != redir->fd) {
-			if (squirrel && redir->fd < 3) {
+		만약 (openfd != redir->fd) {
+			만약 (squirrel && redir->fd < 3) {
 				squirrel[redir->fd] = dup(redir->fd);
 			}
-			if (openfd == -3) {
+			만약 (openfd == -3) {
 				close(openfd);
-			} else {
+			} 아니면 {
 				dup2(openfd, redir->fd);
-				if (redir->dup == -1)
+				만약 (redir->dup == -1)
 					close (openfd);
 			}
 		}
 	}
-	return 0;
+	반환 0;
 }
 
-static void restore_redirects(int squirrel[])
+static void restore_redirects(정수 squirrel[])
 {
-	int i, fd;
-	for (i=0; i<3; i++) {
+	정수 i, fd;
+	위해 (i=0; i<3; i++) {
 		fd = squirrel[i];
-		if (fd != -1) {
+		만약 (fd != -1) {
 			/* No error checking.  I sure wouldn't know what
 			 * to do with an error if I found one! */
 			dup2(fd, i);
@@ -1257,15 +1257,15 @@ static void restore_redirects(int squirrel[])
  * in particular stdin handling.  Not sure why? */
 static void pseudo_exec(struct child_prog *child)
 {
-	int i, rcode;
+	정수 i, rcode;
 	char *p;
 	struct built_in_command *x;
-	if (child->argv) {
-		for (i=0; is_assignment(child->argv[i]); i++) {
+	만약 (child->argv) {
+		위해 (i=0; is_assignment(child->argv[i]); i++) {
 			debug_printf("pid %d environment modification: %s\n",getpid(),child->argv[i]);
 			p = insert_var_value(child->argv[i]);
 			putenv(strdup(p));
-			if (p != child->argv[i]) free(p);
+			만약 (p != child->argv[i]) free(p);
 		}
 		child->argv+=i;  /* XXX this hack isn't so horrible, since we are about
 					to exit, and therefore don't need to keep data
@@ -1273,7 +1273,7 @@ static void pseudo_exec(struct child_prog *child)
 		/* If a variable is assigned in a forest, and nobody listens,
 		 * was it ever really set?
 		 */
-		if (child->argv[0] == NULL) {
+		만약 (child->argv[0] == NULL) {
 			_exit(EXIT_SUCCESS);
 		}
 
@@ -1283,8 +1283,8 @@ static void pseudo_exec(struct child_prog *child)
 		 * easier to waste a few CPU cycles than it is to figure out
 		 * if this is one of those cases.
 		 */
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[0], x->cmd) == 0 ) {
+		위해 (x = bltins; x->cmd; x++) {
+			만약 (strcmp(child->argv[0], x->cmd) == 0 ) {
 				debug_printf("builtin exec %s\n", child->argv[0]);
 				rcode = x->function(child);
 				fflush(stdout);
@@ -1303,7 +1303,7 @@ static void pseudo_exec(struct child_prog *child)
 		 * to find ourself... */
 #ifdef CONFIG_FEATURE_SH_STANDALONE_SHELL
 		{
-			int argc_l;
+			정수 argc_l;
 			char** argv_l=child->argv;
 			char *name = child->argv[0];
 
@@ -1320,7 +1320,7 @@ static void pseudo_exec(struct child_prog *child)
 			name = get_last_path_component(name);
 #endif
 			/* Count argc for use in a second... */
-			for(argc_l=0;*argv_l!=NULL; argv_l++, argc_l++);
+			위해(argc_l=0;*argv_l!=NULL; argv_l++, argc_l++);
 			optind = 1;
 			debug_printf("running applet %s\n", name);
 			run_applet_by_name(name, argc_l, child->argv);
@@ -1330,14 +1330,14 @@ static void pseudo_exec(struct child_prog *child)
 		execvp(child->argv[0],child->argv);
 		perror_msg("couldn't exec: %s",child->argv[0]);
 		_exit(1);
-	} else if (child->group) {
+	} 아니면 만약 (child->group) {
 		debug_printf("runtime nesting to group\n");
 		interactive=0;    /* crucial!!!! */
 		rcode = run_list_real(child->group);
 		/* OK to leak memory by not calling free_pipe_list,
 		 * since this process is about to exit */
 		_exit(rcode);
-	} else {
+	} 아니면 {
 		/* Can happen.  See what bash does with ">foo" by itself. */
 		debug_printf("trying to pseudo_exec null command\n");
 		_exit(EXIT_SUCCESS);
@@ -1350,15 +1350,15 @@ static void insert_bg_job(struct pipe *pi)
 
 	/* Linear search for the ID of the job to use */
 	pi->jobid = 1;
-	for (thejob = job_list; thejob; thejob = thejob->next)
-		if (thejob->jobid >= pi->jobid)
+	위해 (thejob = job_list; thejob; thejob = thejob->next)
+		만약 (thejob->jobid >= pi->jobid)
 			pi->jobid = thejob->jobid + 1;
 
 	/* add thejob to the list of running jobs */
-	if (!job_list) {
+	만약 (!job_list) {
 		thejob = job_list = xmalloc(sizeof(*thejob));
-	} else {
-		for (thejob = job_list; thejob->next; thejob = thejob->next) /* nothing */;
+	} 아니면 {
+		위해 (thejob = job_list; thejob->next; thejob = thejob->next) /* nothing */;
 		thejob->next = xmalloc(sizeof(*thejob));
 		thejob = thejob->next;
 	}
@@ -1374,7 +1374,7 @@ static void insert_bg_job(struct pipe *pi)
 	{
 		char *bar=thejob->text;
 		char **foo=pi->progs[0].argv;
-		while(foo && *foo) {
+		동안(foo && *foo) {
 			bar += sprintf(bar, "%s ", *foo++);
 		}
 	}
@@ -1391,17 +1391,17 @@ static void remove_bg_job(struct pipe *pi)
 {
 	struct pipe *prev_pipe;
 
-	if (pi == job_list) {
+	만약 (pi == job_list) {
 		job_list = pi->next;
-	} else {
+	} 아니면 {
 		prev_pipe = job_list;
-		while (prev_pipe->next != pi)
+		동안 (prev_pipe->next != pi)
 			prev_pipe = prev_pipe->next;
 		prev_pipe->next = pi->next;
 	}
-	if (job_list)
+	만약 (job_list)
 		last_jobid = job_list->jobid;
-	else
+	아니면
 		last_jobid = 0;
 
 	pi->stopped_progs = 0;
@@ -1411,78 +1411,78 @@ static void remove_bg_job(struct pipe *pi)
 
 /* Checks to see if any processes have exited -- if they
    have, figure out why and see if a job has completed */
-static int checkjobs(struct pipe* fg_pipe)
+static 정수 checkjobs(struct pipe* fg_pipe)
 {
-	int attributes;
-	int status;
-	int prognum = 0;
+	정수 attributes;
+	정수 status;
+	정수 prognum = 0;
 	struct pipe *pi;
 	pid_t childpid;
 
 	attributes = WUNTRACED;
-	if (fg_pipe==NULL) {
+	만약 (fg_pipe==NULL) {
 		attributes |= WNOHANG;
 	}
 
-	while ((childpid = waitpid(-1, &status, attributes)) > 0) {
-		if (fg_pipe) {
-			int i, rcode = 0;
-			for (i=0; i < fg_pipe->num_progs; i++) {
-				if (fg_pipe->progs[i].pid == childpid) {
-					if (i==fg_pipe->num_progs-1)
+	동안 ((childpid = waitpid(-1, &status, attributes)) > 0) {
+		만약 (fg_pipe) {
+			정수 i, rcode = 0;
+			위해 (i=0; i < fg_pipe->num_progs; i++) {
+				만약 (fg_pipe->progs[i].pid == childpid) {
+					만약 (i==fg_pipe->num_progs-1)
 						rcode=WEXITSTATUS(status);
 					(fg_pipe->num_progs)--;
-					return(rcode);
+					반환(rcode);
 				}
 			}
 		}
 
-		for (pi = job_list; pi; pi = pi->next) {
+		위해 (pi = job_list; pi; pi = pi->next) {
 			prognum = 0;
-			while (prognum < pi->num_progs && pi->progs[prognum].pid != childpid) {
+			동안 (prognum < pi->num_progs && pi->progs[prognum].pid != childpid) {
 				prognum++;
 			}
-			if (prognum < pi->num_progs)
+			만약 (prognum < pi->num_progs)
 				break;
 		}
 
-		if(pi==NULL) {
+		만약(pi==NULL) {
 			debug_printf("checkjobs: pid %d was not in our list!\n", childpid);
 			continue;
 		}
 
-		if (WIFEXITED(status) || WIFSIGNALED(status)) {
+		만약 (WIFEXITED(status) || WIFSIGNALED(status)) {
 			/* child exited */
 			pi->running_progs--;
 			pi->progs[prognum].pid = 0;
 
-			if (!pi->running_progs) {
+			만약 (!pi->running_progs) {
 				printf(JOB_STATUS_FORMAT, pi->jobid, "Done", pi->text);
 				remove_bg_job(pi);
 			}
-		} else {
+		} 아니면 {
 			/* child stopped */
 			pi->stopped_progs++;
 			pi->progs[prognum].is_stopped = 1;
 
-#if 0
+#만약 0
 			/* Printing this stuff is a pain, since it tends to
 			 * overwrite the prompt an inconveinient moments.  So
 			 * don't do that.  */
-			if (pi->stopped_progs == pi->num_progs) {
+			만약 (pi->stopped_progs == pi->num_progs) {
 				printf("\n"JOB_STATUS_FORMAT, pi->jobid, "Stopped", pi->text);
 			}
 #endif
 		}
 	}
 
-	if (childpid == -1 && errno != ECHILD)
+	만약 (childpid == -1 && errno != ECHILD)
 		perror_msg("waitpid");
 
 	/* move the shell to the foreground */
 	/*if (interactive && tcsetpgrp(shell_terminal, getpgid(0))) */
 	/*	perror_msg("tcsetpgrp-2"); */
-	return -1;
+	반환 -1;
 }
 
 /* Figure out our controlling tty, checking in order stderr,
@@ -1490,23 +1490,23 @@ static int checkjobs(struct pipe* fg_pipe)
  * we belong to the foreground process group associated with
  * that tty.  The value of shell_terminal is needed in order to call
  * tcsetpgrp(shell_terminal, ...); */
-void controlling_tty(int check_pgrp)
+void controlling_tty(정수 check_pgrp)
 {
 	pid_t curpgrp;
 
-	if ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
+	만약 ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 0)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 1)) < 0)
 		goto shell_terminal_error;
 
-	if (check_pgrp && curpgrp != getpgid(0))
+	만약 (check_pgrp && curpgrp != getpgid(0))
 		goto shell_terminal_error;
 
-	return;
+	반환;
 
 shell_terminal_error:
 		shell_terminal = -1;
-		return;
+		반환;
 }
 #endif
 
@@ -1526,28 +1526,28 @@ shell_terminal_error:
  * now has its stdout directed to the input of the appropriate pipe,
  * so this routine is noticeably simpler.
  */
-static int run_pipe_real(struct pipe *pi)
+static 정수 run_pipe_real(struct pipe *pi)
 {
-	int i;
+	정수 i;
 #ifndef __U_BOOT__
-	int nextin, nextout;
-	int pipefds[2];				/* pipefds[0] is for reading */
+	정수 nextin, nextout;
+	정수 pipefds[2];				/* pipefds[0] is for reading */
 	struct child_prog *child;
 	struct built_in_command *x;
 	char *p;
-# if __GNUC__
+# 만약 __GNUC__
 	/* Avoid longjmp clobbering */
 	(void) &i;
 	(void) &nextin;
 	(void) &nextout;
 	(void) &child;
 # endif
-#else
-	int nextin;
-	int flag = do_repeat ? CMD_FLAG_REPEAT : 0;
+#아니면
+	정수 nextin;
+	정수 flag = do_repeat ? CMD_FLAG_REPEAT : 0;
 	struct child_prog *child;
 	char *p;
-# if __GNUC__
+# 만약 __GNUC__
 	/* Avoid longjmp clobbering */
 	(void) &i;
 	(void) &nextin;
@@ -1564,29 +1564,29 @@ static int run_pipe_real(struct pipe *pi)
 	 * Builtins within pipes have to fork anyway, and are handled in
 	 * pseudo_exec.  "echo foo | read bar" doesn't work on bash, either.
 	 */
-	if (pi->num_progs == 1) child = & (pi->progs[0]);
+	만약 (pi->num_progs == 1) child = & (pi->progs[0]);
 #ifndef __U_BOOT__
-	if (pi->num_progs == 1 && child->group && child->subshell == 0) {
-		int squirrel[] = {-1, -1, -1};
-		int rcode;
+	만약 (pi->num_progs == 1 && child->group && child->subshell == 0) {
+		정수 squirrel[] = {-1, -1, -1};
+		정수 rcode;
 		debug_printf("non-subshell grouping\n");
 		setup_redirects(child, squirrel);
 		/* XXX could we merge code with following builtin case,
 		 * by creating a pseudo builtin that calls run_list_real? */
 		rcode = run_list_real(child->group);
 		restore_redirects(squirrel);
-#else
-		if (pi->num_progs == 1 && child->group) {
-		int rcode;
+#아니면
+		만약 (pi->num_progs == 1 && child->group) {
+		정수 rcode;
 		debug_printf("non-subshell grouping\n");
 		rcode = run_list_real(child->group);
 #endif
-		return rcode;
-	} else if (pi->num_progs == 1 && pi->progs[0].argv != NULL) {
-		for (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
-		if (i!=0 && child->argv[i]==NULL) {
+		반환 rcode;
+	} 아니면 만약 (pi->num_progs == 1 && pi->progs[0].argv != NULL) {
+		위해 (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
+		만약 (i!=0 && child->argv[i]==NULL) {
 			/* assignments, but no command: set the local environment */
-			for (i=0; child->argv[i]!=NULL; i++) {
+			위해 (i=0; child->argv[i]!=NULL; i++) {
 
 				/* Ok, this case is tricky.  We have to decide if this is a
 				 * local variable, or an already exported variable.  If it is
@@ -1594,55 +1594,55 @@ static int run_pipe_real(struct pipe *pi)
 				 * not exported, we need only set this as a local variable.
 				 * This junk is all to decide whether or not to export this
 				 * variable. */
-				int export_me=0;
+				정수 export_me=0;
 				char *name, *value;
 				name = xstrdup(child->argv[i]);
 				debug_printf("Local environment set: %s\n", name);
 				value = strchr(name, '=');
-				if (value)
+				만약 (value)
 					*value=0;
 #ifndef __U_BOOT__
-				if ( get_local_var(name)) {
+				만약 ( get_local_var(name)) {
 					export_me=1;
 				}
 #endif
 				free(name);
 				p = insert_var_value(child->argv[i]);
 				set_local_var(p, export_me);
-				if (p != child->argv[i]) free(p);
+				만약 (p != child->argv[i]) free(p);
 			}
-			return EXIT_SUCCESS;   /* don't worry about errors in set_local_var() yet */
+			반환 EXIT_SUCCESS;   /* don't worry about errors in set_local_var() yet */
 		}
-		for (i = 0; is_assignment(child->argv[i]); i++) {
+		위해 (i = 0; is_assignment(child->argv[i]); i++) {
 			p = insert_var_value(child->argv[i]);
 #ifndef __U_BOOT__
 			putenv(strdup(p));
-#else
+#아니면
 			set_local_var(p, 0);
 #endif
-			if (p != child->argv[i]) {
+			만약 (p != child->argv[i]) {
 				child->sp--;
 				free(p);
 			}
 		}
-		if (child->sp) {
+		만약 (child->sp) {
 			char * str = NULL;
 
 			str = make_string(child->argv + i,
 					  child->argv_nonnull + i);
 			parse_string_outer(str, FLAG_EXIT_FROM_LOOP | FLAG_REPARSING);
 			free(str);
-			return last_return_code;
+			반환 last_return_code;
 		}
 #ifndef __U_BOOT__
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[i], x->cmd) == 0 ) {
-				int squirrel[] = {-1, -1, -1};
-				int rcode;
-				if (x->function == builtin_exec && child->argv[i+1]==NULL) {
+		위해 (x = bltins; x->cmd; x++) {
+			만약 (strcmp(child->argv[i], x->cmd) == 0 ) {
+				정수 squirrel[] = {-1, -1, -1};
+				정수 rcode;
+				만약 (x->function == builtin_exec && child->argv[i+1]==NULL) {
 					debug_printf("magic exec\n");
 					setup_redirects(child,NULL);
-					return EXIT_SUCCESS;
+					반환 EXIT_SUCCESS;
 				}
 				debug_printf("builtin inline %s\n", child->argv[0]);
 				/* XXX setup_redirects acts on file descriptors, not FILEs.
@@ -1657,38 +1657,38 @@ static int run_pipe_real(struct pipe *pi)
 				child->argv -= i;
 				restore_redirects(squirrel);
 			}
-			return rcode;
+			반환 rcode;
 		}
-#else
+#아니면
 		/* check ";", because ,example , argv consist from
 		 * "help;flinfo" must not execute
 		 */
-		if (strchr(child->argv[i], ';')) {
+		만약 (strchr(child->argv[i], ';')) {
 			printf("Unknown command '%s' - try 'help' or use "
 					"'run' command\n", child->argv[i]);
-			return -1;
+			반환 -1;
 		}
 		/* Process the command */
-		return cmd_process(flag, child->argc - i, child->argv + i,
+		반환 cmd_process(flag, child->argc - i, child->argv + i,
 				   &flag_repeat, NULL);
 #endif
 	}
 #ifndef __U_BOOT__
 
-	for (i = 0; i < pi->num_progs; i++) {
+	위해 (i = 0; i < pi->num_progs; i++) {
 		child = & (pi->progs[i]);
 
 		/* pipes are inserted between pairs of commands */
-		if ((i + 1) < pi->num_progs) {
-			if (pipe(pipefds)<0) perror_msg_and_die("pipe");
+		만약 ((i + 1) < pi->num_progs) {
+			만약 (pipe(pipefds)<0) perror_msg_and_die("pipe");
 			nextout = pipefds[1];
-		} else {
+		} 아니면 {
 			nextout=1;
 			pipefds[0] = -1;
 		}
 
 		/* XXX test for failed fork()? */
-		if (!(child->pid = fork())) {
+		만약 (!(child->pid = fork())) {
 			/* Set the handling for job control signals back to the default.  */
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
@@ -1700,15 +1700,15 @@ static int run_pipe_real(struct pipe *pi)
 
 			close_all();
 
-			if (nextin != 0) {
+			만약 (nextin != 0) {
 				dup2(nextin, 0);
 				close(nextin);
 			}
-			if (nextout != 1) {
+			만약 (nextout != 1) {
 				dup2(nextout, 1);
 				close(nextout);
 			}
-			if (pipefds[0]!=-1) {
+			만약 (pipefds[0]!=-1) {
 				close(pipefds[0]);  /* opposite end of our output pipe */
 			}
 
@@ -1716,13 +1716,13 @@ static int run_pipe_real(struct pipe *pi)
 			 * and the pipe fd is available for dup'ing. */
 			setup_redirects(child,NULL);
 
-			if (interactive && pi->followup!=PIPE_BG) {
+			만약 (interactive && pi->followup!=PIPE_BG) {
 				/* If we (the child) win the race, put ourselves in the process
 				 * group whose leader is the first process in this pipe. */
-				if (pi->pgrp < 0) {
+				만약 (pi->pgrp < 0) {
 					pi->pgrp = getpid();
 				}
-				if (setpgid(0, pi->pgrp) == 0) {
+				만약 (setpgid(0, pi->pgrp) == 0) {
 					tcsetpgrp(2, pi->pgrp);
 				}
 			}
@@ -1732,16 +1732,16 @@ static int run_pipe_real(struct pipe *pi)
 
 		/* put our child in the process group whose leader is the
 		   first process in this pipe */
-		if (pi->pgrp < 0) {
+		만약 (pi->pgrp < 0) {
 			pi->pgrp = child->pid;
 		}
 		/* Don't check for errors.  The child may be dead already,
 		 * in which case setpgid returns error code EACCES. */
 		setpgid(child->pid, pi->pgrp);
 
-		if (nextin != 0)
+		만약 (nextin != 0)
 			close(nextin);
-		if (nextout != 1)
+		만약 (nextout != 1)
 			close(nextout);
 
 		/* If there isn't another process, nextin is garbage
@@ -1749,35 +1749,35 @@ static int run_pipe_real(struct pipe *pi)
 		nextin = pipefds[0];
 	}
 #endif
-	return -1;
+	반환 -1;
 }
 
-static int run_list_real(struct pipe *pi)
+static 정수 run_list_real(struct pipe *pi)
 {
 	char *save_name = NULL;
 	char **list = NULL;
 	char **save_list = NULL;
 	struct pipe *rpipe;
-	int flag_rep = 0;
+	정수 flag_rep = 0;
 #ifndef __U_BOOT__
-	int save_num_progs;
+	정수 save_num_progs;
 #endif
-	int rcode=0, flag_skip=1;
-	int flag_restore = 0;
-	int if_code=0, next_if_code=0;  /* need double-buffer to handle elif */
+	정수 rcode=0, flag_skip=1;
+	정수 flag_restore = 0;
+	정수 if_code=0, next_if_code=0;  /* need double-buffer to handle elif */
 	reserved_style rmode, skip_more_in_this_rmode=RES_XXXX;
 	/* check syntax for "for" */
-	for (rpipe = pi; rpipe; rpipe = rpipe->next) {
-		if ((rpipe->r_mode == RES_IN ||
+	위해 (rpipe = pi; rpipe; rpipe = rpipe->next) {
+		만약 ((rpipe->r_mode == RES_IN ||
 		    rpipe->r_mode == RES_FOR) &&
 		    (rpipe->next == NULL)) {
 				syntax();
 #ifdef __U_BOOT__
 				flag_repeat = 0;
 #endif
-				return 1;
+				반환 1;
 		}
-		if ((rpipe->r_mode == RES_IN &&
+		만약 ((rpipe->r_mode == RES_IN &&
 			(rpipe->next->r_mode == RES_IN &&
 			rpipe->next->progs->argv != NULL))||
 			(rpipe->r_mode == RES_FOR &&
@@ -1786,41 +1786,41 @@ static int run_list_real(struct pipe *pi)
 #ifdef __U_BOOT__
 				flag_repeat = 0;
 #endif
-				return 1;
+				반환 1;
 		}
 	}
-	for (; pi; pi = (flag_restore != 0) ? rpipe : pi->next) {
-		if (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
+	위해 (; pi; pi = (flag_restore != 0) ? rpipe : pi->next) {
+		만약 (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
 			pi->r_mode == RES_FOR) {
 #ifdef __U_BOOT__
 				/* check Ctrl-C */
 				ctrlc();
-				if ((had_ctrlc())) {
-					return 1;
+				만약 ((had_ctrlc())) {
+					반환 1;
 				}
 #endif
 				flag_restore = 0;
-				if (!rpipe) {
+				만약 (!rpipe) {
 					flag_rep = 0;
 					rpipe = pi;
 				}
 		}
 		rmode = pi->r_mode;
 		debug_printf("rmode=%d  if_code=%d  next_if_code=%d skip_more=%d\n", rmode, if_code, next_if_code, skip_more_in_this_rmode);
-		if (rmode == skip_more_in_this_rmode && flag_skip) {
-			if (pi->followup == PIPE_SEQ) flag_skip=0;
+		만약 (rmode == skip_more_in_this_rmode && flag_skip) {
+			만약 (pi->followup == PIPE_SEQ) flag_skip=0;
 			continue;
 		}
 		flag_skip = 1;
 		skip_more_in_this_rmode = RES_XXXX;
-		if (rmode == RES_THEN || rmode == RES_ELSE) if_code = next_if_code;
-		if (rmode == RES_THEN &&  if_code) continue;
-		if (rmode == RES_ELSE && !if_code) continue;
-		if (rmode == RES_ELIF && !if_code) break;
-		if (rmode == RES_FOR && pi->num_progs) {
-			if (!list) {
+		만약 (rmode == RES_THEN || rmode == RES_ELSE) if_code = next_if_code;
+		만약 (rmode == RES_THEN &&  if_code) continue;
+		만약 (rmode == RES_ELSE && !if_code) continue;
+		만약 (rmode == RES_ELIF && !if_code) break;
+		만약 (rmode == RES_FOR && pi->num_progs) {
+			만약 (!list) {
 				/* if no variable values after "in" we skip "for" */
-				if (!pi->next->progs->argv) continue;
+				만약 (!pi->next->progs->argv) continue;
 				/* create list of variable values */
 				list = make_list_in(pi->next->progs->argv,
 					pi->progs->argv[0]);
@@ -1829,7 +1829,7 @@ static int run_list_real(struct pipe *pi)
 				pi->progs->argv[0] = NULL;
 				flag_rep = 1;
 			}
-			if (!(*list)) {
+			만약 (!(*list)) {
 				free(pi->progs->argv[0]);
 				free(save_list);
 				list = NULL;
@@ -1840,7 +1840,7 @@ static int run_list_real(struct pipe *pi)
 					pi->progs->argv[0];
 #endif
 				continue;
-			} else {
+			} 아니면 {
 				/* insert new value from list for variable */
 				free(pi->progs->argv[0]);
 				pi->progs->argv[0] = *list++;
@@ -1850,108 +1850,108 @@ static int run_list_real(struct pipe *pi)
 #endif
 			}
 		}
-		if (rmode == RES_IN) continue;
-		if (rmode == RES_DO) {
-			if (!flag_rep) continue;
+		만약 (rmode == RES_IN) continue;
+		만약 (rmode == RES_DO) {
+			만약 (!flag_rep) continue;
 		}
-		if (rmode == RES_DONE) {
-			if (flag_rep) {
+		만약 (rmode == RES_DONE) {
+			만약 (flag_rep) {
 				flag_restore = 1;
-			} else {
+			} 아니면 {
 				rpipe = NULL;
 			}
 		}
-		if (pi->num_progs == 0) continue;
+		만약 (pi->num_progs == 0) continue;
 #ifndef __U_BOOT__
 		save_num_progs = pi->num_progs; /* save number of programs */
 #endif
 		rcode = run_pipe_real(pi);
 		debug_printf("run_pipe_real returned %d\n",rcode);
 #ifndef __U_BOOT__
-		if (rcode!=-1) {
+		만약 (rcode!=-1) {
 			/* We only ran a builtin: rcode was set by the return value
 			 * of run_pipe_real(), and we don't need to wait for anything. */
-		} else if (pi->followup==PIPE_BG) {
+		} 아니면 만약 (pi->followup==PIPE_BG) {
 			/* XXX check bash's behavior with nontrivial pipes */
 			/* XXX compute jobid */
 			/* XXX what does bash do with attempts to background builtins? */
 			insert_bg_job(pi);
 			rcode = EXIT_SUCCESS;
-		} else {
-			if (interactive) {
+		} 아니면 {
+			만약 (interactive) {
 				/* move the new process group into the foreground */
-				if (tcsetpgrp(shell_terminal, pi->pgrp) && errno != ENOTTY)
+				만약 (tcsetpgrp(shell_terminal, pi->pgrp) && errno != ENOTTY)
 					perror_msg("tcsetpgrp-3");
 				rcode = checkjobs(pi);
 				/* move the shell to the foreground */
-				if (tcsetpgrp(shell_terminal, getpgid(0)) && errno != ENOTTY)
+				만약 (tcsetpgrp(shell_terminal, getpgid(0)) && errno != ENOTTY)
 					perror_msg("tcsetpgrp-4");
-			} else {
+			} 아니면 {
 				rcode = checkjobs(pi);
 			}
 			debug_printf("checkjobs returned %d\n",rcode);
 		}
 		last_return_code=rcode;
-#else
-		if (rcode < -1) {
+#아니면
+		만약 (rcode < -1) {
 			last_return_code = -rcode - 2;
-			return -2;	/* exit */
+			반환 -2;	/* exit */
 		}
 		last_return_code = rcode;
 #endif
 #ifndef __U_BOOT__
 		pi->num_progs = save_num_progs; /* restore number of programs */
 #endif
-		if ( rmode == RES_IF || rmode == RES_ELIF )
+		만약 ( rmode == RES_IF || rmode == RES_ELIF )
 			next_if_code=rcode;  /* can be overwritten a number of times */
-		if (rmode == RES_WHILE)
+		만약 (rmode == RES_WHILE)
 			flag_rep = !last_return_code;
-		if (rmode == RES_UNTIL)
+		만약 (rmode == RES_UNTIL)
 			flag_rep = last_return_code;
-		if ( (rcode==EXIT_SUCCESS && pi->followup==PIPE_OR) ||
+		만약 ( (rcode==EXIT_SUCCESS && pi->followup==PIPE_OR) ||
 		     (rcode!=EXIT_SUCCESS && pi->followup==PIPE_AND) )
 			skip_more_in_this_rmode=rmode;
 #ifndef __U_BOOT__
 		checkjobs(NULL);
 #endif
 	}
-	return rcode;
+	반환 rcode;
 }
 
 /* broken, of course, but OK for testing */
-static char *indenter(int i)
+static char *indenter(정수 i)
 {
 	static char blanks[]="                                    ";
-	return &blanks[sizeof(blanks)-i-1];
+	반환 &blanks[sizeof(blanks)-i-1];
 }
 
 /* return code is the exit status of the pipe */
-static int free_pipe(struct pipe *pi, int indent)
+static 정수 free_pipe(struct pipe *pi, 정수 indent)
 {
 	char **p;
 	struct child_prog *child;
 #ifndef __U_BOOT__
 	struct redir_struct *r, *rnext;
 #endif
-	int a, i, ret_code=0;
+	정수 a, i, ret_code=0;
 	char *ind = indenter(indent);
 
 #ifndef __U_BOOT__
-	if (pi->stopped_progs > 0)
-		return ret_code;
+	만약 (pi->stopped_progs > 0)
+		반환 ret_code;
 	final_printf("%s run pipe: (pid %d)\n",ind,getpid());
 #endif
-	for (i=0; i<pi->num_progs; i++) {
+	위해 (i=0; i<pi->num_progs; i++) {
 		child = &pi->progs[i];
 		final_printf("%s  command %d:\n",ind,i);
-		if (child->argv) {
-			for (a=0,p=child->argv; *p; a++,p++) {
+		만약 (child->argv) {
+			위해 (a=0,p=child->argv; *p; a++,p++) {
 				final_printf("%s   argv[%d] = %s\n",ind,a,*p);
 			}
 #ifndef __U_BOOT__
 			globfree(&child->glob_result);
-#else
-			for (a = 0; a < child->argc; a++) {
+#아니면
+			위해 (a = 0; a < child->argc; a++) {
 				free(child->argv[a]);
 			}
 			free(child->argv);
@@ -1959,25 +1959,25 @@ static int free_pipe(struct pipe *pi, int indent)
 			child->argc = 0;
 #endif
 			child->argv=NULL;
-		} else if (child->group) {
+		} 아니면 만약 (child->group) {
 #ifndef __U_BOOT__
 			final_printf("%s   begin group (subshell:%d)\n",ind, child->subshell);
 #endif
 			ret_code = free_pipe_list(child->group,indent+3);
 			final_printf("%s   end group\n",ind);
-		} else {
+		} 아니면 {
 			final_printf("%s   (nil)\n",ind);
 		}
 #ifndef __U_BOOT__
-		for (r=child->redirects; r; r=rnext) {
+		위해 (r=child->redirects; r; r=rnext) {
 			final_printf("%s   redirect %d%s", ind, r->fd, redir_table[r->type].descrip);
-			if (r->dup == -1) {
+			만약 (r->dup == -1) {
 				/* guard against the case >$FOO, where foo is unset or blank */
-				if (r->word.gl_pathv) {
+				만약 (r->word.gl_pathv) {
 					final_printf(" %s\n", *r->word.gl_pathv);
 					globfree(&r->word);
 				}
-			} else {
+			} 아니면 {
 				final_printf("&%d\n", r->dup);
 			}
 			rnext=r->next;
@@ -1988,15 +1988,15 @@ static int free_pipe(struct pipe *pi, int indent)
 	}
 	free(pi->progs);   /* children are an array, they get freed all at once */
 	pi->progs=NULL;
-	return ret_code;
+	반환 ret_code;
 }
 
-static int free_pipe_list(struct pipe *head, int indent)
+static 정수 free_pipe_list(struct pipe *head, 정수 indent)
 {
-	int rcode=0;   /* if list has no members */
+	정수 rcode=0;   /* if list has no members */
 	struct pipe *pi, *next;
 	char *ind = indenter(indent);
-	for (pi=head; pi; pi=next) {
+	위해 (pi=head; pi; pi=next) {
 		final_printf("%s pipe reserved mode %d\n", ind, pi->r_mode);
 		rcode = free_pipe(pi, indent);
 		final_printf("%s pipe followup code %d\n", ind, pi->followup);
@@ -2004,15 +2004,15 @@ static int free_pipe_list(struct pipe *head, int indent)
 		pi->next=NULL;
 		free(pi);
 	}
-	return rcode;
+	반환 rcode;
 }
 
 /* Select which version we will use */
-static int run_list(struct pipe *pi)
+static 정수 run_list(struct pipe *pi)
 {
-	int rcode=0;
+	정수 rcode=0;
 #ifndef __U_BOOT__
-	if (fake_mode==0) {
+	만약 (fake_mode==0) {
 #endif
 		rcode = run_list_real(pi);
 #ifndef __U_BOOT__
@@ -2022,7 +2022,7 @@ static int run_list(struct pipe *pi)
 	 * In the long run that function can be merged with run_list_real,
 	 * but doing that now would hobble the debugging effort. */
 	free_pipe_list(pi,0);
-	return rcode;
+	반환 rcode;
 }
 
 /* The API for glob is arguably broken.  This routine pushes a non-matching
@@ -2033,18 +2033,18 @@ static int run_list(struct pipe *pi)
  * XXX broken if the last character is '\\', check that before calling.
  */
 #ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob)
+static 정수 globhack(const char *src, 정수 flags, glob_t *pglob)
 {
-	int cnt=0, pathc;
+	정수 cnt=0, pathc;
 	const char *s;
 	char *dest;
-	for (cnt=1, s=src; s && *s; s++) {
-		if (*s == '\\') s++;
+	위해 (cnt=1, s=src; s && *s; s++) {
+		만약 (*s == '\\') s++;
 		cnt++;
 	}
 	dest = malloc(cnt);
-	if (!dest) return GLOB_NOSPACE;
-	if (!(flags & GLOB_APPEND)) {
+	만약 (!dest) 반환 GLOB_NOSPACE;
+	만약 (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathv=NULL;
 		pglob->gl_pathc=0;
 		pglob->gl_offs=0;
@@ -2052,73 +2052,73 @@ static int globhack(const char *src, int flags, glob_t *pglob)
 	}
 	pathc = ++pglob->gl_pathc;
 	pglob->gl_pathv = realloc(pglob->gl_pathv, (pathc+1)*sizeof(*pglob->gl_pathv));
-	if (pglob->gl_pathv == NULL) return GLOB_NOSPACE;
+	만약 (pglob->gl_pathv == NULL) 반환 GLOB_NOSPACE;
 	pglob->gl_pathv[pathc-1]=dest;
 	pglob->gl_pathv[pathc]=NULL;
-	for (s=src; s && *s; s++, dest++) {
-		if (*s == '\\') s++;
+	위해 (s=src; s && *s; s++, dest++) {
+		만약 (*s == '\\') s++;
 		*dest = *s;
 	}
 	*dest='\0';
-	return 0;
+	반환 0;
 }
 
 /* XXX broken if the last character is '\\', check that before calling */
-static int glob_needed(const char *s)
+static 정수 glob_needed(const char *s)
 {
-	for (; *s; s++) {
-		if (*s == '\\') s++;
-		if (strchr("*[?",*s)) return 1;
+	위해 (; *s; s++) {
+		만약 (*s == '\\') s++;
+		만약 (strchr("*[?",*s)) 반환 1;
 	}
-	return 0;
+	반환 0;
 }
 
-#if 0
+#만약 0
 static void globprint(glob_t *pglob)
 {
-	int i;
+	정수 i;
 	debug_printf("glob_t at %p:\n", pglob);
 	debug_printf("  gl_pathc=%d  gl_pathv=%p  gl_offs=%d  gl_flags=%d\n",
 		pglob->gl_pathc, pglob->gl_pathv, pglob->gl_offs, pglob->gl_flags);
-	for (i=0; i<pglob->gl_pathc; i++)
+	위해 (i=0; i<pglob->gl_pathc; i++)
 		debug_printf("pglob->gl_pathv[%d] = %p = %s\n", i,
 			pglob->gl_pathv[i], pglob->gl_pathv[i]);
 }
 #endif
 
-static int xglob(o_string *dest, int flags, glob_t *pglob)
+static 정수 xglob(o_string *dest, 정수 flags, glob_t *pglob)
 {
-	int gr;
+	정수 gr;
 
 	/* short-circuit for null word */
 	/* we can code this better when the debug_printf's are gone */
-	if (dest->length == 0) {
-		if (dest->nonnull) {
+	만약 (dest->length == 0) {
+		만약 (dest->nonnull) {
 			/* bash man page calls this an "explicit" null */
 			gr = globhack(dest->data, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
-		} else {
-			return 0;
+		} 아니면 {
+			반환 0;
 		}
-	} else if (glob_needed(dest->data)) {
+	} 아니면 만약 (glob_needed(dest->data)) {
 		gr = glob(dest->data, flags, NULL, pglob);
 		debug_printf("glob returned %d\n",gr);
-		if (gr == GLOB_NOMATCH) {
+		만약 (gr == GLOB_NOMATCH) {
 			/* quote removal, or more accurately, backslash removal */
 			gr = globhack(dest->data, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
 		}
-	} else {
+	} 아니면 {
 		gr = globhack(dest->data, flags, pglob);
 		debug_printf("globhack returned %d\n",gr);
 	}
-	if (gr == GLOB_NOSPACE)
+	만약 (gr == GLOB_NOSPACE)
 		error_msg_and_die("out of memory during glob");
-	if (gr != 0) { /* GLOB_ABORTED ? */
+	만약 (gr != 0) { /* GLOB_ABORTED ? */
 		error_msg("glob(3) error %d",gr);
 	}
 	/* globprint(glob_target); */
-	return gr;
+	반환 gr;
 }
 #endif
 
@@ -2131,34 +2131,34 @@ char *get_local_var(const char *s)
 {
 	struct variables *cur;
 
-	if (!s)
-		return NULL;
+	만약 (!s)
+		반환 NULL;
 
 #ifdef __U_BOOT__
-	if (*s == '$')
-		return get_dollar_var(s[1]);
+	만약 (*s == '$')
+		반환 get_dollar_var(s[1]);
 #endif
 
-	for (cur = top_vars; cur; cur=cur->next)
-		if(strcmp(cur->name, s)==0)
-			return cur->value;
-	return NULL;
+	위해 (cur = top_vars; cur; cur=cur->next)
+		만약(strcmp(cur->name, s)==0)
+			반환 cur->value;
+	반환 NULL;
 }
 
 /* This is used to set local shell variables
    flg_export==0 if only local (not exporting) variable
    flg_export==1 if "new" exporting environ
    flg_export>1  if current startup environ (not call putenv()) */
-int set_local_var(const char *s, int flg_export)
+정수 set_local_var(const char *s, 정수 flg_export)
 {
 	char *name, *value;
-	int result=0;
+	정수 result=0;
 	struct variables *cur;
 
 #ifdef __U_BOOT__
 	/* might be possible! */
-	if (!isalpha(*s))
-		return -1;
+	만약 (!isalpha(*s))
+		반환 -1;
 #endif
 
 	name=strdup(s);
@@ -2167,99 +2167,99 @@ int set_local_var(const char *s, int flg_export)
 	 * NAME=VALUE format.  So the first order of business is to
 	 * split 's' on the '=' into 'name' and 'value' */
 	value = strchr(name, '=');
-	if (!value) {
+	만약 (!value) {
 		free(name);
-		return -1;
+		반환 -1;
 	}
 	*value++ = 0;
 
-	if (!*value) {
+	만약 (!*value) {
 		unset_local_var(name);
 		free(name);
-		return 0;
+		반환 0;
 	}
 
-	for(cur = top_vars; cur; cur = cur->next) {
-		if(strcmp(cur->name, name)==0)
+	위해(cur = top_vars; cur; cur = cur->next) {
+		만약(strcmp(cur->name, name)==0)
 			break;
 	}
 
-	if(cur) {
-		if(strcmp(cur->value, value)==0) {
-			if(flg_export>0 && cur->flg_export==0)
+	만약(cur) {
+		만약(strcmp(cur->value, value)==0) {
+			만약(flg_export>0 && cur->flg_export==0)
 				cur->flg_export=flg_export;
-			else
+			아니면
 				result++;
-		} else {
-			if(cur->flg_read_only) {
+		} 아니면 {
+			만약(cur->flg_read_only) {
 				error_msg("%s: readonly variable", name);
 				result = -1;
-			} else {
-				if(flg_export>0 || cur->flg_export>1)
+			} 아니면 {
+				만약(flg_export>0 || cur->flg_export>1)
 					cur->flg_export=1;
 				free(cur->value);
 
 				cur->value = strdup(value);
 			}
 		}
-	} else {
+	} 아니면 {
 		cur = malloc(sizeof(struct variables));
-		if(!cur) {
+		만약(!cur) {
 			result = -1;
-		} else {
+		} 아니면 {
 			cur->name = strdup(name);
-			if (cur->name == NULL) {
+			만약 (cur->name == NULL) {
 				free(cur);
 				result = -1;
-			} else {
+			} 아니면 {
 				struct variables *bottom = top_vars;
 				cur->value = strdup(value);
 				cur->next = NULL;
 				cur->flg_export = flg_export;
 				cur->flg_read_only = 0;
-				while(bottom->next) bottom=bottom->next;
+				동안(bottom->next) bottom=bottom->next;
 				bottom->next = cur;
 			}
 		}
 	}
 
 #ifndef __U_BOOT__
-	if(result==0 && cur->flg_export==1) {
+	만약(result==0 && cur->flg_export==1) {
 		*(value-1) = '=';
 		result = putenv(name);
-	} else {
+	} 아니면 {
 #endif
 		free(name);
 #ifndef __U_BOOT__
-		if(result>0)            /* equivalent to previous set */
+		만약(result>0)            /* equivalent to previous set */
 			result = 0;
 	}
 #endif
-	return result;
+	반환 result;
 }
 
 void unset_local_var(const char *name)
 {
 	struct variables *cur;
 
-	if (name) {
-		for (cur = top_vars; cur; cur=cur->next) {
-			if(strcmp(cur->name, name)==0)
+	만약 (name) {
+		위해 (cur = top_vars; cur; cur=cur->next) {
+			만약(strcmp(cur->name, name)==0)
 				break;
 		}
-		if (cur != NULL) {
+		만약 (cur != NULL) {
 			struct variables *next = top_vars;
-			if(cur->flg_read_only) {
+			만약(cur->flg_read_only) {
 				error_msg("%s: readonly variable", name);
-				return;
-			} else {
+				반환;
+			} 아니면 {
 #ifndef __U_BOOT__
-				if(cur->flg_export)
+				만약(cur->flg_export)
 					unenv_set(cur->name);
 #endif
 				free(cur->name);
 				free(cur->value);
-				while (next->next != cur)
+				동안 (next->next != cur)
 					next = next->next;
 				next->next = cur->next;
 			}
@@ -2268,15 +2268,15 @@ void unset_local_var(const char *name)
 	}
 }
 
-static int is_assignment(const char *s)
+static 정수 is_assignment(const char *s)
 {
-	if (s == NULL)
-		return 0;
+	만약 (s == NULL)
+		반환 0;
 
-	if (!isalpha(*s)) return 0;
+	만약 (!isalpha(*s)) 반환 0;
 	++s;
-	while(isalnum(*s) || *s=='_') ++s;
-	return *s=='=';
+	동안(isalnum(*s) || *s=='_') ++s;
+	반환 *s=='=';
 }
 
 #ifndef __U_BOOT__
@@ -2284,7 +2284,7 @@ static int is_assignment(const char *s)
  * for file descriptor duplication, e.g., "2>&1".
  * Return code is 0 normally, 1 if a syntax error is detected in src.
  * Resource errors (in xmalloc) cause the process to exit */
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
+static 정수 setup_redirect(struct p_context *ctx, 정수 fd, redir_type style,
 	struct in_str *input)
 {
 	struct child_prog *child=ctx->child;
@@ -2292,16 +2292,16 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 	struct redir_struct *last_redir=NULL;
 
 	/* Create a new redir_struct and drop it onto the end of the linked list */
-	while(redir) {
+	동안(redir) {
 		last_redir=redir;
 		redir=redir->next;
 	}
 	redir = xmalloc(sizeof(struct redir_struct));
 	redir->next=NULL;
 	redir->word.gl_pathv=NULL;
-	if (last_redir) {
+	만약 (last_redir) {
 		last_redir->next=redir;
-	} else {
+	} 아니면 {
 		child->redirects=redir;
 	}
 
@@ -2312,13 +2312,13 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 
 	/* Check for a '2>&1' type redirect */
 	redir->dup = redirect_dup_num(input);
-	if (redir->dup == -2) return 1;  /* syntax error */
-	if (redir->dup != -1) {
+	만약 (redir->dup == -2) 반환 1;  /* syntax error */
+	만약 (redir->dup != -1) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
 		debug_printf("Duplicating redirect '%d>&%d'\n", redir->fd, redir->dup);
-	} else {
+	} 아니면 {
 		/* We do _not_ try to open the file that src points to,
 		 * since we need to return and let src be expanded first.
 		 * Set ctx->pending_redirect, so we know what to do at the
@@ -2326,7 +2326,7 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 		 */
 		ctx->pending_redirect = redir;
 	}
-	return 0;
+	반환 0;
 }
 #endif
 
@@ -2339,7 +2339,7 @@ static struct pipe *new_pipe(void)
 	pi->next = NULL;
 	pi->followup = 0;  /* invalid */
 	pi->r_mode = RES_NONE;
-	return pi;
+	반환 pi;
 }
 
 static void initialize_context(struct p_context *ctx)
@@ -2366,7 +2366,7 @@ static void initialize_context(struct p_context *ctx)
  */
 struct reserved_combo {
 	char *literal;
-	int code;
+	정수 code;
 	long flag;
 };
 /* Mostly a list of accepted follow-up reserved words.
@@ -2389,35 +2389,35 @@ static struct reserved_combo reserved_list[] = {
 };
 #define NRES (sizeof(reserved_list)/sizeof(struct reserved_combo))
 
-static int reserved_word(o_string *dest, struct p_context *ctx)
+static 정수 reserved_word(o_string *dest, struct p_context *ctx)
 {
 	struct reserved_combo *r;
-	for (r=reserved_list;
+	위해 (r=reserved_list;
 		r<reserved_list+NRES; r++) {
-		if (strcmp(dest->data, r->literal) == 0) {
+		만약 (strcmp(dest->data, r->literal) == 0) {
 			debug_printf("found reserved word %s, code %d\n",r->literal,r->code);
-			if (r->flag & FLAG_START) {
+			만약 (r->flag & FLAG_START) {
 				struct p_context *new = xmalloc(sizeof(struct p_context));
 				debug_printf("push stack\n");
-				if (ctx->w == RES_IN || ctx->w == RES_FOR) {
+				만약 (ctx->w == RES_IN || ctx->w == RES_FOR) {
 					syntax();
 					free(new);
 					ctx->w = RES_SNTX;
 					b_reset(dest);
-					return 1;
+					반환 1;
 				}
 				*new = *ctx;   /* physical copy */
 				initialize_context(ctx);
 				ctx->stack=new;
-			} else if ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
+			} 아니면 만약 ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
 				syntax();
 				ctx->w = RES_SNTX;
 				b_reset(dest);
-				return 1;
+				반환 1;
 			}
 			ctx->w=r->code;
 			ctx->old_flag = r->flag;
-			if (ctx->old_flag & FLAG_END) {
+			만약 (ctx->old_flag & FLAG_END) {
 				struct p_context *old;
 				debug_printf("pop stack\n");
 				done_pipe(ctx,PIPE_SEQ);
@@ -2430,74 +2430,74 @@ static int reserved_word(o_string *dest, struct p_context *ctx)
 				free(old);
 			}
 			b_reset (dest);
-			return 1;
+			반환 1;
 		}
 	}
-	return 0;
+	반환 0;
 }
 
 /* normal return is 0.
  * Syntax or xglob errors return 1. */
-static int done_word(o_string *dest, struct p_context *ctx)
+static 정수 done_word(o_string *dest, struct p_context *ctx)
 {
 	struct child_prog *child=ctx->child;
 #ifndef __U_BOOT__
 	glob_t *glob_target;
-	int gr, flags = 0;
-#else
+	정수 gr, flags = 0;
+#아니면
 	char *str, *s;
-	int argc, cnt;
+	정수 argc, cnt;
 #endif
 
 	debug_printf("done_word: %s %p\n", dest->data, child);
-	if (dest->length == 0 && !dest->nonnull) {
+	만약 (dest->length == 0 && !dest->nonnull) {
 		debug_printf("  true null, ignored\n");
-		return 0;
+		반환 0;
 	}
 #ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+	만약 (ctx->pending_redirect) {
 		glob_target = &ctx->pending_redirect->word;
-	} else {
+	} 아니면 {
 #endif
-		if (child->group) {
+		만약 (child->group) {
 			syntax();
-			return 1;  /* syntax error, groups and arglists don't mix */
+			반환 1;  /* syntax error, groups and arglists don't mix */
 		}
-		if (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
+		만약 (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
 			debug_printf("checking %s for reserved-ness\n",dest->data);
-			if (reserved_word(dest,ctx)) return ctx->w==RES_SNTX;
+			만약 (reserved_word(dest,ctx)) 반환 ctx->w==RES_SNTX;
 		}
 #ifndef __U_BOOT__
 		glob_target = &child->glob_result;
-		if (child->argv) flags |= GLOB_APPEND;
-#else
-		for (cnt = 1, s = dest->data; s && *s; s++) {
-			if (*s == '\\') s++;
+		만약 (child->argv) flags |= GLOB_APPEND;
+#아니면
+		위해 (cnt = 1, s = dest->data; s && *s; s++) {
+			만약 (*s == '\\') s++;
 			cnt++;
 		}
 		str = malloc(cnt);
-		if (!str) return 1;
-		if ( child->argv == NULL) {
+		만약 (!str) 반환 1;
+		만약 ( child->argv == NULL) {
 			child->argc=0;
 		}
 		argc = ++child->argc;
 		child->argv = realloc(child->argv, (argc+1)*sizeof(*child->argv));
-		if (child->argv == NULL) {
+		만약 (child->argv == NULL) {
 			free(str);
-			return 1;
+			반환 1;
 		}
 		child->argv_nonnull = realloc(child->argv_nonnull,
 					(argc+1)*sizeof(*child->argv_nonnull));
-		if (child->argv_nonnull == NULL) {
+		만약 (child->argv_nonnull == NULL) {
 			free(str);
-			return 1;
+			반환 1;
 		}
 		child->argv[argc-1]=str;
 		child->argv_nonnull[argc-1] = dest->nonnull;
 		child->argv[argc]=NULL;
 		child->argv_nonnull[argc] = 0;
-		for (s = dest->data; s && *s; s++,str++) {
-			if (*s == '\\') s++;
+		위해 (s = dest->data; s && *s; s++,str++) {
+			만약 (*s == '\\') s++;
 			*str = *s;
 		}
 		*str = '\0';
@@ -2505,31 +2505,31 @@ static int done_word(o_string *dest, struct p_context *ctx)
 #ifndef __U_BOOT__
 	}
 	gr = xglob(dest, flags, glob_target);
-	if (gr != 0) return 1;
+	만약 (gr != 0) 반환 1;
 #endif
 
 	b_reset(dest);
 #ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+	만약 (ctx->pending_redirect) {
 		ctx->pending_redirect=NULL;
-		if (glob_target->gl_pathc != 1) {
+		만약 (glob_target->gl_pathc != 1) {
 			error_msg("ambiguous redirect");
-			return 1;
+			반환 1;
 		}
-	} else {
+	} 아니면 {
 		child->argv = glob_target->gl_pathv;
 	}
 #endif
-	if (ctx->w == RES_FOR) {
+	만약 (ctx->w == RES_FOR) {
 		done_word(dest,ctx);
 		done_pipe(ctx,PIPE_SEQ);
 	}
-	return 0;
+	반환 0;
 }
 
 /* The only possible error here is out of memory, in which case
  * xmalloc exits. */
-static int done_command(struct p_context *ctx)
+static 정수 done_command(struct p_context *ctx)
 {
 	/* The child is really already in the pipe structure, so
 	 * advance the pipe counter and make a new, null child.
@@ -2539,19 +2539,19 @@ static int done_command(struct p_context *ctx)
 	struct pipe *pi=ctx->pipe;
 	struct child_prog *prog=ctx->child;
 
-	if (prog && prog->group == NULL
+	만약 (prog && prog->group == NULL
 		 && prog->argv == NULL
 #ifndef __U_BOOT__
 		 && prog->redirects == NULL) {
-#else
+#아니면
 										) {
 #endif
 		debug_printf("done_command: skipping null command\n");
-		return 0;
-	} else if (prog) {
+		반환 0;
+	} 아니면 만약 (prog) {
 		pi->num_progs++;
 		debug_printf("done_command: num_progs incremented to %d\n",pi->num_progs);
-	} else {
+	} 아니면 {
 		debug_printf("done_command: initializing\n");
 	}
 	pi->progs = xrealloc(pi->progs, sizeof(*pi->progs) * (pi->num_progs+1));
@@ -2575,10 +2575,10 @@ static int done_command(struct p_context *ctx)
 	prog->type = ctx->type;
 
 	/* but ctx->pipe and ctx->list_head remain unchanged */
-	return 0;
+	반환 0;
 }
 
-static int done_pipe(struct p_context *ctx, pipe_style type)
+static 정수 done_pipe(struct p_context *ctx, pipe_style type)
 {
 	struct pipe *new_p;
 	done_command(ctx);  /* implicit closure of previous command */
@@ -2590,7 +2590,7 @@ static int done_pipe(struct p_context *ctx, pipe_style type)
 	ctx->pipe = new_p;
 	ctx->child = NULL;
 	done_command(ctx);  /* set up new pipe to accept commands */
-	return 0;
+	반환 0;
 }
 
 #ifndef __U_BOOT__
@@ -2598,28 +2598,28 @@ static int done_pipe(struct p_context *ctx, pipe_style type)
  * as in "2>&1", that represents duplicating a file descriptor.
  * returns either -2 (syntax error), -1 (no &), or the number found.
  */
-static int redirect_dup_num(struct in_str *input)
+static 정수 redirect_dup_num(struct in_str *input)
 {
-	int ch, d=0, ok=0;
+	정수 ch, d=0, ok=0;
 	ch = b_peek(input);
-	if (ch != '&') return -1;
+	만약 (ch != '&') 반환 -1;
 
 	b_getch(input);  /* get the & */
 	ch=b_peek(input);
-	if (ch == '-') {
+	만약 (ch == '-') {
 		b_getch(input);
-		return -3;  /* "-" represents "close me" */
+		반환 -3;  /* "-" represents "close me" */
 	}
-	while (isdigit(ch)) {
+	동안 (isdigit(ch)) {
 		d = d*10+(ch-'0');
 		ok=1;
 		b_getch(input);
 		ch = b_peek(input);
 	}
-	if (ok) return d;
+	만약 (ok) 반환 d;
 
 	error_msg("ambiguous redirect");
-	return -2;
+	반환 -2;
 }
 
 /* If a redirect is immediately preceded by a number, that number is
@@ -2633,42 +2633,42 @@ static int redirect_dup_num(struct in_str *input)
  * A -1 output from this program means no valid number was found, so the
  * caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+static 정수 redirect_opt_num(o_string *o)
 {
-	int num;
+	정수 num;
 
-	if (o->length==0) return -1;
-	for(num=0; num<o->length; num++) {
-		if (!isdigit(*(o->data+num))) {
-			return -1;
+	만약 (o->length==0) 반환 -1;
+	위해(num=0; num<o->length; num++) {
+		만약 (!isdigit(*(o->data+num))) {
+			반환 -1;
 		}
 	}
 	/* reuse num (and save an int) */
 	num=atoi(o->data);
 	b_reset(o);
-	return num;
+	반환 num;
 }
 
 FILE *generate_stream_from_list(struct pipe *head)
 {
 	FILE *pf;
-#if 1
-	int pid, channel[2];
-	if (pipe(channel)<0) perror_msg_and_die("pipe");
+#만약 1
+	정수 pid, channel[2];
+	만약 (pipe(channel)<0) perror_msg_and_die("pipe");
 	pid=fork();
-	if (pid<0) {
+	만약 (pid<0) {
 		perror_msg_and_die("fork");
-	} else if (pid==0) {
+	} 아니면 만약 (pid==0) {
 		close(channel[0]);
-		if (channel[1] != 1) {
+		만약 (channel[1] != 1) {
 			dup2(channel[1],1);
 			close(channel[1]);
 		}
-#if 0
+#만약 0
 #define SURROGATE "surrogate response"
 		write(1,SURROGATE,sizeof(SURROGATE));
 		_exit(run_list(head));
-#else
+#아니면
 		_exit(run_list_real(head));   /* leaks memory */
 #endif
 	}
@@ -2676,19 +2676,19 @@ FILE *generate_stream_from_list(struct pipe *head)
 	close(channel[1]);
 	pf = fdopen(channel[0],"r");
 	debug_printf("pipe on FILE *%p\n",pf);
-#else
+#아니면
 	free_pipe_list(head,0);
 	pf=popen("echo surrogate response","r");
 	debug_printf("started fake pipe on FILE *%p\n",pf);
 #endif
-	return pf;
+	반환 pf;
 }
 
 /* this version hacked for testing purposes */
 /* return code is exit status of the process that is run. */
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end)
+static 정수 process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, 정수 subst_end)
 {
-	int retcode;
+	정수 retcode;
 	o_string result=NULL_O_STRING;
 	struct p_context inner;
 	FILE *p;
@@ -2697,13 +2697,13 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 
 	/* recursion to generate command */
 	retcode = parse_stream(&result, &inner, input, subst_end);
-	if (retcode != 0) return retcode;  /* syntax error or EOF */
+	만약 (retcode != 0) 반환 retcode;  /* syntax error or EOF */
 	done_word(&result, &inner);
 	done_pipe(&inner, PIPE_SEQ);
 	b_free(&result);
 
 	p=generate_stream_from_list(inner.list_head);
-	if (p==NULL) return 1;
+	만약 (p==NULL) 반환 1;
 	mark_open(fileno(p));
 	setup_file_in_str(&pipe_str, p);
 
@@ -2711,8 +2711,8 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	retcode = parse_stream(dest, ctx, &pipe_str, '\0');
 	/* XXX In case of a syntax error, should we try to kill the child?
 	 * That would be tough to do right, so just read until EOF. */
-	if (retcode == 1) {
-		while (b_getch(&pipe_str)!=EOF) { /* discard */ };
+	만약 (retcode == 1) {
+		동안 (b_getch(&pipe_str)!=EOF) { /* discard */ };
 	}
 
 	debug_printf("done reading from pipe, pclose()ing\n");
@@ -2726,18 +2726,18 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	free_pipe_list(inner.list_head,0);
 	debug_printf("pclosed, retcode=%d\n",retcode);
 	/* XXX this process fails to trim a single trailing newline */
-	return retcode;
+	반환 retcode;
 }
 
-static int parse_group(o_string *dest, struct p_context *ctx,
-	struct in_str *input, int ch)
+static 정수 parse_group(o_string *dest, struct p_context *ctx,
+	struct in_str *input, 정수 ch)
 {
-	int rcode, endch=0;
+	정수 rcode, endch=0;
 	struct p_context sub;
 	struct child_prog *child = ctx->child;
-	if (child->argv) {
+	만약 (child->argv) {
 		syntax();
-		return 1;  /* syntax error, groups and arglists don't mix */
+		반환 1;  /* syntax error, groups and arglists don't mix */
 	}
 	initialize_context(&sub);
 	switch(ch) {
@@ -2749,7 +2749,7 @@ static int parse_group(o_string *dest, struct p_context *ctx,
 	done_word(dest,&sub); /* finish off the final word in the subcontext */
 	done_pipe(&sub, PIPE_SEQ);  /* and the final command there, too */
 	child->group = sub.list_head;
-	return rcode;
+	반환 rcode;
 	/* child remains "open", available for possible redirects */
 }
 #endif
@@ -2761,50 +2761,50 @@ static char *lookup_param(char *src)
 	char *p;
 	char *sep;
 	char *default_val = NULL;
-	int assign = 0;
-	int expand_empty = 0;
+	정수 assign = 0;
+	정수 expand_empty = 0;
 
-	if (!src)
-		return NULL;
+	만약 (!src)
+		반환 NULL;
 
 	sep = strchr(src, ':');
 
-	if (sep) {
+	만약 (sep) {
 		*sep = '\0';
-		if (*(sep + 1) == '-')
+		만약 (*(sep + 1) == '-')
 			default_val = sep+2;
-		if (*(sep + 1) == '=') {
+		만약 (*(sep + 1) == '=') {
 			default_val = sep+2;
 			assign = 1;
 		}
-		if (*(sep + 1) == '+') {
+		만약 (*(sep + 1) == '+') {
 			default_val = sep+2;
 			expand_empty = 1;
 		}
 	}
 
 	p = env_get(src);
-	if (!p)
+	만약 (!p)
 		p = get_local_var(src);
 
-	if (!p || strlen(p) == 0) {
+	만약 (!p || strlen(p) == 0) {
 		p = default_val;
-		if (assign) {
+		만약 (assign) {
 			char *var = malloc(strlen(src)+strlen(default_val)+2);
-			if (var) {
+			만약 (var) {
 				sprintf(var, "%s=%s", src, default_val);
 				set_local_var(var, 0);
 			}
 			free(var);
 		}
-	} else if (expand_empty) {
+	} 아니면 만약 (expand_empty) {
 		p += strlen(p);
 	}
 
-	if (sep)
+	만약 (sep)
 		*sep = ':';
 
-	return p;
+	반환 p;
 }
 
 #ifdef __U_BOOT__
@@ -2815,59 +2815,59 @@ static char *get_dollar_var(char ch)
 	buf[0] = '\0';
 	switch (ch) {
 		case '?':
-			sprintf(buf, "%u", (unsigned int)last_return_code);
+			sprintf(buf, "%u", (unsigned 정수)last_return_code);
 			break;
 		default:
-			return NULL;
+			반환 NULL;
 	}
-	return buf;
+	반환 buf;
 }
 #endif
 
 /* return code: 0 for OK, 1 for syntax error */
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input)
+static 정수 handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input)
 {
 #ifndef __U_BOOT__
-	int i, advance=0;
-#else
-	int advance=0;
+	정수 i, advance=0;
+#아니면
+	정수 advance=0;
 #endif
 #ifndef __U_BOOT__
 	char sep[]=" ";
 #endif
-	int ch = input->peek(input);  /* first character after the $ */
+	정수 ch = input->peek(input);  /* first character after the $ */
 	debug_printf("handle_dollar: ch=%c\n",ch);
-	if (isalpha(ch)) {
+	만약 (isalpha(ch)) {
 		b_addchr(dest, SPECIAL_VAR_SYMBOL);
 		ctx->child->sp++;
-		while(ch=b_peek(input),isalnum(ch) || ch=='_') {
+		동안(ch=b_peek(input),isalnum(ch) || ch=='_') {
 			b_getch(input);
 			b_addchr(dest,ch);
 		}
 		b_addchr(dest, SPECIAL_VAR_SYMBOL);
 #ifndef __U_BOOT__
-	} else if (isdigit(ch)) {
+	} 아니면 만약 (isdigit(ch)) {
 		i = ch-'0';  /* XXX is $0 special? */
-		if (i<global_argc) {
+		만약 (i<global_argc) {
 			parse_string(dest, ctx, global_argv[i]); /* recursion */
 		}
 		advance = 1;
 #endif
-	} else switch (ch) {
+	} 아니면 switch (ch) {
 #ifndef __U_BOOT__
 		case '$':
 			b_adduint(dest,getpid());
 			advance = 1;
 			break;
 		case '!':
-			if (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
+			만약 (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
 			advance = 1;
 			break;
 #endif
 		case '?':
 #ifndef __U_BOOT__
 			b_adduint(dest,last_return_code);
-#else
+#아니면
 			ctx->child->sp++;
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
 			b_addchr(dest, '$');
@@ -2887,12 +2887,12 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 			ctx->child->sp++;
 			b_getch(input);
 			/* XXX maybe someone will try to escape the '}' */
-			while(ch=b_getch(input),ch!=EOF && ch!='}') {
+			동안(ch=b_getch(input),ch!=EOF && ch!='}') {
 				b_addchr(dest,ch);
 			}
-			if (ch != '}') {
+			만약 (ch != '}') {
 				syntax();
-				return 1;
+				반환 1;
 			}
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
 			break;
@@ -2903,9 +2903,9 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 			break;
 		case '*':
 			sep[0]=ifs[0];
-			for (i=1; i<global_argc; i++) {
+			위해 (i=1; i<global_argc; i++) {
 				parse_string(dest, ctx, global_argv[i]);
-				if (i+1 < global_argc) parse_string(dest, ctx, sep);
+				만약 (i+1 < global_argc) parse_string(dest, ctx, sep);
 			}
 			break;
 		case '@':
@@ -2913,7 +2913,7 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 		case '_':
 			/* still unhandled, but should be eventually */
 			error_msg("unhandled syntax: $%c",ch);
-			return 1;
+			반환 1;
 			break;
 #endif
 		default:
@@ -2924,39 +2924,39 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 	 * for all the "advance = 1;" above, and also end up with
 	 * a nice size-optimized program.  Hah!  That'll be the day.
 	 */
-	if (advance) b_getch(input);
-	return 0;
+	만약 (advance) b_getch(input);
+	반환 0;
 }
 
 #ifndef __U_BOOT__
-int parse_string(o_string *dest, struct p_context *ctx, const char *src)
+정수 parse_string(o_string *dest, struct p_context *ctx, const char *src)
 {
 	struct in_str foo;
 	setup_string_in_str(&foo, src);
-	return parse_stream(dest, ctx, &foo, '\0');
+	반환 parse_stream(dest, ctx, &foo, '\0');
 }
 #endif
 
 /* return code is 0 for normal exit, 1 for syntax error */
-static int parse_stream(o_string *dest, struct p_context *ctx,
-			struct in_str *input, int end_trigger)
+static 정수 parse_stream(o_string *dest, struct p_context *ctx,
+			struct in_str *input, 정수 end_trigger)
 {
-	unsigned int ch, m;
+	unsigned 정수 ch, m;
 #ifndef __U_BOOT__
-	int redir_fd;
+	정수 redir_fd;
 	redir_type redir_style;
 #endif
-	int next;
+	정수 next;
 
 	/* Only double-quote state is handled in the state variable dest->quote.
 	 * A single-quote triggers a bypass of the main loop until its mate is
 	 * found.  When recursing, quote state is passed in via dest->quote. */
 
 	debug_printf("parse_stream, end_trigger=%d\n",end_trigger);
-	while ((ch=b_getch(input))!=EOF) {
+	동안 ((ch=b_getch(input))!=EOF) {
 		m = map[ch];
 #ifdef __U_BOOT__
-		if (input->__promptme == 0) return 1;
+		만약 (input->__promptme == 0) 반환 1;
 #endif
 		next = (ch == '\n') ? 0 : b_peek(input);
 
@@ -2964,60 +2964,60 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 			ch >= ' ' ? ch : '.', ch, m,
 			dest->quote, ctx->stack == NULL ? '*' : '.');
 
-		if (m==0 || ((m==1 || m==2) && dest->quote)) {
+		만약 (m==0 || ((m==1 || m==2) && dest->quote)) {
 			b_addqchr(dest, ch, dest->quote);
-		} else {
-			if (m==2) {  /* unquoted IFS */
-				if (done_word(dest, ctx)) {
-					return 1;
+		} 아니면 {
+			만약 (m==2) {  /* unquoted IFS */
+				만약 (done_word(dest, ctx)) {
+					반환 1;
 				}
 				/* If we aren't performing a substitution, treat a newline as a
 				 * command separator.  */
-				if (end_trigger != '\0' && ch=='\n')
+				만약 (end_trigger != '\0' && ch=='\n')
 					done_pipe(ctx,PIPE_SEQ);
 			}
-			if (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
+			만약 (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
 				debug_printf("leaving parse_stream (triggered)\n");
-				return 0;
+				반환 0;
 			}
-#if 0
-			if (ch=='\n') {
+#만약 0
+			만약 (ch=='\n') {
 				/* Yahoo!  Time to run with it! */
 				done_pipe(ctx,PIPE_SEQ);
 				run_list(ctx->list_head);
 				initialize_context(ctx);
 			}
 #endif
-			if (m!=2) switch (ch) {
+			만약 (m!=2) switch (ch) {
 		case '#':
-			if (dest->length == 0 && !dest->quote) {
-				while(ch=b_peek(input),ch!=EOF && ch!='\n') { b_getch(input); }
-			} else {
+			만약 (dest->length == 0 && !dest->quote) {
+				동안(ch=b_peek(input),ch!=EOF && ch!='\n') { b_getch(input); }
+			} 아니면 {
 				b_addqchr(dest, ch, dest->quote);
 			}
 			break;
 		case '\\':
-			if (next == EOF) {
+			만약 (next == EOF) {
 				syntax();
-				return 1;
+				반환 1;
 			}
 			b_addqchr(dest, '\\', dest->quote);
 			b_addqchr(dest, b_getch(input), dest->quote);
 			break;
 		case '$':
-			if (handle_dollar(dest, ctx, input)!=0) return 1;
+			만약 (handle_dollar(dest, ctx, input)!=0) 반환 1;
 			break;
 		case '\'':
 			dest->nonnull = 1;
-			while(ch=b_getch(input),ch!=EOF && ch!='\'') {
+			동안(ch=b_getch(input),ch!=EOF && ch!='\'') {
 #ifdef __U_BOOT__
-				if(input->__promptme == 0) return 1;
+				만약(input->__promptme == 0) 반환 1;
 #endif
 				b_addchr(dest,ch);
 			}
-			if (ch==EOF) {
+			만약 (ch==EOF) {
 				syntax();
-				return 1;
+				반환 1;
 			}
 			break;
 		case '"':
@@ -3032,12 +3032,12 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 			redir_fd = redirect_opt_num(dest);
 			done_word(dest, ctx);
 			redir_style=REDIRECT_OVERWRITE;
-			if (next == '>') {
+			만약 (next == '>') {
 				redir_style=REDIRECT_APPEND;
 				b_getch(input);
-			} else if (next == '(') {
+			} 아니면 만약 (next == '(') {
 				syntax();   /* until we support >(list) Process Substitution */
-				return 1;
+				반환 1;
 			}
 			setup_redirect(ctx, redir_fd, redir_style, input);
 			break;
@@ -3045,15 +3045,15 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 			redir_fd = redirect_opt_num(dest);
 			done_word(dest, ctx);
 			redir_style=REDIRECT_INPUT;
-			if (next == '<') {
+			만약 (next == '<') {
 				redir_style=REDIRECT_HEREIS;
 				b_getch(input);
-			} else if (next == '>') {
+			} 아니면 만약 (next == '>') {
 				redir_style=REDIRECT_IO;
 				b_getch(input);
-			} else if (next == '(') {
+			} 아니면 만약 (next == '(') {
 				syntax();   /* until we support <(list) Process Substitution */
-				return 1;
+				반환 1;
 			}
 			setup_redirect(ctx, redir_fd, redir_style, input);
 			break;
@@ -3064,64 +3064,64 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 			break;
 		case '&':
 			done_word(dest, ctx);
-			if (next=='&') {
+			만약 (next=='&') {
 				b_getch(input);
 				done_pipe(ctx,PIPE_AND);
-			} else {
+			} 아니면 {
 #ifndef __U_BOOT__
 				done_pipe(ctx,PIPE_BG);
-#else
+#아니면
 				syntax_err();
-				return 1;
+				반환 1;
 #endif
 			}
 			break;
 		case '|':
 			done_word(dest, ctx);
-			if (next=='|') {
+			만약 (next=='|') {
 				b_getch(input);
 				done_pipe(ctx,PIPE_OR);
-			} else {
+			} 아니면 {
 				/* we could pick up a file descriptor choice here
 				 * with redirect_opt_num(), but bash doesn't do it.
 				 * "echo foo 2| cat" yields "foo 2". */
 #ifndef __U_BOOT__
 				done_command(ctx);
-#else
+#아니면
 				syntax_err();
-				return 1;
+				반환 1;
 #endif
 			}
 			break;
 #ifndef __U_BOOT__
 		case '(':
 		case '{':
-			if (parse_group(dest, ctx, input, ch)!=0) return 1;
+			만약 (parse_group(dest, ctx, input, ch)!=0) 반환 1;
 			break;
 		case ')':
 		case '}':
 			syntax();   /* Proper use of this character caught by end_trigger */
-			return 1;
+			반환 1;
 			break;
 #endif
 		case SUBSTED_VAR_SYMBOL:
 			dest->nonnull = 1;
-			while (ch = b_getch(input), ch != EOF &&
+			동안 (ch = b_getch(input), ch != EOF &&
 			    ch != SUBSTED_VAR_SYMBOL) {
 				debug_printf("subst, pass=%d\n", ch);
-				if (input->__promptme == 0)
-					return 1;
+				만약 (input->__promptme == 0)
+					반환 1;
 				b_addchr(dest, ch);
 			}
 			debug_printf("subst, term=%d\n", ch);
-			if (ch == EOF) {
+			만약 (ch == EOF) {
 				syntax();
-				return 1;
+				반환 1;
 			}
 			break;
 		default:
 			syntax();   /* this is really an internal logic error */
-			return 1;
+			반환 1;
 			}
 		}
 	}
@@ -3134,21 +3134,21 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 	 * one before the EOF.  Can't use the standard "syntax error" return code,
 	 * so that parse_stream_outer can distinguish the EOF and exit smoothly. */
 	debug_printf("leaving parse_stream (EOF)\n");
-	if (end_trigger != '\0') return -1;
-	return 0;
+	만약 (end_trigger != '\0') 반환 -1;
+	반환 0;
 }
 
-static void mapset(const unsigned char *set, int code)
+static void mapset(const unsigned char *set, 정수 code)
 {
 	const unsigned char *s;
-	for (s=set; *s; s++) map[*s] = code;
+	위해 (s=set; *s; s++) map[*s] = code;
 }
 
 static void update_ifs_map(void)
 {
 	/* char *ifs and char map[256] are both globals. */
 	ifs = (uchar *)env_get("IFS");
-	if (ifs == NULL) ifs=(uchar *)" \t\n";
+	만약 (ifs == NULL) ifs=(uchar *)" \t\n";
 	/* Precompute a list of 'flow through' behavior so it can be treated
 	 * quickly up front.  Computation is necessary because of IFS.
 	 * Special case handling of IFS == " \t\n" is not implemented.
@@ -3159,7 +3159,7 @@ static void update_ifs_map(void)
 #ifndef __U_BOOT__
 	mapset((uchar *)"\\$'\"`", 3);      /* never flow through */
 	mapset((uchar *)"<>;&|(){}#", 1);   /* flow through if quoted */
-#else
+#아니면
 	{
 		uchar subst[2] = {SUBSTED_VAR_SYMBOL, 0};
 		mapset(subst, 3);       /* never flow through */
@@ -3172,44 +3172,44 @@ static void update_ifs_map(void)
 
 /* most recursion does not come through here, the exeception is
  * from builtin_source() */
-static int parse_stream_outer(struct in_str *inp, int flag)
+static 정수 parse_stream_outer(struct in_str *inp, 정수 flag)
 {
 
 	struct p_context ctx;
 	o_string temp=NULL_O_STRING;
-	int rcode;
+	정수 rcode;
 #ifdef __U_BOOT__
-	int code = 1;
+	정수 code = 1;
 #endif
 	do {
 		ctx.type = flag;
 		initialize_context(&ctx);
 		update_ifs_map();
-		if (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
+		만약 (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
 		inp->promptmode=1;
 		rcode = parse_stream(&temp, &ctx, inp,
 				     flag & FLAG_CONT_ON_NEWLINE ? -1 : '\n');
 #ifdef __U_BOOT__
-		if (rcode == 1) flag_repeat = 0;
+		만약 (rcode == 1) flag_repeat = 0;
 #endif
-		if (rcode != 1 && ctx.old_flag != 0) {
+		만약 (rcode != 1 && ctx.old_flag != 0) {
 			syntax();
 #ifdef __U_BOOT__
 			flag_repeat = 0;
 #endif
 		}
-		if (rcode != 1 && ctx.old_flag == 0) {
+		만약 (rcode != 1 && ctx.old_flag == 0) {
 			done_word(&temp, &ctx);
 			done_pipe(&ctx,PIPE_SEQ);
 #ifndef __U_BOOT__
 			run_list(ctx.list_head);
-#else
+#아니면
 			code = run_list(ctx.list_head);
-			if (code == -2) {	/* exit */
+			만약 (code == -2) {	/* exit */
 				b_free(&temp);
 				code = 0;
 				/* XXX hackish way to not allow exit from main loop */
-				if (inp->peek == file_peek) {
+				만약 (inp->peek == file_peek) {
 					printf("exit not allowed from main input shell.\n");
 					continue;
 				}
@@ -3221,18 +3221,18 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 				 * stored in 'last_return_code' variable!
 				 * DANGER
 				 */
-				return -2;
+				반환 -2;
 			}
-			if (code == -1)
+			만약 (code == -1)
 			    flag_repeat = 0;
 #endif
-		} else {
-			if (ctx.old_flag != 0) {
+		} 아니면 {
+			만약 (ctx.old_flag != 0) {
 				free(ctx.stack);
 				b_reset(&temp);
 			}
 #ifdef __U_BOOT__
-			if (inp->__promptme == 0) printf("<INTERRUPT>\n");
+			만약 (inp->__promptme == 0) printf("<INTERRUPT>\n");
 			inp->__promptme = 1;
 #endif
 			temp.nonnull = 0;
@@ -3242,68 +3242,68 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 		}
 		b_free(&temp);
 	/* loop on syntax errors, return on EOF */
-	} while (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
+	} 동안 (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
 		(inp->peek != static_peek || b_peek(inp)));
 #ifndef __U_BOOT__
-	return 0;
-#else
-	return (code != 0) ? 1 : 0;
+	반환 0;
+#아니면
+	반환 (code != 0) ? 1 : 0;
 #endif /* __U_BOOT__ */
 }
 
 #ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag)
-#else
-int parse_string_outer(const char *s, int flag)
+static 정수 parse_string_outer(const char *s, 정수 flag)
+#아니면
+정수 parse_string_outer(const char *s, 정수 flag)
 #endif	/* __U_BOOT__ */
 {
 	struct in_str input;
-	int rcode;
+	정수 rcode;
 #ifdef __U_BOOT__
 	char *p = NULL;
-	if (!s)
-		return 1;
-	if (!*s)
-		return 0;
-	if (!(p = strchr(s, '\n')) || *++p) {
+	만약 (!s)
+		반환 1;
+	만약 (!*s)
+		반환 0;
+	만약 (!(p = strchr(s, '\n')) || *++p) {
 		p = xmalloc(strlen(s) + 2);
 		strcpy(p, s);
 		strcat(p, "\n");
 		setup_string_in_str(&input, p);
 		rcode = parse_stream_outer(&input, flag);
 		free(p);
-		return rcode == -2 ? last_return_code : rcode;
-	} else {
+		반환 rcode == -2 ? last_return_code : rcode;
+	} 아니면 {
 #endif
 	setup_string_in_str(&input, s);
 	rcode = parse_stream_outer(&input, flag);
-	return rcode == -2 ? last_return_code : rcode;
+	반환 rcode == -2 ? last_return_code : rcode;
 #ifdef __U_BOOT__
 	}
 #endif
 }
 
 #ifndef __U_BOOT__
-static int parse_file_outer(FILE *f)
-#else
-int parse_file_outer(void)
+static 정수 parse_file_outer(FILE *f)
+#아니면
+정수 parse_file_outer(void)
 #endif
 {
-	int rcode;
+	정수 rcode;
 	struct in_str input;
 #ifndef __U_BOOT__
 	setup_file_in_str(&input, f);
-#else
+#아니면
 	setup_file_in_str(&input);
 #endif
 	rcode = parse_stream_outer(&input, FLAG_PARSE_SEMICOLON);
-	return rcode == -2 ? last_return_code : rcode;
+	반환 rcode == -2 ? last_return_code : rcode;
 }
 
 #ifdef __U_BOOT__
-int u_boot_hush_start(void)
+정수 u_boot_hush_start(void)
 {
-	if (top_vars == NULL) {
+	만약 (top_vars == NULL) {
 		top_vars = malloc(sizeof(struct variables));
 		top_vars->name = "HUSH_VERSION";
 		top_vars->value = "0.01";
@@ -3311,29 +3311,29 @@ int u_boot_hush_start(void)
 		top_vars->flg_export = 0;
 		top_vars->flg_read_only = 1;
 	}
-	return 0;
+	반환 0;
 }
 
 static void *xmalloc(size_t size)
 {
 	void *p = NULL;
 
-	if (!(p = malloc(size))) {
+	만약 (!(p = malloc(size))) {
 	    printf("ERROR : xmalloc failed\n");
-	    for(;;);
+	    위해(;;);
 	}
-	return p;
+	반환 p;
 }
 
 static void *xrealloc(void *ptr, size_t size)
 {
 	void *p = NULL;
 
-	if (!(p = realloc(ptr, size))) {
+	만약 (!(p = realloc(ptr, size))) {
 	    printf("ERROR : xrealloc failed\n");
-	    for(;;);
+	    위해(;;);
 	}
-	return p;
+	반환 p;
 }
 #endif /* __U_BOOT__ */
 
@@ -3345,7 +3345,7 @@ static void setup_job_control(void)
 {
 	static pid_t shell_pgrp;
 	/* Loop until we are in the foreground.  */
-	while (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
+	동안 (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
 		kill (- shell_pgrp, SIGTTIN);
 
 	/* Ignore interactive and job-control signals.  */
@@ -3366,9 +3366,9 @@ static void setup_job_control(void)
 	tcsetpgrp(shell_terminal, shell_pgrp);
 }
 
-int hush_main(int argc, char * const *argv)
+정수 hush_main(정수 argc, char * const *argv)
 {
-	int opt;
+	정수 opt;
 	FILE *input;
 	char **e = environ;
 
@@ -3392,23 +3392,23 @@ int hush_main(int argc, char * const *argv)
 	set_cwd();
 #ifdef CONFIG_FEATURE_COMMAND_EDITING
 	cmdedit_set_initial_prompt();
-#else
+#아니면
 	PS1 = NULL;
 #endif
 	PS2 = "> ";
 
 	/* initialize our shell local variables with the values
 	 * currently living in the environment */
-	if (e) {
-		for (; *e; e++)
+	만약 (e) {
+		위해 (; *e; e++)
 			set_local_var(*e, 2);   /* without call putenv() */
 	}
 
 	last_return_code=EXIT_SUCCESS;
 
-	if (argv[0] && argv[0][0] == '-') {
+	만약 (argv[0] && argv[0][0] == '-') {
 		debug_printf("\nsourcing /etc/profile\n");
-		if ((input = fopen("/etc/profile", "r")) != NULL) {
+		만약 ((input = fopen("/etc/profile", "r")) != NULL) {
 			mark_open(fileno(input));
 			parse_file_outer(input);
 			mark_closed(fileno(input));
@@ -3417,7 +3417,7 @@ int hush_main(int argc, char * const *argv)
 	}
 	input=stdin;
 
-	while ((opt = getopt(argc, argv, "c:xif")) > 0) {
+	동안 ((opt = getopt(argc, argv, "c:xif")) > 0) {
 		switch (opt) {
 			case 'c':
 				{
@@ -3438,7 +3438,7 @@ int hush_main(int argc, char * const *argv)
 				fprintf(stderr, "Usage: sh [FILE]...\n"
 						"   or: sh -c command [args]...\n\n");
 				exit(EXIT_FAILURE);
-#else
+#아니면
 				show_usage();
 #endif
 		}
@@ -3450,13 +3450,13 @@ int hush_main(int argc, char * const *argv)
 	 *    standard input is a terminal
 	 *    standard output is a terminal
 	 *    Refer to Posix.2, the description of the `sh' utility. */
-	if (argv[optind]==NULL && input==stdin &&
+	만약 (argv[optind]==NULL && input==stdin &&
 			isatty(fileno(stdin)) && isatty(fileno(stdout))) {
 		interactive++;
 	}
 
 	debug_printf("\ninteractive=%d\n", interactive);
-	if (interactive) {
+	만약 (interactive) {
 		/* Looks like they want an interactive shell */
 #ifndef CONFIG_FEATURE_SH_EXTRA_QUIET
 		printf( "\n\n" BB_BANNER " hush - the humble shell v0.01 (testing)\n");
@@ -3465,7 +3465,7 @@ int hush_main(int argc, char * const *argv)
 		setup_job_control();
 	}
 
-	if (argv[optind]==NULL) {
+	만약 (argv[optind]==NULL) {
 		opt=parse_file_outer(stdin);
 		goto final_return;
 	}
@@ -3478,13 +3478,13 @@ int hush_main(int argc, char * const *argv)
 
 #ifdef CONFIG_FEATURE_CLEAN_UP
 	fclose(input);
-	if (cwd && cwd != unknown)
+	만약 (cwd && cwd != unknown)
 		free((char*)cwd);
 	{
 		struct variables *cur, *tmp;
-		for(cur = top_vars; cur; cur = tmp) {
+		위해(cur = top_vars; cur; cur = tmp) {
 			tmp = cur->next;
-			if (!cur->flg_read_only) {
+			만약 (!cur->flg_read_only) {
 				free(cur->name);
 				free(cur->value);
 				free(cur);
@@ -3494,25 +3494,25 @@ int hush_main(int argc, char * const *argv)
 #endif
 
 final_return:
-	return(opt?opt:last_return_code);
+	반환(opt?opt:last_return_code);
 }
 #endif
 
 static char *insert_var_value(char *inp)
 {
-	return insert_var_value_sub(inp, 0);
+	반환 insert_var_value_sub(inp, 0);
 }
 
-static char *insert_var_value_sub(char *inp, int tag_subst)
+static char *insert_var_value_sub(char *inp, 정수 tag_subst)
 {
-	int res_str_len = 0;
-	int len;
-	int done = 0;
+	정수 res_str_len = 0;
+	정수 len;
+	정수 done = 0;
 	char *p, *p1, *res_str = NULL;
 
-	while ((p = strchr(inp, SPECIAL_VAR_SYMBOL))) {
+	동안 ((p = strchr(inp, SPECIAL_VAR_SYMBOL))) {
 		/* check the beginning of the string for normal characters */
-		if (p != inp) {
+		만약 (p != inp) {
 			/* copy any characters to the result string */
 			len = p - inp;
 			res_str = xrealloc(res_str, (res_str_len + len));
@@ -3524,13 +3524,13 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 		p = strchr(inp, SPECIAL_VAR_SYMBOL);
 		*p = '\0';
 		/* look up the value to substitute */
-		if ((p1 = lookup_param(inp))) {
-			if (tag_subst)
+		만약 ((p1 = lookup_param(inp))) {
+			만약 (tag_subst)
 				len = res_str_len + strlen(p1) + 2;
-			else
+			아니면
 				len = res_str_len + strlen(p1);
 			res_str = xrealloc(res_str, (1 + len));
-			if (tag_subst) {
+			만약 (tag_subst) {
 				/*
 				 * copy the variable value to the result
 				 * string
@@ -3544,7 +3544,7 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 				res_str[res_str_len] = SUBSTED_VAR_SYMBOL;
 				res_str[res_str_len + 1 + strlen(p1)] =
 					SUBSTED_VAR_SYMBOL;
-			} else
+			} 아니면
 				/*
 				 * copy the variable value to the result
 				 * string
@@ -3557,37 +3557,37 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 		inp = ++p;
 		done = 1;
 	}
-	if (done) {
+	만약 (done) {
 		res_str = xrealloc(res_str, (1 + res_str_len + strlen(inp)));
 		strcpy((res_str + res_str_len), inp);
-		while ((p = strchr(res_str, '\n'))) {
+		동안 ((p = strchr(res_str, '\n'))) {
 			*p = ' ';
 		}
 	}
-	return (res_str == NULL) ? inp : res_str;
+	반환 (res_str == NULL) ? inp : res_str;
 }
 
 static char **make_list_in(char **inp, char *name)
 {
-	int len, i;
-	int name_len = strlen(name);
-	int n = 0;
+	정수 len, i;
+	정수 name_len = strlen(name);
+	정수 n = 0;
 	char **list;
 	char *p1, *p2, *p3;
 
 	/* create list of variable values */
 	list = xmalloc(sizeof(*list));
-	for (i = 0; inp[i]; i++) {
+	위해 (i = 0; inp[i]; i++) {
 		p3 = insert_var_value(inp[i]);
 		p1 = p3;
-		while (*p1) {
-			if (*p1 == ' ') {
+		동안 (*p1) {
+			만약 (*p1 == ' ') {
 				p1++;
 				continue;
 			}
-			if ((p2 = strchr(p1, ' '))) {
+			만약 ((p2 = strchr(p1, ' '))) {
 				len = p2 - p1;
-			} else {
+			} 아니면 {
 				len = strlen(p1);
 				p2 = p1 + len;
 			}
@@ -3601,10 +3601,10 @@ static char **make_list_in(char **inp, char *name)
 			list[n++][name_len + len + 1] = '\0';
 			p1 = p2;
 		}
-		if (p3 != inp[i]) free(p3);
+		만약 (p3 != inp[i]) free(p3);
 	}
 	list[n] = NULL;
-	return list;
+	반환 list;
 }
 
 /*
@@ -3612,84 +3612,84 @@ static char **make_list_in(char **inp, char *name)
  * inp     - array of argument strings to flatten
  * nonnull - indicates argument was quoted when originally parsed
  */
-static char *make_string(char **inp, int *nonnull)
+static char *make_string(char **inp, 정수 *nonnull)
 {
 	char *p;
 	char *str = NULL;
-	int n;
-	int len = 2;
+	정수 n;
+	정수 len = 2;
 	char *noeval_str;
-	int noeval = 0;
+	정수 noeval = 0;
 
 	noeval_str = get_local_var("HUSH_NO_EVAL");
-	if (noeval_str != NULL && *noeval_str != '0' && *noeval_str != '\0')
+	만약 (noeval_str != NULL && *noeval_str != '0' && *noeval_str != '\0')
 		noeval = 1;
-	for (n = 0; inp[n]; n++) {
+	위해 (n = 0; inp[n]; n++) {
 		p = insert_var_value_sub(inp[n], noeval);
 		char *new_str = xrealloc(str, (len + strlen(p) + (2 * nonnull[n])));
-		if (!new_str) {
+		만약 (!new_str) {
 			free(str);
-			if (p != inp[n]) free(p);
-			return NULL;
+			만약 (p != inp[n]) free(p);
+			반환 NULL;
 		}
 		str = new_str;
-		if (n) {
+		만약 (n) {
 			strcat(str, " ");
-		} else {
+		} 아니면 {
 			*str = '\0';
 		}
-		if (nonnull[n])
+		만약 (nonnull[n])
 			strcat(str, "'");
 		strcat(str, p);
-		if (nonnull[n])
+		만약 (nonnull[n])
 			strcat(str, "'");
 		len = strlen(str) + 3;
-		if (p != inp[n]) free(p);
+		만약 (p != inp[n]) free(p);
 	}
 	len = strlen(str);
 	*(str + len) = '\n';
 	*(str + len + 1) = '\0';
-	return str;
+	반환 str;
 }
 
 #ifdef __U_BOOT__
-static int do_showvar(struct cmd_tbl *cmdtp, int flag, int argc,
+static 정수 do_showvar(struct cmd_tbl *cmdtp, 정수 flag, 정수 argc,
 		      char *const argv[])
 {
-	int i, k;
-	int rcode = 0;
+	정수 i, k;
+	정수 rcode = 0;
 	struct variables *cur;
 
-	if (argc == 1) {		/* Print all env variables	*/
-		for (cur = top_vars; cur; cur = cur->next) {
+	만약 (argc == 1) {		/* Print all env variables	*/
+		위해 (cur = top_vars; cur; cur = cur->next) {
 			printf ("%s=%s\n", cur->name, cur->value);
-			if (ctrlc ()) {
+			만약 (ctrlc ()) {
 				puts ("\n ** Abort\n");
-				return 1;
+				반환 1;
 			}
 		}
-		return 0;
+		반환 0;
 	}
-	for (i = 1; i < argc; ++i) {	/* print single env variables	*/
+	위해 (i = 1; i < argc; ++i) {	/* print single env variables	*/
 		char *name = argv[i];
 
 		k = -1;
-		for (cur = top_vars; cur; cur = cur->next) {
-			if(strcmp (cur->name, name) == 0) {
+		위해 (cur = top_vars; cur; cur = cur->next) {
+			만약(strcmp (cur->name, name) == 0) {
 				k = 0;
 				printf ("%s=%s\n", cur->name, cur->value);
 			}
-			if (ctrlc ()) {
+			만약 (ctrlc ()) {
 				puts ("\n ** Abort\n");
-				return 1;
+				반환 1;
 			}
 		}
-		if (k < 0) {
+		만약 (k < 0) {
 			printf ("## Error: \"%s\" not defined\n", name);
 			rcode ++;
 		}
 	}
-	return rcode;
+	반환 rcode;
 }
 
 U_BOOT_CMD(

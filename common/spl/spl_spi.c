@@ -28,46 +28,46 @@ static ulong spl_spi_fit_read(struct spl_load_info *load, ulong sector,
 	ulong ret;
 
 	ret = spi_flash_read(flash, sector, count, buf);
-	if (!ret)
-		return count;
-	else
-		return 0;
+	만약 (!ret)
+		반환 count;
+	아니면
+		반환 0;
 }
 
-unsigned int __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
+unsigned 정수 __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
 {
-	return CONFIG_SYS_SPI_U_BOOT_OFFS;
+	반환 CONFIG_SYS_SPI_U_BOOT_OFFS;
 }
 
 u32 __weak spl_spi_boot_bus(void)
 {
-	return CONFIG_SF_DEFAULT_BUS;
+	반환 CONFIG_SF_DEFAULT_BUS;
 }
 
 u32 __weak spl_spi_boot_cs(void)
 {
-	return CONFIG_SF_DEFAULT_CS;
+	반환 CONFIG_SF_DEFAULT_CS;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_spi_load_image_os(struct spl_image_info *spl_image,
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT)
+static 정수 spl_spi_load_image_os(struct spl_image_info *spl_image,
 				 struct spl_boot_device *bootdev,
 				 struct spi_flash *flash,
 				 struct spl_load_info *load)
 {
-	int err = spl_load(spl_image, bootdev, load, 0,
+	정수 err = spl_load(spl_image, bootdev, load, 0,
 			   CONFIG_SYS_SPI_KERNEL_OFFS);
 
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/* Read device tree. */
-	return spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
+	반환 spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
 			      CONFIG_SYS_SPI_ARGS_SIZE,
 			      (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-#else
-	return 0;
+#아니면
+	반환 0;
 #endif
 
 }
@@ -78,14 +78,14 @@ static int spl_spi_load_image_os(struct spl_image_info *spl_image,
  * configured and available since this code loads the main U-Boot image
  * from SPI into SDRAM and starts it from there.
  */
-static int spl_spi_load_image(struct spl_image_info *spl_image,
+static 정수 spl_spi_load_image(struct spl_image_info *spl_image,
 			      struct spl_boot_device *bootdev)
 {
-	int err = 0;
-	unsigned int payload_offs;
+	정수 err = 0;
+	unsigned 정수 payload_offs;
 	struct spi_flash *flash;
-	unsigned int sf_bus = spl_spi_boot_bus();
-	unsigned int sf_cs = spl_spi_boot_cs();
+	unsigned 정수 sf_bus = spl_spi_boot_bus();
+	unsigned 정수 sf_cs = spl_spi_boot_cs();
 	struct spl_load_info load;
 
 	/*
@@ -96,45 +96,45 @@ static int spl_spi_load_image(struct spl_image_info *spl_image,
 	flash = spi_flash_probe(sf_bus, sf_cs,
 				CONFIG_SF_DEFAULT_SPEED,
 				CONFIG_SF_DEFAULT_MODE);
-	if (!flash) {
+	만약 (!flash) {
 		puts("SPI probe failed.\n");
-		return -ENODEV;
+		반환 -ENODEV;
 	}
 
 	spl_load_init(&load, spl_spi_fit_read, flash, 1);
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#만약 CONFIG_IS_ENABLED(OS_BOOT)
+	만약 (!spl_start_uboot()) {
 		err = spl_spi_load_image_os(spl_image, bootdev, flash, &load);
 
-		if (!err)
-			return 0;
+		만약 (!err)
+			반환 0;
 
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		만약 (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			반환 err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
 
 	payload_offs = spl_spi_get_uboot_offs(flash);
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
+	만약 (CONFIG_IS_ENABLED(OF_REAL)) {
 		payload_offs = ofnode_conf_read_int("u-boot,spl-payload-offset",
 						    payload_offs);
 	}
 
 	err = spl_load(spl_image, bootdev, &load, 0, payload_offs);
-	if (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
-		int ret = spi_nor_remove(flash);
+	만약 (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
+		정수 ret = spi_nor_remove(flash);
 
-		if (ret) {
+		만약 (ret) {
 			printf("%s: Failed to remove SPI NOR flash: %d\n",
 			       __func__, ret);
-			if (!err)
+			만약 (!err)
 				err = ret;
 		}
 	}
-	return err;
+	반환 err;
 }
 /* Use priorty 1 so that boards can override this */
 SPL_LOAD_IMAGE_METHOD("SPI", 1, BOOT_DEVICE_SPI, spl_spi_load_image);

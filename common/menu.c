@@ -38,16 +38,16 @@ struct menu_item {
  */
 struct menu {
 	struct menu_item *default_item;
-	int timeout;
+	정수 timeout;
 	char *title;
-	int prompt;
+	정수 prompt;
 	void (*display_statusline)(struct menu *);
 	void (*item_data_print)(void *);
 	char *(*item_choice)(void *);
 	bool (*need_reprint)(void *);
 	void *item_choice_data;
 	struct list_head items;
-	int item_cnt;
+	정수 item_cnt;
 };
 
 /*
@@ -71,11 +71,11 @@ static inline void *menu_items_iter(struct menu *m,
 
 		ret = callback(m, item, extra);
 
-		if (ret)
-			return ret;
+		만약 (ret)
+			반환 ret;
 	}
 
-	return NULL;
+	반환 NULL;
 }
 
 /*
@@ -87,14 +87,14 @@ static inline void *menu_item_print(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (!m->item_data_print) {
+	만약 (!m->item_data_print) {
 		puts(item->key);
 		putc('\n');
-	} else {
+	} 아니면 {
 		m->item_data_print(item->data);
 	}
 
-	return NULL;
+	반환 NULL;
 }
 
 /*
@@ -105,12 +105,12 @@ static inline void *menu_item_destroy(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (item->key)
+	만약 (item->key)
 		free(item->key);
 
 	free(item);
 
-	return NULL;
+	반환 NULL;
 }
 
 /*
@@ -119,16 +119,16 @@ static inline void *menu_item_destroy(struct menu *m,
  */
 static inline void menu_display(struct menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	만약 (m->need_reprint) {
+		만약 (!m->need_reprint(m->item_choice_data))
+			반환;
 	}
 
-	if (m->title) {
+	만약 (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	만약 (m->display_statusline)
 		m->display_statusline(m);
 
 	menu_items_iter(m, menu_item_print, NULL);
@@ -147,17 +147,17 @@ static inline void *menu_item_key_match(struct menu *m,
 {
 	char *item_key = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	만약 (!item_key || !item->key) {
+		만약 (item_key == item->key)
+			반환 item;
 
-		return NULL;
+		반환 NULL;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	만약 (strcmp(item->key, item_key) == 0)
+		반환 item;
 
-	return NULL;
+	반환 NULL;
 }
 
 /*
@@ -166,21 +166,21 @@ static inline void *menu_item_key_match(struct menu *m,
 static inline struct menu_item *menu_item_by_key(struct menu *m,
 							char *item_key)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	반환 menu_items_iter(m, menu_item_key_match, item_key);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+정수 menu_default_choice(struct menu *m, void **choice)
 {
-	if (m->default_item) {
+	만약 (m->default_item) {
 		*choice = m->default_item->data;
-		return 1;
+		반환 1;
 	}
 
-	return -ENOENT;
+	반환 -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+static inline 정수 menu_interactive_choice(struct menu *m, void **choice)
 {
 	char cbuf[CONFIG_SYS_CBSIZE];
 	struct menu_item *choice_item = NULL;
-	int readret;
+	정수 readret;
 
-	while (!choice_item) {
+	동안 (!choice_item) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
+		만약 (!m->item_choice) {
 			readret = cli_readline_into_buffer("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
+			만약 (readret >= 0) {
 				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
+				만약 (!choice_item)
 					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
+			} 아니면 만약 (readret == -1)  {
 				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+				반환 -EINTR;
+			} 아니면 {
+				반환 menu_default_choice(m, choice);
 			}
-		} else {
+		} 아니면 {
 			char *key = m->item_choice(m->item_choice_data);
 
-			if (key)
+			만약 (key)
 				choice_item = menu_item_by_key(m, key);
 		}
 
-		if (!choice_item)
+		만약 (!choice_item)
 			m->timeout = 0;
 	}
 
 	*choice = choice_item->data;
 
-	return 1;
+	반환 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+정수 menu_default_set(struct menu *m, char *item_key)
 {
 	struct menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	만약 (!m)
+		반환 -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (!item)
-		return -ENOENT;
+	만약 (!item)
+		반환 -ENOENT;
 
 	m->default_item = item;
 
-	return 1;
+	반환 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+정수 menu_get_choice(struct menu *m, void **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	만약 (!m || !choice)
+		반환 -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	만약 (!m->item_cnt)
+		반환 -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	만약 (!m->prompt)
+		반환 menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	반환 menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,29 +309,29 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+정수 menu_item_add(struct menu *m, char *item_key, void *item_data)
 {
 	struct menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	만약 (!m)
+		반환 -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (item) {
+	만약 (item) {
 		item->data = item_data;
-		return 1;
+		반환 1;
 	}
 
 	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	만약 (!item)
+		반환 -ENOMEM;
 
 	item->key = strdup(item_key);
 
-	if (!item->key) {
+	만약 (!item->key) {
 		free(item);
-		return -ENOMEM;
+		반환 -ENOMEM;
 	}
 
 	item->data = item_data;
@@ -339,7 +339,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
 	list_add_tail(&item->list, &m->items);
 	m->item_cnt++;
 
-	return 1;
+	반환 1;
 }
 
 /*
@@ -377,7 +377,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
+struct menu *menu_create(char *title, 정수 timeout, 정수 prompt,
 				void (*display_statusline)(struct menu *),
 				void (*item_data_print)(void *),
 				char *(*item_choice)(void *),
@@ -388,8 +388,8 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 
 	m = malloc(sizeof *m);
 
-	if (!m)
-		return NULL;
+	만약 (!m)
+		반환 NULL;
 
 	m->default_item = NULL;
 	m->prompt = prompt;
@@ -401,18 +401,18 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->item_choice_data = item_choice_data;
 	m->item_cnt = 0;
 
-	if (title) {
+	만약 (title) {
 		m->title = strdup(title);
-		if (!m->title) {
+		만약 (!m->title) {
 			free(m);
-			return NULL;
+			반환 NULL;
 		}
-	} else
+	} 아니면
 		m->title = NULL;
 
 	INIT_LIST_HEAD(&m->items);
 
-	return m;
+	반환 m;
 }
 
 /*
@@ -422,24 +422,24 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+정수 menu_destroy(struct menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	만약 (!m)
+		반환 -EINVAL;
 
 	menu_items_iter(m, menu_item_destroy, NULL);
 
-	if (m->title)
+	만약 (m->title)
 		free(m->title);
 
 	free(m);
 
-	return 1;
+	반환 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+static 정수 bootmenu_conv_shortcut_key(struct bootmenu_data *menu, 정수 ichar)
 {
-	int shortcut_key;
+	정수 shortcut_key;
 
 	ichar = tolower(ichar);
 	switch (ichar) {
@@ -454,26 +454,26 @@ static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
 	/* Reserve 0 for last option (aka Exit) */
 	case '0':
 	default:
-		return -1;
+		반환 -1;
 	}
 
-	return shortcut_key;
+	반환 shortcut_key;
 }
 
 enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 					 struct cli_ch_state *cch)
 {
 	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	정수 i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	동안 (menu->delay > 0) {
+		정수 ichar;
 
-		if (ansi)
+		만약 (ansi)
 			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
+		위해 (i = 0; i < 100; ++i) {
+			만약 (!tstc()) {
 				schedule();
 				mdelay(10);
 				continue;
@@ -506,25 +506,25 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 			break;
 		}
 
-		if (key == BKEY_SHORTCUT)
+		만약 (key == BKEY_SHORTCUT)
 			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
 
-		if (menu->delay < 0)
+		만약 (menu->delay < 0)
 			break;
 
 		--menu->delay;
 	}
 
-	if (ansi)
+	만약 (ansi)
 		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
 
-	if (menu->delay == 0)
+	만약 (menu->delay == 0)
 		key = BKEY_SELECT;
 
-	return key;
+	반환 key;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+enum bootmenu_key bootmenu_conv_key(정수 ichar)
 {
 	enum bootmenu_key key;
 
@@ -561,24 +561,24 @@ enum bootmenu_key bootmenu_conv_key(int ichar)
 		break;
 	}
 
-	return key;
+	반환 key;
 }
 
 enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 				struct cli_ch_state *cch)
 {
 	enum bootmenu_key key;
-	int c, errchar = 0;
+	정수 c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
+	만약 (!c) {
+		동안 (!c && !tstc()) {
 			schedule();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		만약 (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
@@ -586,10 +586,10 @@ enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 
 	key = bootmenu_conv_key(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
+	만약 (key == BKEY_NONE && isalnum(c)) {
 		key = BKEY_SHORTCUT;
 		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
 	}
 
-	return key;
+	반환 key;
 }

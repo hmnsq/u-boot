@@ -44,11 +44,11 @@
  * environment are used
  */
 #ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
-#else
-int overwrite_console(void)
+extern 정수 overwrite_console(void);
+#아니면
+정수 overwrite_console(void)
 {
-	return 0;
+	반환 0;
 }
 #endif
 
@@ -97,7 +97,7 @@ static const unsigned char usb_kbd_num_keypad[] = {
 static const u8 usb_special_keys[] = {
 #ifdef CONFIG_USB_KEYBOARD_FN_KEYS
 	'2', 'H', '5', '3', 'F', '6', 'C', 'D', 'B', 'A'
-#else
+#아니면
 	'C', 'D', 'B', 'A'
 #endif
 };
@@ -116,8 +116,8 @@ static const u8 usb_special_keys[] = {
 
 struct usb_kbd_pdata {
 	unsigned long	intpipe;
-	int		intpktsize;
-	int		intinterval;
+	정수		intpktsize;
+	정수		intinterval;
 	unsigned long	last_report;
 	struct int_queue *intq;
 
@@ -135,29 +135,29 @@ struct usb_kbd_pdata {
 	uint8_t		flags;
 };
 
-extern int __maybe_unused net_busy_flag;
+extern 정수 __maybe_unused net_busy_flag;
 
 /* The period of time between two calls of usb_kbd_testc(). */
 static unsigned long kbd_testc_tms;
 
-int usb_kbd_remove_for_test(void)
+정수 usb_kbd_remove_for_test(void)
 {
-	return console_remove_by_name(DEVNAME);
+	반환 console_remove_by_name(DEVNAME);
 }
 
 /* Puts character in the queue and sets up the in and out pointer. */
 static void usb_kbd_put_queue(struct usb_kbd_pdata *data, u8 c)
 {
-	if (data->usb_in_pointer == USB_KBD_BUFFER_LEN - 1) {
+	만약 (data->usb_in_pointer == USB_KBD_BUFFER_LEN - 1) {
 		/* Check for buffer full. */
-		if (data->usb_out_pointer == 0)
-			return;
+		만약 (data->usb_out_pointer == 0)
+			반환;
 
 		data->usb_in_pointer = 0;
-	} else {
+	} 아니면 {
 		/* Check for buffer full. */
-		if (data->usb_in_pointer == data->usb_out_pointer - 1)
-			return;
+		만약 (data->usb_in_pointer == data->usb_out_pointer - 1)
+			반환;
 
 		data->usb_in_pointer++;
 	}
@@ -184,105 +184,105 @@ static void usb_kbd_setled(struct usb_device *dev)
 
 #define CAPITAL_MASK	0x20
 /* Translate the scancode in ASCII */
-static int usb_kbd_translate(struct usb_kbd_pdata *data, unsigned char scancode,
-				unsigned char modifier, int pressed)
+static 정수 usb_kbd_translate(struct usb_kbd_pdata *data, unsigned char scancode,
+				unsigned char modifier, 정수 pressed)
 {
 	uint8_t keycode = 0;
 
 	/* Key released */
-	if (pressed == 0) {
+	만약 (pressed == 0) {
 		data->repeat_delay = 0;
-		return 0;
+		반환 0;
 	}
 
-	if (pressed == 2) {
+	만약 (pressed == 2) {
 		data->repeat_delay++;
-		if (data->repeat_delay < REPEAT_DELAY)
-			return 0;
+		만약 (data->repeat_delay < REPEAT_DELAY)
+			반환 0;
 
 		data->repeat_delay = REPEAT_DELAY;
 	}
 
 	/* Alphanumeric values */
-	if ((scancode > 3) && (scancode <= 0x1d)) {
+	만약 ((scancode > 3) && (scancode <= 0x1d)) {
 		keycode = scancode - 4 + 'a';
 
-		if (data->flags & USB_KBD_CAPSLOCK)
+		만약 (data->flags & USB_KBD_CAPSLOCK)
 			keycode &= ~CAPITAL_MASK;
 
-		if (modifier & (LEFT_SHIFT | RIGHT_SHIFT)) {
+		만약 (modifier & (LEFT_SHIFT | RIGHT_SHIFT)) {
 			/* Handle CAPSLock + Shift pressed simultaneously */
-			if (keycode & CAPITAL_MASK)
+			만약 (keycode & CAPITAL_MASK)
 				keycode &= ~CAPITAL_MASK;
-			else
+			아니면
 				keycode |= CAPITAL_MASK;
 		}
 	}
 
-	if ((scancode > 0x1d) && (scancode < 0x39)) {
+	만약 ((scancode > 0x1d) && (scancode < 0x39)) {
 		/* Shift pressed */
-		if (modifier & (LEFT_SHIFT | RIGHT_SHIFT))
+		만약 (modifier & (LEFT_SHIFT | RIGHT_SHIFT))
 			keycode = usb_kbd_numkey_shifted[scancode - 0x1e];
-		else
+		아니면
 			keycode = usb_kbd_numkey[scancode - 0x1e];
 	}
 
 	/* Numeric keypad */
-	if ((scancode >= 0x54) && (scancode <= 0x67))
+	만약 ((scancode >= 0x54) && (scancode <= 0x67))
 		keycode = usb_kbd_num_keypad[scancode - 0x54];
 
-	if (data->flags & USB_KBD_CTRL)
+	만약 (data->flags & USB_KBD_CTRL)
 		keycode = scancode - 0x3;
 
-	if (pressed == 1) {
-		if (scancode == NUM_LOCK) {
+	만약 (pressed == 1) {
+		만약 (scancode == NUM_LOCK) {
 			data->flags ^= USB_KBD_NUMLOCK;
-			return 1;
+			반환 1;
 		}
 
-		if (scancode == CAPS_LOCK) {
+		만약 (scancode == CAPS_LOCK) {
 			data->flags ^= USB_KBD_CAPSLOCK;
-			return 1;
+			반환 1;
 		}
-		if (scancode == SCROLL_LOCK) {
+		만약 (scancode == SCROLL_LOCK) {
 			data->flags ^= USB_KBD_SCROLLLOCK;
-			return 1;
+			반환 1;
 		}
 	}
 
 	/* Report keycode if any */
-	if (keycode) {
+	만약 (keycode) {
 		debug("%c", keycode);
 		usb_kbd_put_queue(data, keycode);
-		return 0;
+		반환 0;
 	}
 
 #ifdef CONFIG_USB_KEYBOARD_FN_KEYS
-	if (scancode < 0x3a || scancode > 0x52 ||
+	만약 (scancode < 0x3a || scancode > 0x52 ||
 	    scancode == 0x46 || scancode == 0x47)
-		return 1;
+		반환 1;
 
 	usb_kbd_put_queue(data, 0x1b);
-	if (scancode < 0x3e) {
+	만약 (scancode < 0x3e) {
 		/* F1 - F4 */
 		usb_kbd_put_queue(data, 0x4f);
 		usb_kbd_put_queue(data, scancode - 0x3a + 'P');
-		return 0;
+		반환 0;
 	}
 	usb_kbd_put_queue(data, '[');
-	if (scancode < 0x42) {
+	만약 (scancode < 0x42) {
 		/* F5 - F8 */
 		usb_kbd_put_queue(data, '1');
-		if (scancode == 0x3e)
+		만약 (scancode == 0x3e)
 			--scancode;
 		keycode = scancode - 0x3f + '7';
-	} else if (scancode < 0x49) {
+	} 아니면 만약 (scancode < 0x49) {
 		/* F9 - F12 */
 		usb_kbd_put_queue(data, '2');
-		if (scancode > 0x43)
+		만약 (scancode > 0x43)
 			++scancode;
 		keycode = scancode - 0x42 + '0';
-	} else {
+	} 아니면 {
 		/*
 		 * INSERT, HOME, PAGE UP, DELETE, END, PAGE DOWN,
 		 * RIGHT, LEFT, DOWN, UP
@@ -290,111 +290,111 @@ static int usb_kbd_translate(struct usb_kbd_pdata *data, unsigned char scancode,
 		keycode = usb_special_keys[scancode - 0x49];
 	}
 	usb_kbd_put_queue(data, keycode);
-	if (scancode < 0x4f && scancode != 0x4a && scancode != 0x4d)
+	만약 (scancode < 0x4f && scancode != 0x4a && scancode != 0x4d)
 		usb_kbd_put_queue(data, '~');
-	return 0;
-#else
+	반환 0;
+#아니면
 	/* Left, Right, Up, Down */
-	if (scancode > 0x4e && scancode < 0x53) {
+	만약 (scancode > 0x4e && scancode < 0x53) {
 		usb_kbd_put_queue(data, 0x1b);
 		usb_kbd_put_queue(data, '[');
 		usb_kbd_put_queue(data, usb_special_keys[scancode - 0x4f]);
-		return 0;
+		반환 0;
 	}
-	return 1;
+	반환 1;
 #endif /* CONFIG_USB_KEYBOARD_FN_KEYS */
 }
 
-static uint32_t usb_kbd_service_key(struct usb_device *dev, int i, int up)
+static uint32_t usb_kbd_service_key(struct usb_device *dev, 정수 i, 정수 up)
 {
 	uint32_t res = 0;
 	struct usb_kbd_pdata *data = dev->privptr;
 	uint8_t *new;
 	uint8_t *old;
 
-	if (up) {
+	만약 (up) {
 		new = data->old;
 		old = data->new;
-	} else {
+	} 아니면 {
 		new = data->new;
 		old = data->old;
 	}
 
-	if ((old[i] > 3) &&
+	만약 ((old[i] > 3) &&
 	    (memscan(new + 2, old[i], USB_KBD_BOOT_REPORT_SIZE - 2) ==
 			new + USB_KBD_BOOT_REPORT_SIZE)) {
 		res |= usb_kbd_translate(data, old[i], data->new[0], up);
 	}
 
-	return res;
+	반환 res;
 }
 
 /* Interrupt service routine */
-static int usb_kbd_irq_worker(struct usb_device *dev)
+static 정수 usb_kbd_irq_worker(struct usb_device *dev)
 {
 	struct usb_kbd_pdata *data = dev->privptr;
-	int i, res = 0;
+	정수 i, res = 0;
 
 	/* No combo key pressed */
-	if (data->new[0] == 0x00)
+	만약 (data->new[0] == 0x00)
 		data->flags &= ~USB_KBD_CTRL;
 	/* Left or Right Ctrl pressed */
-	else if ((data->new[0] == LEFT_CNTR) || (data->new[0] == RIGHT_CNTR))
+	아니면 만약 ((data->new[0] == LEFT_CNTR) || (data->new[0] == RIGHT_CNTR))
 		data->flags |= USB_KBD_CTRL;
 
-	for (i = 2; i < USB_KBD_BOOT_REPORT_SIZE; i++) {
+	위해 (i = 2; i < USB_KBD_BOOT_REPORT_SIZE; i++) {
 		res |= usb_kbd_service_key(dev, i, 0);
 		res |= usb_kbd_service_key(dev, i, 1);
 	}
 
 	/* Key is still pressed */
-	if ((data->new[2] > 3) && (data->old[2] == data->new[2]))
+	만약 ((data->new[2] > 3) && (data->old[2] == data->new[2]))
 		res |= usb_kbd_translate(data, data->new[2], data->new[0], 2);
 
-	if (res == 1)
+	만약 (res == 1)
 		usb_kbd_setled(dev);
 
 	memcpy(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE);
 
-	return 1;
+	반환 1;
 }
 
 /* Keyboard interrupt handler */
-static int usb_kbd_irq(struct usb_device *dev)
+static 정수 usb_kbd_irq(struct usb_device *dev)
 {
-	if ((dev->irq_status != 0) ||
+	만약 ((dev->irq_status != 0) ||
 	    (dev->irq_act_len != USB_KBD_BOOT_REPORT_SIZE)) {
 		debug("USB KBD: Error %lX, len %d\n",
 		      dev->irq_status, dev->irq_act_len);
-		return 1;
+		반환 1;
 	}
 
-	return usb_kbd_irq_worker(dev);
+	반환 usb_kbd_irq_worker(dev);
 }
 
 /* Interrupt polling */
 static inline void usb_kbd_poll_for_event(struct usb_device *dev)
 {
-#if defined(CONFIG_SYS_USB_EVENT_POLL)
+#만약 defined(CONFIG_SYS_USB_EVENT_POLL)
 	struct usb_kbd_pdata *data = dev->privptr;
 
 	/* Submit an interrupt transfer request */
-	if (usb_int_msg(dev, data->intpipe, &data->new[0],
+	만약 (usb_int_msg(dev, data->intpipe, &data->new[0],
 			data->intpktsize, data->intinterval, true) >= 0)
 		usb_kbd_irq_worker(dev);
 #elif defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) || \
       defined(CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE)
-#if defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
+#만약 defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
 	struct usb_interface *iface;
 	struct usb_kbd_pdata *data = dev->privptr;
 	iface = &dev->config.if_desc[data->ifnum];
 	usb_get_report(dev, iface->desc.bInterfaceNumber,
 		       1, 0, data->new, USB_KBD_BOOT_REPORT_SIZE);
-	if (memcmp(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE)) {
+	만약 (memcmp(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE)) {
 		usb_kbd_irq_worker(dev);
-#else
+#아니면
 	struct usb_kbd_pdata *data = dev->privptr;
-	if (poll_int_queue(dev, data->intq)) {
+	만약 (poll_int_queue(dev, data->intq)) {
 		usb_kbd_irq_worker(dev);
 		/* We've consumed all queued int packets, create new */
 		destroy_int_queue(dev, data->intq);
@@ -404,7 +404,7 @@ static inline void usb_kbd_poll_for_event(struct usb_device *dev)
 #endif
 		data->last_report = get_timer(0);
 	/* Repeat last usb hid report every REPEAT_RATE ms for keyrepeat */
-	} else if (data->last_report != -1 &&
+	} 아니면 만약 (data->last_report != -1 &&
 		   get_timer(data->last_report) > REPEAT_RATE) {
 		usb_kbd_irq_worker(dev);
 		data->last_report = get_timer(0);
@@ -413,7 +413,7 @@ static inline void usb_kbd_poll_for_event(struct usb_device *dev)
 }
 
 /* test if a character is in the queue */
-static int usb_kbd_testc(struct stdio_dev *sdev)
+static 정수 usb_kbd_testc(struct stdio_dev *sdev)
 {
 	struct stdio_dev *dev;
 	struct usb_device *usb_kbd_dev;
@@ -426,13 +426,13 @@ static int usb_kbd_testc(struct stdio_dev *sdev)
 	 */
 	unsigned long poll_delay = CONFIG_SYS_HZ / 50;
 
-#if defined(CONFIG_CMD_NET) && !defined(CONFIG_NET_LWIP)
+#만약 defined(CONFIG_CMD_NET) && !defined(CONFIG_NET_LWIP)
 	/*
 	 * If net_busy_flag is 1, NET transfer is running,
 	 * then we check key-pressed every second (first check may be
 	 * less than 1 second) to improve TFTP booting performance.
 	 */
-	if (net_busy_flag)
+	만약 (net_busy_flag)
 		poll_delay = CONFIG_SYS_HZ;
 #endif
 
@@ -440,7 +440,7 @@ static int usb_kbd_testc(struct stdio_dev *sdev)
 	/*
 	 * Skip delaying polls if a test requests it.
 	 */
-	if (state_get_skip_delays())
+	만약 (state_get_skip_delays())
 		poll_delay = 0;
 #endif
 
@@ -448,16 +448,16 @@ static int usb_kbd_testc(struct stdio_dev *sdev)
 	usb_kbd_dev = (struct usb_device *)dev->priv;
 	data = usb_kbd_dev->privptr;
 
-	if (get_timer(kbd_testc_tms) >= poll_delay) {
+	만약 (get_timer(kbd_testc_tms) >= poll_delay) {
 		usb_kbd_poll_for_event(usb_kbd_dev);
 		kbd_testc_tms = get_timer(0);
 	}
 
-	return !(data->usb_in_pointer == data->usb_out_pointer);
+	반환 !(data->usb_in_pointer == data->usb_out_pointer);
 }
 
 /* gets the character from the queue */
-static int usb_kbd_getc(struct stdio_dev *sdev)
+static 정수 usb_kbd_getc(struct stdio_dev *sdev)
 {
 	struct stdio_dev *dev;
 	struct usb_device *usb_kbd_dev;
@@ -467,55 +467,55 @@ static int usb_kbd_getc(struct stdio_dev *sdev)
 	usb_kbd_dev = (struct usb_device *)dev->priv;
 	data = usb_kbd_dev->privptr;
 
-	while (data->usb_in_pointer == data->usb_out_pointer) {
+	동안 (data->usb_in_pointer == data->usb_out_pointer) {
 		schedule();
 		usb_kbd_poll_for_event(usb_kbd_dev);
 	}
 
-	if (data->usb_out_pointer == USB_KBD_BUFFER_LEN - 1)
+	만약 (data->usb_out_pointer == USB_KBD_BUFFER_LEN - 1)
 		data->usb_out_pointer = 0;
-	else
+	아니면
 		data->usb_out_pointer++;
 
-	return data->usb_kbd_buffer[data->usb_out_pointer];
+	반환 data->usb_kbd_buffer[data->usb_out_pointer];
 }
 
 /* probes the USB device dev for keyboard type. */
-static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
+static 정수 usb_kbd_probe_dev(struct usb_device *dev, unsigned 정수 ifnum)
 {
 	struct usb_interface *iface;
 	struct usb_endpoint_descriptor *ep;
 	struct usb_kbd_pdata *data;
-	unsigned int quirks = 0;
-	int epNum;
+	unsigned 정수 quirks = 0;
+	정수 epNum;
 
-	if (dev->descriptor.bNumConfigurations != 1)
-		return 0;
+	만약 (dev->descriptor.bNumConfigurations != 1)
+		반환 0;
 
 	iface = &dev->config.if_desc[ifnum];
 
-	if (iface->desc.bInterfaceClass != USB_CLASS_HID)
-		return 0;
+	만약 (iface->desc.bInterfaceClass != USB_CLASS_HID)
+		반환 0;
 
-	if (iface->desc.bInterfaceSubClass != USB_SUB_HID_BOOT)
-		return 0;
+	만약 (iface->desc.bInterfaceSubClass != USB_SUB_HID_BOOT)
+		반환 0;
 
-	if (iface->desc.bInterfaceProtocol != USB_PROT_HID_KEYBOARD)
-		return 0;
+	만약 (iface->desc.bInterfaceProtocol != USB_PROT_HID_KEYBOARD)
+		반환 0;
 
-	for (epNum = 0; epNum < iface->desc.bNumEndpoints; epNum++) {
+	위해 (epNum = 0; epNum < iface->desc.bNumEndpoints; epNum++) {
 		ep = &iface->ep_desc[epNum];
 
 		/* Check if endpoint is interrupt IN endpoint */
-		if ((ep->bmAttributes & 3) != 3)
+		만약 ((ep->bmAttributes & 3) != 3)
 			continue;
 
-		if (ep->bEndpointAddress & 0x80)
+		만약 (ep->bEndpointAddress & 0x80)
 			break;
 	}
 
-	if (epNum == iface->desc.bNumEndpoints)
-		return 0;
+	만약 (epNum == iface->desc.bNumEndpoints)
+		반환 0;
 
 	debug("USB KBD: found interrupt EP: 0x%x\n", ep->bEndpointAddress);
 
@@ -529,9 +529,9 @@ static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
 	}
 
 	data = malloc(sizeof(struct usb_kbd_pdata));
-	if (!data) {
+	만약 (!data) {
 		printf("USB KBD: Error allocating private data\n");
-		return 0;
+		반환 0;
 	}
 
 	/* Clear private data */
@@ -559,11 +559,11 @@ static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
 	debug("USB KBD: set boot protocol\n");
 	usb_set_protocol(dev, iface->desc.bInterfaceNumber, 0);
 
-#if !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) && \
+#만약 !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) && \
     !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE)
 	debug("USB KBD: set idle interval...\n");
 	usb_set_idle(dev, iface->desc.bInterfaceNumber, REPEAT_RATE / 4, 0);
-#else
+#아니면
 	debug("USB KBD: set idle interval=0...\n");
 	usb_set_idle(dev, iface->desc.bInterfaceNumber, 0, 0);
 #endif
@@ -572,49 +572,49 @@ static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
 	 * Apple and Keychron keyboards do not report the device state. Reports
 	 * are only returned during key presses.
 	 */
-	if (quirks & USB_HID_QUIRK_POLL_NO_REPORT_IDLE) {
+	만약 (quirks & USB_HID_QUIRK_POLL_NO_REPORT_IDLE) {
 		debug("USB KBD: quirk: skip testing device state\n");
-		return 1;
+		반환 1;
 	}
 	debug("USB KBD: enable interrupt pipe...\n");
 #ifdef CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE
 	data->intq = create_int_queue(dev, data->intpipe, 1,
 				      USB_KBD_BOOT_REPORT_SIZE, data->new,
 				      data->intinterval);
-	if (!data->intq) {
+	만약 (!data->intq) {
 #elif defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
-	if (usb_get_report(dev, iface->desc.bInterfaceNumber,
+	만약 (usb_get_report(dev, iface->desc.bInterfaceNumber,
 			   1, 0, data->new, USB_KBD_BOOT_REPORT_SIZE) < 0) {
-#else
-	if (usb_int_msg(dev, data->intpipe, data->new, data->intpktsize,
+#아니면
+	만약 (usb_int_msg(dev, data->intpipe, data->new, data->intpktsize,
 			data->intinterval, false) < 0) {
 #endif
 		printf("Failed to get keyboard state from device %04x:%04x\n",
 		       dev->descriptor.idVendor, dev->descriptor.idProduct);
 		/* Abort, we don't want to use that non-functional keyboard. */
-		return 0;
+		반환 0;
 	}
 
 	/* Success. */
-	return 1;
+	반환 1;
 }
 
-static int probe_usb_keyboard(struct usb_device *dev)
+static 정수 probe_usb_keyboard(struct usb_device *dev)
 {
 	char *stdinname;
 	struct stdio_dev usb_kbd_dev;
-	unsigned int ifnum;
-	unsigned int max_ifnum = min((unsigned int)USB_MAX_ACTIVE_INTERFACES,
-				     (unsigned int)dev->config.no_of_if);
-	int error;
+	unsigned 정수 ifnum;
+	unsigned 정수 max_ifnum = min((unsigned 정수)USB_MAX_ACTIVE_INTERFACES,
+				     (unsigned 정수)dev->config.no_of_if);
+	정수 error;
 
 	/* Try probing the keyboard */
-	for (ifnum = 0; ifnum < max_ifnum; ifnum++) {
-		if (usb_kbd_probe_dev(dev, ifnum) == 1)
+	위해 (ifnum = 0; ifnum < max_ifnum; ifnum++) {
+		만약 (usb_kbd_probe_dev(dev, ifnum) == 1)
 			break;
 	}
-	if (ifnum >= max_ifnum)
-		return -ENOENT;
+	만약 (ifnum >= max_ifnum)
+		반환 -ENOENT;
 
 	/* Register the keyboard */
 	debug("USB KBD: register.\n");
@@ -625,59 +625,59 @@ static int probe_usb_keyboard(struct usb_device *dev)
 	usb_kbd_dev.tstc = usb_kbd_testc;
 	usb_kbd_dev.priv = (void *)dev;
 	error = stdio_register(&usb_kbd_dev);
-	if (error)
-		return error;
+	만약 (error)
+		반환 error;
 
 	stdinname = env_get("stdin");
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	if (strstr(stdinname, DEVNAME) != NULL) {
+#만약 CONFIG_IS_ENABLED(CONSOLE_MUX)
+	만약 (strstr(stdinname, DEVNAME) != NULL) {
 		error = iomux_doenv(stdin, stdinname);
-		if (error)
-			return error;
+		만약 (error)
+			반환 error;
 	}
-#else
+#아니면
 	/* Check if this is the standard input device. */
-	if (!strcmp(stdinname, DEVNAME)) {
+	만약 (!strcmp(stdinname, DEVNAME)) {
 		/* Reassign the console */
-		if (overwrite_console())
-			return 1;
+		만약 (overwrite_console())
+			반환 1;
 
 		error = console_assign(stdin, DEVNAME);
-		if (error)
-			return error;
+		만약 (error)
+			반환 error;
 	}
 #endif
 
-	return 0;
+	반환 0;
 }
 
-static int usb_kbd_probe(struct udevice *dev)
+static 정수 usb_kbd_probe(struct udevice *dev)
 {
 	struct usb_device *udev = dev_get_parent_priv(dev);
 
-	return probe_usb_keyboard(udev);
+	반환 probe_usb_keyboard(udev);
 }
 
-static int usb_kbd_remove(struct udevice *dev)
+static 정수 usb_kbd_remove(struct udevice *dev)
 {
 	struct usb_device *udev = dev_get_parent_priv(dev);
 	struct usb_kbd_pdata *data;
 	struct stdio_dev *sdev;
-	int ret;
+	정수 ret;
 
 	sdev = stdio_get_by_name(DEVNAME);
-	if (!sdev) {
+	만약 (!sdev) {
 		ret = -ENXIO;
 		goto err;
 	}
 	data = udev->privptr;
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	if (iomux_replace_device(stdin, DEVNAME, "nulldev")) {
+#만약 CONFIG_IS_ENABLED(CONSOLE_MUX)
+	만약 (iomux_replace_device(stdin, DEVNAME, "nulldev")) {
 		ret = -ENOLINK;
 		goto err;
 	}
 #endif
-	if (stdio_deregister_dev(sdev, true)) {
+	만약 (stdio_deregister_dev(sdev, true)) {
 		ret = -EPERM;
 		goto err;
 	}
@@ -687,10 +687,10 @@ static int usb_kbd_remove(struct udevice *dev)
 	free(data->new);
 	free(data);
 
-	return 0;
+	반환 0;
 err:
 	printf("%s: warning, ret=%d", __func__, ret);
-	return ret;
+	반환 ret;
 }
 
 static const struct udevice_id usb_kbd_ids[] = {

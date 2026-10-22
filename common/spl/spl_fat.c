@@ -18,29 +18,29 @@
 #include <linux/libfdt.h>
 #include <asm/cache.h>
 
-static int fat_registered;
+static 정수 fat_registered;
 
 void spl_fat_force_reregister(void)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+static 정수 spl_register_fat_device(struct blk_desc *block_dev, 정수 partition)
 {
-	int err = 0;
+	정수 err = 0;
 
-	if (fat_registered)
-		return err;
+	만약 (fat_registered)
+		반환 err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
+	만약 (err) {
 		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+		반환 err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	반환 err;
 }
 
 static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
@@ -48,44 +48,44 @@ static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
 {
 	struct legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
+	정수 ret;
 	char *filename = load->priv;
 
 	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	만약 (ret)
+		반환 ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
+	만약 (CONFIG_IS_ENABLED(OS_BOOT)) {
 		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+		만약 (image_get_magic(header) != FDT_MAGIC)
+			반환 size;
 	}
 
-	return actread;
+	반환 actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
+정수 spl_load_image_fat(struct spl_image_info *spl_image,
 		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
+		       struct blk_desc *block_dev, 정수 partition,
 		       const char *filename)
 {
-	int err;
+	정수 err;
 	loff_t size;
 	struct spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
+	만약 (err)
 		goto end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	만약 (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = fat_size(filename, &size);
-		if (err)
+		만약 (err)
 			goto end;
-	} else {
+	} 아니면 {
 		size = 0;
 	}
 
@@ -96,55 +96,55 @@ int spl_load_image_fat(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0) {
+	만약 (err < 0) {
 		spl_fat_force_reregister();
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	반환 err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
+#만약 CONFIG_IS_ENABLED(OS_BOOT)
+정수 spl_load_image_fat_os(struct spl_image_info *spl_image,
 			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+			  struct blk_desc *block_dev, 정수 partition)
 {
-	int err;
+	정수 err;
 	__maybe_unused char *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+	만약 (!CONFIG_IS_ENABLED(ENV_SUPPORT))
 		goto defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	만약 (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		만약 (err != 0) {
 			puts("spl: falling back to default\n");
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		만약 (file) {
 			err = file_fat_read(
 				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
+			만약 (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
 				goto defaults;
 			}
-			return 0;
-		} else
+			반환 0;
+		} 아니면
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 #endif
 
-	} else
+	} 아니면
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
@@ -152,26 +152,26 @@ defaults:
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	만약 (err)
+		반환 err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#만약 IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
 			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
+	만약 (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		반환 -1;
 	}
 #endif
 
-	return 0;
+	반환 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
+#아니면
+정수 spl_load_image_fat_os(struct spl_image_info *spl_image,
 			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+			  struct blk_desc *block_dev, 정수 partition)
 {
-	return -ENOSYS;
+	반환 -ENOSYS;
 }
 #endif

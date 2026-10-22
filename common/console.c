@@ -29,67 +29,67 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
-	int flags)
+static 정수 on_console(const char *name, const char *value, enum env_op op,
+	정수 flags)
 {
-	int console = -1;
+	정수 console = -1;
 
 	/* Check for console redirection */
-	if (strcmp(name, "stdin") == 0)
+	만약 (strcmp(name, "stdin") == 0)
 		console = stdin;
-	else if (strcmp(name, "stdout") == 0)
+	아니면 만약 (strcmp(name, "stdout") == 0)
 		console = stdout;
-	else if (strcmp(name, "stderr") == 0)
+	아니면 만약 (strcmp(name, "stderr") == 0)
 		console = stderr;
 
 	/* if not actually setting a console variable, we don't care */
-	if (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
-		return 0;
+	만약 (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
+		반환 0;
 
 	switch (op) {
 	case env_op_create:
 	case env_op_overwrite:
 
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
-				return 1;
-		} else {
+		만약 (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			만약 (iomux_doenv(console, value))
+				반환 1;
+		} 아니면 {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
-				return 1;
+			만약 (console_assign(console, value) < 0)
+				반환 1;
 		}
 
-		return 0;
+		반환 0;
 
 	case env_op_delete:
-		if ((flags & H_FORCE) == 0)
+		만약 ((flags & H_FORCE) == 0)
 			printf("Can't delete \"%s\"\n", name);
-		return 1;
+		반환 1;
 
 	default:
-		return 0;
+		반환 0;
 	}
 }
 U_BOOT_ENV_CALLBACK(console, on_console);
 
 #ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
-	int flags)
+static 정수 on_silent(const char *name, const char *value, enum env_op op,
+	정수 flags)
 {
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
-		if (flags & H_INTERACTIVE)
-			return 0;
+	만약 (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
+		만약 (flags & H_INTERACTIVE)
+			반환 0;
 
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
-		if ((flags & H_INTERACTIVE) == 0)
-			return 0;
+	만약 (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
+		만약 ((flags & H_INTERACTIVE) == 0)
+			반환 0;
 
-	if (value != NULL)
+	만약 (value != NULL)
 		gd->flags |= GD_FLG_SILENT;
-	else
+	아니면
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return 0;
+	반환 0;
 }
 U_BOOT_ENV_CALLBACK(silent, on_silent);
 #endif
@@ -98,47 +98,47 @@ U_BOOT_ENV_CALLBACK(silent, on_silent);
 /* helper function: access to gd->console_out and gd->console_in */
 static void console_record_putc(const char c)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start &&
+	만약 (!(gd->flags & GD_FLG_RECORD))
+		반환;
+	만약  (gd->console_out.start &&
 	     !membuf_putbyte((struct membuf *)&gd->console_out, c))
 		gd->flags |= GD_FLG_RECORD_OVF;
 }
 
 static void console_record_puts(const char *s)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start) {
-		int len = strlen(s);
+	만약 (!(gd->flags & GD_FLG_RECORD))
+		반환;
+	만약  (gd->console_out.start) {
+		정수 len = strlen(s);
 
-		if (membuf_put((struct membuf *)&gd->console_out, s, len) !=
+		만약 (membuf_put((struct membuf *)&gd->console_out, s, len) !=
 		    len)
 			gd->flags |= GD_FLG_RECORD_OVF;
 	}
 }
 
-static int console_record_getc(void)
+static 정수 console_record_getc(void)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return -1;
-	if (!gd->console_in.start)
-		return -1;
+	만약 (!(gd->flags & GD_FLG_RECORD))
+		반환 -1;
+	만약 (!gd->console_in.start)
+		반환 -1;
 
-	return membuf_getbyte((struct membuf *)&gd->console_in);
+	반환 membuf_getbyte((struct membuf *)&gd->console_in);
 }
 
-static int console_record_tstc(void)
+static 정수 console_record_tstc(void)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return 0;
-	if (gd->console_in.start) {
-		if (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
-			return 1;
+	만약 (!(gd->flags & GD_FLG_RECORD))
+		반환 0;
+	만약 (gd->console_in.start) {
+		만약 (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
+			반환 1;
 	}
-	return 0;
+	반환 0;
 }
-#else
+#아니면
 static void console_record_putc(char c)
 {
 }
@@ -147,45 +147,45 @@ static void console_record_puts(const char *s)
 {
 }
 
-static int console_record_getc(void)
+static 정수 console_record_getc(void)
 {
-	return -1;
+	반환 -1;
 }
 
-static int console_record_tstc(void)
+static 정수 console_record_tstc(void)
 {
-	return 0;
+	반환 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#만약 CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /*
  * if overwrite_console returns 1, the stdin, stderr and stdout
  * are switched to the serial port, else the settings in the
  * environment are used
  */
 #ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
+extern 정수 overwrite_console(void);
 #define OVERWRITE_CONSOLE overwrite_console()
-#else
+#아니면
 #define OVERWRITE_CONSOLE 0
 #endif /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-static int console_setfile(int file, struct stdio_dev * dev)
+static 정수 console_setfile(정수 file, struct stdio_dev * dev)
 {
-	int error = 0;
+	정수 error = 0;
 
-	if (dev == NULL)
-		return -1;
+	만약 (dev == NULL)
+		반환 -1;
 
 	switch (file) {
 	case stdin:
 	case stdout:
 	case stderr:
 		error = console_start(file, dev);
-		if (error)
+		만약 (error)
 			break;
 
 		/* Assign the new device (leaving the existing one started) */
@@ -213,7 +213,7 @@ static int console_setfile(int file, struct stdio_dev * dev)
 	default:		/* Invalid file ID */
 		error = -1;
 	}
-	return error;
+	반환 error;
 }
 
 /**
@@ -227,26 +227,26 @@ static bool console_dev_is_serial(struct stdio_dev *sdev)
 {
 	bool is_serial;
 
-	if (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
+	만약 (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
 		struct udevice *dev = sdev->priv;
 
 		is_serial = device_get_uclass_id(dev) == UCLASS_SERIAL;
-	} else {
+	} 아니면 {
 		is_serial = !strcmp(sdev->name, "serial");
 	}
 
-	return is_serial;
+	반환 is_serial;
 }
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
+#만약 CONFIG_IS_ENABLED(CONSOLE_MUX)
 /** Console I/O multiplexing *******************************************/
 
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
 static struct stdio_dev *tstcdev;
 struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+정수 cd_count[MAX_FILES];
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+static void console_devices_set(정수 file, struct stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
 	cd_count[file] = 1;
@@ -263,18 +263,18 @@ static void console_devices_set(int file, struct stdio_dev *dev)
  * other words, we start console once before first STDIO device wants it and
  * stop after the last is gone.
  */
-static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+static bool console_needs_start_stop(정수 file, struct stdio_dev *sdev)
 {
-	int i;
+	정수 i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
-		if (i == file)
+	위해 (i = 0; i < ARRAY_SIZE(cd_count); i++) {
+		만약 (i == file)
 			continue;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
-			return false;
+		만약 (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
+			반환 false;
 	}
-	return true;
+	반환 true;
 }
 
 /*
@@ -283,51 +283,51 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
  * only from fgetc() which assures it.
  * No attempt is made to demultiplex multiple input sources.
  */
-static int console_getc(int file)
+static 정수 console_getc(정수 file)
 {
 	unsigned char ret;
 
 	/* This is never called with testcdev == NULL */
 	ret = tstcdev->getc(tstcdev);
 	tstcdev = NULL;
-	return ret;
+	반환 ret;
 }
 
 /*  Upper layer may have already called tstc(): check the saved result */
 static bool console_has_tstc(void)
 {
-	return !!tstcdev;
+	반환 !!tstcdev;
 }
 
-static int console_tstc(int file)
+static 정수 console_tstc(정수 file)
 {
-	int i, ret;
+	정수 i, ret;
 	struct stdio_dev *dev;
-	int prev;
+	정수 prev;
 
 	prev = disable_ctrlc(1);
 	for_each_console_dev(i, file, dev) {
-		if (dev->tstc != NULL) {
+		만약 (dev->tstc != NULL) {
 			ret = dev->tstc(dev);
-			if (ret > 0) {
+			만약 (ret > 0) {
 				tstcdev = dev;
 				disable_ctrlc(prev);
-				return ret;
+				반환 ret;
 			}
 		}
 	}
 	disable_ctrlc(prev);
 
-	return 0;
+	반환 0;
 }
 
-static void console_putc(int file, const char c)
+static void console_putc(정수 file, const char c)
 {
-	int i;
+	정수 i;
 	struct stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->putc != NULL)
+		만약 (dev->putc != NULL)
 			dev->putc(dev, c);
 	}
 }
@@ -340,30 +340,30 @@ static void console_putc(int file, const char c)
  *	else
  * @s: String to output
  */
-static void console_puts_select(int file, bool serial_only, const char *s)
+static void console_puts_select(정수 file, bool serial_only, const char *s)
 {
-	int i;
+	정수 i;
 	struct stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
 		bool is_serial = console_dev_is_serial(dev);
 
-		if (dev->puts && serial_only == is_serial)
+		만약 (dev->puts && serial_only == is_serial)
 			dev->puts(dev, s);
 	}
 }
 
 void console_puts_select_stderr(bool serial_only, const char *s)
 {
-	if (gd->flags & GD_FLG_DEVINIT)
+	만약 (gd->flags & GD_FLG_DEVINIT)
 		console_puts_select(stderr, serial_only, s);
 }
 
-int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
+정수 console_printf_select_stderr(bool serial_only, const char *fmt, ...)
 {
 	char buf[CONFIG_SYS_PBSIZE];
 	va_list args;
-	int ret;
+	정수 ret;
 
 	va_start(args, fmt);
 
@@ -374,133 +374,133 @@ int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
 	va_end(args);
 	console_puts_select_stderr(serial_only, buf);
 
-	return ret;
+	반환 ret;
 }
 
-static void console_puts(int file, const char *s)
+static void console_puts(정수 file, const char *s)
 {
-	int i;
+	정수 i;
 	struct stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->puts != NULL)
+		만약 (dev->puts != NULL)
 			dev->puts(dev, s);
 	}
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void console_flush(int file)
+static void console_flush(정수 file)
 {
-	int i;
+	정수 i;
 	struct stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->flush != NULL)
+		만약 (dev->flush != NULL)
 			dev->flush(dev);
 	}
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#만약 CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+static inline void console_doenv(정수 file, struct stdio_dev *dev)
 {
 	iomux_doenv(file, dev->name);
 }
 #endif
-#else
+#아니면
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+static void console_devices_set(정수 file, struct stdio_dev *dev)
 {
 }
 
-static inline bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+static inline bool console_needs_start_stop(정수 file, struct stdio_dev *sdev)
 {
-	return true;
+	반환 true;
 }
 
-static inline int console_getc(int file)
+static inline 정수 console_getc(정수 file)
 {
-	return stdio_devices[file]->getc(stdio_devices[file]);
+	반환 stdio_devices[file]->getc(stdio_devices[file]);
 }
 
 static bool console_has_tstc(void)
 {
-	return false;
+	반환 false;
 }
 
-static inline int console_tstc(int file)
+static inline 정수 console_tstc(정수 file)
 {
-	return stdio_devices[file]->tstc(stdio_devices[file]);
+	반환 stdio_devices[file]->tstc(stdio_devices[file]);
 }
 
-static inline void console_putc(int file, const char c)
+static inline void console_putc(정수 file, const char c)
 {
 	stdio_devices[file]->putc(stdio_devices[file], c);
 }
 
-void console_puts_select(int file, bool serial_only, const char *s)
+void console_puts_select(정수 file, bool serial_only, const char *s)
 {
-	if ((gd->flags & GD_FLG_DEVINIT) &&
+	만약 ((gd->flags & GD_FLG_DEVINIT) &&
 	    serial_only == console_dev_is_serial(stdio_devices[file]))
 		stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
-static inline void console_puts(int file, const char *s)
+static inline void console_puts(정수 file, const char *s)
 {
 	stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static inline void console_flush(int file)
+static inline void console_flush(정수 file)
 {
-	if (stdio_devices[file]->flush)
+	만약 (stdio_devices[file]->flush)
 		stdio_devices[file]->flush(stdio_devices[file]);
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#만약 CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+static inline void console_doenv(정수 file, struct stdio_dev *dev)
 {
 	console_setfile(file, dev);
 }
 #endif
 #endif /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
 
-static void __maybe_unused console_setfile_and_devices(int file, struct stdio_dev *dev)
+static void __maybe_unused console_setfile_and_devices(정수 file, struct stdio_dev *dev)
 {
 	console_setfile(file, dev);
 	console_devices_set(file, dev);
 }
 
-int console_start(int file, struct stdio_dev *sdev)
+정수 console_start(정수 file, struct stdio_dev *sdev)
 {
-	int error;
+	정수 error;
 
-	if (!console_needs_start_stop(file, sdev))
-		return 0;
+	만약 (!console_needs_start_stop(file, sdev))
+		반환 0;
 
 	/* Start new device */
-	if (sdev->start) {
+	만약 (sdev->start) {
 		error = sdev->start(sdev);
 		/* If it's not started don't use it */
-		if (error < 0)
-			return error;
+		만약 (error < 0)
+			반환 error;
 	}
-	return 0;
+	반환 0;
 }
 
-void console_stop(int file, struct stdio_dev *sdev)
+void console_stop(정수 file, struct stdio_dev *sdev)
 {
-	if (!console_needs_start_stop(file, sdev))
-		return;
+	만약 (!console_needs_start_stop(file, sdev))
+		반환;
 
-	if (sdev->stop)
+	만약 (sdev->stop)
 		sdev->stop(sdev);
 }
 
 /** U-Boot INITIAL CONSOLE-NOT COMPATIBLE FUNCTIONS *************************/
 
-int serial_printf(const char *fmt, ...)
+정수 serial_printf(const char *fmt, ...)
 {
 	va_list args;
 	uint i;
@@ -515,71 +515,71 @@ int serial_printf(const char *fmt, ...)
 	va_end(args);
 
 	serial_puts(printbuffer);
-	return i;
+	반환 i;
 }
 
-int fgetc(int file)
+정수 fgetc(정수 file)
 {
-	if ((unsigned int)file < MAX_FILES) {
+	만약 ((unsigned 정수)file < MAX_FILES) {
 		/*
 		 * Effectively poll for input wherever it may be available.
 		 */
-		for (;;) {
+		위해 (;;) {
 			schedule();
-			if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			만약 (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 				/*
 				 * Upper layer may have already called tstc() so
 				 * check for that first.
 				 */
-				if (console_has_tstc())
-					return console_getc(file);
+				만약 (console_has_tstc())
+					반환 console_getc(file);
 				console_tstc(file);
-			} else {
-				if (console_tstc(file))
-					return console_getc(file);
+			} 아니면 {
+				만약 (console_tstc(file))
+					반환 console_getc(file);
 			}
 
 			/*
 			 * If the watchdog must be rate-limited then it should
 			 * already be handled in board-specific code.
 			 */
-			if (IS_ENABLED(CONFIG_WATCHDOG))
+			만약 (IS_ENABLED(CONFIG_WATCHDOG))
 				udelay(1);
 		}
 	}
 
-	return -1;
+	반환 -1;
 }
 
-int ftstc(int file)
+정수 ftstc(정수 file)
 {
-	if ((unsigned int)file < MAX_FILES)
-		return console_tstc(file);
+	만약 ((unsigned 정수)file < MAX_FILES)
+		반환 console_tstc(file);
 
-	return -1;
+	반환 -1;
 }
 
-void fputc(int file, const char c)
+void fputc(정수 file, const char c)
 {
-	if ((unsigned int)file < MAX_FILES)
+	만약 ((unsigned 정수)file < MAX_FILES)
 		console_putc(file, c);
 }
 
-void fputs(int file, const char *s)
+void fputs(정수 file, const char *s)
 {
-	if ((unsigned int)file < MAX_FILES)
+	만약 ((unsigned 정수)file < MAX_FILES)
 		console_puts(file, s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void fflush(int file)
+void fflush(정수 file)
 {
-	if ((unsigned int)file < MAX_FILES)
+	만약 ((unsigned 정수)file < MAX_FILES)
 		console_flush(file);
 }
 #endif
 
-int fprintf(int file, const char *fmt, ...)
+정수 fprintf(정수 file, const char *fmt, ...)
 {
 	va_list args;
 	uint i;
@@ -595,52 +595,52 @@ int fprintf(int file, const char *fmt, ...)
 
 	/* Send to desired file */
 	fputs(file, printbuffer);
-	return i;
+	반환 i;
 }
 
 /** U-Boot INITIAL CONSOLE-COMPATIBLE FUNCTION *****************************/
 
-int getchar(void)
+정수 getchar(void)
 {
-	int ch;
+	정수 ch;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	만약 (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		반환 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	만약 (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		반환 0;
 
 	ch = console_record_getc();
-	if (ch != -1)
-		return ch;
+	만약 (ch != -1)
+		반환 ch;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	만약 (gd->flags & GD_FLG_DEVINIT) {
 		/* Get from the standard input */
-		return fgetc(stdin);
+		반환 fgetc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_getc();
+	반환 serial_getc();
 }
 
-int tstc(void)
+정수 tstc(void)
 {
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	만약 (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		반환 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	만약 (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		반환 0;
 
-	if (console_record_tstc())
-		return 1;
+	만약 (console_record_tstc())
+		반환 1;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	만약 (gd->flags & GD_FLG_DEVINIT) {
 		/* Test the standard input */
-		return ftstc(stdin);
+		반환 ftstc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_tstc();
+	반환 serial_tstc();
 }
 
 /**
@@ -648,22 +648,22 @@ int tstc(void)
  */
 void console_flush_stdin(void)
 {
-	while (tstc())
+	동안 (tstc())
 		(void)getchar();
 }
 
 #define PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
 #define PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
 
-#if CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+#만약 CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
 #define CIRC_BUF_IDX(idx) ((idx) % (unsigned long)CONFIG_VAL(PRE_CON_BUF_SZ))
 
 static void pre_console_putc(const char c)
 {
 	char *buffer;
 
-	if (gd->precon_buf_idx < 0)
-		return;
+	만약 (gd->precon_buf_idx < 0)
+		반환;
 
 	buffer = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
 
@@ -674,27 +674,27 @@ static void pre_console_putc(const char c)
 
 static void pre_console_puts(const char *s)
 {
-	if (gd->precon_buf_idx < 0)
-		return;
+	만약 (gd->precon_buf_idx < 0)
+		반환;
 
-	while (*s)
+	동안 (*s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+static void print_pre_console_buffer(정수 flushpoint)
 {
 	long in = 0, out = 0;
 	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
 	char *buf_in;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	만약 (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		반환;
 
 	buf_in = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
-	if (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
+	만약 (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
 		in = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
 
-	while (in < gd->precon_buf_idx)
+	동안 (in < gd->precon_buf_idx)
 		buf_out[out++] = buf_in[CIRC_BUF_IDX(in++)];
 	unmap_sysmem(buf_in);
 
@@ -711,47 +711,47 @@ static void print_pre_console_buffer(int flushpoint)
 	}
 	gd->precon_buf_idx = in;
 }
-#else
+#아니면
 static inline void pre_console_putc(const char c) {}
 static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
+static inline void print_pre_console_buffer(정수 flushpoint) {}
 #endif
 
 void putc(const char c)
 {
-	if (!gd)
-		return;
+	만약 (!gd)
+		반환;
 
 	console_record_putc(c);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	만약 (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_putc(c);
-		return;
+		반환;
 	}
 
 	/* if we don't have a console yet, use the debug UART */
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	만약 (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printch(c);
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	만약 (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		만약 (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_putc(c);
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	만약 (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		반환;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_putc(c);
+	만약 (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		반환 pre_console_putc(c);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	만약 (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputc(stdout, c);
-	} else {
+	} 아니면 {
 		/* Send directly to the handler */
 		pre_console_putc(c);
 		serial_putc(c);
@@ -760,38 +760,38 @@ void putc(const char c)
 
 void puts(const char *s)
 {
-	if (!gd)
-		return;
+	만약 (!gd)
+		반환;
 
 	console_record_puts(s);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	만약 (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_puts(s);
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	만약 (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printascii(s);
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	만약 (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		만약 (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_puts(s);
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	만약 (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		반환;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_puts(s);
+	만약 (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		반환 pre_console_puts(s);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	만약 (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputs(stdout, s);
-	} else {
+	} 아니면 {
 		/* Send directly to the handler */
 		pre_console_puts(s);
 		serial_puts(s);
@@ -801,31 +801,31 @@ void puts(const char *s)
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
 void flush(void)
 {
-	if (!gd)
-		return;
+	만약 (!gd)
+		반환;
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	만약 (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_flush();
-		return;
+		반환;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
-		return;
+	만약 (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
+		반환;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	만약 (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		반환;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	만약 (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		반환;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return;
+	만약 (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		반환;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	만약 (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fflush(stdout);
-	} else {
+	} 아니면 {
 		/* Send directly to the handler */
 		serial_flush();
 	}
@@ -833,23 +833,23 @@ void flush(void)
 #endif
 
 #ifdef CONFIG_CONSOLE_RECORD
-int console_record_init(void)
+정수 console_record_init(void)
 {
-	int ret;
+	정수 ret;
 
 	ret = membuf_new((struct membuf *)&gd->console_out,
 			 gd->flags & GD_FLG_RELOC ?
 				CONFIG_CONSOLE_RECORD_OUT_SIZE :
 				CONFIG_CONSOLE_RECORD_OUT_SIZE_F);
-	if (ret)
-		return ret;
+	만약 (ret)
+		반환 ret;
 	ret = membuf_new((struct membuf *)&gd->console_in,
 			 CONFIG_CONSOLE_RECORD_IN_SIZE);
 
 	/* Start recording from the beginning */
 	gd->flags |= GD_FLG_RECORD;
 
-	return ret;
+	반환 ret;
 }
 
 void console_record_reset(void)
@@ -859,101 +859,101 @@ void console_record_reset(void)
 	gd->flags &= ~GD_FLG_RECORD_OVF;
 }
 
-int console_record_reset_enable(void)
+정수 console_record_reset_enable(void)
 {
 	console_record_reset();
 	gd->flags |= GD_FLG_RECORD;
 
-	return 0;
+	반환 0;
 }
 
-int console_record_readline(char *str, int maxlen)
+정수 console_record_readline(char *str, 정수 maxlen)
 {
-	if (gd->flags & GD_FLG_RECORD_OVF)
-		return -ENOSPC;
-	if (console_record_isempty())
-		return -ENOENT;
+	만약 (gd->flags & GD_FLG_RECORD_OVF)
+		반환 -ENOSPC;
+	만약 (console_record_isempty())
+		반환 -ENOENT;
 
-	return membuf_readline((struct membuf *)&gd->console_out, str,
+	반환 membuf_readline((struct membuf *)&gd->console_out, str,
 				maxlen, '\0', false);
 }
 
-int console_record_avail(void)
+정수 console_record_avail(void)
 {
-	return membuf_avail((struct membuf *)&gd->console_out);
+	반환 membuf_avail((struct membuf *)&gd->console_out);
 }
 
 bool console_record_isempty(void)
 {
-	return membuf_isempty((struct membuf *)&gd->console_out);
+	반환 membuf_isempty((struct membuf *)&gd->console_out);
 }
 
-int console_in_puts(const char *str)
+정수 console_in_puts(const char *str)
 {
-	return membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
+	반환 membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
 }
 
 #endif
 
 /* test if ctrl-c was pressed */
-static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
-int ctrlc(void)
+static 정수 ctrlc_disabled = 0;	/* see disable_ctrl() */
+static 정수 ctrlc_was_pressed = 0;
+정수 ctrlc(void)
 {
-	if (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
-		if (tstc()) {
+	만약 (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
+		만약 (tstc()) {
 			switch (getchar()) {
 			case 0x03:		/* ^C - Control C */
 				ctrlc_was_pressed = 1;
-				return 1;
+				반환 1;
 			default:
 				break;
 			}
 		}
 	}
 
-	return 0;
+	반환 0;
 }
 /* Reads user's confirmation.
    Returns 1 if user's input is "y", "Y", "yes" or "YES"
 */
-int confirm_yesno(void)
+정수 confirm_yesno(void)
 {
-	int i;
+	정수 i;
 	char str_input[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
+	동안 (i < sizeof(str_input)) {
 		str_input[i] = getchar();
 		putc(str_input[i]);
-		if (str_input[i] == '\r')
+		만약 (str_input[i] == '\r')
 			break;
 		i++;
 	}
 	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
+	만약 (strncmp(str_input, "y\r", 2) == 0 ||
 	    strncmp(str_input, "Y\r", 2) == 0 ||
 	    strncmp(str_input, "yes\r", 4) == 0 ||
 	    strncmp(str_input, "YES\r", 4) == 0)
-		return 1;
-	return 0;
+		반환 1;
+	반환 0;
 }
 /* pass 1 to disable ctrlc() checking, 0 to enable.
  * returns previous state
  */
-int disable_ctrlc(int disable)
+정수 disable_ctrlc(정수 disable)
 {
-	int prev = ctrlc_disabled;	/* save previous state */
+	정수 prev = ctrlc_disabled;	/* save previous state */
 
 	ctrlc_disabled = disable;
-	return prev;
+	반환 prev;
 }
 
-int had_ctrlc (void)
+정수 had_ctrlc (void)
 {
-	return ctrlc_was_pressed;
+	반환 ctrlc_was_pressed;
 }
 
 void clear_ctrlc(void)
@@ -963,35 +963,35 @@ void clear_ctrlc(void)
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+struct stdio_dev *console_search_dev(정수 flags, const char *name)
 {
 	struct stdio_dev *dev;
 
 	dev = stdio_get_by_name(name);
-	if (dev && (dev->flags & flags))
-		return dev;
+	만약 (dev && (dev->flags & flags))
+		반환 dev;
 
-	return NULL;
+	반환 NULL;
 }
 
-int console_assign(int file, const char *devname)
+정수 console_assign(정수 file, const char *devname)
 {
-	int flag;
+	정수 flag;
 	struct stdio_dev *dev;
 
 	/* Check for valid file */
 	flag = stdio_file_to_flags(file);
-	if (flag < 0)
-		return flag;
+	만약 (flag < 0)
+		반환 flag;
 
 	/* Check for valid device name */
 
 	dev = console_search_dev(flag, devname);
 
-	if (dev)
-		return console_setfile(file, dev);
+	만약 (dev)
+		반환 console_setfile(file, dev);
 
-	return -1;
+	반환 -1;
 }
 
 /* return true if the 'silent' flag is removed */
@@ -999,27 +999,27 @@ static bool console_update_silent(void)
 {
 	unsigned long flags = gd->flags;
 
-	if (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
-		return false;
+	만약 (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
+		반환 false;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
+	만약 (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		반환 false;
 	}
 
-	if (env_get("silent")) {
+	만약 (env_get("silent")) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		반환 false;
 	}
 
 	gd->flags &= ~GD_FLG_SILENT;
 
-	return !!(flags & GD_FLG_SILENT);
+	반환 !!(flags & GD_FLG_SILENT);
 }
 
-int console_announce_r(void)
+정수 console_announce_r(void)
 {
-#if !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+#만약 !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
 	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
 
 	display_options_get_banner(false, buf, sizeof(buf));
@@ -1027,11 +1027,11 @@ int console_announce_r(void)
 	console_puts_select(stdout, false, buf);
 #endif
 
-	return 0;
+	반환 0;
 }
 
 /* Called before relocation - use serial functions */
-int console_init_f(void)
+정수 console_init_f(void)
 {
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
@@ -1039,10 +1039,10 @@ int console_init_f(void)
 
 	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
-	return 0;
+	반환 0;
 }
 
-int console_clear(void)
+정수 console_clear(void)
 {
 	/*
 	 * Send clear screen and home
@@ -1052,27 +1052,27 @@ int console_clear(void)
 	 * displays
 	 */
 	printf(CSI "2J" CSI "1;1H");
-	if (IS_ENABLED(CONFIG_VIDEO_ANSI))
-		return 0;
+	만약 (IS_ENABLED(CONFIG_VIDEO_ANSI))
+		반환 0;
 
-	if (IS_ENABLED(CONFIG_VIDEO)) {
+	만약 (IS_ENABLED(CONFIG_VIDEO)) {
 		struct udevice *dev;
-		int ret;
+		정수 ret;
 
 		ret = uclass_first_device_err(UCLASS_VIDEO_CONSOLE, &dev);
-		if (ret)
-			return ret;
+		만약 (ret)
+			반환 ret;
 		ret = vidconsole_clear_and_reset(dev);
-		if (ret)
-			return ret;
+		만약 (ret)
+			반환 ret;
 	}
 
-	return 0;
+	반환 0;
 }
 
 static char *get_stdio(const u8 std)
 {
-	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
+	반환 stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
 static void stdio_print_current_devices(void)
@@ -1081,7 +1081,7 @@ static void stdio_print_current_devices(void)
 	char *stdoutname = NULL;
 	char *stderrname = NULL;
 
-	if (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
+	만약 (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
 	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)) {
 		/* stdin stdout and stderr are in environment */
 		stdinname  = env_get("stdin");
@@ -1104,20 +1104,20 @@ static void stdio_print_current_devices(void)
 	printf("%s\n", stderrname);
 }
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#만약 CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+정수 console_init_r(void)
 {
 	char *stdinname, *stdoutname, *stderrname;
 	struct stdio_dev *inputdev = NULL, *outputdev = NULL, *errdev = NULL;
-	int i;
-	int iomux_err = 0;
-	int flushpoint;
+	정수 i;
+	정수 iomux_err = 0;
+	정수 flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	만약 (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	아니면
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/* set default handlers at first */
@@ -1133,76 +1133,76 @@ int console_init_r(void)
 	stdoutname = env_get("stdout");
 	stderrname = env_get("stderr");
 
-	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
+	만약 (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
 		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
 		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
 		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+		만약 (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 			iomux_err = iomux_doenv(stdin, stdinname);
 			iomux_err += iomux_doenv(stdout, stdoutname);
 			iomux_err += iomux_doenv(stderr, stderrname);
-			if (!iomux_err)
+			만약 (!iomux_err)
 				/* Successful, so skip all the code below. */
 				goto done;
 		}
 	}
 	/* if the devices are overwritten or not found, use default device */
-	if (inputdev == NULL) {
+	만약 (inputdev == NULL) {
 		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
 	}
-	if (outputdev == NULL) {
+	만약 (outputdev == NULL) {
 		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
-	if (errdev == NULL) {
+	만약 (errdev == NULL) {
 		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	만약 (outputdev != NULL) {
 		/* need to set a console if not done above. */
 		console_doenv(stdout, outputdev);
 	}
-	if (errdev != NULL) {
+	만약 (errdev != NULL) {
 		/* need to set a console if not done above. */
 		console_doenv(stderr, errdev);
 	}
-	if (inputdev != NULL) {
+	만약 (inputdev != NULL) {
 		/* need to set a console if not done above. */
 		console_doenv(stdin, inputdev);
 	}
 
 done:
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	만약 (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
-	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
+	만약 (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
-		for (i = 0; i < MAX_FILES; i++)
+		위해 (i = 0; i < MAX_FILES; i++)
 			env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	반환 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#아니면 /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+정수 console_init_r(void)
 {
 	struct stdio_dev *inputdev = NULL, *outputdev = NULL;
-	int i;
+	정수 i;
 	struct list_head *list = stdio_get_list();
 	struct list_head *pos;
 	struct stdio_dev *dev;
-	int flushpoint;
+	정수 flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	만약 (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	아니면
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/*
@@ -1211,8 +1211,8 @@ int console_init_r(void)
 	 * console to serial console in this case or suppress it if
 	 * "silent" mode was requested.
 	 */
-	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
-		if (!(gd->flags & GD_FLG_SILENT))
+	만약 (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
+		만약 (!(gd->flags & GD_FLG_SILENT))
 			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
@@ -1220,69 +1220,69 @@ int console_init_r(void)
 	list_for_each(pos, list) {
 		dev = list_entry(pos, struct stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		만약 ((dev->flags & DEV_FLAGS_INPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
-		if ((dev->flags & DEV_FLAGS_OUTPUT) &&
+		만약 ((dev->flags & DEV_FLAGS_OUTPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !outputdev))
 			outputdev = dev;
 
 		/* The current serial console is the preferred stdio. */
-		if (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
+		만약 (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
 			break;
 	}
 
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	만약 (outputdev != NULL) {
 		console_setfile_and_devices(stdout, outputdev);
 		console_setfile_and_devices(stderr, outputdev);
 	}
 
 	/* Initializes input console */
-	if (inputdev != NULL)
+	만약 (inputdev != NULL)
 		console_setfile_and_devices(stdin, inputdev);
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	만약 (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
 	/* Setting environment variables */
-	for (i = 0; i < MAX_FILES; i++) {
+	위해 (i = 0; i < MAX_FILES; i++) {
 		env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	반환 0;
 }
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-int console_remove_by_name(const char *name)
+정수 console_remove_by_name(const char *name)
 {
-	int err = 0;
+	정수 err = 0;
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	int fnum;
+#만약 CONFIG_IS_ENABLED(CONSOLE_MUX)
+	정수 fnum;
 
 	log_debug("removing console device %s\n", name);
-	for (fnum = 0; fnum < MAX_FILES; fnum++) {
+	위해 (fnum = 0; fnum < MAX_FILES; fnum++) {
 		struct stdio_dev **src, **dest;
-		int i;
+		정수 i;
 
 		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
+		위해 (i = 0; i < cd_count[fnum]; i++, src++) {
 			struct stdio_dev *sdev = *src;
-			int ret = 0;
+			정수 ret = 0;
 
-			if (!strcmp(sdev->name, name))
+			만약 (!strcmp(sdev->name, name))
 				ret = stdio_deregister_dev(sdev, true);
-			else
+			아니면
 				*dest++ = *src;
-			if (ret && !err)
+			만약 (ret && !err)
 				err = ret;
 		}
 		cd_count[fnum] = dest - console_devices[fnum];
@@ -1290,5 +1290,5 @@ int console_remove_by_name(const char *name)
 	}
 #endif /* CONSOLE_MUX */
 
-	return err;
+	반환 err;
 }

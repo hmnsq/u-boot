@@ -10,7 +10,7 @@
 #include <linux/errno.h>
 #include <linux/string.h>
 
-static int scp03_enable(bool provision)
+static 정수 scp03_enable(bool provision)
 {
 	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
 	struct tee_open_session_arg session;
@@ -19,13 +19,13 @@ static int scp03_enable(bool provision)
 	struct udevice *tee = NULL;
 
 	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	만약 (!tee)
+		반환 -ENODEV;
 
 	memset(&session, 0, sizeof(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	만약 (tee_open_session(tee, &session, 0, NULL))
+		반환 -ENXIO;
 
 	memset(&param, 0, sizeof(param));
 	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
@@ -35,20 +35,20 @@ static int scp03_enable(bool provision)
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	만약 (tee_invoke_func(tee, &invoke, 1, &param))
+		반환 -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	반환 0;
 }
 
-int tee_enable_scp03(void)
+정수 tee_enable_scp03(void)
 {
-	return scp03_enable(false);
+	반환 scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+정수 tee_provision_scp03(void)
 {
-	return scp03_enable(true);
+	반환 scp03_enable(true);
 }

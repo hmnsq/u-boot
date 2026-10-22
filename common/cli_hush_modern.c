@@ -42,13 +42,13 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#만약 CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
 typedef signed char smallint;
 typedef unsigned char smalluint;
-#else
+#아니면
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
+typedef 정수 smallint;
 typedef unsigned smalluint;
 #endif
 
@@ -89,14 +89,14 @@ static void __noreturn xfunc_die(void)
 
 #define bb_error_msg_and_die(format, ...) do { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} 동안 (0);
 
 #define bb_simple_error_msg_and_die(msg) do { \
 panic_str("HUSH: " msg); \
-} while (0);
+} 동안 (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+static 정수 __maybe_unused fdprintf(정수 fd, const char *format, ...)
 {
 	va_list args;
 	uint i;
@@ -107,7 +107,7 @@ static int __maybe_unused fdprintf(int fd, const char *format, ...)
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	반환 i;
 }
 
 static void bb_verror_msg(const char *s, va_list p, const char* strerr)
@@ -133,29 +133,29 @@ static void bb_simple_error_msg(const char *s)
 static void *xmalloc(size_t size)
 {
 	void *p = NULL;
-	if (!(p = malloc(size)))
+	만약 (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	반환 p;
 }
 
 static void *xzalloc(size_t size)
 {
 	void *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	반환 p;
 }
 
 static void *xrealloc(void *ptr, size_t size)
 {
 	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	만약 (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	반환 p;
 }
 
-static void *xmemdup(const void *s, int n)
+static void *xmemdup(const void *s, 정수 n)
 {
-	return memcpy(xmalloc(n), s, n);
+	반환 memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
@@ -163,7 +163,7 @@ static void *xmemdup(const void *s, int n)
 
 static void *mempcpy(void *dest, const void *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	반환 memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
@@ -173,8 +173,8 @@ static void overlapping_strcpy(char *dst, const char *src)
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	만약 (dst != src) {
+		동안 ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
@@ -190,18 +190,18 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	동안 (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	반환 (char *) s;
 }
 
 static char* skip_non_whitespace(const char *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	동안 (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	반환 (char *) s;
 }
 
 #define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
@@ -209,13 +209,13 @@ static char* skip_non_whitespace(const char *s)
 
 static const char* endofname(const char *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
+	만약 (!is_name(*name))
+		반환 name;
+	동안 (*++name) {
+		만약 (!is_in_name(*name))
 			break;
 	}
-	return name;
+	반환 name;
 }
 
 /**
@@ -230,34 +230,34 @@ static size_t list_size(char **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	위해 (size = 0; list[size] != NULL; size++);
 
-	return size;
+	반환 size;
 }
 
-static int varcmp(const char *p, const char *q)
+static 정수 varcmp(const char *p, const char *q)
 {
-	int c, d;
+	정수 c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
+	동안 ((c = *p) == (d = *q)) {
+		만약 (c == '\0' || c == '=')
 			goto out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	만약 (c == '=')
 		c = '\0';
-	if (d == '=')
+	만약 (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	반환 c - d;
 }
 
 struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+static 정수 u_boot_cli_readline(struct in_str *i);
 
 struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+static 정수 u_boot_cli_readline(struct in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
@@ -288,36 +288,36 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  *
  */
 
-int u_boot_hush_start_modern(void)
+정수 u_boot_hush_start_modern(void)
 {
 	INIT_G();
-	return 0;
+	반환 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+static 정수 u_boot_cli_readline(struct in_str *i)
 {
 	char *prompt;
 	char __maybe_unused *ps_prompt = NULL;
 
-	if (!G.promptmode)
+	만약 (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	아니면
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#아니면
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	만약 (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		만약 (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		아니면
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		만약 (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	반환 cli_readline(prompt);
 }

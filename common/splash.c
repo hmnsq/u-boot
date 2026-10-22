@@ -64,61 +64,61 @@ static struct splash_location default_splash_locations[] = {
 
 #include <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+static 정수 splash_video_logo_load(void)
 {
 	char *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	만약 (!splashimage)
+		반환 -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	만약 (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		반환 -EFAULT;
 	}
 
 	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
 	       ARRAY_SIZE(bmp_logo_bitmap));
 
-	return 0;
+	반환 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#아니면
+static inline 정수 splash_video_logo_load(void) { 반환 -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak 정수 splash_screen_prepare(void)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
+	만약 (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		반환 splash_source_load(default_splash_locations,
 					  ARRAY_SIZE(default_splash_locations));
 
-	return splash_video_logo_load();
+	반환 splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+void splash_get_pos(정수 *x, 정수 *y)
 {
 	char *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	만약 (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		반환;
 
-	if (s[0] == 'm')
+	만약 (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
+	아니면
 		*x = simple_strtol(s, NULL, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	만약 (s != NULL) {
+		만약 (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
+		아니면
 			*y = simple_strtol(s + 1, NULL, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#만약 CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
 #include <bmp_logo.h>
@@ -133,16 +133,16 @@ void splash_display_banner(void)
 	struct video_fontdata __maybe_unused *fontdata = fonts;
 	struct udevice *dev;
 	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	정수 col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	만약 (ret)
+		반환;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#만약 IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#아니면
 	col = 0;
 	row = 0;
 #endif
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+정수 splash_display(void)
 {
 	ulong addr;
 	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	정수 x = 0, y = 0, ret;
+	만약 (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		반환 -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	만약 (!s)
+		반환 -EINVAL;
 
 	addr = hextoul(s, NULL);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	만약 (ret)
+		반환 ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	만약 (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	아니면
+		반환 -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
+	만약 (x || y)
 		goto end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#만약 CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	반환 ret;
 }
