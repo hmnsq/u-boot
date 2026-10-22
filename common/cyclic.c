@@ -8,38 +8,38 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#شامل <cyclic.h>
+#شامل <log.h>
+#شامل <malloc.h>
+#شامل <time.h>
+#شامل <linux/errno.h>
+#شامل <linux/list.h>
+#شامل <asm/global_data.h>
+#شامل <u-boot/schedule.h>
+#شامل <uthread.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-void hw_watchdog_reset(void);
+تهی hw_watchdog_reset(تهی);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+ایستا bool cyclic_is_registered(ثابت ساختار cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	ثابت ساختار cyclic_info *c;
 
 	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+		اگر (c == cyclic)
+			بازگشت true;
 	}
 
-	return false;
+	بازگشت false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+تهی cyclic_register(ساختار cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, ثابت نویسه *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	memset(cyclic, 0, اندازه(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
@@ -49,18 +49,18 @@ void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
 	hlist_add_head(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+تهی cyclic_unregister(ساختار cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	اگر (!cyclic_is_registered(cyclic))
+		بازگشت;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+ایستا تهی cyclic_run(تهی)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	ساختار cyclic_info *cyclic;
+	ساختار hlist_گره *tmp;
 	u64 now, after, cpu_time;
 
 	/*
@@ -73,12 +73,12 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	اگر (hlist_empty(&gd->cyclic_list))
+		بازگشت;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	اگر (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		بازگشت;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
@@ -87,7 +87,7 @@ static void cyclic_run(void)
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		اگر (time_after_eq64(now, cyclic->next_call)) {
 			/* Call cyclic function and account it's cpu-time */
 			cyclic->next_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
@@ -98,7 +98,7 @@ static void cyclic_run(void)
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			اگر ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
 				       cyclic->name, cpu_time,
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+تهی schedule(تهی)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	اگر (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
+	اگر (gd)
 		cyclic_run();
 
 	uthread_schedule();
 }
 
-int cyclic_unregister_all(void)
+صحیح cyclic_unregister_all(تهی)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	ساختار cyclic_info *cyclic;
+	ساختار hlist_گره *tmp;
 
 	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	بازگشت 0;
 }

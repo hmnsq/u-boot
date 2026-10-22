@@ -8,51 +8,51 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <hang.h>
-#include <malloc.h>
-#include <time.h>
-#include <watchdog.h>
-#include <linux/errno.h>
-#include <asm/global_data.h>
+#شامل <bootretry.h>
+#شامل <cli.h>
+#شامل <command.h>
+#شامل <hang.h>
+#شامل <malloc.h>
+#شامل <time.h>
+#شامل <watchdog.h>
+#شامل <linux/errno.h>
+#شامل <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char erase_seq[] = "\b \b";	/* erase sequence */
-static const char   tab_seq[] = "        ";	/* used to expand TABs */
+ایستا ثابت نویسه erase_seq[] = "\b \b";	/* erase sequence */
+ایستا ثابت نویسه   tab_seq[] = "        ";	/* used to expand TABs */
 
-char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
+نویسه console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+ایستا نویسه *delete_char (نویسه *buffer, نویسه *p, صحیح *colp, صحیح *np, صحیح plen)
 {
-	char *s;
+	نویسه *s;
 
-	if (*np == 0)
-		return p;
+	اگر (*np == 0)
+		بازگشت p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	اگر (*(--p) == '\t') {		/* will retype the whole line */
+		وقتی (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		برای (s = buffer; s < p; ++s) {
+			اگر (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} وگرنه {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} وگرنه {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	بازگشت p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,11 +62,11 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (صحیح)n, str)
 
 #define CTL_BACKSPACE		('\b')
-#define DEL			((char)255)
-#define DEL7			((char)127)
+#define DEL			((نویسه)255)
+#define DEL7			((نویسه)127)
 #define CREAD_HIST_CHAR		('!')
 
 #define getcmd_putch(ch)	putc(ch)
@@ -76,390 +76,390 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#وگرنه
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
-static unsigned hist_num;
+ایستا صحیح hist_max;
+ایستا صحیح hist_add_idx;
+ایستا صحیح hist_cur = -1;
+ایستا unsigned hist_رقم;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-static char hist_data[HIST_MAX][HIST_SIZE + 1];
+ایستا نویسه hist_data[HIST_MAX][HIST_SIZE + 1];
 #endif
-static char *hist_list[HIST_MAX];
+ایستا نویسه *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+ایستا تهی getcmd_putchars(صحیح شمار, صحیح ch)
 {
-	int i;
+	صحیح i;
 
-	for (i = 0; i < count; i++)
+	برای (i = 0; i < شمار; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+ایستا صحیح hist_init(تهی)
 {
-	int i;
+	صحیح i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	برای (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
-	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+#وگرنه
+	unsigned نویسه *hist = calloc(HIST_MAX, HIST_SIZE + 1);
+	اگر (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	برای (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
 	hist_max = 0;
 	hist_add_idx = 0;
 	hist_cur = -1;
-	hist_num = 0;
+	hist_رقم = 0;
 
-	return 0;
+	بازگشت 0;
 }
 
-static void cread_add_to_hist(char *line)
+ایستا تهی cread_add_to_hist(نویسه *سطر)
 {
-	strcpy(hist_list[hist_add_idx], line);
+	strcpy(hist_list[hist_add_idx], سطر);
 
-	if (++hist_add_idx >= HIST_MAX)
+	اگر (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	اگر (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
-	hist_num++;
+	hist_رقم++;
 }
 
-static char *hist_prev(void)
+ایستا نویسه *hist_prev(تهی)
 {
-	char *ret;
-	int old_cur;
+	نویسه *ret;
+	صحیح old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	اگر (hist_cur < 0)
+		بازگشت پوچ;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	اگر (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	اگر (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
-		ret = NULL;
-	} else {
+		ret = پوچ;
+	} وگرنه {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	بازگشت ret;
 }
 
-static char *hist_next(void)
+ایستا نویسه *hist_next(تهی)
 {
-	char *ret;
+	نویسه *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	اگر (hist_cur < 0)
+		بازگشت پوچ;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	اگر (hist_cur == hist_add_idx)
+		بازگشت پوچ;
 
-	if (++hist_cur > hist_max)
+	اگر (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	اگر (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	وگرنه
 		ret = hist_list[hist_cur];
 
-	return ret;
+	بازگشت ret;
 }
 
-void cread_print_hist_list(void)
+تهی cread_print_hist_list(تهی)
 {
-	int i;
+	صحیح i;
 	uint n;
 
-	n = hist_num - hist_max;
+	n = hist_رقم - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	وقتی (1) {
+		اگر (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
-			break;
+		اگر (i == hist_add_idx)
+			بشکن;
 		printf("%s\n", hist_list[i]);
 		n++;
 		i++;
 	}
 }
 
-#define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+#define BEGINNING_OF_سطر() {			\
+	وقتی (cls->رقم) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
-		cls->num--;			\
+		cls->رقم--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
-		do {					\
+	اگر (cls->رقم < cls->eol_رقم) {		\
+		printf("%*s", (صحیح)(cls->eol_رقم - cls->رقم), ""); \
+		انجامبده {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} وقتی (--cls->eol_رقم > cls->رقم);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
-		uint wlen = cls->eol_num - cls->num;	\
-		putnstr(buf + cls->num, wlen);		\
-		cls->num = cls->eol_num;		\
+	اگر (cls->رقم < cls->eol_رقم) {			\
+		uint wlen = cls->eol_رقم - cls->رقم;	\
+		putnstr(buf + cls->رقم, wlen);		\
+		cls->رقم = cls->eol_رقم;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
-			   uint *eol_num, char *buf, uint len)
+ایستا تهی cread_add_char(نویسه ichar, صحیح درج, uint *رقم,
+			   uint *eol_رقم, نویسه *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	اگر (درج || *رقم == *eol_رقم) {
+		اگر (*eol_رقم > len - 1) {
 			getcmd_cbeep();
-			return;
+			بازگشت;
 		}
-		(*eol_num)++;
+		(*eol_رقم)++;
 	}
 
-	if (insert) {
-		wlen = *eol_num - *num;
-		if (wlen > 1)
-			memmove(&buf[*num+1], &buf[*num], wlen-1);
+	اگر (درج) {
+		wlen = *eol_رقم - *رقم;
+		اگر (wlen > 1)
+			memmove(&buf[*رقم+1], &buf[*رقم], wlen-1);
 
-		buf[*num] = ichar;
-		putnstr(buf + *num, wlen);
-		(*num)++;
-		while (--wlen)
+		buf[*رقم] = ichar;
+		putnstr(buf + *رقم, wlen);
+		(*رقم)++;
+		وقتی (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} وگرنه {
 		/* echo the character */
 		wlen = 1;
-		buf[*num] = ichar;
-		putnstr(buf + *num, wlen);
-		(*num)++;
+		buf[*رقم] = ichar;
+		putnstr(buf + *رقم, wlen);
+		(*رقم)++;
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
-			  uint *num, uint *eol_num, char *buf, uint len)
+ایستا تهی cread_add_str(نویسه *str, صحیح strsize, صحیح درج,
+			  uint *رقم, uint *eol_رقم, نویسه *buf, uint len)
 {
-	while (strsize--) {
-		cread_add_char(*str, insert, num, eol_num, buf, len);
+	وقتی (strsize--) {
+		cread_add_char(*str, درج, رقم, eol_رقم, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+صحیح cread_سطر_process_ch(ساختار cli_سطر_state *cls, نویسه ichar)
 {
-	char *buf = cls->buf;
+	نویسه *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	اگر (!ichar)
+		بازگشت -EAGAIN;
 
-	if (ichar == '\n') {
+	اگر (ichar == '\n') {
 		putc('\n');
-		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		buf[cls->eol_رقم] = '\0';	/* terminate the string */
+		بازگشت 0;
 	}
 
-	switch (ichar) {
-	case CTL_CH('a'):
-		BEGINNING_OF_LINE();
-		break;
-	case CTL_CH('c'):	/* ^C - break */
+	انتخاب (ichar) {
+	حالت CTL_CH('a'):
+		BEGINNING_OF_سطر();
+		بشکن;
+	حالت CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
-	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
-			getcmd_putch(buf[cls->num]);
-			cls->num++;
+		بازگشت -EINTR;
+	حالت CTL_CH('f'):
+		اگر (cls->رقم < cls->eol_رقم) {
+			getcmd_putch(buf[cls->رقم]);
+			cls->رقم++;
 		}
-		break;
-	case CTL_CH('b'):
-		if (cls->num) {
+		بشکن;
+	حالت CTL_CH('b'):
+		اگر (cls->رقم) {
 			getcmd_putch(CTL_BACKSPACE);
-			cls->num--;
+			cls->رقم--;
 		}
-		break;
-	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		بشکن;
+	حالت CTL_CH('d'):
+		اگر (cls->رقم < cls->eol_رقم) {
 			uint wlen;
 
-			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
-				memmove(&buf[cls->num], &buf[cls->num + 1],
+			wlen = cls->eol_رقم - cls->رقم - 1;
+			اگر (wlen) {
+				memmove(&buf[cls->رقم], &buf[cls->رقم + 1],
 					wlen);
-				putnstr(buf + cls->num, wlen);
+				putnstr(buf + cls->رقم, wlen);
 			}
 
 			getcmd_putch(' ');
-			do {
+			انجامبده {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
-			cls->eol_num--;
+			} وقتی (wlen--);
+			cls->eol_رقم--;
 		}
-		break;
-	case CTL_CH('k'):
+		بشکن;
+	حالت CTL_CH('k'):
 		ERASE_TO_EOL();
-		break;
-	case CTL_CH('e'):
+		بشکن;
+	حالت CTL_CH('e'):
 		REFRESH_TO_EOL();
-		break;
-	case CTL_CH('o'):
-		cls->insert = !cls->insert;
-		break;
-	case CTL_CH('w'):
-		if (cls->num) {
+		بشکن;
+	حالت CTL_CH('o'):
+		cls->درج = !cls->درج;
+		بشکن;
+	حالت CTL_CH('w'):
+		اگر (cls->رقم) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			برای (base = cls->رقم;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			برای (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
-			wlen = cls->num - base;
-			cls->eol_num -= wlen;
-			memmove(&buf[base], &buf[cls->num],
-				cls->eol_num - base + 1);
-			cls->num = base;
+			wlen = cls->رقم - base;
+			cls->eol_رقم -= wlen;
+			memmove(&buf[base], &buf[cls->رقم],
+				cls->eol_رقم - base + 1);
+			cls->رقم = base;
 			getcmd_putchars(wlen, CTL_BACKSPACE);
 			puts(buf + base);
 			getcmd_putchars(wlen, ' ');
-			getcmd_putchars(wlen + cls->eol_num - cls->num,
+			getcmd_putchars(wlen + cls->eol_رقم - cls->رقم,
 					CTL_BACKSPACE);
 		}
-		break;
-	case CTL_CH('x'):
-	case CTL_CH('u'):
-		BEGINNING_OF_LINE();
+		بشکن;
+	حالت CTL_CH('x'):
+	حالت CTL_CH('u'):
+		BEGINNING_OF_سطر();
 		ERASE_TO_EOL();
-		break;
-	case DEL:
-	case DEL7:
-	case 8:
-		if (cls->num) {
+		بشکن;
+	حالت DEL:
+	حالت DEL7:
+	حالت 8:
+		اگر (cls->رقم) {
 			uint wlen;
 
-			wlen = cls->eol_num - cls->num;
-			cls->num--;
-			memmove(&buf[cls->num], &buf[cls->num + 1], wlen);
+			wlen = cls->eol_رقم - cls->رقم;
+			cls->رقم--;
+			memmove(&buf[cls->رقم], &buf[cls->رقم + 1], wlen);
 			getcmd_putch(CTL_BACKSPACE);
-			putnstr(buf + cls->num, wlen);
+			putnstr(buf + cls->رقم, wlen);
 			getcmd_putch(' ');
-			do {
+			انجامبده {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
-			cls->eol_num--;
+			} وقتی (wlen--);
+			cls->eol_رقم--;
 		}
-		break;
-	case CTL_CH('p'):
-	case CTL_CH('n'):
-		if (cls->history) {
-			char *hline;
+		بشکن;
+	حالت CTL_CH('p'):
+	حالت CTL_CH('n'):
+		اگر (cls->history) {
+			نویسه *hline;
 
-			if (ichar == CTL_CH('p'))
+			اگر (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			وگرنه
 				hline = hist_next();
 
-			if (!hline) {
+			اگر (!hline) {
 				getcmd_cbeep();
-				break;
+				بشکن;
 			}
 
 			/* nuke the current line */
 			/* first, go home */
-			BEGINNING_OF_LINE();
+			BEGINNING_OF_سطر();
 
 			/* erase to end of line */
 			ERASE_TO_EOL();
 
 			/* copy new line into place and display */
 			strcpy(buf, hline);
-			cls->eol_num = strlen(buf);
+			cls->eol_رقم = strlen(buf);
 			REFRESH_TO_EOL();
-			break;
+			بشکن;
 		}
-		break;
-	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		بشکن;
+	حالت '\t':
+		اگر (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			صحیح num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			اگر (cls->رقم < cls->eol_رقم) {
 				getcmd_cbeep();
-				break;
+				بشکن;
 			}
 
-			buf[cls->num] = '\0';
-			col = strlen(cls->prompt) + cls->eol_num;
-			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
-				col = num2 - cls->num;
-				cls->num += col;
-				cls->eol_num += col;
+			buf[cls->رقم] = '\0';
+			col = strlen(cls->prompt) + cls->eol_رقم;
+			num2 = cls->رقم;
+			اگر (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+				col = num2 - cls->رقم;
+				cls->رقم += col;
+				cls->eol_رقم += col;
 			}
-			break;
+			بشکن;
 		}
 		fallthrough;
-	default:
-		cread_add_char(ichar, cls->insert, &cls->num, &cls->eol_num,
+	پیشفرض:
+		cread_add_char(ichar, cls->درج, &cls->رقم, &cls->eol_رقم,
 			       buf, cls->len);
-		break;
+		بشکن;
 	}
 
 	/*
 	 * keep the string terminated...if we added a char at the end then we
 	 * want a \0 after it
 	 */
-	buf[cls->eol_num] = '\0';
+	buf[cls->eol_رقم] = '\0';
 
-	return -EAGAIN;
+	بازگشت -EAGAIN;
 }
 
-void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
+تهی cli_cread_init(ساختار cli_سطر_state *cls, نویسه *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	صحیح init_len = strlen(buf);
 
-	memset(cls, '\0', sizeof(struct cli_line_state));
-	cls->insert = true;
+	memset(cls, '\0', اندازه(ساختار cli_سطر_state));
+	cls->درج = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
-		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
+	اگر (init_len)
+		cread_add_str(buf, init_len, 0, &cls->رقم, &cls->eol_رقم, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+ایستا صحیح cread_سطر(ثابت نویسه *ثابت prompt, نویسه *buf, unsigned صحیح *len,
+		      صحیح timeout)
 {
-	struct cli_ch_state s_cch, *cch = &s_cch;
-	struct cli_line_state s_cls, *cls = &s_cls;
-	char ichar;
-	int first = 1;
+	ساختار cli_ch_state s_cch, *cch = &s_cch;
+	ساختار cli_سطر_state s_cls, *cls = &s_cls;
+	نویسه ichar;
+	صحیح first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	وقتی (1) {
+		صحیح ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		اگر (!ichar) {
+			اگر (bootretry_tstc_timeout())
+				بازگشت -2;	/* timed out */
+			اگر (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				وقتی (!tstc()) {	/* while no incoming data */
+					اگر (get_ticks() >= etime)
+						بازگشت -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -491,39 +491,39 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 			ichar = cli_ch_process(cch, ichar);
 		}
 
-		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
-			break;
+		ret = cread_سطر_process_ch(cls, ichar);
+		اگر (ret == -EINTR)
+			بازگشت -1;
+		وگرنه اگر (!ret)
+			بشکن;
 	}
-	*len = cls->eol_num;
+	*len = cls->eol_رقم;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	اگر (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	بازگشت 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#وگرنه /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+ایستا درونخطی صحیح hist_init(تهی)
 {
-	return 0;
+	بازگشت 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+ایستا صحیح cread_سطر(ثابت نویسه *ثابت prompt, نویسه *buf, unsigned صحیح *len,
+		      صحیح timeout)
 {
-	return 0;
+	بازگشت 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+صحیح cli_readline(ثابت نویسه *ثابت prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	بازگشت cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+ایستا صحیح cread_سطر_simple(ثابت نویسه *ثابت prompt, نویسه *p)
 {
-	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	نویسه *p_buf = p;
+	صحیح n = 0;		/* buffer index */
+	صحیح plen = 0;		/* prompt length */
+	صحیح col;		/* output column cnt */
+	صحیح c;
 
 	/* print prompt */
-	if (prompt) {
+	اگر (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	برای (;;) {
+		اگر (bootretry_tstc_timeout())
+			بازگشت -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -568,64 +568,64 @@ static int cread_line_simple(const char *const prompt, char *p)
 		/*
 		 * Special character handling
 		 */
-		switch (c) {
-		case '\r':			/* Enter		*/
-		case '\n':
+		انتخاب (c) {
+		حالت '\r':			/* Enter		*/
+		حالت '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			بازگشت p - p_buf;
 
-		case '\0':			/* nul			*/
-			continue;
+		حالت '\0':			/* nul			*/
+			ادامه;
 
-		case 0x03:			/* ^C - break		*/
+		حالت 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			بازگشت -1;
 
-		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+		حالت 0x15:			/* ^U - erase line	*/
+			وقتی (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
 			p = p_buf;
 			n = 0;
-			continue;
+			ادامه;
 
-		case 0x17:			/* ^W - erase word	*/
+		حالت 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			وقتی ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
-			continue;
+			ادامه;
 
-		case 0x08:			/* ^H  - backspace	*/
-		case 0x7F:			/* DEL - backspace	*/
+		حالت 0x08:			/* ^H  - backspace	*/
+		حالت 0x7F:			/* DEL - backspace	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			continue;
+			ادامه;
 
-		default:
+		پیشفرض:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			اگر (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
-				break;
+				بشکن;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			اگر (c == '\t') {	/* expand TABs */
+				اگر (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					اگر (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
-						continue;
+						ادامه;
 					}
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
-				char __maybe_unused buf[2];
+			} وگرنه {
+				نویسه __maybe_unused buf[2];
 
 				/*
 				 * Echo input using puts() to force an LCD
@@ -638,18 +638,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 			}
 			*p++ = c;
 			++n;
-			break;
+			بشکن;
 		}
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+صحیح cli_readline_into_buffer(ثابت نویسه *ثابت prompt, نویسه *buffer,
+			     صحیح timeout)
 {
-	char *p = buffer;
+	نویسه *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	صحیح rc;
+	ایستا صحیح initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	اگر (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		اگر (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			اگر (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		اگر (prompt)
 			puts(prompt);
 
-		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		rc = cread_سطر(prompt, p, &len, timeout);
+		بازگشت rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} وگرنه {
+		بازگشت cread_سطر_simple(prompt, p);
 	}
 }

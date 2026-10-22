@@ -5,12 +5,12 @@
 
 #define IOTRACE_IMPL
 
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/bug.h>
-#include <u-boot/crc.h>
+#شامل <mapmem.h>
+#شامل <time.h>
+#شامل <asm/global_data.h>
+#شامل <asm/io.h>
+#شامل <linux/bug.h>
+#شامل <u-boot/crc.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -26,7 +26,7 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
+ایستا ساختار iotrace {
 	ulong start;
 	ulong size;
 	ulong needed_size;
@@ -37,9 +37,9 @@ static struct iotrace {
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+ایستا تهی add_record(صحیح flags, ثابت تهی *ptr, ulong مقدار)
 {
-	struct iotrace_record srec, *rec = &srec;
+	ساختار iotrace_record srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,125 +47,125 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	اگر (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		بازگشت;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
+	اگر (iotrace.region_size)
+		اگر ((ulong)ptr < iotrace.region_start ||
 		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+			بازگشت;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
+	اگر (iotrace.offset + اندازه(*rec) < iotrace.size) {
+		rec = (ساختار iotrace_record *)map_sysmem(
 					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+					اندازه(مقدار));
+	} وگرنه {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_size += اندازه(ساختار iotrace_record);
+		بازگشت;
 	}
 
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
 	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->مقدار = مقدار;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.crc32 = crc32(iotrace.crc32, (unsigned نویسه *)rec,
+			      اندازه(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_size += اندازه(ساختار iotrace_record);
+	iotrace.offset += اندازه(ساختار iotrace_record);
 }
 
-u32 iotrace_readl(const void *ptr)
+u32 iotrace_readl(ثابت تهی *ptr)
 {
 	u32 v;
 
 	v = readl(ptr);
 	add_record(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	بازگشت v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+تهی iotrace_writel(ulong مقدار, تهی *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	add_record(IOT_32 | IOT_WRITE, ptr, مقدار);
+	writel(مقدار, ptr);
 }
 
-u16 iotrace_readw(const void *ptr)
+u16 iotrace_readw(ثابت تهی *ptr)
 {
 	u32 v;
 
 	v = readw(ptr);
 	add_record(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	بازگشت v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+تهی iotrace_writew(ulong مقدار, تهی *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	add_record(IOT_16 | IOT_WRITE, ptr, مقدار);
+	writew(مقدار, ptr);
 }
 
-u8 iotrace_readb(const void *ptr)
+u8 iotrace_readb(ثابت تهی *ptr)
 {
 	u32 v;
 
 	v = readb(ptr);
 	add_record(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	بازگشت v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+تهی iotrace_writeb(ulong مقدار, تهی *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	add_record(IOT_8 | IOT_WRITE, ptr, مقدار);
+	writeb(مقدار, ptr);
 }
 
-void iotrace_reset_checksum(void)
+تهی iotrace_reset_checksum(تهی)
 {
 	iotrace.crc32 = 0;
 }
 
-u32 iotrace_get_checksum(void)
+u32 iotrace_get_checksum(تهی)
 {
-	return iotrace.crc32;
+	بازگشت iotrace.crc32;
 }
 
-void iotrace_set_region(ulong start, ulong size)
+تهی iotrace_set_region(ulong start, ulong size)
 {
 	iotrace.region_start = start;
 	iotrace.region_size = size;
 }
 
-void iotrace_reset_region(void)
+تهی iotrace_reset_region(تهی)
 {
 	iotrace.region_start = 0;
 	iotrace.region_size = 0;
 }
 
-void iotrace_get_region(ulong *start, ulong *size)
+تهی iotrace_get_region(ulong *start, ulong *size)
 {
 	*start = iotrace.region_start;
 	*size = iotrace.region_size;
 }
 
-void iotrace_set_enabled(int enable)
+تهی iotrace_set_enabled(صحیح enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+صحیح iotrace_get_enabled(تهی)
 {
-	return iotrace.enabled;
+	بازگشت iotrace.enabled;
 }
 
-void iotrace_set_buffer(ulong start, ulong size)
+تهی iotrace_set_buffer(ulong start, ulong size)
 {
 	iotrace.start = start;
 	iotrace.size = size;
@@ -173,11 +173,11 @@ void iotrace_set_buffer(ulong start, ulong size)
 	iotrace.crc32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+تهی iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *شمار)
 {
 	*start = iotrace.start;
 	*size = iotrace.size;
 	*needed_size = iotrace.needed_size;
 	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*شمار = iotrace.offset / اندازه(ساختار iotrace_record);
 }

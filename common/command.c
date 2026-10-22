@@ -8,17 +8,17 @@
  *  Command Processor Table
  */
 
-#include <config.h>
-#include <compiler.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/ctype.h>
+#شامل <config.h>
+#شامل <compiler.h>
+#شامل <command.h>
+#شامل <console.h>
+#شامل <env.h>
+#شامل <image.h>
+#شامل <log.h>
+#شامل <mapmem.h>
+#شامل <time.h>
+#شامل <asm/global_data.h>
+#شامل <linux/ctype.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -27,204 +27,204 @@ DECLARE_GLOBAL_DATA_PTR;
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+صحیح _do_help(ساختار cmd_tbl *cmd_start, صحیح cmd_اقلام, ساختار cmd_tbl *cmdtp,
+	     صحیح flag, صحیح argc, نویسه *ثابت argv[])
 {
-	int i;
-	int rcode = 0;
+	صحیح i;
+	صحیح rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+	اگر (argc == 1) {	/* show list of commands */
+		ساختار cmd_tbl *cmd_array[cmd_اقلام];
+		صحیح i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
 		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		برای (i = 0; i < cmd_اقلام; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		برای (i = cmd_اقلام - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			برای (j = 0; j < i; ++j) {
+				اگر (strcmp(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
-					struct cmd_tbl *tmp;
+					ساختار cmd_tbl *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
 					cmd_array[j + 1] = tmp;
 					++swaps;
 				}
 			}
-			if (!swaps)
-				break;
+			اگر (!swaps)
+				بشکن;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
-			const char *usage = cmd_array[i]->usage;
+		برای (i = 0; i < cmd_اقلام; i++) {
+			ثابت نویسه *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
-				continue;
+			اگر (ctrlc())
+				بازگشت 1;
+			اگر (usage == پوچ)
+				ادامه;
 			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		بازگشت 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+	برای (i = 1; i < argc; ++i) {
+		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_اقلام);
+		اگر (cmdtp != پوچ) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
+		} وگرنه {
 			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	بازگشت rcode;
 }
 
 /* find command table entry for a command */
-struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+ساختار cmd_tbl *find_cmd_tbl(ثابت نویسه *cmd, ساختار cmd_tbl *table,
+			     صحیح table_len)
 {
 #ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
-	const char *p;
-	int len;
-	int n_found = 0;
+	ساختار cmd_tbl *cmdtp;
+	ساختار cmd_tbl *cmdtp_temp = table;	/* Init value */
+	ثابت نویسه *p;
+	صحیح len;
+	صحیح n_found = 0;
 
-	if (!cmd)
-		return NULL;
+	اگر (!cmd)
+		بازگشت پوچ;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == پوچ) ? strlen (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	برای (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
+		اگر (strncmp(cmd, cmdtp->name, len) == 0) {
+			اگر (len == strlen(cmdtp->name))
+				بازگشت cmdtp;	/* full match */
 
 			cmdtp_temp = cmdtp;	/* abbreviated command ? */
 			n_found++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	اگر (n_found == 1) {			/* exactly one match */
+		بازگشت cmdtp_temp;
 	}
 #endif /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	بازگشت پوچ;	/* not found or ambiguous command */
 }
 
-struct cmd_tbl *find_cmd(const char *cmd)
+ساختار cmd_tbl *find_cmd(ثابت نویسه *cmd)
 {
-	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	ساختار cmd_tbl *start = ll_entry_start(ساختار cmd_tbl, cmd);
+	ثابت صحیح len = ll_entry_شمار(ساختار cmd_tbl, cmd);
+	بازگشت find_cmd_tbl(cmd, start, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+صحیح cmd_usage(ثابت ساختار cmd_tbl *cmdtp)
 {
 	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
 #ifdef	CONFIG_SYS_LONGHELP
 	printf("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
+	اگر (!cmdtp->help) {
 		puts ("- No additional help available.\n");
-		return 1;
+		بازگشت 1;
 	}
 
 	puts(cmdtp->help);
 	putc('\n');
 #endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+	بازگشت 1;
 }
 
 #ifdef CONFIG_AUTO_COMPLETE
-static char env_complete_buf[512];
+ایستا نویسه env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
-		 char *cmdv[])
+صحیح var_complete(صحیح argc, نویسه *ثابت argv[], نویسه last_char, صحیح maxv,
+		 نویسه *cmdv[])
 {
-	int space;
+	صحیح space;
 
 	space = last_char == '\0' || isblank(last_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	اگر (space && argc == 1)
+		بازگشت env_complete("", maxv, cmdv, اندازه(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
-				    sizeof(env_complete_buf),
+	اگر (!space && argc == 2)
+		بازگشت env_complete(argv[1], maxv, cmdv,
+				    اندازه(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	بازگشت 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+ایستا صحیح dollar_complete(صحیح argc, نویسه *ثابت argv[], نویسه last_char,
+			   صحیح maxv, نویسه *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
+	اگر (argc < 1 || argv[argc - 1][0] != '$' ||
 	    last_char == '\0' || isblank(last_char))
-		return 0;
+		بازگشت 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	بازگشت env_complete(argv[argc - 1], maxv, cmdv, اندازه(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
-		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+صحیح complete_subcmdv(ساختار cmd_tbl *cmdtp, صحیح شمار, صحیح argc,
+		     نویسه *ثابت argv[], نویسه last_char,
+		     صحیح maxv, نویسه *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
-	const char *p;
-	int len, clen;
-	int n_found = 0;
-	const char *cmd;
+	ثابت ساختار cmd_tbl *cmdend = cmdtp + شمار;
+	ثابت نویسه *p;
+	صحیح len, clen;
+	صحیح n_found = 0;
+	ثابت نویسه *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	اگر (maxv < 2)
+		بازگشت -2;
 
-	cmdv[0] = NULL;
+	cmdv[0] = پوچ;
 
-	if (argc == 0) {
+	اگر (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
+		برای (; cmdtp != cmdend; cmdtp++) {
+			اگر (n_found >= maxv - 2) {
 				cmdv[n_found++] = "...";
-				break;
+				بشکن;
 			}
 			cmdv[n_found++] = cmdtp->name;
 		}
-		cmdv[n_found] = NULL;
-		return n_found;
+		cmdv[n_found] = پوچ;
+		بازگشت n_found;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
-			cmdv[0] = NULL;
-			return 0;
+	اگر (argc > 1 || last_char == '\0' || isblank(last_char)) {
+		cmdtp = find_cmd_tbl(argv[0], cmdtp, شمار);
+		اگر (cmdtp == پوچ || cmdtp->complete == پوچ) {
+			cmdv[0] = پوچ;
+			بازگشت 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		بازگشت (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,100 +233,100 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
+	اگر (p == پوچ)
 		len = strlen(cmd);
-	else
+	وگرنه
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	برای (; cmdtp != cmdend; cmdtp++) {
 
 		clen = strlen(cmdtp->name);
-		if (clen < len)
-			continue;
+		اگر (clen < len)
+			ادامه;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
-			continue;
+		اگر (memcmp(cmd, cmdtp->name, len) != 0)
+			ادامه;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
+		اگر (n_found >= maxv - 2) {
 			cmdv[n_found++] = "...";
-			break;
+			بشکن;
 		}
 
 		cmdv[n_found++] = cmdtp->name;
 	}
 
-	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
+	cmdv[n_found] = پوچ;
+	بازگشت n_found;
+#وگرنه
+	بازگشت 0;
 #endif
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+ایستا صحیح complete_cmdv(صحیح argc, نویسه *ثابت argv[], نویسه last_char,
+			 صحیح maxv, نویسه *cmdv[])
 {
 #ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
+	بازگشت complete_subcmdv(ll_entry_start(ساختار cmd_tbl, cmd),
+				ll_entry_شمار(ساختار cmd_tbl, cmd), argc, argv,
 				last_char, maxv, cmdv);
-#else
-	return 0;
+#وگرنه
+	بازگشت 0;
 #endif
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+ایستا صحیح make_argv(نویسه *s, صحیح argvsz, نویسه *argv[])
 {
-	int argc = 0;
+	صحیح argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	وقتی (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		وقتی (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
-			break;
+		اگر (*s == '\0')	/* end of s, no more args	*/
+			بشکن;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		وقتی (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
-			break;
+		اگر (*s == '\0')		/* end of s, no more args	*/
+			بشکن;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
-	argv[argc] = NULL;
+	argv[argc] = پوچ;
 
-	return argc;
+	بازگشت argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+ایستا تهی print_argv(ثابت نویسه *banner, ثابت نویسه *leader, ثابت نویسه *sep,
+		       صحیح linemax, نویسه *ثابت argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	صحیح ll = leader != پوچ ? strlen(leader) : 0;
+	صحیح sl = sep != پوچ ? strlen(sep) : 0;
+	صحیح len, i;
 
-	if (banner) {
+	اگر (banner) {
 		puts("\n");
 		puts(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
+	وقتی (*argv != پوچ) {
 		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
+		اگر (i + len >= linemax) {
 			puts("\n");
-			if (leader)
+			اگر (leader)
 				puts(leader);
 			i = ll - sl;
-		} else if (sep)
+		} وگرنه اگر (sep)
 			puts(sep);
 		puts(*argv++);
 		i += len;
@@ -334,236 +334,236 @@ static void print_argv(const char *banner, const char *leader, const char *sep,
 	printf("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+ایستا صحیح find_common_prefix(نویسه *ثابت argv[])
 {
-	int i, len;
-	char *anchor, *s, *t;
+	صحیح i, len;
+	نویسه *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	اگر (*argv == پوچ)
+		بازگشت 0;
 
 	/* begin with max */
 	anchor = *argv++;
 	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	وقتی ((t = *argv++) != پوچ) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
-				break;
+		برای (i = 0; i < len; i++, t++, s++) {
+			اگر (*t != *s)
+				بشکن;
 		}
 		len = s - anchor;
 	}
-	return len;
+	بازگشت len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+صحیح cmd_auto_complete(ثابت نویسه *ثابت prompt, نویسه *buf, صحیح *np, صحیح *colp)
 {
-	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
-	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
-	char *cmdv[20];
-	char *s, *t;
-	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
-	char last_char;
-	const char *ps_prompt;
+	نویسه tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
+	صحیح n = *np, col = *colp;
+	نویسه *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
+	نویسه *cmdv[20];
+	نویسه *s, *t;
+	ثابت نویسه *sep;
+	صحیح i, j, k, len, seplen, argc;
+	صحیح cnt;
+	نویسه last_char;
+	ثابت نویسه *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	اگر (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		اگر (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} وگرنه
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	اگر (strcmp(prompt, ps_prompt) != 0)
+		بازگشت 0;	/* not in normal console */
 
 	cnt = strlen(buf);
-	if (cnt >= 1)
+	اگر (cnt >= 1)
 		last_char = buf[cnt - 1];
-	else
+	وگرنه
 		last_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
 	strcpy(tmp_buf, buf);
 
 	/* separate into argv */
-	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);
+	argc = make_argv(tmp_buf, اندازه(argv)/اندازه(argv[0]), argv);
 
 	/* first try a $ completion */
 	i = dollar_complete(argc, argv, last_char,
-			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+			    اندازه(cmdv) / اندازه(cmdv[0]), cmdv);
+	اگر (!i) {
 		/* do the completion and return the possible completions */
 		i = complete_cmdv(argc, argv, last_char,
-				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
+				  اندازه(cmdv) / اندازه(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	اگر (i == 0) {
+		اگر (argc > 1)	/* allow tab for non command */
+			بازگشت 0;
 		putc('\a');
-		return 1;
+		بازگشت 1;
 	}
 
-	s = NULL;
+	s = پوچ;
 	len = 0;
-	sep = NULL;
+	sep = پوچ;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
+	اگر (i == 1) { /* one match; perfect */
+		اگر (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		وگرنه
 			k = 0;
 
 		s = cmdv[0] + k;
 		len = strlen(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
+	} وگرنه اگر (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
+		اگر (last_char != '\0' && !isblank(last_char))
 			k = strlen(argv[argc - 1]);
-		else
+		وگرنه
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		اگر (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	اگر (s != پوچ) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		اگر (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			بازگشت 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		برای (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		اگر (sep != پوچ)
+			برای (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
 		col += k;
 		puts(t - k);
-		if (sep == NULL)
+		اگر (sep == پوچ)
 			putc('\a');
 		*np = n;
 		*colp = col;
-	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+	} وگرنه {
+		print_argv(پوچ, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);
 	}
-	return 1;
+	بازگشت 1;
 }
 
 #endif
 
 #ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+صحیح cmd_get_data_size(ثابت نویسه *arg, صحیح default_size)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
-		switch (arg[len-1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return CMD_DATA_SIZE_STR;
-		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+	صحیح len = strlen(arg);
+	اگر (len >= 2 && arg[len-2] == '.') {
+		انتخاب (arg[len-1]) {
+		حالت 'b':
+			بازگشت 1;
+		حالت 'w':
+			بازگشت 2;
+		حالت 'l':
+			بازگشت 4;
+		حالت 's':
+			بازگشت CMD_DATA_SIZE_STR;
+		حالت 'q':
+			اگر (MEM_SUPPORT_64BIT_DATA)
+				بازگشت 8;
 			fallthrough;
-		default:
-			return CMD_DATA_SIZE_ERR;
+		پیشفرض:
+			بازگشت CMD_DATA_SIZE_ERR;
 		}
 	}
-	return default_size;
+	بازگشت default_size;
 }
 #endif
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+تهی fixup_cmdtable(ساختار cmd_tbl *cmdtp, صحیح size)
 {
-	int	i;
+	صحیح	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	اگر (gd->reloc_off == 0)
+		بازگشت;
 
-	for (i = 0; i < size; i++) {
+	برای (i = 0; i < size; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(صحیح (*)(ساختار cmd_tbl *, صحیح, صحیح,
+				 نویسه * ثابت [], صحیح *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
 #ifdef DEBUG_COMMANDS
 		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
 #endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
-				      char *const []))addr;
+		cmdtp->cmd = (صحیح (*)(ساختار cmd_tbl *, صحیح, صحیح,
+				      نویسه *ثابت []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		cmdtp->name = (نویسه *)addr;
+		اگر (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
+			cmdtp->usage = (نویسه *)addr;
 		}
 #ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+		اگر (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
+			cmdtp->help = (نویسه *)addr;
 		}
 #endif
 #ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+		اگر (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(صحیح (*)(صحیح, نویسه * ثابت [], نویسه, صحیح, نویسه * []))addr;
 		}
 #endif
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+صحیح cmd_always_repeatable(ساختار cmd_tbl *cmdtp, صحیح flag, صحیح argc,
+			  نویسه *ثابت argv[], صحیح *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	بازگشت cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+صحیح cmd_never_repeatable(ساختار cmd_tbl *cmdtp, صحیح flag, صحیح argc,
+			 نویسه *ثابت argv[], صحیح *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	بازگشت cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			   char *const argv[])
+صحیح cmd_discard_repeatable(ساختار cmd_tbl *cmdtp, صحیح flag, صحیح argc,
+			   نویسه *ثابت argv[])
 {
-	int repeatable;
+	صحیح repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	بازگشت cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,30 +578,30 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+ایستا صحیح cmd_call(ساختار cmd_tbl *cmdtp, صحیح flag, صحیح argc,
+		    نویسه *ثابت argv[], صحیح *repeatable)
 {
-	int result;
+	صحیح result;
 
 	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
+	اگر (result)
 		debug("Command failed, result=%d\n", result);
-	return result;
+	بازگشت result;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+شمارش command_ret_t cmd_process(صحیح flag, صحیح argc, نویسه *ثابت argv[],
+			       صحیح *repeatable, ulong *ticks)
 {
-	enum command_ret_t rc = CMD_RET_SUCCESS;
-	struct cmd_tbl *cmdtp;
+	شمارش command_ret_t rc = CMD_RET_SUCCESS;
+	ساختار cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
-	char *xtrace;
+#اگر defined(CONFIG_SYS_XTRACE)
+	نویسه *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
+	اگر (xtrace) {
 		puts("+");
-		for (int i = 0; i < argc; i++) {
+		برای (صحیح i = 0; i < argc; i++) {
 			puts(" ");
 			puts(argv[i]);
 		}
@@ -611,69 +611,69 @@ enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
 
 	/* Look up command in command table */
 	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
+	اگر (cmdtp == پوچ) {
 		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+		بازگشت 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	اگر (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#اگر defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
+	وگرنه اگر (cmdtp->cmd == do_bootd) {
+		اگر (flag & CMD_FLAG_BOOTD) {
 			puts("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} وگرنه {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
 #endif
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	اگر (!rc) {
+		صحیح newrep;
 
-		if (ticks)
+		اگر (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		اگر (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	اگر (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	بازگشت rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+صحیح cmd_process_error(ساختار cmd_tbl *cmdtp, صحیح err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	اگر (err == CMD_RET_USAGE)
+		بازگشت CMD_RET_USAGE;
 
-	if (err) {
+	اگر (err) {
 		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+		بازگشت CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	بازگشت CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+صحیح cmd_source_script(ulong addr, ثابت نویسه *fit_uname, ثابت نویسه *confname)
 {
-	char *data;
-	void *buf;
+	نویسه *data;
+	تهی *buf;
 	uint len;
-	int ret;
+	صحیح ret;
 
 	buf = map_sysmem(addr, 0);
 	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	اگر (ret)
+		بازگشت CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	بازگشت run_command_list(data, len, 0);
 }

@@ -7,72 +7,72 @@
  *
  */
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <squashfs.h>
-#include <errno.h>
-#include <image.h>
+#شامل <env.h>
+#شامل <part.h>
+#شامل <spl.h>
+#شامل <spl_load.h>
+#شامل <squashfs.h>
+#شامل <errno.h>
+#شامل <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ایستا ulong spl_fit_read(ساختار spl_load_info *load, ulong file_offset,
+			  ulong size, تهی *buf)
 {
-	struct legacy_img_hdr *header;
-	char *filename = load->priv;
+	ساختار legacy_img_hdr *header;
+	نویسه *filename = load->priv;
 	loff_t actread;
-	int ret;
+	صحیح ret;
 
 	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	اگر (ret)
+		بازگشت ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	اگر (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (ساختار legacy_img_hdr *)buf;
+		اگر (image_get_magic(header) != FDT_MAGIC)
+			بازگشت size;
 	}
 
-	return actread;
+	بازگشت actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
-			const char *filename)
+صحیح spl_load_image_sqfs(ساختار spl_image_info *spl_image,
+			ساختار spl_boot_device *bootdev,
+			ساختار blk_desc *block_dev, صحیح partition,
+			ثابت نویسه *filename)
 {
-	int err;
+	صحیح err;
 	loff_t size = 0;
-	struct spl_load_info load;
-	struct disk_partition part_info = {};
+	ساختار spl_load_info load;
+	ساختار disk_partition part_info = {};
 
 	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
+	اگر (err) {
 		printf("spl: no partition table found\n");
-		goto end;
+		برو end;
 	}
 
 	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
+	اگر (err) {
 		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
-		goto end;
+		برو end;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	اگر (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = sqfs_size(filename, &size);
-		if (err)
-			goto end;
+		اگر (err)
+			برو end;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename, 1);
+	spl_load_init(&load, spl_fit_read, (تهی *)filename, 1);
 
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0)
+	اگر (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	بازگشت err;
 }

@@ -8,38 +8,38 @@
  * as file malloc-2.6.6.c.
  */
 
-#if CONFIG_IS_ENABLED(UNIT_TEST)
+#اگر CONFIG_IS_ENABLED(UNIT_TEST)
 #define DEBUG
 #endif
 
-#include <log.h>
-#include <asm/global_data.h>
+#شامل <log.h>
+#شامل <asm/global_data.h>
 
-#include <malloc.h>
-#include <mapmem.h>
-#include <string.h>
-#include <asm/io.h>
-#include <valgrind/memcheck.h>
+#شامل <malloc.h>
+#شامل <mapmem.h>
+#شامل <string.h>
+#شامل <asm/io.h>
+#شامل <valgrind/memcheck.h>
 
 #ifdef DEBUG
-#if __STD_C
-static void malloc_update_mallinfo (void);
-void malloc_stats (void);
-#else
-static void malloc_update_mallinfo ();
-void malloc_stats();
+#اگر __STD_C
+ایستا تهی malloc_update_mallinfo (تهی);
+تهی malloc_stats (تهی);
+#وگرنه
+ایستا تهی malloc_update_mallinfo ();
+تهی malloc_stats();
 #endif
 #endif	/* DEBUG */
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef MCHECK_HEAP_PROTECTION
- #define STATIC_IF_MCHECK static
+ #define STATIC_IF_MCHECK ایستا
  #undef MALLOC_COPY
  #undef MALLOC_ZERO
-static inline void MALLOC_ZERO(void *p, size_t sz) { memset(p, 0, sz); }
-static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(dest, src, sz); }
-#else
+ایستا درونخطی تهی MALLOC_ZERO(تهی *p, size_t sz) { memset(p, 0, sz); }
+ایستا درونخطی تهی MALLOC_COPY(تهی *dest, ثابت تهی *src, size_t sz) { memcpy(dest, src, sz); }
+#وگرنه
  #define STATIC_IF_MCHECK
  #define mALLOc_impl mALLOc
  #define fREe_impl fREe
@@ -64,77 +64,77 @@ static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(
 /* resrve 64MB to insure large contiguous space */
 #define RESERVED_SIZE (1024*1024*64)
 #define NEXT_SIZE (2048*1024)
-#define TOP_MEMORY ((unsigned long)2*1024*1024*1024)
+#define بالاترین_MEMORY ((unsigned long)2*1024*1024*1024)
 
-struct GmListElement;
-typedef struct GmListElement GmListElement;
+ساختار GmListElement;
+تعریفنوع ساختار GmListElement GmListElement;
 
-struct GmListElement
+ساختار GmListElement
 {
 	GmListElement* next;
-	void* base;
+	تهی* base;
 };
 
-static GmListElement* head = 0;
-static unsigned int gNextAddress = 0;
-static unsigned int gAddressBase = 0;
-static unsigned int gAllocatedSize = 0;
+ایستا GmListElement* head = 0;
+ایستا unsigned صحیح gNextAddress = 0;
+ایستا unsigned صحیح gAddressBase = 0;
+ایستا unsigned صحیح gAllocatedSize = 0;
 
-static
-GmListElement* makeGmListElement (void* bas)
+ایستا
+GmListElement* makeGmListElement (تهی* bas)
 {
 	GmListElement* this;
-	this = (GmListElement*)(void*)LocalAlloc (0, sizeof (GmListElement));
-	assert (this);
-	if (this)
+	this = (GmListElement*)(تهی*)LocalAlloc (0, اندازه (GmListElement));
+	أكد (this);
+	اگر (this)
 	{
 		this->base = bas;
 		this->next = head;
 		head = this;
 	}
-	return this;
+	بازگشت this;
 }
 
-void gcleanup (void)
+تهی gcleanup (تهی)
 {
 	BOOL rval;
-	assert ( (head == NULL) || (head->base == (void*)gAddressBase));
-	if (gAddressBase && (gNextAddress - gAddressBase))
+	أكد ( (head == پوچ) || (head->base == (تهی*)gAddressBase));
+	اگر (gAddressBase && (gNextAddress - gAddressBase))
 	{
-		rval = VirtualFree ((void*)gAddressBase,
+		rval = VirtualFree ((تهی*)gAddressBase,
 							gNextAddress - gAddressBase,
 							MEM_DECOMMIT);
-	assert (rval);
+	أكد (rval);
 	}
-	while (head)
+	وقتی (head)
 	{
 		GmListElement* next = head->next;
 		rval = VirtualFree (head->base, 0, MEM_RELEASE);
-		assert (rval);
+		أكد (rval);
 		LocalFree (head);
 		head = next;
 	}
 }
 
-static
-void* findRegion (void* start_address, unsigned long size)
+ایستا
+تهی* findRegion (تهی* start_address, unsigned long size)
 {
 	MEMORY_BASIC_INFORMATION info;
-	if (size >= TOP_MEMORY) return NULL;
+	اگر (size >= بالاترین_MEMORY) بازگشت پوچ;
 
-	while ((unsigned long)start_address + size < TOP_MEMORY)
+	وقتی ((unsigned long)start_address + size < بالاترین_MEMORY)
 	{
-		VirtualQuery (start_address, &info, sizeof (info));
-		if ((info.State == MEM_FREE) && (info.RegionSize >= size))
-			return start_address;
-		else
+		VirtualQuery (start_address, &info, اندازه (info));
+		اگر ((info.State == MEM_FREE) && (info.RegionSize >= size))
+			بازگشت start_address;
+		وگرنه
 		{
 			/* Requested region is not available so see if the */
 			/* next region is available.  Set 'start_address' */
 			/* to the next region and call 'VirtualQuery()' */
 			/* again. */
 
-			start_address = (char*)info.BaseAddress + info.RegionSize;
+			start_address = (نویسه*)info.BaseAddress + info.RegionSize;
 
 			/* Make sure we start looking for the next region */
 			/* on the *next* 64K boundary.  Otherwise, even if */
@@ -149,88 +149,88 @@ void* findRegion (void* start_address, unsigned long size)
 			/* here, causing us to go into an infinite loop. */
 
 			start_address =
-				(void *) AlignPage64K((unsigned long) start_address);
+				(تهی *) AlignPage64K((unsigned long) start_address);
 		}
 	}
-	return NULL;
+	بازگشت پوچ;
 
 }
 
-void* wsbrk (long size)
+تهی* wsbrk (long size)
 {
-	void* tmp;
-	if (size > 0)
+	تهی* tmp;
+	اگر (size > 0)
 	{
-		if (gAddressBase == 0)
+		اگر (gAddressBase == 0)
 		{
 			gAllocatedSize = max (RESERVED_SIZE, AlignPage (size));
 			gNextAddress = gAddressBase =
-				(unsigned int)VirtualAlloc (NULL, gAllocatedSize,
+				(unsigned صحیح)VirtualAlloc (پوچ, gAllocatedSize,
 											MEM_RESERVE, PAGE_NOACCESS);
-		} else if (AlignPage (gNextAddress + size) > (gAddressBase +
+		} وگرنه اگر (AlignPage (gNextAddress + size) > (gAddressBase +
 gAllocatedSize))
 		{
 			long new_size = max (NEXT_SIZE, AlignPage (size));
-			void* new_address = (void*)(gAddressBase+gAllocatedSize);
-			do
+			تهی* new_address = (تهی*)(gAddressBase+gAllocatedSize);
+			انجامبده
 			{
 				new_address = findRegion (new_address, new_size);
 
-				if (!new_address)
-					return (void*)-1;
+				اگر (!new_address)
+					بازگشت (تهی*)-1;
 
 				gAddressBase = gNextAddress =
-					(unsigned int)VirtualAlloc (new_address, new_size,
+					(unsigned صحیح)VirtualAlloc (new_address, new_size,
 												MEM_RESERVE, PAGE_NOACCESS);
 				/* repeat in case of race condition */
 				/* The region that we found has been snagged */
 				/* by another thread */
 			}
-			while (gAddressBase == 0);
+			وقتی (gAddressBase == 0);
 
-			assert (new_address == (void*)gAddressBase);
+			أكد (new_address == (تهی*)gAddressBase);
 
 			gAllocatedSize = new_size;
 
-			if (!makeGmListElement ((void*)gAddressBase))
-				return (void*)-1;
+			اگر (!makeGmListElement ((تهی*)gAddressBase))
+				بازگشت (تهی*)-1;
 		}
-		if ((size + gNextAddress) > AlignPage (gNextAddress))
+		اگر ((size + gNextAddress) > AlignPage (gNextAddress))
 		{
-			void* res;
-			res = VirtualAlloc ((void*)AlignPage (gNextAddress),
+			تهی* res;
+			res = VirtualAlloc ((تهی*)AlignPage (gNextAddress),
 								(size + gNextAddress -
 								 AlignPage (gNextAddress)),
 								MEM_COMMIT, PAGE_READWRITE);
-			if (!res)
-				return (void*)-1;
+			اگر (!res)
+				بازگشت (تهی*)-1;
 		}
-		tmp = (void*)gNextAddress;
-		gNextAddress = (unsigned int)tmp + size;
-		return tmp;
+		tmp = (تهی*)gNextAddress;
+		gNextAddress = (unsigned صحیح)tmp + size;
+		بازگشت tmp;
 	}
-	else if (size < 0)
+	وگرنه اگر (size < 0)
 	{
-		unsigned int alignedGoal = AlignPage (gNextAddress + size);
+		unsigned صحیح alignedGoal = AlignPage (gNextAddress + size);
 		/* Trim by releasing the virtual memory */
-		if (alignedGoal >= gAddressBase)
+		اگر (alignedGoal >= gAddressBase)
 		{
-			VirtualFree ((void*)alignedGoal, gNextAddress - alignedGoal,
+			VirtualFree ((تهی*)alignedGoal, gNextAddress - alignedGoal,
 						 MEM_DECOMMIT);
 			gNextAddress = gNextAddress + size;
-			return (void*)gNextAddress;
+			بازگشت (تهی*)gNextAddress;
 		}
-		else
+		وگرنه
 		{
-			VirtualFree ((void*)gAddressBase, gNextAddress - gAddressBase,
+			VirtualFree ((تهی*)gAddressBase, gNextAddress - gAddressBase,
 						 MEM_DECOMMIT);
 			gNextAddress = gAddressBase;
-			return (void*)-1;
+			بازگشت (تهی*)-1;
 		}
 	}
-	else
+	وگرنه
 	{
-		return (void*)gNextAddress;
+		بازگشت (تهی*)gNextAddress;
 	}
 }
 
@@ -240,15 +240,15 @@ gAllocatedSize))
   Type declarations
 */
 
-struct malloc_chunk
+ساختار malloc_chunk
 {
   INTERNAL_SIZE_T prev_size; /* Size of previous chunk (if free). */
   INTERNAL_SIZE_T size;      /* Size in bytes, including overhead. */
-  struct malloc_chunk* fd;   /* double links -- used only if free. */
-  struct malloc_chunk* bk;
+  ساختار malloc_chunk* fd;   /* double links -- used only if free. */
+  ساختار malloc_chunk* bk;
 } __attribute__((__may_alias__)) ;
 
-typedef struct malloc_chunk* mchunkptr;
+تعریفنوع ساختار malloc_chunk* mchunkptr;
 
 /*
 
@@ -375,15 +375,15 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /*  sizes, alignments */
 
-#define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
+#define SIZE_SZ                (اندازه(INTERNAL_SIZE_T))
 #define MALLOC_ALIGNMENT       (SIZE_SZ + SIZE_SZ)
 #define MALLOC_ALIGN_MASK      (MALLOC_ALIGNMENT - 1)
-#define MINSIZE                (sizeof(struct malloc_chunk))
+#define MINSIZE                (اندازه(ساختار malloc_chunk))
 
 /* conversion from malloc headers to user pointers, and back */
 
-#define chunk2mem(p)   ((Void_t*)((char*)(p) + 2*SIZE_SZ))
-#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))
+#define chunk2mem(p)   ((Void_t*)((نویسه*)(p) + 2*SIZE_SZ))
+#define mem2chunk(mem) ((mchunkptr)((نویسه*)(mem) - 2*SIZE_SZ))
 
 /* pad request bytes into a usable size */
 
@@ -414,16 +414,16 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /* Ptr to next physical malloc_chunk. */
 
-#define next_chunk(p) ((mchunkptr)( ((char*)(p)) + ((p)->size & ~PREV_INUSE) ))
+#define next_chunk(p) ((mchunkptr)( ((نویسه*)(p)) + ((p)->size & ~PREV_INUSE) ))
 
 /* Ptr to previous physical malloc_chunk */
 
 #define prev_chunk(p)\
-   ((mchunkptr)( ((char*)(p)) - ((p)->prev_size) ))
+   ((mchunkptr)( ((نویسه*)(p)) - ((p)->prev_size) ))
 
 /* Treat space at ptr + offset as a chunk */
 
-#define chunk_at_offset(p, s)  ((mchunkptr)(((char*)(p)) + (s)))
+#define chunk_at_offset(p, s)  ((mchunkptr)(((نویسه*)(p)) + (s)))
 
 /*
   Dealing with use bits
@@ -432,7 +432,7 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /* extract p's inuse bit */
 
 #define inuse(p)\
-((((mchunkptr)(((char*)(p))+((p)->size & ~PREV_INUSE)))->size) & PREV_INUSE)
+((((mchunkptr)(((نویسه*)(p))+((p)->size & ~PREV_INUSE)))->size) & PREV_INUSE)
 
 /* extract inuse bit of previous chunk */
 
@@ -445,21 +445,21 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /* set/clear chunk as in use without otherwise disturbing */
 
 #define set_inuse(p)\
-((mchunkptr)(((char*)(p)) + ((p)->size & ~PREV_INUSE)))->size |= PREV_INUSE
+((mchunkptr)(((نویسه*)(p)) + ((p)->size & ~PREV_INUSE)))->size |= PREV_INUSE
 
 #define clear_inuse(p)\
-((mchunkptr)(((char*)(p)) + ((p)->size & ~PREV_INUSE)))->size &= ~(PREV_INUSE)
+((mchunkptr)(((نویسه*)(p)) + ((p)->size & ~PREV_INUSE)))->size &= ~(PREV_INUSE)
 
 /* check/set/clear inuse bits in known places */
 
 #define inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size & PREV_INUSE)
+ (((mchunkptr)(((نویسه*)(p)) + (s)))->size & PREV_INUSE)
 
 #define set_inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size |= PREV_INUSE)
+ (((mchunkptr)(((نویسه*)(p)) + (s)))->size |= PREV_INUSE)
 
 #define clear_inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size &= ~(PREV_INUSE))
+ (((mchunkptr)(((نویسه*)(p)) + (s)))->size &= ~(PREV_INUSE))
 
 /*
   Dealing with size fields
@@ -479,7 +479,7 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /* Set size at footer (only when chunk is not in use) */
 
-#define set_foot(p, s)   (((mchunkptr)((char*)(p) + (s)))->prev_size = (s))
+#define set_foot(p, s)   (((mchunkptr)((نویسه*)(p) + (s)))->prev_size = (s))
 
 /*
    Bins
@@ -517,13 +517,13 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 #define NAV             128   /* number of bins */
 
-typedef struct malloc_chunk* mbinptr;
+تعریفنوع ساختار malloc_chunk* mbinptr;
 
 /* access macros */
 
-#define bin_at(i)      ((mbinptr)((char*)&(av_[2*(i) + 2]) - 2*SIZE_SZ))
-#define next_bin(b)    ((mbinptr)((char*)(b) + 2 * sizeof(mbinptr)))
-#define prev_bin(b)    ((mbinptr)((char*)(b) - 2 * sizeof(mbinptr)))
+#define bin_at(i)      ((mbinptr)((نویسه*)&(av_[2*(i) + 2]) - 2*SIZE_SZ))
+#define next_bin(b)    ((mbinptr)((نویسه*)(b) + 2 * اندازه(mbinptr)))
+#define prev_bin(b)    ((mbinptr)((نویسه*)(b) - 2 * اندازه(mbinptr)))
 
 /*
    The first 2 bins are never indexed. The corresponding av_ cells are instead
@@ -531,7 +531,7 @@ typedef struct malloc_chunk* mbinptr;
    indexing, maintain locality, and avoid some initialization tests.
 */
 
-#define top            (av_[2])          /* The topmost chunk */
+#define بالاترین            (av_[2])          /* The topmost chunk */
 #define last_remainder (bin_at(1))       /* remainder from last split */
 
 /*
@@ -541,14 +541,14 @@ typedef struct malloc_chunk* mbinptr;
    it even exists yet. But we still need to in malloc_extend_top.
 */
 
-#define initial_top    ((mchunkptr)(bin_at(0)))
+#define initial_بالاترین    ((mchunkptr)(bin_at(0)))
 
 /* Helper macro to initialize bins */
 
 #define IAV(i)  bin_at(i), bin_at(i)
 
-static mbinptr av_[NAV * 2 + 2] = {
- NULL, NULL,
+ایستا mbinptr av_[NAV * 2 + 2] = {
+ پوچ, پوچ,
  IAV(0),   IAV(1),   IAV(2),   IAV(3),   IAV(4),   IAV(5),   IAV(6),   IAV(7),
  IAV(8),   IAV(9),   IAV(10),  IAV(11),  IAV(12),  IAV(13),  IAV(14),  IAV(15),
  IAV(16),  IAV(17),  IAV(18),  IAV(19),  IAV(20),  IAV(21),  IAV(22),  IAV(23),
@@ -568,37 +568,37 @@ static mbinptr av_[NAV * 2 + 2] = {
 };
 
 #ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
-static void malloc_init(void);
+ایستا تهی malloc_init(تهی);
 #endif
 
 ulong mem_malloc_start = 0;
 ulong mem_malloc_end = 0;
 ulong mem_malloc_brk = 0;
 
-static bool malloc_testing;	/* enable test mode */
-static int malloc_max_allocs;	/* return NULL after this many calls to malloc() */
+ایستا bool malloc_testing;	/* enable test mode */
+ایستا صحیح malloc_max_allocs;	/* return NULL after this many calls to malloc() */
 
-void *sbrk(ptrdiff_t increment)
+تهی *sbrk(ptrdiff_t increment)
 {
 	ulong old = mem_malloc_brk;
 	ulong new = old + increment;
 
-	if ((new < mem_malloc_start) || (new > mem_malloc_end))
-		return (void *)MORECORE_FAILURE;
+	اگر ((new < mem_malloc_start) || (new > mem_malloc_end))
+		بازگشت (تهی *)MORECORE_FAILURE;
 
 	/*
 	 * if we are giving memory back make sure we clear it out since
 	 * we set MORECORE_CLEARS to 1
 	 */
-	if (increment < 0)
-		memset((void *)new, 0, -increment);
+	اگر (increment < 0)
+		memset((تهی *)new, 0, -increment);
 
 	mem_malloc_brk = new;
 
-	return (void *)old;
+	بازگشت (تهی *)old;
 }
 
-void mem_malloc_init(ulong start, ulong size)
+تهی mem_malloc_init(ulong start, ulong size)
 {
 	mem_malloc_start = (ulong)map_sysmem(start, size);
 	mem_malloc_end = mem_malloc_start + size;
@@ -610,8 +610,8 @@ void mem_malloc_init(ulong start, ulong size)
 
 	debug("using memory %#lx-%#lx for malloc()\n", mem_malloc_start,
 	      mem_malloc_end);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-	memset((void *)mem_malloc_start, 0x0, size);
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+	memset((تهی *)mem_malloc_start, 0x0, size);
 #endif
 }
 
@@ -674,22 +674,22 @@ void mem_malloc_init(ulong start, ulong size)
 
 /* variables holding tunable values */
 
-static unsigned long trim_threshold   = DEFAULT_TRIM_THRESHOLD;
-static unsigned long top_pad          = DEFAULT_TOP_PAD;
-static unsigned int  n_mmaps_max      = DEFAULT_MMAP_MAX;
-static unsigned long mmap_threshold   = DEFAULT_MMAP_THRESHOLD;
+ایستا unsigned long trim_threshold   = DEFAULT_TRIM_THRESHOLD;
+ایستا unsigned long بالاترین_pad          = DEFAULT_بالاترین_PAD;
+ایستا unsigned صحیح  n_mmaps_max      = DEFAULT_MMAP_MAX;
+ایستا unsigned long mmap_threshold   = DEFAULT_MMAP_THRESHOLD;
 
 /* The first value returned from sbrk */
-static char* sbrk_base = (char*)(-1);
+ایستا نویسه* sbrk_base = (نویسه*)(-1);
 
 /* The maximum memory obtained from system via sbrk */
-static unsigned long max_sbrked_mem = 0;
+ایستا unsigned long max_sbrked_mem = 0;
 
 /* The maximum via either sbrk or mmap */
-static unsigned long max_total_mem = 0;
+ایستا unsigned long max_total_mem = 0;
 
 /* internal working copy of mallinfo */
-static struct mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+ایستا ساختار mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 /* The total memory obtained from system via sbrk */
 #define sbrked_mem  (current_mallinfo.arena)
@@ -697,41 +697,41 @@ static struct mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 /* Tracking mmaps */
 
 #ifdef DEBUG
-static unsigned int n_mmaps = 0;
+ایستا unsigned صحیح n_mmaps = 0;
 #endif	/* DEBUG */
-static unsigned long mmapped_mem = 0;
-#if HAVE_MMAP
-static unsigned int max_n_mmaps = 0;
-static unsigned long max_mmapped_mem = 0;
+ایستا unsigned long mmapped_mem = 0;
+#اگر HAVE_MMAP
+ایستا unsigned صحیح max_n_mmaps = 0;
+ایستا unsigned long max_mmapped_mem = 0;
 #endif
 
 #ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
-static void malloc_init(void)
+ایستا تهی malloc_init(تهی)
 {
-	int i, j;
+	صحیح i, j;
 
-	debug("bins (av_ array) are at %p\n", (void *)av_);
+	debug("bins (av_ array) are at %p\n", (تهی *)av_);
 
-	av_[0] = NULL; av_[1] = NULL;
-	for (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
+	av_[0] = پوچ; av_[1] = پوچ;
+	برای (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
 		av_[i] = bin_at(j - 2);
 		av_[i + 1] = bin_at(j - 2);
 
 		/* Just print the first few bins so that
 		 * we can see there are alright.
 		 */
-		if (i < 10)
+		اگر (i < 10)
 			debug("av_[%d]=%lx av_[%d]=%lx\n",
 			      i, (ulong)av_[i],
 			      i + 1, (ulong)av_[i + 1]);
 	}
 
 	/* Init the static bookkeeping as well */
-	sbrk_base = (char *)(-1);
+	sbrk_base = (نویسه *)(-1);
 	max_sbrked_mem = 0;
 	max_total_mem = 0;
 #ifdef DEBUG
-	memset((void *)&current_mallinfo, 0, sizeof(struct mallinfo));
+	memset((تهی *)&current_mallinfo, 0, اندازه(ساختار mallinfo));
 #endif
 }
 #endif
@@ -750,30 +750,30 @@ static void malloc_init(void)
   in malloc. In which case, please report it!)
 */
 
-#if __STD_C
-static void do_check_chunk(mchunkptr p)
-#else
-static void do_check_chunk(p) mchunkptr p;
+#اگر __STD_C
+ایستا تهی do_check_chunk(mchunkptr p)
+#وگرنه
+ایستا تهی do_check_chunk(p) mchunkptr p;
 #endif
 {
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
 
   /* No checkable chunk is mmapped */
-  assert(!chunk_is_mmapped(p));
+  أكد(!chunk_is_mmapped(p));
 
   /* Check for legal address ... */
-  assert((char*)p >= sbrk_base);
-  if (p != top)
-    assert((char*)p + sz <= (char*)top);
-  else
-    assert((char*)p + sz <= sbrk_base + sbrked_mem);
+  أكد((نویسه*)p >= sbrk_base);
+  اگر (p != بالاترین)
+    أكد((نویسه*)p + sz <= (نویسه*)بالاترین);
+  وگرنه
+    أكد((نویسه*)p + sz <= sbrk_base + sbrked_mem);
 
 }
 
-#if __STD_C
-static void do_check_free_chunk(mchunkptr p)
-#else
-static void do_check_free_chunk(p) mchunkptr p;
+#اگر __STD_C
+ایستا تهی do_check_free_chunk(mchunkptr p)
+#وگرنه
+ایستا تهی do_check_free_chunk(p) mchunkptr p;
 #endif
 {
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
@@ -782,63 +782,63 @@ static void do_check_free_chunk(p) mchunkptr p;
   do_check_chunk(p);
 
   /* Check whether it claims to be free ... */
-  assert(!inuse(p));
+  أكد(!inuse(p));
 
   /* Unless a special marker, must have OK fields */
-  if ((long)sz >= (long)MINSIZE)
+  اگر ((long)sz >= (long)MINSIZE)
   {
-    assert((sz & MALLOC_ALIGN_MASK) == 0);
-    assert(aligned_OK(chunk2mem(p)));
+    أكد((sz & MALLOC_ALIGN_MASK) == 0);
+    أكد(aligned_OK(chunk2mem(p)));
     /* ... matching footer field */
-    assert(next->prev_size == sz);
+    أكد(next->prev_size == sz);
     /* ... and is fully consolidated */
-    assert(prev_inuse(p));
-    assert (next == top || inuse(next));
+    أكد(prev_inuse(p));
+    أكد (next == بالاترین || inuse(next));
 
     /* ... and has minimally sane links */
-    assert(p->fd->bk == p);
-    assert(p->bk->fd == p);
+    أكد(p->fd->bk == p);
+    أكد(p->bk->fd == p);
   }
-  else /* markers are always of size SIZE_SZ */
-    assert(sz == SIZE_SZ);
+  وگرنه /* markers are always of size SIZE_SZ */
+    أكد(sz == SIZE_SZ);
 }
 
-#if __STD_C
-static void do_check_inuse_chunk(mchunkptr p)
-#else
-static void do_check_inuse_chunk(p) mchunkptr p;
+#اگر __STD_C
+ایستا تهی do_check_inuse_chunk(mchunkptr p)
+#وگرنه
+ایستا تهی do_check_inuse_chunk(p) mchunkptr p;
 #endif
 {
   mchunkptr next = next_chunk(p);
   do_check_chunk(p);
 
   /* Check whether it claims to be in use ... */
-  assert(inuse(p));
+  أكد(inuse(p));
 
   /* ... and is surrounded by OK chunks.
     Since more things can be checked with free chunks than inuse ones,
     if an inuse chunk borders them and debug is on, it's worth doing them.
   */
-  if (!prev_inuse(p))
+  اگر (!prev_inuse(p))
   {
     mchunkptr prv = prev_chunk(p);
-    assert(next_chunk(prv) == p);
+    أكد(next_chunk(prv) == p);
     do_check_free_chunk(prv);
   }
-  if (next == top)
+  اگر (next == بالاترین)
   {
-    assert(prev_inuse(next));
-    assert(chunksize(next) >= MINSIZE);
+    أكد(prev_inuse(next));
+    أكد(chunksize(next) >= MINSIZE);
   }
-  else if (!inuse(next))
+  وگرنه اگر (!inuse(next))
     do_check_free_chunk(next);
 
 }
 
-#if __STD_C
-static void do_check_malloced_chunk(mchunkptr p, INTERNAL_SIZE_T s)
-#else
-static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
+#اگر __STD_C
+ایستا تهی do_check_malloced_chunk(mchunkptr p, INTERNAL_SIZE_T s)
+#وگرنه
+ایستا تهی do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #endif
 {
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
@@ -847,16 +847,16 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
   do_check_inuse_chunk(p);
 
   /* Legal size ... */
-  assert((long)sz >= (long)MINSIZE);
-  assert((sz & MALLOC_ALIGN_MASK) == 0);
-  assert(room >= 0);
-  assert(room < (long)MINSIZE);
+  أكد((long)sz >= (long)MINSIZE);
+  أكد((sz & MALLOC_ALIGN_MASK) == 0);
+  أكد(room >= 0);
+  أكد(room < (long)MINSIZE);
 
   /* ... and alignment */
-  assert(aligned_OK(chunk2mem(p)));
+  أكد(aligned_OK(chunk2mem(p)));
 
   /* ... and was allocated at front of an available chunk */
-  assert(prev_inuse(p));
+  أكد(prev_inuse(p));
 
 }
 
@@ -864,7 +864,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #define check_inuse_chunk(P) do_check_inuse_chunk(P)
 #define check_chunk(P) do_check_chunk(P)
 #define check_malloced_chunk(P,N) do_check_malloced_chunk(P,N)
-#else
+#وگرنه
 #define check_free_chunk(P)
 #define check_inuse_chunk(P)
 #define check_chunk(P)
@@ -887,7 +887,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 #define frontlink(P, S, IDX, BK, FD)                                          \
 {                                                                             \
-  if (S < MAX_SMALLBIN_SIZE)                                                  \
+  اگر (S < MAX_SMALLBIN_SIZE)                                                  \
   {                                                                           \
     IDX = smallbin_index(S);                                                  \
     mark_binblock(IDX);                                                       \
@@ -897,15 +897,15 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
     P->fd = FD;                                                               \
     FD->bk = BK->fd = P;                                                      \
   }                                                                           \
-  else                                                                        \
+  وگرنه                                                                        \
   {                                                                           \
     IDX = bin_index(S);                                                       \
     BK = bin_at(IDX);                                                         \
     FD = BK->fd;                                                              \
-    if (FD == BK) mark_binblock(IDX);                                         \
-    else                                                                      \
+    اگر (FD == BK) mark_binblock(IDX);                                         \
+    وگرنه                                                                      \
     {                                                                         \
-      while (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
+      وقتی (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
       BK = FD->bk;                                                            \
     }                                                                         \
     P->bk = BK;                                                               \
@@ -939,22 +939,22 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 /* Routines dealing with mmap(). */
 
-#if HAVE_MMAP
+#اگر HAVE_MMAP
 
-#if __STD_C
-static mchunkptr mmap_chunk(size_t size)
-#else
-static mchunkptr mmap_chunk(size) size_t size;
+#اگر __STD_C
+ایستا mchunkptr mmap_chunk(size_t size)
+#وگرنه
+ایستا mchunkptr mmap_chunk(size) size_t size;
 #endif
 {
   size_t page_mask = malloc_getpagesize - 1;
   mchunkptr p;
 
 #ifndef MAP_ANONYMOUS
-  static int fd = -1;
+  ایستا صحیح fd = -1;
 #endif
 
-  if(n_mmaps >= n_mmaps_max) return 0; /* too many regions */
+  اگر(n_mmaps >= n_mmaps_max) بازگشت 0; /* too many regions */
 
   /* For mmapped chunks, the overhead is one SIZE_SZ unit larger, because
    * there is no following chunk whose prev_size field could be used.
@@ -964,22 +964,22 @@ static mchunkptr mmap_chunk(size) size_t size;
 #ifdef MAP_ANONYMOUS
   p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE,
 		      MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-#else /* !MAP_ANONYMOUS */
-  if (fd < 0)
+#وگرنه /* !MAP_ANONYMOUS */
+  اگر (fd < 0)
   {
     fd = open("/dev/zero", O_RDWR);
-    if(fd < 0) return 0;
+    اگر(fd < 0) بازگشت 0;
   }
   p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 #endif
 
-  if(p == (mchunkptr)-1) return 0;
+  اگر(p == (mchunkptr)-1) بازگشت 0;
 
   n_mmaps++;
-  if (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
+  اگر (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
 
   /* We demand that eight bytes into a page must be 8-byte aligned. */
-  assert(aligned_OK(chunk2mem(p)));
+  أكد(aligned_OK(chunk2mem(p)));
 
   /* The offset to the start of the mmapped region is stored
    * in the prev_size field of the chunk; normally it is zero,
@@ -989,75 +989,75 @@ static mchunkptr mmap_chunk(size) size_t size;
   set_head(p, size|IS_MMAPPED);
 
   mmapped_mem += size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  اگر ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  اگر ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  بازگشت p;
 }
 
-#if __STD_C
-static void munmap_chunk(mchunkptr p)
-#else
-static void munmap_chunk(p) mchunkptr p;
+#اگر __STD_C
+ایستا تهی munmap_chunk(mchunkptr p)
+#وگرنه
+ایستا تهی munmap_chunk(p) mchunkptr p;
 #endif
 {
   INTERNAL_SIZE_T size = chunksize(p);
-  int ret;
+  صحیح ret;
 
-  assert (chunk_is_mmapped(p));
-  assert(! ((char*)p >= sbrk_base && (char*)p < sbrk_base + sbrked_mem));
-  assert((n_mmaps > 0));
-  assert(((p->prev_size + size) & (malloc_getpagesize-1)) == 0);
+  أكد (chunk_is_mmapped(p));
+  أكد(! ((نویسه*)p >= sbrk_base && (نویسه*)p < sbrk_base + sbrked_mem));
+  أكد((n_mmaps > 0));
+  أكد(((p->prev_size + size) & (malloc_getpagesize-1)) == 0);
 
   n_mmaps--;
   mmapped_mem -= (size + p->prev_size);
 
-  ret = munmap((char *)p - p->prev_size, size + p->prev_size);
+  ret = munmap((نویسه *)p - p->prev_size, size + p->prev_size);
 
   /* munmap returns non-zero on failure */
-  assert(ret == 0);
+  أكد(ret == 0);
 }
 
-#if HAVE_MREMAP
+#اگر HAVE_MREMAP
 
-#if __STD_C
-static mchunkptr mremap_chunk(mchunkptr p, size_t new_size)
-#else
-static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
+#اگر __STD_C
+ایستا mchunkptr mremap_chunk(mchunkptr p, size_t new_size)
+#وگرنه
+ایستا mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 #endif
 {
   size_t page_mask = malloc_getpagesize - 1;
   INTERNAL_SIZE_T offset = p->prev_size;
   INTERNAL_SIZE_T size = chunksize(p);
-  char *cp;
+  نویسه *cp;
 
-  assert (chunk_is_mmapped(p));
-  assert(! ((char*)p >= sbrk_base && (char*)p < sbrk_base + sbrked_mem));
-  assert((n_mmaps > 0));
-  assert(((size + offset) & (malloc_getpagesize-1)) == 0);
+  أكد (chunk_is_mmapped(p));
+  أكد(! ((نویسه*)p >= sbrk_base && (نویسه*)p < sbrk_base + sbrked_mem));
+  أكد((n_mmaps > 0));
+  أكد(((size + offset) & (malloc_getpagesize-1)) == 0);
 
   /* Note the extra SIZE_SZ overhead as in mmap_chunk(). */
   new_size = (new_size + offset + SIZE_SZ + page_mask) & ~page_mask;
 
-  cp = (char *)mremap((char *)p - offset, size + offset, new_size, 1);
+  cp = (نویسه *)mremap((نویسه *)p - offset, size + offset, new_size, 1);
 
-  if (cp == (char *)-1) return 0;
+  اگر (cp == (نویسه *)-1) بازگشت 0;
 
   p = (mchunkptr)(cp + offset);
 
-  assert(aligned_OK(chunk2mem(p)));
+  أكد(aligned_OK(chunk2mem(p)));
 
-  assert((p->prev_size == offset));
+  أكد((p->prev_size == offset));
   set_head(p, (new_size - offset)|IS_MMAPPED);
 
   mmapped_mem -= size + offset;
   mmapped_mem += new_size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  اگر ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  اگر ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  بازگشت p;
 }
 
 #endif /* HAVE_MREMAP */
@@ -1069,63 +1069,63 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
   Main interface to sbrk (but see also malloc_trim).
 */
 
-#if __STD_C
-static void malloc_extend_top(INTERNAL_SIZE_T nb)
-#else
-static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
+#اگر __STD_C
+ایستا تهی malloc_extend_بالاترین(INTERNAL_SIZE_T nb)
+#وگرنه
+ایستا تهی malloc_extend_بالاترین(nb) INTERNAL_SIZE_T nb;
 #endif
 {
-  char*     brk;                  /* return value from sbrk */
+  نویسه*     brk;                  /* return value from sbrk */
   INTERNAL_SIZE_T front_misalign; /* unusable bytes at front of sbrked space */
   INTERNAL_SIZE_T correction;     /* bytes for 2nd sbrk call */
-  char*     new_brk;              /* return of 2nd sbrk call */
-  INTERNAL_SIZE_T top_size;       /* new size of top chunk */
+  نویسه*     new_brk;              /* return of 2nd sbrk call */
+  INTERNAL_SIZE_T بالاترین_size;       /* new size of top chunk */
 
-  mchunkptr old_top     = top;  /* Record state of old top */
-  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
-  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+  mchunkptr old_بالاترین     = بالاترین;  /* Record state of old top */
+  INTERNAL_SIZE_T old_بالاترین_size = chunksize(old_بالاترین);
+  نویسه*     old_end      = (نویسه*)(chunk_at_offset(old_بالاترین, old_بالاترین_size));
 
   /* Pad request with top_pad plus minimal overhead */
 
-  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
+  INTERNAL_SIZE_T    sbrk_size     = nb + بالاترین_pad + MINSIZE;
   unsigned long pagesz    = malloc_getpagesize;
 
   /* If not the first time through, round to preserve page boundary */
   /* Otherwise, we need to correct to a page size below anyway. */
   /* (We also correct below if an intervening foreign sbrk call.) */
 
-  if (sbrk_base != (char*)(-1))
+  اگر (sbrk_base != (نویسه*)(-1))
     sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
 
-  brk = (char*)(MORECORE (sbrk_size));
+  brk = (نویسه*)(MORECORE (sbrk_size));
 
   /* Fail if sbrk failed or if a foreign sbrk call killed our space */
-  if (brk == (char*)(MORECORE_FAILURE) ||
-      (brk < old_end && old_top != initial_top))
-    return;
+  اگر (brk == (نویسه*)(MORECORE_FAILURE) ||
+      (brk < old_end && old_بالاترین != initial_بالاترین))
+    بازگشت;
 
   sbrked_mem += sbrk_size;
 
-  if (brk == old_end) /* can just add bytes to current top */
+  اگر (brk == old_end) /* can just add bytes to current top */
   {
-    top_size = sbrk_size + old_top_size;
-    set_head(top, top_size | PREV_INUSE);
+    بالاترین_size = sbrk_size + old_بالاترین_size;
+    set_head(بالاترین, بالاترین_size | PREV_INUSE);
   }
-  else
+  وگرنه
   {
-    if (sbrk_base == (char*)(-1))  /* First time through. Record base */
+    اگر (sbrk_base == (نویسه*)(-1))  /* First time through. Record base */
       sbrk_base = brk;
-    else  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
-      sbrked_mem += brk - (char*)old_end;
+    وگرنه  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
+      sbrked_mem += brk - (نویسه*)old_end;
 
     /* Guarantee alignment of first new chunk made from this space */
     front_misalign = (unsigned long)chunk2mem(brk) & MALLOC_ALIGN_MASK;
-    if (front_misalign > 0)
+    اگر (front_misalign > 0)
     {
       correction = (MALLOC_ALIGNMENT) - front_misalign;
       brk += correction;
     }
-    else
+    وگرنه
       correction = 0;
 
     /* Guarantee the next brk will be at a page boundary */
@@ -1134,48 +1134,48 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 		   ~(pagesz - 1)) - ((unsigned long)(brk + sbrk_size));
 
     /* Allocate correction */
-    new_brk = (char*)(MORECORE (correction));
-    if (new_brk == (char*)(MORECORE_FAILURE)) return;
+    new_brk = (نویسه*)(MORECORE (correction));
+    اگر (new_brk == (نویسه*)(MORECORE_FAILURE)) بازگشت;
 
     sbrked_mem += correction;
 
-    top = (mchunkptr)brk;
-    top_size = new_brk - brk + correction;
-    set_head(top, top_size | PREV_INUSE);
+    بالاترین = (mchunkptr)brk;
+    بالاترین_size = new_brk - brk + correction;
+    set_head(بالاترین, بالاترین_size | PREV_INUSE);
 
-    if (old_top != initial_top)
+    اگر (old_بالاترین != initial_بالاترین)
     {
 
       /* There must have been an intervening foreign sbrk call. */
       /* A double fencepost is necessary to prevent consolidation */
 
       /* If not enough space to do this, then user did something very wrong */
-      if (old_top_size < MINSIZE)
+      اگر (old_بالاترین_size < MINSIZE)
       {
-	set_head(top, PREV_INUSE); /* will force null return from malloc */
-	return;
+	set_head(بالاترین, PREV_INUSE); /* will force null return from malloc */
+	بازگشت;
       }
 
       /* Also keep size a multiple of MALLOC_ALIGNMENT */
-      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
-      set_head_size(old_top, old_top_size);
-      chunk_at_offset(old_top, old_top_size          )->size =
+      old_بالاترین_size = (old_بالاترین_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
+      set_head_size(old_بالاترین, old_بالاترین_size);
+      chunk_at_offset(old_بالاترین, old_بالاترین_size          )->size =
 	SIZE_SZ|PREV_INUSE;
-      chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
+      chunk_at_offset(old_بالاترین, old_بالاترین_size + SIZE_SZ)->size =
 	SIZE_SZ|PREV_INUSE;
       /* If possible, release the rest. */
-      if (old_top_size >= MINSIZE)
-	fREe(chunk2mem(old_top));
+      اگر (old_بالاترین_size >= MINSIZE)
+	fREe(chunk2mem(old_بالاترین));
     }
   }
 
-  if ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem)
+  اگر ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem)
     max_sbrked_mem = sbrked_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  اگر ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
 
   /* We always land on a page boundary */
-  assert(((unsigned long)((char*)top + top_size) & (pagesz - 1)) == 0);
+  أكد(((unsigned long)((نویسه*)بالاترین + بالاترین_size) & (pagesz - 1)) == 0);
 }
 
 /* Main public routines */
@@ -1239,51 +1239,51 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#اگر __STD_C
 Void_t* mALLOc_impl(size_t bytes)
-#else
+#وگرنه
 Void_t* mALLOc_impl(bytes) size_t bytes;
 #endif
 {
   mchunkptr victim;                  /* inspected/selected chunk */
   INTERNAL_SIZE_T victim_size;       /* its size */
-  int       idx;                     /* index for bin traversal */
+  صحیح       idx;                     /* index for bin traversal */
   mbinptr   bin;                     /* associated bin */
   mchunkptr remainder;               /* remainder from a split */
   long      remainder_size;          /* its size */
-  int       remainder_index;         /* its bin index */
+  صحیح       remainder_index;         /* its bin index */
   unsigned long block;               /* block traverser bit */
-  int       startidx;                /* first bin of a traversed block */
+  صحیح       startidx;                /* first bin of a traversed block */
   mchunkptr fwd;                     /* misc temp for linking */
   mchunkptr bck;                     /* misc temp for linking */
   mbinptr q;                         /* misc temp */
 
   INTERNAL_SIZE_T nb;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT))
-		return malloc_simple(bytes);
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (!(gd->flags & GD_FLG_FULL_MALLOC_INIT))
+		بازگشت malloc_simple(bytes);
 #endif
 
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+  اگر (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    اگر (--malloc_max_allocs < 0)
+      بازگشت پوچ;
   }
 
   /* check if mem_malloc_init() was run */
-  if ((mem_malloc_start == 0) && (mem_malloc_end == 0)) {
+  اگر ((mem_malloc_start == 0) && (mem_malloc_end == 0)) {
     /* not initialized yet */
-    return NULL;
+    بازگشت پوچ;
   }
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  اگر (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     بازگشت پوچ;
 
   nb = request2size(bytes);  /* padded request size; */
 
   /* Check for exact match in a bin */
 
-  if (is_small_request(nb))  /* Faster version for small requests */
+  اگر (is_small_request(nb))  /* Faster version for small requests */
   {
     idx = smallbin_index(nb);
 
@@ -1293,47 +1293,47 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
     victim = last(q);
 
     /* Also scan the next one, since it would have a remainder < MINSIZE */
-    if (victim == q)
+    اگر (victim == q)
     {
       q = next_bin(q);
       victim = last(q);
     }
-    if (victim != q)
+    اگر (victim != q)
     {
       victim_size = chunksize(victim);
       unlink(victim, bck, fwd);
       set_inuse_bit_at_offset(victim, victim_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      بازگشت chunk2mem(victim);
     }
 
     idx += 2; /* Set for bin scan below. We've already scanned 2 bins. */
 
   }
-  else
+  وگرنه
   {
     idx = bin_index(nb);
     bin = bin_at(idx);
 
-    for (victim = last(bin); victim != bin; victim = victim->bk)
+    برای (victim = last(bin); victim != bin; victim = victim->bk)
     {
       victim_size = chunksize(victim);
       remainder_size = victim_size - nb;
 
-      if (remainder_size >= (long)MINSIZE) /* too big */
+      اگر (remainder_size >= (long)MINSIZE) /* too big */
       {
 	--idx; /* adjust to rescan below after checking last remainder */
-	break;
+	بشکن;
       }
 
-      else if (remainder_size >= 0) /* exact fit */
+      وگرنه اگر (remainder_size >= 0) /* exact fit */
       {
 	unlink(victim, bck, fwd);
 	set_inuse_bit_at_offset(victim, victim_size);
 	check_malloced_chunk(victim, nb);
         VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	return chunk2mem(victim);
+	بازگشت chunk2mem(victim);
       }
     }
 
@@ -1343,12 +1343,12 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 
   /* Try to use the last split-off remainder */
 
-  if ( (victim = last_remainder->fd) != last_remainder)
+  اگر ( (victim = last_remainder->fd) != last_remainder)
   {
     victim_size = chunksize(victim);
     remainder_size = victim_size - nb;
 
-    if (remainder_size >= (long)MINSIZE) /* re-split */
+    اگر (remainder_size >= (long)MINSIZE) /* re-split */
     {
       remainder = chunk_at_offset(victim, nb);
       set_head(victim, nb | PREV_INUSE);
@@ -1357,17 +1357,17 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
       set_foot(remainder, remainder_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      بازگشت chunk2mem(victim);
     }
 
     clear_last_remainder;
 
-    if (remainder_size >= 0)  /* exhaust */
+    اگر (remainder_size >= 0)  /* exhaust */
     {
       set_inuse_bit_at_offset(victim, victim_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      بازگشت chunk2mem(victim);
     }
 
     /* Else place in bin */
@@ -1380,17 +1380,17 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
      search for best fitting chunk by scanning bins in blockwidth units.
   */
 
-  if ( (block = idx2binblock(idx)) <= binblocks_r)
+  اگر ( (block = idx2binblock(idx)) <= binblocks_r)
   {
 
     /* Get to the first marked block */
 
-    if ( (block & binblocks_r) == 0)
+    اگر ( (block & binblocks_r) == 0)
     {
       /* force to an even block boundary */
       idx = (idx & ~(BINBLOCKWIDTH - 1)) + BINBLOCKWIDTH;
       block <<= 1;
-      while ((block & binblocks_r) == 0)
+      وقتی ((block & binblocks_r) == 0)
       {
 	idx += BINBLOCKWIDTH;
 	block <<= 1;
@@ -1398,22 +1398,22 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
     }
 
     /* For each possibly nonempty block ... */
-    for (;;)
+    برای (;;)
     {
       startidx = idx;          /* (track incomplete blocks) */
       q = bin = bin_at(idx);
 
       /* For each bin in this block ... */
-      do
+      انجامبده
       {
 	/* Find and use first big enough chunk ... */
 
-	for (victim = last(bin); victim != bin; victim = victim->bk)
+	برای (victim = last(bin); victim != bin; victim = victim->bk)
 	{
 	  victim_size = chunksize(victim);
 	  remainder_size = victim_size - nb;
 
-	  if (remainder_size >= (long)MINSIZE) /* split */
+	  اگر (remainder_size >= (long)MINSIZE) /* split */
 	  {
 	    remainder = chunk_at_offset(victim, nb);
 	    set_head(victim, nb | PREV_INUSE);
@@ -1423,79 +1423,79 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 	    set_foot(remainder, remainder_size);
 	    check_malloced_chunk(victim, nb);
 	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    بازگشت chunk2mem(victim);
 	  }
 
-	  else if (remainder_size >= 0)  /* take */
+	  وگرنه اگر (remainder_size >= 0)  /* take */
 	  {
 	    set_inuse_bit_at_offset(victim, victim_size);
 	    unlink(victim, bck, fwd);
 	    check_malloced_chunk(victim, nb);
 	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    بازگشت chunk2mem(victim);
 	  }
 
 	}
 
        bin = next_bin(bin);
 
-      } while ((++idx & (BINBLOCKWIDTH - 1)) != 0);
+      } وقتی ((++idx & (BINBLOCKWIDTH - 1)) != 0);
 
       /* Clear out the block bit. */
 
-      do   /* Possibly backtrack to try to clear a partial block */
+      انجامبده   /* Possibly backtrack to try to clear a partial block */
       {
-	if ((startidx & (BINBLOCKWIDTH - 1)) == 0)
+	اگر ((startidx & (BINBLOCKWIDTH - 1)) == 0)
 	{
 	  av_[1] = (mbinptr)(binblocks_r & ~block);
-	  break;
+	  بشکن;
 	}
 	--startidx;
        q = prev_bin(q);
-      } while (first(q) == q);
+      } وقتی (first(q) == q);
 
       /* Get to the next possibly nonempty block */
 
-      if ( (block <<= 1) <= binblocks_r && (block != 0) )
+      اگر ( (block <<= 1) <= binblocks_r && (block != 0) )
       {
-	while ((block & binblocks_r) == 0)
+	وقتی ((block & binblocks_r) == 0)
 	{
 	  idx += BINBLOCKWIDTH;
 	  block <<= 1;
 	}
       }
-      else
-	break;
+      وگرنه
+	بشکن;
     }
   }
 
   /* Try to use top chunk */
 
   /* Require that there be a remainder, ensuring top always exists  */
-  if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+  اگر ( (remainder_size = chunksize(بالاترین) - nb) < (long)MINSIZE)
   {
 
-#if HAVE_MMAP
+#اگر HAVE_MMAP
     /* If big and would otherwise need to extend, try to use mmap instead */
-    if ((unsigned long)nb >= (unsigned long)mmap_threshold &&
+    اگر ((unsigned long)nb >= (unsigned long)mmap_threshold &&
 	(victim = mmap_chunk(nb)))
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      بازگشت chunk2mem(victim);
 #endif
 
     /* Try to extend */
-    malloc_extend_top(nb);
-    if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
-      return NULL; /* propagate failure */
+    malloc_extend_بالاترین(nb);
+    اگر ( (remainder_size = chunksize(بالاترین) - nb) < (long)MINSIZE)
+      بازگشت پوچ; /* propagate failure */
   }
 
-  victim = top;
+  victim = بالاترین;
   set_head(victim, nb | PREV_INUSE);
-  top = chunk_at_offset(victim, nb);
-  set_head(top, remainder_size | PREV_INUSE);
+  بالاترین = chunk_at_offset(victim, nb);
+  set_head(بالاترین, remainder_size | PREV_INUSE);
   check_malloced_chunk(victim, nb);
   VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-  return chunk2mem(victim);
+  بازگشت chunk2mem(victim);
 
 }
 
@@ -1521,42 +1521,42 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-void fREe_impl(Void_t* mem)
-#else
-void fREe_impl(mem) Void_t* mem;
+#اگر __STD_C
+تهی fREe_impl(Void_t* mem)
+#وگرنه
+تهی fREe_impl(mem) Void_t* mem;
 #endif
 {
   mchunkptr p;         /* chunk corresponding to mem */
   INTERNAL_SIZE_T hd;  /* its head field */
   INTERNAL_SIZE_T sz;  /* its size */
-  int       idx;       /* its bin index */
+  صحیح       idx;       /* its bin index */
   mchunkptr next;      /* next contiguous chunk */
   INTERNAL_SIZE_T nextsz; /* its size */
   INTERNAL_SIZE_T prevsz; /* size of previous contiguous chunk */
   mchunkptr bck;       /* misc temp for linking */
   mchunkptr fwd;       /* misc temp for linking */
-  int       islr;      /* track whether merging with last_remainder */
+  صحیح       islr;      /* track whether merging with last_remainder */
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	/* free() is a no-op - all the memory will be freed on relocation */
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+	اگر (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
-		return;
+		بازگشت;
 	}
 #endif
 
-  if (mem == NULL)                              /* free(0) has no effect */
-    return;
+  اگر (mem == پوچ)                              /* free(0) has no effect */
+    بازگشت;
 
   p = mem2chunk(mem);
   hd = p->size;
 
-#if HAVE_MMAP
-  if (hd & IS_MMAPPED)                       /* release mmapped memory. */
+#اگر HAVE_MMAP
+  اگر (hd & IS_MMAPPED)                       /* release mmapped memory. */
   {
     munmap_chunk(p);
-    return;
+    بازگشت;
   }
 #endif
 
@@ -1567,11 +1567,11 @@ void fREe_impl(mem) Void_t* mem;
   nextsz = chunksize(next);
   VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
 
-  if (next == top)                            /* merge with top */
+  اگر (next == بالاترین)                            /* merge with top */
   {
     sz += nextsz;
 
-    if (!(hd & PREV_INUSE))                    /* consolidate backward */
+    اگر (!(hd & PREV_INUSE))                    /* consolidate backward */
     {
       prevsz = p->prev_size;
       p = chunk_at_offset(p, -((long) prevsz));
@@ -1580,44 +1580,44 @@ void fREe_impl(mem) Void_t* mem;
     }
 
     set_head(p, sz | PREV_INUSE);
-    top = p;
-    if ((unsigned long)(sz) >= (unsigned long)trim_threshold)
-      malloc_trim(top_pad);
-    return;
+    بالاترین = p;
+    اگر ((unsigned long)(sz) >= (unsigned long)trim_threshold)
+      malloc_trim(بالاترین_pad);
+    بازگشت;
   }
 
   set_head(next, nextsz);                    /* clear inuse bit */
 
   islr = 0;
 
-  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+  اگر (!(hd & PREV_INUSE))                    /* consolidate backward */
   {
     prevsz = p->prev_size;
     p = chunk_at_offset(p, -((long) prevsz));
     sz += prevsz;
 
-    if (p->fd == last_remainder)             /* keep as last_remainder */
+    اگر (p->fd == last_remainder)             /* keep as last_remainder */
       islr = 1;
-    else
+    وگرنه
       unlink(p, bck, fwd);
   }
 
-  if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+  اگر (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
   {
     sz += nextsz;
 
-    if (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
+    اگر (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
     {
       islr = 1;
       link_last_remainder(p);
     }
-    else
+    وگرنه
       unlink(next, bck, fwd);
   }
 
   set_head(p, sz | PREV_INUSE);
   set_foot(p, sz);
-  if (!islr)
+  اگر (!islr)
     frontlink(p, sz, idx, bck, fwd);
 }
 
@@ -1656,9 +1656,9 @@ void fREe_impl(mem) Void_t* mem;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#اگر __STD_C
 Void_t* rEALLOc_impl(Void_t* oldmem, size_t bytes)
-#else
+#وگرنه
 Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 #endif
 {
@@ -1684,27 +1684,27 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
   mchunkptr fwd;              /* misc temp for linking */
 
 #ifdef REALLOC_ZERO_BYTES_FREES
-  if (!bytes) {
+  اگر (!bytes) {
 	fREe_impl(oldmem);
-	return NULL;
+	بازگشت پوچ;
   }
 #endif
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  اگر (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     بازگشت پوچ;
 
   /* realloc of null is supposed to be same as malloc */
-  if (oldmem == NULL) return mALLOc_impl(bytes);
+  اگر (oldmem == پوچ) بازگشت mALLOc_impl(bytes);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		/* This is harder to support and should not be needed */
 		panic("pre-reloc realloc() is not supported");
 	}
 #endif
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+  اگر (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    اگر (--malloc_max_allocs < 0)
+      بازگشت پوچ;
   }
 
   newp    = oldp    = mem2chunk(oldmem);
@@ -1712,83 +1712,83 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 
   nb = request2size(bytes);
 
-#if HAVE_MMAP
-  if (chunk_is_mmapped(oldp))
+#اگر HAVE_MMAP
+  اگر (chunk_is_mmapped(oldp))
   {
-#if HAVE_MREMAP
+#اگر HAVE_MREMAP
     newp = mremap_chunk(oldp, nb);
-    if(newp) return chunk2mem(newp);
+    اگر(newp) بازگشت chunk2mem(newp);
 #endif
     /* Note the extra SIZE_SZ overhead. */
-    if(oldsize - SIZE_SZ >= nb) return oldmem; /* do nothing */
+    اگر(oldsize - SIZE_SZ >= nb) بازگشت oldmem; /* do nothing */
     /* Must alloc, copy, free. */
     newmem = mALLOc_impl(bytes);
-    if (!newmem)
-	return NULL; /* propagate failure */
+    اگر (!newmem)
+	بازگشت پوچ; /* propagate failure */
     MALLOC_COPY(newmem, oldmem, oldsize - 2*SIZE_SZ);
     munmap_chunk(oldp);
-    return newmem;
+    بازگشت newmem;
   }
 #endif
 
   check_inuse_chunk(oldp);
 
-  if ((long)(oldsize) < (long)(nb))
+  اگر ((long)(oldsize) < (long)(nb))
   {
 
     /* Try expanding forward */
 
     next = chunk_at_offset(oldp, oldsize);
-    if (next == top || !inuse(next))
+    اگر (next == بالاترین || !inuse(next))
     {
       nextsize = chunksize(next);
 
       /* Forward into top only if a remainder */
-      if (next == top)
+      اگر (next == بالاترین)
       {
-	if ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
+	اگر ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
 	{
 	  newsize += nextsize;
-	  top = chunk_at_offset(oldp, nb);
-	  set_head(top, (newsize - nb) | PREV_INUSE);
+	  بالاترین = chunk_at_offset(oldp, nb);
+	  set_head(بالاترین, (newsize - nb) | PREV_INUSE);
 	  set_head_size(oldp, nb);
 	  VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
 	  VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
-	  return chunk2mem(oldp);
+	  بازگشت chunk2mem(oldp);
 	}
       }
 
       /* Forward into next chunk */
-      else if (((long)(nextsize + newsize) >= (long)(nb)))
+      وگرنه اگر (((long)(nextsize + newsize) >= (long)(nb)))
       {
 	unlink(next, bck, fwd);
 	newsize  += nextsize;
 	VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
 	VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
-	goto split;
+	برو split;
       }
     }
-    else
+    وگرنه
     {
-      next = NULL;
+      next = پوچ;
       nextsize = 0;
     }
 
     /* Try shifting backwards. */
 
-    if (!prev_inuse(oldp))
+    اگر (!prev_inuse(oldp))
     {
       prev = prev_chunk(oldp);
       prevsize = chunksize(prev);
 
       /* try forward + backward first to save a later consolidation */
 
-      if (next != NULL)
+      اگر (next != پوچ)
       {
 	/* into top */
-	if (next == top)
+	اگر (next == بالاترین)
 	{
-	  if ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
+	  اگر ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
 	  {
 	    unlink(prev, bck, fwd);
 	    newp = prev;
@@ -1796,16 +1796,16 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	    newmem = chunk2mem(newp);
 	    VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
 	    MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	    top = chunk_at_offset(newp, nb);
-	    set_head(top, (newsize - nb) | PREV_INUSE);
+	    بالاترین = chunk_at_offset(newp, nb);
+	    set_head(بالاترین, (newsize - nb) | PREV_INUSE);
 	    set_head_size(newp, nb);
 	    VALGRIND_FREELIKE_BLOCK(oldmem, SIZE_SZ);
-	    return newmem;
+	    بازگشت newmem;
 	  }
 	}
 
 	/* into next chunk */
-	else if (((long)(nextsize + prevsize + newsize) >= (long)(nb)))
+	وگرنه اگر (((long)(nextsize + prevsize + newsize) >= (long)(nb)))
 	{
 	  unlink(next, bck, fwd);
 	  unlink(prev, bck, fwd);
@@ -1814,12 +1814,12 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	  newmem = chunk2mem(newp);
 	  VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
 	  MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	  goto split;
+	  برو split;
 	}
       }
 
       /* backward only */
-      if (prev != NULL && (long)(prevsize + newsize) >= (long)nb)
+      اگر (prev != پوچ && (long)(prevsize + newsize) >= (long)nb)
       {
 	unlink(prev, bck, fwd);
 	newp = prev;
@@ -1827,7 +1827,7 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	newmem = chunk2mem(newp);
 	VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
 	MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	goto split;
+	برو split;
       }
     }
 
@@ -1835,31 +1835,31 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 
     newmem = mALLOc_impl (bytes);
 
-    if (newmem == NULL)  /* propagate failure */
-      return NULL;
+    اگر (newmem == پوچ)  /* propagate failure */
+      بازگشت پوچ;
 
     /* Avoid copy if newp is next chunk after oldp. */
     /* (This can only happen when new chunk is sbrk'ed.) */
 
-    if ( (newp = mem2chunk(newmem)) == next_chunk(oldp))
+    اگر ( (newp = mem2chunk(newmem)) == next_chunk(oldp))
     {
       newsize += chunksize(newp);
       newp = oldp;
-      goto split;
+      برو split;
     }
 
     /* Otherwise copy, free, and exit */
     MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
     fREe_impl(oldmem);
-    return newmem;
-  } else {
+    بازگشت newmem;
+  } وگرنه {
     VALGRIND_RESIZEINPLACE_BLOCK(oldmem, 0, bytes, SIZE_SZ);
     VALGRIND_MAKE_MEM_DEFINED(oldmem, bytes);
   }
 
  split:  /* split off extra room in old or expanded chunk */
 
-  if (newsize - nb >= MINSIZE) /* split off remainder */
+  اگر (newsize - nb >= MINSIZE) /* split off remainder */
   {
     remainder = chunk_at_offset(newp, nb);
     remainder_size = newsize - nb;
@@ -1870,14 +1870,14 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 			      false);
     fREe_impl(chunk2mem(remainder)); /* let free() deal with it */
   }
-  else
+  وگرنه
   {
     set_head_size(newp, newsize);
     set_inuse_bit_at_offset(newp, newsize);
   }
 
   check_inuse_chunk(newp);
-  return chunk2mem(newp);
+  بازگشت chunk2mem(newp);
 }
 
 /*
@@ -1899,43 +1899,43 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#اگر __STD_C
 Void_t* mEMALIGn_impl(size_t alignment, size_t bytes)
-#else
+#وگرنه
 Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
 #endif
 {
   INTERNAL_SIZE_T    nb;      /* padded  request size */
-  char*     m;                /* memory returned by malloc call */
+  نویسه*     m;                /* memory returned by malloc call */
   mchunkptr p;                /* corresponding chunk */
-  char*     brk;              /* alignment point within p */
+  نویسه*     brk;              /* alignment point within p */
   mchunkptr newp;             /* chunk to return */
   INTERNAL_SIZE_T  newsize;   /* its size */
   INTERNAL_SIZE_T  leadsize;  /* leading space befor alignment point */
   mchunkptr remainder;        /* spare room at end to split off */
   long      remainder_size;   /* its size */
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  اگر (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     بازگشت پوچ;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
-		return memalign_simple(alignment, bytes);
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+		بازگشت memalign_simple(alignment, bytes);
 	}
 #endif
 
   /* If need less alignment than we give anyway, just relay to malloc */
 
-  if (alignment <= MALLOC_ALIGNMENT) return mALLOc_impl(bytes);
+  اگر (alignment <= MALLOC_ALIGNMENT) بازگشت mALLOc_impl(bytes);
 
   /* Otherwise, ensure that it is at least a minimum chunk size */
 
-  if (alignment <  MINSIZE) alignment = MINSIZE;
+  اگر (alignment <  MINSIZE) alignment = MINSIZE;
 
   /* Call malloc with worst case padding to hit alignment. */
 
   nb = request2size(bytes);
-  m  = (char*)(mALLOc_impl(nb + alignment + MINSIZE));
+  m  = (نویسه*)(mALLOc_impl(nb + alignment + MINSIZE));
 
   /*
   * The attempt to over-allocate (with a size large enough to guarantee the
@@ -1945,16 +1945,16 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   * the allocation now succeeds and just happens to be aligned, we can still
   * fulfill the user's request.
   */
-  if (m == NULL) {
+  اگر (m == پوچ) {
     size_t extra, extra2;
     /*
      * Use bytes not nb, since mALLOc internally calls request2size too, and
      * each call increases the size to allocate, to account for the header.
      */
-    m  = (char*)(mALLOc_impl(bytes));
+    m  = (نویسه*)(mALLOc_impl(bytes));
     /* Aligned -> return it */
-    if ((((unsigned long)(m)) % alignment) == 0)
-      return m;
+    اگر ((((unsigned long)(m)) % alignment) == 0)
+      بازگشت m;
     /*
      * Otherwise, try again, requesting enough extra space to be able to
      * acquire alignment.
@@ -1962,34 +1962,34 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     fREe_impl(m);
     /* Add in extra bytes to match misalignment of unexpanded allocation */
     extra = alignment - (((unsigned long)(m)) % alignment);
-    m  = (char*)(mALLOc_impl(bytes + extra));
+    m  = (نویسه*)(mALLOc_impl(bytes + extra));
     /*
      * m might not be the same as before. Validate that the previous value of
      * extra still works for the current value of m.
      * If (!m), extra2=alignment so 
      */
-    if (m) {
+    اگر (m) {
       extra2 = alignment - (((unsigned long)(m)) % alignment);
-      if (extra2 > extra) {
+      اگر (extra2 > extra) {
         fREe_impl(m);
-        m = NULL;
+        m = پوچ;
       }
     }
     /* Fall through to original NULL check and chunk splitting logic */
   }
 
-  if (m == NULL) return NULL; /* propagate failure */
+  اگر (m == پوچ) بازگشت پوچ; /* propagate failure */
 
   p = mem2chunk(m);
 
-  if ((((unsigned long)(m)) % alignment) == 0) /* aligned */
+  اگر ((((unsigned long)(m)) % alignment) == 0) /* aligned */
   {
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
-      return chunk2mem(p); /* nothing more to do */
+#اگر HAVE_MMAP
+    اگر(chunk_is_mmapped(p))
+      بازگشت chunk2mem(p); /* nothing more to do */
 #endif
   }
-  else /* misaligned */
+  وگرنه /* misaligned */
   {
     /*
       Find an aligned spot inside chunk.
@@ -2000,19 +2000,19 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
       this is always possible.
     */
 
-    brk = (char*)mem2chunk(((unsigned long)(m + alignment - 1)) & -((signed) alignment));
-    if ((long)(brk - (char*)(p)) < MINSIZE) brk = brk + alignment;
+    brk = (نویسه*)mem2chunk(((unsigned long)(m + alignment - 1)) & -((signed) alignment));
+    اگر ((long)(brk - (نویسه*)(p)) < MINSIZE) brk = brk + alignment;
 
     newp = (mchunkptr)brk;
-    leadsize = brk - (char*)(p);
+    leadsize = brk - (نویسه*)(p);
     newsize = chunksize(p) - leadsize;
 
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
+#اگر HAVE_MMAP
+    اگر(chunk_is_mmapped(p))
     {
       newp->prev_size = p->prev_size + leadsize;
       set_head(newp, newsize|IS_MMAPPED);
-      return chunk2mem(newp);
+      بازگشت chunk2mem(newp);
     }
 #endif
 
@@ -2025,14 +2025,14 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     p = newp;
     VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(p), bytes, SIZE_SZ, false);
 
-    assert (newsize >= nb && (((unsigned long)(chunk2mem(p))) % alignment) == 0);
+    أكد (newsize >= nb && (((unsigned long)(chunk2mem(p))) % alignment) == 0);
   }
 
   /* Also give back spare room at the end */
 
   remainder_size = chunksize(p) - nb;
 
-  if (remainder_size >= (long)MINSIZE)
+  اگر (remainder_size >= (long)MINSIZE)
   {
     remainder = chunk_at_offset(p, nb);
     set_head(remainder, remainder_size | PREV_INUSE);
@@ -2043,7 +2043,7 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   }
 
   check_inuse_chunk(p);
-  return chunk2mem(p);
+  بازگشت chunk2mem(p);
 
 }
 
@@ -2053,13 +2053,13 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     be figured out from all the includes/defines above.)
 */
 
-#if __STD_C
+#اگر __STD_C
 Void_t* vALLOc(size_t bytes)
-#else
+#وگرنه
 Void_t* vALLOc(bytes) size_t bytes;
 #endif
 {
-  return mEMALIGn (malloc_getpagesize, bytes);
+  بازگشت mEMALIGn (malloc_getpagesize, bytes);
 }
 
 /*
@@ -2067,14 +2067,14 @@ Void_t* vALLOc(bytes) size_t bytes;
   that will accommodate request
 */
 
-#if __STD_C
+#اگر __STD_C
 Void_t* pvALLOc(size_t bytes)
-#else
+#وگرنه
 Void_t* pvALLOc(bytes) size_t bytes;
 #endif
 {
   size_t pagesize = malloc_getpagesize;
-  return mEMALIGn (pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
+  بازگشت mEMALIGn (pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
 }
 
 /*
@@ -2084,9 +2084,9 @@ Void_t* pvALLOc(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#اگر __STD_C
 Void_t* cALLOc_impl(size_t n, size_t elem_size)
-#else
+#وگرنه
 Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 #endif
 {
@@ -2096,39 +2096,39 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
   INTERNAL_SIZE_T sz = n * elem_size;
 
   /* check if expand_top called, in which case don't need to clear */
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
-  mchunkptr oldtop = top;
-  INTERNAL_SIZE_T oldtopsize = chunksize(top);
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#اگر MORECORE_CLEARS
+  mchunkptr oldtop = بالاترین;
+  INTERNAL_SIZE_T oldtopsize = chunksize(بالاترین);
 #endif
 #endif
   Void_t* mem = mALLOc_impl (sz);
 
-  if ((long)n < 0) return NULL;
+  اگر ((long)n < 0) بازگشت پوچ;
 
-  if (mem == NULL)
-    return NULL;
-  else
+  اگر (mem == پوچ)
+    بازگشت پوچ;
+  وگرنه
   {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		memset(mem, 0, sz);
-		return mem;
+		بازگشت mem;
 	}
 #endif
     p = mem2chunk(mem);
 
     /* Two optional cases in which clearing not necessary */
 
-#if HAVE_MMAP
-    if (chunk_is_mmapped(p)) return mem;
+#اگر HAVE_MMAP
+    اگر (chunk_is_mmapped(p)) بازگشت mem;
 #endif
 
     csz = chunksize(p);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
-    if (p == oldtop && csz > oldtopsize)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#اگر MORECORE_CLEARS
+    اگر (p == oldtop && csz > oldtopsize)
     {
       /* clear only the bytes from non-freshly-sbrked memory */
       csz = oldtopsize;
@@ -2138,7 +2138,7 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 
     MALLOC_ZERO(mem, csz - SIZE_SZ);
     VALGRIND_MAKE_MEM_DEFINED(mem, sz);
-    return mem;
+    بازگشت mem;
   }
 }
 
@@ -2149,11 +2149,11 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 
 */
 
-#if !defined(INTERNAL_LINUX_C_LIB) || !defined(__ELF__)
-#if __STD_C
-void cfree(Void_t *mem)
-#else
-void cfree(mem) Void_t *mem;
+#اگر !defined(INTERNAL_LINUX_C_LIB) || !defined(__ELF__)
+#اگر __STD_C
+تهی cfree(Void_t *mem)
+#وگرنه
+تهی cfree(mem) Void_t *mem;
 #endif
 {
   fREe(mem);
@@ -2161,8 +2161,8 @@ void cfree(mem) Void_t *mem;
 #endif
 
 #ifdef MCHECK_HEAP_PROTECTION
- #include "mcheck_core.inc.h"
- #if !__STD_C
+ #شامل "mcheck_core.inc.h"
+ #اگر !__STD_C
   #error "must have __STD_C"
  #endif
 
@@ -2170,45 +2170,45 @@ Void_t *mALLOc(size_t bytes)
 {
 	mcheck_pedantic_prehook();
 	size_t fullsz = mcheck_alloc_prehook(bytes);
-	void *p = mALLOc_impl(fullsz);
+	تهی *p = mALLOc_impl(fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_posthook(p, bytes);
+	اگر (!p)
+		بازگشت p;
+	بازگشت mcheck_alloc_posthook(p, bytes);
 }
 
-void fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
+تهی fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
 
 Void_t *rEALLOc(Void_t *oldmem, size_t bytes)
 {
 	mcheck_pedantic_prehook();
-	if (bytes == 0) {
-		if (oldmem)
+	اگر (bytes == 0) {
+		اگر (oldmem)
 			fREe(oldmem);
-		return NULL;
+		بازگشت پوچ;
 	}
 
-	if (oldmem == NULL)
-		return mALLOc(bytes);
+	اگر (oldmem == پوچ)
+		بازگشت mALLOc(bytes);
 
-	void *p = mcheck_reallocfree_prehook(oldmem);
+	تهی *p = mcheck_reallocfree_prehook(oldmem);
 	size_t newsz = mcheck_alloc_prehook(bytes);
 
 	p = rEALLOc_impl(p, newsz);
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, bytes);
+	اگر (!p)
+		بازگشت p;
+	بازگشت mcheck_alloc_noclean_posthook(p, bytes);
 }
 
 Void_t *mEMALIGn(size_t alignment, size_t bytes)
 {
 	mcheck_pedantic_prehook();
 	size_t fullsz = mcheck_memalign_prehook(alignment, bytes);
-	void *p = mEMALIGn_impl(alignment, fullsz);
+	تهی *p = mEMALIGn_impl(alignment, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_memalign_posthook(alignment, p, bytes);
+	اگر (!p)
+		بازگشت p;
+	بازگشت mcheck_memalign_posthook(alignment, p, bytes);
 }
 
 // pvALLOc, vALLOc - redirect to mEMALIGn, defined here, so they need no wrapping.
@@ -2218,29 +2218,29 @@ Void_t *cALLOc(size_t n, size_t elem_size)
 	mcheck_pedantic_prehook();
 	// NB: here is no overflow check.
 	size_t fullsz = mcheck_alloc_prehook(n * elem_size);
-	void *p = cALLOc_impl(1, fullsz);
+	تهی *p = cALLOc_impl(1, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, n * elem_size);
+	اگر (!p)
+		بازگشت p;
+	بازگشت mcheck_alloc_noclean_posthook(p, n * elem_size);
 }
 
 // mcheck API {
-int mcheck_pedantic(mcheck_abortfunc_t f)
+صحیح mcheck_pedantic(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 1);
-	return 0;
+	بازگشت 0;
 }
 
-int mcheck(mcheck_abortfunc_t f)
+صحیح mcheck(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 0);
-	return 0;
+	بازگشت 0;
 }
 
-void mcheck_check_all(void) { mcheck_pedantic_check(); }
+تهی mcheck_check_all(تهی) { mcheck_pedantic_check(); }
 
-enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
+شمارش mcheck_status mprobe(تهی *__ptr) { بازگشت mcheck_mprobe(__ptr); }
 // mcheck API }
 #endif
 
@@ -2267,57 +2267,57 @@ enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
 
 */
 
-#if __STD_C
-int malloc_trim(size_t pad)
-#else
-int malloc_trim(pad) size_t pad;
+#اگر __STD_C
+صحیح malloc_trim(size_t pad)
+#وگرنه
+صحیح malloc_trim(pad) size_t pad;
 #endif
 {
-  long  top_size;        /* Amount of top-most memory */
+  long  بالاترین_size;        /* Amount of top-most memory */
   long  extra;           /* Amount to release */
-  char* current_brk;     /* address returned by pre-check sbrk call */
-  char* new_brk;         /* address returned by negative sbrk call */
+  نویسه* current_brk;     /* address returned by pre-check sbrk call */
+  نویسه* new_brk;         /* address returned by negative sbrk call */
 
   unsigned long pagesz = malloc_getpagesize;
 
-  top_size = chunksize(top);
-  extra = ((top_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
+  بالاترین_size = chunksize(بالاترین);
+  extra = ((بالاترین_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
 
-  if (extra < (long)pagesz)  /* Not enough memory to release */
-    return 0;
+  اگر (extra < (long)pagesz)  /* Not enough memory to release */
+    بازگشت 0;
 
-  else
+  وگرنه
   {
     /* Test to make sure no one else called sbrk */
-    current_brk = (char*)(MORECORE (0));
-    if (current_brk != (char*)(top) + top_size)
-      return 0;     /* Apparently we don't own memory; must fail */
+    current_brk = (نویسه*)(MORECORE (0));
+    اگر (current_brk != (نویسه*)(بالاترین) + بالاترین_size)
+      بازگشت 0;     /* Apparently we don't own memory; must fail */
 
-    else
+    وگرنه
     {
-      new_brk = (char*)(MORECORE (-extra));
+      new_brk = (نویسه*)(MORECORE (-extra));
 
-      if (new_brk == (char*)(MORECORE_FAILURE)) /* sbrk failed? */
+      اگر (new_brk == (نویسه*)(MORECORE_FAILURE)) /* sbrk failed? */
       {
 	/* Try to figure out what we have */
-	current_brk = (char*)(MORECORE (0));
-	top_size = current_brk - (char*)top;
-	if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+	current_brk = (نویسه*)(MORECORE (0));
+	بالاترین_size = current_brk - (نویسه*)بالاترین;
+	اگر (بالاترین_size >= (long)MINSIZE) /* if not, we are very very dead! */
 	{
 	  sbrked_mem = current_brk - sbrk_base;
-	  set_head(top, top_size | PREV_INUSE);
+	  set_head(بالاترین, بالاترین_size | PREV_INUSE);
 	}
-	check_chunk(top);
-	return 0;
+	check_chunk(بالاترین);
+	بازگشت 0;
       }
 
-      else
+      وگرنه
       {
 	/* Success. Adjust top accordingly. */
-	set_head(top, (top_size - extra) | PREV_INUSE);
+	set_head(بالاترین, (بالاترین_size - extra) | PREV_INUSE);
 	sbrked_mem -= extra;
-	check_chunk(top);
-	return 1;
+	check_chunk(بالاترین);
+	بازگشت 1;
       }
     }
   }
@@ -2334,52 +2334,52 @@ int malloc_trim(pad) size_t pad;
 
 */
 
-#if __STD_C
+#اگر __STD_C
 size_t malloc_usable_size(Void_t* mem)
-#else
+#وگرنه
 size_t malloc_usable_size(mem) Void_t* mem;
 #endif
 {
   mchunkptr p;
-  if (mem == NULL)
-    return 0;
-  else
+  اگر (mem == پوچ)
+    بازگشت 0;
+  وگرنه
   {
     p = mem2chunk(mem);
-    if(!chunk_is_mmapped(p))
+    اگر(!chunk_is_mmapped(p))
     {
-      if (!inuse(p)) return 0;
+      اگر (!inuse(p)) بازگشت 0;
       check_inuse_chunk(p);
-      return chunksize(p) - SIZE_SZ;
+      بازگشت chunksize(p) - SIZE_SZ;
     }
-    return chunksize(p) - 2*SIZE_SZ;
+    بازگشت chunksize(p) - 2*SIZE_SZ;
   }
 }
 
 /* Utility to update current_mallinfo for malloc_stats and mallinfo() */
 
 #ifdef DEBUG
-static void malloc_update_mallinfo(void)
+ایستا تهی malloc_update_mallinfo(تهی)
 {
-  int i;
+  صحیح i;
   mbinptr b;
   mchunkptr p;
 #ifdef DEBUG
   mchunkptr q;
 #endif
 
-  INTERNAL_SIZE_T avail = chunksize(top);
-  int   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
+  INTERNAL_SIZE_T avail = chunksize(بالاترین);
+  صحیح   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
 
-  for (i = 1; i < NAV; ++i)
+  برای (i = 1; i < NAV; ++i)
   {
     b = bin_at(i);
-    for (p = last(b); p != b; p = p->bk)
+    برای (p = last(b); p != b; p = p->bk)
     {
 #ifdef DEBUG
       check_free_chunk(p);
-      for (q = next_chunk(p);
-	   q < top && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
+      برای (q = next_chunk(p);
+	   q < بالاترین && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
 	   q = next_chunk(q))
 	check_inuse_chunk(q);
 #endif
@@ -2393,7 +2393,7 @@ static void malloc_update_mallinfo(void)
   current_mallinfo.fordblks = avail;
   current_mallinfo.hblks = n_mmaps;
   current_mallinfo.hblkhd = mmapped_mem;
-  current_mallinfo.keepcost = chunksize(top);
+  current_mallinfo.keepcost = chunksize(بالاترین);
 
 }
 #endif	/* DEBUG */
@@ -2414,18 +2414,18 @@ static void malloc_update_mallinfo(void)
 */
 
 #ifdef DEBUG
-void malloc_stats(void)
+تهی malloc_stats(تهی)
 {
   malloc_update_mallinfo();
   printf("max system bytes = %10u\n",
-	  (unsigned int)(max_total_mem));
+	  (unsigned صحیح)(max_total_mem));
   printf("system bytes     = %10u\n",
-	  (unsigned int)(sbrked_mem + mmapped_mem));
+	  (unsigned صحیح)(sbrked_mem + mmapped_mem));
   printf("in use bytes     = %10u\n",
-	  (unsigned int)(current_mallinfo.uordblks + mmapped_mem));
-#if HAVE_MMAP
+	  (unsigned صحیح)(current_mallinfo.uordblks + mmapped_mem));
+#اگر HAVE_MMAP
   printf("max mmap regions = %10u\n",
-	  (unsigned int)max_n_mmaps);
+	  (unsigned صحیح)max_n_mmaps);
 #endif
 }
 #endif	/* DEBUG */
@@ -2435,10 +2435,10 @@ void malloc_stats(void)
 */
 
 #ifdef DEBUG
-struct mallinfo mALLINFo(void)
+ساختار mallinfo mALLINFo(تهی)
 {
   malloc_update_mallinfo();
-  return current_mallinfo;
+  بازگشت current_mallinfo;
 }
 #endif	/* DEBUG */
 
@@ -2455,50 +2455,50 @@ struct mallinfo mALLINFo(void)
 
 */
 
-#if __STD_C
-int mALLOPt(int param_number, int value)
-#else
-int mALLOPt(param_number, value) int param_number; int value;
+#اگر __STD_C
+صحیح mALLOPt(صحیح param_عدد, صحیح مقدار)
+#وگرنه
+صحیح mALLOPt(param_عدد, مقدار) صحیح param_عدد; صحیح مقدار;
 #endif
 {
-  switch(param_number)
+  انتخاب(param_عدد)
   {
-    case M_TRIM_THRESHOLD:
-      trim_threshold = value; return 1;
-    case M_TOP_PAD:
-      top_pad = value; return 1;
-    case M_MMAP_THRESHOLD:
-      mmap_threshold = value; return 1;
-    case M_MMAP_MAX:
-#if HAVE_MMAP
-      n_mmaps_max = value; return 1;
-#else
-      if (value != 0) return 0; else  n_mmaps_max = value; return 1;
+    حالت M_TRIM_THRESHOLD:
+      trim_threshold = مقدار; بازگشت 1;
+    حالت M_TOP_PAD:
+      بالاترین_pad = مقدار; بازگشت 1;
+    حالت M_MMAP_THRESHOLD:
+      mmap_threshold = مقدار; بازگشت 1;
+    حالت M_MMAP_MAX:
+#اگر HAVE_MMAP
+      n_mmaps_max = مقدار; بازگشت 1;
+#وگرنه
+      اگر (مقدار != 0) بازگشت 0; وگرنه  n_mmaps_max = مقدار; بازگشت 1;
 #endif
 
-    default:
-      return 0;
+    پیشفرض:
+      بازگشت 0;
   }
 }
 
-int initf_malloc(void)
+صحیح initf_malloc(تهی)
 {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	assert(gd->malloc_base);	/* Set up by crt0.S */
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	أكد(gd->malloc_base);	/* Set up by crt0.S */
 	gd->malloc_limit = CONFIG_VAL(SYS_MALLOC_F_LEN);
 	gd->malloc_ptr = 0;
 #endif
 
-	return 0;
+	بازگشت 0;
 }
 
-void malloc_enable_testing(int max_allocs)
+تهی malloc_enable_testing(صحیح max_allocs)
 {
 	malloc_testing = true;
 	malloc_max_allocs = max_allocs;
 }
 
-void malloc_disable_testing(void)
+تهی malloc_disable_testing(تهی)
 {
 	malloc_testing = false;
 }

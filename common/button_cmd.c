@@ -4,19 +4,19 @@
  *   Author: Casey Connolly <casey.connolly@linaro.org>
  */
 
-#include <button.h>
-#include <command.h>
-#include <env.h>
-#include <log.h>
-#include <stdio.h>
+#شامل <button.h>
+#شامل <command.h>
+#شامل <env.h>
+#شامل <log.h>
+#شامل <stdio.h>
 
 /* Some sane limit "just in case" */
 #define MAX_BTN_CMDS 32
 
-struct button_cmd {
+ساختار button_cmd {
 	bool pressed;
-	const char *btn_name;
-	const char *cmd;
+	ثابت نویسه *btn_name;
+	ثابت نویسه *cmd;
 };
 
 /*
@@ -30,54 +30,54 @@ struct button_cmd {
  *
  * Returns 1 if a command was found, 0 otherwise.
  */
-static int get_button_cmd(int n, struct button_cmd *cmd)
+ایستا صحیح get_button_cmd(صحیح n, ساختار button_cmd *cmd)
 {
-	const char *cmd_str;
-	struct udevice *btn = NULL;
-	char buf[24];
+	ثابت نویسه *cmd_str;
+	ساختار udevice *btn = پوچ;
+	نویسه buf[24];
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d_name", n);
+	snprintf(buf, اندازه(buf), "button_cmd_%d_name", n);
 	cmd->btn_name = env_get(buf);
-	if (!cmd->btn_name)
-		return 0;
+	اگر (!cmd->btn_name)
+		بازگشت 0;
 
 	button_get_by_label(cmd->btn_name, &btn);
-	if (!btn) {
+	اگر (!btn) {
 		log_err("No button labelled '%s'\n", cmd->btn_name);
-		return 0;
+		بازگشت 0;
 	}
 
 	cmd->pressed = button_get_state(btn) == BUTTON_ON;
 	/* If the button isn't pressed then cmd->cmd will be unused so don't waste
 	 * cycles reading it
 	 */
-	if (!cmd->pressed)
-		return 1;
+	اگر (!cmd->pressed)
+		بازگشت 1;
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d", n);
+	snprintf(buf, اندازه(buf), "button_cmd_%d", n);
 	cmd_str = env_get(buf);
-	if (!cmd_str) {
+	اگر (!cmd_str) {
 		log_err("No command set for button '%s'\n", cmd->btn_name);
-		return 0;
+		بازگشت 0;
 	}
 
 	cmd->cmd = cmd_str;
 
-	return 1;
+	بازگشت 1;
 }
 
-void process_button_cmds(void)
+تهی process_button_cmds(تهی)
 {
-	struct button_cmd cmd = {0};
-	int i = 0;
+	ساختار button_cmd cmd = {0};
+	صحیح i = 0;
 
-	while (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
-		if (!cmd.pressed)
-			continue;
+	وقتی (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
+		اگر (!cmd.pressed)
+			ادامه;
 
 		log_info("BTN '%s'> %s\n", cmd.btn_name, cmd.cmd);
 		run_command(cmd.cmd, CMD_FLAG_ENV);
 		/* Don't run commands for multiple buttons */
-		return;
+		بازگشت;
 	}
 }

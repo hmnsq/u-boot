@@ -5,304 +5,304 @@
  * Authors: Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <bmp_layout.h>
-#include <command.h>
-#include <env.h>
-#include <errno.h>
-#include <fs.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <log.h>
-#include <nand.h>
-#include <sata.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <splash.h>
-#include <usb.h>
-#include <virtio.h>
-#include <asm/global_data.h>
+#شامل <bmp_layout.h>
+#شامل <command.h>
+#شامل <env.h>
+#شامل <errno.h>
+#شامل <fs.h>
+#شامل <fdt_support.h>
+#شامل <image.h>
+#شامل <log.h>
+#شامل <nand.h>
+#شامل <sata.h>
+#شامل <spi.h>
+#شامل <spi_flash.h>
+#شامل <splash.h>
+#شامل <usb.h>
+#شامل <virtio.h>
+#شامل <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef CONFIG_SPI_FLASH
-static struct spi_flash *sf;
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+ایستا ساختار spi_flash *sf;
+ایستا صحیح splash_sf_read_raw(ulong bmp_load_addr, صحیح offset, size_t read_size)
 {
-	if (!sf) {
+	اگر (!sf) {
 		sf = spi_flash_probe(CONFIG_SF_DEFAULT_BUS,
 				     CONFIG_SF_DEFAULT_CS,
 				     CONFIG_SF_DEFAULT_SPEED,
 				     CONFIG_SF_DEFAULT_MODE);
-		if (!sf)
-			return -ENODEV;
+		اگر (!sf)
+			بازگشت -ENODEV;
 	}
 
-	return spi_flash_read(sf, offset, read_size, (void *)(uintptr_t)bmp_load_addr);
+	بازگشت spi_flash_read(sf, offset, read_size, (تهی *)(uintptr_t)bmp_load_addr);
 }
-#else
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#وگرنه
+ایستا صحیح splash_sf_read_raw(ulong bmp_load_addr, صحیح offset, size_t read_size)
 {
 	debug("%s: sf support not available\n", __func__);
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_CMD_NAND
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+ایستا صحیح splash_nand_read_raw(ulong bmp_load_addr, صحیح offset, size_t read_size)
 {
-	struct mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
-	return nand_read_skip_bad(mtd, offset,
-				  &read_size, NULL,
+	ساختار mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
+	بازگشت nand_read_skip_bad(mtd, offset,
+				  &read_size, پوچ,
 				  mtd->size,
 				  (u_char *)bmp_load_addr);
 }
-#else
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#وگرنه
+ایستا صحیح splash_nand_read_raw(ulong bmp_load_addr, صحیح offset, size_t read_size)
 {
 	debug("%s: nand support not available\n", __func__);
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 #endif
 
-static int splash_mmc_read_raw(ulong bmp_load_addr, struct splash_location *location,
+ایستا صحیح splash_mmc_read_raw(ulong bmp_load_addr, ساختار splash_location *location,
 			       size_t read_size)
 {
-	struct disk_partition partition;
-	struct blk_desc *desc;
+	ساختار disk_partition partition;
+	ساختار blk_desc *desc;
 	lbaint_t blkcnt;
-	int ret, n;
+	صحیح ret, n;
 
-	if (!IS_ENABLED(CONFIG_CMD_MMC)) {
+	اگر (!IS_ENABLED(CONFIG_CMD_MMC)) {
 		debug("%s: mmc support not available\n", __func__);
-		return -ENOSYS;
+		بازگشت -ENOSYS;
 	}
 
-	ret = part_get_info_by_dev_and_name_or_num("mmc", location->devpart, &desc,
+	ret = part_get_info_by_dev_and_name_or_رقم("mmc", location->devpart, &desc,
 						   &partition, 1);
-	if (ret < 0)
-		return ret;
+	اگر (ret < 0)
+		بازگشت ret;
 
 	blkcnt = DIV_ROUND_UP(read_size, partition.blksz);
-	n = blk_dread(desc, partition.start, blkcnt, (void *)(uintptr_t)bmp_load_addr);
+	n = blk_dread(desc, partition.start, blkcnt, (تهی *)(uintptr_t)bmp_load_addr);
 
-	return (n == blkcnt) ? 0 : -EIO;
+	بازگشت (n == blkcnt) ? 0 : -EIO;
 }
 
-static int splash_storage_read_raw(struct splash_location *location,
+ایستا صحیح splash_storage_read_raw(ساختار splash_location *location,
 			       ulong bmp_load_addr, size_t read_size)
 {
 	u32 offset;
 
-	if (!location)
-		return -EINVAL;
+	اگر (!location)
+		بازگشت -EINVAL;
 
 	offset = location->offset;
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
-		return splash_mmc_read_raw(bmp_load_addr, location, read_size);
-	case SPLASH_STORAGE_NAND:
-		return splash_nand_read_raw(bmp_load_addr, offset, read_size);
-	case SPLASH_STORAGE_SF:
-		return splash_sf_read_raw(bmp_load_addr, offset, read_size);
-	default:
+	انتخاب (location->storage) {
+	حالت SPLASH_STORAGE_MMC:
+		بازگشت splash_mmc_read_raw(bmp_load_addr, location, read_size);
+	حالت SPLASH_STORAGE_NAND:
+		بازگشت splash_nand_read_raw(bmp_load_addr, offset, read_size);
+	حالت SPLASH_STORAGE_SF:
+		بازگشت splash_sf_read_raw(bmp_load_addr, offset, read_size);
+	پیشفرض:
 		printf("Unknown splash location\n");
 	}
 
-	return -EINVAL;
+	بازگشت -EINVAL;
 }
 
-static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr)
+ایستا صحیح splash_load_raw(ساختار splash_location *location, ulong bmp_load_addr)
 {
-	struct bmp_header *bmp_hdr;
-	int res;
-	size_t bmp_size, bmp_header_size = sizeof(struct bmp_header);
+	ساختار bmp_header *bmp_hdr;
+	صحیح res;
+	size_t bmp_size, bmp_header_size = اندازه(ساختار bmp_header);
 
-	if (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	اگر (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
+		برو splash_address_too_بالا;
 
 	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_size);
-	if (res < 0)
-		return res;
+	اگر (res < 0)
+		بازگشت res;
 
-	bmp_hdr = (struct bmp_header *)(uintptr_t)bmp_load_addr;
+	bmp_hdr = (ساختار bmp_header *)(uintptr_t)bmp_load_addr;
 	bmp_size = le32_to_cpu(bmp_hdr->file_size);
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	اگر (bmp_load_addr + bmp_size >= gd->start_addr_sp)
+		برو splash_address_too_بالا;
 
-	return splash_storage_read_raw(location, bmp_load_addr, bmp_size);
+	بازگشت splash_storage_read_raw(location, bmp_load_addr, bmp_size);
 
-splash_address_too_high:
+splash_address_too_بالا:
 	printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 
-	return -EFAULT;
+	بازگشت -EFAULT;
 }
 
-static int splash_select_fs_dev(struct splash_location *location)
+ایستا صحیح splash_select_fs_dev(ساختار splash_location *location)
 {
-	int res;
+	صحیح res;
 
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
+	انتخاب (location->storage) {
+	حالت SPLASH_STORAGE_MMC:
 		res = fs_set_blk_dev("mmc", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_USB:
+		بشکن;
+	حالت SPLASH_STORAGE_USB:
 		res = fs_set_blk_dev("usb", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_SATA:
+		بشکن;
+	حالت SPLASH_STORAGE_SATA:
 		res = fs_set_blk_dev("sata", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_NAND:
-		if (location->ubivol != NULL)
-			res = fs_set_blk_dev("ubi", NULL, FS_TYPE_UBIFS);
-		else
+		بشکن;
+	حالت SPLASH_STORAGE_NAND:
+		اگر (location->ubivol != پوچ)
+			res = fs_set_blk_dev("ubi", پوچ, FS_TYPE_UBIFS);
+		وگرنه
 			res = -ENODEV;
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		printf("Error: %s: unsupported location storage.\n", __func__);
-		return -ENODEV;
+		بازگشت -ENODEV;
 	}
 
-	if (res)
+	اگر (res)
 		printf("Error: %s: could not access storage.\n", __func__);
 
-	return res;
+	بازگشت res;
 }
 
 #ifdef CONFIG_USB_STORAGE
-static int splash_init_usb(void)
+ایستا صحیح splash_init_usb(تهی)
 {
-	int err;
+	صحیح err;
 
 	err = usb_init();
-	if (err)
-		return err;
+	اگر (err)
+		بازگشت err;
 
 #ifndef CONFIG_DM_USB
 	err = usb_stor_scan(1) < 0 ? -ENODEV : 0;
 #endif
 
-	return err;
+	بازگشت err;
 }
-#else
-static inline int splash_init_usb(void)
+#وگرنه
+ایستا درونخطی صحیح splash_init_usb(تهی)
 {
 	printf("Cannot load splash image: no USB support\n");
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_SATA
-static int splash_init_sata(void)
+ایستا صحیح splash_init_sata(تهی)
 {
-	return sata_probe(0);
+	بازگشت sata_probe(0);
 }
-#else
-static inline int splash_init_sata(void)
+#وگرنه
+ایستا درونخطی صحیح splash_init_sata(تهی)
 {
 	printf("Cannot load splash image: no SATA support\n");
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 #endif
 
-static int splash_init_virtio(void)
+ایستا صحیح splash_init_virtio(تهی)
 {
-	if (!IS_ENABLED(CONFIG_VIRTIO)) {
+	اگر (!IS_ENABLED(CONFIG_VIRTIO)) {
 		printf("Cannot load splash image: no virtio support\n");
-		return -ENOSYS;
-	} else {
-		return virtio_init();
+		بازگشت -ENOSYS;
+	} وگرنه {
+		بازگشت virtio_init();
 	}
 }
 
-#if defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
-static int splash_mount_ubifs(struct splash_location *location)
+#اگر defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
+ایستا صحیح splash_mount_ubifs(ساختار splash_location *location)
 {
-	int res;
-	char cmd[32];
+	صحیح res;
+	نویسه cmd[32];
 
 	sprintf(cmd, "ubi part %s", location->mtdpart);
 	res = run_command(cmd, 0);
-	if (res)
-		return res;
+	اگر (res)
+		بازگشت res;
 
 	sprintf(cmd, "ubifsmount %s", location->ubivol);
 	res = run_command(cmd, 0);
 
-	return res;
+	بازگشت res;
 }
 
-static inline int splash_umount_ubifs(void)
+ایستا درونخطی صحیح splash_umount_ubifs(تهی)
 {
-	return run_command("ubifsumount", 0);
+	بازگشت run_command("ubifsumount", 0);
 }
-#else
-static inline int splash_mount_ubifs(struct splash_location *location)
+#وگرنه
+ایستا درونخطی صحیح splash_mount_ubifs(ساختار splash_location *location)
 {
 	printf("Cannot load splash image: no UBIFS support\n");
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 
-static inline int splash_umount_ubifs(void)
+ایستا درونخطی صحیح splash_umount_ubifs(تهی)
 {
 	printf("Cannot unmount UBIFS: no UBIFS support\n");
-	return -ENOSYS;
+	بازگشت -ENOSYS;
 }
 #endif
 
 #define SPLASH_SOURCE_DEFAULT_FILE_NAME		"splash.bmp"
 
-static int splash_load_fs(struct splash_location *location, ulong bmp_load_addr)
+ایستا صحیح splash_load_fs(ساختار splash_location *location, ulong bmp_load_addr)
 {
-	int res = 0;
+	صحیح res = 0;
 	loff_t bmp_size;
 	loff_t actread;
-	char *splash_file;
+	نویسه *splash_file;
 
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	اگر (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	if (location->storage == SPLASH_STORAGE_USB)
+	اگر (location->storage == SPLASH_STORAGE_USB)
 		res = splash_init_usb();
 
-	if (location->storage == SPLASH_STORAGE_SATA)
+	اگر (location->storage == SPLASH_STORAGE_SATA)
 		res = splash_init_sata();
 
-	if (location->storage == SPLASH_STORAGE_VIRTIO)
+	اگر (location->storage == SPLASH_STORAGE_VIRTIO)
 		res = splash_init_virtio();
 
-	if (location->ubivol != NULL)
+	اگر (location->ubivol != پوچ)
 		res = splash_mount_ubifs(location);
 
-	if (res)
-		return res;
+	اگر (res)
+		بازگشت res;
 
 	res = splash_select_fs_dev(location);
-	if (res)
-		goto out;
+	اگر (res)
+		برو out;
 
 	res = fs_size(splash_file, &bmp_size);
-	if (res) {
+	اگر (res) {
 		printf("Error: %s: cannot determine file size (%d)\n",
 		       __func__, res);
-		goto out;
+		برو out;
 	}
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
+	اگر (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
 		printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 		res = -EFAULT;
-		goto out;
+		برو out;
 	}
 
 	splash_select_fs_dev(location);
 	res = fs_read(splash_file, bmp_load_addr, 0, 0, &actread);
 
 out:
-	if (location->ubivol != NULL)
+	اگر (location->ubivol != پوچ)
 		splash_umount_ubifs();
 
-	return res;
+	بازگشت res;
 }
 
 /**
@@ -320,106 +320,106 @@ out:
  *	    If splashsource env variable contains a supported value
  *			return the location selected by splashsource.
  */
-static struct splash_location *select_splash_location(
-			    struct splash_location *locations, uint size)
+ایستا ساختار splash_location *select_splash_location(
+			    ساختار splash_location *locations, uint size)
 {
-	int i;
-	char *env_splashsource;
+	صحیح i;
+	نویسه *env_splashsource;
 
-	if (!locations || size == 0)
-		return NULL;
+	اگر (!locations || size == 0)
+		بازگشت پوچ;
 
 	env_splashsource = env_get("splashsource");
-	if (env_splashsource == NULL)
-		return &locations[0];
+	اگر (env_splashsource == پوچ)
+		بازگشت &locations[0];
 
-	for (i = 0; i < size; i++) {
-		if (!strcmp(locations[i].name, env_splashsource))
-			return &locations[i];
+	برای (i = 0; i < size; i++) {
+		اگر (!strcmp(locations[i].name, env_splashsource))
+			بازگشت &locations[i];
 	}
 
 	printf("splashsource env variable set to unsupported value\n");
-	return NULL;
+	بازگشت پوچ;
 }
 
 #ifdef CONFIG_FIT
-static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr)
+ایستا صحیح splash_load_fit(ساختار splash_location *location, ulong bmp_load_addr)
 {
-	int res;
-	int node_offset;
-	const char *splash_file;
-	const void *internal_splash_data;
+	صحیح res;
+	صحیح گره_offset;
+	ثابت نویسه *splash_file;
+	ثابت تهی *internal_splash_data;
 	size_t internal_splash_size;
-	int external_splash_addr;
+	صحیح external_splash_addr;
 	u32 external_splash_size;
 	bool is_splash_external = false;
-	struct legacy_img_hdr *img_header;
-	const u32 *fit_header;
+	ساختار legacy_img_hdr *img_header;
+	ثابت u32 *fit_header;
 	u32 fit_size;
-	const size_t header_size = sizeof(struct legacy_img_hdr);
+	ثابت size_t header_size = اندازه(ساختار legacy_img_hdr);
 
 	/* Read in image header */
 	res = splash_storage_read_raw(location, bmp_load_addr, header_size);
-	if (res < 0)
-		return res;
+	اگر (res < 0)
+		بازگشت res;
 
-	img_header = (struct legacy_img_hdr *)(uintptr_t)bmp_load_addr;
-	if (image_get_magic(img_header) != FDT_MAGIC) {
+	img_header = (ساختار legacy_img_hdr *)(uintptr_t)bmp_load_addr;
+	اگر (image_get_magic(img_header) != FDT_MAGIC) {
 		printf("Could not find FDT magic\n");
-		return -EINVAL;
+		بازگشت -EINVAL;
 	}
 
 	fit_size = fdt_totalsize(img_header);
 
 	/* Read in entire FIT */
-	fit_header = (const u32 *)(bmp_load_addr + header_size);
+	fit_header = (ثابت u32 *)(bmp_load_addr + header_size);
 	res = splash_storage_read_raw(location, (uintptr_t)fit_header, fit_size);
-	if (res < 0)
-		return res;
+	اگر (res < 0)
+		بازگشت res;
 
 	res = fit_check_format(fit_header, IMAGE_SIZE_INVAL);
-	if (res) {
+	اگر (res) {
 		debug("Could not find valid FIT image\n");
-		return res;
+		بازگشت res;
 	}
 
 	/* Get the splash image node */
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	اگر (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	node_offset = fit_image_get_node(fit_header, splash_file);
-	if (node_offset < 0) {
+	گره_offset = fit_image_get_گره(fit_header, splash_file);
+	اگر (گره_offset < 0) {
 		debug("Could not find splash image '%s' in FIT\n",
 		      splash_file);
-		return -ENOENT;
+		بازگشت -ENOENT;
 	}
 
 	/* Extract the splash data from FIT */
-	if (!fit_image_get_data(fit_header, node_offset, &internal_splash_data,
+	اگر (!fit_image_get_data(fit_header, گره_offset, &internal_splash_data,
 				&internal_splash_size)) {
-		memmove((void *)(uintptr_t)bmp_load_addr, internal_splash_data,
+		memmove((تهی *)(uintptr_t)bmp_load_addr, internal_splash_data,
 			internal_splash_size);
-	} else {
+	} وگرنه {
 		printf("Failed to get splash image from FIT\n");
-		return -ENODATA;
+		بازگشت -ENODATA;
 	}
 
-	if (is_splash_external) {
-		res = fit_image_get_data_size(fit_header, node_offset, &external_splash_size);
-		if (res < 0) {
+	اگر (is_splash_external) {
+		res = fit_image_get_data_size(fit_header, گره_offset, &external_splash_size);
+		اگر (res < 0) {
 			printf("Failed to get size of splash image (err=%d)\n", res);
-			return res;
+			بازگشت res;
 		}
 
 		/* Read in the splash data */
 		location->offset = external_splash_addr;
 		res = splash_storage_read_raw(location, bmp_load_addr, external_splash_size);
-		if (res < 0)
-			return res;
+		اگر (res < 0)
+			بازگشت res;
 	}
 
-	return 0;
+	بازگشت 0;
 }
 #endif /* CONFIG_FIT */
 
@@ -435,38 +435,38 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
  *
  * @return: 0 on success, negative value on failure.
  */
-int splash_source_load(struct splash_location *locations, uint size)
+صحیح splash_source_load(ساختار splash_location *locations, uint size)
 {
-	struct splash_location *splash_location;
-	char *env_splashimage_value;
-	char *devpart;
+	ساختار splash_location *splash_location;
+	نویسه *env_splashimage_مقدار;
+	نویسه *devpart;
 	ulong bmp_load_addr;
 
-	env_splashimage_value = env_get("splashimage");
-	if (env_splashimage_value == NULL)
-		return -ENOENT;
+	env_splashimage_مقدار = env_get("splashimage");
+	اگر (env_splashimage_مقدار == پوچ)
+		بازگشت -ENOENT;
 
-	bmp_load_addr = hextoul(env_splashimage_value, 0);
-	if (bmp_load_addr == 0) {
+	bmp_load_addr = hextoul(env_splashimage_مقدار, 0);
+	اگر (bmp_load_addr == 0) {
 		printf("Error: bad splashimage address specified\n");
-		return -EFAULT;
+		بازگشت -EFAULT;
 	}
 
 	splash_location = select_splash_location(locations, size);
-	if (!splash_location)
-		return -EINVAL;
+	اگر (!splash_location)
+		بازگشت -EINVAL;
 
 	devpart = env_get("splashdevpart");
-	if (devpart)
+	اگر (devpart)
 		splash_location->devpart = devpart;
 
-	if (splash_location->flags == SPLASH_STORAGE_RAW)
-		return splash_load_raw(splash_location, bmp_load_addr);
-	else if (splash_location->flags == SPLASH_STORAGE_FS)
-		return splash_load_fs(splash_location, bmp_load_addr);
+	اگر (splash_location->flags == SPLASH_STORAGE_RAW)
+		بازگشت splash_load_raw(splash_location, bmp_load_addr);
+	وگرنه اگر (splash_location->flags == SPLASH_STORAGE_FS)
+		بازگشت splash_load_fs(splash_location, bmp_load_addr);
 #ifdef CONFIG_FIT
-	else if (splash_location->flags == SPLASH_STORAGE_FIT)
-		return splash_load_fit(splash_location, bmp_load_addr);
+	وگرنه اگر (splash_location->flags == SPLASH_STORAGE_FIT)
+		بازگشت splash_load_fit(splash_location, bmp_load_addr);
 #endif
-	return -EINVAL;
+	بازگشت -EINVAL;
 }

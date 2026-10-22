@@ -8,165 +8,165 @@
 
 #define LOG_CATEGORY UCLASS_BOOTSTD
 
-#include <alist.h>
-#include <bloblist.h>
-#include <dm.h>
-#include <image.h>
-#include <mapmem.h>
-#include <serial.h>
-#include <spl.h>
-#include <upl.h>
-#include <video.h>
-#include <asm/global_data.h>
-#include <dm/read.h>
-#include <dm/uclass-internal.h>
+#شامل <alist.h>
+#شامل <bloblist.h>
+#شامل <dm.h>
+#شامل <image.h>
+#شامل <mapmem.h>
+#شامل <serial.h>
+#شامل <spl.h>
+#شامل <upl.h>
+#شامل <video.h>
+#شامل <asm/global_data.h>
+#شامل <dm/read.h>
+#شامل <dm/uclass-internal.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct upl s_upl;
+ساختار upl s_upl;
 
-void upl_set_fit_addr(ulong fit)
+تهی upl_set_fit_addr(ulong fit)
 {
-	struct upl *upl = &s_upl;
+	ساختار upl *upl = &s_upl;
 
 	upl->fit = fit;
 }
 
-void upl_set_fit_info(ulong fit, int conf_offset, ulong entry_addr)
+تهی upl_set_fit_info(ulong fit, صحیح conf_offset, ulong entry_addr)
 {
-	struct upl *upl = &s_upl;
+	ساختار upl *upl = &s_upl;
 
 	upl->fit = fit;
 	upl->conf_offset = conf_offset;
 	log_debug("upl: add fit %lx conf %x\n", fit, conf_offset);
 }
 
-int _upl_add_image(int node, ulong load_addr, ulong size, const char *desc)
+صحیح _upl_add_image(صحیح گره, ulong load_addr, ulong size, ثابت نویسه *desc)
 {
-	struct upl *upl = &s_upl;
-	struct upl_image img;
+	ساختار upl *upl = &s_upl;
+	ساختار upl_image img;
 
 	img.load = load_addr;
 	img.size = size;
-	img.offset = node;
+	img.offset = گره;
 	img.description = desc;
-	if (!alist_add(&upl->image, img))
-		return -ENOMEM;
+	اگر (!alist_add(&upl->image, img))
+		بازگشت -ENOMEM;
 	log_debug("upl: add image %s at %lx size %lx\n", desc, load_addr, size);
 
-	return 0;
+	بازگشت 0;
 }
 
-static int write_serial(struct upl_serial *ser)
+ایستا صحیح write_serial(ساختار upl_serial *ser)
 {
-	struct udevice *dev = gd->cur_serial_dev;
-	struct serial_device_info info;
-	struct memregion region;
-	int ret;
+	ساختار udevice *dev = gd->cur_serial_dev;
+	ساختار serial_device_info info;
+	ساختار memregion region;
+	صحیح ret;
 
-	if (!dev)
-		return log_msg_ret("ser", -ENOENT);
+	اگر (!dev)
+		بازگشت log_پیام_ret("ser", -ENOENT);
 	ret = serial_getinfo(dev, &info);
-	if (ret)
-		return log_msg_ret("inf", ret);
+	اگر (ret)
+		بازگشت log_پیام_ret("inf", ret);
 
 	ser->compatible = ofnode_read_string(dev_ofnode(dev), "compatible");
 	ser->clock_frequency = info.clock;
 	ser->current_speed = gd->baudrate;
 	region.base = info.addr;
 	region.size = info.size;
-	alist_init_struct(&ser->reg, struct memregion);
-	if (!alist_add(&ser->reg, region))
-		return -ENOMEM;
+	alist_init_struct(&ser->reg, ساختار memregion);
+	اگر (!alist_add(&ser->reg, region))
+		بازگشت -ENOMEM;
 	ser->reg_io_shift = info.reg_shift;
 	ser->reg_offset = info.reg_offset;
 	ser->reg_io_width = info.reg_width;
 	ser->virtual_reg = 0;
 	ser->access_type = info.addr_space;
 
-	return 0;
+	بازگشت 0;
 }
 
-static int write_graphics(struct upl_graphics *gra)
+ایستا صحیح write_graphics(ساختار upl_graphics *gra)
 {
-	struct video_uc_plat *plat;
-	struct video_priv *priv;
-	struct memregion region;
-	struct udevice *dev;
+	ساختار video_uc_plat *plat;
+	ساختار video_priv *priv;
+	ساختار memregion region;
+	ساختار udevice *dev;
 
-	alist_init_struct(&gra->reg, struct memregion);
+	alist_init_struct(&gra->reg, ساختار memregion);
 	uclass_find_first_device(UCLASS_VIDEO, &dev);
-	if (!dev || !device_active(dev))
-		return log_msg_ret("vid", -ENOENT);
+	اگر (!dev || !device_active(dev))
+		بازگشت log_پیام_ret("vid", -ENOENT);
 
 	plat = dev_get_uclass_plat(dev);
 	region.base = plat->base;
 	region.size = plat->size;
-	if (!alist_add(&gra->reg, region))
-		return log_msg_ret("reg", -ENOMEM);
+	اگر (!alist_add(&gra->reg, region))
+		بازگشت log_پیام_ret("reg", -ENOMEM);
 
 	priv = dev_get_uclass_priv(dev);
 	gra->width = priv->xsize;
 	gra->height = priv->ysize;
-	gra->stride = priv->line_length;	/* private field */
-	switch (priv->format) {
-	case VIDEO_RGBA8888:
-	case VIDEO_X8R8G8B8:
+	gra->stride = priv->سطر_length;	/* private field */
+	انتخاب (priv->format) {
+	حالت VIDEO_RGBA8888:
+	حالت VIDEO_X8R8G8B8:
 		gra->format = UPLGF_ARGB32;
-		break;
-	case VIDEO_X8B8G8R8:
+		بشکن;
+	حالت VIDEO_X8B8G8R8:
 		gra->format = UPLGF_ABGR32;
-		break;
-	case VIDEO_X2R10G10B10:
+		بشکن;
+	حالت VIDEO_X2R10G10B10:
 		log_debug("device '%s': VIDEO_X2R10G10B10 not supported\n",
 			  dev->name);
-		return log_msg_ret("for", -EPROTO);
-	case VIDEO_UNKNOWN:
+		بازگشت log_پیام_ret("for", -EPROTO);
+	حالت VIDEO_UNKNOWN:
 		log_debug("device '%s': Unknown video format\n", dev->name);
-		return log_msg_ret("for", -EPROTO);
+		بازگشت log_پیام_ret("for", -EPROTO);
 	}
 
-	return 0;
+	بازگشت 0;
 }
 
-int spl_write_upl_handoff(struct spl_image_info *spl_image)
+صحیح spl_write_upl_handoff(ساختار spl_image_info *spl_image)
 {
-	struct upl *upl = &s_upl;
-	struct abuf buf;
-	ofnode root;
-	void *ptr;
-	int ret;
+	ساختار upl *upl = &s_upl;
+	ساختار abuf buf;
+	ofnode ریشه;
+	تهی *ptr;
+	صحیح ret;
 
-	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.count);
+	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.شمار);
 	upl->addr_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
 	upl->size_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
 	upl->bootmode = UPLBM_DEFAULT;
 	ret = write_serial(&upl->serial);
-	if (ret)
-		return log_msg_ret("ser", ret);
+	اگر (ret)
+		بازگشت log_پیام_ret("ser", ret);
 	ret = write_graphics(&upl->graphics);
-	if (ret && ret != -ENOENT)
-		return log_msg_ret("gra", ret);
+	اگر (ret && ret != -ENOENT)
+		بازگشت log_پیام_ret("gra", ret);
 
-	root = ofnode_root();
-	ret = upl_write_handoff(upl, root, true);
-	if (ret)
-		return log_msg_ret("wr", ret);
+	ریشه = ofnode_ریشه();
+	ret = upl_write_handoff(upl, ریشه, true);
+	اگر (ret)
+		بازگشت log_پیام_ret("wr", ret);
 
 	ret = oftree_to_fdt(oftree_default(), &buf);
-	if (ret)
-		return log_msg_ret("fdt", ret);
+	اگر (ret)
+		بازگشت log_پیام_ret("fdt", ret);
 	log_debug("FDT size %zx\n", abuf_size(&buf));
 
 	ptr = bloblist_add(BLOBLISTT_CONTROL_FDT, abuf_size(&buf), 0);
-	if (!ptr)
-		return log_msg_ret("blo", -ENOENT);
+	اگر (!ptr)
+		بازگشت log_پیام_ret("blo", -ENOENT);
 	memcpy(ptr, abuf_data(&buf), abuf_size(&buf));
 
-	return 0;
+	بازگشت 0;
 }
 
-void spl_upl_init(void)
+تهی spl_upl_init(تهی)
 {
 	upl_init(&s_upl);
 }

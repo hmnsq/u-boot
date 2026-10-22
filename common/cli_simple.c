@@ -8,89 +8,89 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <log.h>
-#include <linux/ctype.h>
+#شامل <bootretry.h>
+#شامل <cli.h>
+#شامل <command.h>
+#شامل <console.h>
+#شامل <env.h>
+#شامل <log.h>
+#شامل <linux/ctype.h>
 
 #define DEBUG_PARSER	0	/* set to 1 to debug */
 
 #define debug_parser(fmt, args...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+صحیح cli_simple_process_macros(ثابت نویسه *درون_داد, نویسه *output, صحیح max_size)
 {
-	char c, prev;
-	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
-	int outputcnt = max_size;
-	int state = 0;		/* 0 = waiting for '$'  */
-	int ret;
+	نویسه c, prev;
+	ثابت نویسه *varname_start = پوچ;
+	صحیح inputcnt = strlen(درون_داد);
+	صحیح outputcnt = max_size;
+	صحیح state = 0;		/* 0 = waiting for '$'  */
+	صحیح ret;
 
 	/* 1 = waiting for '(' or '{' */
 	/* 2 = waiting for ')' or '}' */
 	/* 3 = waiting for '''  */
-	char __maybe_unused *output_start = output;
+	نویسه __maybe_unused *output_start = output;
 
-	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(input),
-		     input);
+	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(درون_داد),
+		     درون_داد);
 
 	prev = '\0';		/* previous character   */
 
-	while (inputcnt && outputcnt) {
-		c = *input++;
+	وقتی (inputcnt && outputcnt) {
+		c = *درون_داد++;
 		inputcnt--;
 
-		if (state != 3) {
+		اگر (state != 3) {
 			/* remove one level of escape characters */
-			if ((c == '\\') && (prev != '\\')) {
-				if (inputcnt-- == 0)
-					break;
+			اگر ((c == '\\') && (prev != '\\')) {
+				اگر (inputcnt-- == 0)
+					بشکن;
 				prev = c;
-				c = *input++;
+				c = *درون_داد++;
 			}
 		}
 
-		switch (state) {
-		case 0:	/* Waiting for (unescaped) $    */
-			if ((c == '\'') && (prev != '\\')) {
+		انتخاب (state) {
+		حالت 0:	/* Waiting for (unescaped) $    */
+			اگر ((c == '\'') && (prev != '\\')) {
 				state = 3;
-				break;
+				بشکن;
 			}
-			if ((c == '$') && (prev != '\\')) {
+			اگر ((c == '$') && (prev != '\\')) {
 				state++;
-			} else {
+			} وگرنه {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
-		case 1:	/* Waiting for (        */
-			if (c == '(' || c == '{') {
+			بشکن;
+		حالت 1:	/* Waiting for (        */
+			اگر (c == '(' || c == '{') {
 				state++;
-				varname_start = input;
-			} else {
+				varname_start = درون_داد;
+			} وگرنه {
 				state = 0;
 				*(output++) = '$';
 				outputcnt--;
 
-				if (outputcnt) {
+				اگر (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
 			}
-			break;
-		case 2:	/* Waiting for )        */
-			if (c == ')' || c == '}') {
-				int i;
-				char envname[CONFIG_SYS_CBSIZE], *envval;
+			بشکن;
+		حالت 2:	/* Waiting for )        */
+			اگر (c == ')' || c == '}') {
+				صحیح i;
+				نویسه envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				صحیح envcnt = درون_داد - varname_start - 1;
 
 				/* Get the varname */
-				for (i = 0; i < envcnt; i++)
+				برای (i = 0; i < envcnt; i++)
 					envname[i] = varname_start[i];
 				envname[i] = 0;
 
@@ -98,31 +98,31 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				envval = env_get(envname);
 
 				/* Copy into the line if it exists */
-				if (envval != NULL)
-					while ((*envval) && outputcnt) {
+				اگر (envval != پوچ)
+					وقتی ((*envval) && outputcnt) {
 						*(output++) = *(envval++);
 						outputcnt--;
 					}
 				/* Look for another '$' */
 				state = 0;
 			}
-			break;
-		case 3:	/* Waiting for '        */
-			if ((c == '\'') && (prev != '\\')) {
+			بشکن;
+		حالت 3:	/* Waiting for '        */
+			اگر ((c == '\'') && (prev != '\\')) {
 				state = 0;
-			} else {
+			} وگرنه {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
+			بشکن;
 		}
 		prev = c;
 	}
 
 	ret = inputcnt ? -ENOSPC : 0;
-	if (outputcnt) {
+	اگر (outputcnt) {
 		*output = 0;
-	} else {
+	} وگرنه {
 		*(output - 1) = 0;
 		ret = -ENOSPC;
 	}
@@ -130,45 +130,45 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 	debug_parser("[PROCESS_MACROS] OUTPUT len %zd: \"%s\"\n",
 		     strlen(output_start), output_start);
 
-	return ret;
+	بازگشت ret;
 }
 
 #ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+صحیح cli_simple_parse_سطر(نویسه *سطر, نویسه *argv[])
 {
-	int nargs = 0;
+	صحیح nargs = 0;
 
-	debug_parser("%s: \"%s\"\n", __func__, line);
-	while (nargs < CONFIG_SYS_MAXARGS) {
+	debug_parser("%s: \"%s\"\n", __func__, سطر);
+	وقتی (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
-			++line;
+		وقتی (isblank(*سطر))
+			++سطر;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		اگر (*سطر == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = پوچ;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
-			return nargs;
+			بازگشت nargs;
 		}
 
-		argv[nargs++] = line;	/* begin of argument string	*/
+		argv[nargs++] = سطر;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
-			++line;
+		وقتی (*سطر && !isblank(*سطر))
+			++سطر;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		اگر (*سطر == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = پوچ;
 			debug_parser("parse_line: nargs=%d\n", nargs);
-			return nargs;
+			بازگشت nargs;
 		}
 
-		*line++ = '\0';		/* terminate current arg	 */
+		*سطر++ = '\0';		/* terminate current arg	 */
 	}
 
 	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
 
 	debug_parser("%s: nargs=%d\n", __func__, nargs);
-	return nargs;
+	بازگشت nargs;
 }
 
  /*
@@ -179,32 +179,32 @@ int cli_simple_parse_line(char *line, char *argv[])
  * the environment data, which may change magicly when the command we run
  * creates or modifies environment variables (like "bootp" does).
  */
-int cli_simple_run_command(const char *cmd, int flag)
+صحیح cli_simple_run_command(ثابت نویسه *cmd, صحیح flag)
 {
-	char cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
-	char *token;			/* start of token in cmdbuf	*/
-	char *sep;			/* end of token (separator) in cmdbuf */
-	char finaltoken[CONFIG_SYS_CBSIZE];
-	char *str = cmdbuf;
-	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
-	int argc, inquotes;
-	int repeatable = 1;
-	int rc = 0;
+	نویسه cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
+	نویسه *token;			/* start of token in cmdbuf	*/
+	نویسه *sep;			/* end of token (separator) in cmdbuf */
+	نویسه finaltoken[CONFIG_SYS_CBSIZE];
+	نویسه *str = cmdbuf;
+	نویسه *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
+	صحیح argc, inquotes;
+	صحیح repeatable = 1;
+	صحیح rc = 0;
 
 	debug_parser("[RUN_COMMAND] cmd[%p]=\"", cmd);
-	if (DEBUG_PARSER) {
+	اگر (DEBUG_PARSER) {
 		/* use puts - string may be loooong */
 		puts(cmd ? cmd : "NULL");
 		puts("\"\n");
 	}
 	clear_ctrlc();		/* forget any previous Control C */
 
-	if (!cmd || !*cmd)
-		return -1;	/* empty command */
+	اگر (!cmd || !*cmd)
+		بازگشت -1;	/* empty command */
 
-	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
+	اگر (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
 		puts("## Command too long!\n");
-		return -1;
+		بازگشت -1;
 	}
 
 	strcpy(cmdbuf, cmd);
@@ -214,67 +214,67 @@ int cli_simple_run_command(const char *cmd, int flag)
 	 */
 
 	debug_parser("[PROCESS_SEPARATORS] %s\n", cmd);
-	while (*str) {
+	وقتی (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for (inquotes = 0, sep = str; *sep; sep++) {
-			if ((*sep == '\'') &&
+		برای (inquotes = 0, sep = str; *sep; sep++) {
+			اگر ((*sep == '\'') &&
 			    (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
 
-			if (!inquotes &&
+			اگر (!inquotes &&
 			    (*sep == ';') &&	/* separator		*/
 			    (sep != str) &&	/* past string start	*/
 			    (*(sep - 1) != '\\'))	/* and NOT escaped */
-				break;
+				بشکن;
 		}
 
 		/*
 		 * Limit the token to data between separators
 		 */
 		token = str;
-		if (*sep) {
+		اگر (*sep) {
 			str = sep + 1;	/* start of command for next pass */
 			*sep = '\0';
-		} else {
+		} وگرنه {
 			str = sep;	/* no more commands for next pass */
 		}
 		debug_parser("token: \"%s\"\n", token);
 
 		/* find macros in this token and replace them */
 		cli_simple_process_macros(token, finaltoken,
-					  sizeof(finaltoken));
+					  اندازه(finaltoken));
 
 		/* Extract arguments */
-		argc = cli_simple_parse_line(finaltoken, argv);
-		if (argc == 0) {
+		argc = cli_simple_parse_سطر(finaltoken, argv);
+		اگر (argc == 0) {
 			rc = -1;	/* no command at all */
-			continue;
+			ادامه;
 		}
 
-		if (cmd_process(flag, argc, argv, &repeatable, NULL))
+		اگر (cmd_process(flag, argc, argv, &repeatable, پوچ))
 			rc = -1;
 
 		/* Did the user stop this? */
-		if (had_ctrlc())
-			return -1;	/* if stopped then not repeatable */
+		اگر (had_ctrlc())
+			بازگشت -1;	/* if stopped then not repeatable */
 	}
 
-	return rc ? rc : repeatable;
+	بازگشت rc ? rc : repeatable;
 }
 
-void cli_simple_loop(void)
+تهی cli_simple_loop(تهی)
 {
-	static char lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
+	ایستا نویسه lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
 
-	int len;
-	int flag;
-	int rc = 1;
+	صحیح len;
+	صحیح flag;
+	صحیح rc = 1;
 
-	for (;;) {
-		if (rc >= 0) {
+	برای (;;) {
+		اگر (rc >= 0) {
 			/* Saw enough of a valid command to
 			 * restart the timeout.
 			 */
@@ -283,66 +283,66 @@ void cli_simple_loop(void)
 		len = cli_readline(CONFIG_SYS_PROMPT);
 
 		flag = 0;	/* assume no special flags for now */
-		if (len > 0)
+		اگر (len > 0)
 			strlcpy(lastcommand, console_buffer,
 				CONFIG_SYS_CBSIZE + 1);
-		else if (len == 0)
+		وگرنه اگر (len == 0)
 			flag |= CMD_FLAG_REPEAT;
 #ifdef CONFIG_BOOT_RETRY_TIME
-		else if (len == -2) {
+		وگرنه اگر (len == -2) {
 			/* -2 means timed out, retry autoboot
 			 */
 			puts("\nTimed out waiting for command\n");
 # ifdef CONFIG_RESET_TO_RETRY
 			/* Reinit board to run initialization code again */
-			do_reset(NULL, 0, 0, NULL);
-# else
-			return;		/* retry autoboot */
+			do_reset(پوچ, 0, 0, پوچ);
+# وگرنه
+			بازگشت;		/* retry autoboot */
 # endif
 		}
 #endif
 
-		if (len == -1)
+		اگر (len == -1)
 			puts("<INTERRUPT>\n");
-		else
+		وگرنه
 			rc = run_command_repeatable(lastcommand, flag);
 
-		if (rc <= 0) {
+		اگر (rc <= 0) {
 			/* invalid command or not repeatable, forget it */
 			lastcommand[0] = 0;
 		}
 	}
 }
 
-int cli_simple_run_command_list(char *cmd, int flag)
+صحیح cli_simple_run_command_list(نویسه *cmd, صحیح flag)
 {
-	char *line, *next;
-	int rcode = 0;
+	نویسه *سطر, *next;
+	صحیح rcode = 0;
 
 	/*
 	 * Break into individual lines, and execute each line; terminate on
 	 * error.
 	 */
 	next = cmd;
-	line = cmd;
-	while (*next) {
-		if (*next == '\n') {
+	سطر = cmd;
+	وقتی (*next) {
+		اگر (*next == '\n') {
 			*next = '\0';
 			/* run only non-empty commands */
-			if (*line) {
-				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+			اگر (*سطر) {
+				debug("** exec: \"%s\"\n", سطر);
+				اگر (cli_simple_run_command(سطر, 0) < 0) {
 					rcode = 1;
-					break;
+					بشکن;
 				}
 			}
-			line = next + 1;
+			سطر = next + 1;
 		}
 		++next;
 	}
-	if (rcode == 0 && *line)
-		rcode = (cli_simple_run_command(line, 0) < 0);
+	اگر (rcode == 0 && *سطر)
+		rcode = (cli_simple_run_command(سطر, 0) < 0);
 
-	return rcode;
+	بازگشت rcode;
 }
 #endif

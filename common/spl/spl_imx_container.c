@@ -4,49 +4,49 @@
  */
 
 #define LOG_CATEGORY LOGC_ARCH
-#include <stdlib.h>
-#include <errno.h>
-#include <imx_container.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <cpu_func.h>
+#شامل <stdlib.h>
+#شامل <errno.h>
+#شامل <imx_container.h>
+#شامل <log.h>
+#شامل <mapmem.h>
+#شامل <spl.h>
+#شامل <cpu_func.h>
 #ifdef CONFIG_AHAB_BOOT
-#include <asm/mach-imx/ahab.h>
+#شامل <asm/mach-imx/ahab.h>
 #endif
 
-__weak bool arch_check_dst_in_secure(void *start, ulong size)
+__weak bool arch_check_dst_in_secure(تهی *start, ulong size)
 {
-	return false;
+	بازگشت false;
 }
 
-__weak void *arch_get_container_trampoline(void)
+__weak تهی *arch_get_container_trampoline(تهی)
 {
-	return NULL;
+	بازگشت پوچ;
 }
 
-static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
-					  struct spl_load_info *info,
-					  struct container_hdr *container,
-					  int image_index,
+ایستا ساختار boot_img_t *read_auth_image(ساختار spl_image_info *spl_image,
+					  ساختار spl_load_info *info,
+					  ساختار container_hdr *container,
+					  صحیح image_index,
 					  ulong container_offset)
 {
-	struct boot_img_t *images;
+	ساختار boot_img_t *images;
 	ulong offset, size;
-	void *buf, *trampoline;
+	تهی *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	اگر (image_index > container->رقم_images) {
 		debug("Invalid image number\n");
-		return NULL;
+		بازگشت پوچ;
 	}
 
-	images = (struct boot_img_t *)((u8 *)container +
-				       sizeof(struct container_hdr));
+	images = (ساختار boot_img_t *)((u8 *)container +
+				       اندازه(ساختار container_hdr));
 
-	if (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
+	اگر (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
 		printf("%s: image%d offset not aligned to %u\n",
 		       __func__, image_index, spl_get_bl_len(info));
-		return NULL;
+		بازگشت پوچ;
 	}
 
 	size = ALIGN(images[image_index].size, spl_get_bl_len(info));
@@ -56,43 +56,43 @@ static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
 	      container, offset, size);
 
 	buf = map_sysmem(images[image_index].dst, images[image_index].size);
-	if (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
+	اگر (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
 	    arch_check_dst_in_secure(buf, size)) {
 		trampoline = arch_get_container_trampoline();
-		if (!trampoline) {
+		اگر (!trampoline) {
 			printf("%s: trampoline size is zero\n", __func__);
-			return NULL;
+			بازگشت پوچ;
 		}
 
-		if (info->read(info, offset, size, trampoline) < images[image_index].size) {
+		اگر (info->اقرأ(info, offset, size, trampoline) < images[image_index].size) {
 			printf("%s: failed to load image to a trampoline buffer\n", __func__);
-			return NULL;
+			بازگشت پوچ;
 		}
 
 		memcpy(buf, trampoline, images[image_index].size);
-	} else {
-		if (info->read(info, offset, size, buf) < images[image_index].size) {
+	} وگرنه {
+		اگر (info->اقرأ(info, offset, size, buf) < images[image_index].size) {
 				printf("%s: failed to load image to a non-secure region\n", __func__);
-			return NULL;
+			بازگشت پوچ;
 		}
 	}
 
 #ifdef CONFIG_AHAB_BOOT
 	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_index].size - 1));
-	if (ahab_verify_cntr_image(&images[image_index], image_index))
-		return NULL;
+	اگر (ahab_verify_cntr_image(&images[image_index], image_index))
+		بازگشت پوچ;
 #endif
 
-	return &images[image_index];
+	بازگشت &images[image_index];
 }
 
-static int read_auth_container(struct spl_image_info *spl_image,
-			       struct spl_load_info *info, ulong offset)
+ایستا صحیح read_auth_container(ساختار spl_image_info *spl_image,
+			       ساختار spl_load_info *info, ulong offset)
 {
-	struct container_hdr *container = NULL;
-	struct container_hdr *authhdr;
+	ساختار container_hdr *container = پوچ;
+	ساختار container_hdr *authhdr;
 	u16 length;
-	int i, size, ret = 0;
+	صحیح i, size, ret = 0;
 
 	size = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
 
@@ -101,45 +101,45 @@ static int read_auth_container(struct spl_image_info *spl_image,
 	 * no need malloc
 	 */
 	container = malloc(size);
-	if (!container)
-		return -ENOMEM;
+	اگر (!container)
+		بازگشت -ENOMEM;
 
 	debug("%s: container: %p offset: %lu size: %u\n", __func__,
 	      container, offset, size);
-	if (info->read(info, offset, size, container) <
+	اگر (info->اقرأ(info, offset, size, container) <
 	    CONTAINER_HDR_ALIGNMENT) {
 		ret = -EIO;
-		goto end;
+		برو end;
 	}
 
-	if (!valid_container_hdr(container)) {
+	اگر (!valid_container_hdr(container)) {
 		log_err("Wrong container header\n");
 		ret = -ENOENT;
-		goto end;
+		برو end;
 	}
 
-	if (!container->num_images) {
+	اگر (!container->رقم_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
-		goto end;
+		برو end;
 	}
 
 	length = container->length_lsb + (container->length_msb << 8);
 	debug("Container length %u\n", length);
 
-	if (length > CONTAINER_HDR_ALIGNMENT) {
+	اگر (length > CONTAINER_HDR_ALIGNMENT) {
 		size = ALIGN(length, spl_get_bl_len(info));
 
-		free(container);
+		آزاد(container);
 		container = malloc(size);
-		if (!container)
-			return -ENOMEM;
+		اگر (!container)
+			بازگشت -ENOMEM;
 
 		debug("%s: container: %p offset: %lu size: %u\n",
 		      __func__, container, offset, size);
-		if (info->read(info, offset, size, container) < length) {
+		اگر (info->اقرأ(info, offset, size, container) < length) {
 			ret = -EIO;
-			goto end;
+			برو end;
 		}
 	}
 
@@ -147,23 +147,23 @@ static int read_auth_container(struct spl_image_info *spl_image,
 
 #ifdef CONFIG_AHAB_BOOT
 	authhdr = ahab_auth_cntr_hdr(authhdr, length);
-	if (!authhdr) {
+	اگر (!authhdr) {
 		ret = -EINVAL;
-		goto end_auth;
+		برو end_auth;
 	}
 #endif
 
-	for (i = 0; i < authhdr->num_images; i++) {
-		struct boot_img_t *image = read_auth_image(spl_image, info,
+	برای (i = 0; i < authhdr->رقم_images; i++) {
+		ساختار boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
 							   offset);
 
-		if (!image) {
+		اگر (!image) {
 			ret = -EINVAL;
-			goto end_auth;
+			برو end_auth;
 		}
 
-		if (i == 0) {
+		اگر (i == 0) {
 			spl_image->load_addr = image->dst;
 			spl_image->entry_point = image->entry;
 		}
@@ -175,13 +175,13 @@ end_auth:
 #endif
 
 end:
-	free(container);
+	آزاد(container);
 
-	return ret;
+	بازگشت ret;
 }
 
-int spl_load_imx_container(struct spl_image_info *spl_image,
-			   struct spl_load_info *info, ulong offset)
+صحیح spl_load_imx_container(ساختار spl_image_info *spl_image,
+			   ساختار spl_load_info *info, ulong offset)
 {
-	return read_auth_container(spl_image, info, offset);
+	بازگشت read_auth_container(spl_image, info, offset);
 }
