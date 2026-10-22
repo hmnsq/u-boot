@@ -1,0 +1,556 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+
+## Keywords with no word in a language's table
+
+- guru:_exit: 75
+- guru:__FILE__: 75
+- yantra:ENTRY: 75
+- guru:size_t: 71
+- guru:EXIT_SUCCESS: 71
+- guru:strchr: 71
+- guru:EOF: 71
+- guru:EXIT_FAILURE: 71
+- guru:abort: 71
+- guru:close: 71
+- guru:errno: 71
+- guru:putc: 71
+- guru:sprintf: 71
+- guru:stdin: 71
+- guru:stdout: 71
+- guru:va_list: 71
+- guru:SIGINT: 71
+- guru:va_start: 71
+- guru:va_end: 71
+- guru:SIG_IGN: 71
+- guru:FILE: 71
+- guru:stderr: 71
+- guru:memmove: 71
+- guru:getc: 71
+- guru:SIG_DFL: 71
+- guru:realloc: 71
+- guru:memcmp: 71
+- guru:kill: 71
+- guru:strcspn: 71
+- guru:fflush: 71
+- guru:fgetc: 71
+- guru:strncpy: 71
+- guru:strtok: 71
+- guru:fclose: 71
+- guru:fputs: 71
+- guru:offsetof: 71
+- guru:ULONG_MAX: 71
+- guru:atoi: 71
+- guru:BUFSIZ: 71
+- guru:fprintf: 71
+- guru:fork: 71
+- guru:SIGTERM: 71
+- guru:chdir: 71
+- guru:fopen: 71
+- guru:vprintf: 71
+- guru:strspn: 71
+- guru:UINT_MAX: 71
+- guru:fputc: 71
+- guru:remove: 71
+- guru:asm: 71
+- guru:vfprintf: 71
+- guru:strerror: 71
+- guru:fgets: 71
+- guru:strtoul: 71
+- guru:strncat: 71
+- guru:isxdigit: 71
+- guru:getenv: 71
+- guru:SIGSEGV: 71
+- guru:sigsuspend: 71
+- guru:times: 71
+- guru:clock_t: 71
+- guru:ptrdiff_t: 71
+- guru:tolower: 71
+- guru:clock: 71
+- guru:isprint: 71
+- guru:puts: 70
+- guru:memset: 70
+- guru:strcmp: 70
+- guru:strcpy: 70
+- guru:getchar: 70
+- guru:strcat: 70
+- guru:open: 70
+- guru:wait: 70
+- guru:exp: 67
+- guru:#endif: 66
+- guru:#define: 66
+- guru:#ifndef: 66
+- guru:#ifdef: 66
+- guru:#undef: 66
+- guru:#error: 66
+- guru:unsigned: 62
+- guru:printf: 62
+- guru:long: 62
+- guru:strlen: 62
+- guru:memcpy: 62
+- guru:malloc: 62
+- guru:short: 62
+- guru:strncmp: 62
+- guru:exit: 62
+- guru:isdigit: 62
+- guru:isalnum: 62
+- guru:strstr: 62
+- guru:calloc: 62
+- guru:isalpha: 62
+- guru:putchar: 62
+- guru:signed: 62
+- guru:sscanf: 62
+- guru:INT_MAX: 62
+- guru:isspace: 62
+- guru:abs: 62
+- guru:main: 54
+- guru:static: 25
+- guru:void: 25
+- guru:NULL: 25
+- guru:const: 25
+- guru:goto: 25
+- guru:free: 25
+- guru:continue: 25
+- guru:do: 25
+- guru:switch: 25
+- guru:assert: 25
+- guru:default: 25
+- guru:typedef: 25
+- guru:#elif: 25
+- guru:read: 25
+- guru:write: 25
+- guru:extern: 25
+- guru:raise: 25
+- guru:for: 9
+- guru:struct: 9
+- guru:char: 9
+- guru:break: 9
+- guru:case: 9
+- guru:sizeof: 9
+- guru:enum: 9
+- guru:inline: 9
+- guru:signal: 9
+- guru:volatile: 9
+- guru:if: 1
+- guru:return: 1
+- guru:int: 1
+- guru:#if: 1
+- guru:else: 1
+- guru:while: 1
+- guru:#else: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `i`: 76
+- `ret`: 76
+- `dev`: 76
+- `argv`: 76
+- `p`: 76
+- `ch`: 76
+- `ctx`: 76
+- `G`: 76
+- `gd`: 76
+- `pi`: 76
+- `buf`: 76
+- `debug`: 76
+- `s`: 76
+- `name`: 76
+- `CONFIG_IS_ENABLED`: 76
+- `len`: 76
+- `spl_image`: 76
+- `err`: 76
+- `n`: 76
+- `dest`: 76
+- `flags`: 76
+- `info`: 76
+- `addr`: 76
+- `str`: 76
+- `rec`: 76
+- `o`: 76
+- `ptr`: 76
+- `rcode`: 76
+- `cmd`: 76
+- `cur`: 76
+- `IS_ENABLED`: 76
+- `command`: 76
+- `xyz`: 76
+- `c`: 76
+- `res`: 76
+- `defined`: 76
+- `hdr`: 76
+- `srb`: 76
+- `pipe`: 76
+- `file`: 76
+- `us`: 76
+- `INITCALL`: 76
+- `fd`: 76
+- `bootdev`: 76
+- `IAV`: 76
+- `rc`: 76
+- `list`: 76
+- `output`: 76
+- `define`: 76
+- `as_string`: 76
+- `m`: 76
+- `endif`: 76
+- `val`: 76
+- `arg`: 76
+- `part`: 76
+- `sig`: 76
+- `o_string`: 76
+- `argc`: 76
+- `fit`: 76
+- `r`: 76
+- `TIMING`: 76
+- `o_addchr`: 76
+- `usb_device`: 76
+- `redir`: 76
+- `x`: 76
+- `cmdtp`: 76
+- `cls`: 76
+- `spl_image_info`: 76
+- `funcp`: 76
+- `type`: 76
+- `debug_printf`: 76
+- `debug_printf_exec`: 76
+- `hub`: 76
+- `BB_MMU`: 76
+- `sz`: 76
+- `FAST_FUNC`: 76
+- `pusb_dev`: 76
+- `mmc`: 76
+- `cp`: 76
+- `desc`: 76
+- `debug_printf_parse`: 76
+- `src`: 76
+- `tmp`: 76
+- `stdio_dev`: 76
+- `flag`: 76
+- `var`: 76
+- `mchunkptr`: 76
+- `algo`: 76
+- `u32`: 76
+- `EINVAL`: 76
+- `cnt`: 76
+- `fmt`: 76
+- `ichar`: 76
+- `pp`: 76
+- `image`: 76
+- `global_argv`: 76
+- `i_getch`: 76
+- `nb`: 76
+- `udevice`: 76
+- `state`: 76
+- `pid`: 76
+- `victim`: 76
+- `env_get`: 76
+- `descriptor`: 76
+- `id`: 76
+- `v`: 76
+- `param`: 76
+- `spl_boot_device`: 76
+- `j`: 76
+- `ops`: 76
+- `ENOENT`: 76
+- `log_debug`: 76
+- `filename`: 76
+- `edid_info`: 76
+- `e`: 76
+- `udev`: 76
+- `cch`: 76
+- `G_interactive_fd`: 76
+- `bus`: 76
+- `u8`: 76
+- `inp`: 76
+- `nommu_addchr`: 76
+- `argv_expanded`: 76
+- `G_traps`: 76
+- `fp`: 76
+- `chunk2mem`: 76
+- `map_sysmem`: 76
+- `mem`: 76
+- `hash_algo`: 76
+- `ldev`: 76
+- `BLTIN`: 76
+- `sdev`: 76
+- `old`: 76
+- `cmds`: 76
+- `timing`: 76
+- `prompt`: 76
+- `sep`: 76
+- `sq`: 76
+- `idx`: 76
+- `spy`: 76
+- `image_info`: 76
+- `devnum`: 76
+- `blksz`: 76
+- `blk_desc`: 76
+- `blob`: 76
+- `varstr`: 76
+- `devname`: 76
+- `iface`: 76
+- `ZM_DEBUG`: 76
+- `func`: 76
+- `ENABLE_HUSH_FUNCTIONS`: 76
+- `fdt_addr`: 76
+- `config`: 76
+- `scancode`: 76
+- `b`: 76
+- `dst`: 76
+- `iotrace`: 76
+- `filt`: 76
+- `legacy_img_hdr`: 76
+- `ifnum`: 76
+- `bd`: 76
+- `progs`: 76
+- `squirrel`: 76
+- `fdprintf`: 76
+- `ctx_res_w`: 76
+- `location`: 76
+- `relocaddr`: 76
+- `uintptr_t`: 76
+- `opt`: 76
+- `heredoc_cnt`: 76
+- `os`: 76
+- `a`: 76
+- `u`: 76
+- `cmd_tbl`: 76
+- `pgrp`: 76
+- `global_argc`: 76
+- `fg_pipe`: 76
+- `the_command`: 76
+- `gr`: 76
+- `variable`: 76
+- `lineno`: 76
+- `menu`: 76
+- `retry`: 76
+- `tee`: 76
+- `fdt_blob`: 76
+- `uint32_t`: 76
+- `alignment`: 76
+- `is_assignment`: 76
+- `k`: 76
+- `timeout`: 76
+- `newp`: 76
+- `sector`: 76
+- `if_desc`: 76
+- `p_context`: 76
+- `flg_export`: 76
+- `smallint`: 76
+- `ENABLE_HUSH_CASE`: 76
+- `o_expflags`: 76
+- `exp_op`: 76
+- `t`: 76
+- `rword`: 76
+- `cyclic`: 76
+- `Void_t`: 76
+- `uint8_t`: 76
+- `reg`: 76
+- `promptmode`: 76
+- `indent`: 76
+- `pglob`: 76
+- `thejob`: 76
+- `ENABLE_HUSH_LOOPS`: 76
+- `cmdv`: 76
+- `priv`: 76
+- `chunksize`: 76
+- `edid`: 76
+- `sense_buf`: 76
+- `delaykey`: 76
+- `lbaint_t`: 76
+- `ENODEV`: 76
+- `bloblist_rec`: 76
+- `upl`: 76
+- `ENOSYS`: 76
+- `CTL_CH`: 76
+- `function`: 76
+- `d`: 76
+- `has_quoted_part`: 76
+- `var_nest_level`: 76
+- `wlen`: 76
+- `MINSIZE`: 76
+- `portstatus`: 76
+- `lun`: 76
+- `CONFIG_VAL`: 76
+- `followup`: 76
+- `optarg`: 76
+- `debug_printf_env`: 76
+- `spd`: 76
+- `P`: 76
+- `bl31_params_mem`: 76
+- `ENOMEM`: 76
+- `ALIGN`: 76
+- `EIO`: 76
+- `ho`: 76
+- `PIPE_SEQ`: 76
+- `jobid`: 76
+- `ifs`: 76
+- `newfd`: 76
+- `newsize`: 76
+- `layout`: 76
+- `USB_CNTL_TIMEOUT`: 76
+- `sectors`: 76
+- `cwd`: 76
+- `xmalloc`: 76
+- `xzalloc`: 76
+- `q`: 76
+- `arglen`: 76
+- `level`: 76
+- `noffset`: 76
+- `presskey`: 76
+- `tstc`: 76
+- `bootdelay`: 76
+- `AvbIOResult`: 76
+- `boot_device`: 76
+- `pos`: 76
+- `parse_error_exitcode1`: 76
+- `stdio_devices`: 76
+- `images`: 76
+- `splash_location`: 76
+- `tmp_buf`: 76
+- `chksum`: 76
+- `CONFIG_SYS_CBSIZE`: 76
+- `prog`: 76
+- `prompt_str`: 76
+- `error`: 76
+- `childpid`: 76
+- `console`: 76
+- `pr_err`: 76
+- `monitor`: 76
+- `blkcnt`: 76
+- `dev_desc`: 76
+- `datalen`: 76
+- `bloblist`: 76
+- `uchar`: 76
+- `xstrdup`: 76
+- `pending_redirect`: 76
+- `EXP_FLAG_ESC_GLOB_CHARS`: 76
+- `HFILE`: 76
+- `hp`: 76
+- `oldmem`: 76
+- `mii_dev`: 76
+- `stat`: 76
+- `get_timer`: 76
+- `phys_addr_t`: 76
+- `act`: 76
+- `RES_FOR`: 76
+- `b_getch`: 76
+- `IF_HAS_KEYWORDS`: 76
+- `cmd_type`: 76
+- `syntax_error_unterm_ch`: 76
+- `sv`: 76
+- `heredoc`: 76
+- `nommu_save`: 76
+
+## Comments with no translation
+
+- !__U_BOOT__: 76
+- __U_BOOT__: 76
+- config:: 76
+- config:	default y: 76
+- config:	depends on SHELL_HUSH: 76
+- error: 76
+- get next char: 76
+- config:	help: 76
+- its size: 76
+- unbackslash:: 76
+- - checksum and addr: 76
+- in_dquote:: 76
+- bash compat: 76
+- (no pid to wait for): 76
+- misc temp for linking: 76
+- Send directly to the handler: 76
+- DEBUG: 76
+- quote_mask:: 76
+- fall through: 76
+- string has no special chars: 76
+- handle_squotes:: 76
+- propagate failure: 76
+- 2 byte addr field: 76
+- asynch transfer not allowed: 76
+- asynch transfer allowed: 76
+- long wait for reset: 76
+- isalpha, isdigit: 76
+- nothing: 76
+- create list of variable values: 76
+- exit: 76
+- physical copy: 76
+- first character after the $: 76
+- never flow through: 76
+- string-based in_str: 76
+- peek_buf[] is an int array, not char. Can contain EOF.: 76
+- paranoia: 76
+- start as "", not as NULL: 76
+- Convert raw ^C to corresponding special variable reference: 76
+- unsigned pos = dest->length;: 76
+- debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);: 76
+- EOL - do not finalize word: 76
+- mimic bash message: 76
+- Don't propagate SIG_IGN to the child: 76
+- ?	close_saved_fds_and_FILE_fds();: 76
+- flag:: 76
+- wtf? take next variable: 76
+- timed out: 76
+- sandbox can send characters to stdout before it has a console: 76
+- Send to the standard output: 76
+- need to set a console if not done above.: 76
+- 3 byte addr field: 76
+- 4 byte addr field: 76
+- end record with a: 76
+- try to recognize storage devices immediately: 76
+- nulldev is empty!: 76
+- Terminating entry: 76
+- Check for input string overflow: 76
+- we got a key press: 76
+- consume input: 76
+- don't auto boot: 76
+- disable Ctrl-C checking: 76
+- restore Ctrl-C checking: 76
+- * Please do not add logic to this function (variables, if (), etc.).
+	 * For simplicity it should re: 76
+- initialize timer: 76
+- initialize environment: 76
+- serial communications setup: 76
+- * The pre-relocation drivers may be using memory that has now gone
+	 * away. Mark serial as unavaila: 76
+- sentinel: 76
+- go init the NAND: 76
+- CONFIG_CMDLINE: 76
+- cast away const: 76
+- Home key: 76
+- End key: 76
+- bracketed paste: 76
+- malloc, free, realloc: 76
+- find_cmd: 76
+- #include <dmalloc.h>: 76
+- This holds pointers to the various results of parsing: 76
+- 0 if exited: 76
+- number of program arguments: 76
+- I/O redirections: 76
+- job number: 76
+- name of job: 76
+- process group ID for the job: 76
+- array of commands in pipe: 76
+- PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND: 76
+- Table of built-in functions.  They can be forked or not, depending on
+ * context: within pipes, they: 76
+- never returns: 76
+- built-in 'fg' and 'bg' handler: 76
+- If they gave us no args, assume they want the last backgrounded task: 76
+- Put the job into the foreground.: 76
+- Restart the processes in the job: 76
+- My analysis of quoting semantics tells me that state information
+ * is associated with a destination: 76
+- This is the magic location that prints prompts
+ * and gets data back from the user: 76
+- OK to leak memory by not calling free_pipe_list,
+		 * since this process is about to exit: 76
+- child exited: 76
+- child stopped: 76
+- move the shell to the foreground: 76
+- Avoid longjmp clobbering: 76
+- Process the command: 76
