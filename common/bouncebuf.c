@@ -5,38 +5,38 @@
  * Copyright (C) 2012 Marek Vasut <marex@denx.de>
  */
 
-#include <cpu_func.h>
-#include <log.h>
-#include <malloc.h>
-#include <errno.h>
-#include <bouncebuf.h>
-#include <asm/cache.h>
-#include <linux/dma-mapping.h>
+#অন্তর্ভাব <cpu_func.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <malloc.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <bouncebuf.h>
+#অন্তর্ভাব <asm/cache.h>
+#অন্তর্ভাব <linux/dma-mapping.h>
 
-static int addr_aligned(struct bounce_buffer *state)
+স্থির পূর্ণাঙ্ক addr_aligned(সংরচনা bounce_buffer *state)
 {
-	const ulong align_mask = ARCH_DMA_MINALIGN - 1;
+	ধ্রুব ulong align_mask = ARCH_DMA_MINALIGN - 1;
 
 	/* Check if start is aligned */
-	if ((ulong)state->user_buffer & align_mask) {
+	যদি ((ulong)state->user_buffer & align_mask) {
 		debug("Unaligned buffer address %p\n", state->user_buffer);
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/* Check if length is aligned */
-	if (state->len != state->len_aligned) {
+	যদি (state->len != state->len_aligned) {
 		debug("Unaligned buffer length %zu\n", state->len);
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/* Aligned */
-	return 1;
+	প্রত্যাগম 1;
 }
 
-int bounce_buffer_start_extalign(struct bounce_buffer *state, void *data,
-				 size_t len, unsigned int flags,
+পূর্ণাঙ্ক bounce_buffer_start_extalign(সংরচনা bounce_buffer *state, শূন্য *data,
+				 size_t len, unsigned পূর্ণাঙ্ক flags,
 				 size_t alignment,
-				 int (*addr_is_aligned)(struct bounce_buffer *state))
+				 পূর্ণাঙ্ক (*addr_is_aligned)(সংরচনা bounce_buffer *state))
 {
 	state->user_buffer = data;
 	state->bounce_buffer = data;
@@ -44,13 +44,13 @@ int bounce_buffer_start_extalign(struct bounce_buffer *state, void *data,
 	state->len_aligned = roundup(len, alignment);
 	state->flags = flags;
 
-	if (!addr_is_aligned(state)) {
+	যদি (!addr_is_aligned(state)) {
 		state->bounce_buffer = memalign(alignment,
 						state->len_aligned);
-		if (!state->bounce_buffer)
-			return -ENOMEM;
+		যদি (!state->bounce_buffer)
+			প্রত্যাগম -ENOMEM;
 
-		if (state->flags & GEN_BB_READ)
+		যদি (state->flags & GEN_BB_READ)
 			memcpy(state->bounce_buffer, state->user_buffer,
 				state->len);
 	}
@@ -63,33 +63,33 @@ int bounce_buffer_start_extalign(struct bounce_buffer *state, void *data,
 		       state->len_aligned,
 		       DMA_BIDIRECTIONAL);
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-int bounce_buffer_start(struct bounce_buffer *state, void *data,
-			size_t len, unsigned int flags)
+পূর্ণাঙ্ক bounce_buffer_start(সংরচনা bounce_buffer *state, শূন্য *data,
+			size_t len, unsigned পূর্ণাঙ্ক flags)
 {
-	return bounce_buffer_start_extalign(state, data, len, flags,
+	প্রত্যাগম bounce_buffer_start_extalign(state, data, len, flags,
 					    ARCH_DMA_MINALIGN,
 					    addr_aligned);
 }
 
-int bounce_buffer_stop(struct bounce_buffer *state)
+পূর্ণাঙ্ক bounce_buffer_stop(সংরচনা bounce_buffer *state)
 {
-	if (state->flags & GEN_BB_WRITE) {
+	যদি (state->flags & GEN_BB_WRITE) {
 		/* Invalidate cache so that CPU can see any newly DMA'd data */
 		dma_unmap_single((dma_addr_t)(uintptr_t)state->bounce_buffer,
 				 state->len_aligned,
 				 DMA_BIDIRECTIONAL);
 	}
 
-	if (state->bounce_buffer == state->user_buffer)
-		return 0;
+	যদি (state->bounce_buffer == state->user_buffer)
+		প্রত্যাগম 0;
 
-	if (state->flags & GEN_BB_WRITE)
+	যদি (state->flags & GEN_BB_WRITE)
 		memcpy(state->user_buffer, state->bounce_buffer, state->len);
 
-	free(state->bounce_buffer);
+	মুক্ত(state->bounce_buffer);
 
-	return 0;
+	প্রত্যাগম 0;
 }

@@ -6,22 +6,22 @@
  * Part of this source has been derived from the Linux USB
  * project.
  */
-#include <console.h>
-#include <dm.h>
-#include <env.h>
-#include <errno.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <stdio_dev.h>
-#include <time.h>
-#include <watchdog.h>
-#include <asm/byteorder.h>
+#অন্তর্ভাব <console.h>
+#অন্তর্ভাব <dm.h>
+#অন্তর্ভাব <env.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <malloc.h>
+#অন্তর্ভাব <memalign.h>
+#অন্তর্ভাব <stdio_dev.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <watchdog.h>
+#অন্তর্ভাব <asm/byteorder.h>
 #ifdef CONFIG_SANDBOX
-#include <asm/state.h>
+#অন্তর্ভাব <asm/state.h>
 #endif
 
-#include <usb.h>
+#অন্তর্ভাব <usb.h>
 
 /*
  * USB vendor and product IDs used for quirks.
@@ -44,11 +44,11 @@
  * environment are used
  */
 #ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
-#else
-int overwrite_console(void)
+বাহ্য পূর্ণাঙ্ক overwrite_console(শূন্য);
+#অন্যথা
+পূর্ণাঙ্ক overwrite_console(শূন্য)
 {
-	return 0;
+	প্রত্যাগম 0;
 }
 #endif
 
@@ -56,19 +56,19 @@ int overwrite_console(void)
 #define REPEAT_RATE	40		/* 40msec -> 25cps */
 #define REPEAT_DELAY	10		/* 10 x REPEAT_RATE = 400msec */
 
-#define NUM_LOCK	0x53
+#define অঙ্ক_LOCK	0x53
 #define CAPS_LOCK	0x39
 #define SCROLL_LOCK	0x47
 
 /* Modifier bits */
-#define LEFT_CNTR	(1 << 0)
-#define LEFT_SHIFT	(1 << 1)
-#define LEFT_ALT	(1 << 2)
-#define LEFT_GUI	(1 << 3)
-#define RIGHT_CNTR	(1 << 4)
-#define RIGHT_SHIFT	(1 << 5)
-#define RIGHT_ALT	(1 << 6)
-#define RIGHT_GUI	(1 << 7)
+#define বাম_CNTR	(1 << 0)
+#define বাম_SHIFT	(1 << 1)
+#define বাম_ALT	(1 << 2)
+#define বাম_GUI	(1 << 3)
+#define ডান_CNTR	(1 << 4)
+#define ডান_SHIFT	(1 << 5)
+#define ডান_ALT	(1 << 6)
+#define ডান_GUI	(1 << 7)
 
 /* Size of the keyboard buffer */
 #define USB_KBD_BUFFER_LEN	0x20
@@ -77,27 +77,27 @@ int overwrite_console(void)
 #define DEVNAME			"usbkbd"
 
 /* Keyboard maps */
-static const unsigned char usb_kbd_numkey[] = {
+স্থির ধ্রুব unsigned বর্ণ usb_kbd_numkey[] = {
 	'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
 	'\r', 0x1b, '\b', '\t', ' ', '-', '=', '[', ']',
 	'\\', '#', ';', '\'', '`', ',', '.', '/'
 };
-static const unsigned char usb_kbd_numkey_shifted[] = {
+স্থির ধ্রুব unsigned বর্ণ usb_kbd_numkey_shifted[] = {
 	'!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
 	'\r', 0x1b, '\b', '\t', ' ', '_', '+', '{', '}',
 	'|', '~', ':', '"', '~', '<', '>', '?'
 };
 
-static const unsigned char usb_kbd_num_keypad[] = {
+স্থির ধ্রুব unsigned বর্ণ usb_kbd_অঙ্ক_keypad[] = {
 	'/', '*', '-', '+', '\r',
 	'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
 	'.', 0, 0, 0, '='
 };
 
-static const u8 usb_special_keys[] = {
-#ifdef CONFIG_USB_KEYBOARD_FN_KEYS
+স্থির ধ্রুব u8 usb_special_চাবিগুলি[] = {
+#ifdef CONFIG_USB_KEYBOARD_FN_চাবিগুলি
 	'2', 'H', '5', '3', 'F', '6', 'C', 'D', 'B', 'A'
-#else
+#অন্যথা
 	'C', 'D', 'B', 'A'
 #endif
 };
@@ -114,12 +114,12 @@ static const u8 usb_special_keys[] = {
 #define USB_KBD_LEDMASK		\
 	(USB_KBD_NUMLOCK | USB_KBD_CAPSLOCK | USB_KBD_SCROLLLOCK)
 
-struct usb_kbd_pdata {
+সংরচনা usb_kbd_pdata {
 	unsigned long	intpipe;
-	int		intpktsize;
-	int		intinterval;
+	পূর্ণাঙ্ক		intpktsize;
+	পূর্ণাঙ্ক		intinterval;
 	unsigned long	last_report;
-	struct int_queue *intq;
+	সংরচনা int_queue *intq;
 
 	uint32_t	ifnum;
 
@@ -135,29 +135,29 @@ struct usb_kbd_pdata {
 	uint8_t		flags;
 };
 
-extern int __maybe_unused net_busy_flag;
+বাহ্য পূর্ণাঙ্ক __maybe_unused net_busy_flag;
 
 /* The period of time between two calls of usb_kbd_testc(). */
-static unsigned long kbd_testc_tms;
+স্থির unsigned long kbd_testc_tms;
 
-int usb_kbd_remove_for_test(void)
+পূর্ণাঙ্ক usb_kbd_remove_for_test(শূন্য)
 {
-	return console_remove_by_name(DEVNAME);
+	প্রত্যাগম console_remove_by_name(DEVNAME);
 }
 
 /* Puts character in the queue and sets up the in and out pointer. */
-static void usb_kbd_put_queue(struct usb_kbd_pdata *data, u8 c)
+স্থির শূন্য usb_kbd_put_queue(সংরচনা usb_kbd_pdata *data, u8 c)
 {
-	if (data->usb_in_pointer == USB_KBD_BUFFER_LEN - 1) {
+	যদি (data->usb_in_pointer == USB_KBD_BUFFER_LEN - 1) {
 		/* Check for buffer full. */
-		if (data->usb_out_pointer == 0)
-			return;
+		যদি (data->usb_out_pointer == 0)
+			প্রত্যাগম;
 
 		data->usb_in_pointer = 0;
-	} else {
+	} অন্যথা {
 		/* Check for buffer full. */
-		if (data->usb_in_pointer == data->usb_out_pointer - 1)
-			return;
+		যদি (data->usb_in_pointer == data->usb_out_pointer - 1)
+			প্রত্যাগম;
 
 		data->usb_in_pointer++;
 	}
@@ -170,231 +170,231 @@ static void usb_kbd_put_queue(struct usb_kbd_pdata *data, u8 c)
  * issued with a timeout of 0. This means, that the job is queued without
  * waiting for job completion.
  */
-static void usb_kbd_setled(struct usb_device *dev)
+স্থির শূন্য usb_kbd_setled(সংরচনা usb_device *dev)
 {
-	struct usb_kbd_pdata *data = dev->privptr;
-	struct usb_interface *iface = &dev->config.if_desc[data->ifnum];
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
+	সংরচনা usb_interface *iface = &dev->config.if_desc[data->ifnum];
 	ALLOC_ALIGN_BUFFER(uint32_t, leds, 1, USB_DMA_MINALIGN);
 
 	*leds = data->flags & USB_KBD_LEDMASK;
-	usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	usb_control_বার্তা(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_REPORT, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		0x200, iface->desc.bInterfaceNumber, leds, 1, 0);
+		0x200, iface->desc.b_Interface_সংখ্যা, leds, 1, 0);
 }
 
 #define CAPITAL_MASK	0x20
 /* Translate the scancode in ASCII */
-static int usb_kbd_translate(struct usb_kbd_pdata *data, unsigned char scancode,
-				unsigned char modifier, int pressed)
+স্থির পূর্ণাঙ্ক usb_kbd_translate(সংরচনা usb_kbd_pdata *data, unsigned বর্ণ scancode,
+				unsigned বর্ণ modifier, পূর্ণাঙ্ক pressed)
 {
 	uint8_t keycode = 0;
 
 	/* Key released */
-	if (pressed == 0) {
+	যদি (pressed == 0) {
 		data->repeat_delay = 0;
-		return 0;
+		প্রত্যাগম 0;
 	}
 
-	if (pressed == 2) {
+	যদি (pressed == 2) {
 		data->repeat_delay++;
-		if (data->repeat_delay < REPEAT_DELAY)
-			return 0;
+		যদি (data->repeat_delay < REPEAT_DELAY)
+			প্রত্যাগম 0;
 
 		data->repeat_delay = REPEAT_DELAY;
 	}
 
 	/* Alphanumeric values */
-	if ((scancode > 3) && (scancode <= 0x1d)) {
+	যদি ((scancode > 3) && (scancode <= 0x1d)) {
 		keycode = scancode - 4 + 'a';
 
-		if (data->flags & USB_KBD_CAPSLOCK)
+		যদি (data->flags & USB_KBD_CAPSLOCK)
 			keycode &= ~CAPITAL_MASK;
 
-		if (modifier & (LEFT_SHIFT | RIGHT_SHIFT)) {
+		যদি (modifier & (বাম_SHIFT | ডান_SHIFT)) {
 			/* Handle CAPSLock + Shift pressed simultaneously */
-			if (keycode & CAPITAL_MASK)
+			যদি (keycode & CAPITAL_MASK)
 				keycode &= ~CAPITAL_MASK;
-			else
+			অন্যথা
 				keycode |= CAPITAL_MASK;
 		}
 	}
 
-	if ((scancode > 0x1d) && (scancode < 0x39)) {
+	যদি ((scancode > 0x1d) && (scancode < 0x39)) {
 		/* Shift pressed */
-		if (modifier & (LEFT_SHIFT | RIGHT_SHIFT))
+		যদি (modifier & (বাম_SHIFT | ডান_SHIFT))
 			keycode = usb_kbd_numkey_shifted[scancode - 0x1e];
-		else
+		অন্যথা
 			keycode = usb_kbd_numkey[scancode - 0x1e];
 	}
 
 	/* Numeric keypad */
-	if ((scancode >= 0x54) && (scancode <= 0x67))
-		keycode = usb_kbd_num_keypad[scancode - 0x54];
+	যদি ((scancode >= 0x54) && (scancode <= 0x67))
+		keycode = usb_kbd_অঙ্ক_keypad[scancode - 0x54];
 
-	if (data->flags & USB_KBD_CTRL)
+	যদি (data->flags & USB_KBD_CTRL)
 		keycode = scancode - 0x3;
 
-	if (pressed == 1) {
-		if (scancode == NUM_LOCK) {
+	যদি (pressed == 1) {
+		যদি (scancode == অঙ্ক_LOCK) {
 			data->flags ^= USB_KBD_NUMLOCK;
-			return 1;
+			প্রত্যাগম 1;
 		}
 
-		if (scancode == CAPS_LOCK) {
+		যদি (scancode == CAPS_LOCK) {
 			data->flags ^= USB_KBD_CAPSLOCK;
-			return 1;
+			প্রত্যাগম 1;
 		}
-		if (scancode == SCROLL_LOCK) {
+		যদি (scancode == SCROLL_LOCK) {
 			data->flags ^= USB_KBD_SCROLLLOCK;
-			return 1;
+			প্রত্যাগম 1;
 		}
 	}
 
 	/* Report keycode if any */
-	if (keycode) {
+	যদি (keycode) {
 		debug("%c", keycode);
 		usb_kbd_put_queue(data, keycode);
-		return 0;
+		প্রত্যাগম 0;
 	}
 
-#ifdef CONFIG_USB_KEYBOARD_FN_KEYS
-	if (scancode < 0x3a || scancode > 0x52 ||
+#ifdef CONFIG_USB_KEYBOARD_FN_চাবিগুলি
+	যদি (scancode < 0x3a || scancode > 0x52 ||
 	    scancode == 0x46 || scancode == 0x47)
-		return 1;
+		প্রত্যাগম 1;
 
 	usb_kbd_put_queue(data, 0x1b);
-	if (scancode < 0x3e) {
+	যদি (scancode < 0x3e) {
 		/* F1 - F4 */
 		usb_kbd_put_queue(data, 0x4f);
 		usb_kbd_put_queue(data, scancode - 0x3a + 'P');
-		return 0;
+		প্রত্যাগম 0;
 	}
 	usb_kbd_put_queue(data, '[');
-	if (scancode < 0x42) {
+	যদি (scancode < 0x42) {
 		/* F5 - F8 */
 		usb_kbd_put_queue(data, '1');
-		if (scancode == 0x3e)
+		যদি (scancode == 0x3e)
 			--scancode;
 		keycode = scancode - 0x3f + '7';
-	} else if (scancode < 0x49) {
+	} অন্যথা যদি (scancode < 0x49) {
 		/* F9 - F12 */
 		usb_kbd_put_queue(data, '2');
-		if (scancode > 0x43)
+		যদি (scancode > 0x43)
 			++scancode;
 		keycode = scancode - 0x42 + '0';
-	} else {
+	} অন্যথা {
 		/*
 		 * INSERT, HOME, PAGE UP, DELETE, END, PAGE DOWN,
 		 * RIGHT, LEFT, DOWN, UP
 		 */
-		keycode = usb_special_keys[scancode - 0x49];
+		keycode = usb_special_চাবিগুলি[scancode - 0x49];
 	}
 	usb_kbd_put_queue(data, keycode);
-	if (scancode < 0x4f && scancode != 0x4a && scancode != 0x4d)
+	যদি (scancode < 0x4f && scancode != 0x4a && scancode != 0x4d)
 		usb_kbd_put_queue(data, '~');
-	return 0;
-#else
+	প্রত্যাগম 0;
+#অন্যথা
 	/* Left, Right, Up, Down */
-	if (scancode > 0x4e && scancode < 0x53) {
+	যদি (scancode > 0x4e && scancode < 0x53) {
 		usb_kbd_put_queue(data, 0x1b);
 		usb_kbd_put_queue(data, '[');
-		usb_kbd_put_queue(data, usb_special_keys[scancode - 0x4f]);
-		return 0;
+		usb_kbd_put_queue(data, usb_special_চাবিগুলি[scancode - 0x4f]);
+		প্রত্যাগম 0;
 	}
-	return 1;
+	প্রত্যাগম 1;
 #endif /* CONFIG_USB_KEYBOARD_FN_KEYS */
 }
 
-static uint32_t usb_kbd_service_key(struct usb_device *dev, int i, int up)
+স্থির uint32_t usb_kbd_service_চাবি(সংরচনা usb_device *dev, পূর্ণাঙ্ক i, পূর্ণাঙ্ক up)
 {
 	uint32_t res = 0;
-	struct usb_kbd_pdata *data = dev->privptr;
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
 	uint8_t *new;
 	uint8_t *old;
 
-	if (up) {
+	যদি (up) {
 		new = data->old;
 		old = data->new;
-	} else {
+	} অন্যথা {
 		new = data->new;
 		old = data->old;
 	}
 
-	if ((old[i] > 3) &&
+	যদি ((old[i] > 3) &&
 	    (memscan(new + 2, old[i], USB_KBD_BOOT_REPORT_SIZE - 2) ==
 			new + USB_KBD_BOOT_REPORT_SIZE)) {
 		res |= usb_kbd_translate(data, old[i], data->new[0], up);
 	}
 
-	return res;
+	প্রত্যাগম res;
 }
 
 /* Interrupt service routine */
-static int usb_kbd_irq_worker(struct usb_device *dev)
+স্থির পূর্ণাঙ্ক usb_kbd_irq_worker(সংরচনা usb_device *dev)
 {
-	struct usb_kbd_pdata *data = dev->privptr;
-	int i, res = 0;
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
+	পূর্ণাঙ্ক i, res = 0;
 
 	/* No combo key pressed */
-	if (data->new[0] == 0x00)
+	যদি (data->new[0] == 0x00)
 		data->flags &= ~USB_KBD_CTRL;
 	/* Left or Right Ctrl pressed */
-	else if ((data->new[0] == LEFT_CNTR) || (data->new[0] == RIGHT_CNTR))
+	অন্যথা যদি ((data->new[0] == বাম_CNTR) || (data->new[0] == ডান_CNTR))
 		data->flags |= USB_KBD_CTRL;
 
-	for (i = 2; i < USB_KBD_BOOT_REPORT_SIZE; i++) {
-		res |= usb_kbd_service_key(dev, i, 0);
-		res |= usb_kbd_service_key(dev, i, 1);
+	প্রতি (i = 2; i < USB_KBD_BOOT_REPORT_SIZE; i++) {
+		res |= usb_kbd_service_চাবি(dev, i, 0);
+		res |= usb_kbd_service_চাবি(dev, i, 1);
 	}
 
 	/* Key is still pressed */
-	if ((data->new[2] > 3) && (data->old[2] == data->new[2]))
+	যদি ((data->new[2] > 3) && (data->old[2] == data->new[2]))
 		res |= usb_kbd_translate(data, data->new[2], data->new[0], 2);
 
-	if (res == 1)
+	যদি (res == 1)
 		usb_kbd_setled(dev);
 
 	memcpy(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE);
 
-	return 1;
+	প্রত্যাগম 1;
 }
 
 /* Keyboard interrupt handler */
-static int usb_kbd_irq(struct usb_device *dev)
+স্থির পূর্ণাঙ্ক usb_kbd_irq(সংরচনা usb_device *dev)
 {
-	if ((dev->irq_status != 0) ||
+	যদি ((dev->irq_status != 0) ||
 	    (dev->irq_act_len != USB_KBD_BOOT_REPORT_SIZE)) {
 		debug("USB KBD: Error %lX, len %d\n",
 		      dev->irq_status, dev->irq_act_len);
-		return 1;
+		প্রত্যাগম 1;
 	}
 
-	return usb_kbd_irq_worker(dev);
+	প্রত্যাগম usb_kbd_irq_worker(dev);
 }
 
 /* Interrupt polling */
-static inline void usb_kbd_poll_for_event(struct usb_device *dev)
+স্থির অন্তঃস্থ শূন্য usb_kbd_poll_for_event(সংরচনা usb_device *dev)
 {
-#if defined(CONFIG_SYS_USB_EVENT_POLL)
-	struct usb_kbd_pdata *data = dev->privptr;
+#যদি defined(CONFIG_SYS_USB_EVENT_POLL)
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
 
 	/* Submit an interrupt transfer request */
-	if (usb_int_msg(dev, data->intpipe, &data->new[0],
+	যদি (usb_int_বার্তা(dev, data->intpipe, &data->new[0],
 			data->intpktsize, data->intinterval, true) >= 0)
 		usb_kbd_irq_worker(dev);
-#elif defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) || \
+#নোচেদ্যদি defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) || \
       defined(CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE)
-#if defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
-	struct usb_interface *iface;
-	struct usb_kbd_pdata *data = dev->privptr;
+#যদি defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
+	সংরচনা usb_interface *iface;
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
 	iface = &dev->config.if_desc[data->ifnum];
-	usb_get_report(dev, iface->desc.bInterfaceNumber,
+	usb_get_report(dev, iface->desc.b_Interface_সংখ্যা,
 		       1, 0, data->new, USB_KBD_BOOT_REPORT_SIZE);
-	if (memcmp(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE)) {
+	যদি (memcmp(data->old, data->new, USB_KBD_BOOT_REPORT_SIZE)) {
 		usb_kbd_irq_worker(dev);
-#else
-	struct usb_kbd_pdata *data = dev->privptr;
-	if (poll_int_queue(dev, data->intq)) {
+#অন্যথা
+	সংরচনা usb_kbd_pdata *data = dev->privptr;
+	যদি (poll_int_queue(dev, data->intq)) {
 		usb_kbd_irq_worker(dev);
 		/* We've consumed all queued int packets, create new */
 		destroy_int_queue(dev, data->intq);
@@ -404,7 +404,7 @@ static inline void usb_kbd_poll_for_event(struct usb_device *dev)
 #endif
 		data->last_report = get_timer(0);
 	/* Repeat last usb hid report every REPEAT_RATE ms for keyrepeat */
-	} else if (data->last_report != -1 &&
+	} অন্যথা যদি (data->last_report != -1 &&
 		   get_timer(data->last_report) > REPEAT_RATE) {
 		usb_kbd_irq_worker(dev);
 		data->last_report = get_timer(0);
@@ -413,11 +413,11 @@ static inline void usb_kbd_poll_for_event(struct usb_device *dev)
 }
 
 /* test if a character is in the queue */
-static int usb_kbd_testc(struct stdio_dev *sdev)
+স্থির পূর্ণাঙ্ক usb_kbd_testc(সংরচনা stdio_dev *sdev)
 {
-	struct stdio_dev *dev;
-	struct usb_device *usb_kbd_dev;
-	struct usb_kbd_pdata *data;
+	সংরচনা stdio_dev *dev;
+	সংরচনা usb_device *usb_kbd_dev;
+	সংরচনা usb_kbd_pdata *data;
 
 	/*
 	 * Polling the keyboard for an event can take dozens of milliseconds.
@@ -426,13 +426,13 @@ static int usb_kbd_testc(struct stdio_dev *sdev)
 	 */
 	unsigned long poll_delay = CONFIG_SYS_HZ / 50;
 
-#if defined(CONFIG_CMD_NET) && !defined(CONFIG_NET_LWIP)
+#যদি defined(CONFIG_CMD_NET) && !defined(CONFIG_NET_LWIP)
 	/*
 	 * If net_busy_flag is 1, NET transfer is running,
 	 * then we check key-pressed every second (first check may be
 	 * less than 1 second) to improve TFTP booting performance.
 	 */
-	if (net_busy_flag)
+	যদি (net_busy_flag)
 		poll_delay = CONFIG_SYS_HZ;
 #endif
 
@@ -440,102 +440,102 @@ static int usb_kbd_testc(struct stdio_dev *sdev)
 	/*
 	 * Skip delaying polls if a test requests it.
 	 */
-	if (state_get_skip_delays())
+	যদি (state_get_skip_delays())
 		poll_delay = 0;
 #endif
 
 	dev = stdio_get_by_name(sdev->name);
-	usb_kbd_dev = (struct usb_device *)dev->priv;
+	usb_kbd_dev = (সংরচনা usb_device *)dev->priv;
 	data = usb_kbd_dev->privptr;
 
-	if (get_timer(kbd_testc_tms) >= poll_delay) {
+	যদি (get_timer(kbd_testc_tms) >= poll_delay) {
 		usb_kbd_poll_for_event(usb_kbd_dev);
 		kbd_testc_tms = get_timer(0);
 	}
 
-	return !(data->usb_in_pointer == data->usb_out_pointer);
+	প্রত্যাগম !(data->usb_in_pointer == data->usb_out_pointer);
 }
 
 /* gets the character from the queue */
-static int usb_kbd_getc(struct stdio_dev *sdev)
+স্থির পূর্ণাঙ্ক usb_kbd_getc(সংরচনা stdio_dev *sdev)
 {
-	struct stdio_dev *dev;
-	struct usb_device *usb_kbd_dev;
-	struct usb_kbd_pdata *data;
+	সংরচনা stdio_dev *dev;
+	সংরচনা usb_device *usb_kbd_dev;
+	সংরচনা usb_kbd_pdata *data;
 
 	dev = stdio_get_by_name(sdev->name);
-	usb_kbd_dev = (struct usb_device *)dev->priv;
+	usb_kbd_dev = (সংরচনা usb_device *)dev->priv;
 	data = usb_kbd_dev->privptr;
 
-	while (data->usb_in_pointer == data->usb_out_pointer) {
+	যাবত্ (data->usb_in_pointer == data->usb_out_pointer) {
 		schedule();
 		usb_kbd_poll_for_event(usb_kbd_dev);
 	}
 
-	if (data->usb_out_pointer == USB_KBD_BUFFER_LEN - 1)
+	যদি (data->usb_out_pointer == USB_KBD_BUFFER_LEN - 1)
 		data->usb_out_pointer = 0;
-	else
+	অন্যথা
 		data->usb_out_pointer++;
 
-	return data->usb_kbd_buffer[data->usb_out_pointer];
+	প্রত্যাগম data->usb_kbd_buffer[data->usb_out_pointer];
 }
 
 /* probes the USB device dev for keyboard type. */
-static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
+স্থির পূর্ণাঙ্ক usb_kbd_probe_dev(সংরচনা usb_device *dev, unsigned পূর্ণাঙ্ক ifnum)
 {
-	struct usb_interface *iface;
-	struct usb_endpoint_descriptor *ep;
-	struct usb_kbd_pdata *data;
-	unsigned int quirks = 0;
-	int epNum;
+	সংরচনা usb_interface *iface;
+	সংরচনা usb_endpoint_descriptor *ep;
+	সংরচনা usb_kbd_pdata *data;
+	unsigned পূর্ণাঙ্ক quirks = 0;
+	পূর্ণাঙ্ক ep_অঙ্ক;
 
-	if (dev->descriptor.bNumConfigurations != 1)
-		return 0;
+	যদি (dev->descriptor.b_অঙ্ক_Configurations != 1)
+		প্রত্যাগম 0;
 
 	iface = &dev->config.if_desc[ifnum];
 
-	if (iface->desc.bInterfaceClass != USB_CLASS_HID)
-		return 0;
+	যদি (iface->desc.bInterfaceClass != USB_CLASS_HID)
+		প্রত্যাগম 0;
 
-	if (iface->desc.bInterfaceSubClass != USB_SUB_HID_BOOT)
-		return 0;
+	যদি (iface->desc.bInterfaceSubClass != USB_SUB_HID_BOOT)
+		প্রত্যাগম 0;
 
-	if (iface->desc.bInterfaceProtocol != USB_PROT_HID_KEYBOARD)
-		return 0;
+	যদি (iface->desc.bInterfaceProtocol != USB_PROT_HID_KEYBOARD)
+		প্রত্যাগম 0;
 
-	for (epNum = 0; epNum < iface->desc.bNumEndpoints; epNum++) {
-		ep = &iface->ep_desc[epNum];
+	প্রতি (ep_অঙ্ক = 0; ep_অঙ্ক < iface->desc.b_অঙ্ক_Endpoints; ep_অঙ্ক++) {
+		ep = &iface->ep_desc[ep_অঙ্ক];
 
 		/* Check if endpoint is interrupt IN endpoint */
-		if ((ep->bmAttributes & 3) != 3)
-			continue;
+		যদি ((ep->bmAttributes & 3) != 3)
+			অনুবর্ত;
 
-		if (ep->bEndpointAddress & 0x80)
-			break;
+		যদি (ep->bEndpointAddress & 0x80)
+			ভঙ্গ;
 	}
 
-	if (epNum == iface->desc.bNumEndpoints)
-		return 0;
+	যদি (ep_অঙ্ক == iface->desc.b_অঙ্ক_Endpoints)
+		প্রত্যাগম 0;
 
 	debug("USB KBD: found interrupt EP: 0x%x\n", ep->bEndpointAddress);
 
-	switch (dev->descriptor.idVendor) {
-	case USB_VENDOR_ID_APPLE:
-	case USB_VENDOR_ID_KEYCHRON:
+	বিকল্প (dev->descriptor.idVendor) {
+	পক্ষ USB_VENDOR_ID_APPLE:
+	পক্ষ USB_VENDOR_ID_KEYCHRON:
 		quirks |= USB_HID_QUIRK_POLL_NO_REPORT_IDLE;
-		break;
-	default:
-		break;
+		ভঙ্গ;
+	স্বভাব:
+		ভঙ্গ;
 	}
 
-	data = malloc(sizeof(struct usb_kbd_pdata));
-	if (!data) {
+	data = malloc(পরিমাণ(সংরচনা usb_kbd_pdata));
+	যদি (!data) {
 		printf("USB KBD: Error allocating private data\n");
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/* Clear private data */
-	memset(data, 0, sizeof(struct usb_kbd_pdata));
+	memset(data, 0, পরিমাণ(সংরচনা usb_kbd_pdata));
 
 	/* allocate input buffer aligned and sized to USB DMA alignment */
 	data->new = memalign(USB_DMA_MINALIGN,
@@ -557,143 +557,143 @@ static int usb_kbd_probe_dev(struct usb_device *dev, unsigned int ifnum)
 
 	/* We found a USB Keyboard, install it. */
 	debug("USB KBD: set boot protocol\n");
-	usb_set_protocol(dev, iface->desc.bInterfaceNumber, 0);
+	usb_set_protocol(dev, iface->desc.b_Interface_সংখ্যা, 0);
 
-#if !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) && \
+#যদি !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP) && \
     !defined(CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE)
 	debug("USB KBD: set idle interval...\n");
-	usb_set_idle(dev, iface->desc.bInterfaceNumber, REPEAT_RATE / 4, 0);
-#else
+	usb_set_idle(dev, iface->desc.b_Interface_সংখ্যা, REPEAT_RATE / 4, 0);
+#অন্যথা
 	debug("USB KBD: set idle interval=0...\n");
-	usb_set_idle(dev, iface->desc.bInterfaceNumber, 0, 0);
+	usb_set_idle(dev, iface->desc.b_Interface_সংখ্যা, 0, 0);
 #endif
 
 	/*
 	 * Apple and Keychron keyboards do not report the device state. Reports
 	 * are only returned during key presses.
 	 */
-	if (quirks & USB_HID_QUIRK_POLL_NO_REPORT_IDLE) {
+	যদি (quirks & USB_HID_QUIRK_POLL_NO_REPORT_IDLE) {
 		debug("USB KBD: quirk: skip testing device state\n");
-		return 1;
+		প্রত্যাগম 1;
 	}
 	debug("USB KBD: enable interrupt pipe...\n");
 #ifdef CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE
 	data->intq = create_int_queue(dev, data->intpipe, 1,
 				      USB_KBD_BOOT_REPORT_SIZE, data->new,
 				      data->intinterval);
-	if (!data->intq) {
-#elif defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
-	if (usb_get_report(dev, iface->desc.bInterfaceNumber,
+	যদি (!data->intq) {
+#নোচেদ্যদি defined(CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP)
+	যদি (usb_get_report(dev, iface->desc.b_Interface_সংখ্যা,
 			   1, 0, data->new, USB_KBD_BOOT_REPORT_SIZE) < 0) {
-#else
-	if (usb_int_msg(dev, data->intpipe, data->new, data->intpktsize,
+#অন্যথা
+	যদি (usb_int_বার্তা(dev, data->intpipe, data->new, data->intpktsize,
 			data->intinterval, false) < 0) {
 #endif
 		printf("Failed to get keyboard state from device %04x:%04x\n",
 		       dev->descriptor.idVendor, dev->descriptor.idProduct);
 		/* Abort, we don't want to use that non-functional keyboard. */
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/* Success. */
-	return 1;
+	প্রত্যাগম 1;
 }
 
-static int probe_usb_keyboard(struct usb_device *dev)
+স্থির পূর্ণাঙ্ক probe_usb_keyboard(সংরচনা usb_device *dev)
 {
-	char *stdinname;
-	struct stdio_dev usb_kbd_dev;
-	unsigned int ifnum;
-	unsigned int max_ifnum = min((unsigned int)USB_MAX_ACTIVE_INTERFACES,
-				     (unsigned int)dev->config.no_of_if);
-	int error;
+	বর্ণ *stdinname;
+	সংরচনা stdio_dev usb_kbd_dev;
+	unsigned পূর্ণাঙ্ক ifnum;
+	unsigned পূর্ণাঙ্ক max_ifnum = min((unsigned পূর্ণাঙ্ক)USB_MAX_ACTIVE_INTERFACES,
+				     (unsigned পূর্ণাঙ্ক)dev->config.no_of_if);
+	পূর্ণাঙ্ক error;
 
 	/* Try probing the keyboard */
-	for (ifnum = 0; ifnum < max_ifnum; ifnum++) {
-		if (usb_kbd_probe_dev(dev, ifnum) == 1)
-			break;
+	প্রতি (ifnum = 0; ifnum < max_ifnum; ifnum++) {
+		যদি (usb_kbd_probe_dev(dev, ifnum) == 1)
+			ভঙ্গ;
 	}
-	if (ifnum >= max_ifnum)
-		return -ENOENT;
+	যদি (ifnum >= max_ifnum)
+		প্রত্যাগম -ENOENT;
 
 	/* Register the keyboard */
 	debug("USB KBD: register.\n");
-	memset(&usb_kbd_dev, 0, sizeof(struct stdio_dev));
+	memset(&usb_kbd_dev, 0, পরিমাণ(সংরচনা stdio_dev));
 	strcpy(usb_kbd_dev.name, DEVNAME);
-	usb_kbd_dev.flags = DEV_FLAGS_INPUT | DEV_FLAGS_DM;
+	usb_kbd_dev.flags = DEV_FLAGS_প্রবেশ | DEV_FLAGS_DM;
 	usb_kbd_dev.getc = usb_kbd_getc;
 	usb_kbd_dev.tstc = usb_kbd_testc;
-	usb_kbd_dev.priv = (void *)dev;
+	usb_kbd_dev.priv = (শূন্য *)dev;
 	error = stdio_register(&usb_kbd_dev);
-	if (error)
-		return error;
+	যদি (error)
+		প্রত্যাগম error;
 
 	stdinname = env_get("stdin");
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	if (strstr(stdinname, DEVNAME) != NULL) {
+#যদি CONFIG_IS_ENABLED(CONSOLE_MUX)
+	যদি (strstr(stdinname, DEVNAME) != রিক্ত) {
 		error = iomux_doenv(stdin, stdinname);
-		if (error)
-			return error;
+		যদি (error)
+			প্রত্যাগম error;
 	}
-#else
+#অন্যথা
 	/* Check if this is the standard input device. */
-	if (!strcmp(stdinname, DEVNAME)) {
+	যদি (!strcmp(stdinname, DEVNAME)) {
 		/* Reassign the console */
-		if (overwrite_console())
-			return 1;
+		যদি (overwrite_console())
+			প্রত্যাগম 1;
 
 		error = console_assign(stdin, DEVNAME);
-		if (error)
-			return error;
+		যদি (error)
+			প্রত্যাগম error;
 	}
 #endif
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int usb_kbd_probe(struct udevice *dev)
+স্থির পূর্ণাঙ্ক usb_kbd_probe(সংরচনা udevice *dev)
 {
-	struct usb_device *udev = dev_get_parent_priv(dev);
+	সংরচনা usb_device *udev = dev_get_parent_priv(dev);
 
-	return probe_usb_keyboard(udev);
+	প্রত্যাগম probe_usb_keyboard(udev);
 }
 
-static int usb_kbd_remove(struct udevice *dev)
+স্থির পূর্ণাঙ্ক usb_kbd_remove(সংরচনা udevice *dev)
 {
-	struct usb_device *udev = dev_get_parent_priv(dev);
-	struct usb_kbd_pdata *data;
-	struct stdio_dev *sdev;
-	int ret;
+	সংরচনা usb_device *udev = dev_get_parent_priv(dev);
+	সংরচনা usb_kbd_pdata *data;
+	সংরচনা stdio_dev *sdev;
+	পূর্ণাঙ্ক ret;
 
 	sdev = stdio_get_by_name(DEVNAME);
-	if (!sdev) {
+	যদি (!sdev) {
 		ret = -ENXIO;
-		goto err;
+		গচ্ছ err;
 	}
 	data = udev->privptr;
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	if (iomux_replace_device(stdin, DEVNAME, "nulldev")) {
+#যদি CONFIG_IS_ENABLED(CONSOLE_MUX)
+	যদি (iomux_replace_device(stdin, DEVNAME, "nulldev")) {
 		ret = -ENOLINK;
-		goto err;
+		গচ্ছ err;
 	}
 #endif
-	if (stdio_deregister_dev(sdev, true)) {
+	যদি (stdio_deregister_dev(sdev, true)) {
 		ret = -EPERM;
-		goto err;
+		গচ্ছ err;
 	}
 #ifdef CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE
 	destroy_int_queue(udev, data->intq);
 #endif
-	free(data->new);
-	free(data);
+	মুক্ত(data->new);
+	মুক্ত(data);
 
-	return 0;
+	প্রত্যাগম 0;
 err:
 	printf("%s: warning, ret=%d", __func__, ret);
-	return ret;
+	প্রত্যাগম ret;
 }
 
-static const struct udevice_id usb_kbd_ids[] = {
+স্থির ধ্রুব সংরচনা udevice_id usb_kbd_ids[] = {
 	{ .compatible = "usb-keyboard" },
 	{ }
 };
@@ -706,7 +706,7 @@ U_BOOT_DRIVER(usb_kbd) = {
 	.remove = usb_kbd_remove,
 };
 
-static const struct usb_device_id kbd_id_table[] = {
+স্থির ধ্রুব সংরচনা usb_device_id kbd_id_table[] = {
 	{
 		.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS |
 			USB_DEVICE_ID_MATCH_INT_SUBCLASS |

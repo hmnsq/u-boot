@@ -6,15 +6,15 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <linux/kernel.h>
-#include <linux/string.h>
-#include <eeprom_layout.h>
-#include <eeprom_field.h>
+#অন্তর্ভাব <linux/kernel.h>
+#অন্তর্ভাব <linux/string.h>
+#অন্তর্ভাব <eeprom_layout.h>
+#অন্তর্ভাব <eeprom_field.h>
 
 #define NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
 
-struct eeprom_field layout_unknown[1] = {
-	{ NO_LAYOUT_FIELDS, 256, NULL, eeprom_field_print_bin,
+সংরচনা eeprom_field layout_unknown[1] = {
+	{ NO_LAYOUT_FIELDS, 256, রিক্ত, eeprom_field_print_bin,
 				       eeprom_field_update_bin },
 };
 
@@ -24,9 +24,9 @@ struct eeprom_field layout_unknown[1] = {
  *
  * Returns: the detected layout version.
  */
-__weak int eeprom_layout_detect(unsigned char *data)
+__weak পূর্ণাঙ্ক eeprom_layout_detect(unsigned বর্ণ *data)
 {
-	return LAYOUT_VERSION_UNRECOGNIZED;
+	প্রত্যাগম LAYOUT_VERSION_UNRECOGNIZED;
 }
 
 /*
@@ -34,25 +34,25 @@ __weak int eeprom_layout_detect(unsigned char *data)
  * @layout:		A pointer to an existing struct layout.
  * @layout_version:	The version number of the desired layout
  */
-__weak void __eeprom_layout_assign(struct eeprom_layout *layout,
-				   int layout_version)
+__weak শূন্য __eeprom_layout_assign(সংরচনা eeprom_layout *layout,
+				   পূর্ণাঙ্ক layout_version)
 {
 	layout->fields = layout_unknown;
-	layout->num_of_fields = ARRAY_SIZE(layout_unknown);
+	layout->অঙ্ক_of_fields = ARRAY_SIZE(layout_unknown);
 }
-void eeprom_layout_assign(struct eeprom_layout *layout, int layout_version) \
+শূন্য eeprom_layout_assign(সংরচনা eeprom_layout *layout, পূর্ণাঙ্ক layout_version) \
 		__attribute__((weak, alias("__eeprom_layout_assign")));
 
 /*
  * eeprom_layout_print() - print the layout and the data which is assigned to it
  * @layout: A pointer to an existing struct layout.
  */
-static void eeprom_layout_print(const struct eeprom_layout *layout)
+স্থির শূন্য eeprom_layout_print(ধ্রুব সংরচনা eeprom_layout *layout)
 {
-	int i;
-	struct eeprom_field *fields = layout->fields;
+	পূর্ণাঙ্ক i;
+	সংরচনা eeprom_field *fields = layout->fields;
 
-	for (i = 0; i < layout->num_of_fields; i++)
+	প্রতি (i = 0; i < layout->অঙ্ক_of_fields; i++)
 		fields[i].print(&fields[i]);
 }
 
@@ -64,18 +64,18 @@ static void eeprom_layout_print(const struct eeprom_layout *layout)
  *
  * Returns: a pointer to the found field or NULL on failure.
  */
-struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
-					      char *field_name, bool warn)
+সংরচনা eeprom_field *eeprom_layout_find_field(সংরচনা eeprom_layout *layout,
+					      বর্ণ *field_name, bool warn)
 {
-	for (int i = 0; i < layout->num_of_fields; i++)
-		if (layout->fields[i].name != RESERVED_FIELDS &&
+	প্রতি (পূর্ণাঙ্ক i = 0; i < layout->অঙ্ক_of_fields; i++)
+		যদি (layout->fields[i].name != RESERVED_FIELDS &&
 		    !strcmp(layout->fields[i].name, field_name))
-			return &layout->fields[i];
+			প্রত্যাগম &layout->fields[i];
 
-	if (warn)
+	যদি (warn)
 		printf("No such field '%s'\n", field_name);
 
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
 /*
@@ -86,27 +86,27 @@ struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
  *
  * Returns: 0 on success, negative error value on failure.
  */
-static int eeprom_layout_update_field(struct eeprom_layout *layout,
-				      char *field_name, char *new_data)
+স্থির পূর্ণাঙ্ক eeprom_layout_update_field(সংরচনা eeprom_layout *layout,
+				      বর্ণ *field_name, বর্ণ *new_data)
 {
-	struct eeprom_field *field;
-	int err;
+	সংরচনা eeprom_field *field;
+	পূর্ণাঙ্ক err;
 
-	if (new_data == NULL)
-		return 0;
+	যদি (new_data == রিক্ত)
+		প্রত্যাগম 0;
 
-	if (field_name == NULL)
-		return -1;
+	যদি (field_name == রিক্ত)
+		প্রত্যাগম -1;
 
 	field = eeprom_layout_find_field(layout, field_name, true);
-	if (field == NULL)
-		return -1;
+	যদি (field == রিক্ত)
+		প্রত্যাগম -1;
 
 	err = field->update(field, new_data);
-	if (err)
+	যদি (err)
 		printf("Invalid data for field %s\n", field_name);
 
-	return err;
+	প্রত্যাগম err;
 }
 
 /*
@@ -117,14 +117,14 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
  * @buf_size:	Size of buf in bytes.
  * @layout version: The version number of the layout.
  */
-void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
-			 unsigned int buf_size, int layout_version)
+শূন্য eeprom_layout_setup(সংরচনা eeprom_layout *layout, unsigned বর্ণ *buf,
+			 unsigned পূর্ণাঙ্ক buf_size, পূর্ণাঙ্ক layout_version)
 {
-	int i;
+	পূর্ণাঙ্ক i;
 
-	if (layout_version == LAYOUT_VERSION_AUTODETECT)
+	যদি (layout_version == LAYOUT_VERSION_AUTODETECT)
 		layout->layout_version = eeprom_layout_detect(buf);
-	else
+	অন্যথা
 		layout->layout_version = layout_version;
 
 	layout->data_size = buf_size;
@@ -133,7 +133,7 @@ void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
 
 	eeprom_layout_assign(layout, layout_version);
 	layout->data = buf;
-	for (i = 0; i < layout->num_of_fields; i++) {
+	প্রতি (i = 0; i < layout->অঙ্ক_of_fields; i++) {
 		layout->fields[i].buf = buf;
 		buf += layout->fields[i].size;
 	}
