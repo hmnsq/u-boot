@@ -4,17 +4,17 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY	LOGC_BLOBLIST
+#परिभाषय LOG_CATEGORY	LOGC_BLOBLIST
 
-#include <bloblist.h>
-#include <display_options.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <tables_csum.h>
-#include <asm/global_data.h>
-#include <u-boot/crc.h>
+#अन्तर्भाव <bloblist.h>
+#अन्तर्भाव <display_options.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <tables_csum.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <u-boot/crc.h>
 
 /*
  * A bloblist is a single contiguous chunk of memory with a header
@@ -28,21 +28,21 @@
  * of the bloblist itself or the blob header.
  */
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 
-static struct tag_name {
-	enum bloblist_tag_t tag;
-	const char *name;
-} tag_name[] = {
+स्थिर संरचना चिह्नकम्_name {
+	गणना bloblist_चिह्नकम्_t चिह्नकम्;
+	ध्रुव वर्ण *name;
+} चिह्नकम्_name[] = {
 	{ BLOBLISTT_VOID, "(void)" },
 
 	/* BLOBLISTT_AREA_FIRMWARE_TOP */
 	{ BLOBLISTT_CONTROL_FDT, "Control FDT" },
-	{ BLOBLISTT_HOB_BLOCK, "HOB block" },
+	{ BLOBLISTT_HOB_खण्डम्, "HOB block" },
 	{ BLOBLISTT_HOB_LIST, "HOB list" },
 	{ BLOBLISTT_ACPI_TABLES, "ACPI tables for x86" },
 	{ BLOBLISTT_TPM_EVLOG, "TPM event log defined by TCG EFI" },
-	{ BLOBLISTT_TPM_CRB_BASE, "TPM Command Response Buffer address" },
+	{ BLOBLISTT_TPM_CRB_आधारः, "TPM Command Response Buffer address" },
 	{ BLOBLISTT_FDT_OVERLAY, "DT overlay" },
 
 	/* BLOBLISTT_AREA_FIRMWARE */
@@ -66,243 +66,243 @@ static struct tag_name {
 	/* BLOBLISTT_VENDOR_AREA */
 };
 
-const char *bloblist_tag_name(enum bloblist_tag_t tag)
+ध्रुव वर्ण *bloblist_चिह्नकम्_name(गणना bloblist_चिह्नकम्_t चिह्नकम्)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; i < ARRAY_SIZE(tag_name); i++) {
-		if (tag_name[i].tag == tag)
-			return tag_name[i].name;
+	प्रति (i = 0; i < ARRAY_आकार(चिह्नकम्_name); i++) {
+		यदि (चिह्नकम्_name[i].चिह्नकम् == चिह्नकम्)
+			प्रत्यागम चिह्नकम्_name[i].name;
 	}
 
-	return "invalid";
+	प्रत्यागम "invalid";
 }
 
-static struct bloblist_rec *bloblist_first_blob(struct bloblist_hdr *hdr)
+स्थिर संरचना bloblist_rec *bloblist_first_blob(संरचना bloblist_hdr *hdr)
 {
-	if (hdr->used_size <= hdr->hdr_size)
-		return NULL;
-	return (struct bloblist_rec *)((void *)hdr + hdr->hdr_size);
+	यदि (hdr->प्रयुक्तम्_आकार <= hdr->hdr_आकार)
+		प्रत्यागम रिक्त;
+	प्रत्यागम (संरचना bloblist_rec *)((शून्य *)hdr + hdr->hdr_आकार);
 }
 
-static inline uint rec_hdr_size(struct bloblist_rec *rec)
+स्थिर अन्तःस्थ uint rec_hdr_आकार(संरचना bloblist_rec *rec)
 {
-	return (rec->tag_and_hdr_size & BLOBLISTR_HDR_SIZE_MASK) >>
-		BLOBLISTR_HDR_SIZE_SHIFT;
+	प्रत्यागम (rec->चिह्नकम्_and_hdr_आकार & BLOBLISTR_HDR_आकार_आवरणम्) >>
+		BLOBLISTR_HDR_आकार_सरणम्;
 }
 
-static inline uint rec_tag(struct bloblist_rec *rec)
+स्थिर अन्तःस्थ uint rec_चिह्नकम्(संरचना bloblist_rec *rec)
 {
-	return (rec->tag_and_hdr_size & BLOBLISTR_TAG_MASK) >>
-		BLOBLISTR_TAG_SHIFT;
+	प्रत्यागम (rec->चिह्नकम्_and_hdr_आकार & BLOBLISTR_चिह्नकम्_आवरणम्) >>
+		BLOBLISTR_चिह्नकम्_सरणम्;
 }
 
-static inline void void_blob(struct bloblist_rec *rec)
+स्थिर अन्तःस्थ शून्य void_blob(संरचना bloblist_rec *rec)
 {
-	if (rec_tag(rec) == BLOBLISTT_VOID)
-		return;
-	rec->tag_and_hdr_size = BLOBLISTT_VOID |
-				sizeof(*rec) << BLOBLISTR_HDR_SIZE_SHIFT;
+	यदि (rec_चिह्नकम्(rec) == BLOBLISTT_VOID)
+		प्रत्यागम;
+	rec->चिह्नकम्_and_hdr_आकार = BLOBLISTT_VOID |
+				परिमाण(*rec) << BLOBLISTR_HDR_आकार_सरणम्;
 }
 
-static inline struct bloblist_rec *rec_from_blob(void *blob)
+स्थिर अन्तःस्थ संरचना bloblist_rec *rec_from_blob(शून्य *blob)
 {
-	return (blob - sizeof(struct bloblist_rec));
+	प्रत्यागम (blob - परिमाण(संरचना bloblist_rec));
 }
 
-static ulong bloblist_blob_end_ofs(struct bloblist_hdr *hdr,
-				   struct bloblist_rec *rec)
+स्थिर ulong bloblist_blob_अन्तः_ofs(संरचना bloblist_hdr *hdr,
+				   संरचना bloblist_rec *rec)
 {
-	ulong offset;
+	ulong विस्थापनम्;
 
-	offset = (void *)rec - (void *)hdr;
+	विस्थापनम् = (शून्य *)rec - (शून्य *)hdr;
 	/*
 	 * The data section of next TE should start from an address aligned
 	 * to 1 << hdr->align_log2.
 	 */
-	offset += rec_hdr_size(rec) + rec->size;
-	offset = round_up(offset + rec_hdr_size(rec), 1 << hdr->align_log2);
-	offset -= rec_hdr_size(rec);
+	विस्थापनम् += rec_hdr_आकार(rec) + rec->आकार;
+	विस्थापनम् = आवर्तनम्_ऊर्ध्वम्(विस्थापनम् + rec_hdr_आकार(rec), 1 << hdr->align_log2);
+	विस्थापनम् -= rec_hdr_आकार(rec);
 
-	return offset;
+	प्रत्यागम विस्थापनम्;
 }
 
-static struct bloblist_rec *bloblist_next_blob(struct bloblist_hdr *hdr,
-					       struct bloblist_rec *rec)
+स्थिर संरचना bloblist_rec *bloblist_अग्र_blob(संरचना bloblist_hdr *hdr,
+					       संरचना bloblist_rec *rec)
 {
-	ulong offset = bloblist_blob_end_ofs(hdr, rec);
+	ulong विस्थापनम् = bloblist_blob_अन्तः_ofs(hdr, rec);
 
-	if (offset >= hdr->used_size)
-		return NULL;
-	return (struct bloblist_rec *)((void *)hdr + offset);
+	यदि (विस्थापनम् >= hdr->प्रयुक्तम्_आकार)
+		प्रत्यागम रिक्त;
+	प्रत्यागम (संरचना bloblist_rec *)((शून्य *)hdr + विस्थापनम्);
 }
 
-#define foreach_rec(_rec, _hdr) \
-	for (_rec = bloblist_first_blob(_hdr); \
+#परिभाषय foreach_rec(_rec, _hdr) \
+	प्रति (_rec = bloblist_first_blob(_hdr); \
 	     _rec; \
-	     _rec = bloblist_next_blob(_hdr, _rec))
+	     _rec = bloblist_अग्र_blob(_hdr, _rec))
 
-static struct bloblist_rec *bloblist_findrec(uint tag)
+स्थिर संरचना bloblist_rec *bloblist_findrec(uint चिह्नकम्)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_rec *rec;
 
-	if (!hdr)
-		return NULL;
+	यदि (!hdr)
+		प्रत्यागम रिक्त;
 
 	foreach_rec(rec, hdr) {
-		if (rec_tag(rec) == tag)
-			return rec;
+		यदि (rec_चिह्नकम्(rec) == चिह्नकम्)
+			प्रत्यागम rec;
 	}
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static int bloblist_addrec(uint tag, int size, int align_log2,
-			   struct bloblist_rec **recp)
+स्थिर पूर्णाङ्क bloblist_addrec(uint चिह्नकम्, पूर्णाङ्क आकार, पूर्णाङ्क align_log2,
+			   संरचना bloblist_rec **recp)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
-	phys_addr_t data_start, aligned_start;
-	phys_size_t new_alloced;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_rec *rec;
+	phys_addr_t दत्त_start, aligned_start;
+	phys_आकार_t new_alloced;
 
-	if (!align_log2)
+	यदि (!align_log2)
 		align_log2 = BLOBLIST_BLOB_ALIGN_LOG2;
 
 	/* Figure out where the new data will start */
-	data_start = map_to_sysmem(hdr) + hdr->used_size + sizeof(*rec);
+	दत्त_start = map_गन्तव्यम्_sysmem(hdr) + hdr->प्रयुक्तम्_आकार + परिमाण(*rec);
 
 	/* Align the address and then calculate the offset from used size */
-	aligned_start = ALIGN(data_start, 1U << align_log2) - data_start;
+	aligned_start = ALIGN(दत्त_start, 1U << align_log2) - दत्त_start;
 
 	/* If we need to create a dummy record, create it */
-	if (aligned_start) {
-		int void_size = aligned_start - sizeof(*rec);
-		struct bloblist_rec *vrec;
-		int ret;
+	यदि (aligned_start) {
+		पूर्णाङ्क void_आकार = aligned_start - परिमाण(*rec);
+		संरचना bloblist_rec *vrec;
+		पूर्णाङ्क ret;
 
-		ret = bloblist_addrec(BLOBLISTT_VOID, void_size, 0, &vrec);
-		if (ret)
-			return log_msg_ret("void", ret);
+		ret = bloblist_addrec(BLOBLISTT_VOID, void_आकार, 0, &vrec);
+		यदि (ret)
+			प्रत्यागम log_सन्देशः_ret("void", ret);
 
 		/* start the record after that */
-		data_start = map_to_sysmem(hdr) + hdr->used_size + sizeof(*vrec);
+		दत्त_start = map_गन्तव्यम्_sysmem(hdr) + hdr->प्रयुक्तम्_आकार + परिमाण(*vrec);
 	}
 
 	/* Calculate the new allocated total */
-	new_alloced = data_start - map_to_sysmem(hdr) +
-		ALIGN(size, 1U << align_log2);
+	new_alloced = दत्त_start - map_गन्तव्यम्_sysmem(hdr) +
+		ALIGN(आकार, 1U << align_log2);
 
-	if (new_alloced > hdr->total_size) {
-		log_err("Failed to allocate %x bytes\n", size);
+	यदि (new_alloced > hdr->योग_आकार) {
+		log_err("Failed to allocate %x bytes\n", आकार);
 		log_err("Used size=%x, total size=%x\n",
-			hdr->used_size, hdr->total_size);
-		return log_msg_ret("bloblist add", -ENOSPC);
+			hdr->प्रयुक्तम्_आकार, hdr->योग_आकार);
+		प्रत्यागम log_सन्देशः_ret("bloblist add", -ENOSPC);
 	}
-	rec = (void *)hdr + hdr->used_size;
+	rec = (शून्य *)hdr + hdr->प्रयुक्तम्_आकार;
 
-	rec->tag_and_hdr_size = tag | sizeof(*rec) << BLOBLISTR_HDR_SIZE_SHIFT;
-	rec->size = size;
+	rec->चिह्नकम्_and_hdr_आकार = चिह्नकम् | परिमाण(*rec) << BLOBLISTR_HDR_आकार_सरणम्;
+	rec->आकार = आकार;
 
 	/* Zero the record data */
-	memset((void *)rec + rec_hdr_size(rec), '\0', rec->size);
+	स्मृतिं_पूरय((शून्य *)rec + rec_hdr_आकार(rec), '\0', rec->आकार);
 
-	hdr->used_size = new_alloced;
+	hdr->प्रयुक्तम्_आकार = new_alloced;
 	*recp = rec;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int bloblist_ensurerec(uint tag, struct bloblist_rec **recp, int size,
-			      int align_log2)
+स्थिर पूर्णाङ्क bloblist_ensurerec(uint चिह्नकम्, संरचना bloblist_rec **recp, पूर्णाङ्क आकार,
+			      पूर्णाङ्क align_log2)
 {
-	struct bloblist_rec *rec;
+	संरचना bloblist_rec *rec;
 
-	rec = bloblist_findrec(tag);
-	if (rec) {
-		if (size && size != rec->size) {
+	rec = bloblist_findrec(चिह्नकम्);
+	यदि (rec) {
+		यदि (आकार && आकार != rec->आकार) {
 			*recp = rec;
-			return -ESPIPE;
+			प्रत्यागम -ESPIPE;
 		}
-	} else {
-		int ret;
+	} अन्यथा {
+		पूर्णाङ्क ret;
 
-		ret = bloblist_addrec(tag, size, align_log2, &rec);
-		if (ret)
-			return ret;
+		ret = bloblist_addrec(चिह्नकम्, आकार, align_log2, &rec);
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 	*recp = rec;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int bloblist_get_blob_data_offset(uint tag)
+स्थिर पूर्णाङ्क bloblist_get_blob_दत्त_विस्थापनम्(uint चिह्नकम्)
 {
-	switch (tag) {
-	case BLOBLISTT_FDT_OVERLAY:
-		return sizeof(struct dto_blob_hdr);
+	विकल्प (चिह्नकम्) {
+	पक्ष BLOBLISTT_FDT_OVERLAY:
+		प्रत्यागम परिमाण(संरचना dto_blob_hdr);
 	/*
 	 * return the data offset if it is not following the blob
 	 * header immediately.
 	 */
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-void *bloblist_find(uint tag, int size)
+शून्य *bloblist_find(uint चिह्नकम्, पूर्णाङ्क आकार)
 {
-	void *blob = NULL;
-	int blob_size;
+	शून्य *blob = रिक्त;
+	पूर्णाङ्क blob_आकार;
 
-	blob = bloblist_get_blob(tag, &blob_size);
+	blob = bloblist_get_blob(चिह्नकम्, &blob_आकार);
 
-	if (size && size != blob_size)
-		return NULL;
+	यदि (आकार && आकार != blob_आकार)
+		प्रत्यागम रिक्त;
 
-	return blob;
+	प्रत्यागम blob;
 }
 
-void *bloblist_get_blob(uint tag, int *sizep)
+शून्य *bloblist_get_blob(uint चिह्नकम्, पूर्णाङ्क *sizep)
 {
-	struct bloblist_rec *rec;
+	संरचना bloblist_rec *rec;
 
-	rec = bloblist_findrec(tag);
-	if (!rec)
-		return NULL;
+	rec = bloblist_findrec(चिह्नकम्);
+	यदि (!rec)
+		प्रत्यागम रिक्त;
 
-	*sizep = rec->size;
+	*sizep = rec->आकार;
 
-	return (void *)rec + rec_hdr_size(rec);
+	प्रत्यागम (शून्य *)rec + rec_hdr_आकार(rec);
 }
 
-int bloblist_apply_blobs(uint tag, int (*func)(void **data, int size))
+पूर्णाङ्क bloblist_apply_blobs(uint चिह्नकम्, पूर्णाङ्क (*func)(शून्य **दत्त, पूर्णाङ्क आकार))
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_rec *rec;
 
-	if (!func || !hdr)
-		return -ENOENT;
+	यदि (!func || !hdr)
+		प्रत्यागम -ENOENT;
 
 	foreach_rec(rec, hdr) {
 		/* Apply all blobs with the specified tag */
-		if (rec_tag(rec) == tag) {
-			int ret;
-			int tag = rec_tag(rec);
-			void *blob = (void *)rec + rec_hdr_size(rec);
-			int dat_off = bloblist_get_blob_data_offset(tag);
+		यदि (rec_चिह्नकम्(rec) == चिह्नकम्) {
+			पूर्णाङ्क ret;
+			पूर्णाङ्क चिह्नकम् = rec_चिह्नकम्(rec);
+			शून्य *blob = (शून्य *)rec + rec_hdr_आकार(rec);
+			पूर्णाङ्क dat_off = bloblist_get_blob_दत्त_विस्थापनम्(चिह्नकम्);
 
 			blob += dat_off;
-			ret = func(&blob, rec->size - dat_off);
-			if (ret) {
+			ret = func(&blob, rec->आकार - dat_off);
+			यदि (ret) {
 				log_err("Failed to apply blob with tag %d\n",
-					tag);
-				return ret;
+					चिह्नकम्);
+				प्रत्यागम ret;
 			}
 
 			rec = rec_from_blob(blob - dat_off);
-			if (!rec) {
+			यदि (!rec) {
 				log_err("Blob corrupted\n");
-				return -ENOENT;
+				प्रत्यागम -ENOENT;
 			}
 
 			/* Mark applied blob record as void */
@@ -310,388 +310,388 @@ int bloblist_apply_blobs(uint tag, int (*func)(void **data, int size))
 		}
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void *bloblist_add(uint tag, int size, int align_log2)
+शून्य *bloblist_सङ्कलय(uint चिह्नकम्, पूर्णाङ्क आकार, पूर्णाङ्क align_log2)
 {
-	struct bloblist_rec *rec;
+	संरचना bloblist_rec *rec;
 
-	if (bloblist_addrec(tag, size, align_log2, &rec))
-		return NULL;
+	यदि (bloblist_addrec(चिह्नकम्, आकार, align_log2, &rec))
+		प्रत्यागम रिक्त;
 
-	return (void *)rec + rec_hdr_size(rec);
+	प्रत्यागम (शून्य *)rec + rec_hdr_आकार(rec);
 }
 
-int bloblist_ensure_size(uint tag, int size, int align_log2, void **blobp)
+पूर्णाङ्क bloblist_ensure_आकार(uint चिह्नकम्, पूर्णाङ्क आकार, पूर्णाङ्क align_log2, शून्य **blobp)
 {
-	struct bloblist_rec *rec;
-	int ret;
+	संरचना bloblist_rec *rec;
+	पूर्णाङ्क ret;
 
-	ret = bloblist_ensurerec(tag, &rec, size, align_log2);
-	if (ret)
-		return ret;
-	*blobp = (void *)rec + rec_hdr_size(rec);
+	ret = bloblist_ensurerec(चिह्नकम्, &rec, आकार, align_log2);
+	यदि (ret)
+		प्रत्यागम ret;
+	*blobp = (शून्य *)rec + rec_hdr_आकार(rec);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void *bloblist_ensure(uint tag, int size)
+शून्य *bloblist_ensure(uint चिह्नकम्, पूर्णाङ्क आकार)
 {
-	struct bloblist_rec *rec;
+	संरचना bloblist_rec *rec;
 
-	if (bloblist_ensurerec(tag, &rec, size, 0))
-		return NULL;
+	यदि (bloblist_ensurerec(चिह्नकम्, &rec, आकार, 0))
+		प्रत्यागम रिक्त;
 
-	return (void *)rec + rec_hdr_size(rec);
+	प्रत्यागम (शून्य *)rec + rec_hdr_आकार(rec);
 }
 
-int bloblist_ensure_size_ret(uint tag, int *sizep, void **blobp)
+पूर्णाङ्क bloblist_ensure_आकार_ret(uint चिह्नकम्, पूर्णाङ्क *sizep, शून्य **blobp)
 {
-	struct bloblist_rec *rec;
-	int ret;
+	संरचना bloblist_rec *rec;
+	पूर्णाङ्क ret;
 
-	ret = bloblist_ensurerec(tag, &rec, *sizep, 0);
-	if (ret == -ESPIPE)
-		*sizep = rec->size;
-	else if (ret)
-		return ret;
-	*blobp = (void *)rec + rec_hdr_size(rec);
+	ret = bloblist_ensurerec(चिह्नकम्, &rec, *sizep, 0);
+	यदि (ret == -ESPIPE)
+		*sizep = rec->आकार;
+	अन्यथा यदि (ret)
+		प्रत्यागम ret;
+	*blobp = (शून्य *)rec + rec_hdr_आकार(rec);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int bloblist_resize_rec(struct bloblist_hdr *hdr,
-			       struct bloblist_rec *rec,
-			       int new_size)
+स्थिर पूर्णाङ्क bloblist_resize_rec(संरचना bloblist_hdr *hdr,
+			       संरचना bloblist_rec *rec,
+			       पूर्णाङ्क new_आकार)
 {
-	int expand_by;	/* Number of bytes to expand by (-ve to contract) */
-	int new_alloced;
-	ulong next_ofs;	/* Offset of the record after @rec */
+	पूर्णाङ्क expand_by;	/* Number of bytes to expand by (-ve to contract) */
+	पूर्णाङ्क new_alloced;
+	ulong अग्र_ofs;	/* Offset of the record after @rec */
 
-	expand_by = ALIGN(new_size - rec->size, BLOBLIST_BLOB_ALIGN);
-	new_alloced = ALIGN(hdr->used_size + expand_by, BLOBLIST_BLOB_ALIGN);
-	if (new_size < 0) {
+	expand_by = ALIGN(new_आकार - rec->आकार, BLOBLIST_BLOB_ALIGN);
+	new_alloced = ALIGN(hdr->प्रयुक्तम्_आकार + expand_by, BLOBLIST_BLOB_ALIGN);
+	यदि (new_आकार < 0) {
 		log_debug("Attempt to shrink blob size below 0 (%x)\n",
-			  new_size);
-		return log_msg_ret("size", -EINVAL);
+			  new_आकार);
+		प्रत्यागम log_सन्देशः_ret("size", -EINVAL);
 	}
-	if (new_alloced > hdr->total_size) {
-		log_err("Failed to allocate %x bytes\n", new_size);
+	यदि (new_alloced > hdr->योग_आकार) {
+		log_err("Failed to allocate %x bytes\n", new_आकार);
 		log_err("Used size=%x, total size=%x\n",
-			hdr->used_size, hdr->total_size);
-		return log_msg_ret("alloc", -ENOSPC);
+			hdr->प्रयुक्तम्_आकार, hdr->योग_आकार);
+		प्रत्यागम log_सन्देशः_ret("alloc", -ENOSPC);
 	}
 
 	/* Move the following blobs up or down, if this is not the last */
-	next_ofs = bloblist_blob_end_ofs(hdr, rec);
-	if (next_ofs != hdr->used_size) {
-		memmove((void *)hdr + next_ofs + expand_by,
-			(void *)hdr + next_ofs, hdr->used_size - next_ofs);
+	अग्र_ofs = bloblist_blob_अन्तः_ofs(hdr, rec);
+	यदि (अग्र_ofs != hdr->प्रयुक्तम्_आकार) {
+		memmove((शून्य *)hdr + अग्र_ofs + expand_by,
+			(शून्य *)hdr + अग्र_ofs, hdr->प्रयुक्तम्_आकार - अग्र_ofs);
 	}
-	hdr->used_size = new_alloced;
+	hdr->प्रयुक्तम्_आकार = new_alloced;
 
 	/* Zero the new part of the blob */
-	if (expand_by > 0) {
-		memset((void *)rec + rec_hdr_size(rec) + rec->size, '\0',
-		       new_size - rec->size);
+	यदि (expand_by > 0) {
+		स्मृतिं_पूरय((शून्य *)rec + rec_hdr_आकार(rec) + rec->आकार, '\0',
+		       new_आकार - rec->आकार);
 	}
 
 	/* Update the size of this blob */
-	rec->size = new_size;
+	rec->आकार = new_आकार;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bloblist_resize(uint tag, int new_size)
+पूर्णाङ्क bloblist_resize(uint चिह्नकम्, पूर्णाङ्क new_आकार)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
-	int ret;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_rec *rec;
+	पूर्णाङ्क ret;
 
-	rec = bloblist_findrec(tag);
-	if (!rec)
-		return log_msg_ret("find", -ENOENT);
-	ret = bloblist_resize_rec(hdr, rec, new_size);
-	if (ret)
-		return log_msg_ret("resize", ret);
+	rec = bloblist_findrec(चिह्नकम्);
+	यदि (!rec)
+		प्रत्यागम log_सन्देशः_ret("find", -ENOENT);
+	ret = bloblist_resize_rec(hdr, rec, new_आकार);
+	यदि (ret)
+		प्रत्यागम log_सन्देशः_ret("resize", ret);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static u32 bloblist_calc_chksum(struct bloblist_hdr *hdr)
+स्थिर u32 bloblist_calc_chksum(संरचना bloblist_hdr *hdr)
 {
 	u8 chksum;
 
-	chksum = table_compute_checksum(hdr, hdr->used_size);
+	chksum = सारणी_compute_checksum(hdr, hdr->प्रयुक्तम्_आकार);
 	chksum += hdr->chksum;
 
-	return chksum;
+	प्रत्यागम chksum;
 }
 
-int bloblist_new(ulong addr, uint size, uint flags, uint align_log2)
+पूर्णाङ्क bloblist_new(ulong addr, uint आकार, uint flags, uint align_log2)
 {
-	struct bloblist_hdr *hdr;
+	संरचना bloblist_hdr *hdr;
 
-	if (size < sizeof(*hdr))
-		return log_ret(-ENOSPC);
-	if (addr & (BLOBLIST_ALIGN - 1))
-		return log_ret(-EFAULT);
-	hdr = map_sysmem(addr, size);
-	memset(hdr, '\0', sizeof(*hdr));
-	hdr->version = BLOBLIST_VERSION;
-	hdr->hdr_size = sizeof(*hdr);
+	यदि (आकार < परिमाण(*hdr))
+		प्रत्यागम log_ret(-ENOSPC);
+	यदि (addr & (BLOBLIST_ALIGN - 1))
+		प्रत्यागम log_ret(-EFAULT);
+	hdr = map_sysmem(addr, आकार);
+	स्मृतिं_पूरय(hdr, '\0', परिमाण(*hdr));
+	hdr->version = BLOBLIST_संस्करणम्;
+	hdr->hdr_आकार = परिमाण(*hdr);
 	hdr->flags = flags;
 	hdr->magic = BLOBLIST_MAGIC;
-	hdr->used_size = hdr->hdr_size;
-	hdr->total_size = size;
+	hdr->प्रयुक्तम्_आकार = hdr->hdr_आकार;
+	hdr->योग_आकार = आकार;
 	hdr->align_log2 = align_log2 ? align_log2 : BLOBLIST_BLOB_ALIGN_LOG2;
 	hdr->chksum = 0;
 	gd->bloblist = hdr;
 	gd->flags |= GD_FLG_BLOBLIST_HANDOFF;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bloblist_check(ulong addr, uint size)
+पूर्णाङ्क bloblist_check(ulong addr, uint आकार)
 {
-	struct bloblist_hdr *hdr;
+	संरचना bloblist_hdr *hdr;
 	u32 chksum;
 
-	hdr = map_sysmem(addr, sizeof(*hdr));
-	if (hdr->magic != BLOBLIST_MAGIC)
-		return log_msg_ret("Bad magic", -ENOENT);
-	if (hdr->version != BLOBLIST_VERSION)
-		return log_msg_ret("Bad version", -EPROTONOSUPPORT);
-	if (!hdr->total_size || (size && hdr->total_size > size))
-		return log_msg_ret("Bad total size", -EFBIG);
-	if (hdr->used_size > hdr->total_size)
-		return log_msg_ret("Bad used size", -ENOENT);
-	if (hdr->hdr_size != sizeof(struct bloblist_hdr))
-		return log_msg_ret("Bad header size", -ENOENT);
+	hdr = map_sysmem(addr, परिमाण(*hdr));
+	यदि (hdr->magic != BLOBLIST_MAGIC)
+		प्रत्यागम log_सन्देशः_ret("Bad magic", -ENOENT);
+	यदि (hdr->version != BLOBLIST_संस्करणम्)
+		प्रत्यागम log_सन्देशः_ret("Bad version", -EPROTONOSUPPORT);
+	यदि (!hdr->योग_आकार || (आकार && hdr->योग_आकार > आकार))
+		प्रत्यागम log_सन्देशः_ret("Bad total size", -EFBIG);
+	यदि (hdr->प्रयुक्तम्_आकार > hdr->योग_आकार)
+		प्रत्यागम log_सन्देशः_ret("Bad used size", -ENOENT);
+	यदि (hdr->hdr_आकार != परिमाण(संरचना bloblist_hdr))
+		प्रत्यागम log_सन्देशः_ret("Bad header size", -ENOENT);
 
 	chksum = bloblist_calc_chksum(hdr);
-	if (hdr->chksum != chksum) {
+	यदि (hdr->chksum != chksum) {
 		log_err("Checksum %x != %x\n", hdr->chksum, chksum);
-		return log_msg_ret("Bad checksum", -EIO);
+		प्रत्यागम log_सन्देशः_ret("Bad checksum", -EIO);
 	}
 	gd->bloblist = hdr;
 	gd->flags |= GD_FLG_BLOBLIST_HANDOFF;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bloblist_finish(void)
+पूर्णाङ्क bloblist_finish(शून्य)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
 
 	hdr->chksum = bloblist_calc_chksum(hdr);
-	log_debug("Finished bloblist size %lx at %lx\n", (ulong)hdr->used_size,
-		  (ulong)map_to_sysmem(hdr));
+	log_debug("Finished bloblist size %lx at %lx\n", (ulong)hdr->प्रयुक्तम्_आकार,
+		  (ulong)map_गन्तव्यम्_sysmem(hdr));
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-ulong bloblist_get_base(void)
+ulong bloblist_get_आधारः(शून्य)
 {
-	return map_to_sysmem(gd->bloblist);
+	प्रत्यागम map_गन्तव्यम्_sysmem(gd->bloblist);
 }
 
-ulong bloblist_get_size(void)
+ulong bloblist_get_आकार(शून्य)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
 
-	return hdr->used_size;
+	प्रत्यागम hdr->प्रयुक्तम्_आकार;
 }
 
-ulong bloblist_get_total_size(void)
+ulong bloblist_get_योग_आकार(शून्य)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
 
-	return hdr->total_size;
+	प्रत्यागम hdr->योग_आकार;
 }
 
-void bloblist_get_stats(ulong *basep, ulong *tsizep, ulong *usizep)
+शून्य bloblist_get_stats(ulong *basep, ulong *tsizep, ulong *usizep)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
 
-	*basep = map_to_sysmem(gd->bloblist);
-	*tsizep = hdr->total_size;
-	*usizep = hdr->used_size;
+	*basep = map_गन्तव्यम्_sysmem(gd->bloblist);
+	*tsizep = hdr->योग_आकार;
+	*usizep = hdr->प्रयुक्तम्_आकार;
 }
 
-static void show_value(const char *prompt, ulong value)
+स्थिर शून्य show_मानम्(ध्रुव वर्ण *prompt, ulong मानम्)
 {
-	printf("%s:%*s %-5lx  ", prompt, 10 - (int)strlen(prompt), "", value);
-	print_size(value, "\n");
+	प्रारूप_लिख("%s:%*s %-5lx  ", prompt, 10 - (पूर्णाङ्क)वाक्यदैर्घ्यम्(prompt), "", मानम्);
+	print_आकार(मानम्, "\n");
 }
 
-void bloblist_show_stats(void)
+शून्य bloblist_show_stats(शून्य)
 {
-	ulong base, tsize, usize;
+	ulong आधारः, tsize, usize;
 
-	bloblist_get_stats(&base, &tsize, &usize);
-	printf("base:       %lx\n", base);
-	show_value("total size", tsize);
-	show_value("used size", usize);
-	show_value("free", tsize - usize);
+	bloblist_get_stats(&आधारः, &tsize, &usize);
+	प्रारूप_लिख("base:       %lx\n", आधारः);
+	show_मानम्("total size", tsize);
+	show_मानम्("used size", usize);
+	show_मानम्("free", tsize - usize);
 }
 
-void bloblist_show_list(void)
+शून्य bloblist_show_list(शून्य)
 {
-	struct bloblist_hdr *hdr = gd->bloblist;
-	struct bloblist_rec *rec;
+	संरचना bloblist_hdr *hdr = gd->bloblist;
+	संरचना bloblist_rec *rec;
 
-	printf("%-8s  %8s   Tag Name\n", "Address", "Size");
-	for (rec = bloblist_first_blob(hdr); rec;
-	     rec = bloblist_next_blob(hdr, rec)) {
-		printf("%08lx  %8x  %4x %s\n",
-		       (ulong)map_to_sysmem((void *)rec + rec_hdr_size(rec)),
-		       rec->size, rec_tag(rec),
-		       bloblist_tag_name(rec_tag(rec)));
+	प्रारूप_लिख("%-8s  %8s   Tag Name\n", "Address", "Size");
+	प्रति (rec = bloblist_first_blob(hdr); rec;
+	     rec = bloblist_अग्र_blob(hdr, rec)) {
+		प्रारूप_लिख("%08lx  %8x  %4x %s\n",
+		       (ulong)map_गन्तव्यम्_sysmem((शून्य *)rec + rec_hdr_आकार(rec)),
+		       rec->आकार, rec_चिह्नकम्(rec),
+		       bloblist_चिह्नकम्_name(rec_चिह्नकम्(rec)));
 	}
 }
 
-int bloblist_reloc(void *to, uint to_size)
+पूर्णाङ्क bloblist_reloc(शून्य *गन्तव्यम्, uint गन्तव्यम्_आकार)
 {
-	struct bloblist_hdr *hdr;
+	संरचना bloblist_hdr *hdr;
 
-	if (!to_size)
-		return 0;
+	यदि (!गन्तव्यम्_आकार)
+		प्रत्यागम 0;
 
-	if (to_size < gd->bloblist->total_size)
-		return -ENOSPC;
+	यदि (गन्तव्यम्_आकार < gd->bloblist->योग_आकार)
+		प्रत्यागम -ENOSPC;
 
-	memcpy(to, gd->bloblist, gd->bloblist->total_size);
-	hdr = to;
-	hdr->total_size = to_size;
-	gd->bloblist = to;
+	स्मृतिं_प्रतिलिख(गन्तव्यम्, gd->bloblist, gd->bloblist->योग_आकार);
+	hdr = गन्तव्यम्;
+	hdr->योग_आकार = गन्तव्यम्_आकार;
+	gd->bloblist = गन्तव्यम्;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
  * Weak default function for getting bloblist from boot args.
  */
-int __weak xferlist_from_boot_arg(ulong __always_unused *addr)
+पूर्णाङ्क __weak xferlist_from_boot_arg(ulong __always_unused *addr)
 {
-	return -ENOENT;
+	प्रत्यागम -ENOENT;
 }
 
-bool bloblist_exists(void)
+bool bloblist_exists(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 	ulong addr = 0;
 
 	/* Check if a valid transfer list passed in */
-	if (!xferlist_from_boot_arg(&addr))
-		goto found;
+	यदि (!xferlist_from_boot_arg(&addr))
+		गच्छ प्राप्तम्;
 
 	/*
 	 * If Firmware Handoff is mandatory but no transfer list is
 	 * observed, report it as an error.
 	 */
-	if (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
-		return false;
+	यदि (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
+		प्रत्यागम false;
 
 	/*
 	 * We have checked for a valid transfer list being passed. At this
 	 * point, if we do not have a fixed address for the bloblist, we cannot
 	 * be provided with one.
 	 */
-	if (xpl_is_first_phase() || !IS_ENABLED(CONFIG_BLOBLIST_FIXED))
-		return false;
+	यदि (xpl_is_first_phase() || !IS_ENABLED(CONFIG_BLOBLIST_FIXED))
+		प्रत्यागम false;
 
 	/*
 	 * Check for a valid list as the configured address.
 	 */
 	addr = IF_ENABLED_INT(CONFIG_BLOBLIST_FIXED,
 			      CONFIG_BLOBLIST_ADDR);
-	ret = bloblist_check(addr, CONFIG_BLOBLIST_SIZE);
-	if (!ret)
-		goto found;
+	ret = bloblist_check(addr, CONFIG_BLOBLIST_आकार);
+	यदि (!ret)
+		गच्छ प्राप्तम्;
 
 	log_debug("Bloblist at %lx not found (err=%d)\n", addr, ret);
-	return false;
+	प्रत्यागम false;
 
-found:
-#ifdef DEBUG
+प्राप्तम्:
+#यदि_परिभाषितम् DEBUG
 	bloblist_show_stats();
 	bloblist_show_list();
-#endif
-	return true;
+#यदि_अन्तः
+	प्रत्यागम true;
 }
 
-int bloblist_init(void)
+पूर्णाङ्क bloblist_init(शून्य)
 {
-	int ret;
-	ulong addr = 0, size = CONFIG_BLOBLIST_SIZE;
+	पूर्णाङ्क ret;
+	ulong addr = 0, आकार = CONFIG_BLOBLIST_आकार;
 
-	if (gd->flags & GD_FLG_BLOBLIST_HANDOFF) {
+	यदि (gd->flags & GD_FLG_BLOBLIST_HANDOFF) {
 		log_debug("Found existing bloblist size %x at %p\n",
-			  gd->bloblist->total_size, gd->bloblist);
-		return 0;
+			  gd->bloblist->योग_आकार, gd->bloblist);
+		प्रत्यागम 0;
 	}
 
 	/*
 	 * If Firmware Handoff is mandatory but no transfer list has been
 	 * observed by fdtdec_setup, report it as an error.
 	 */
-	if (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
-		return -ENOENT;
+	यदि (IS_ENABLED(CONFIG_BLOBLIST_PASSAGE_MANDATORY))
+		प्रत्यागम -ENOENT;
 
 	/*
 	 * If we don't have an existing bloblist, we either need
 	 * to allocate one now, or initialize the fixed address
 	 * space as a bloblist.
 	 */
-	if (CONFIG_IS_ENABLED(BLOBLIST_ALLOC)) {
-		void *ptr = memalign(BLOBLIST_ALIGN, size);
+	यदि (CONFIG_IS_ENABLED(BLOBLIST_ALLOC)) {
+		शून्य *ptr = memalign(BLOBLIST_ALIGN, आकार);
 
-		if (!ptr)
-			return log_msg_ret("alloc", -ENOMEM);
-		addr = map_to_sysmem(ptr);
-	} else
+		यदि (!ptr)
+			प्रत्यागम log_सन्देशः_ret("alloc", -ENOMEM);
+		addr = map_गन्तव्यम्_sysmem(ptr);
+	} अन्यथा
 		addr = IF_ENABLED_INT(CONFIG_BLOBLIST_FIXED,
 				      CONFIG_BLOBLIST_ADDR);
 
-	log_debug("Creating new bloblist size %lx at %lx\n", size,
+	log_debug("Creating new bloblist size %lx at %lx\n", आकार,
 		  addr);
-	ret = bloblist_new(addr, size, 0, 0);
-	if (ret)
-		return log_msg_ret("ini", ret);
+	ret = bloblist_new(addr, आकार, 0, 0);
+	यदि (ret)
+		प्रत्यागम log_सन्देशः_ret("ini", ret);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bloblist_check_reg_conv(ulong rfdt, ulong rzero, ulong rsig, ulong xlist)
+पूर्णाङ्क bloblist_check_reg_conv(ulong rfdt, ulong rzero, ulong rsig, ulong xlist)
 {
 	u64 version = BLOBLIST_REGCONV_VER;
 	ulong sigval;
-	int ret;
+	पूर्णाङ्क ret;
 
-	if ((IS_ENABLED(CONFIG_64BIT) && !IS_ENABLED(CONFIG_SPL_BUILD)) ||
+	यदि ((IS_ENABLED(CONFIG_64BIT) && !IS_ENABLED(CONFIG_SPL_BUILD)) ||
 			(IS_ENABLED(CONFIG_SPL_64BIT) && IS_ENABLED(CONFIG_SPL_BUILD))) {
-		sigval = ((BLOBLIST_MAGIC & ((1ULL << BLOBLIST_REGCONV_SHIFT_64) - 1)) |
-			 ((version  & BLOBLIST_REGCONV_MASK) << BLOBLIST_REGCONV_SHIFT_64));
-	} else {
-		sigval = ((BLOBLIST_MAGIC & ((1UL << BLOBLIST_REGCONV_SHIFT_32) - 1)) |
-			 ((version  & BLOBLIST_REGCONV_MASK) << BLOBLIST_REGCONV_SHIFT_32));
+		sigval = ((BLOBLIST_MAGIC & ((1ULL << BLOBLIST_REGCONV_सरणम्_64) - 1)) |
+			 ((version  & BLOBLIST_REGCONV_आवरणम्) << BLOBLIST_REGCONV_सरणम्_64));
+	} अन्यथा {
+		sigval = ((BLOBLIST_MAGIC & ((1UL << BLOBLIST_REGCONV_सरणम्_32) - 1)) |
+			 ((version  & BLOBLIST_REGCONV_आवरणम्) << BLOBLIST_REGCONV_सरणम्_32));
 	}
 
-	if (rzero || rsig != sigval)
-		return -EIO;
+	यदि (rzero || rsig != sigval)
+		प्रत्यागम -EIO;
 
 	ret = bloblist_check(xlist, 0);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 
-	if (rfdt != (ulong)bloblist_find(BLOBLISTT_CONTROL_FDT, 0)) {
+	यदि (rfdt != (ulong)bloblist_find(BLOBLISTT_CONTROL_FDT, 0)) {
 		/* Remove this bloblist from gd */
-		gd->bloblist = NULL;
+		gd->bloblist = रिक्त;
 		gd->flags &= ~GD_FLG_BLOBLIST_HANDOFF;
-		return -EIO;
+		प्रत्यागम -EIO;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }

@@ -8,223 +8,223 @@
  *  Command Processor Table
  */
 
-#include <config.h>
-#include <compiler.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/ctype.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <compiler.h>
+#अन्तर्भाव <command.h>
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <image.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <linux/ctype.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 
 /*
  * Use puts() instead of printf() to avoid printf buffer overflow
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+पूर्णाङ्क _do_help(संरचना cmd_tbl *cmd_start, पूर्णाङ्क cmd_वस्तूनि, संरचना cmd_tbl *cmdtp,
+	     पूर्णाङ्क flag, पूर्णाङ्क argc, वर्ण *ध्रुव argv[])
 {
-	int i;
-	int rcode = 0;
+	पूर्णाङ्क i;
+	पूर्णाङ्क rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+	यदि (argc == 1) {	/* show list of commands */
+		संरचना cmd_tbl *cmd_array[cmd_वस्तूनि];
+		पूर्णाङ्क i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
 		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		प्रति (i = 0; i < cmd_वस्तूनि; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		प्रति (i = cmd_वस्तूनि - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			प्रति (j = 0; j < i; ++j) {
+				यदि (वाक्यं_तुलय(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
-					struct cmd_tbl *tmp;
+					संरचना cmd_tbl *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
 					cmd_array[j + 1] = tmp;
 					++swaps;
 				}
 			}
-			if (!swaps)
-				break;
+			यदि (!swaps)
+				भङ्ग;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
-			const char *usage = cmd_array[i]->usage;
+		प्रति (i = 0; i < cmd_वस्तूनि; i++) {
+			ध्रुव वर्ण *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
-				continue;
-			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
+			यदि (ctrlc())
+				प्रत्यागम 1;
+			यदि (usage == रिक्त)
+				अनुवर्त;
+			प्रारूप_लिख("%-*s- %s\n", CFG_SYS_HELP_CMD_विस्तारः,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		प्रत्यागम 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+	प्रति (i = 1; i < argc; ++i) {
+		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_वस्तूनि);
+		यदि (cmdtp != रिक्त) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
-			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
+		} अन्यथा {
+			प्रारूप_लिख("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	प्रत्यागम rcode;
 }
 
 /* find command table entry for a command */
-struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+संरचना cmd_tbl *find_cmd_tbl(ध्रुव वर्ण *cmd, संरचना cmd_tbl *सारणी,
+			     पूर्णाङ्क सारणी_len)
 {
-#ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
-	const char *p;
-	int len;
-	int n_found = 0;
+#यदि_परिभाषितम् CONFIG_CMDLINE
+	संरचना cmd_tbl *cmdtp;
+	संरचना cmd_tbl *cmdtp_अस्थायी = सारणी;	/* Init value */
+	ध्रुव वर्ण *p;
+	पूर्णाङ्क len;
+	पूर्णाङ्क n_प्राप्तम् = 0;
 
-	if (!cmd)
-		return NULL;
+	यदि (!cmd)
+		प्रत्यागम रिक्त;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == रिक्त) ? वाक्यदैर्घ्यम् (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	प्रति (cmdtp = सारणी; cmdtp != सारणी + सारणी_len; cmdtp++) {
+		यदि (वाक्ये_तुलय(cmd, cmdtp->name, len) == 0) {
+			यदि (len == वाक्यदैर्घ्यम्(cmdtp->name))
+				प्रत्यागम cmdtp;	/* full match */
 
-			cmdtp_temp = cmdtp;	/* abbreviated command ? */
-			n_found++;
+			cmdtp_अस्थायी = cmdtp;	/* abbreviated command ? */
+			n_प्राप्तम्++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	यदि (n_प्राप्तम् == 1) {			/* exactly one match */
+		प्रत्यागम cmdtp_अस्थायी;
 	}
-#endif /* CONFIG_CMDLINE */
+#यदि_अन्तः /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	प्रत्यागम रिक्त;	/* not found or ambiguous command */
 }
 
-struct cmd_tbl *find_cmd(const char *cmd)
+संरचना cmd_tbl *find_cmd(ध्रुव वर्ण *cmd)
 {
-	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	संरचना cmd_tbl *start = ll_प्रविष्टिः_start(संरचना cmd_tbl, cmd);
+	ध्रुव पूर्णाङ्क len = ll_प्रविष्टिः_गणनम्(संरचना cmd_tbl, cmd);
+	प्रत्यागम find_cmd_tbl(cmd, start, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+पूर्णाङ्क cmd_usage(ध्रुव संरचना cmd_tbl *cmdtp)
 {
-	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
+	प्रारूप_लिख("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
-#ifdef	CONFIG_SYS_LONGHELP
-	printf("Usage:\n%s ", cmdtp->name);
+#यदि_परिभाषितम्	CONFIG_SYS_LONGHELP
+	प्रारूप_लिख("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
-		puts ("- No additional help available.\n");
-		return 1;
+	यदि (!cmdtp->help) {
+		पङ्क्तिं_लिख ("- No additional help available.\n");
+		प्रत्यागम 1;
 	}
 
-	puts(cmdtp->help);
+	पङ्क्तिं_लिख(cmdtp->help);
 	putc('\n');
-#endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+#यदि_अन्तः	/* CONFIG_SYS_LONGHELP */
+	प्रत्यागम 1;
 }
 
-#ifdef CONFIG_AUTO_COMPLETE
-static char env_complete_buf[512];
+#यदि_परिभाषितम् CONFIG_AUTO_COMPLETE
+स्थिर वर्ण env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
-		 char *cmdv[])
+पूर्णाङ्क var_complete(पूर्णाङ्क argc, वर्ण *ध्रुव argv[], वर्ण चरमः_char, पूर्णाङ्क maxv,
+		 वर्ण *cmdv[])
 {
-	int space;
+	पूर्णाङ्क space;
 
-	space = last_char == '\0' || isblank(last_char);
+	space = चरमः_char == '\0' || isblank(चरमः_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	यदि (space && argc == 1)
+		प्रत्यागम env_complete("", maxv, cmdv, परिमाण(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
-				    sizeof(env_complete_buf),
+	यदि (!space && argc == 2)
+		प्रत्यागम env_complete(argv[1], maxv, cmdv,
+				    परिमाण(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+स्थिर पूर्णाङ्क dollar_complete(पूर्णाङ्क argc, वर्ण *ध्रुव argv[], वर्ण चरमः_char,
+			   पूर्णाङ्क maxv, वर्ण *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
-	    last_char == '\0' || isblank(last_char))
-		return 0;
+	यदि (argc < 1 || argv[argc - 1][0] != '$' ||
+	    चरमः_char == '\0' || isblank(चरमः_char))
+		प्रत्यागम 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	प्रत्यागम env_complete(argv[argc - 1], maxv, cmdv, परिमाण(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
-		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+पूर्णाङ्क complete_subcmdv(संरचना cmd_tbl *cmdtp, पूर्णाङ्क गणनम्, पूर्णाङ्क argc,
+		     वर्ण *ध्रुव argv[], वर्ण चरमः_char,
+		     पूर्णाङ्क maxv, वर्ण *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
-	const char *p;
-	int len, clen;
-	int n_found = 0;
-	const char *cmd;
+#यदि_परिभाषितम् CONFIG_CMDLINE
+	ध्रुव संरचना cmd_tbl *cmdend = cmdtp + गणनम्;
+	ध्रुव वर्ण *p;
+	पूर्णाङ्क len, clen;
+	पूर्णाङ्क n_प्राप्तम् = 0;
+	ध्रुव वर्ण *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	यदि (maxv < 2)
+		प्रत्यागम -2;
 
-	cmdv[0] = NULL;
+	cmdv[0] = रिक्त;
 
-	if (argc == 0) {
+	यदि (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
-				cmdv[n_found++] = "...";
-				break;
+		प्रति (; cmdtp != cmdend; cmdtp++) {
+			यदि (n_प्राप्तम् >= maxv - 2) {
+				cmdv[n_प्राप्तम्++] = "...";
+				भङ्ग;
 			}
-			cmdv[n_found++] = cmdtp->name;
+			cmdv[n_प्राप्तम्++] = cmdtp->name;
 		}
-		cmdv[n_found] = NULL;
-		return n_found;
+		cmdv[n_प्राप्तम्] = रिक्त;
+		प्रत्यागम n_प्राप्तम्;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
-			cmdv[0] = NULL;
-			return 0;
+	यदि (argc > 1 || चरमः_char == '\0' || isblank(चरमः_char)) {
+		cmdtp = find_cmd_tbl(argv[0], cmdtp, गणनम्);
+		यदि (cmdtp == रिक्त || cmdtp->complete == रिक्त) {
+			cmdv[0] = रिक्त;
+			प्रत्यागम 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		प्रत्यागम (*cmdtp->complete)(argc, argv, चरमः_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,337 +233,337 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
-		len = strlen(cmd);
-	else
+	यदि (p == रिक्त)
+		len = वाक्यदैर्घ्यम्(cmd);
+	अन्यथा
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	प्रति (; cmdtp != cmdend; cmdtp++) {
 
-		clen = strlen(cmdtp->name);
-		if (clen < len)
-			continue;
+		clen = वाक्यदैर्घ्यम्(cmdtp->name);
+		यदि (clen < len)
+			अनुवर्त;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
-			continue;
+		यदि (memcmp(cmd, cmdtp->name, len) != 0)
+			अनुवर्त;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
-			cmdv[n_found++] = "...";
-			break;
+		यदि (n_प्राप्तम् >= maxv - 2) {
+			cmdv[n_प्राप्तम्++] = "...";
+			भङ्ग;
 		}
 
-		cmdv[n_found++] = cmdtp->name;
+		cmdv[n_प्राप्तम्++] = cmdtp->name;
 	}
 
-	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
-#endif
+	cmdv[n_प्राप्तम्] = रिक्त;
+	प्रत्यागम n_प्राप्तम्;
+#अन्यथा
+	प्रत्यागम 0;
+#यदि_अन्तः
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+स्थिर पूर्णाङ्क complete_cmdv(पूर्णाङ्क argc, वर्ण *ध्रुव argv[], वर्ण चरमः_char,
+			 पूर्णाङ्क maxv, वर्ण *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
-				last_char, maxv, cmdv);
-#else
-	return 0;
-#endif
+#यदि_परिभाषितम् CONFIG_CMDLINE
+	प्रत्यागम complete_subcmdv(ll_प्रविष्टिः_start(संरचना cmd_tbl, cmd),
+				ll_प्रविष्टिः_गणनम्(संरचना cmd_tbl, cmd), argc, argv,
+				चरमः_char, maxv, cmdv);
+#अन्यथा
+	प्रत्यागम 0;
+#यदि_अन्तः
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+स्थिर पूर्णाङ्क make_argv(वर्ण *s, पूर्णाङ्क argvsz, वर्ण *argv[])
 {
-	int argc = 0;
+	पूर्णाङ्क argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	यावत् (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		यावत् (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
-			break;
+		यदि (*s == '\0')	/* end of s, no more args	*/
+			भङ्ग;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		यावत् (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
-			break;
+		यदि (*s == '\0')		/* end of s, no more args	*/
+			भङ्ग;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
-	argv[argc] = NULL;
+	argv[argc] = रिक्त;
 
-	return argc;
+	प्रत्यागम argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+स्थिर शून्य print_argv(ध्रुव वर्ण *banner, ध्रुव वर्ण *leader, ध्रुव वर्ण *sep,
+		       पूर्णाङ्क linemax, वर्ण *ध्रुव argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	पूर्णाङ्क ll = leader != रिक्त ? वाक्यदैर्घ्यम्(leader) : 0;
+	पूर्णाङ्क sl = sep != रिक्त ? वाक्यदैर्घ्यम्(sep) : 0;
+	पूर्णाङ्क len, i;
 
-	if (banner) {
-		puts("\n");
-		puts(banner);
+	यदि (banner) {
+		पङ्क्तिं_लिख("\n");
+		पङ्क्तिं_लिख(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
-		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
-			puts("\n");
-			if (leader)
-				puts(leader);
+	यावत् (*argv != रिक्त) {
+		len = वाक्यदैर्घ्यम्(*argv) + sl;
+		यदि (i + len >= linemax) {
+			पङ्क्तिं_लिख("\n");
+			यदि (leader)
+				पङ्क्तिं_लिख(leader);
 			i = ll - sl;
-		} else if (sep)
-			puts(sep);
-		puts(*argv++);
+		} अन्यथा यदि (sep)
+			पङ्क्तिं_लिख(sep);
+		पङ्क्तिं_लिख(*argv++);
 		i += len;
 	}
-	printf("\n");
+	प्रारूप_लिख("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+स्थिर पूर्णाङ्क find_common_उपसर्गः(वर्ण *ध्रुव argv[])
 {
-	int i, len;
-	char *anchor, *s, *t;
+	पूर्णाङ्क i, len;
+	वर्ण *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	यदि (*argv == रिक्त)
+		प्रत्यागम 0;
 
 	/* begin with max */
 	anchor = *argv++;
-	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	len = वाक्यदैर्घ्यम्(anchor);
+	यावत् ((t = *argv++) != रिक्त) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
-				break;
+		प्रति (i = 0; i < len; i++, t++, s++) {
+			यदि (*t != *s)
+				भङ्ग;
 		}
 		len = s - anchor;
 	}
-	return len;
+	प्रत्यागम len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+पूर्णाङ्क cmd_auto_complete(ध्रुव वर्ण *ध्रुव prompt, वर्ण *buf, पूर्णाङ्क *np, पूर्णाङ्क *colp)
 {
-	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
-	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
-	char *cmdv[20];
-	char *s, *t;
-	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
-	char last_char;
-	const char *ps_prompt;
+	वर्ण tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
+	पूर्णाङ्क n = *np, col = *colp;
+	वर्ण *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
+	वर्ण *cmdv[20];
+	वर्ण *s, *t;
+	ध्रुव वर्ण *sep;
+	पूर्णाङ्क i, j, k, len, seplen, argc;
+	पूर्णाङ्क cnt;
+	वर्ण चरमः_char;
+	ध्रुव वर्ण *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	यदि (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		यदि (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} अन्यथा
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	यदि (वाक्यं_तुलय(prompt, ps_prompt) != 0)
+		प्रत्यागम 0;	/* not in normal console */
 
-	cnt = strlen(buf);
-	if (cnt >= 1)
-		last_char = buf[cnt - 1];
-	else
-		last_char = '\0';
+	cnt = वाक्यदैर्घ्यम्(buf);
+	यदि (cnt >= 1)
+		चरमः_char = buf[cnt - 1];
+	अन्यथा
+		चरमः_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
-	strcpy(tmp_buf, buf);
+	वाक्यं_प्रतिलिख(tmp_buf, buf);
 
 	/* separate into argv */
-	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);
+	argc = make_argv(tmp_buf, परिमाण(argv)/परिमाण(argv[0]), argv);
 
 	/* first try a $ completion */
-	i = dollar_complete(argc, argv, last_char,
-			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+	i = dollar_complete(argc, argv, चरमः_char,
+			    परिमाण(cmdv) / परिमाण(cmdv[0]), cmdv);
+	यदि (!i) {
 		/* do the completion and return the possible completions */
-		i = complete_cmdv(argc, argv, last_char,
-				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
+		i = complete_cmdv(argc, argv, चरमः_char,
+				  परिमाण(cmdv) / परिमाण(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	यदि (i == 0) {
+		यदि (argc > 1)	/* allow tab for non command */
+			प्रत्यागम 0;
 		putc('\a');
-		return 1;
+		प्रत्यागम 1;
 	}
 
-	s = NULL;
+	s = रिक्त;
 	len = 0;
-	sep = NULL;
+	sep = रिक्त;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	यदि (i == 1) { /* one match; perfect */
+		यदि (चरमः_char != '\0' && !isblank(चरमः_char))
+			k = वाक्यदैर्घ्यम्(argv[argc - 1]);
+		अन्यथा
 			k = 0;
 
 		s = cmdv[0] + k;
-		len = strlen(s);
+		len = वाक्यदैर्घ्यम्(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	} अन्यथा यदि (i > 1 && (j = find_common_उपसर्गः(cmdv)) != 0) { /*अधिकम्*/
+		यदि (चरमः_char != '\0' && !isblank(चरमः_char))
+			k = वाक्यदैर्घ्यम्(argv[argc - 1]);
+		अन्यथा
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		यदि (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	यदि (s != रिक्त) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		यदि (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			प्रत्यागम 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		प्रति (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		यदि (sep != रिक्त)
+			प्रति (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
 		col += k;
-		puts(t - k);
-		if (sep == NULL)
+		पङ्क्तिं_लिख(t - k);
+		यदि (sep == रिक्त)
 			putc('\a');
 		*np = n;
 		*colp = col;
-	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+	} अन्यथा {
+		print_argv(रिक्त, "  ", " ", 78, cmdv);
 
-		puts(prompt);
-		puts(buf);
+		पङ्क्तिं_लिख(prompt);
+		पङ्क्तिं_लिख(buf);
 	}
-	return 1;
+	प्रत्यागम 1;
 }
 
-#endif
+#यदि_अन्तः
 
-#ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+#यदि_परिभाषितम् CMD_दत्त_आकार
+पूर्णाङ्क cmd_get_दत्त_आकार(ध्रुव वर्ण *arg, पूर्णाङ्क default_आकार)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
-		switch (arg[len-1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return CMD_DATA_SIZE_STR;
-		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+	पूर्णाङ्क len = वाक्यदैर्घ्यम्(arg);
+	यदि (len >= 2 && arg[len-2] == '.') {
+		विकल्प (arg[len-1]) {
+		पक्ष 'b':
+			प्रत्यागम 1;
+		पक्ष 'w':
+			प्रत्यागम 2;
+		पक्ष 'l':
+			प्रत्यागम 4;
+		पक्ष 's':
+			प्रत्यागम CMD_दत्त_आकार_STR;
+		पक्ष 'q':
+			यदि (MEM_SUPPORT_64_BIT_दत्त)
+				प्रत्यागम 8;
 			fallthrough;
-		default:
-			return CMD_DATA_SIZE_ERR;
+		स्वभाव:
+			प्रत्यागम CMD_दत्त_आकार_ERR;
 		}
 	}
-	return default_size;
+	प्रत्यागम default_आकार;
 }
-#endif
+#यदि_अन्तः
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+शून्य fixup_cmdtable(संरचना cmd_tbl *cmdtp, पूर्णाङ्क आकार)
 {
-	int	i;
+	पूर्णाङ्क	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	यदि (gd->reloc_off == 0)
+		प्रत्यागम;
 
-	for (i = 0; i < size; i++) {
+	प्रति (i = 0; i < आकार; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(पूर्णाङ्क (*)(संरचना cmd_tbl *, पूर्णाङ्क, पूर्णाङ्क,
+				 वर्ण * ध्रुव [], पूर्णाङ्क *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
-#ifdef DEBUG_COMMANDS
-		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
+#यदि_परिभाषितम् DEBUG_COMMANDS
+		प्रारूप_लिख("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
-#endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
-				      char *const []))addr;
+#यदि_अन्तः
+		cmdtp->cmd = (पूर्णाङ्क (*)(संरचना cmd_tbl *, पूर्णाङ्क, पूर्णाङ्क,
+				      वर्ण *ध्रुव []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		cmdtp->name = (वर्ण *)addr;
+		यदि (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
+			cmdtp->usage = (वर्ण *)addr;
 		}
-#ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+#यदि_परिभाषितम्	CONFIG_SYS_LONGHELP
+		यदि (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
+			cmdtp->help = (वर्ण *)addr;
 		}
-#endif
-#ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+#यदि_अन्तः
+#यदि_परिभाषितम् CONFIG_AUTO_COMPLETE
+		यदि (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(पूर्णाङ्क (*)(पूर्णाङ्क, वर्ण * ध्रुव [], वर्ण, पूर्णाङ्क, वर्ण * []))addr;
 		}
-#endif
+#यदि_अन्तः
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+पूर्णाङ्क cmd_always_repeatable(संरचना cmd_tbl *cmdtp, पूर्णाङ्क flag, पूर्णाङ्क argc,
+			  वर्ण *ध्रुव argv[], पूर्णाङ्क *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	प्रत्यागम cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+पूर्णाङ्क cmd_never_repeatable(संरचना cmd_tbl *cmdtp, पूर्णाङ्क flag, पूर्णाङ्क argc,
+			 वर्ण *ध्रुव argv[], पूर्णाङ्क *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	प्रत्यागम cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			   char *const argv[])
+पूर्णाङ्क cmd_discard_repeatable(संरचना cmd_tbl *cmdtp, पूर्णाङ्क flag, पूर्णाङ्क argc,
+			   वर्ण *ध्रुव argv[])
 {
-	int repeatable;
+	पूर्णाङ्क repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	प्रत्यागम cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,102 +578,102 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+स्थिर पूर्णाङ्क cmd_call(संरचना cmd_tbl *cmdtp, पूर्णाङ्क flag, पूर्णाङ्क argc,
+		    वर्ण *ध्रुव argv[], पूर्णाङ्क *repeatable)
 {
-	int result;
+	पूर्णाङ्क परिणाम;
 
-	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
-		debug("Command failed, result=%d\n", result);
-	return result;
+	परिणाम = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
+	यदि (परिणाम)
+		debug("Command failed, result=%d\n", परिणाम);
+	प्रत्यागम परिणाम;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+गणना command_ret_t cmd_process(पूर्णाङ्क flag, पूर्णाङ्क argc, वर्ण *ध्रुव argv[],
+			       पूर्णाङ्क *repeatable, ulong *ticks)
 {
-	enum command_ret_t rc = CMD_RET_SUCCESS;
-	struct cmd_tbl *cmdtp;
+	गणना command_ret_t rc = CMD_RET_SUCCESS;
+	संरचना cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
-	char *xtrace;
+#यदि defined(CONFIG_SYS_XTRACE)
+	वर्ण *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
-		puts("+");
-		for (int i = 0; i < argc; i++) {
-			puts(" ");
-			puts(argv[i]);
+	यदि (xtrace) {
+		पङ्क्तिं_लिख("+");
+		प्रति (पूर्णाङ्क i = 0; i < argc; i++) {
+			पङ्क्तिं_लिख(" ");
+			पङ्क्तिं_लिख(argv[i]);
 		}
-		puts("\n");
+		पङ्क्तिं_लिख("\n");
 	}
-#endif
+#यदि_अन्तः
 
 	/* Look up command in command table */
 	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
-		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+	यदि (cmdtp == रिक्त) {
+		प्रारूप_लिख("Unknown command '%s' - try 'help'\n", argv[0]);
+		प्रत्यागम 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	यदि (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#यदि defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
-			puts("'bootd' recursion detected\n");
+	अन्यथा यदि (cmdtp->cmd == do_bootd) {
+		यदि (flag & CMD_FLAG_BOOTD) {
+			पङ्क्तिं_लिख("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} अन्यथा {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
-#endif
+#यदि_अन्तः
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	यदि (!rc) {
+		पूर्णाङ्क newrep;
 
-		if (ticks)
+		यदि (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		यदि (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	यदि (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	प्रत्यागम rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+पूर्णाङ्क cmd_process_error(संरचना cmd_tbl *cmdtp, पूर्णाङ्क err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	यदि (err == CMD_RET_USAGE)
+		प्रत्यागम CMD_RET_USAGE;
 
-	if (err) {
-		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+	यदि (err) {
+		प्रारूप_लिख("Command '%s' failed: Error %d\n", cmdtp->name, err);
+		प्रत्यागम CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	प्रत्यागम CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+पूर्णाङ्क cmd_source_script(ulong addr, ध्रुव वर्ण *fit_uname, ध्रुव वर्ण *confname)
 {
-	char *data;
-	void *buf;
+	वर्ण *दत्त;
+	शून्य *buf;
 	uint len;
-	int ret;
+	पूर्णाङ्क ret;
 
 	buf = map_sysmem(addr, 0);
-	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
+	ret = image_locate_script(buf, 0, fit_uname, confname, &दत्त, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	यदि (ret)
+		प्रत्यागम CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	प्रत्यागम सततम्_command_list(दत्त, len, 0);
 }

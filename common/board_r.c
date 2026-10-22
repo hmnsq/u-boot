@@ -9,157 +9,157 @@
  * Marius Groeger <mgroeger@sysgo.de>
  */
 
-#include <config.h>
-#include <api.h>
-#include <bootstage.h>
-#include <cpu_func.h>
-#include <cyclic.h>
-#include <display_options.h>
-#include <exports.h>
-#ifdef CONFIG_MTD_NOR_FLASH
-#include <flash.h>
-#endif
-#include <hang.h>
-#include <image.h>
-#include <irq_func.h>
-#include <lmb.h>
-#include <log.h>
-#include <net.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <u-boot/crc.h>
-#include <binman.h>
-#include <command.h>
-#include <console.h>
-#include <dm.h>
-#include <efi_loader.h>
-#include <env.h>
-#include <env_internal.h>
-#include <fdtdec.h>
-#include <init.h>
-#include <initcall.h>
-#include <kgdb.h>
-#include <irq_func.h>
-#include <led.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <miiphy.h>
-#include <mmc.h>
-#include <mux.h>
-#include <nand.h>
-#include <of_live.h>
-#include <onenand_uboot.h>
-#include <pvblock.h>
-#include <scsi.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <timer.h>
-#include <trace.h>
-#include <watchdog.h>
-#include <xen.h>
-#include <asm/sections.h>
-#include <dm/root.h>
-#include <dm/ofnode.h>
-#include <linux/compiler.h>
-#include <linux/err.h>
-#include <wdt.h>
-#include <asm-generic/gpio.h>
-#include <relocate.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <api.h>
+#अन्तर्भाव <bootstage.h>
+#अन्तर्भाव <cpu_func.h>
+#अन्तर्भाव <cyclic.h>
+#अन्तर्भाव <display_options.h>
+#अन्तर्भाव <exports.h>
+#यदि_परिभाषितम् CONFIG_MTD_NOR_FLASH
+#अन्तर्भाव <flash.h>
+#यदि_अन्तः
+#अन्तर्भाव <hang.h>
+#अन्तर्भाव <image.h>
+#अन्तर्भाव <irq_func.h>
+#अन्तर्भाव <lmb.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <net.h>
+#अन्तर्भाव <asm/cache.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <u-boot/crc.h>
+#अन्तर्भाव <binman.h>
+#अन्तर्भाव <command.h>
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <efi_loader.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <env_internal.h>
+#अन्तर्भाव <fdtdec.h>
+#अन्तर्भाव <init.h>
+#अन्तर्भाव <initcall.h>
+#अन्तर्भाव <kgdb.h>
+#अन्तर्भाव <irq_func.h>
+#अन्तर्भाव <led.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <miiphy.h>
+#अन्तर्भाव <mmc.h>
+#अन्तर्भाव <mux.h>
+#अन्तर्भाव <nand.h>
+#अन्तर्भाव <of_live.h>
+#अन्तर्भाव <onenand_uboot.h>
+#अन्तर्भाव <pvblock.h>
+#अन्तर्भाव <scsi.h>
+#अन्तर्भाव <serial.h>
+#अन्तर्भाव <stdio_dev.h>
+#अन्तर्भाव <timer.h>
+#अन्तर्भाव <trace.h>
+#अन्तर्भाव <watchdog.h>
+#अन्तर्भाव <xen.h>
+#अन्तर्भाव <asm/sections.h>
+#अन्तर्भाव <dm/root.h>
+#अन्तर्भाव <dm/ofnode.h>
+#अन्तर्भाव <linux/compiler.h>
+#अन्तर्भाव <linux/err.h>
+#अन्तर्भाव <wdt.h>
+#अन्तर्भाव <asm-generic/gpio.h>
+#अन्तर्भाव <relocate.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 
 ulong monitor_flash_len;
 
-__weak int board_flash_wp_on(void)
+__weak पूर्णाङ्क board_flash_wp_on(शून्य)
 {
 	/*
 	 * Most flashes can't be detected when write protection is enabled,
 	 * so provide a way to let U-Boot gracefully ignore write protected
 	 * devices.
 	 */
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int cpu_secondary_init_r(void)
+__weak पूर्णाङ्क cpu_secondary_init_r(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_trace(void)
+स्थिर पूर्णाङ्क initr_trace(शून्य)
 {
-#ifdef CONFIG_TRACE
-	trace_init(gd->trace_buff, CONFIG_TRACE_BUFFER_SIZE);
-#endif
+#यदि_परिभाषितम् CONFIG_TRACE
+	trace_init(gd->trace_buff, CONFIG_TRACE_बफर_आकार);
+#यदि_अन्तः
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_reloc(void)
+स्थिर पूर्णाङ्क initr_reloc(शून्य)
 {
 	/* tell others: relocation done */
-	gd->flags |= GD_FLG_RELOC | GD_FLG_FULL_MALLOC_INIT;
+	gd->flags |= GD_FLG_RELOC | GD_FLG_पूर्णम्_MALLOC_INIT;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if defined(CONFIG_ARM) || defined(CONFIG_RISCV)
+#यदि defined(CONFIG_ARM) || defined(CONFIG_RISCV)
 /*
  * Some of these functions are needed purely because the functions they
  * call return void. If we change them to return 0, these stubs can go away.
  */
-static int initr_caches(void)
+स्थिर पूर्णाङ्क initr_caches(शून्य)
 {
 	/* Enable caches */
 	enable_caches();
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-__weak int fixup_cpu(void)
+__weak पूर्णाङ्क fixup_cpu(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_reloc_global_data(void)
+स्थिर पूर्णाङ्क initr_reloc_global_दत्त(शून्य)
 {
-#ifdef __ARM__
-	monitor_flash_len = _end - __image_copy_start;
-#elif defined(CONFIG_RISCV)
-	monitor_flash_len = (ulong)_end - (ulong)_start;
-#elif !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
+#यदि_परिभाषितम् __ARM__
+	monitor_flash_len = अन्तः - __image_copy_start;
+#नोचेद्यदि defined(CONFIG_RISCV)
+	monitor_flash_len = (ulong)अन्तः - (ulong)_start;
+#नोचेद्यदि !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
 	monitor_flash_len = (ulong)__init_end - gd->relocaddr;
-#endif
-#if defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
+#यदि_अन्तः
+#यदि defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
 	/*
 	 * The gd->cpu pointer is set to an address in flash before relocation.
 	 * We need to update it to point to the same CPU entry in RAM.
 	 * TODO: why not just add gd->reloc_ofs?
 	 */
-	gd->arch.cpu += gd->relocaddr - CONFIG_SYS_MONITOR_BASE;
+	gd->arch.cpu += gd->relocaddr - CONFIG_SYS_MONITOR_आधारः;
 
 	/*
 	 * If we didn't know the cpu mask & # cores, we can save them of
 	 * now rather than 'computing' them constantly
 	 */
 	fixup_cpu();
-#endif
-#ifdef CONFIG_ENV_RELOC_GD_ENV_ADDR
+#यदि_अन्तः
+#यदि_परिभाषितम् CONFIG_ENV_RELOC_GD_ENV_ADDR
 	/*
 	 * Relocate the early env_addr pointer unless we know it is not inside
 	 * the binary. Some systems need this and for the rest, it doesn't hurt.
 	 */
 	gd->env_addr += gd->reloc_off;
-#endif
+#यदि_अन्तः
 
 	/*
 	 * For CONFIG_OF_EMBED case the FDT is embedded into ELF, available by
 	 * __dtb_dt_begin. After U-Boot ELF self-relocation to RAM top address
 	 * it is worth to update fdt_blob in global_data
 	 */
-	if (IS_ENABLED(CONFIG_OF_EMBED))
-		fdtdec_setup_embed();
+	यदि (IS_ENABLED(CONFIG_सम्बन्धि_EMBED))
+		fdtdec_सज्जता_embed();
 
-#ifdef CONFIG_EFI_LOADER
+#यदि_परिभाषितम् CONFIG_EFI_LOADER
 	/*
 	 * On the ARM architecture gd is mapped to a fixed register (r9 or x18).
 	 * As this register may be overwritten by an EFI payload we save it here
@@ -167,10 +167,10 @@ static int initr_reloc_global_data(void)
 	 */
 	efi_save_gd();
 
-	if (!(gd->flags & GD_FLG_SKIP_RELOC))
-		efi_runtime_relocate(gd->relocaddr, NULL);
+	यदि (!(gd->flags & GD_FLG_SKIP_RELOC))
+		efi_runtime_relocate(gd->relocaddr, रिक्त);
 
-#endif
+#यदि_अन्तः
 	/*
 	 * We are done with all relocations change the permissions of the binary
 	 * NOTE: __start_rodata etc are defined in arm64 linker scripts and
@@ -179,251 +179,251 @@ static int initr_reloc_global_data(void)
 	 * random addresses.
 	 *
 	 */
-	if (IS_ENABLED(CONFIG_MMU_PGPROT)) {
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__start_rodata),
+	यदि (IS_ENABLED(CONFIG_MMU_PGPROT)) {
+		pgprot_समुच्चयः_attrs((phys_addr_t)(uintptr_t)(__start_rodata),
 				 (size_t)(uintptr_t)(__end_rodata - __start_rodata),
 				 MMU_ATTR_RO);
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__start_data),
+		pgprot_समुच्चयः_attrs((phys_addr_t)(uintptr_t)(__start_data),
 				 (size_t)(uintptr_t)(__end_data - __start_data),
 				 MMU_ATTR_RW);
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__text_start),
+		pgprot_समुच्चयः_attrs((phys_addr_t)(uintptr_t)(__text_start),
 				 (size_t)(uintptr_t)(__text_end - __text_start),
 				 MMU_ATTR_RX);
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int arch_initr_trap(void)
+__weak पूर्णाङ्क arch_initr_trap(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if defined(CONFIG_SYS_INIT_RAM_LOCK) && defined(CONFIG_E500)
-static int initr_unlock_ram_in_cache(void)
+#यदि defined(CONFIG_SYS_INIT_RAM_तालकम्) && defined(CONFIG_E500)
+स्थिर पूर्णाङ्क initr_unlock_ram_अन्तर्_cache(शून्य)
 {
-	unlock_ram_in_cache();	/* it's time to unlock D-cache in e500 */
-	return 0;
+	unlock_ram_अन्तर्_cache();	/* it's time to unlock D-cache in e500 */
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-static int initr_barrier(void)
+स्थिर पूर्णाङ्क initr_barrier(शून्य)
 {
-#ifdef CONFIG_PPC
+#यदि_परिभाषितम् CONFIG_PPC
 	/* TODO: Can we not use dmb() macros for this? */
 	asm("sync ; isync");
-#endif
-	return 0;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
-static int initr_malloc(void)
+स्थिर पूर्णाङ्क initr_malloc(शून्य)
 {
 	ulong start;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	debug("Pre-reloc malloc() used %#x bytes (%d KB)\n", gd->malloc_ptr,
 	      gd->malloc_ptr / 1024);
-#endif
+#यदि_अन्तः
 	/* The malloc area is immediately below the monitor copy in DRAM */
 	/*
 	 * This value MUST match the value of gd->start_addr_sp in board_f.c:
 	 * reserve_noncached().
 	 */
-	start = gd->relocaddr - TOTAL_MALLOC_LEN;
-	gd_set_malloc_start(start);
-	mem_malloc_init(start, TOTAL_MALLOC_LEN);
-	return 0;
+	start = gd->relocaddr - योग_MALLOC_LEN;
+	gd_समुच्चयः_malloc_start(start);
+	mem_malloc_init(start, योग_MALLOC_LEN);
+	प्रत्यागम 0;
 }
 
-static int initr_of_live(void)
+स्थिर पूर्णाङ्क initr_सम्बन्धि_जीवितम्(शून्य)
 {
-	if (CONFIG_IS_ENABLED(OF_LIVE)) {
-		int ret;
+	यदि (CONFIG_IS_ENABLED(सम्बन्धि_जीवितम्)) {
+		पूर्णाङ्क ret;
 
-		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
-		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
-		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
-		if (ret)
-			return ret;
+		bootstage_start(BOOTSTAGE_ID_ACCUM_सम्बन्धि_जीवितम्, "of_live");
+		ret = सम्बन्धि_जीवितम्_build(gd->fdt_blob,
+				    (संरचना device_ग्रन्थिः **)gd_सम्बन्धि_मूलम्_ptr());
+		bootstage_accum(BOOTSTAGE_ID_ACCUM_सम्बन्धि_जीवितम्);
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#ifdef CONFIG_DM
-static int initr_dm(void)
+#यदि_परिभाषितम् CONFIG_DM
+स्थिर पूर्णाङ्क initr_dm(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
 	oftree_reset();
 
 	/* Drop the pre-reloc driver model and start a new one */
-	gd->dm_root = NULL;
-#ifdef CONFIG_TIMER
-	gd->timer = NULL;
-#endif
+	gd->dm_मूलम् = रिक्त;
+#यदि_परिभाषितम् CONFIG_TIMER
+	gd->timer = रिक्त;
+#यदि_अन्तः
 	bootstage_start(BOOTSTAGE_ID_ACCUM_DM_R, "dm_r");
-	ret = dm_init_and_scan(false);
+	ret = dm_init_and_अवलोकनम्(false);
 	bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_R);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 
-	return dm_autoprobe();
+	प्रत्यागम dm_autoprobe();
 }
-#endif
+#यदि_अन्तः
 
-static int initr_dm_devices(void)
+स्थिर पूर्णाङ्क initr_dm_devices(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-	if (IS_ENABLED(CONFIG_TIMER_EARLY)) {
+	यदि (IS_ENABLED(CONFIG_TIMER_EARLY)) {
 		ret = dm_timer_init();
-		if (ret)
-			return ret;
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 
-	if (IS_ENABLED(CONFIG_MULTIPLEXER)) {
+	यदि (IS_ENABLED(CONFIG_MULTIPLEXER)) {
 		/*
 		 * Initialize the multiplexer controls to their default state.
 		 * This must be done early as other drivers may unknowingly
 		 * rely on it.
 		 */
 		ret = dm_mux_init();
-		if (ret)
-			return ret;
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_bootstage(void)
+स्थिर पूर्णाङ्क initr_bootstage(शून्य)
 {
 	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_R, "board_init_r");
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int power_init_board(void)
+__weak पूर्णाङ्क power_init_board(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_announce(void)
+स्थिर पूर्णाङ्क initr_announce(शून्य)
 {
 	debug("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int __maybe_unused initr_binman(void)
+स्थिर पूर्णाङ्क __maybe_unused initr_binman(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
 	ret = binman_init();
-	if (ret)
-		printf("binman_init failed:%d\n", ret);
+	यदि (ret)
+		प्रारूप_लिख("binman_init failed:%d\n", ret);
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-#if defined(CONFIG_MTD_NOR_FLASH)
-__weak int is_flash_available(void)
+#यदि defined(CONFIG_MTD_NOR_FLASH)
+__weak पूर्णाङ्क is_flash_उपलब्धम्(शून्य)
 {
-	return 1;
+	प्रत्यागम 1;
 }
 
-static int initr_flash(void)
+स्थिर पूर्णाङ्क initr_flash(शून्य)
 {
-	ulong flash_size = 0;
-	struct bd_info *bd = gd->bd;
+	ulong flash_आकार = 0;
+	संरचना bd_info *bd = gd->bd;
 
-	if (!is_flash_available())
-		return 0;
+	यदि (!is_flash_उपलब्धम्())
+		प्रत्यागम 0;
 
-	puts("Flash: ");
+	पङ्क्तिं_लिख("Flash: ");
 
-	if (board_flash_wp_on())
-		printf("Uninitialized - Write Protect On\n");
-	else
-		flash_size = flash_init();
+	यदि (board_flash_wp_on())
+		प्रारूप_लिख("Uninitialized - Write Protect On\n");
+	अन्यथा
+		flash_आकार = flash_init();
 
-	print_size(flash_size, "");
-#ifdef CONFIG_SYS_FLASH_CHECKSUM
+	print_आकार(flash_आकार, "");
+#यदि_परिभाषितम् CONFIG_SYS_FLASH_CHECKSUM
 	/*
 	 * Compute and print flash CRC if flashchecksum is set to 'y'
 	 *
 	 * NOTE: Maybe we should add some schedule()? XXX
 	 */
-	if (env_get_yesno("flashchecksum") == 1) {
-		const uchar *flash_base = (const uchar *)CFG_SYS_FLASH_BASE;
+	यदि (env_get_yesno("flashchecksum") == 1) {
+		ध्रुव uchar *flash_आधारः = (ध्रुव uchar *)CFG_SYS_FLASH_आधारः;
 
-		printf("  CRC: %08X", crc32(0,
-					    flash_base,
-					    flash_size));
+		प्रारूप_लिख("  CRC: %08X", चक्रीयपरीक्षा_32(0,
+					    flash_आधारः,
+					    flash_आकार));
 	}
-#endif /* CONFIG_SYS_FLASH_CHECKSUM */
+#यदि_अन्तः /* CONFIG_SYS_FLASH_CHECKSUM */
 	putc('\n');
 
 	/* update start of FLASH memory    */
-#ifdef CFG_SYS_FLASH_BASE
-	bd->bi_flashstart = CFG_SYS_FLASH_BASE;
-#endif
+#यदि_परिभाषितम् CFG_SYS_FLASH_आधारः
+	bd->bi_flashstart = CFG_SYS_FLASH_आधारः;
+#यदि_अन्तः
 	/* size of FLASH memory (final value) */
-	bd->bi_flashsize = flash_size;
+	bd->bi_flashsize = flash_आकार;
 
-#if defined(CONFIG_SYS_UPDATE_FLASH_SIZE)
+#यदि defined(CONFIG_SYS_UPDATE_FLASH_आकार)
 	/* Make a update of the Memctrl. */
-	update_flash_size(flash_size);
-#endif
+	update_flash_आकार(flash_आकार);
+#यदि_अन्तः
 
-#if defined(CONFIG_OXC) || defined(CONFIG_RMU)
+#यदि defined(CONFIG_OXC) || defined(CONFIG_RMU)
 	/* flash mapped at end of memory map */
-	bd->bi_flashoffset = CONFIG_TEXT_BASE + flash_size;
-#elif CONFIG_SYS_MONITOR_BASE == CFG_SYS_FLASH_BASE
+	bd->bi_flashoffset = CONFIG_TEXT_आधारः + flash_आकार;
+#नोचेद्यदि CONFIG_SYS_MONITOR_आधारः == CFG_SYS_FLASH_आधारः
 	bd->bi_flashoffset = monitor_flash_len;	/* reserved area for monitor */
-#endif
-	return 0;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#ifdef CONFIG_CMD_NAND
+#यदि_परिभाषितम् CONFIG_CMD_NAND
 /* go init the NAND */
-static int initr_nand(void)
+स्थिर पूर्णाङ्क initr_nand(शून्य)
 {
-	puts("NAND:  ");
+	पङ्क्तिं_लिख("NAND:  ");
 	nand_init();
-	printf("%lu MiB\n", nand_size() / 1024);
-	return 0;
+	प्रारूप_लिख("%lu MiB\n", nand_आकार() / 1024);
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#if defined(CONFIG_CMD_ONENAND)
+#यदि defined(CONFIG_CMD_ONENAND)
 /* go init the NAND */
-static int initr_onenand(void)
+स्थिर पूर्णाङ्क initr_onenand(शून्य)
 {
-	puts("NAND:  ");
+	पङ्क्तिं_लिख("NAND:  ");
 	onenand_init();
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#ifdef CONFIG_MMC
-static int initr_mmc(void)
+#यदि_परिभाषितम् CONFIG_MMC
+स्थिर पूर्णाङ्क initr_mmc(शून्य)
 {
-	puts("MMC:   ");
+	पङ्क्तिं_लिख("MMC:   ");
 	mmc_initialize(gd->bd);
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#ifdef CONFIG_PVBLOCK
-static int initr_pvblock(void)
+#यदि_परिभाषितम् CONFIG_PVBLOCK
+स्थिर पूर्णाङ्क initr_pvblock(शून्य)
 {
-	puts("PVBLOCK: ");
+	पङ्क्तिं_लिख("PVBLOCK: ");
 	pvblock_init();
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
 /*
  * Tell if it's OK to load the environment early in boot.
@@ -436,153 +436,153 @@ static int initr_pvblock(void)
  *
  * Return: 0 if environment should not be loaded, !=0 if it is ok to load
  */
-static int should_load_env(void)
+स्थिर पूर्णाङ्क should_आरोपय_env(शून्य)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
-		return ofnode_conf_read_int("load-environment", 1);
+	यदि (IS_ENABLED(CONFIG_सम्बन्धि_CONTROL))
+		प्रत्यागम ofnode_conf_read_int("load-environment", 1);
 
-	return 1;
+	प्रत्यागम 1;
 }
 
-static int initr_env(void)
+स्थिर पूर्णाङ्क initr_env(शून्य)
 {
 	/* initialize environment */
-	if (should_load_env())
+	यदि (should_आरोपय_env())
 		env_relocate();
-	else
-		env_set_default(NULL, 0);
+	अन्यथा
+		env_समुच्चयः_default(रिक्त, 0);
 
 	env_import_fdt();
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
-		env_set_hex("fdtcontroladdr",
-			    (unsigned long)map_to_sysmem(gd->fdt_blob));
+	यदि (IS_ENABLED(CONFIG_सम्बन्धि_CONTROL))
+		env_समुच्चयः_hex("fdtcontroladdr",
+			    (अचिह्नित दीर्घ)map_गन्तव्यम्_sysmem(gd->fdt_blob));
 
-	#if (IS_ENABLED(CONFIG_SAVE_PREV_BL_INITRAMFS_START_ADDR) || \
-						IS_ENABLED(CONFIG_SAVE_PREV_BL_FDT_ADDR))
-		save_prev_bl_data();
-	#endif
+	#यदि (IS_ENABLED(CONFIG_SAVE_पूर्व_BL_INITRAMFS_START_ADDR) || \
+						IS_ENABLED(CONFIG_SAVE_पूर्व_BL_FDT_ADDR))
+		save_पूर्व_bl_दत्त();
+	#यदि_अन्तः
 
 	/* Initialize from environment */
-	image_load_addr = env_get_ulong("loadaddr", 16, image_load_addr);
+	image_आरोपय_addr = env_get_ulong("loadaddr", 16, image_आरोपय_addr);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#ifdef CONFIG_SYS_MALLOC_BOOTPARAMS
-static int initr_malloc_bootparams(void)
+#यदि_परिभाषितम् CONFIG_SYS_MALLOC_BOOTPARAMS
+स्थिर पूर्णाङ्क initr_malloc_bootparams(शून्य)
 {
-	gd->bd->bi_boot_params = (ulong)malloc(CONFIG_SYS_BOOTPARAMS_LEN);
-	if (!gd->bd->bi_boot_params) {
-		puts("WARNING: Cannot allocate space for boot parameters\n");
-		return -ENOMEM;
+	gd->bd->bi_boot_params = (ulong)स्मृतिं_देहि(CONFIG_SYS_BOOTPARAMS_LEN);
+	यदि (!gd->bd->bi_boot_params) {
+		पङ्क्तिं_लिख("WARNING: Cannot allocate space for boot parameters\n");
+		प्रत्यागम -ENOMEM;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-static int initr_boot_led_blink(void)
+स्थिर पूर्णाङ्क initr_boot_led_blink(शून्य)
 {
 	led_boot_blink();
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initr_boot_led_on(void)
+स्थिर पूर्णाङ्क initr_boot_led_on(शून्य)
 {
 	led_boot_on();
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if CONFIG_IS_ENABLED(NET)
-static int initr_net(void)
+#यदि CONFIG_IS_ENABLED(NET)
+स्थिर पूर्णाङ्क initr_net(शून्य)
 {
-	puts("Net:   ");
+	पङ्क्तिं_लिख("Net:   ");
 	eth_initialize();
-#if defined(CONFIG_RESET_PHY_R)
+#यदि defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");
 	reset_phy();
-#endif
-	return 0;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#ifdef CONFIG_POST
-static int initr_post(void)
+#यदि_परिभाषितम् CONFIG_POST
+स्थिर पूर्णाङ्क initr_post(शून्य)
 {
-	post_run(NULL, POST_RAM | post_bootmode_get(0));
-	return 0;
+	post_सततम्(रिक्त, POST_RAM | post_bootmode_get(0));
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-#if defined(CFG_PRAM)
+#यदि defined(CFG_PRAM)
 /*
  * Export available size of memory for Linux, taking into account the
  * protected RAM at top of memory
  */
-int initr_mem(void)
+पूर्णाङ्क initr_mem(शून्य)
 {
 	ulong pram = 0;
-	char memsz[32];
+	वर्ण memsz[32];
 
 	pram = env_get_ulong("pram", 10, CFG_PRAM);
-	sprintf(memsz, "%ldk", (long int)((gd->ram_size / 1024) - pram));
-	env_set("mem", memsz);
+	sprintf(memsz, "%ldk", (दीर्घ पूर्णाङ्क)((gd->ram_आकार / 1024) - pram));
+	env_समुच्चयः("mem", memsz);
 
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-static int initr_lmb(void)
+स्थिर पूर्णाङ्क initr_lmb(शून्य)
 {
-	if (CONFIG_IS_ENABLED(LMB))
-		return lmb_init();
-	else
-		return 0;
+	यदि (CONFIG_IS_ENABLED(LMB))
+		प्रत्यागम lmb_init();
+	अन्यथा
+		प्रत्यागम 0;
 }
 
-static int dm_announce(void)
+स्थिर पूर्णाङ्क dm_announce(शून्य)
 {
-	int device_count;
-	int uclass_count;
+	पूर्णाङ्क device_गणनम्;
+	पूर्णाङ्क uclass_गणनम्;
 
-	if (IS_ENABLED(CONFIG_DM)) {
-		dm_get_stats(&device_count, &uclass_count);
-		printf("Core:  %d devices, %d uclasses", device_count,
-		       uclass_count);
-		if (CONFIG_IS_ENABLED(OF_REAL))
-			printf(", devicetree: %s", fdtdec_get_srcname());
-		if (CONFIG_IS_ENABLED(UPL))
-			printf(", universal payload active");
-		printf("\n");
-		if (IS_ENABLED(CONFIG_OF_HAS_PRIOR_STAGE) &&
+	यदि (IS_ENABLED(CONFIG_DM)) {
+		dm_get_stats(&device_गणनम्, &uclass_गणनम्);
+		प्रारूप_लिख("Core:  %d devices, %d uclasses", device_गणनम्,
+		       uclass_गणनम्);
+		यदि (CONFIG_IS_ENABLED(सम्बन्धि_REAL))
+			प्रारूप_लिख(", devicetree: %s", fdtdec_get_srcname());
+		यदि (CONFIG_IS_ENABLED(UPL))
+			प्रारूप_लिख(", universal payload active");
+		प्रारूप_लिख("\n");
+		यदि (IS_ENABLED(CONFIG_सम्बन्धि_HAS_प्राक्_STAGE) &&
 		    (gd->fdt_src == FDTSRC_SEPARATE ||
 		     gd->fdt_src == FDTSRC_EMBED)) {
-			printf("Warning: Unexpected devicetree source (not from a prior stage)");
-			printf("Warning: U-Boot may not function properly\n");
+			प्रारूप_लिख("Warning: Unexpected devicetree source (not from a prior stage)");
+			प्रारूप_लिख("Warning: U-Boot may not function properly\n");
 		}
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int run_main_loop(void)
+स्थिर पूर्णाङ्क सततम्_main_loop(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-#ifdef CONFIG_SANDBOX
+#यदि_परिभाषितम् CONFIG_SANDBOX
 	sandbox_main_loop_init();
-#endif
+#यदि_अन्तः
 
 	ret = event_notify_null(EVT_MAIN_LOOP);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 
 	/* main_loop() can return to retry autoboot, if so just run it again */
-	for (;;)
+	प्रति (;;)
 		main_loop();
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -592,7 +592,7 @@ static int run_main_loop(void)
  * TODO: perhaps reset the watchdog in the initcall function after each call?
  */
 
-static void initcall_run_r(void)
+स्थिर शून्य initcall_सततम्_r(शून्य)
 {
 	/*
 	 * Please do not add logic to this function (variables, if (), etc.).
@@ -602,7 +602,7 @@ static void initcall_run_r(void)
 	INITCALL(initr_reloc);
 	INITCALL(event_init);
 	/* TODO: could x86/PPC have this also perhaps? */
-#if CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
+#यदि CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
 	INITCALL(initr_caches);
 	/* Note: For Freescale LS2 SoCs, new MMU table is created in DDR.
 	 *	 A temporary mapping of IFC high region is since removed,
@@ -610,173 +610,173 @@ static void initcall_run_r(void)
 	 *	 until board_init() is called below to remap IFC to high
 	 *	 region.
 	 */
-#endif
-	INITCALL(initr_reloc_global_data);
-#if CONFIG_IS_ENABLED(SYS_INIT_RAM_LOCK) && CONFIG_IS_ENABLED(E500)
-	INITCALL(initr_unlock_ram_in_cache);
-#endif
+#यदि_अन्तः
+	INITCALL(initr_reloc_global_दत्त);
+#यदि CONFIG_IS_ENABLED(SYS_INIT_RAM_तालकम्) && CONFIG_IS_ENABLED(E500)
+	INITCALL(initr_unlock_ram_अन्तर्_cache);
+#यदि_अन्तः
 	INITCALL(initr_barrier);
 	INITCALL(initr_malloc);
 	INITCALL(log_init);
 	INITCALL(initr_bootstage); /* Needs malloc() but has its own timer */
-#if CONFIG_IS_ENABLED(CONSOLE_RECORD)
-	INITCALL(console_record_init);
-#endif
-#if CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_MEMORY)
+#यदि CONFIG_IS_ENABLED(CONSOLE_लेखः)
+	INITCALL(console_लेखः_init);
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_स्मृतिः)
 	INITCALL(noncached_init);
-#endif
-	INITCALL(initr_of_live);
-#if CONFIG_IS_ENABLED(DM)
+#यदि_अन्तः
+	INITCALL(initr_सम्बन्धि_जीवितम्);
+#यदि CONFIG_IS_ENABLED(DM)
 	INITCALL(initr_dm);
-#endif
-#if CONFIG_IS_ENABLED(ADDR_MAP)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(ADDR_MAP)
 	INITCALL(init_addr_map);
-#endif
-#if CONFIG_IS_ENABLED(BOARD_INIT)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(BOARD_INIT)
 	INITCALL(board_init);	/* Setup chipselects */
-#endif
+#यदि_अन्तः
 	/*
 	 * TODO: printing of the clock inforamtion of the board is now
 	 * implemented as part of bdinfo command. Currently only support for
 	 * davinci SOC's is added. Remove this check once all the board
 	 * implement this.
 	 */
-#if CONFIG_IS_ENABLED(CLOCKS)
-	INITCALL(set_cpu_clk_info);
-#endif
+#यदि CONFIG_IS_ENABLED(CLOCKS)
+	INITCALL(समुच्चयः_cpu_clk_info);
+#यदि_अन्तः
 	INITCALL(initr_lmb);
-#if CONFIG_IS_ENABLED(EFI_LOADER)
-	INITCALL(efi_memory_init);
-#endif
-#if CONFIG_IS_ENABLED(BINMAN_FDT)
+#यदि CONFIG_IS_ENABLED(EFI_LOADER)
+	INITCALL(efi_स्मृतिः_init);
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(BINMAN_FDT)
 	INITCALL(initr_binman);
-#endif
-#if CONFIG_IS_ENABLED(FSP_VERSION2)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(FSP_VERSION2)
 	INITCALL(arch_fsp_init_r);
-#endif
+#यदि_अन्तः
 	INITCALL(initr_dm_devices);
 	INITCALL(stdio_init_tables);
 	INITCALL(serial_initialize);
 	INITCALL(initr_announce);
 	INITCALL(dm_announce);
-#if CONFIG_IS_ENABLED(WDT)
+#यदि CONFIG_IS_ENABLED(WDT)
 	INITCALL(initr_watchdog);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
 	INITCALL(arch_initr_trap);
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
+#यदि CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
 	INITCALL(board_early_init_r);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(POST)
+#यदि CONFIG_IS_ENABLED(POST)
 	INITCALL(post_output_backlog);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#यदि CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do early PCI configuration _before_ the flash gets initialised,
 	 * because PCU resources are crucial for flash access on some boards.
 	 */
 	INITCALL(pci_init);
-#endif
-#if CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
 	INITCALL(arch_early_init_r);
-#endif
+#यदि_अन्तः
 	INITCALL(power_init_board);
-#if CONFIG_IS_ENABLED(MTD_NOR_FLASH)
+#यदि CONFIG_IS_ENABLED(MTD_NOR_FLASH)
 	INITCALL(initr_flash);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
-#if IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
+#यदि IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
 	/* initialize higher level parts of CPU like time base and timers */
 	INITCALL(cpu_init_r);
-#endif
-#if CONFIG_IS_ENABLED(EFI_LOADER)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(EFI_LOADER)
 	INITCALL(efi_init_early);
-#endif
-#if CONFIG_IS_ENABLED(CMD_NAND)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(CMD_NAND)
 	INITCALL(initr_nand);
-#endif
-#if CONFIG_IS_ENABLED(CMD_ONENAND)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(CMD_ONENAND)
 	INITCALL(initr_onenand);
-#endif
-#if CONFIG_IS_ENABLED(MMC)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(MMC)
 	INITCALL(initr_mmc);
-#endif
-#if CONFIG_IS_ENABLED(XEN)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(XEN)
 	INITCALL(xen_init);
-#endif
-#if CONFIG_IS_ENABLED(PVBLOCK)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(PVBLOCK)
 	INITCALL(initr_pvblock);
-#endif
+#यदि_अन्तः
 	INITCALL(initr_env);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
 	INITCALL(initr_malloc_bootparams);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
 	INITCALL(cpu_secondary_init_r);
-#if CONFIG_IS_ENABLED(ID_EEPROM)
+#यदि CONFIG_IS_ENABLED(ID_EEPROM)
 	INITCALL(mac_read_from_eeprom);
-#endif
+#यदि_अन्तः
 	INITCALL_EVT(EVT_SETTINGS_R);
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#यदि CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do pci configuration
 	 */
 	INITCALL(pci_init);
-#endif
-	INITCALL(stdio_add_devices);
+#यदि_अन्तः
+	INITCALL(stdio_सङ्कलय_devices);
 	INITCALL(jumptable_init);
-#if CONFIG_IS_ENABLED(API)
+#यदि CONFIG_IS_ENABLED(API)
 	INITCALL(api_init);
-#endif
+#यदि_अन्तः
 	INITCALL(console_init_r);	/* fully init console as a device */
-#if CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
+#यदि CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
 	INITCALL(console_announce_r);
 	INITCALL(show_board_info);
-#endif
+#यदि_अन्तः
 	/* miscellaneous arch-dependent init */
-#if CONFIG_IS_ENABLED(ARCH_MISC_INIT)
+#यदि CONFIG_IS_ENABLED(ARCH_MISC_INIT)
 	INITCALL(arch_misc_init);
-#endif
+#यदि_अन्तः
 	/* miscellaneous platform-dependent init */
-#if CONFIG_IS_ENABLED(MISC_INIT_R)
+#यदि CONFIG_IS_ENABLED(MISC_INIT_R)
 	INITCALL(misc_init_r);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(CMD_KGDB)
+#यदि CONFIG_IS_ENABLED(CMD_KGDB)
 	INITCALL(kgdb_init);
-#endif
-	INITCALL(interrupt_init);
-#if defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
+#यदि_अन्तः
+	INITCALL(व्यवधानम्_init);
+#यदि defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
 	INITCALL(timer_init);		/* initialize timer */
-#endif
+#यदि_अन्तः
 	INITCALL(initr_boot_led_blink);
 	/* PPC has a udelay(20) here dating from 2002. Why? */
-#if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
+#यदि CONFIG_IS_ENABLED(BOARD_LATE_INIT)
 	INITCALL(board_late_init);
-#endif
-#if CONFIG_IS_ENABLED(PCI_ENDPOINT)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(PCI_ENDPOINT)
 	INITCALL(pci_ep_init);
-#endif
-#if CONFIG_IS_ENABLED(NET)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(NET)
 	WATCHDOG_RESET();
 	INITCALL(initr_net);
-#endif
-#if CONFIG_IS_ENABLED(POST)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(POST)
 	INITCALL(initr_post);
-#endif
+#यदि_अन्तः
 	WATCHDOG_RESET();
-	INITCALL_EVT(EVT_LAST_STAGE_INIT);
-#if defined(CFG_PRAM)
+	INITCALL_EVT(EVT_चरमः_STAGE_INIT);
+#यदि defined(CFG_PRAM)
 	INITCALL(initr_mem);
-#endif
+#यदि_अन्तः
 	INITCALL(initr_boot_led_on);
-	INITCALL(run_main_loop);
+	INITCALL(सततम्_main_loop);
 }
 
-void board_init_r(gd_t *new_gd, ulong dest_addr)
+शून्य board_init_r(gd_t *new_gd, ulong dest_addr)
 {
 	/*
 	 * The pre-relocation drivers may be using memory that has now gone
@@ -793,17 +793,17 @@ void board_init_r(gd_t *new_gd, ulong dest_addr)
 	 * TODO(sjg@chromium.org): Consider doing this for all archs, or
 	 * dropping the new_gd parameter.
 	 */
-	if (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
-		arch_setup_gd(new_gd);
+	यदि (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
+		arch_सज्जता_gd(new_gd);
 
-#if defined(CONFIG_RISCV)
-	set_gd(new_gd);
-#elif !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+#यदि defined(CONFIG_RISCV)
+	समुच्चयः_gd(new_gd);
+#नोचेद्यदि !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
 	gd = new_gd;
-#endif
+#यदि_अन्तः
 	gd->flags &= ~GD_FLG_LOG_READY;
 
-	initcall_run_r();
+	initcall_सततम्_r();
 
 	/* NOTREACHED - run_main_loop() does not return */
 	hang();

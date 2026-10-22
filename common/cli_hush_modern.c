@@ -12,176 +12,176 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <malloc.h>         /* malloc, free, realloc*/
+#अन्तर्भाव <linux/ctype.h>    /* isalpha, isdigit */
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <bootretry.h>
+#अन्तर्भाव <cli.h>
+#अन्तर्भाव <cli_hush.h>
+#अन्तर्भाव <command.h>        /* find_cmd */
+#अन्तर्भाव <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
  */
-#define BB_VER			"1.37.0.git23da5c4b716b"
+#परिभाषय BB_VER			"1.37.0.git23da5c4b716b"
 
 /*
  * Define hush features by the names used upstream.
  */
-#define ENABLE_HUSH_INTERACTIVE	1
-#define ENABLE_FEATURE_EDITING	1
-#define ENABLE_HUSH_IF		1
-#define ENABLE_HUSH_LOOPS	1
+#परिभाषय ENABLE_HUSH_INTERACTIVE	1
+#परिभाषय ENABLE_FEATURE_EDITING	1
+#परिभाषय ENABLE_HUSH_IF		1
+#परिभाषय ENABLE_HUSH_LOOPS	1
 /* No MMU in U-Boot */
-#define BB_MMU			0
-#define USE_FOR_NOMMU(...)	__VA_ARGS__
-#define USE_FOR_MMU(...)
+#परिभाषय BB_MMU			0
+#परिभाषय USE_FOR_NOMMU(...)	__VA_ARGS__
+#परिभाषय USE_FOR_MMU(...)
 
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#यदि CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+प्रकारनिर्देश चिह्नित वर्ण smallint;
+प्रकारनिर्देश अचिह्नित वर्ण smalluint;
+#अन्यथा
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
-#endif
+प्रकारनिर्देश पूर्णाङ्क smallint;
+प्रकारनिर्देश अचिह्नित smalluint;
+#यदि_अन्तः
 
 /*
  * Alignment defines used by BusyBox.
  */
-#define ALIGN1			__attribute__((aligned(1)))
-#define ALIGN2			__attribute__((aligned(2)))
-#define ALIGN4			__attribute__((aligned(4)))
-#define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#परिभाषय ALIGN1			__attribute__((aligned(1)))
+#परिभाषय ALIGN2			__attribute__((aligned(2)))
+#परिभाषय ALIGN4			__attribute__((aligned(4)))
+#परिभाषय ALIGN8			__attribute__((aligned(8)))
+#परिभाषय ALIGN_PTR		__attribute__((aligned(परिमाण(शून्य*))))
 
 /*
  * Miscellaneous compiler/platform defines.
  */
-#define FAST_FUNC /* not used in U-Boot */
-#define UNUSED_PARAM		__always_unused
-#define ALWAYS_INLINE		__always_inline
-#define NOINLINE		noinline
+#परिभाषय FAST_FUNC /* not used in U-Boot */
+#परिभाषय अप्रयुक्तम्_PARAM		__always_unused
+#परिभाषय ALWAYS_INLINE		__always_inline
+#परिभाषय NOINLINE		noinline
 
 /*
  * Defines to provide equivalents to what libc/BusyBox defines.
  */
-#define EOF			(-1)
-#define EXIT_SUCCESS		0
-#define EXIT_FAILURE		1
+#परिभाषय EOF			(-1)
+#परिभाषय EXIT_SUCCESS		0
+#परिभाषय EXIT_FAILURE		1
 
 /*
  * Stubs to provide libc/BusyBox functions based on U-Boot equivalents where it
  * makes sense.
  */
-#define utoa			simple_itoa
+#परिभाषय utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+स्थिर शून्य __noreturn xfunc_die(शून्य)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#परिभाषय bb_error_सन्देशः_and_die(format, ...) कुरु { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} यावत् (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#परिभाषय bb_simple_error_सन्देशः_and_die(सन्देशः) कुरु { \
+panic_str("HUSH: " सन्देशः); \
+} यावत् (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+स्थिर पूर्णाङ्क __maybe_unused fdprintf(पूर्णाङ्क fd, ध्रुव वर्ण *format, ...)
 {
-	va_list args;
+	va_list तर्काः;
 	uint i;
 
-	assert(fd == 2);
+	प्रतिज्ञा(fd == 2);
 
-	va_start(args, format);
-	i = vprintf(format, args);
-	va_end(args);
+	va_start(तर्काः, format);
+	i = vprintf(format, तर्काः);
+	va_अन्तः(तर्काः);
 
-	return i;
+	प्रत्यागम i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+स्थिर शून्य bb_verror_सन्देशः(ध्रुव वर्ण *s, va_list p, ध्रुव वर्ण* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+स्थिर शून्य bb_error_सन्देशः(ध्रुव वर्ण *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
-	va_end(p);
+	bb_verror_सन्देशः(s, p, रिक्त);
+	va_अन्तः(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+स्थिर शून्य bb_simple_error_सन्देशः(ध्रुव वर्ण *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_सन्देशः("%s", s);
 }
 
-static void *xmalloc(size_t size)
+स्थिर शून्य *xmalloc(size_t आकार)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	शून्य *p = रिक्त;
+	यदि (!(p = स्मृतिं_देहि(आकार)))
 		panic("out of memory");
-	return p;
+	प्रत्यागम p;
 }
 
-static void *xzalloc(size_t size)
+स्थिर शून्य *xzalloc(size_t आकार)
 {
-	void *p = xmalloc(size);
-	memset(p, 0, size);
-	return p;
+	शून्य *p = xmalloc(आकार);
+	स्मृतिं_पूरय(p, 0, आकार);
+	प्रत्यागम p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+स्थिर शून्य *xrealloc(शून्य *ptr, size_t आकार)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	शून्य *p = रिक्त;
+	यदि (!(p = realloc(ptr, आकार)))
 		panic("out of memory");
-	return p;
+	प्रत्यागम p;
 }
 
-static void *xmemdup(const void *s, int n)
+स्थिर शून्य *xmemdup(ध्रुव शून्य *s, पूर्णाङ्क n)
 {
-	return memcpy(xmalloc(n), s, n);
+	प्रत्यागम स्मृतिं_प्रतिलिख(xmalloc(n), s, n);
 }
 
-#define xstrdup		strdup
-#define xstrndup	strndup
+#परिभाषय xstrdup		strdup
+#परिभाषय xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+स्थिर शून्य *mempcpy(शून्य *dest, ध्रुव शून्य *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	प्रत्यागम स्मृतिं_प्रतिलिख(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+स्थिर शून्य overlapping_strcpy(वर्ण *dst, ध्रुव वर्ण *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	यदि (dst != src) {
+		यावत् ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+स्थिर वर्ण* skip_whitespace(ध्रुव वर्ण *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	यावत् (*s == ' ' || (अचिह्नित वर्ण)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	प्रत्यागम (वर्ण *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+स्थिर वर्ण* skip_non_whitespace(ध्रुव वर्ण *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	यावत् (*s != '\0' && *s != ' ' && (अचिह्नित वर्ण)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	प्रत्यागम (वर्ण *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#परिभाषय is_name(c)	((c) == '_' || अक्षरम्_वा((अचिह्नित वर्ण)(c)))
+#परिभाषय is_अन्तर्_name(c)	((c) == '_' || अक्षरम्_अङ्कः_वा((अचिह्नित वर्ण)(c)))
 
-static const char* endofname(const char *name)
+स्थिर ध्रुव वर्ण* endofname(ध्रुव वर्ण *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	यदि (!is_name(*name))
+		प्रत्यागम name;
+	यावत् (*++name) {
+		यदि (!is_अन्तर्_name(*name))
+			भङ्ग;
 	}
-	return name;
+	प्रत्यागम name;
 }
 
 /**
@@ -226,98 +226,98 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+स्थिर size_t list_आकार(वर्ण **list)
 {
-	size_t size;
+	size_t आकार;
 
-	for (size = 0; list[size] != NULL; size++);
+	प्रति (आकार = 0; list[आकार] != रिक्त; आकार++);
 
-	return size;
+	प्रत्यागम आकार;
 }
 
-static int varcmp(const char *p, const char *q)
+स्थिर पूर्णाङ्क varcmp(ध्रुव वर्ण *p, ध्रुव वर्ण *q)
 {
-	int c, d;
+	पूर्णाङ्क c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	यावत् ((c = *p) == (d = *q)) {
+		यदि (c == '\0' || c == '=')
+			गच्छ बहिर्गमनम्;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	यदि (c == '=')
 		c = '\0';
-	if (d == '=')
+	यदि (d == '=')
 		d = '\0';
-out:
-	return c - d;
+बहिर्गमनम्:
+	प्रत्यागम c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+संरचना अन्तर्_str;
+स्थिर पूर्णाङ्क u_boot_cli_readline(संरचना अन्तर्_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+संरचना अन्तर्_str;
+स्थिर पूर्णाङ्क u_boot_cli_readline(संरचना अन्तर्_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+स्थिर uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
-#define defifs (defifsvar + 4)
+स्थिर ध्रुव वर्ण defifsvar[] __aligned(1) = "IFS= \t\n";
+#परिभाषय defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
-#define EXIT_RET_CODE -2
+#परिभाषय EXIT_RET_संहिता -2
 
 /*
  * This define is used for changes that need be done directly in the upstream
  * sources still. Ideally, its use should be minimized as much as possible.
  */
-#define __U_BOOT__
+#परिभाषय __U_BOOT__
 
 /*
  *
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#अन्तर्भाव "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+पूर्णाङ्क u_boot_hush_start_modern(शून्य)
 {
 	INIT_G();
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+स्थिर पूर्णाङ्क u_boot_cli_readline(संरचना अन्तर्_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	वर्ण *prompt;
+	वर्ण __maybe_unused *ps_prompt = रिक्त;
 
-	if (!G.promptmode)
+	यदि (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
-#ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+#यदि_परिभाषितम् CONFIG_SYS_PROMPT_HUSH_PS2
+	अन्यथा
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#अन्यथा
 	/* TODO: default value? */
-	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
-#endif
+	#दोषः "SYS_PROMPT_HUSH_PS2 is not defined!"
+#यदि_अन्तः
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	यदि (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		यदि (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		अन्यथा
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		यदि (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	प्रत्यागम cli_readline(prompt);
 }

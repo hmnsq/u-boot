@@ -6,86 +6,86 @@
  * Aneesh V <aneesh@ti.com>
  */
 
-#include <config.h>
-#include <bloblist.h>
-#include <binman_sym.h>
-#include <bootstage.h>
-#include <dm.h>
-#include <handoff.h>
-#include <hang.h>
-#include <init.h>
-#include <irq_func.h>
-#include <log.h>
-#include <mapmem.h>
-#include <of_live.h>
-#include <serial.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <system-constants.h>
-#include <asm/global_data.h>
-#include <asm-generic/gpio.h>
-#include <nand.h>
-#include <fat.h>
-#include <u-boot/crc.h>
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
-#include <timestamp.h>
-#endif
-#include <version.h>
-#include <image.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <dm/root.h>
-#include <dm/util.h>
-#include <dm/device-internal.h>
-#include <dm/uclass-internal.h>
-#include <linux/compiler.h>
-#include <fdt_support.h>
-#include <bootcount.h>
-#include <wdt.h>
-#include <video.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <bloblist.h>
+#अन्तर्भाव <binman_sym.h>
+#अन्तर्भाव <bootstage.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <handoff.h>
+#अन्तर्भाव <hang.h>
+#अन्तर्भाव <init.h>
+#अन्तर्भाव <irq_func.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <of_live.h>
+#अन्तर्भाव <serial.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <spl_load.h>
+#अन्तर्भाव <system-constants.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <asm-generic/gpio.h>
+#अन्तर्भाव <nand.h>
+#अन्तर्भाव <fat.h>
+#अन्तर्भाव <u-boot/crc.h>
+#यदि CONFIG_IS_ENABLED(BANNER_PRINT)
+#अन्तर्भाव <timestamp.h>
+#यदि_अन्तः
+#अन्तर्भाव <version.h>
+#अन्तर्भाव <image.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <dm/root.h>
+#अन्तर्भाव <dm/util.h>
+#अन्तर्भाव <dm/device-internal.h>
+#अन्तर्भाव <dm/uclass-internal.h>
+#अन्तर्भाव <linux/compiler.h>
+#अन्तर्भाव <fdt_support.h>
+#अन्तर्भाव <bootcount.h>
+#अन्तर्भाव <wdt.h>
+#अन्तर्भाव <video.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 DECLARE_BINMAN_MAGIC_SYM;
 
-u32 *boot_params_ptr = NULL;
+u32 *boot_params_ptr = रिक्त;
 
-#if CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS)
+#यदि CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS)
 /* See spl.h for information about this */
-#if defined(CONFIG_SPL_BUILD)
+#यदि defined(CONFIG_SPL_BUILD)
 binman_sym_declare(ulong, u_boot_any, image_pos);
-binman_sym_declare(ulong, u_boot_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_any, आकार);
+#यदि_अन्तः
 
-#ifdef CONFIG_TPL
+#यदि_परिभाषितम् CONFIG_TPL
 binman_sym_declare(ulong, u_boot_spl_any, image_pos);
-binman_sym_declare(ulong, u_boot_spl_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_spl_any, आकार);
+#यदि_अन्तः
 
-#ifdef CONFIG_VPL
+#यदि_परिभाषितम् CONFIG_VPL
 binman_sym_declare(ulong, u_boot_vpl_any, image_pos);
-binman_sym_declare(ulong, u_boot_vpl_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_vpl_any, आकार);
+#यदि_अन्तः
 
-#endif /* BINMAN_UBOOT_SYMBOLS */
+#यदि_अन्तः /* BINMAN_UBOOT_SYMBOLS */
 
 /* Define board data structure */
-static struct bd_info bdata __attribute__ ((section(".data")));
+स्थिर संरचना bd_info bdata __attribute__ ((section(".data")));
 
-#if CONFIG_IS_ENABLED(SHOW_BOOT_PROGRESS)
+#यदि CONFIG_IS_ENABLED(SHOW_BOOT_प्रगतिः)
 /*
  * Board-specific Platform code can reimplement show_boot_progress () if needed
  */
-__weak void show_boot_progress(int val) {}
-#endif
+__weak शून्य show_boot_प्रगतिः(पूर्णाङ्क val) {}
+#यदि_अन्तः
 
-#if defined(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) || \
+#यदि defined(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) || \
 	defined(CONFIG_SPL_ATF)
 /* weak, default platform-specific function to initialize dram banks */
-__weak int dram_init_banksize(void)
+__weak पूर्णाङ्क dram_init_banksize(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
 /*
  * Default function to determine if u-boot or the OS should
@@ -97,129 +97,129 @@ __weak int dram_init_banksize(void)
  * 0 to not start u-boot
  * positive if u-boot should start
  */
-#if CONFIG_IS_ENABLED(OS_BOOT)
-__weak int spl_start_uboot(void)
+#यदि CONFIG_IS_ENABLED(OS_BOOT)
+__weak पूर्णाङ्क spl_start_uboot(शून्य)
 {
-	puts(PHASE_PROMPT
+	पङ्क्तिं_लिख(PHASE_PROMPT
 	     "Please implement spl_start_uboot() for your board\n");
-	puts(PHASE_PROMPT "Direct Linux boot not active!\n");
-	return 1;
+	पङ्क्तिं_लिख(PHASE_PROMPT "Direct Linux boot not active!\n");
+	प्रत्यागम 1;
 }
 
 /*
  * Weak default function for arch specific zImage check. Return zero
  * and fill start and end address if image is recognized.
  */
-int __weak bootz_setup(ulong image, ulong *start, ulong *end)
+पूर्णाङ्क __weak bootz_सज्जता(ulong image, ulong *start, ulong *अन्तः_2)
 {
-	 return 1;
+	 प्रत्यागम 1;
 }
 
-int __weak booti_setup(ulong image, ulong *relocated_addr, ulong *size, bool force_reloc)
+पूर्णाङ्क __weak booti_सज्जता(ulong image, ulong *relocated_addr, ulong *आकार, bool force_reloc)
 {
-	 return 1;
+	 प्रत्यागम 1;
 }
-#endif
+#यदि_अन्तः
 
 /* Weak default function for arch specific fixups to the spl_image_info */
-void __weak spl_perform_arch_fixups(struct spl_image_info *spl_image)
+शून्य __weak spl_perform_arch_fixups(संरचना spl_image_info *spl_image)
 {
 }
 
 /* Weak default function for board specific fixups to the spl_image_info */
-void __weak spl_perform_board_fixups(struct spl_image_info *spl_image)
+शून्य __weak spl_perform_board_fixups(संरचना spl_image_info *spl_image)
 {
 }
 
-void spl_fixup_fdt(void *fdt_blob)
+शून्य spl_fixup_fdt(शून्य *fdt_blob)
 {
-#if defined(CONFIG_SPL_OF_LIBFDT)
-	int err;
+#यदि defined(CONFIG_SPL_सम्बन्धि_LIBFDT)
+	पूर्णाङ्क err;
 
-	if (!fdt_blob)
-		return;
+	यदि (!fdt_blob)
+		प्रत्यागम;
 
-	err = fdt_check_header(fdt_blob);
-	if (err < 0) {
-		printf("fdt_root: %s\n", fdt_strerror(err));
-		return;
+	err = fdt_check_शीर्षकम्(fdt_blob);
+	यदि (err < 0) {
+		प्रारूप_लिख("fdt_root: %s\n", fdt_strerror(err));
+		प्रत्यागम;
 	}
 
 	/* fixup the memory dt node */
-	err = fdt_shrink_to_minimum(fdt_blob, 0);
-	if (err == 0) {
-		printf(PHASE_PROMPT "fdt_shrink_to_minimum err - %d\n", err);
-		return;
+	err = fdt_shrink_गन्तव्यम्_minimum(fdt_blob, 0);
+	यदि (err == 0) {
+		प्रारूप_लिख(PHASE_PROMPT "fdt_shrink_to_minimum err - %d\n", err);
+		प्रत्यागम;
 	}
 
 	err = arch_fixup_fdt(fdt_blob);
-	if (err) {
-		printf(PHASE_PROMPT "arch_fixup_fdt err - %d\n", err);
-		return;
+	यदि (err) {
+		प्रारूप_लिख(PHASE_PROMPT "arch_fixup_fdt err - %d\n", err);
+		प्रत्यागम;
 	}
-#endif
+#यदि_अन्तः
 }
 
-int spl_reserve_video_from_ram_top(void)
+पूर्णाङ्क spl_reserve_video_from_ram_शिखरम्(शून्य)
 {
-	if (CONFIG_IS_ENABLED(VIDEO)) {
+	यदि (CONFIG_IS_ENABLED(VIDEO)) {
 		ulong addr;
-		int ret;
+		पूर्णाङ्क ret;
 
-		addr = gd->ram_top;
+		addr = gd->ram_शिखरम्;
 		ret = video_reserve(&addr);
-		if (ret)
-			return ret;
+		यदि (ret)
+			प्रत्यागम ret;
 		debug("Reserving %luk for video at: %08lx\n",
-		      ((unsigned long)gd->relocaddr - addr) >> 10, addr);
+		      ((अचिह्नित दीर्घ)gd->relocaddr - addr) >> 10, addr);
 		gd->relocaddr = addr;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-ulong spl_get_image_pos(void)
+ulong spl_get_image_pos(शून्य)
 {
-	if (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
-		return BINMAN_SYM_MISSING;
+	यदि (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
+		प्रत्यागम BINMAN_SYM_MISSING;
 
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return binman_sym(ulong, u_boot_vpl_any, image_pos);
-#endif
-#if defined(CONFIG_TPL) && !defined(CONFIG_VPL)
-	if (xpl_next_phase() == PHASE_SPL)
-		return binman_sym(ulong, u_boot_spl_any, image_pos);
-#endif
-#if defined(CONFIG_SPL_BUILD)
-	return binman_sym(ulong, u_boot_any, image_pos);
-#endif
+#यदि_परिभाषितम् CONFIG_VPL
+	यदि (xpl_अग्र_phase() == PHASE_VPL)
+		प्रत्यागम binman_sym(ulong, u_boot_vpl_any, image_pos);
+#यदि_अन्तः
+#यदि defined(CONFIG_TPL) && !defined(CONFIG_VPL)
+	यदि (xpl_अग्र_phase() == PHASE_SPL)
+		प्रत्यागम binman_sym(ulong, u_boot_spl_any, image_pos);
+#यदि_अन्तः
+#यदि defined(CONFIG_SPL_BUILD)
+	प्रत्यागम binman_sym(ulong, u_boot_any, image_pos);
+#यदि_अन्तः
 
-	return BINMAN_SYM_MISSING;
+	प्रत्यागम BINMAN_SYM_MISSING;
 }
 
-ulong spl_get_image_size(void)
+ulong spl_get_image_आकार(शून्य)
 {
-	if (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
-		return BINMAN_SYM_MISSING;
+	यदि (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
+		प्रत्यागम BINMAN_SYM_MISSING;
 
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return binman_sym(ulong, u_boot_vpl_any, size);
-#endif
-	return xpl_next_phase() == PHASE_SPL ?
-		binman_sym(ulong, u_boot_spl_any, size) :
-		binman_sym(ulong, u_boot_any, size);
+#यदि_परिभाषितम् CONFIG_VPL
+	यदि (xpl_अग्र_phase() == PHASE_VPL)
+		प्रत्यागम binman_sym(ulong, u_boot_vpl_any, आकार);
+#यदि_अन्तः
+	प्रत्यागम xpl_अग्र_phase() == PHASE_SPL ?
+		binman_sym(ulong, u_boot_spl_any, आकार) :
+		binman_sym(ulong, u_boot_any, आकार);
 }
 
-ulong spl_get_image_text_base(void)
+ulong spl_get_image_text_आधारः(शून्य)
 {
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return CONFIG_VPL_TEXT_BASE;
-#endif
-	return xpl_next_phase() == PHASE_SPL ? CONFIG_SPL_TEXT_BASE :
-		CONFIG_TEXT_BASE;
+#यदि_परिभाषितम् CONFIG_VPL
+	यदि (xpl_अग्र_phase() == PHASE_VPL)
+		प्रत्यागम CONFIG_VPL_TEXT_आधारः;
+#यदि_अन्तः
+	प्रत्यागम xpl_अग्र_phase() == PHASE_SPL ? CONFIG_SPL_TEXT_आधारः :
+		CONFIG_TEXT_आधारः;
 }
 
 /*
@@ -227,109 +227,109 @@ ulong spl_get_image_text_base(void)
  * Linux boot. Some boards/platforms might not need it, so just provide
  * an empty stub here.
  */
-__weak void spl_board_prepare_for_linux(void)
+__weak शून्य spl_board_prepare_for_linux(शून्य)
 {
 	/* Nothing to do! */
 }
 
-__weak void spl_board_prepare_for_optee(void *fdt)
+__weak शून्य spl_board_prepare_for_optee(शून्य *fdt)
 {
 }
 
-__weak const char *spl_board_loader_name(u32 boot_device)
+__weak ध्रुव वर्ण *spl_board_loader_name(u32 boot_device)
 {
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-#if CONFIG_IS_ENABLED(OPTEE_IMAGE)
-__weak void __noreturn jump_to_image_optee(struct spl_image_info *spl_image)
+#यदि CONFIG_IS_ENABLED(OPTEE_IMAGE)
+__weak शून्य __noreturn jump_गन्तव्यम्_image_optee(संरचना spl_image_info *spl_image)
 {
-	spl_optee_entry(NULL, NULL, spl_image->fdt_addr,
-			(void *)spl_image->entry_point);
+	spl_optee_प्रविष्टिः(रिक्त, रिक्त, spl_image->fdt_addr,
+			(शून्य *)spl_image->प्रविष्टिः_point);
 }
-#endif
+#यदि_अन्तः
 
-__weak void spl_board_prepare_for_boot(void)
+__weak शून्य spl_board_prepare_for_boot(शून्य)
 {
 	/* Nothing to do! */
 }
 
-__weak struct legacy_img_hdr *spl_get_load_buffer(ssize_t offset, size_t size)
+__weak संरचना legacy_img_hdr *spl_get_आरोपय_बफर(ssize_t विस्थापनम्, size_t आकार)
 {
-	return map_sysmem(CONFIG_TEXT_BASE + offset, 0);
+	प्रत्यागम map_sysmem(CONFIG_TEXT_आधारः + विस्थापनम्, 0);
 }
 
-void spl_set_header_raw_uboot(struct spl_image_info *spl_image)
+शून्य spl_समुच्चयः_शीर्षकम्_raw_uboot(संरचना spl_image_info *spl_image)
 {
 	ulong u_boot_pos = spl_get_image_pos();
 
-#if CONFIG_SYS_MONITOR_LEN != 0
-	spl_image->size = CONFIG_SYS_MONITOR_LEN;
-#else
+#यदि CONFIG_SYS_MONITOR_LEN != 0
+	spl_image->आकार = CONFIG_SYS_MONITOR_LEN;
+#अन्यथा
 	/* Unknown U-Boot size, let's assume it will not be more than 200 KB */
-	spl_image->size = 200 * 1024;
-#endif
+	spl_image->आकार = 200 * 1024;
+#यदि_अन्तः
 
 	/*
 	 * Binman error cases: address of the end of the previous region or the
 	 * start of the image's entry area (usually 0) if there is no previous
 	 * region.
 	 */
-	if (u_boot_pos && u_boot_pos != BINMAN_SYM_MISSING) {
+	यदि (u_boot_pos && u_boot_pos != BINMAN_SYM_MISSING) {
 		/* Binman does not support separated entry addresses */
-		spl_image->entry_point = spl_get_image_text_base();
-		spl_image->load_addr = spl_get_image_text_base();
-		spl_image->size = spl_get_image_size();
-		log_debug("Next load addr %lx\n", spl_image->load_addr);
-	} else {
-		spl_image->entry_point = CONFIG_SYS_UBOOT_START;
-		spl_image->load_addr = CONFIG_TEXT_BASE;
+		spl_image->प्रविष्टिः_point = spl_get_image_text_आधारः();
+		spl_image->आरोपय_addr = spl_get_image_text_आधारः();
+		spl_image->आकार = spl_get_image_आकार();
+		log_debug("Next load addr %lx\n", spl_image->आरोपय_addr);
+	} अन्यथा {
+		spl_image->प्रविष्टिः_point = CONFIG_SYS_UBOOT_START;
+		spl_image->आरोपय_addr = CONFIG_TEXT_आधारः;
 		log_debug("Default load addr %lx (u_boot_pos=%lx)\n",
-			  spl_image->load_addr, u_boot_pos);
+			  spl_image->आरोपय_addr, u_boot_pos);
 	}
 	spl_image->os = IH_OS_U_BOOT;
-	spl_image->name = xpl_name(xpl_next_phase());
+	spl_image->name = xpl_name(xpl_अग्र_phase());
 	log_debug("Next phase: %s at %lx size %lx\n", spl_image->name,
-		  spl_image->load_addr, (ulong)spl_image->size);
+		  spl_image->आरोपय_addr, (ulong)spl_image->आकार);
 }
 
-__weak int spl_parse_board_header(struct spl_image_info *spl_image,
-				  const struct spl_boot_device *bootdev,
-				  const void *image_header, size_t size)
+__weak पूर्णाङ्क spl_parse_board_शीर्षकम्(संरचना spl_image_info *spl_image,
+				  ध्रुव संरचना spl_boot_device *bootdev,
+				  ध्रुव शून्य *image_शीर्षकम्, size_t आकार)
 {
-	return -EINVAL;
+	प्रत्यागम -EINVAL;
 }
 
-__weak int spl_parse_legacy_header(struct spl_image_info *spl_image,
-				   const struct legacy_img_hdr *header)
+__weak पूर्णाङ्क spl_parse_legacy_शीर्षकम्(संरचना spl_image_info *spl_image,
+				   ध्रुव संरचना legacy_img_hdr *शीर्षकम्)
 {
 	/* LEGACY image not supported */
 	debug("Legacy boot image support not enabled, proceeding to other boot methods\n");
-	return -EINVAL;
+	प्रत्यागम -EINVAL;
 }
 
-int spl_parse_image_header(struct spl_image_info *spl_image,
-			   const struct spl_boot_device *bootdev,
-			   const struct legacy_img_hdr *header)
+पूर्णाङ्क spl_parse_image_शीर्षकम्(संरचना spl_image_info *spl_image,
+			   ध्रुव संरचना spl_boot_device *bootdev,
+			   ध्रुव संरचना legacy_img_hdr *शीर्षकम्)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-	if (CONFIG_IS_ENABLED(LOAD_FIT_FULL)) {
-		ret = spl_load_fit_image(spl_image, header);
+	यदि (CONFIG_IS_ENABLED(आरोपय_FIT_पूर्णम्)) {
+		ret = spl_आरोपय_fit_image(spl_image, शीर्षकम्);
 
-		if (!ret)
-			return ret;
+		यदि (!ret)
+			प्रत्यागम ret;
 	}
-	if (image_get_magic(header) == IH_MAGIC) {
-		int ret;
+	यदि (image_get_magic(शीर्षकम्) == IH_MAGIC) {
+		पूर्णाङ्क ret;
 
-		ret = spl_parse_legacy_header(spl_image, header);
-		if (ret)
-			return ret;
-		return 0;
+		ret = spl_parse_legacy_शीर्षकम्(spl_image, शीर्षकम्);
+		यदि (ret)
+			प्रत्यागम ret;
+		प्रत्यागम 0;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_PANIC_ON_RAW_IMAGE)) {
+	यदि (IS_ENABLED(CONFIG_SPL_PANIC_ON_RAW_IMAGE)) {
 		/*
 		 * CONFIG_SPL_PANIC_ON_RAW_IMAGE is defined when the
 		 * code which loads images in SPL cannot guarantee that
@@ -341,118 +341,118 @@ int spl_parse_image_header(struct spl_image_info *spl_image,
 		panic("** no mkimage signature but raw image not supported");
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT) && IS_ENABLED(CONFIG_SPL_BOOTI)) {
-		ulong start, size;
+	यदि (IS_ENABLED(CONFIG_SPL_OS_BOOT) && IS_ENABLED(CONFIG_SPL_BOOTI)) {
+		ulong start, आकार;
 
-		if (!booti_setup((ulong)header, &start, &size, 0)) {
+		यदि (!booti_सज्जता((ulong)शीर्षकम्, &start, &आकार, 0)) {
 			spl_image->name = "Linux";
 			spl_image->os = IH_OS_LINUX;
-			spl_image->load_addr = start;
-			spl_image->entry_point = start;
-			spl_image->size = size;
+			spl_image->आरोपय_addr = start;
+			spl_image->प्रविष्टिः_point = start;
+			spl_image->आकार = आकार;
 			debug(PHASE_PROMPT
 			      "payload Image, load addr: 0x%lx size: %d\n",
-			      spl_image->load_addr, spl_image->size);
-			return 0;
+			      spl_image->आरोपय_addr, spl_image->आकार);
+			प्रत्यागम 0;
 		}
-	} else if (IS_ENABLED(CONFIG_SPL_OS_BOOT) &&
+	} अन्यथा यदि (IS_ENABLED(CONFIG_SPL_OS_BOOT) &&
 		   IS_ENABLED(CONFIG_SPL_BOOTZ)) {
-		ulong start, end;
+		ulong start, अन्तः_2;
 
-		if (!bootz_setup((ulong)header, &start, &end)) {
+		यदि (!bootz_सज्जता((ulong)शीर्षकम्, &start, &अन्तः_2)) {
 			spl_image->name = "Linux";
 			spl_image->os = IH_OS_LINUX;
-			spl_image->load_addr = CONFIG_SYS_LOAD_ADDR;
-			spl_image->entry_point = CONFIG_SYS_LOAD_ADDR;
-			spl_image->size = end - start;
+			spl_image->आरोपय_addr = CONFIG_SYS_आरोपय_ADDR;
+			spl_image->प्रविष्टिः_point = CONFIG_SYS_आरोपय_ADDR;
+			spl_image->आकार = अन्तः_2 - start;
 			debug(PHASE_PROMPT
 			      "payload zImage, load addr: 0x%lx size: %d\n",
-			      spl_image->load_addr, spl_image->size);
-			return 0;
+			      spl_image->आरोपय_addr, spl_image->आकार);
+			प्रत्यागम 0;
 		}
 	}
 
-	if (!spl_parse_board_header(spl_image, bootdev, (const void *)header,
-				    sizeof(*header)))
-		return 0;
+	यदि (!spl_parse_board_शीर्षकम्(spl_image, bootdev, (ध्रुव शून्य *)शीर्षकम्,
+				    परिमाण(*शीर्षकम्)))
+		प्रत्यागम 0;
 
-	if (IS_ENABLED(CONFIG_SPL_RAW_IMAGE_SUPPORT)) {
+	यदि (IS_ENABLED(CONFIG_SPL_RAW_IMAGE_SUPPORT)) {
 		/* Signature not found - assume u-boot.bin */
 		debug("mkimage signature not found - ih_magic = %x\n",
-		      header->ih_magic);
-		spl_set_header_raw_uboot(spl_image);
-	} else {
+		      शीर्षकम्->ih_magic);
+		spl_समुच्चयः_शीर्षकम्_raw_uboot(spl_image);
+	} अन्यथा {
 		/* RAW image not supported, proceed to other boot methods. */
 		debug("Raw boot image support not enabled, proceeding to other boot methods\n");
-		return -EINVAL;
+		प्रत्यागम -EINVAL;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if SPL_LOAD_USERS > 1
-int spl_load(struct spl_image_info *spl_image,
-	     const struct spl_boot_device *bootdev, struct spl_load_info *info,
-	     size_t size, size_t offset)
+#यदि SPL_आरोपय_USERS > 1
+पूर्णाङ्क spl_आरोपय(संरचना spl_image_info *spl_image,
+	     ध्रुव संरचना spl_boot_device *bootdev, संरचना spl_आरोपय_info *info,
+	     size_t आकार, size_t विस्थापनम्)
 {
-	return _spl_load(spl_image, bootdev, info, size, offset);
+	प्रत्यागम spl_आरोपय_2(spl_image, bootdev, info, आकार, विस्थापनम्);
 }
-#endif
+#यदि_अन्तः
 
-__weak void __noreturn jump_to_image(struct spl_image_info *spl_image)
+__weak शून्य __noreturn jump_गन्तव्यम्_image(संरचना spl_image_info *spl_image)
 {
-	typedef void __noreturn (*image_entry_noargs_t)(void);
+	प्रकारनिर्देश शून्य __noreturn (*image_प्रविष्टिः_noargs_t)(शून्य);
 
-	image_entry_noargs_t image_entry =
-		(image_entry_noargs_t)spl_image->entry_point;
+	image_प्रविष्टिः_noargs_t image_प्रविष्टिः =
+		(image_प्रविष्टिः_noargs_t)spl_image->प्रविष्टिः_point;
 
-	debug("image entry point: 0x%lx\n", spl_image->entry_point);
-	image_entry();
+	debug("image entry point: 0x%lx\n", spl_image->प्रविष्टिः_point);
+	image_प्रविष्टिः();
 }
 
-#if CONFIG_IS_ENABLED(HANDOFF)
+#यदि CONFIG_IS_ENABLED(HANDOFF)
 /**
  * Set up the SPL hand-off information
  *
  * This is initially empty (zero) but can be written by
  */
-static int setup_spl_handoff(void)
+स्थिर पूर्णाङ्क सज्जता_spl_handoff(शून्य)
 {
-	struct spl_handoff *ho;
+	संरचना spl_handoff *ho;
 
-	ho = bloblist_ensure(BLOBLISTT_U_BOOT_SPL_HANDOFF, sizeof(struct spl_handoff));
-	if (!ho)
-		return -ENOENT;
+	ho = bloblist_ensure(BLOBLISTT_U_BOOT_SPL_HANDOFF, परिमाण(संरचना spl_handoff));
+	यदि (!ho)
+		प्रत्यागम -ENOENT;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int handoff_arch_save(struct spl_handoff *ho)
+__weak पूर्णाङ्क handoff_arch_save(संरचना spl_handoff *ho)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int write_spl_handoff(void)
+स्थिर पूर्णाङ्क write_spl_handoff(शून्य)
 {
-	struct spl_handoff *ho;
-	int ret;
+	संरचना spl_handoff *ho;
+	पूर्णाङ्क ret;
 
-	ho = bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF, sizeof(struct spl_handoff));
-	if (!ho)
-		return -ENOENT;
+	ho = bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF, परिमाण(संरचना spl_handoff));
+	यदि (!ho)
+		प्रत्यागम -ENOENT;
 	handoff_save_dram(ho);
 	ret = handoff_arch_save(ho);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 	debug(PHASE_PROMPT "Wrote SPL handoff\n");
 
-	return 0;
+	प्रत्यागम 0;
 }
-#else
-static inline int setup_spl_handoff(void) { return 0; }
-static inline int write_spl_handoff(void) { return 0; }
+#अन्यथा
+स्थिर अन्तःस्थ पूर्णाङ्क सज्जता_spl_handoff(शून्य) { प्रत्यागम 0; }
+स्थिर अन्तःस्थ पूर्णाङ्क write_spl_handoff(शून्य) { प्रत्यागम 0; }
 
-#endif /* HANDOFF */
+#यदि_अन्तः /* HANDOFF */
 
 /**
  * get_bootstage_id() - Get the bootstage ID to emit
@@ -460,166 +460,166 @@ static inline int write_spl_handoff(void) { return 0; }
  * @start: true if this is for starting SPL, false for ending it
  * Return: bootstage ID to use
  */
-static enum bootstage_id get_bootstage_id(bool start)
+स्थिर गणना bootstage_id get_bootstage_id(bool start)
 {
-	enum xpl_phase_t phase = xpl_phase();
+	गणना xpl_phase_t phase = xpl_phase();
 
-	if (IS_ENABLED(CONFIG_TPL_BUILD) && phase == PHASE_TPL)
-		return start ? BOOTSTAGE_ID_START_TPL : BOOTSTAGE_ID_END_TPL;
-	else if (IS_ENABLED(CONFIG_VPL_BUILD) && phase == PHASE_VPL)
-		return start ? BOOTSTAGE_ID_START_VPL : BOOTSTAGE_ID_END_VPL;
-	else
-		return start ? BOOTSTAGE_ID_START_SPL : BOOTSTAGE_ID_END_SPL;
+	यदि (IS_ENABLED(CONFIG_TPL_BUILD) && phase == PHASE_TPL)
+		प्रत्यागम start ? BOOTSTAGE_ID_START_TPL : BOOTSTAGE_ID_अन्तः_TPL;
+	अन्यथा यदि (IS_ENABLED(CONFIG_VPL_BUILD) && phase == PHASE_VPL)
+		प्रत्यागम start ? BOOTSTAGE_ID_START_VPL : BOOTSTAGE_ID_अन्तः_VPL;
+	अन्यथा
+		प्रत्यागम start ? BOOTSTAGE_ID_START_SPL : BOOTSTAGE_ID_अन्तः_SPL;
 }
 
-static int spl_common_init(bool setup_malloc)
+स्थिर पूर्णाङ्क spl_common_init(bool सज्जता_malloc)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (setup_malloc) {
-#ifdef CFG_MALLOC_F_ADDR
-		gd->malloc_base = CFG_MALLOC_F_ADDR;
-#endif
-		gd->malloc_limit = CONFIG_VAL(SYS_MALLOC_F_LEN);
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (सज्जता_malloc) {
+#यदि_परिभाषितम् CFG_MALLOC_F_ADDR
+		gd->malloc_आधारः = CFG_MALLOC_F_ADDR;
+#यदि_अन्तः
+		gd->malloc_सीमा = CONFIG_VAL(SYS_MALLOC_F_LEN);
 		gd->malloc_ptr = 0;
 	}
-#endif
+#यदि_अन्तः
 	ret = bootstage_init(xpl_is_first_phase());
-	if (ret) {
+	यदि (ret) {
 		debug("%s: Failed to set up bootstage: ret=%d\n", __func__,
 		      ret);
-		return ret;
+		प्रत्यागम ret;
 	}
-	if (!xpl_is_first_phase()) {
+	यदि (!xpl_is_first_phase()) {
 		ret = bootstage_unstash_default();
-		if (ret)
+		यदि (ret)
 			log_debug("Failed to unstash bootstage: ret=%d\n", ret);
 	}
 	bootstage_mark_name(get_bootstage_id(true), xpl_name(xpl_phase()));
-#if CONFIG_IS_ENABLED(LOG)
+#यदि CONFIG_IS_ENABLED(LOG)
 	ret = log_init();
-	if (ret) {
+	यदि (ret) {
 		debug("%s: Failed to set up logging\n", __func__);
-		return ret;
+		प्रत्यागम ret;
 	}
-#endif
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
-		ret = fdtdec_setup();
-		if (ret) {
+#यदि_अन्तः
+	यदि (CONFIG_IS_ENABLED(सम्बन्धि_REAL)) {
+		ret = fdtdec_सज्जता();
+		यदि (ret) {
 			debug("fdtdec_setup() returned error %d\n", ret);
-			return ret;
+			प्रत्यागम ret;
 		}
 	}
-	if (CONFIG_IS_ENABLED(OF_LIVE)) {
-		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
-		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
-		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
-		if (ret)
-			return ret;
+	यदि (CONFIG_IS_ENABLED(सम्बन्धि_जीवितम्)) {
+		bootstage_start(BOOTSTAGE_ID_ACCUM_सम्बन्धि_जीवितम्, "of_live");
+		ret = सम्बन्धि_जीवितम्_build(gd->fdt_blob,
+				    (संरचना device_ग्रन्थिः **)gd_सम्बन्धि_मूलम्_ptr());
+		bootstage_accum(BOOTSTAGE_ID_ACCUM_सम्बन्धि_जीवितम्);
+		यदि (ret)
+			प्रत्यागम ret;
 	}
-	if (CONFIG_IS_ENABLED(DM)) {
+	यदि (CONFIG_IS_ENABLED(DM)) {
 		bootstage_start(BOOTSTAGE_ID_ACCUM_DM_SPL,
 				xpl_phase() == PHASE_TPL ? "dm tpl" : "dm_spl");
 		/* With CONFIG_SPL_OF_PLATDATA, bring in all devices */
-		ret = dm_init_and_scan(!CONFIG_IS_ENABLED(OF_PLATDATA));
+		ret = dm_init_and_अवलोकनम्(!CONFIG_IS_ENABLED(सम्बन्धि_PLATDATA));
 		bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_SPL);
-		if (ret) {
+		यदि (ret) {
 			debug("dm_init_and_scan() returned error %d\n", ret);
-			return ret;
+			प्रत्यागम ret;
 		}
 
 		ret = dm_autoprobe();
-		if (ret)
-			return ret;
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void spl_set_bd(void)
+शून्य spl_समुच्चयः_bd(शून्य)
 {
 	/*
 	 * NOTE: On some platforms (e.g. x86) bdata may be in flash and not
 	 * writeable.
 	 */
-	if (!gd->bd)
+	यदि (!gd->bd)
 		gd->bd = &bdata;
 }
 
-int spl_early_init(void)
+पूर्णाङ्क spl_early_init(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
 	debug("%s\n", __func__);
 
 	ret = spl_common_init(true);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 	gd->flags |= GD_FLG_SPL_EARLY_INIT;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int spl_init(void)
+पूर्णाङ्क spl_init(शून्य)
 {
-	int ret;
-	bool setup_malloc = !(IS_ENABLED(CONFIG_SPL_STACK_R) &&
+	पूर्णाङ्क ret;
+	bool सज्जता_malloc = !(IS_ENABLED(CONFIG_SPL_राशिः_R) &&
 			IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIMPLE));
 
 	debug("%s\n", __func__);
 
-	if (!(gd->flags & GD_FLG_SPL_EARLY_INIT)) {
-		ret = spl_common_init(setup_malloc);
-		if (ret)
-			return ret;
+	यदि (!(gd->flags & GD_FLG_SPL_EARLY_INIT)) {
+		ret = spl_common_init(सज्जता_malloc);
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 	gd->flags |= GD_FLG_SPL_INIT;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#ifndef BOOT_DEVICE_NONE
-#define BOOT_DEVICE_NONE 0xdeadbeef
-#endif
+#यदि_अपरिभाषितम् BOOT_DEVICE_NONE
+#परिभाषय BOOT_DEVICE_NONE 0xdeadbeef
+#यदि_अन्तः
 
-__weak void board_boot_order(u32 *spl_boot_list)
+__weak शून्य board_boot_क्रमः(u32 *spl_boot_list)
 {
 	spl_boot_list[0] = spl_boot_device();
 }
 
-__weak int spl_check_board_image(struct spl_image_info *spl_image,
-				 const struct spl_boot_device *bootdev)
+__weak पूर्णाङ्क spl_check_board_image(संरचना spl_image_info *spl_image,
+				 ध्रुव संरचना spl_boot_device *bootdev)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int spl_load_image(struct spl_image_info *spl_image,
-			  struct spl_image_loader *loader)
+स्थिर पूर्णाङ्क spl_आरोपय_image(संरचना spl_image_info *spl_image,
+			  संरचना spl_image_loader *loader)
 {
-	int ret;
-	struct spl_boot_device bootdev;
+	पूर्णाङ्क ret;
+	संरचना spl_boot_device bootdev;
 
 	bootdev.boot_device = loader->boot_device;
-	bootdev.boot_device_name = NULL;
+	bootdev.boot_device_name = रिक्त;
 
-	ret = loader->load_image(spl_image, &bootdev);
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
-	if (!ret && spl_image->dcrc_length) {
+	ret = loader->आरोपय_image(spl_image, &bootdev);
+#यदि_परिभाषितम् CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
+	यदि (!ret && spl_image->dcrc_दीर्घता) {
 		/* check data crc */
-		ulong dcrc = crc32_wd(0, (unsigned char *)spl_image->dcrc_data,
-				      spl_image->dcrc_length, CHUNKSZ_CRC32);
-		if (dcrc != spl_image->dcrc) {
-			puts("SPL: Image data CRC check failed!\n");
+		ulong dcrc = चक्रीयपरीक्षा_32_wd(0, (अचिह्नित वर्ण *)spl_image->dcrc_दत्त,
+				      spl_image->dcrc_दीर्घता, CHUNKSZ_चक्रीयपरीक्षा_32);
+		यदि (dcrc != spl_image->dcrc) {
+			पङ्क्तिं_लिख("SPL: Image data CRC check failed!\n");
 			ret = -EINVAL;
 		}
 	}
-#endif
-	if (!ret)
+#यदि_अन्तः
+	यदि (!ret)
 		ret = spl_check_board_image(spl_image, &bootdev);
 
-	return ret;
+	प्रत्यागम ret;
 }
 
 /**
@@ -632,53 +632,53 @@ static int spl_load_image(struct spl_image_info *spl_image,
  *	if CONFIG_SHOW_ERRORS is enabled, returns -ENXIO if there were
  *	devices but none worked
  */
-static int boot_from_devices(struct spl_image_info *spl_image,
-			     u32 spl_boot_list[], int count)
+स्थिर पूर्णाङ्क boot_from_devices(संरचना spl_image_info *spl_image,
+			     u32 spl_boot_list[], पूर्णाङ्क गणनम्)
 {
-	struct spl_image_loader *drv =
-		ll_entry_start(struct spl_image_loader, spl_image_loader);
-	const int n_ents =
-		ll_entry_count(struct spl_image_loader, spl_image_loader);
-	int ret = -ENODEV;
-	int i;
+	संरचना spl_image_loader *drv =
+		ll_प्रविष्टिः_start(संरचना spl_image_loader, spl_image_loader);
+	ध्रुव पूर्णाङ्क n_ents =
+		ll_प्रविष्टिः_गणनम्(संरचना spl_image_loader, spl_image_loader);
+	पूर्णाङ्क ret = -ENODEV;
+	पूर्णाङ्क i;
 
-	for (i = 0; i < count && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
-		struct spl_image_loader *loader;
-		int bootdev = spl_boot_list[i];
+	प्रति (i = 0; i < गणनम् && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
+		संरचना spl_image_loader *loader;
+		पूर्णाङ्क bootdev = spl_boot_list[i];
 
-		if (CONFIG_IS_ENABLED(SHOW_ERRORS))
+		यदि (CONFIG_IS_ENABLED(SHOW_ERRORS))
 			ret = -ENXIO;
-		for (loader = drv; loader != drv + n_ents; loader++) {
-			if (loader && bootdev != loader->boot_device)
-				continue;
-			if (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
-				printf("Trying to boot from %s\n",
+		प्रति (loader = drv; loader != drv + n_ents; loader++) {
+			यदि (loader && bootdev != loader->boot_device)
+				अनुवर्त;
+			यदि (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
+				प्रारूप_लिख("Trying to boot from %s\n",
 				       spl_loader_name(loader));
 			}
 
-			ret = spl_load_image(spl_image, loader);
-			if (!ret) {
+			ret = spl_आरोपय_image(spl_image, loader);
+			यदि (!ret) {
 				spl_image->boot_device = bootdev;
-				return 0;
+				प्रत्यागम 0;
 			}
-			printf("Error: %d\n", ret);
+			प्रारूप_लिख("Error: %d\n", ret);
 		}
 
-		if (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
-			if (CONFIG_IS_ENABLED(SHOW_ERRORS))
-				printf(PHASE_PROMPT
+		यदि (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
+			यदि (CONFIG_IS_ENABLED(SHOW_ERRORS))
+				प्रारूप_लिख(PHASE_PROMPT
 				       "Unsupported Boot Device %d\n",
 				       bootdev);
-			else
-				printf(PHASE_PROMPT
+			अन्यथा
+				प्रारूप_लिख(PHASE_PROMPT
 				       "Unsupported Boot Device!\n");
 		}
 	}
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-void board_init_r(gd_t *dummy1, ulong dummy2)
+शून्य board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	u32 spl_boot_list[] = {
 		BOOT_DEVICE_NONE,
@@ -687,90 +687,90 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 		BOOT_DEVICE_NONE,
 		BOOT_DEVICE_NONE,
 	};
-	spl_jump_to_image_t jumper = &jump_to_image;
-	struct spl_image_info spl_image;
-	int ret, os;
-	void *fdt;
+	spl_jump_गन्तव्यम्_image_t jumper = &jump_गन्तव्यम्_image;
+	संरचना spl_image_info spl_image;
+	पूर्णाङ्क ret, os;
+	शून्य *fdt;
 
 	debug(">>" PHASE_PROMPT "board_init_r()\n");
 
-	spl_set_bd();
+	spl_समुच्चयः_bd();
 
-	if (IS_ENABLED(CONFIG_SPL_SYS_MALLOC)) {
-		mem_malloc_init(SPL_SYS_MALLOC_START, SPL_SYS_MALLOC_SIZE);
-		gd->flags |= GD_FLG_FULL_MALLOC_INIT;
+	यदि (IS_ENABLED(CONFIG_SPL_SYS_MALLOC)) {
+		mem_malloc_init(SPL_SYS_MALLOC_START, SPL_SYS_MALLOC_आकार);
+		gd->flags |= GD_FLG_पूर्णम्_MALLOC_INIT;
 	}
-	if (!(gd->flags & GD_FLG_SPL_INIT)) {
-		if (spl_init())
+	यदि (!(gd->flags & GD_FLG_SPL_INIT)) {
+		यदि (spl_init())
 			hang();
 	}
 	timer_init();
-	if (CONFIG_IS_ENABLED(BLOBLIST)) {
+	यदि (CONFIG_IS_ENABLED(BLOBLIST)) {
 		ret = bloblist_init();
-		if (ret) {
+		यदि (ret) {
 			debug("%s: Failed to set up bloblist: ret=%d\n",
 			      __func__, ret);
-			puts(PHASE_PROMPT "Cannot set up bloblist\n");
+			पङ्क्तिं_लिख(PHASE_PROMPT "Cannot set up bloblist\n");
 			hang();
 		}
 	}
-	if (CONFIG_IS_ENABLED(HANDOFF)) {
-		int ret;
+	यदि (CONFIG_IS_ENABLED(HANDOFF)) {
+		पूर्णाङ्क ret;
 
-		ret = setup_spl_handoff();
-		if (ret) {
-			puts(PHASE_PROMPT "Cannot set up SPL handoff\n");
+		ret = सज्जता_spl_handoff();
+		यदि (ret) {
+			पङ्क्तिं_लिख(PHASE_PROMPT "Cannot set up SPL handoff\n");
 			hang();
 		}
 	}
 
-	if (CONFIG_IS_ENABLED(SOC_INIT))
+	यदि (CONFIG_IS_ENABLED(SOC_INIT))
 		spl_soc_init();
 
-	if (IS_ENABLED(CONFIG_SPL_WATCHDOG) && CONFIG_IS_ENABLED(WDT))
+	यदि (IS_ENABLED(CONFIG_SPL_WATCHDOG) && CONFIG_IS_ENABLED(WDT))
 		initr_watchdog();
 
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) ||
+	यदि (IS_ENABLED(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) ||
 	    IS_ENABLED(CONFIG_SPL_ATF) || IS_ENABLED(CONFIG_SPL_NET))
 		dram_init_banksize();
 
-	if (IS_ENABLED(CONFIG_SPL_LMB))
+	यदि (IS_ENABLED(CONFIG_SPL_LMB))
 		lmb_init();
 
-	if (CONFIG_IS_ENABLED(PCI) && !(gd->flags & GD_FLG_DM_DEAD)) {
+	यदि (CONFIG_IS_ENABLED(PCI) && !(gd->flags & GD_FLG_DM_DEAD)) {
 		ret = pci_init();
-		if (ret)
-			puts(PHASE_PROMPT "Cannot initialize PCI\n");
+		यदि (ret)
+			पङ्क्तिं_लिख(PHASE_PROMPT "Cannot initialize PCI\n");
 		/* Don't fail. We still can try other boot methods. */
 	}
 
-	if (CONFIG_IS_ENABLED(BOARD_INIT))
+	यदि (CONFIG_IS_ENABLED(BOARD_INIT))
 		spl_board_init();
 
 	bootcount_inc();
 
 	/* Dump driver model states to aid analysis */
-	if (CONFIG_IS_ENABLED(DM_STATS)) {
-		struct dm_stats mem;
+	यदि (CONFIG_IS_ENABLED(DM_STATS)) {
+		संरचना dm_stats mem;
 
 		dm_get_mem(&mem);
 		dm_dump_mem(&mem);
 	}
 
-	memset(&spl_image, '\0', sizeof(spl_image));
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT))
-		spl_image.arg = (void *)SPL_PAYLOAD_ARGS_ADDR;
+	स्मृतिं_पूरय(&spl_image, '\0', परिमाण(spl_image));
+	यदि (IS_ENABLED(CONFIG_SPL_OS_BOOT))
+		spl_image.arg = (शून्य *)SPL_PAYLOAD_तर्काः_ADDR;
 	spl_image.boot_device = BOOT_DEVICE_NONE;
-	board_boot_order(spl_boot_list);
+	board_boot_क्रमः(spl_boot_list);
 
 	ret = boot_from_devices(&spl_image, spl_boot_list,
-				ARRAY_SIZE(spl_boot_list));
-	if (ret) {
-		if (CONFIG_IS_ENABLED(SHOW_ERRORS))
-			printf(PHASE_PROMPT "failed to boot from all boot devices (err=%d)\n",
+				ARRAY_आकार(spl_boot_list));
+	यदि (ret) {
+		यदि (CONFIG_IS_ENABLED(SHOW_ERRORS))
+			प्रारूप_लिख(PHASE_PROMPT "failed to boot from all boot devices (err=%d)\n",
 			       ret);
-		else
-			puts(PHASE_PROMPT "failed to boot from all boot devices\n");
+		अन्यथा
+			पङ्क्तिं_लिख(PHASE_PROMPT "failed to boot from all boot devices\n");
 		hang();
 	}
 
@@ -778,84 +778,84 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	spl_perform_board_fixups(&spl_image);
 
 	os = spl_image.os;
-	if (os == IH_OS_U_BOOT) {
-		debug("Jumping to %s...\n", xpl_name(xpl_next_phase()));
-	} else if (CONFIG_IS_ENABLED(ATF) && os == IH_OS_ARM_TRUSTED_FIRMWARE) {
+	यदि (os == IH_OS_U_BOOT) {
+		debug("Jumping to %s...\n", xpl_name(xpl_अग्र_phase()));
+	} अन्यथा यदि (CONFIG_IS_ENABLED(ATF) && os == IH_OS_ARM_TRUSTED_FIRMWARE) {
 		debug("Jumping to U-Boot via ARM Trusted Firmware\n");
 		spl_fixup_fdt(spl_image_fdt_addr(&spl_image));
 		jumper = &spl_invoke_atf;
-	} else if (CONFIG_IS_ENABLED(OPTEE_IMAGE) && os == IH_OS_TEE) {
+	} अन्यथा यदि (CONFIG_IS_ENABLED(OPTEE_IMAGE) && os == IH_OS_TEE) {
 		debug("Jumping to U-Boot via OP-TEE\n");
 		spl_board_prepare_for_optee(spl_image_fdt_addr(&spl_image));
-		jumper = &jump_to_image_optee;
-	} else if (CONFIG_IS_ENABLED(OPENSBI) && os == IH_OS_OPENSBI) {
+		jumper = &jump_गन्तव्यम्_image_optee;
+	} अन्यथा यदि (CONFIG_IS_ENABLED(OPENSBI) && os == IH_OS_OPENSBI) {
 		debug("Jumping to U-Boot via RISC-V OpenSBI\n");
 		jumper = &spl_invoke_opensbi;
-	} else if (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
+	} अन्यथा यदि (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
 		debug("Jumping to Linux\n");
-		if (CONFIG_IS_ENABLED(OS_BOOT_ARGS))
-			fdt = (void *)SPL_PAYLOAD_ARGS_ADDR;
-		else
+		यदि (CONFIG_IS_ENABLED(OS_BOOT_तर्काः))
+			fdt = (शून्य *)SPL_PAYLOAD_तर्काः_ADDR;
+		अन्यथा
 			fdt = spl_image_fdt_addr(&spl_image);
 		spl_fixup_fdt(fdt);
 		spl_board_prepare_for_linux();
 		spl_image.arg = fdt;
-		jumper = &jump_to_image_linux;
-	} else {
+		jumper = &jump_गन्तव्यम्_image_linux;
+	} अन्यथा {
 		debug("Unsupported OS image.. Jumping nevertheless..\n");
 	}
-	if (CONFIG_IS_ENABLED(SYS_MALLOC_F) &&
-	    !IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIZE))
+	यदि (CONFIG_IS_ENABLED(SYS_MALLOC_F) &&
+	    !IS_ENABLED(CONFIG_SPL_SYS_MALLOC_आकार))
 		debug("SPL malloc() used 0x%x bytes (%d KB)\n",
 		      gd_malloc_ptr(), gd_malloc_ptr() / 1024);
 
 	bootstage_mark_name(get_bootstage_id(false), "end phase");
 	ret = bootstage_stash_default();
-	if (ret)
+	यदि (ret)
 		debug("Failed to stash bootstage: err=%d\n", ret);
 
-	if (IS_ENABLED(CONFIG_SPL_VIDEO_REMOVE)) {
-		struct udevice *dev;
-		int rc;
+	यदि (IS_ENABLED(CONFIG_SPL_VIDEO_REMOVE)) {
+		संरचना udevice *dev;
+		पूर्णाङ्क rc;
 
 		rc = uclass_find_device(UCLASS_VIDEO, 0, &dev);
-		if (!rc && dev) {
-			rc = device_remove(dev, DM_REMOVE_NORMAL);
-			if (rc)
-				printf("Cannot remove video device '%s' (err=%d)\n",
+		यदि (!rc && dev) {
+			rc = device_remove(dev, DM_REMOVE_प्रसामान्यम्);
+			यदि (rc)
+				प्रारूप_लिख("Cannot remove video device '%s' (err=%d)\n",
 				       dev->name, rc);
 		}
 	}
-	if (CONFIG_IS_ENABLED(HANDOFF)) {
+	यदि (CONFIG_IS_ENABLED(HANDOFF)) {
 		ret = write_spl_handoff();
-		if (ret)
-			printf(PHASE_PROMPT
+		यदि (ret)
+			प्रारूप_लिख(PHASE_PROMPT
 			       "SPL hand-off write failed (err=%d)\n", ret);
 	}
-	if (CONFIG_IS_ENABLED(UPL_OUT) && (gd->flags & GD_FLG_UPL)) {
+	यदि (CONFIG_IS_ENABLED(UPL_बहिर्गमनम्) && (gd->flags & GD_FLG_UPL)) {
 		ret = spl_write_upl_handoff(&spl_image);
-		if (ret) {
-			printf(PHASE_PROMPT
+		यदि (ret) {
+			प्रारूप_लिख(PHASE_PROMPT
 			       "UPL hand-off write failed (err=%d)\n", ret);
 			hang();
 		}
 	}
-	if (CONFIG_IS_ENABLED(BLOBLIST)) {
+	यदि (CONFIG_IS_ENABLED(BLOBLIST)) {
 		ret = bloblist_finish();
-		if (ret)
-			printf("Warning: Failed to finish bloblist (ret=%d)\n",
+		यदि (ret)
+			प्रारूप_लिख("Warning: Failed to finish bloblist (ret=%d)\n",
 			       ret);
 	}
 
 	spl_board_prepare_for_boot();
 
-	if (CONFIG_IS_ENABLED(RELOC_LOADER)) {
-		int ret;
+	यदि (CONFIG_IS_ENABLED(RELOC_LOADER)) {
+		पूर्णाङ्क ret;
 
 		ret = spl_reloc_jump(&spl_image, jumper);
-		if (ret) {
-			if (xpl_phase() == PHASE_VPL)
-				printf("jump failed %d\n", ret);
+		यदि (ret) {
+			यदि (xpl_phase() == PHASE_VPL)
+				प्रारूप_लिख("jump failed %d\n", ret);
 			hang();
 		}
 	}
@@ -867,45 +867,45 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
  * This requires UART clocks to be enabled.  In order for this to work the
  * caller must ensure that the gd pointer is valid.
  */
-void preloader_console_init(void)
+शून्य preloader_console_init(शून्य)
 {
-#if CONFIG_IS_ENABLED(SERIAL)
+#यदि CONFIG_IS_ENABLED(SERIAL)
 	gd->baudrate = CONFIG_BAUDRATE;
 
 	serial_init();		/* serial communications setup */
 
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
-	puts("\nU-Boot " PHASE_NAME " " PLAIN_VERSION " (" U_BOOT_DATE " - "
+#यदि CONFIG_IS_ENABLED(BANNER_PRINT)
+	पङ्क्तिं_लिख("\nU-Boot " PHASE_NAME " " PLAIN_संस्करणम् " (" U_BOOT_DATE " - "
 	     U_BOOT_TIME " " U_BOOT_TZ ")\n");
-#endif
-#ifdef CONFIG_SPL_DISPLAY_PRINT
+#यदि_अन्तः
+#यदि_परिभाषितम् CONFIG_SPL_DISPLAY_PRINT
 	spl_display_print();
-#endif
-#endif
+#यदि_अन्तः
+#यदि_अन्तः
 }
 
 /**
  * This function is called before the stack is changed from initial stack to
  * relocated stack. It tries to dump the stack size used
  */
-__weak void spl_relocate_stack_check(void)
+__weak शून्य spl_relocate_राशिः_check(शून्य)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
+#यदि CONFIG_IS_ENABLED(SYS_REPORT_राशिः_F_USAGE)
 	ulong init_sp = gd->start_addr_sp;
-	ulong stack_bottom = init_sp - CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK);
-	u8 *ptr = (u8 *)stack_bottom;
+	ulong राशिः_bottom = init_sp - CONFIG_VAL(आकार_सीमा_PROVIDE_राशिः);
+	u8 *ptr = (u8 *)राशिः_bottom;
 	ulong i;
 
-	for (i = 0; i < CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK); i++) {
-		if (*ptr != CONFIG_VAL(SYS_STACK_F_CHECK_BYTE))
-			break;
+	प्रति (i = 0; i < CONFIG_VAL(आकार_सीमा_PROVIDE_राशिः); i++) {
+		यदि (*ptr != CONFIG_VAL(SYS_राशिः_F_CHECK_BYTE))
+			भङ्ग;
 		ptr++;
 	}
-	printf("SPL initial stack usage: %lu bytes\n",
-	       CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK) - i);
-#endif
+	प्रारूप_लिख("SPL initial stack usage: %lu bytes\n",
+	       CONFIG_VAL(आकार_सीमा_PROVIDE_राशिः) - i);
+#यदि_अन्तः
 }
 
 /**
@@ -926,54 +926,54 @@ __weak void spl_relocate_stack_check(void)
  *
  * Return: new stack location, or 0 to use the same stack
  */
-ulong spl_relocate_stack_gd(void)
+ulong spl_relocate_राशिः_gd(शून्य)
 {
-#if CONFIG_IS_ENABLED(STACK_R)
+#यदि CONFIG_IS_ENABLED(राशिः_R)
 	gd_t *new_gd;
-	ulong ptr = CONFIG_SPL_STACK_R_ADDR;
+	ulong ptr = CONFIG_SPL_राशिः_R_ADDR;
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
-		spl_relocate_stack_check();
+	यदि (CONFIG_IS_ENABLED(SYS_REPORT_राशिः_F_USAGE))
+		spl_relocate_राशिः_check();
 
-#if defined(CONFIG_SPL_SYS_MALLOC_SIMPLE) && CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN) {
+#यदि defined(CONFIG_SPL_SYS_MALLOC_SIMPLE) && CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (CONFIG_SPL_राशिः_R_MALLOC_SIMPLE_LEN) {
 		debug("SPL malloc() before relocation used 0x%x bytes (%d KB)\n",
 		      gd->malloc_ptr, gd->malloc_ptr / 1024);
-		ptr -= CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
-		gd->malloc_base = ptr;
-		gd->malloc_limit = CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
+		ptr -= CONFIG_SPL_राशिः_R_MALLOC_SIMPLE_LEN;
+		gd->malloc_आधारः = ptr;
+		gd->malloc_सीमा = CONFIG_SPL_राशिः_R_MALLOC_SIMPLE_LEN;
 		gd->malloc_ptr = 0;
 	}
-#endif
+#यदि_अन्तः
 	/* Get stack position: use 8-byte alignment for ABI compliance */
-	ptr -= roundup(sizeof(gd_t), 16);
+	ptr -= roundup(परिमाण(gd_t), 16);
 	gd->start_addr_sp = ptr;
 	new_gd = (gd_t *)ptr;
-	memcpy(new_gd, (void *)gd, sizeof(gd_t));
-#if CONFIG_IS_ENABLED(DM)
+	स्मृतिं_प्रतिलिख(new_gd, (शून्य *)gd, परिमाण(gd_t));
+#यदि CONFIG_IS_ENABLED(DM)
 	dm_fixup_for_gd_move(new_gd);
-#endif
-#if CONFIG_IS_ENABLED(LOG)
+#यदि_अन्तः
+#यदि CONFIG_IS_ENABLED(LOG)
 	log_fixup_for_gd_move(new_gd);
-#endif
-#if !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
+#यदि_अन्तः
+#यदि !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
 	gd = new_gd;
-#endif
-	return ptr;
-#else
-	return 0;
-#endif
+#यदि_अन्तः
+	प्रत्यागम ptr;
+#अन्यथा
+	प्रत्यागम 0;
+#यदि_अन्तः
 }
 
-#if defined(CONFIG_BOOTCOUNT_LIMIT) && \
-	((!defined(CONFIG_TPL_BUILD) && !defined(CONFIG_SPL_BOOTCOUNT_LIMIT)) || \
-	 (defined(CONFIG_TPL_BUILD) && !defined(CONFIG_TPL_BOOTCOUNT_LIMIT)))
-void bootcount_store(ulong a)
+#यदि defined(CONFIG_BOOTCOUNT_सीमा) && \
+	((!defined(CONFIG_TPL_BUILD) && !defined(CONFIG_SPL_BOOTCOUNT_सीमा)) || \
+	 (defined(CONFIG_TPL_BUILD) && !defined(CONFIG_TPL_BOOTCOUNT_सीमा)))
+शून्य bootcount_store(ulong a)
 {
 }
 
-ulong bootcount_load(void)
+ulong bootcount_आरोपय(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः

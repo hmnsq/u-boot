@@ -5,143 +5,143 @@
  *
  * Ravi B <ravibabu@ti.com>
  */
-#include <env.h>
-#include <spl.h>
-#include <linux/compiler.h>
-#include <errno.h>
-#include <watchdog.h>
-#include <console.h>
-#include <g_dnl.h>
-#include <usb.h>
-#include <dfu.h>
-#include <linux/printk.h>
-#include <pci_ep.h>
-#include <dm/uclass.h>
-#include <cpu_func.h>
-#include <linux/io.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <linux/compiler.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <watchdog.h>
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <g_dnl.h>
+#अन्तर्भाव <usb.h>
+#अन्तर्भाव <dfu.h>
+#अन्तर्भाव <linux/printk.h>
+#अन्तर्भाव <pci_ep.h>
+#अन्तर्भाव <dm/uclass.h>
+#अन्तर्भाव <cpu_func.h>
+#अन्तर्भाव <linux/io.h>
 
 /*
  * Macros define size of magic word and boot phase string
  * in bytes.
  */
-#define MAGIC_WORD_SIZE 4
-#define BOOT_PHASE_STRING_SIZE 63
+#परिभाषय MAGIC_WORD_आकार 4
+#परिभाषय BOOT_PHASE_STRING_आकार 63
 
-static int run_dfu(int usb_index, char *interface, char *devstring)
+स्थिर पूर्णाङ्क सततम्_dfu(पूर्णाङ्क usb_सूचकांक, वर्ण *interface, वर्ण *devstring)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
 	ret = dfu_init_env_entities(interface, devstring);
-	if (ret) {
+	यदि (ret) {
 		dfu_free_entities();
-		goto exit;
+		गच्छ निर्गच्छ;
 	}
 
-	run_usb_dnl_gadget(usb_index, "usb_dnl_dfu");
-exit:
+	सततम्_usb_dnl_gadget(usb_सूचकांक, "usb_dnl_dfu");
+निर्गच्छ:
 	dfu_free_entities();
-	return ret;
+	प्रत्यागम ret;
 }
 
-#ifdef CONFIG_SPL_PCI_DFU
-static int dfu_over_pcie(void)
+#यदि_परिभाषितम् CONFIG_SPL_PCI_DFU
+स्थिर पूर्णाङ्क dfu_over_pcie(शून्य)
 {
-	u32 offset, magic_word;
-	volatile void *addr;
-	struct udevice *dev;
-	struct pci_bar bar;
-	struct pci_ep_header hdr;
+	u32 विस्थापनम्, magic_word;
+	चञ्चल शून्य *addr;
+	संरचना udevice *dev;
+	संरचना pci_bar bar;
+	संरचना pci_ep_शीर्षकम् hdr;
 	uint fn = 0;
-	int ret;
-	char *bootphase;
+	पूर्णाङ्क ret;
+	वर्ण *bootphase;
 
 	uclass_get_device_by_seq(UCLASS_PCI_EP, 0, &dev);
-	if (!dev) {
+	यदि (!dev) {
 		pr_err("Failed to get pci ep device\n");
-		return -ENODEV;
+		प्रत्यागम -ENODEV;
 	}
 
 	hdr.deviceid = CONFIG_SPL_PCI_DFU_DEVICE_ID;
 	hdr.vendorid = CONFIG_SPL_PCI_DFU_VENDOR_ID;
-	hdr.baseclass_code = PCI_BASE_CLASS_MEMORY;
-	hdr.subclass_code = PCI_CLASS_MEMORY_RAM & 0xff;
+	hdr.baseclass_संहिता = PCI_आधारः_CLASS_स्मृतिः;
+	hdr.subclass_संहिता = PCI_CLASS_स्मृतिः_RAM & 0xff;
 
-	ret = pci_ep_write_header(dev, fn, &hdr);
-	if (ret) {
+	ret = pci_ep_write_शीर्षकम्(dev, fn, &hdr);
+	यदि (ret) {
 		pr_err("Failed to write header: %d\n", ret);
-		return ret;
+		प्रत्यागम ret;
 	}
 
 	bar.barno = BAR_0;
-	bar.phys_addr = (dma_addr_t)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-	bar.flags = PCI_BASE_ADDRESS_SPACE_MEMORY |
-			  PCI_BASE_ADDRESS_MEM_TYPE_32 |
-			  PCI_BASE_ADDRESS_MEM_PREFETCH;
+	bar.phys_addr = (dma_addr_t)CONFIG_SPL_PCI_DFU_SPL_आरोपय_FIT_स्थानाङ्कः;
+	bar.flags = PCI_आधारः_स्थानाङ्कः_SPACE_स्मृतिः |
+			  PCI_आधारः_स्थानाङ्कः_MEM_TYPE_32 |
+			  PCI_आधारः_स्थानाङ्कः_MEM_PREFETCH;
 
-	bar.size = CONFIG_SPL_PCI_DFU_BAR_SIZE;
+	bar.आकार = CONFIG_SPL_PCI_DFU_BAR_आकार;
 
-	ret = pci_ep_set_bar(dev, fn, &bar);
-	if (ret) {
+	ret = pci_ep_समुच्चयः_bar(dev, fn, &bar);
+	यदि (ret) {
 		pr_err("Failed to set bar: %d\n", ret);
-		return ret;
+		प्रत्यागम ret;
 	}
 
 	ret = pci_ep_start(dev);
-	if (ret) {
+	यदि (ret) {
 		pr_err("Failed to start ep: %d\n", ret);
-		return ret;
+		प्रत्यागम ret;
 	}
 
-	addr = (void *)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-	offset = CONFIG_SPL_PCI_DFU_BAR_SIZE - MAGIC_WORD_SIZE;
+	addr = (शून्य *)CONFIG_SPL_PCI_DFU_SPL_आरोपय_FIT_स्थानाङ्कः;
+	विस्थापनम् = CONFIG_SPL_PCI_DFU_BAR_आकार - MAGIC_WORD_आकार;
 
-	if (sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
+	यदि (परिमाण(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_आकार) {
 		pr_err("Not copying boot phase. String too long\n");
-	} else {
-		bootphase = (char *)(addr + CONFIG_SPL_PCI_DFU_BAR_SIZE -
-				  (BOOT_PHASE_STRING_SIZE + MAGIC_WORD_SIZE + 1));
+	} अन्यथा {
+		bootphase = (वर्ण *)(addr + CONFIG_SPL_PCI_DFU_BAR_आकार -
+				  (BOOT_PHASE_STRING_आकार + MAGIC_WORD_आकार + 1));
 		strlcpy(bootphase, CONFIG_SPL_PCI_DFU_BOOT_PHASE,
-			sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
+			परिमाण(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
 	}
 
-	addr = addr + offset;
+	addr = addr + विस्थापनम्;
 	magic_word = CONFIG_SPL_PCI_DFU_MAGIC_WORD;
-	(*(int *)addr) = 0;
+	(*(पूर्णाङ्क *)addr) = 0;
 	flush_dcache_all();
-	for (;;) {
-		if (*(int *)addr == magic_word)
-			break;
+	प्रति (;;) {
+		यदि (*(पूर्णाङ्क *)addr == magic_word)
+			भङ्ग;
 		invalidate_dcache_all();
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
+पूर्णाङ्क spl_dfu_cmd(पूर्णाङ्क usbctrl, वर्ण *dfu_alt_info, वर्ण *interface, वर्ण *devstr)
 {
-	char *str_env;
-	int ret;
+	वर्ण *str_env;
+	पूर्णाङ्क ret;
 
-#ifdef CONFIG_SPL_PCI_DFU
-	if (spl_boot_device() == BOOT_DEVICE_PCIE)
-		return dfu_over_pcie();
-#endif
+#यदि_परिभाषितम् CONFIG_SPL_PCI_DFU
+	यदि (spl_boot_device() == BOOT_DEVICE_PCIE)
+		प्रत्यागम dfu_over_pcie();
+#यदि_अन्तः
 
 	/* set default environment */
-	env_set_default(NULL, 0);
+	env_समुच्चयः_default(रिक्त, 0);
 	str_env = env_get(dfu_alt_info);
-	if (!str_env) {
+	यदि (!str_env) {
 		pr_err("\"%s\" env variable not defined!\n", dfu_alt_info);
-		return -EINVAL;
+		प्रत्यागम -EINVAL;
 	}
 
-	ret = env_set("dfu_alt_info", str_env);
-	if (ret) {
+	ret = env_समुच्चयः("dfu_alt_info", str_env);
+	यदि (ret) {
 		pr_err("unable to set env variable \"dfu_alt_info\"!\n");
-		return -EINVAL;
+		प्रत्यागम -EINVAL;
 	}
 
 	/* invoke dfu command */
-	return run_dfu(usbctrl, interface, devstr);
+	प्रत्यागम सततम्_dfu(usbctrl, interface, devstr);
 }

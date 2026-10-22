@@ -3,18 +3,18 @@
  * (C) Copyright 2018, Linaro Limited
  */
 
-#include <avb_verify.h>
-#include <blk.h>
-#include <cpu_func.h>
-#include <image.h>
-#include <malloc.h>
-#include <part.h>
-#include <tee.h>
-#include <tee/optee_ta_avb.h>
-#include <u-boot/sha256.h>
+#अन्तर्भाव <avb_verify.h>
+#अन्तर्भाव <blk.h>
+#अन्तर्भाव <cpu_func.h>
+#अन्तर्भाव <image.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <part.h>
+#अन्तर्भाव <tee.h>
+#अन्तर्भाव <tee/optee_ta_avb.h>
+#अन्तर्भाव <u-boot/sha256.h>
 
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
-static const unsigned char avb_root_pub[1032] = {
+#यदि CONFIG_IS_ENABLED(AVB_मूलम्_कुञ्चिका_BUILTIN)
+स्थिर ध्रुव अचिह्नित वर्ण avb_मूलम्_pub[1032] = {
 	0x0, 0x0, 0x10, 0x0, 0x55, 0xd9, 0x4, 0xad, 0xd8, 0x4,
 	0xaf, 0xe3, 0xd3, 0x84, 0x6c, 0x7e, 0xd, 0x89, 0x3d, 0xc2,
 	0x8c, 0xd3, 0x12, 0x55, 0xe9, 0x62, 0xc9, 0xf1, 0xf, 0x5e,
@@ -120,55 +120,55 @@ static const unsigned char avb_root_pub[1032] = {
 	0xe1, 0x74, 0xa1, 0xa3, 0x99, 0xa0, 0x85, 0x9e, 0xf1, 0xac,
 	0xd8, 0x7e,
 };
-#endif /* AVB_ROOT_KEY_BUILTIN */
+#यदि_अन्तः /* AVB_ROOT_KEY_BUILTIN */
 
-const char *str_avb_io_error(AvbIOResult res)
+ध्रुव वर्ण *str_avb_io_error(AvbIOResult res)
 {
-	switch (res) {
-	case AVB_IO_RESULT_OK:
-		return "Requested operation was successful";
-	case AVB_IO_RESULT_ERROR_IO:
-		return "Underlying hardware encountered an I/O error";
-	case AVB_IO_RESULT_ERROR_OOM:
-		return "Unable to allocate memory";
-	case AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION:
-		return "Requested partition does not exist";
-	case AVB_IO_RESULT_ERROR_RANGE_OUTSIDE_PARTITION:
-		return "Bytes requested is outside the range of partition";
-	case AVB_IO_RESULT_ERROR_NO_SUCH_VALUE:
-		return "Named persistent value does not exist";
-	case AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE:
-		return "Named persistent value size is not supported";
-	case AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE:
-		return "Buffer is too small for the requested operation";
-	default:
-		return "Unknown AVB error";
+	विकल्प (res) {
+	पक्ष AVB_IO_परिणाम_OK:
+		प्रत्यागम "Requested operation was successful";
+	पक्ष AVB_IO_परिणाम_ERROR_IO:
+		प्रत्यागम "Underlying hardware encountered an I/O error";
+	पक्ष AVB_IO_परिणाम_ERROR_OOM:
+		प्रत्यागम "Unable to allocate memory";
+	पक्ष AVB_IO_परिणाम_ERROR_NO_SUCH_PARTITION:
+		प्रत्यागम "Requested partition does not exist";
+	पक्ष AVB_IO_परिणाम_ERROR_RANGE_OUTSIDE_PARTITION:
+		प्रत्यागम "Bytes requested is outside the range of partition";
+	पक्ष AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्:
+		प्रत्यागम "Named persistent value does not exist";
+	पक्ष AVB_IO_परिणाम_ERROR_INVALID_मानम्_आकार:
+		प्रत्यागम "Named persistent value size is not supported";
+	पक्ष AVB_IO_परिणाम_ERROR_INSUFFICIENT_SPACE:
+		प्रत्यागम "Buffer is too small for the requested operation";
+	स्वभाव:
+		प्रत्यागम "Unknown AVB error";
 	}
 }
 
-const char *str_avb_slot_error(AvbSlotVerifyResult res)
+ध्रुव वर्ण *str_avb_slot_error(Avb_Slot_Verify_परिणाम res)
 {
-	switch (res) {
-	case AVB_SLOT_VERIFY_RESULT_OK:
-		return "Verification passed successfully";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_OOM:
-		return "Allocation of memory failed";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_IO:
-		return "I/O error occurred while trying to load data";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_VERIFICATION:
-		return "Digest didn't match or signature checks failed";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_ROLLBACK_INDEX:
-		return "Rollback index is less than its stored value";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_PUBLIC_KEY_REJECTED:
-		return "Public keys are not accepted";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_METADATA:
-		return "Metadata is invalid or inconsistent";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_UNSUPPORTED_VERSION:
-		return "Metadata requires a newer version of libavb";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_ARGUMENT:
-		return "Invalid arguments are used";
-	default:
-		return "Unknown AVB slot verification error";
+	विकल्प (res) {
+	पक्ष AVB_SLOT_VERIFY_परिणाम_OK:
+		प्रत्यागम "Verification passed successfully";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_OOM:
+		प्रत्यागम "Allocation of memory failed";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_IO:
+		प्रत्यागम "I/O error occurred while trying to load data";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_VERIFICATION:
+		प्रत्यागम "Digest didn't match or signature checks failed";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_ROLLBACK_सूचकांक:
+		प्रत्यागम "Rollback index is less than its stored value";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_लौकिकम्_कुञ्चिका_REJECTED:
+		प्रत्यागम "Public keys are not accepted";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_INVALID_METADATA:
+		प्रत्यागम "Metadata is invalid or inconsistent";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_UNSUPPORTED_संस्करणम्:
+		प्रत्यागम "Metadata requires a newer version of libavb";
+	पक्ष AVB_SLOT_VERIFY_परिणाम_ERROR_INVALID_तर्कः:
+		प्रत्यागम "Invalid arguments are used";
+	स्वभाव:
+		प्रत्यागम "Unknown AVB slot verification error";
 	}
 }
 /**
@@ -176,131 +176,131 @@ const char *str_avb_slot_error(AvbSlotVerifyResult res)
  * Boot states support (GREEN, YELLOW, ORANGE, RED) and dm_verity
  * ============================================================================
  */
-char *avb_set_state(AvbOps *ops, enum avb_boot_state boot_state)
+वर्ण *avb_समुच्चयः_state(AvbOps *ops, गणना avb_boot_state boot_state)
 {
-	struct AvbOpsData *data;
-	char *cmdline = NULL;
+	संरचना Avb_Ops_दत्त *दत्त;
+	वर्ण *cmdline = रिक्त;
 
-	if (!ops)
-		return NULL;
+	यदि (!ops)
+		प्रत्यागम रिक्त;
 
-	data = (struct AvbOpsData *)ops->user_data;
-	if (!data)
-		return NULL;
+	दत्त = (संरचना Avb_Ops_दत्त *)ops->user_दत्त;
+	यदि (!दत्त)
+		प्रत्यागम रिक्त;
 
-	data->boot_state = boot_state;
-	switch (boot_state) {
-	case AVB_GREEN:
+	दत्त->boot_state = boot_state;
+	विकल्प (boot_state) {
+	पक्ष AVB_GREEN:
 		cmdline = "androidboot.verifiedbootstate=green";
-		break;
-	case AVB_YELLOW:
+		भङ्ग;
+	पक्ष AVB_YELLOW:
 		cmdline = "androidboot.verifiedbootstate=yellow";
-		break;
-	case AVB_ORANGE:
+		भङ्ग;
+	पक्ष AVB_ORANGE:
 		cmdline = "androidboot.verifiedbootstate=orange";
-		break;
-	case AVB_RED:
-		break;
+		भङ्ग;
+	पक्ष AVB_RED:
+		भङ्ग;
 	}
 
-	return cmdline;
+	प्रत्यागम cmdline;
 }
 
-char *append_cmd_line(char *cmdline_orig, char *cmdline_new)
+वर्ण *append_cmd_पङ्क्तिः(वर्ण *cmdline_orig, वर्ण *cmdline_new)
 {
-	char *cmd_line;
+	वर्ण *cmd_पङ्क्तिः;
 
-	if (!cmdline_new)
-		return cmdline_orig;
+	यदि (!cmdline_new)
+		प्रत्यागम cmdline_orig;
 
-	if (cmdline_orig)
-		cmd_line = cmdline_orig;
-	else
-		cmd_line = " ";
+	यदि (cmdline_orig)
+		cmd_पङ्क्तिः = cmdline_orig;
+	अन्यथा
+		cmd_पङ्क्तिः = " ";
 
-	cmd_line = avb_strdupv(cmd_line, " ", cmdline_new, NULL);
+	cmd_पङ्क्तिः = avb_strdupv(cmd_पङ्क्तिः, " ", cmdline_new, रिक्त);
 
-	return cmd_line;
+	प्रत्यागम cmd_पङ्क्तिः;
 }
 
-static int avb_find_dm_args(char **args, char *str)
+स्थिर पूर्णाङ्क avb_find_dm_तर्काः(वर्ण **तर्काः, वर्ण *str)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	if (!str)
-		return -1;
+	यदि (!str)
+		प्रत्यागम -1;
 
-	for (i = 0; i < AVB_MAX_ARGS && args[i]; ++i) {
-		if (strstr(args[i], str))
-			return i;
+	प्रति (i = 0; i < AVB_MAX_तर्काः && तर्काः[i]; ++i) {
+		यदि (वाक्ये_अन्विष(तर्काः[i], str))
+			प्रत्यागम i;
 	}
 
-	return -1;
+	प्रत्यागम -1;
 }
 
-static char *avb_set_enforce_option(const char *cmdline, const char *option)
+स्थिर वर्ण *avb_समुच्चयः_enforce_option(ध्रुव वर्ण *cmdline, ध्रुव वर्ण *option)
 {
-	char *cmdarg[AVB_MAX_ARGS];
-	char *newargs = NULL;
-	int i = 0;
-	int total_args;
+	वर्ण *cmdarg[AVB_MAX_तर्काः];
+	वर्ण *newargs = रिक्त;
+	पूर्णाङ्क i = 0;
+	पूर्णाङ्क योग_तर्काः;
 
-	memset(cmdarg, 0, sizeof(cmdarg));
-	cmdarg[i++] = strtok((char *)cmdline, " ");
+	स्मृतिं_पूरय(cmdarg, 0, परिमाण(cmdarg));
+	cmdarg[i++] = strtok((वर्ण *)cmdline, " ");
 
-	do {
-		cmdarg[i] = strtok(NULL, " ");
-		if (!cmdarg[i])
-			break;
+	कुरु {
+		cmdarg[i] = strtok(रिक्त, " ");
+		यदि (!cmdarg[i])
+			भङ्ग;
 
-		if (++i >= AVB_MAX_ARGS) {
-			printf("%s: Can't handle more then %d args\n",
+		यदि (++i >= AVB_MAX_तर्काः) {
+			प्रारूप_लिख("%s: Can't handle more then %d args\n",
 			       __func__, i);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
-	} while (true);
+	} यावत् (true);
 
-	total_args = i;
-	i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_LOGGING);
-	if (i >= 0) {
-		cmdarg[i] = (char *)option;
-	} else {
-		i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_RESTART);
-		if (i < 0) {
-			printf("%s: No verity options found\n", __func__);
-			return NULL;
+	योग_तर्काः = i;
+	i = avb_find_dm_तर्काः(&cmdarg[0], VERITY_सारणी_OPT_LOGGING);
+	यदि (i >= 0) {
+		cmdarg[i] = (वर्ण *)option;
+	} अन्यथा {
+		i = avb_find_dm_तर्काः(&cmdarg[0], VERITY_सारणी_OPT_RESTART);
+		यदि (i < 0) {
+			प्रारूप_लिख("%s: No verity options found\n", __func__);
+			प्रत्यागम रिक्त;
 		}
 
-		cmdarg[i] = (char *)option;
+		cmdarg[i] = (वर्ण *)option;
 	}
 
-	for (i = 0; i <= total_args; i++)
-		newargs = append_cmd_line(newargs, cmdarg[i]);
+	प्रति (i = 0; i <= योग_तर्काः; i++)
+		newargs = append_cmd_पङ्क्तिः(newargs, cmdarg[i]);
 
-	return newargs;
+	प्रत्यागम newargs;
 }
 
-char *avb_set_ignore_corruption(const char *cmdline)
+वर्ण *avb_समुच्चयः_ignore_corruption(ध्रुव वर्ण *cmdline)
 {
-	char *newargs = NULL;
+	वर्ण *newargs = रिक्त;
 
-	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_LOGGING);
-	if (newargs)
-		newargs = append_cmd_line(newargs,
+	newargs = avb_समुच्चयः_enforce_option(cmdline, VERITY_सारणी_OPT_LOGGING);
+	यदि (newargs)
+		newargs = append_cmd_पङ्क्तिः(newargs,
 					  "androidboot.veritymode=eio");
 
-	return newargs;
+	प्रत्यागम newargs;
 }
 
-char *avb_set_enforce_verity(const char *cmdline)
+वर्ण *avb_समुच्चयः_enforce_verity(ध्रुव वर्ण *cmdline)
 {
-	char *newargs;
+	वर्ण *newargs;
 
-	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_RESTART);
-	if (newargs)
-		newargs = append_cmd_line(newargs,
+	newargs = avb_समुच्चयः_enforce_option(cmdline, VERITY_सारणी_OPT_RESTART);
+	यदि (newargs)
+		newargs = append_cmd_पङ्क्तिः(newargs,
 					  "androidboot.veritymode=enforcing");
-	return newargs;
+	प्रत्यागम newargs;
 }
 
 /**
@@ -308,23 +308,23 @@ char *avb_set_enforce_verity(const char *cmdline)
  * IO(mmc) auxiliary functions
  * ============================================================================
  */
-static unsigned long mmc_read_and_flush(struct mmc_part *part,
+स्थिर अचिह्नित दीर्घ mmc_read_and_flush(संरचना mmc_part *part,
 					lbaint_t start,
 					lbaint_t sectors,
-					void *buffer)
+					शून्य *बफर)
 {
-	unsigned long blks;
-	void *tmp_buf;
-	size_t buf_size;
-	bool unaligned = is_buf_unaligned(buffer);
+	अचिह्नित दीर्घ blks;
+	शून्य *tmp_buf;
+	size_t buf_आकार;
+	bool unaligned = is_buf_unaligned(बफर);
 
-	if (start < part->info.start) {
-		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+	यदि (start < part->info.start) {
+		प्रारूप_लिख("%s: partition start out of bounds\n", __func__);
+		प्रत्यागम 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
-		sectors = part->info.start + part->info.size - start;
-		printf("%s: read sector aligned to partition bounds (" LBAF ")\n",
+	यदि ((start + sectors) > (part->info.start + part->info.आकार)) {
+		sectors = part->info.start + part->info.आकार - start;
+		प्रारूप_लिख("%s: read sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
 	}
 
@@ -332,15 +332,15 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	 * Reading fails on unaligned buffers, so we have to
 	 * use aligned temporary buffer and then copy to destination
 	 */
-	if (unaligned) {
+	यदि (unaligned) {
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
-		      __func__, buffer);
+		      __func__, बफर);
 		tmp_buf = get_sector_buf();
-		buf_size = get_sector_buf_size();
-		if (sectors > buf_size / part->info.blksz)
-			sectors = buf_size / part->info.blksz;
-	} else {
-		tmp_buf = buffer;
+		buf_आकार = get_sector_buf_आकार();
+		यदि (sectors > buf_आकार / part->info.blksz)
+			sectors = buf_आकार / part->info.blksz;
+	} अन्यथा {
+		tmp_buf = बफर;
 	}
 
 	blks = blk_dread(part->mmc_blk,
@@ -348,229 +348,229 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	/* flush cache after read */
 	flush_cache((ulong)tmp_buf, sectors * part->info.blksz);
 
-	if (unaligned)
-		memcpy(buffer, tmp_buf, sectors * part->info.blksz);
+	यदि (unaligned)
+		स्मृतिं_प्रतिलिख(बफर, tmp_buf, sectors * part->info.blksz);
 
-	return blks;
+	प्रत्यागम blks;
 }
 
-static unsigned long mmc_write(struct mmc_part *part, lbaint_t start,
-			       lbaint_t sectors, void *buffer)
+स्थिर अचिह्नित दीर्घ mmc_write(संरचना mmc_part *part, lbaint_t start,
+			       lbaint_t sectors, शून्य *बफर)
 {
-	void *tmp_buf;
-	size_t buf_size;
-	bool unaligned = is_buf_unaligned(buffer);
+	शून्य *tmp_buf;
+	size_t buf_आकार;
+	bool unaligned = is_buf_unaligned(बफर);
 
-	if (start < part->info.start) {
-		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+	यदि (start < part->info.start) {
+		प्रारूप_लिख("%s: partition start out of bounds\n", __func__);
+		प्रत्यागम 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
-		sectors = part->info.start + part->info.size - start;
-		printf("%s: sector aligned to partition bounds (" LBAF ")\n",
+	यदि ((start + sectors) > (part->info.start + part->info.आकार)) {
+		sectors = part->info.start + part->info.आकार - start;
+		प्रारूप_लिख("%s: sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
 	}
-	if (unaligned) {
+	यदि (unaligned) {
 		tmp_buf = get_sector_buf();
-		buf_size = get_sector_buf_size();
+		buf_आकार = get_sector_buf_आकार();
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
-		      __func__, buffer);
-		if (sectors > buf_size / part->info.blksz)
-			sectors = buf_size / part->info.blksz;
+		      __func__, बफर);
+		यदि (sectors > buf_आकार / part->info.blksz)
+			sectors = buf_आकार / part->info.blksz;
 
-		memcpy(tmp_buf, buffer, sectors * part->info.blksz);
-	} else {
-		tmp_buf = buffer;
+		स्मृतिं_प्रतिलिख(tmp_buf, बफर, sectors * part->info.blksz);
+	} अन्यथा {
+		tmp_buf = बफर;
 	}
 
-	return blk_dwrite(part->mmc_blk,
+	प्रत्यागम blk_dwrite(part->mmc_blk,
 			  start, sectors, tmp_buf);
 }
 
-static struct mmc_part *get_partition(AvbOps *ops, const char *partition)
+स्थिर संरचना mmc_part *get_partition(AvbOps *ops, ध्रुव वर्ण *partition)
 {
-	int ret;
-	u8 dev_num;
-	int part_num = 0;
-	struct mmc_part *part;
-	struct blk_desc *mmc_blk;
+	पूर्णाङ्क ret;
+	u8 dev_अङ्कः;
+	पूर्णाङ्क part_अङ्कः = 0;
+	संरचना mmc_part *part;
+	संरचना blk_desc *mmc_blk;
 
-	part = malloc(sizeof(struct mmc_part));
-	if (!part)
-		return NULL;
+	part = स्मृतिं_देहि(परिमाण(संरचना mmc_part));
+	यदि (!part)
+		प्रत्यागम रिक्त;
 
-	dev_num = get_boot_device(ops);
-	part->mmc = find_mmc_device(dev_num);
-	if (!part->mmc) {
-		printf("%s: no MMC device at slot %x\n", __func__, dev_num);
-		goto err;
+	dev_अङ्कः = get_boot_device(ops);
+	part->mmc = find_mmc_device(dev_अङ्कः);
+	यदि (!part->mmc) {
+		प्रारूप_लिख("%s: no MMC device at slot %x\n", __func__, dev_अङ्कः);
+		गच्छ err;
 	}
 
 	ret = mmc_init(part->mmc);
-	if (ret) {
-		printf("%s: MMC initialization failed, err = %d\n",
+	यदि (ret) {
+		प्रारूप_लिख("%s: MMC initialization failed, err = %d\n",
 		       __func__, ret);
-		goto err;
+		गच्छ err;
 	}
 
-	if (IS_MMC(part->mmc)) {
-		ret = mmc_switch_part(part->mmc, part_num);
-		if (ret) {
-			printf("%s: MMC part switch failed, err = %d\n",
+	यदि (IS_MMC(part->mmc)) {
+		ret = mmc_switch_part(part->mmc, part_अङ्कः);
+		यदि (ret) {
+			प्रारूप_लिख("%s: MMC part switch failed, err = %d\n",
 			       __func__, ret);
-			goto err;
+			गच्छ err;
 		}
 	}
 
 	mmc_blk = mmc_get_blk_desc(part->mmc);
-	if (!mmc_blk) {
-		printf("%s: failed to obtain block descriptor\n", __func__);
-		goto err;
+	यदि (!mmc_blk) {
+		प्रारूप_लिख("%s: failed to obtain block descriptor\n", __func__);
+		गच्छ err;
 	}
 
 	ret = part_get_info_by_name(mmc_blk, partition, &part->info);
-	if (ret < 0) {
-		printf("%s: can't find partition '%s'\n", __func__, partition);
-		goto err;
+	यदि (ret < 0) {
+		प्रारूप_लिख("%s: can't find partition '%s'\n", __func__, partition);
+		गच्छ err;
 	}
 
-	part->dev_num = dev_num;
+	part->dev_अङ्कः = dev_अङ्कः;
 	part->mmc_blk = mmc_blk;
 
-	return part;
+	प्रत्यागम part;
 err:
-	free(part);
-	return NULL;
+	मुक्त(part);
+	प्रत्यागम रिक्त;
 }
 
-static AvbIOResult mmc_byte_io(AvbOps *ops,
-			       const char *partition,
-			       s64 offset,
-			       size_t num_bytes,
-			       void *buffer,
-			       size_t *out_num_read,
-			       enum mmc_io_type io_type)
+स्थिर AvbIOResult mmc_byte_io(AvbOps *ops,
+			       ध्रुव वर्ण *partition,
+			       s64 विस्थापनम्,
+			       size_t अङ्कः_अष्टकानि,
+			       शून्य *बफर,
+			       size_t *बहिर्गमनम्_अङ्कः_read,
+			       गणना mmc_io_type io_type)
 {
 	ulong ret;
-	struct mmc_part *part;
-	u64 start_offset, start_sector, sectors, residue;
+	संरचना mmc_part *part;
+	u64 start_विस्थापनम्, start_sector, sectors, residue;
 	u8 *tmp_buf;
 	size_t io_cnt = 0;
-	AvbIOResult io_ret = AVB_IO_RESULT_OK;
+	AvbIOResult io_ret = AVB_IO_परिणाम_OK;
 
-	if (!partition || !buffer || io_type > IO_WRITE)
-		return AVB_IO_RESULT_ERROR_IO;
+	यदि (!partition || !बफर || io_type > IO_WRITE)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	यदि (!part)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_PARTITION;
 
-	if (!part->info.blksz) {
-		io_ret = AVB_IO_RESULT_ERROR_IO;
-		goto out;
+	यदि (!part->info.blksz) {
+		io_ret = AVB_IO_परिणाम_ERROR_IO;
+		गच्छ बहिर्गमनम्;
 	}
 
-	start_offset = calc_offset(part, offset);
-	while (num_bytes) {
-		start_sector = start_offset / part->info.blksz;
-		sectors = num_bytes / part->info.blksz;
+	start_विस्थापनम् = calc_विस्थापनम्(part, विस्थापनम्);
+	यावत् (अङ्कः_अष्टकानि) {
+		start_sector = start_विस्थापनम् / part->info.blksz;
+		sectors = अङ्कः_अष्टकानि / part->info.blksz;
 		/* handle non block-aligned reads */
-		if (start_offset % part->info.blksz ||
-		    num_bytes < part->info.blksz) {
+		यदि (start_विस्थापनम् % part->info.blksz ||
+		    अङ्कः_अष्टकानि < part->info.blksz) {
 			tmp_buf = get_sector_buf();
-			if (start_offset % part->info.blksz) {
+			यदि (start_विस्थापनम् % part->info.blksz) {
 				residue = part->info.blksz -
-					(start_offset % part->info.blksz);
-				if (residue > num_bytes)
-					residue = num_bytes;
-			} else {
-				residue = num_bytes;
+					(start_विस्थापनम् % part->info.blksz);
+				यदि (residue > अङ्कः_अष्टकानि)
+					residue = अङ्कः_अष्टकानि;
+			} अन्यथा {
+				residue = अङ्कः_अष्टकानि;
 			}
 
-			if (io_type == IO_READ) {
+			यदि (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
-					printf("%s: read error (%ld, %lld)\n",
+				यदि (ret != 1) {
+					प्रारूप_लिख("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
-					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					io_ret = AVB_IO_परिणाम_ERROR_IO;
+					गच्छ बहिर्गमनम्;
 				}
 				/*
 				 * if this is not aligned at sector start,
 				 * we have to adjust the tmp buffer
 				 */
-				tmp_buf += (start_offset % part->info.blksz);
-				memcpy(buffer, (void *)tmp_buf, residue);
-			} else {
+				tmp_buf += (start_विस्थापनम् % part->info.blksz);
+				स्मृतिं_प्रतिलिख(बफर, (शून्य *)tmp_buf, residue);
+			} अन्यथा {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
-					printf("%s: read error (%ld, %lld)\n",
+				यदि (ret != 1) {
+					प्रारूप_लिख("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
-					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					io_ret = AVB_IO_परिणाम_ERROR_IO;
+					गच्छ बहिर्गमनम्;
 				}
-				memcpy((void *)tmp_buf +
-					start_offset % part->info.blksz,
-					buffer, residue);
+				स्मृतिं_प्रतिलिख((शून्य *)tmp_buf +
+					start_विस्थापनम् % part->info.blksz,
+					बफर, residue);
 
 				ret = mmc_write(part, part->info.start +
 						start_sector, 1, tmp_buf);
-				if (ret != 1) {
-					printf("%s: write error (%ld, %lld)\n",
+				यदि (ret != 1) {
+					प्रारूप_लिख("%s: write error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
-					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					io_ret = AVB_IO_परिणाम_ERROR_IO;
+					गच्छ बहिर्गमनम्;
 				}
 			}
 
 			io_cnt += residue;
-			buffer += residue;
-			start_offset += residue;
-			num_bytes -= residue;
-			continue;
+			बफर += residue;
+			start_विस्थापनम् += residue;
+			अङ्कः_अष्टकानि -= residue;
+			अनुवर्त;
 		}
 
-		if (sectors) {
-			if (io_type == IO_READ) {
+		यदि (sectors) {
+			यदि (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
-							 sectors, buffer);
-			} else {
+							 sectors, बफर);
+			} अन्यथा {
 				ret = mmc_write(part,
 						part->info.start +
 						start_sector,
-						sectors, buffer);
+						sectors, बफर);
 			}
 
-			if (!ret) {
-				printf("%s: sector read error\n", __func__);
-				io_ret = AVB_IO_RESULT_ERROR_IO;
-				goto out;
+			यदि (!ret) {
+				प्रारूप_लिख("%s: sector read error\n", __func__);
+				io_ret = AVB_IO_परिणाम_ERROR_IO;
+				गच्छ बहिर्गमनम्;
 			}
 
 			io_cnt += ret * part->info.blksz;
-			buffer += ret * part->info.blksz;
-			start_offset += ret * part->info.blksz;
-			num_bytes -= ret * part->info.blksz;
+			बफर += ret * part->info.blksz;
+			start_विस्थापनम् += ret * part->info.blksz;
+			अङ्कः_अष्टकानि -= ret * part->info.blksz;
 		}
 	}
 
 	/* Set counter for read operation */
-	if (io_type == IO_READ && out_num_read)
-		*out_num_read = io_cnt;
+	यदि (io_type == IO_READ && बहिर्गमनम्_अङ्कः_read)
+		*बहिर्गमनम्_अङ्कः_read = io_cnt;
 
-out:
-	free(part);
-	return io_ret;
+बहिर्गमनम्:
+	मुक्त(part);
+	प्रत्यागम io_ret;
 }
 
 /**
@@ -597,15 +597,15 @@ out:
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if there is no partition with
  *      the given name
  */
-static AvbIOResult read_from_partition(AvbOps *ops,
-				       const char *partition_name,
-				       s64 offset_from_partition,
-				       size_t num_bytes,
-				       void *buffer,
-				       size_t *out_num_read)
+स्थिर AvbIOResult read_from_partition(AvbOps *ops,
+				       ध्रुव वर्ण *partition_name,
+				       s64 विस्थापनम्_from_partition,
+				       size_t अङ्कः_अष्टकानि,
+				       शून्य *बफर,
+				       size_t *बहिर्गमनम्_अङ्कः_read)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
-			   num_bytes, buffer, out_num_read, IO_READ);
+	प्रत्यागम mmc_byte_io(ops, partition_name, विस्थापनम्_from_partition,
+			   अङ्कः_अष्टकानि, बफर, बहिर्गमनम्_अङ्कः_read, IO_READ);
 }
 
 /**
@@ -625,14 +625,14 @@ static AvbIOResult read_from_partition(AvbOps *ops,
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition, specified in
  *            @partition_name was not found
  */
-static AvbIOResult write_to_partition(AvbOps *ops,
-				      const char *partition_name,
-				      s64 offset_from_partition,
-				      size_t num_bytes,
-				      const void *buffer)
+स्थिर AvbIOResult write_गन्तव्यम्_partition(AvbOps *ops,
+				      ध्रुव वर्ण *partition_name,
+				      s64 विस्थापनम्_from_partition,
+				      size_t अङ्कः_अष्टकानि,
+				      ध्रुव शून्य *बफर)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
-			   num_bytes, (void *)buffer, NULL, IO_WRITE);
+	प्रत्यागम mmc_byte_io(ops, partition_name, विस्थापनम्_from_partition,
+			   अङ्कः_अष्टकानि, (शून्य *)बफर, रिक्त, IO_WRITE);
 }
 
 /**
@@ -649,103 +649,103 @@ static AvbIOResult write_to_partition(AvbOps *ops,
  * @return:
  *      AVB_IO_RESULT_OK, if partition was found and read operation succeed
  */
-static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
-					      const u8 *public_key_data,
-					      size_t public_key_length,
-					      const u8
-					      *public_key_metadata,
+स्थिर AvbIOResult validate_vbmeta_लौकिकम्_कुञ्चिका(AvbOps *ops,
+					      ध्रुव u8 *लौकिकम्_कुञ्चिका_दत्त,
+					      size_t लौकिकम्_कुञ्चिका_दीर्घता,
+					      ध्रुव u8
+					      *लौकिकम्_कुञ्चिका_metadata,
 					      size_t
-					      public_key_metadata_length,
-					      bool *out_key_is_trusted)
+					      लौकिकम्_कुञ्चिका_metadata_दीर्घता,
+					      bool *बहिर्गमनम्_कुञ्चिका_is_trusted)
 {
-	u8 key_digest[SHA256_SUM_LEN];
-	u8 trusted_digest[SHA256_SUM_LEN];
+	u8 कुञ्चिका_digest[SHA256_योग_LEN];
+	u8 trusted_digest[SHA256_योग_LEN];
 	AvbIOResult rc;
 
-	if (!public_key_length || !public_key_data || !out_key_is_trusted)
-		return AVB_IO_RESULT_ERROR_IO;
+	यदि (!लौकिकम्_कुञ्चिका_दीर्घता || !लौकिकम्_कुञ्चिका_दत्त || !बहिर्गमनम्_कुञ्चिका_is_trusted)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 
 	/* Default deny: only flip to trusted on a positive digest match. */
-	*out_key_is_trusted = false;
+	*बहिर्गमनम्_कुञ्चिका_is_trusted = false;
 
 	/* Digest of the key embedded in the (untrusted) vbmeta. */
-	sha256_csum_wd(public_key_data, public_key_length, key_digest,
+	sha256_csum_wd(लौकिकम्_कुञ्चिका_दत्त, लौकिकम्_कुञ्चिका_दीर्घता, कुञ्चिका_digest,
 		       CHUNKSZ_SHA256);
 
 	/* Digest of the trusted root key from the configured source. */
-	rc = avb_read_root_key_digest(ops, trusted_digest);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	rc = avb_read_मूलम्_कुञ्चिका_digest(ops, trusted_digest);
+	यदि (rc != AVB_IO_परिणाम_OK)
+		प्रत्यागम rc;
 
-	if (avb_safe_memcmp(key_digest, trusted_digest, sizeof(key_digest)) == 0)
-		*out_key_is_trusted = true;
+	यदि (avb_safe_memcmp(कुञ्चिका_digest, trusted_digest, परिमाण(कुञ्चिका_digest)) == 0)
+		*बहिर्गमनम्_कुञ्चिका_is_trusted = true;
 
-	return AVB_IO_RESULT_OK;
+	प्रत्यागम AVB_IO_परिणाम_OK;
 }
 
-#ifdef CONFIG_OPTEE_TA_AVB
-static int get_open_session(struct AvbOpsData *ops_data)
+#यदि_परिभाषितम् CONFIG_OPTEE_TA_AVB
+स्थिर पूर्णाङ्क get_open_session(संरचना Avb_Ops_दत्त *ops_दत्त)
 {
-	struct udevice *tee = NULL;
+	संरचना udevice *tee = रिक्त;
 
-	while (!ops_data->tee) {
-		const struct tee_optee_ta_uuid uuid = TA_AVB_UUID;
-		struct tee_open_session_arg arg;
-		int rc;
+	यावत् (!ops_दत्त->tee) {
+		ध्रुव संरचना tee_optee_ta_uuid uuid = TA_AVB_UUID;
+		संरचना tee_open_session_arg arg;
+		पूर्णाङ्क rc;
 
-		tee = tee_find_device(tee, NULL, NULL, NULL);
-		if (!tee)
-			return -ENODEV;
+		tee = tee_find_device(tee, रिक्त, रिक्त, रिक्त);
+		यदि (!tee)
+			प्रत्यागम -ENODEV;
 
-		memset(&arg, 0, sizeof(arg));
-		tee_optee_ta_uuid_to_octets(arg.uuid, &uuid);
-		rc = tee_open_session(tee, &arg, 0, NULL);
-		if (rc || arg.ret)
-			continue;
+		स्मृतिं_पूरय(&arg, 0, परिमाण(arg));
+		tee_optee_ta_uuid_गन्तव्यम्_octets(arg.uuid, &uuid);
+		rc = tee_open_session(tee, &arg, 0, रिक्त);
+		यदि (rc || arg.ret)
+			अनुवर्त;
 
-		ops_data->tee = tee;
-		ops_data->session = arg.session;
+		ops_दत्त->tee = tee;
+		ops_दत्त->session = arg.session;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
-			       ulong num_param, struct tee_param *param)
+स्थिर AvbIOResult invoke_func(संरचना Avb_Ops_दत्त *ops_दत्त, u32 func,
+			       ulong अङ्कः_param, संरचना tee_param *param)
 {
-	struct tee_invoke_arg arg;
+	संरचना tee_invoke_arg arg;
 
-	if (get_open_session(ops_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	यदि (get_open_session(ops_दत्त))
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 
-	memset(&arg, 0, sizeof(arg));
+	स्मृतिं_पूरय(&arg, 0, परिमाण(arg));
 	arg.func = func;
-	arg.session = ops_data->session;
+	arg.session = ops_दत्त->session;
 
-	if (tee_invoke_func(ops_data->tee, &arg, num_param, param))
-		return AVB_IO_RESULT_ERROR_IO;
-	switch (arg.ret) {
-	case TEE_SUCCESS:
-		return AVB_IO_RESULT_OK;
-	case TEE_ERROR_OUT_OF_MEMORY:
-		return AVB_IO_RESULT_ERROR_OOM;
-	case TEE_ERROR_STORAGE_NO_SPACE:
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
-	case TEE_ERROR_ITEM_NOT_FOUND:
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
-	case TEE_ERROR_TARGET_DEAD:
+	यदि (tee_invoke_func(ops_दत्त->tee, &arg, अङ्कः_param, param))
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
+	विकल्प (arg.ret) {
+	पक्ष TEE_SUCCESS:
+		प्रत्यागम AVB_IO_परिणाम_OK;
+	पक्ष TEE_ERROR_बहिर्गमनम्_सम्बन्धि_स्मृतिः:
+		प्रत्यागम AVB_IO_परिणाम_ERROR_OOM;
+	पक्ष TEE_ERROR_STORAGE_NO_SPACE:
+		प्रत्यागम AVB_IO_परिणाम_ERROR_INSUFFICIENT_SPACE;
+	पक्ष TEE_ERROR_ITEM_NOT_प्राप्तम्:
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
+	पक्ष TEE_ERROR_TARGET_DEAD:
 		/*
 		 * The TA has paniced, close the session to reload the TA
 		 * for the next request.
 		 */
-		tee_close_session(ops_data->tee, ops_data->session);
-		ops_data->tee = NULL;
-		return AVB_IO_RESULT_ERROR_IO;
-	default:
-		return AVB_IO_RESULT_ERROR_IO;
+		tee_close_session(ops_दत्त->tee, ops_दत्त->session);
+		ops_दत्त->tee = रिक्त;
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
+	स्वभाव:
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 	}
 }
-#endif
+#यदि_अन्तः
 
 /**
  * read_rollback_index() - gets the rollback index corresponding to the
@@ -758,39 +758,39 @@ static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
  * @return
  *       AVB_IO_RESULT_OK, if the roolback index was retrieved
  */
-static AvbIOResult read_rollback_index(AvbOps *ops,
-				       size_t rollback_index_slot,
-				       u64 *out_rollback_index)
+स्थिर AvbIOResult read_rollback_सूचकांक(AvbOps *ops,
+				       size_t rollback_सूचकांक_slot,
+				       u64 *बहिर्गमनम्_rollback_सूचकांक)
 {
-#ifndef CONFIG_OPTEE_TA_AVB
+#यदि_अपरिभाषितम् CONFIG_OPTEE_TA_AVB
 	/* For now we always return 0 as the stored rollback index. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	if (out_rollback_index)
-		*out_rollback_index = 0;
+	यदि (बहिर्गमनम्_rollback_सूचकांक)
+		*बहिर्गमनम्_rollback_सूचकांक = 0;
 
-	return AVB_IO_RESULT_OK;
-#else
+	प्रत्यागम AVB_IO_परिणाम_OK;
+#अन्यथा
 	AvbIOResult rc;
-	struct tee_param param[2];
+	संरचना tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	यदि (rollback_सूचकांक_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
 
-	memset(param, 0, sizeof(param));
-	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param[0].u.value.a = rollback_index_slot;
-	param[1].attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+	स्मृतिं_पूरय(param, 0, परिमाण(param));
+	param[0].attr = TEE_PARAM_ATTR_TYPE_मानम्_निवेशः;
+	param[0].u.मानम्.a = rollback_सूचकांक_slot;
+	param[1].attr = TEE_PARAM_ATTR_TYPE_मानम्_OUTPUT;
 
-	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_ROLLBACK_INDEX,
-			 ARRAY_SIZE(param), param);
-	if (rc)
-		return rc;
+	rc = invoke_func(ops->user_दत्त, TA_AVB_CMD_READ_ROLLBACK_सूचकांक,
+			 ARRAY_आकार(param), param);
+	यदि (rc)
+		प्रत्यागम rc;
 
-	*out_rollback_index = (u64)param[1].u.value.a << 32 |
-			      (u32)param[1].u.value.b;
-	return AVB_IO_RESULT_OK;
-#endif
+	*बहिर्गमनम्_rollback_सूचकांक = (u64)param[1].u.मानम्.a << 32 |
+			      (u32)param[1].u.मानम्.b;
+	प्रत्यागम AVB_IO_परिणाम_OK;
+#यदि_अन्तः
 }
 
 /**
@@ -804,31 +804,31 @@ static AvbIOResult read_rollback_index(AvbOps *ops,
  * @return
  *       AVB_IO_RESULT_OK, if the roolback index was retrieved
  */
-static AvbIOResult write_rollback_index(AvbOps *ops,
-					size_t rollback_index_slot,
-					u64 rollback_index)
+स्थिर AvbIOResult write_rollback_सूचकांक(AvbOps *ops,
+					size_t rollback_सूचकांक_slot,
+					u64 rollback_सूचकांक)
 {
-#ifndef CONFIG_OPTEE_TA_AVB
+#यदि_अपरिभाषितम् CONFIG_OPTEE_TA_AVB
 	/* For now this is a no-op. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	return AVB_IO_RESULT_OK;
-#else
-	struct tee_param param[2];
+	प्रत्यागम AVB_IO_परिणाम_OK;
+#अन्यथा
+	संरचना tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	यदि (rollback_सूचकांक_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
 
-	memset(param, 0, sizeof(param));
-	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param[0].u.value.a = rollback_index_slot;
-	param[1].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param[1].u.value.a = (u32)(rollback_index >> 32);
-	param[1].u.value.b = (u32)rollback_index;
+	स्मृतिं_पूरय(param, 0, परिमाण(param));
+	param[0].attr = TEE_PARAM_ATTR_TYPE_मानम्_निवेशः;
+	param[0].u.मानम्.a = rollback_सूचकांक_slot;
+	param[1].attr = TEE_PARAM_ATTR_TYPE_मानम्_निवेशः;
+	param[1].u.मानम्.a = (u32)(rollback_सूचकांक >> 32);
+	param[1].u.मानम्.b = (u32)rollback_सूचकांक;
 
-	return invoke_func(ops->user_data, TA_AVB_CMD_WRITE_ROLLBACK_INDEX,
-			   ARRAY_SIZE(param), param);
-#endif
+	प्रत्यागम invoke_func(ops->user_दत्त, TA_AVB_CMD_WRITE_ROLLBACK_सूचकांक,
+			   ARRAY_आकार(param), param);
+#यदि_अन्तः
 }
 
 /**
@@ -842,25 +842,25 @@ static AvbIOResult write_rollback_index(AvbOps *ops,
  *       AVB_IO_RESULT_OK: state is retrieved successfully
  *       AVB_IO_RESULT_ERROR_IO: an error occurred
  */
-static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
+स्थिर AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *बहिर्गमनम्_is_unlocked)
 {
-#ifndef CONFIG_OPTEE_TA_AVB
+#यदि_अपरिभाषितम् CONFIG_OPTEE_TA_AVB
 	/* For now we always return that the device is unlocked. */
 	debug("%s: device locking is not implemented\n", __func__);
 
-	*out_is_unlocked = true;
+	*बहिर्गमनम्_is_unlocked = true;
 
-	return AVB_IO_RESULT_OK;
-#else
+	प्रत्यागम AVB_IO_परिणाम_OK;
+#अन्यथा
 	AvbIOResult rc;
-	struct tee_param param = { .attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT };
+	संरचना tee_param param = { .attr = TEE_PARAM_ATTR_TYPE_मानम्_OUTPUT };
 
-	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_LOCK_STATE, 1, &param);
-	if (rc)
-		return rc;
-	*out_is_unlocked = !param.u.value.a;
-	return AVB_IO_RESULT_OK;
-#endif
+	rc = invoke_func(ops->user_दत्त, TA_AVB_CMD_READ_तालकम्_STATE, 1, &param);
+	यदि (rc)
+		प्रत्यागम rc;
+	*बहिर्गमनम्_is_unlocked = !param.u.मानम्.a;
+	प्रत्यागम AVB_IO_परिणाम_OK;
+#यदि_अन्तः
 }
 
 /**
@@ -879,29 +879,29 @@ static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
  *             provided
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition was not found
  */
-static AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
-						 const char *partition,
-						 char *guid_buf,
-						 size_t guid_buf_size)
+स्थिर AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
+						 ध्रुव वर्ण *partition,
+						 वर्ण *guid_buf,
+						 size_t guid_buf_आकार)
 {
-	struct mmc_part *part;
-	size_t uuid_size;
+	संरचना mmc_part *part;
+	size_t uuid_आकार;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	यदि (!part)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_PARTITION;
 
-	uuid_size = sizeof(part->info.uuid);
-	if (uuid_size > guid_buf_size) {
-		free(part);
-		return AVB_IO_RESULT_ERROR_IO;
+	uuid_आकार = परिमाण(part->info.uuid);
+	यदि (uuid_आकार > guid_buf_आकार) {
+		मुक्त(part);
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 	}
 
-	memcpy(guid_buf, part->info.uuid, uuid_size);
-	guid_buf[uuid_size - 1] = 0;
+	स्मृतिं_प्रतिलिख(guid_buf, part->info.uuid, uuid_आकार);
+	guid_buf[uuid_आकार - 1] = 0;
 
-	free(part);
-	return AVB_IO_RESULT_OK;
+	मुक्त(part);
+	प्रत्यागम AVB_IO_परिणाम_OK;
 }
 
 /**
@@ -917,159 +917,159 @@ static AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
  *      AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE, out_size_num_bytes is NULL
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition was not found
  */
-static AvbIOResult get_size_of_partition(AvbOps *ops,
-					 const char *partition,
-					 u64 *out_size_num_bytes)
+स्थिर AvbIOResult get_आकार_सम्बन्धि_partition(AvbOps *ops,
+					 ध्रुव वर्ण *partition,
+					 u64 *बहिर्गमनम्_आकार_अङ्कः_अष्टकानि)
 {
-	struct mmc_part *part;
+	संरचना mmc_part *part;
 
-	if (!out_size_num_bytes)
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
+	यदि (!बहिर्गमनम्_आकार_अङ्कः_अष्टकानि)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_INSUFFICIENT_SPACE;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	यदि (!part)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_PARTITION;
 
-	*out_size_num_bytes = part->info.blksz * part->info.size;
-	free(part);
+	*बहिर्गमनम्_आकार_अङ्कः_अष्टकानि = part->info.blksz * part->info.आकार;
+	मुक्त(part);
 
-	return AVB_IO_RESULT_OK;
+	प्रत्यागम AVB_IO_परिणाम_OK;
 }
 
-#ifdef CONFIG_OPTEE_TA_AVB
-static AvbIOResult read_persistent_value(AvbOps *ops,
-					 const char *name,
-					 size_t buffer_size,
-					 u8 *out_buffer,
-					 size_t *out_num_bytes_read)
+#यदि_परिभाषितम् CONFIG_OPTEE_TA_AVB
+स्थिर AvbIOResult read_persistent_मानम्(AvbOps *ops,
+					 ध्रुव वर्ण *name,
+					 size_t बफर_आकार,
+					 u8 *बहिर्गमनम्_बफर,
+					 size_t *बहिर्गमनम्_अङ्कः_अष्टकानि_read)
 {
 	AvbIOResult rc;
-	struct tee_shm *shm_name;
-	struct tee_shm *shm_buf;
-	struct tee_param param[2];
-	struct udevice *tee;
-	size_t name_size = strlen(name) + 1;
+	संरचना tee_shm *shm_name;
+	संरचना tee_shm *shm_buf;
+	संरचना tee_param param[2];
+	संरचना udevice *tee;
+	size_t name_आकार = वाक्यदैर्घ्यम्(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	यदि (get_open_session(ops->user_दत्त))
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 
-	tee = ((struct AvbOpsData *)ops->user_data)->tee;
+	tee = ((संरचना Avb_Ops_दत्त *)ops->user_दत्त)->tee;
 
-	rc = tee_shm_alloc(tee, name_size,
+	rc = tee_shm_alloc(tee, name_आकार,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	यदि (rc)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_OOM;
 
-	rc = tee_shm_alloc(tee, buffer_size,
+	rc = tee_shm_alloc(tee, बफर_आकार,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
-		rc = AVB_IO_RESULT_ERROR_OOM;
-		goto free_name;
+	यदि (rc) {
+		rc = AVB_IO_परिणाम_ERROR_OOM;
+		गच्छ free_name;
 	}
 
-	memcpy(shm_name->addr, name, name_size);
+	स्मृतिं_प्रतिलिख(shm_name->addr, name, name_आकार);
 
-	memset(param, 0, sizeof(param));
-	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INPUT;
+	स्मृतिं_पूरय(param, 0, परिमाण(param));
+	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_निवेशः;
 	param[0].u.memref.shm = shm_name;
-	param[0].u.memref.size = name_size;
+	param[0].u.memref.आकार = name_आकार;
 	param[1].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INOUT;
 	param[1].u.memref.shm = shm_buf;
-	param[1].u.memref.size = buffer_size;
+	param[1].u.memref.आकार = बफर_आकार;
 
-	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_PERSIST_VALUE,
+	rc = invoke_func(ops->user_दत्त, TA_AVB_CMD_READ_PERSIST_मानम्,
 			 2, param);
-	if (rc)
-		goto out;
+	यदि (rc)
+		गच्छ बहिर्गमनम्;
 
-	if (param[1].u.memref.size > buffer_size) {
-		rc = AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
-		goto out;
+	यदि (param[1].u.memref.आकार > बफर_आकार) {
+		rc = AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
+		गच्छ बहिर्गमनम्;
 	}
 
-	*out_num_bytes_read = param[1].u.memref.size;
+	*बहिर्गमनम्_अङ्कः_अष्टकानि_read = param[1].u.memref.आकार;
 
-	memcpy(out_buffer, shm_buf->addr, *out_num_bytes_read);
+	स्मृतिं_प्रतिलिख(बहिर्गमनम्_बफर, shm_buf->addr, *बहिर्गमनम्_अङ्कः_अष्टकानि_read);
 
-out:
+बहिर्गमनम्:
 	tee_shm_free(shm_buf);
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	प्रत्यागम rc;
 }
 
-static AvbIOResult write_persistent_value(AvbOps *ops,
-					  const char *name,
-					  size_t value_size,
-					  const u8 *value)
+स्थिर AvbIOResult write_persistent_मानम्(AvbOps *ops,
+					  ध्रुव वर्ण *name,
+					  size_t मानम्_आकार,
+					  ध्रुव u8 *मानम्)
 {
 	AvbIOResult rc;
-	struct tee_shm *shm_name;
-	struct tee_shm *shm_buf;
-	struct tee_param param[2];
-	struct udevice *tee;
-	size_t name_size = strlen(name) + 1;
+	संरचना tee_shm *shm_name;
+	संरचना tee_shm *shm_buf;
+	संरचना tee_param param[2];
+	संरचना udevice *tee;
+	size_t name_आकार = वाक्यदैर्घ्यम्(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	यदि (get_open_session(ops->user_दत्त))
+		प्रत्यागम AVB_IO_परिणाम_ERROR_IO;
 
-	tee = ((struct AvbOpsData *)ops->user_data)->tee;
+	tee = ((संरचना Avb_Ops_दत्त *)ops->user_दत्त)->tee;
 
-	if (!value_size)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	यदि (!मानम्_आकार)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
 
-	rc = tee_shm_alloc(tee, name_size,
+	rc = tee_shm_alloc(tee, name_आकार,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	यदि (rc)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_OOM;
 
-	rc = tee_shm_alloc(tee, value_size,
+	rc = tee_shm_alloc(tee, मानम्_आकार,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
-		rc = AVB_IO_RESULT_ERROR_OOM;
-		goto free_name;
+	यदि (rc) {
+		rc = AVB_IO_परिणाम_ERROR_OOM;
+		गच्छ free_name;
 	}
 
-	memcpy(shm_name->addr, name, name_size);
-	memcpy(shm_buf->addr, value, value_size);
+	स्मृतिं_प्रतिलिख(shm_name->addr, name, name_आकार);
+	स्मृतिं_प्रतिलिख(shm_buf->addr, मानम्, मानम्_आकार);
 
-	memset(param, 0, sizeof(param));
-	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INPUT;
+	स्मृतिं_पूरय(param, 0, परिमाण(param));
+	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_निवेशः;
 	param[0].u.memref.shm = shm_name;
-	param[0].u.memref.size = name_size;
-	param[1].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INPUT;
+	param[0].u.memref.आकार = name_आकार;
+	param[1].attr = TEE_PARAM_ATTR_TYPE_MEMREF_निवेशः;
 	param[1].u.memref.shm = shm_buf;
-	param[1].u.memref.size = value_size;
+	param[1].u.memref.आकार = मानम्_आकार;
 
-	rc = invoke_func(ops->user_data, TA_AVB_CMD_WRITE_PERSIST_VALUE,
+	rc = invoke_func(ops->user_दत्त, TA_AVB_CMD_WRITE_PERSIST_मानम्,
 			 2, param);
-	if (rc)
-		goto out;
+	यदि (rc)
+		गच्छ बहिर्गमनम्;
 
-out:
+बहिर्गमनम्:
 	tee_shm_free(shm_buf);
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	प्रत्यागम rc;
 }
-#endif
+#यदि_अन्तः
 
 /**
  * ============================================================================
  * AVB root key digest providers (selected via CONFIG_AVB_ROOT_KEY_*)
  * ============================================================================
  */
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
-AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
+#यदि CONFIG_IS_ENABLED(AVB_मूलम्_कुञ्चिका_BUILTIN)
+AvbIOResult avb_read_मूलम्_कुञ्चिका_digest(AvbOps *ops, uint8_t *digest)
 {
-	sha256_csum_wd(avb_root_pub, sizeof(avb_root_pub), digest,
+	sha256_csum_wd(avb_मूलम्_pub, परिमाण(avb_मूलम्_pub), digest,
 		       CHUNKSZ_SHA256);
 
-	return AVB_IO_RESULT_OK;
+	प्रत्यागम AVB_IO_परिणाम_OK;
 }
-#elif CONFIG_IS_ENABLED(AVB_ROOT_KEY_TEE)
+#नोचेद्यदि CONFIG_IS_ENABLED(AVB_मूलम्_कुञ्चिका_TEE)
 /*
  * Read the trusted root key digest from OP-TEE secure storage as a named
  * persistent value, using the existing TA_AVB_CMD_READ_PERSIST_VALUE command
@@ -1077,83 +1077,83 @@ AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
  * beforehand under CONFIG_AVB_ROOT_KEY_TEE_NAME; a missing value returns
  * AVB_IO_RESULT_ERROR_NO_SUCH_VALUE and verification fails closed.
  */
-AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
+AvbIOResult avb_read_मूलम्_कुञ्चिका_digest(AvbOps *ops, uint8_t *digest)
 {
-	size_t num_read = 0;
+	size_t अङ्कः_read = 0;
 	AvbIOResult rc;
 
-	rc = read_persistent_value(ops, CONFIG_AVB_ROOT_KEY_TEE_NAME,
-				   SHA256_SUM_LEN, digest, &num_read);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	rc = read_persistent_मानम्(ops, CONFIG_AVB_मूलम्_कुञ्चिका_TEE_NAME,
+				   SHA256_योग_LEN, digest, &अङ्कः_read);
+	यदि (rc != AVB_IO_परिणाम_OK)
+		प्रत्यागम rc;
 
-	if (num_read != SHA256_SUM_LEN)
-		return AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE;
+	यदि (अङ्कः_read != SHA256_योग_LEN)
+		प्रत्यागम AVB_IO_परिणाम_ERROR_INVALID_मानम्_आकार;
 
-	return AVB_IO_RESULT_OK;
+	प्रत्यागम AVB_IO_परिणाम_OK;
 }
-#else /* CONFIG_AVB_ROOT_KEY_BOARD */
+#अन्यथा /* CONFIG_AVB_ROOT_KEY_BOARD */
 /*
  * Weak, fail-closed default. A board/SoC selecting CONFIG_AVB_ROOT_KEY_BOARD
  * must provide a strong avb_read_root_key_digest() (e.g. reading a hash fused
  * into OTP/eFuse). If it does not, verification fails rather than silently
  * trusting a wrong key.
  */
-__weak AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
+__weak AvbIOResult avb_read_मूलम्_कुञ्चिका_digest(AvbOps *ops, uint8_t *digest)
 {
-	printf("%s: board root key provider not implemented\n", __func__);
+	प्रारूप_लिख("%s: board root key provider not implemented\n", __func__);
 
-	return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	प्रत्यागम AVB_IO_परिणाम_ERROR_NO_SUCH_मानम्;
 }
-#endif
+#यदि_अन्तः
 
 /**
  * ============================================================================
  * AVB2.0 AvbOps alloc/initialisation/free
  * ============================================================================
  */
-AvbOps *avb_ops_alloc(int boot_device)
+AvbOps *avb_ops_alloc(पूर्णाङ्क boot_device)
 {
-	struct AvbOpsData *ops_data;
+	संरचना Avb_Ops_दत्त *ops_दत्त;
 
-	ops_data = avb_calloc(sizeof(struct AvbOpsData));
-	if (!ops_data)
-		return NULL;
+	ops_दत्त = avb_calloc(परिमाण(संरचना Avb_Ops_दत्त));
+	यदि (!ops_दत्त)
+		प्रत्यागम रिक्त;
 
-	ops_data->ops.user_data = ops_data;
+	ops_दत्त->ops.user_दत्त = ops_दत्त;
 
-	ops_data->ops.read_from_partition = read_from_partition;
-	ops_data->ops.write_to_partition = write_to_partition;
-	ops_data->ops.validate_vbmeta_public_key = validate_vbmeta_public_key;
-	ops_data->ops.read_rollback_index = read_rollback_index;
-	ops_data->ops.write_rollback_index = write_rollback_index;
-	ops_data->ops.read_is_device_unlocked = read_is_device_unlocked;
-	ops_data->ops.get_unique_guid_for_partition =
+	ops_दत्त->ops.read_from_partition = read_from_partition;
+	ops_दत्त->ops.write_गन्तव्यम्_partition = write_गन्तव्यम्_partition;
+	ops_दत्त->ops.validate_vbmeta_लौकिकम्_कुञ्चिका = validate_vbmeta_लौकिकम्_कुञ्चिका;
+	ops_दत्त->ops.read_rollback_सूचकांक = read_rollback_सूचकांक;
+	ops_दत्त->ops.write_rollback_सूचकांक = write_rollback_सूचकांक;
+	ops_दत्त->ops.read_is_device_unlocked = read_is_device_unlocked;
+	ops_दत्त->ops.get_unique_guid_for_partition =
 		get_unique_guid_for_partition;
-#ifdef CONFIG_OPTEE_TA_AVB
-	ops_data->ops.write_persistent_value = write_persistent_value;
-	ops_data->ops.read_persistent_value = read_persistent_value;
-#endif
-	ops_data->ops.get_size_of_partition = get_size_of_partition;
-	ops_data->mmc_dev = boot_device;
+#यदि_परिभाषितम् CONFIG_OPTEE_TA_AVB
+	ops_दत्त->ops.write_persistent_मानम् = write_persistent_मानम्;
+	ops_दत्त->ops.read_persistent_मानम् = read_persistent_मानम्;
+#यदि_अन्तः
+	ops_दत्त->ops.get_आकार_सम्बन्धि_partition = get_आकार_सम्बन्धि_partition;
+	ops_दत्त->mmc_dev = boot_device;
 
-	return &ops_data->ops;
+	प्रत्यागम &ops_दत्त->ops;
 }
 
-void avb_ops_free(AvbOps *ops)
+शून्य avb_ops_free(AvbOps *ops)
 {
-	struct AvbOpsData *ops_data;
+	संरचना Avb_Ops_दत्त *ops_दत्त;
 
-	if (!ops)
-		return;
+	यदि (!ops)
+		प्रत्यागम;
 
-	ops_data = ops->user_data;
+	ops_दत्त = ops->user_दत्त;
 
-	if (ops_data) {
-#ifdef CONFIG_OPTEE_TA_AVB
-		if (ops_data->tee)
-			tee_close_session(ops_data->tee, ops_data->session);
-#endif
-		avb_free(ops_data);
+	यदि (ops_दत्त) {
+#यदि_परिभाषितम् CONFIG_OPTEE_TA_AVB
+		यदि (ops_दत्त->tee)
+			tee_close_session(ops_दत्त->tee, ops_दत्त->session);
+#यदि_अन्तः
+		avb_free(ops_दत्त);
 	}
 }

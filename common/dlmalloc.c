@@ -8,45 +8,45 @@
  * as file malloc-2.6.6.c.
  */
 
-#if CONFIG_IS_ENABLED(UNIT_TEST)
-#define DEBUG
-#endif
+#यदि CONFIG_IS_ENABLED(UNIT_TEST)
+#परिभाषय DEBUG
+#यदि_अन्तः
 
-#include <log.h>
-#include <asm/global_data.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <asm/global_data.h>
 
-#include <malloc.h>
-#include <mapmem.h>
-#include <string.h>
-#include <asm/io.h>
-#include <valgrind/memcheck.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <asm/io.h>
+#अन्तर्भाव <valgrind/memcheck.h>
 
-#ifdef DEBUG
-#if __STD_C
-static void malloc_update_mallinfo (void);
-void malloc_stats (void);
-#else
-static void malloc_update_mallinfo ();
-void malloc_stats();
-#endif
-#endif	/* DEBUG */
+#यदि_परिभाषितम् DEBUG
+#यदि __STD_C
+स्थिर शून्य malloc_update_mallinfo (शून्य);
+शून्य malloc_stats (शून्य);
+#अन्यथा
+स्थिर शून्य malloc_update_mallinfo ();
+शून्य malloc_stats();
+#यदि_अन्तः
+#यदि_अन्तः	/* DEBUG */
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 
-#ifdef MCHECK_HEAP_PROTECTION
- #define STATIC_IF_MCHECK static
- #undef MALLOC_COPY
- #undef MALLOC_ZERO
-static inline void MALLOC_ZERO(void *p, size_t sz) { memset(p, 0, sz); }
-static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(dest, src, sz); }
-#else
- #define STATIC_IF_MCHECK
- #define mALLOc_impl mALLOc
- #define fREe_impl fREe
- #define rEALLOc_impl rEALLOc
- #define mEMALIGn_impl mEMALIGn
- #define cALLOc_impl cALLOc
-#endif
+#यदि_परिभाषितम् MCHECK_HEAP_PROTECTION
+ #परिभाषय STATIC_IF_MCHECK स्थिर
+ #अपरिभाषय MALLOC_COPY
+ #अपरिभाषय MALLOC_ZERO
+स्थिर अन्तःस्थ शून्य MALLOC_ZERO(शून्य *p, size_t sz) { स्मृतिं_पूरय(p, 0, sz); }
+स्थिर अन्तःस्थ शून्य MALLOC_COPY(शून्य *dest, ध्रुव शून्य *src, size_t sz) { स्मृतिं_प्रतिलिख(dest, src, sz); }
+#अन्यथा
+ #परिभाषय STATIC_IF_MCHECK
+ #परिभाषय mALLOc_impl mALLOc
+ #परिभाषय fREe_impl fREe
+ #परिभाषय rEALLOc_impl rEALLOc
+ #परिभाषय mEMALIGn_impl mEMALIGn
+ #परिभाषय cALLOc_impl cALLOc
+#यदि_अन्तः
 
 /*
   Emulation of sbrk for WIN32
@@ -55,86 +55,86 @@ static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(
   Thanks to Martin Fong and others for supplying this.
 */
 
-#ifdef WIN32
+#यदि_परिभाषितम् WIN32
 
-#define AlignPage(add) (((add) + (malloc_getpagesize-1)) & \
+#परिभाषय AlignPage(सङ्कलय) (((सङ्कलय) + (malloc_getpagesize-1)) & \
 ~(malloc_getpagesize-1))
-#define AlignPage64K(add) (((add) + (0x10000 - 1)) & ~(0x10000 - 1))
+#परिभाषय AlignPage64K(सङ्कलय) (((सङ्कलय) + (0x10000 - 1)) & ~(0x10000 - 1))
 
 /* resrve 64MB to insure large contiguous space */
-#define RESERVED_SIZE (1024*1024*64)
-#define NEXT_SIZE (2048*1024)
-#define TOP_MEMORY ((unsigned long)2*1024*1024*1024)
+#परिभाषय RESERVED_आकार (1024*1024*64)
+#परिभाषय अग्र_आकार (2048*1024)
+#परिभाषय शिखरम्_स्मृतिः ((अचिह्नित दीर्घ)2*1024*1024*1024)
 
-struct GmListElement;
-typedef struct GmListElement GmListElement;
+संरचना GmListElement;
+प्रकारनिर्देश संरचना GmListElement GmListElement;
 
-struct GmListElement
+संरचना GmListElement
 {
-	GmListElement* next;
-	void* base;
+	GmListElement* अग्र;
+	शून्य* आधारः;
 };
 
-static GmListElement* head = 0;
-static unsigned int gNextAddress = 0;
-static unsigned int gAddressBase = 0;
-static unsigned int gAllocatedSize = 0;
+स्थिर GmListElement* शीर्ष = 0;
+स्थिर अचिह्नित पूर्णाङ्क g_अग्र_स्थानाङ्कः = 0;
+स्थिर अचिह्नित पूर्णाङ्क g_स्थानाङ्कः_आधारः = 0;
+स्थिर अचिह्नित पूर्णाङ्क g_Allocated_आकार = 0;
 
-static
-GmListElement* makeGmListElement (void* bas)
+स्थिर
+GmListElement* makeGmListElement (शून्य* bas)
 {
 	GmListElement* this;
-	this = (GmListElement*)(void*)LocalAlloc (0, sizeof (GmListElement));
-	assert (this);
-	if (this)
+	this = (GmListElement*)(शून्य*)LocalAlloc (0, परिमाण (GmListElement));
+	प्रतिज्ञा (this);
+	यदि (this)
 	{
-		this->base = bas;
-		this->next = head;
-		head = this;
+		this->आधारः = bas;
+		this->अग्र = शीर्ष;
+		शीर्ष = this;
 	}
-	return this;
+	प्रत्यागम this;
 }
 
-void gcleanup (void)
+शून्य gcleanup (शून्य)
 {
 	BOOL rval;
-	assert ( (head == NULL) || (head->base == (void*)gAddressBase));
-	if (gAddressBase && (gNextAddress - gAddressBase))
+	प्रतिज्ञा ( (शीर्ष == रिक्त) || (शीर्ष->आधारः == (शून्य*)g_स्थानाङ्कः_आधारः));
+	यदि (g_स्थानाङ्कः_आधारः && (g_अग्र_स्थानाङ्कः - g_स्थानाङ्कः_आधारः))
 	{
-		rval = VirtualFree ((void*)gAddressBase,
-							gNextAddress - gAddressBase,
+		rval = VirtualFree ((शून्य*)g_स्थानाङ्कः_आधारः,
+							g_अग्र_स्थानाङ्कः - g_स्थानाङ्कः_आधारः,
 							MEM_DECOMMIT);
-	assert (rval);
+	प्रतिज्ञा (rval);
 	}
-	while (head)
+	यावत् (शीर्ष)
 	{
-		GmListElement* next = head->next;
-		rval = VirtualFree (head->base, 0, MEM_RELEASE);
-		assert (rval);
-		LocalFree (head);
-		head = next;
+		GmListElement* अग्र = शीर्ष->अग्र;
+		rval = VirtualFree (शीर्ष->आधारः, 0, MEM_RELEASE);
+		प्रतिज्ञा (rval);
+		LocalFree (शीर्ष);
+		शीर्ष = अग्र;
 	}
 }
 
-static
-void* findRegion (void* start_address, unsigned long size)
+स्थिर
+शून्य* findRegion (शून्य* start_स्थानाङ्कः, अचिह्नित दीर्घ आकार)
 {
-	MEMORY_BASIC_INFORMATION info;
-	if (size >= TOP_MEMORY) return NULL;
+	स्मृतिः_BASIC_INFORMATION info;
+	यदि (आकार >= शिखरम्_स्मृतिः) प्रत्यागम रिक्त;
 
-	while ((unsigned long)start_address + size < TOP_MEMORY)
+	यावत् ((अचिह्नित दीर्घ)start_स्थानाङ्कः + आकार < शिखरम्_स्मृतिः)
 	{
-		VirtualQuery (start_address, &info, sizeof (info));
-		if ((info.State == MEM_FREE) && (info.RegionSize >= size))
-			return start_address;
-		else
+		VirtualQuery (start_स्थानाङ्कः, &info, परिमाण (info));
+		यदि ((info.State == MEM_FREE) && (info.Region_आकार >= आकार))
+			प्रत्यागम start_स्थानाङ्कः;
+		अन्यथा
 		{
 			/* Requested region is not available so see if the */
 			/* next region is available.  Set 'start_address' */
 			/* to the next region and call 'VirtualQuery()' */
 			/* again. */
 
-			start_address = (char*)info.BaseAddress + info.RegionSize;
+			start_स्थानाङ्कः = (वर्ण*)info.आधारः_स्थानाङ्कः + info.Region_आकार;
 
 			/* Make sure we start looking for the next region */
 			/* on the *next* 64K boundary.  Otherwise, even if */
@@ -148,107 +148,107 @@ void* findRegion (void* start_address, unsigned long size)
 			/* to 'VirtualAlloc()' will fail and bring us back */
 			/* here, causing us to go into an infinite loop. */
 
-			start_address =
-				(void *) AlignPage64K((unsigned long) start_address);
+			start_स्थानाङ्कः =
+				(शून्य *) AlignPage64K((अचिह्नित दीर्घ) start_स्थानाङ्कः);
 		}
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 
 }
 
-void* wsbrk (long size)
+शून्य* wsbrk (दीर्घ आकार)
 {
-	void* tmp;
-	if (size > 0)
+	शून्य* tmp;
+	यदि (आकार > 0)
 	{
-		if (gAddressBase == 0)
+		यदि (g_स्थानाङ्कः_आधारः == 0)
 		{
-			gAllocatedSize = max (RESERVED_SIZE, AlignPage (size));
-			gNextAddress = gAddressBase =
-				(unsigned int)VirtualAlloc (NULL, gAllocatedSize,
+			g_Allocated_आकार = max (RESERVED_आकार, AlignPage (आकार));
+			g_अग्र_स्थानाङ्कः = g_स्थानाङ्कः_आधारः =
+				(अचिह्नित पूर्णाङ्क)VirtualAlloc (रिक्त, g_Allocated_आकार,
 											MEM_RESERVE, PAGE_NOACCESS);
-		} else if (AlignPage (gNextAddress + size) > (gAddressBase +
-gAllocatedSize))
+		} अन्यथा यदि (AlignPage (g_अग्र_स्थानाङ्कः + आकार) > (g_स्थानाङ्कः_आधारः +
+g_Allocated_आकार))
 		{
-			long new_size = max (NEXT_SIZE, AlignPage (size));
-			void* new_address = (void*)(gAddressBase+gAllocatedSize);
-			do
+			दीर्घ new_आकार = max (अग्र_आकार, AlignPage (आकार));
+			शून्य* new_स्थानाङ्कः = (शून्य*)(g_स्थानाङ्कः_आधारः+g_Allocated_आकार);
+			कुरु
 			{
-				new_address = findRegion (new_address, new_size);
+				new_स्थानाङ्कः = findRegion (new_स्थानाङ्कः, new_आकार);
 
-				if (!new_address)
-					return (void*)-1;
+				यदि (!new_स्थानाङ्कः)
+					प्रत्यागम (शून्य*)-1;
 
-				gAddressBase = gNextAddress =
-					(unsigned int)VirtualAlloc (new_address, new_size,
+				g_स्थानाङ्कः_आधारः = g_अग्र_स्थानाङ्कः =
+					(अचिह्नित पूर्णाङ्क)VirtualAlloc (new_स्थानाङ्कः, new_आकार,
 												MEM_RESERVE, PAGE_NOACCESS);
 				/* repeat in case of race condition */
 				/* The region that we found has been snagged */
 				/* by another thread */
 			}
-			while (gAddressBase == 0);
+			यावत् (g_स्थानाङ्कः_आधारः == 0);
 
-			assert (new_address == (void*)gAddressBase);
+			प्रतिज्ञा (new_स्थानाङ्कः == (शून्य*)g_स्थानाङ्कः_आधारः);
 
-			gAllocatedSize = new_size;
+			g_Allocated_आकार = new_आकार;
 
-			if (!makeGmListElement ((void*)gAddressBase))
-				return (void*)-1;
+			यदि (!makeGmListElement ((शून्य*)g_स्थानाङ्कः_आधारः))
+				प्रत्यागम (शून्य*)-1;
 		}
-		if ((size + gNextAddress) > AlignPage (gNextAddress))
+		यदि ((आकार + g_अग्र_स्थानाङ्कः) > AlignPage (g_अग्र_स्थानाङ्कः))
 		{
-			void* res;
-			res = VirtualAlloc ((void*)AlignPage (gNextAddress),
-								(size + gNextAddress -
-								 AlignPage (gNextAddress)),
+			शून्य* res;
+			res = VirtualAlloc ((शून्य*)AlignPage (g_अग्र_स्थानाङ्कः),
+								(आकार + g_अग्र_स्थानाङ्कः -
+								 AlignPage (g_अग्र_स्थानाङ्कः)),
 								MEM_COMMIT, PAGE_READWRITE);
-			if (!res)
-				return (void*)-1;
+			यदि (!res)
+				प्रत्यागम (शून्य*)-1;
 		}
-		tmp = (void*)gNextAddress;
-		gNextAddress = (unsigned int)tmp + size;
-		return tmp;
+		tmp = (शून्य*)g_अग्र_स्थानाङ्कः;
+		g_अग्र_स्थानाङ्कः = (अचिह्नित पूर्णाङ्क)tmp + आकार;
+		प्रत्यागम tmp;
 	}
-	else if (size < 0)
+	अन्यथा यदि (आकार < 0)
 	{
-		unsigned int alignedGoal = AlignPage (gNextAddress + size);
+		अचिह्नित पूर्णाङ्क alignedGoal = AlignPage (g_अग्र_स्थानाङ्कः + आकार);
 		/* Trim by releasing the virtual memory */
-		if (alignedGoal >= gAddressBase)
+		यदि (alignedGoal >= g_स्थानाङ्कः_आधारः)
 		{
-			VirtualFree ((void*)alignedGoal, gNextAddress - alignedGoal,
+			VirtualFree ((शून्य*)alignedGoal, g_अग्र_स्थानाङ्कः - alignedGoal,
 						 MEM_DECOMMIT);
-			gNextAddress = gNextAddress + size;
-			return (void*)gNextAddress;
+			g_अग्र_स्थानाङ्कः = g_अग्र_स्थानाङ्कः + आकार;
+			प्रत्यागम (शून्य*)g_अग्र_स्थानाङ्कः;
 		}
-		else
+		अन्यथा
 		{
-			VirtualFree ((void*)gAddressBase, gNextAddress - gAddressBase,
+			VirtualFree ((शून्य*)g_स्थानाङ्कः_आधारः, g_अग्र_स्थानाङ्कः - g_स्थानाङ्कः_आधारः,
 						 MEM_DECOMMIT);
-			gNextAddress = gAddressBase;
-			return (void*)-1;
+			g_अग्र_स्थानाङ्कः = g_स्थानाङ्कः_आधारः;
+			प्रत्यागम (शून्य*)-1;
 		}
 	}
-	else
+	अन्यथा
 	{
-		return (void*)gNextAddress;
+		प्रत्यागम (शून्य*)g_अग्र_स्थानाङ्कः;
 	}
 }
 
-#endif
+#यदि_अन्तः
 
 /*
   Type declarations
 */
 
-struct malloc_chunk
+संरचना malloc_chunk
 {
-  INTERNAL_SIZE_T prev_size; /* Size of previous chunk (if free). */
-  INTERNAL_SIZE_T size;      /* Size in bytes, including overhead. */
-  struct malloc_chunk* fd;   /* double links -- used only if free. */
-  struct malloc_chunk* bk;
+  आन्तरिकम्_आकार_T पूर्व_आकार; /* Size of previous chunk (if free). */
+  आन्तरिकम्_आकार_T आकार;      /* Size in bytes, including overhead. */
+  संरचना malloc_chunk* fd;   /* double links -- used only if free. */
+  संरचना malloc_chunk* bk;
 } __attribute__((__may_alias__)) ;
 
-typedef struct malloc_chunk* mchunkptr;
+प्रकारनिर्देश संरचना malloc_chunk* mchunkptr;
 
 /*
 
@@ -375,26 +375,26 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /*  sizes, alignments */
 
-#define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
-#define MALLOC_ALIGNMENT       (SIZE_SZ + SIZE_SZ)
-#define MALLOC_ALIGN_MASK      (MALLOC_ALIGNMENT - 1)
-#define MINSIZE                (sizeof(struct malloc_chunk))
+#परिभाषय आकार_SZ                (परिमाण(आन्तरिकम्_आकार_T))
+#परिभाषय MALLOC_ALIGNMENT       (आकार_SZ + आकार_SZ)
+#परिभाषय MALLOC_ALIGN_आवरणम्      (MALLOC_ALIGNMENT - 1)
+#परिभाषय MINSIZE                (परिमाण(संरचना malloc_chunk))
 
 /* conversion from malloc headers to user pointers, and back */
 
-#define chunk2mem(p)   ((Void_t*)((char*)(p) + 2*SIZE_SZ))
-#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))
+#परिभाषय chunk2mem(p)   ((Void_t*)((वर्ण*)(p) + 2*आकार_SZ))
+#परिभाषय mem2chunk(mem) ((mchunkptr)((वर्ण*)(mem) - 2*आकार_SZ))
 
 /* pad request bytes into a usable size */
 
-#define request2size(req) \
- ((((req) + (SIZE_SZ + MALLOC_ALIGN_MASK)) < \
-  (MINSIZE + MALLOC_ALIGN_MASK)) ? MINSIZE : \
-   (((req) + (SIZE_SZ + MALLOC_ALIGN_MASK)) & ~(MALLOC_ALIGN_MASK)))
+#परिभाषय request2size(req) \
+ ((((req) + (आकार_SZ + MALLOC_ALIGN_आवरणम्)) < \
+  (MINSIZE + MALLOC_ALIGN_आवरणम्)) ? MINSIZE : \
+   (((req) + (आकार_SZ + MALLOC_ALIGN_आवरणम्)) & ~(MALLOC_ALIGN_आवरणम्)))
 
 /* Check if m has acceptable alignment */
 
-#define aligned_OK(m)    (((unsigned long)((m)) & (MALLOC_ALIGN_MASK)) == 0)
+#परिभाषय aligned_OK(m)    (((अचिह्नित दीर्घ)((m)) & (MALLOC_ALIGN_आवरणम्)) == 0)
 
 /*
   Physical chunk operations
@@ -402,28 +402,28 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /* size field is or'ed with PREV_INUSE when previous adjacent chunk in use */
 
-#define PREV_INUSE 0x1
+#परिभाषय पूर्व_INUSE 0x1
 
 /* size field is or'ed with IS_MMAPPED if the chunk was obtained with mmap() */
 
-#define IS_MMAPPED 0x2
+#परिभाषय IS_MMAPPED 0x2
 
 /* Bits to mask off when extracting size */
 
-#define SIZE_BITS (PREV_INUSE|IS_MMAPPED)
+#परिभाषय आकार_द्वयङ्काः (पूर्व_INUSE|IS_MMAPPED)
 
 /* Ptr to next physical malloc_chunk. */
 
-#define next_chunk(p) ((mchunkptr)( ((char*)(p)) + ((p)->size & ~PREV_INUSE) ))
+#परिभाषय अग्र_chunk(p) ((mchunkptr)( ((वर्ण*)(p)) + ((p)->आकार & ~पूर्व_INUSE) ))
 
 /* Ptr to previous physical malloc_chunk */
 
-#define prev_chunk(p)\
-   ((mchunkptr)( ((char*)(p)) - ((p)->prev_size) ))
+#परिभाषय पूर्व_chunk(p)\
+   ((mchunkptr)( ((वर्ण*)(p)) - ((p)->पूर्व_आकार) ))
 
 /* Treat space at ptr + offset as a chunk */
 
-#define chunk_at_offset(p, s)  ((mchunkptr)(((char*)(p)) + (s)))
+#परिभाषय chunk_at_विस्थापनम्(p, s)  ((mchunkptr)(((वर्ण*)(p)) + (s)))
 
 /*
   Dealing with use bits
@@ -431,35 +431,35 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /* extract p's inuse bit */
 
-#define inuse(p)\
-((((mchunkptr)(((char*)(p))+((p)->size & ~PREV_INUSE)))->size) & PREV_INUSE)
+#परिभाषय inuse(p)\
+((((mchunkptr)(((वर्ण*)(p))+((p)->आकार & ~पूर्व_INUSE)))->आकार) & पूर्व_INUSE)
 
 /* extract inuse bit of previous chunk */
 
-#define prev_inuse(p)  ((p)->size & PREV_INUSE)
+#परिभाषय पूर्व_inuse(p)  ((p)->आकार & पूर्व_INUSE)
 
 /* check for mmap()'ed chunk */
 
-#define chunk_is_mmapped(p) ((p)->size & IS_MMAPPED)
+#परिभाषय chunk_is_mmapped(p) ((p)->आकार & IS_MMAPPED)
 
 /* set/clear chunk as in use without otherwise disturbing */
 
-#define set_inuse(p)\
-((mchunkptr)(((char*)(p)) + ((p)->size & ~PREV_INUSE)))->size |= PREV_INUSE
+#परिभाषय समुच्चयः_inuse(p)\
+((mchunkptr)(((वर्ण*)(p)) + ((p)->आकार & ~पूर्व_INUSE)))->आकार |= पूर्व_INUSE
 
-#define clear_inuse(p)\
-((mchunkptr)(((char*)(p)) + ((p)->size & ~PREV_INUSE)))->size &= ~(PREV_INUSE)
+#परिभाषय clear_inuse(p)\
+((mchunkptr)(((वर्ण*)(p)) + ((p)->आकार & ~पूर्व_INUSE)))->आकार &= ~(पूर्व_INUSE)
 
 /* check/set/clear inuse bits in known places */
 
-#define inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size & PREV_INUSE)
+#परिभाषय inuse_bit_at_विस्थापनम्(p, s)\
+ (((mchunkptr)(((वर्ण*)(p)) + (s)))->आकार & पूर्व_INUSE)
 
-#define set_inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size |= PREV_INUSE)
+#परिभाषय समुच्चयः_inuse_bit_at_विस्थापनम्(p, s)\
+ (((mchunkptr)(((वर्ण*)(p)) + (s)))->आकार |= पूर्व_INUSE)
 
-#define clear_inuse_bit_at_offset(p, s)\
- (((mchunkptr)(((char*)(p)) + (s)))->size &= ~(PREV_INUSE))
+#परिभाषय clear_inuse_bit_at_विस्थापनम्(p, s)\
+ (((mchunkptr)(((वर्ण*)(p)) + (s)))->आकार &= ~(पूर्व_INUSE))
 
 /*
   Dealing with size fields
@@ -467,19 +467,19 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 /* Get size, ignoring use bits */
 
-#define chunksize(p)          ((p)->size & ~(SIZE_BITS))
+#परिभाषय chunksize(p)          ((p)->आकार & ~(आकार_द्वयङ्काः))
 
 /* Set size at head, without disturbing its use bit */
 
-#define set_head_size(p, s)   ((p)->size = (((p)->size & PREV_INUSE) | (s)))
+#परिभाषय समुच्चयः_शीर्ष_आकार(p, s)   ((p)->आकार = (((p)->आकार & पूर्व_INUSE) | (s)))
 
 /* Set size/use ignoring previous bits in header */
 
-#define set_head(p, s)        ((p)->size = (s))
+#परिभाषय समुच्चयः_शीर्ष(p, s)        ((p)->आकार = (s))
 
 /* Set size at footer (only when chunk is not in use) */
 
-#define set_foot(p, s)   (((mchunkptr)((char*)(p) + (s)))->prev_size = (s))
+#परिभाषय समुच्चयः_foot(p, s)   (((mchunkptr)((वर्ण*)(p) + (s)))->पूर्व_आकार = (s))
 
 /*
    Bins
@@ -515,15 +515,15 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 */
 
-#define NAV             128   /* number of bins */
+#परिभाषय NAV             128   /* number of bins */
 
-typedef struct malloc_chunk* mbinptr;
+प्रकारनिर्देश संरचना malloc_chunk* mbinptr;
 
 /* access macros */
 
-#define bin_at(i)      ((mbinptr)((char*)&(av_[2*(i) + 2]) - 2*SIZE_SZ))
-#define next_bin(b)    ((mbinptr)((char*)(b) + 2 * sizeof(mbinptr)))
-#define prev_bin(b)    ((mbinptr)((char*)(b) - 2 * sizeof(mbinptr)))
+#परिभाषय bin_at(i)      ((mbinptr)((वर्ण*)&(av_[2*(i) + 2]) - 2*आकार_SZ))
+#परिभाषय अग्र_bin(b)    ((mbinptr)((वर्ण*)(b) + 2 * परिमाण(mbinptr)))
+#परिभाषय पूर्व_bin(b)    ((mbinptr)((वर्ण*)(b) - 2 * परिमाण(mbinptr)))
 
 /*
    The first 2 bins are never indexed. The corresponding av_ cells are instead
@@ -531,8 +531,8 @@ typedef struct malloc_chunk* mbinptr;
    indexing, maintain locality, and avoid some initialization tests.
 */
 
-#define top            (av_[2])          /* The topmost chunk */
-#define last_remainder (bin_at(1))       /* remainder from last split */
+#परिभाषय शिखरम्            (av_[2])          /* The topmost chunk */
+#परिभाषय चरमः_remainder (bin_at(1))       /* remainder from last split */
 
 /*
    Because top initially points to its own bin with initial
@@ -541,14 +541,14 @@ typedef struct malloc_chunk* mbinptr;
    it even exists yet. But we still need to in malloc_extend_top.
 */
 
-#define initial_top    ((mchunkptr)(bin_at(0)))
+#परिभाषय initial_शिखरम्    ((mchunkptr)(bin_at(0)))
 
 /* Helper macro to initialize bins */
 
-#define IAV(i)  bin_at(i), bin_at(i)
+#परिभाषय IAV(i)  bin_at(i), bin_at(i)
 
-static mbinptr av_[NAV * 2 + 2] = {
- NULL, NULL,
+स्थिर mbinptr av_[NAV * 2 + 2] = {
+ रिक्त, रिक्त,
  IAV(0),   IAV(1),   IAV(2),   IAV(3),   IAV(4),   IAV(5),   IAV(6),   IAV(7),
  IAV(8),   IAV(9),   IAV(10),  IAV(11),  IAV(12),  IAV(13),  IAV(14),  IAV(15),
  IAV(16),  IAV(17),  IAV(18),  IAV(19),  IAV(20),  IAV(21),  IAV(22),  IAV(23),
@@ -567,87 +567,87 @@ static mbinptr av_[NAV * 2 + 2] = {
  IAV(120), IAV(121), IAV(122), IAV(123), IAV(124), IAV(125), IAV(126), IAV(127)
 };
 
-#ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
-static void malloc_init(void);
-#endif
+#यदि_परिभाषितम् CONFIG_SYS_MALLOC_DEFAULT_गन्तव्यम्_INIT
+स्थिर शून्य malloc_init(शून्य);
+#यदि_अन्तः
 
 ulong mem_malloc_start = 0;
-ulong mem_malloc_end = 0;
+ulong mem_malloc_अन्तः = 0;
 ulong mem_malloc_brk = 0;
 
-static bool malloc_testing;	/* enable test mode */
-static int malloc_max_allocs;	/* return NULL after this many calls to malloc() */
+स्थिर bool malloc_testing;	/* enable test mode */
+स्थिर पूर्णाङ्क malloc_max_allocs;	/* return NULL after this many calls to malloc() */
 
-void *sbrk(ptrdiff_t increment)
+शून्य *sbrk(ptrdiff_t increment)
 {
 	ulong old = mem_malloc_brk;
 	ulong new = old + increment;
 
-	if ((new < mem_malloc_start) || (new > mem_malloc_end))
-		return (void *)MORECORE_FAILURE;
+	यदि ((new < mem_malloc_start) || (new > mem_malloc_अन्तः))
+		प्रत्यागम (शून्य *)MORECORE_FAILURE;
 
 	/*
 	 * if we are giving memory back make sure we clear it out since
 	 * we set MORECORE_CLEARS to 1
 	 */
-	if (increment < 0)
-		memset((void *)new, 0, -increment);
+	यदि (increment < 0)
+		स्मृतिं_पूरय((शून्य *)new, 0, -increment);
 
 	mem_malloc_brk = new;
 
-	return (void *)old;
+	प्रत्यागम (शून्य *)old;
 }
 
-void mem_malloc_init(ulong start, ulong size)
+शून्य mem_malloc_init(ulong start, ulong आकार)
 {
-	mem_malloc_start = (ulong)map_sysmem(start, size);
-	mem_malloc_end = mem_malloc_start + size;
+	mem_malloc_start = (ulong)map_sysmem(start, आकार);
+	mem_malloc_अन्तः = mem_malloc_start + आकार;
 	mem_malloc_brk = mem_malloc_start;
 
-#ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
+#यदि_परिभाषितम् CONFIG_SYS_MALLOC_DEFAULT_गन्तव्यम्_INIT
 	malloc_init();
-#endif
+#यदि_अन्तः
 
 	debug("using memory %#lx-%#lx for malloc()\n", mem_malloc_start,
-	      mem_malloc_end);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-	memset((void *)mem_malloc_start, 0x0, size);
-#endif
+	      mem_malloc_अन्तः);
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+	स्मृतिं_पूरय((शून्य *)mem_malloc_start, 0x0, आकार);
+#यदि_अन्तः
 }
 
 /* field-extraction macros */
 
-#define first(b) ((b)->fd)
-#define last(b)  ((b)->bk)
+#परिभाषय first(b) ((b)->fd)
+#परिभाषय चरमः(b)  ((b)->bk)
 
 /*
   Indexing into bins
 */
 
-#define bin_index(sz)                                                          \
-(((((unsigned long)(sz)) >> 9) ==    0) ?       (((unsigned long)(sz)) >>  3): \
- ((((unsigned long)(sz)) >> 9) <=    4) ?  56 + (((unsigned long)(sz)) >>  6): \
- ((((unsigned long)(sz)) >> 9) <=   20) ?  91 + (((unsigned long)(sz)) >>  9): \
- ((((unsigned long)(sz)) >> 9) <=   84) ? 110 + (((unsigned long)(sz)) >> 12): \
- ((((unsigned long)(sz)) >> 9) <=  340) ? 119 + (((unsigned long)(sz)) >> 15): \
- ((((unsigned long)(sz)) >> 9) <= 1364) ? 124 + (((unsigned long)(sz)) >> 18): \
+#परिभाषय bin_सूचकांक(sz)                                                          \
+(((((अचिह्नित दीर्घ)(sz)) >> 9) ==    0) ?       (((अचिह्नित दीर्घ)(sz)) >>  3): \
+ ((((अचिह्नित दीर्घ)(sz)) >> 9) <=    4) ?  56 + (((अचिह्नित दीर्घ)(sz)) >>  6): \
+ ((((अचिह्नित दीर्घ)(sz)) >> 9) <=   20) ?  91 + (((अचिह्नित दीर्घ)(sz)) >>  9): \
+ ((((अचिह्नित दीर्घ)(sz)) >> 9) <=   84) ? 110 + (((अचिह्नित दीर्घ)(sz)) >> 12): \
+ ((((अचिह्नित दीर्घ)(sz)) >> 9) <=  340) ? 119 + (((अचिह्नित दीर्घ)(sz)) >> 15): \
+ ((((अचिह्नित दीर्घ)(sz)) >> 9) <= 1364) ? 124 + (((अचिह्नित दीर्घ)(sz)) >> 18): \
 					  126)
 /*
   bins for chunks < 512 are all spaced 8 bytes apart, and hold
   identically sized chunks. This is exploited in malloc.
 */
 
-#define MAX_SMALLBIN         63
-#define MAX_SMALLBIN_SIZE   512
-#define SMALLBIN_WIDTH        8
+#परिभाषय MAX_SMALLBIN         63
+#परिभाषय MAX_SMALLBIN_आकार   512
+#परिभाषय SMALLBIN_विस्तारः        8
 
-#define smallbin_index(sz)  (((unsigned long)(sz)) >> 3)
+#परिभाषय smallbin_सूचकांक(sz)  (((अचिह्नित दीर्घ)(sz)) >> 3)
 
 /*
    Requests are `small' if both the corresponding and the next bin are small
 */
 
-#define is_small_request(nb) (nb < MAX_SMALLBIN_SIZE - SMALLBIN_WIDTH)
+#परिभाषय is_small_request(nb) (nb < MAX_SMALLBIN_आकार - SMALLBIN_विस्तारः)
 
 /*
     To help compensate for the large number of bins, a one-level index
@@ -659,88 +659,88 @@ void mem_malloc_init(ulong start, ulong size)
     when all are noticed to be empty during traversal in malloc.
 */
 
-#define BINBLOCKWIDTH     4   /* bins per block */
+#परिभाषय BINBLOCKWIDTH     4   /* bins per block */
 
-#define binblocks_r     ((INTERNAL_SIZE_T)av_[1]) /* bitvector of nonempty blocks */
-#define binblocks_w     (av_[1])
+#परिभाषय binblocks_r     ((आन्तरिकम्_आकार_T)av_[1]) /* bitvector of nonempty blocks */
+#परिभाषय binblocks_w     (av_[1])
 
 /* bin<->block macros */
 
-#define idx2binblock(ix)    ((unsigned)1 << (ix / BINBLOCKWIDTH))
-#define mark_binblock(ii)   (binblocks_w = (mbinptr)(binblocks_r | idx2binblock(ii)))
-#define clear_binblock(ii)  (binblocks_w = (mbinptr)(binblocks_r & ~(idx2binblock(ii))))
+#परिभाषय idx2binblock(ix)    ((अचिह्नित)1 << (ix / BINBLOCKWIDTH))
+#परिभाषय mark_binblock(ii)   (binblocks_w = (mbinptr)(binblocks_r | idx2binblock(ii)))
+#परिभाषय clear_binblock(ii)  (binblocks_w = (mbinptr)(binblocks_r & ~(idx2binblock(ii))))
 
 /*  Other static bookkeeping data */
 
 /* variables holding tunable values */
 
-static unsigned long trim_threshold   = DEFAULT_TRIM_THRESHOLD;
-static unsigned long top_pad          = DEFAULT_TOP_PAD;
-static unsigned int  n_mmaps_max      = DEFAULT_MMAP_MAX;
-static unsigned long mmap_threshold   = DEFAULT_MMAP_THRESHOLD;
+स्थिर अचिह्नित दीर्घ trim_देहली   = DEFAULT_TRIM_देहली;
+स्थिर अचिह्नित दीर्घ शिखरम्_pad          = DEFAULT_शिखरम्_PAD;
+स्थिर अचिह्नित पूर्णाङ्क  n_mmaps_max      = DEFAULT_MMAP_MAX;
+स्थिर अचिह्नित दीर्घ mmap_देहली   = DEFAULT_MMAP_देहली;
 
 /* The first value returned from sbrk */
-static char* sbrk_base = (char*)(-1);
+स्थिर वर्ण* sbrk_आधारः = (वर्ण*)(-1);
 
 /* The maximum memory obtained from system via sbrk */
-static unsigned long max_sbrked_mem = 0;
+स्थिर अचिह्नित दीर्घ max_sbrked_mem = 0;
 
 /* The maximum via either sbrk or mmap */
-static unsigned long max_total_mem = 0;
+स्थिर अचिह्नित दीर्घ max_योग_mem = 0;
 
 /* internal working copy of mallinfo */
-static struct mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+स्थिर संरचना mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 /* The total memory obtained from system via sbrk */
-#define sbrked_mem  (current_mallinfo.arena)
+#परिभाषय sbrked_mem  (current_mallinfo.arena)
 
 /* Tracking mmaps */
 
-#ifdef DEBUG
-static unsigned int n_mmaps = 0;
-#endif	/* DEBUG */
-static unsigned long mmapped_mem = 0;
-#if HAVE_MMAP
-static unsigned int max_n_mmaps = 0;
-static unsigned long max_mmapped_mem = 0;
-#endif
+#यदि_परिभाषितम् DEBUG
+स्थिर अचिह्नित पूर्णाङ्क n_mmaps = 0;
+#यदि_अन्तः	/* DEBUG */
+स्थिर अचिह्नित दीर्घ mmapped_mem = 0;
+#यदि HAVE_MMAP
+स्थिर अचिह्नित पूर्णाङ्क max_n_mmaps = 0;
+स्थिर अचिह्नित दीर्घ max_mmapped_mem = 0;
+#यदि_अन्तः
 
-#ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
-static void malloc_init(void)
+#यदि_परिभाषितम् CONFIG_SYS_MALLOC_DEFAULT_गन्तव्यम्_INIT
+स्थिर शून्य malloc_init(शून्य)
 {
-	int i, j;
+	पूर्णाङ्क i, j;
 
-	debug("bins (av_ array) are at %p\n", (void *)av_);
+	debug("bins (av_ array) are at %p\n", (शून्य *)av_);
 
-	av_[0] = NULL; av_[1] = NULL;
-	for (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
+	av_[0] = रिक्त; av_[1] = रिक्त;
+	प्रति (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
 		av_[i] = bin_at(j - 2);
 		av_[i + 1] = bin_at(j - 2);
 
 		/* Just print the first few bins so that
 		 * we can see there are alright.
 		 */
-		if (i < 10)
+		यदि (i < 10)
 			debug("av_[%d]=%lx av_[%d]=%lx\n",
 			      i, (ulong)av_[i],
 			      i + 1, (ulong)av_[i + 1]);
 	}
 
 	/* Init the static bookkeeping as well */
-	sbrk_base = (char *)(-1);
+	sbrk_आधारः = (वर्ण *)(-1);
 	max_sbrked_mem = 0;
-	max_total_mem = 0;
-#ifdef DEBUG
-	memset((void *)&current_mallinfo, 0, sizeof(struct mallinfo));
-#endif
+	max_योग_mem = 0;
+#यदि_परिभाषितम् DEBUG
+	स्मृतिं_पूरय((शून्य *)&current_mallinfo, 0, परिमाण(संरचना mallinfo));
+#यदि_अन्तः
 }
-#endif
+#यदि_अन्तः
 
 /*
   Debugging support
 */
 
-#ifdef DEBUG
+#यदि_परिभाषितम् DEBUG
 
 /*
   These routines make a number of assertions about the states
@@ -750,126 +750,126 @@ static void malloc_init(void)
   in malloc. In which case, please report it!)
 */
 
-#if __STD_C
-static void do_check_chunk(mchunkptr p)
-#else
-static void do_check_chunk(p) mchunkptr p;
-#endif
+#यदि __STD_C
+स्थिर शून्य do_check_chunk(mchunkptr p)
+#अन्यथा
+स्थिर शून्य do_check_chunk(p) mchunkptr p;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
+  आन्तरिकम्_आकार_T sz = p->आकार & ~पूर्व_INUSE;
 
   /* No checkable chunk is mmapped */
-  assert(!chunk_is_mmapped(p));
+  प्रतिज्ञा(!chunk_is_mmapped(p));
 
   /* Check for legal address ... */
-  assert((char*)p >= sbrk_base);
-  if (p != top)
-    assert((char*)p + sz <= (char*)top);
-  else
-    assert((char*)p + sz <= sbrk_base + sbrked_mem);
+  प्रतिज्ञा((वर्ण*)p >= sbrk_आधारः);
+  यदि (p != शिखरम्)
+    प्रतिज्ञा((वर्ण*)p + sz <= (वर्ण*)शिखरम्);
+  अन्यथा
+    प्रतिज्ञा((वर्ण*)p + sz <= sbrk_आधारः + sbrked_mem);
 
 }
 
-#if __STD_C
-static void do_check_free_chunk(mchunkptr p)
-#else
-static void do_check_free_chunk(p) mchunkptr p;
-#endif
+#यदि __STD_C
+स्थिर शून्य do_check_free_chunk(mchunkptr p)
+#अन्यथा
+स्थिर शून्य do_check_free_chunk(p) mchunkptr p;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
-  mchunkptr next = chunk_at_offset(p, sz);
+  आन्तरिकम्_आकार_T sz = p->आकार & ~पूर्व_INUSE;
+  mchunkptr अग्र = chunk_at_विस्थापनम्(p, sz);
 
   do_check_chunk(p);
 
   /* Check whether it claims to be free ... */
-  assert(!inuse(p));
+  प्रतिज्ञा(!inuse(p));
 
   /* Unless a special marker, must have OK fields */
-  if ((long)sz >= (long)MINSIZE)
+  यदि ((दीर्घ)sz >= (दीर्घ)MINSIZE)
   {
-    assert((sz & MALLOC_ALIGN_MASK) == 0);
-    assert(aligned_OK(chunk2mem(p)));
+    प्रतिज्ञा((sz & MALLOC_ALIGN_आवरणम्) == 0);
+    प्रतिज्ञा(aligned_OK(chunk2mem(p)));
     /* ... matching footer field */
-    assert(next->prev_size == sz);
+    प्रतिज्ञा(अग्र->पूर्व_आकार == sz);
     /* ... and is fully consolidated */
-    assert(prev_inuse(p));
-    assert (next == top || inuse(next));
+    प्रतिज्ञा(पूर्व_inuse(p));
+    प्रतिज्ञा (अग्र == शिखरम् || inuse(अग्र));
 
     /* ... and has minimally sane links */
-    assert(p->fd->bk == p);
-    assert(p->bk->fd == p);
+    प्रतिज्ञा(p->fd->bk == p);
+    प्रतिज्ञा(p->bk->fd == p);
   }
-  else /* markers are always of size SIZE_SZ */
-    assert(sz == SIZE_SZ);
+  अन्यथा /* markers are always of size SIZE_SZ */
+    प्रतिज्ञा(sz == आकार_SZ);
 }
 
-#if __STD_C
-static void do_check_inuse_chunk(mchunkptr p)
-#else
-static void do_check_inuse_chunk(p) mchunkptr p;
-#endif
+#यदि __STD_C
+स्थिर शून्य do_check_inuse_chunk(mchunkptr p)
+#अन्यथा
+स्थिर शून्य do_check_inuse_chunk(p) mchunkptr p;
+#यदि_अन्तः
 {
-  mchunkptr next = next_chunk(p);
+  mchunkptr अग्र = अग्र_chunk(p);
   do_check_chunk(p);
 
   /* Check whether it claims to be in use ... */
-  assert(inuse(p));
+  प्रतिज्ञा(inuse(p));
 
   /* ... and is surrounded by OK chunks.
     Since more things can be checked with free chunks than inuse ones,
     if an inuse chunk borders them and debug is on, it's worth doing them.
   */
-  if (!prev_inuse(p))
+  यदि (!पूर्व_inuse(p))
   {
-    mchunkptr prv = prev_chunk(p);
-    assert(next_chunk(prv) == p);
+    mchunkptr prv = पूर्व_chunk(p);
+    प्रतिज्ञा(अग्र_chunk(prv) == p);
     do_check_free_chunk(prv);
   }
-  if (next == top)
+  यदि (अग्र == शिखरम्)
   {
-    assert(prev_inuse(next));
-    assert(chunksize(next) >= MINSIZE);
+    प्रतिज्ञा(पूर्व_inuse(अग्र));
+    प्रतिज्ञा(chunksize(अग्र) >= MINSIZE);
   }
-  else if (!inuse(next))
-    do_check_free_chunk(next);
+  अन्यथा यदि (!inuse(अग्र))
+    do_check_free_chunk(अग्र);
 
 }
 
-#if __STD_C
-static void do_check_malloced_chunk(mchunkptr p, INTERNAL_SIZE_T s)
-#else
-static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
-#endif
+#यदि __STD_C
+स्थिर शून्य do_check_malloced_chunk(mchunkptr p, आन्तरिकम्_आकार_T s)
+#अन्यथा
+स्थिर शून्य do_check_malloced_chunk(p, s) mchunkptr p; आन्तरिकम्_आकार_T s;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
-  long room = sz - s;
+  आन्तरिकम्_आकार_T sz = p->आकार & ~पूर्व_INUSE;
+  दीर्घ अवकाशः = sz - s;
 
   do_check_inuse_chunk(p);
 
   /* Legal size ... */
-  assert((long)sz >= (long)MINSIZE);
-  assert((sz & MALLOC_ALIGN_MASK) == 0);
-  assert(room >= 0);
-  assert(room < (long)MINSIZE);
+  प्रतिज्ञा((दीर्घ)sz >= (दीर्घ)MINSIZE);
+  प्रतिज्ञा((sz & MALLOC_ALIGN_आवरणम्) == 0);
+  प्रतिज्ञा(अवकाशः >= 0);
+  प्रतिज्ञा(अवकाशः < (दीर्घ)MINSIZE);
 
   /* ... and alignment */
-  assert(aligned_OK(chunk2mem(p)));
+  प्रतिज्ञा(aligned_OK(chunk2mem(p)));
 
   /* ... and was allocated at front of an available chunk */
-  assert(prev_inuse(p));
+  प्रतिज्ञा(पूर्व_inuse(p));
 
 }
 
-#define check_free_chunk(P)  do_check_free_chunk(P)
-#define check_inuse_chunk(P) do_check_inuse_chunk(P)
-#define check_chunk(P) do_check_chunk(P)
-#define check_malloced_chunk(P,N) do_check_malloced_chunk(P,N)
-#else
-#define check_free_chunk(P)
-#define check_inuse_chunk(P)
-#define check_chunk(P)
-#define check_malloced_chunk(P,N)
-#endif
+#परिभाषय check_free_chunk(P)  do_check_free_chunk(P)
+#परिभाषय check_inuse_chunk(P) do_check_inuse_chunk(P)
+#परिभाषय check_chunk(P) do_check_chunk(P)
+#परिभाषय check_malloced_chunk(P,N) do_check_malloced_chunk(P,N)
+#अन्यथा
+#परिभाषय check_free_chunk(P)
+#परिभाषय check_inuse_chunk(P)
+#परिभाषय check_chunk(P)
+#परिभाषय check_malloced_chunk(P,N)
+#यदि_अन्तः
 
 /*
   Macro-based internal utilities
@@ -885,11 +885,11 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
   putting it ahead of others of same size.
 */
 
-#define frontlink(P, S, IDX, BK, FD)                                          \
+#परिभाषय frontlink(P, S, IDX, BK, FD)                                          \
 {                                                                             \
-  if (S < MAX_SMALLBIN_SIZE)                                                  \
+  यदि (S < MAX_SMALLBIN_आकार)                                                  \
   {                                                                           \
-    IDX = smallbin_index(S);                                                  \
+    IDX = smallbin_सूचकांक(S);                                                  \
     mark_binblock(IDX);                                                       \
     BK = bin_at(IDX);                                                         \
     FD = BK->fd;                                                              \
@@ -897,15 +897,15 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
     P->fd = FD;                                                               \
     FD->bk = BK->fd = P;                                                      \
   }                                                                           \
-  else                                                                        \
+  अन्यथा                                                                        \
   {                                                                           \
-    IDX = bin_index(S);                                                       \
+    IDX = bin_सूचकांक(S);                                                       \
     BK = bin_at(IDX);                                                         \
     FD = BK->fd;                                                              \
-    if (FD == BK) mark_binblock(IDX);                                         \
-    else                                                                      \
+    यदि (FD == BK) mark_binblock(IDX);                                         \
+    अन्यथा                                                                      \
     {                                                                         \
-      while (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
+      यावत् (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
       BK = FD->bk;                                                            \
     }                                                                         \
     P->bk = BK;                                                               \
@@ -916,7 +916,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 /* take a chunk off a list */
 
-#define unlink(P, BK, FD)                                                     \
+#परिभाषय unlink(P, BK, FD)                                                     \
 {                                                                             \
   BK = P->bk;                                                                 \
   FD = P->fd;                                                                 \
@@ -926,256 +926,256 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 /* Place p as the last remainder */
 
-#define link_last_remainder(P)                                                \
+#परिभाषय link_चरमः_remainder(P)                                                \
 {                                                                             \
-  last_remainder->fd = last_remainder->bk =  P;                               \
-  P->fd = P->bk = last_remainder;                                             \
+  चरमः_remainder->fd = चरमः_remainder->bk =  P;                               \
+  P->fd = P->bk = चरमः_remainder;                                             \
 }
 
 /* Clear the last_remainder bin */
 
-#define clear_last_remainder \
-  (last_remainder->fd = last_remainder->bk = last_remainder)
+#परिभाषय clear_चरमः_remainder \
+  (चरमः_remainder->fd = चरमः_remainder->bk = चरमः_remainder)
 
 /* Routines dealing with mmap(). */
 
-#if HAVE_MMAP
+#यदि HAVE_MMAP
 
-#if __STD_C
-static mchunkptr mmap_chunk(size_t size)
-#else
-static mchunkptr mmap_chunk(size) size_t size;
-#endif
+#यदि __STD_C
+स्थिर mchunkptr mmap_chunk(size_t आकार)
+#अन्यथा
+स्थिर mchunkptr mmap_chunk(आकार) size_t आकार;
+#यदि_अन्तः
 {
-  size_t page_mask = malloc_getpagesize - 1;
+  size_t page_आवरणम् = malloc_getpagesize - 1;
   mchunkptr p;
 
-#ifndef MAP_ANONYMOUS
-  static int fd = -1;
-#endif
+#यदि_अपरिभाषितम् MAP_ANONYMOUS
+  स्थिर पूर्णाङ्क fd = -1;
+#यदि_अन्तः
 
-  if(n_mmaps >= n_mmaps_max) return 0; /* too many regions */
+  यदि(n_mmaps >= n_mmaps_max) प्रत्यागम 0; /* too many regions */
 
   /* For mmapped chunks, the overhead is one SIZE_SZ unit larger, because
    * there is no following chunk whose prev_size field could be used.
    */
-  size = (size + SIZE_SZ + page_mask) & ~page_mask;
+  आकार = (आकार + आकार_SZ + page_आवरणम्) & ~page_आवरणम्;
 
-#ifdef MAP_ANONYMOUS
-  p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE,
-		      MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-#else /* !MAP_ANONYMOUS */
-  if (fd < 0)
+#यदि_परिभाषितम् MAP_ANONYMOUS
+  p = (mchunkptr)mmap(0, आकार, PROT_READ|PROT_WRITE,
+		      MAP_वैयक्तिकम्|MAP_ANONYMOUS, -1, 0);
+#अन्यथा /* !MAP_ANONYMOUS */
+  यदि (fd < 0)
   {
-    fd = open("/dev/zero", O_RDWR);
-    if(fd < 0) return 0;
+    fd = उद्घाटय("/dev/zero", O_RDWR);
+    यदि(fd < 0) प्रत्यागम 0;
   }
-  p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-#endif
+  p = (mchunkptr)mmap(0, आकार, PROT_READ|PROT_WRITE, MAP_वैयक्तिकम्, fd, 0);
+#यदि_अन्तः
 
-  if(p == (mchunkptr)-1) return 0;
+  यदि(p == (mchunkptr)-1) प्रत्यागम 0;
 
   n_mmaps++;
-  if (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
+  यदि (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
 
   /* We demand that eight bytes into a page must be 8-byte aligned. */
-  assert(aligned_OK(chunk2mem(p)));
+  प्रतिज्ञा(aligned_OK(chunk2mem(p)));
 
   /* The offset to the start of the mmapped region is stored
    * in the prev_size field of the chunk; normally it is zero,
    * but that can be changed in memalign().
    */
-  p->prev_size = 0;
-  set_head(p, size|IS_MMAPPED);
+  p->पूर्व_आकार = 0;
+  समुच्चयः_शीर्ष(p, आकार|IS_MMAPPED);
 
-  mmapped_mem += size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  mmapped_mem += आकार;
+  यदि ((अचिह्नित दीर्घ)mmapped_mem > (अचिह्नित दीर्घ)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
-    max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  यदि ((अचिह्नित दीर्घ)(mmapped_mem + sbrked_mem) > (अचिह्नित दीर्घ)max_योग_mem)
+    max_योग_mem = mmapped_mem + sbrked_mem;
+  प्रत्यागम p;
 }
 
-#if __STD_C
-static void munmap_chunk(mchunkptr p)
-#else
-static void munmap_chunk(p) mchunkptr p;
-#endif
+#यदि __STD_C
+स्थिर शून्य munmap_chunk(mchunkptr p)
+#अन्यथा
+स्थिर शून्य munmap_chunk(p) mchunkptr p;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T size = chunksize(p);
-  int ret;
+  आन्तरिकम्_आकार_T आकार = chunksize(p);
+  पूर्णाङ्क ret;
 
-  assert (chunk_is_mmapped(p));
-  assert(! ((char*)p >= sbrk_base && (char*)p < sbrk_base + sbrked_mem));
-  assert((n_mmaps > 0));
-  assert(((p->prev_size + size) & (malloc_getpagesize-1)) == 0);
+  प्रतिज्ञा (chunk_is_mmapped(p));
+  प्रतिज्ञा(! ((वर्ण*)p >= sbrk_आधारः && (वर्ण*)p < sbrk_आधारः + sbrked_mem));
+  प्रतिज्ञा((n_mmaps > 0));
+  प्रतिज्ञा(((p->पूर्व_आकार + आकार) & (malloc_getpagesize-1)) == 0);
 
   n_mmaps--;
-  mmapped_mem -= (size + p->prev_size);
+  mmapped_mem -= (आकार + p->पूर्व_आकार);
 
-  ret = munmap((char *)p - p->prev_size, size + p->prev_size);
+  ret = munmap((वर्ण *)p - p->पूर्व_आकार, आकार + p->पूर्व_आकार);
 
   /* munmap returns non-zero on failure */
-  assert(ret == 0);
+  प्रतिज्ञा(ret == 0);
 }
 
-#if HAVE_MREMAP
+#यदि HAVE_MREMAP
 
-#if __STD_C
-static mchunkptr mremap_chunk(mchunkptr p, size_t new_size)
-#else
-static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
-#endif
+#यदि __STD_C
+स्थिर mchunkptr mremap_chunk(mchunkptr p, size_t new_आकार)
+#अन्यथा
+स्थिर mchunkptr mremap_chunk(p, new_आकार) mchunkptr p; size_t new_आकार;
+#यदि_अन्तः
 {
-  size_t page_mask = malloc_getpagesize - 1;
-  INTERNAL_SIZE_T offset = p->prev_size;
-  INTERNAL_SIZE_T size = chunksize(p);
-  char *cp;
+  size_t page_आवरणम् = malloc_getpagesize - 1;
+  आन्तरिकम्_आकार_T विस्थापनम् = p->पूर्व_आकार;
+  आन्तरिकम्_आकार_T आकार = chunksize(p);
+  वर्ण *cp;
 
-  assert (chunk_is_mmapped(p));
-  assert(! ((char*)p >= sbrk_base && (char*)p < sbrk_base + sbrked_mem));
-  assert((n_mmaps > 0));
-  assert(((size + offset) & (malloc_getpagesize-1)) == 0);
+  प्रतिज्ञा (chunk_is_mmapped(p));
+  प्रतिज्ञा(! ((वर्ण*)p >= sbrk_आधारः && (वर्ण*)p < sbrk_आधारः + sbrked_mem));
+  प्रतिज्ञा((n_mmaps > 0));
+  प्रतिज्ञा(((आकार + विस्थापनम्) & (malloc_getpagesize-1)) == 0);
 
   /* Note the extra SIZE_SZ overhead as in mmap_chunk(). */
-  new_size = (new_size + offset + SIZE_SZ + page_mask) & ~page_mask;
+  new_आकार = (new_आकार + विस्थापनम् + आकार_SZ + page_आवरणम्) & ~page_आवरणम्;
 
-  cp = (char *)mremap((char *)p - offset, size + offset, new_size, 1);
+  cp = (वर्ण *)mremap((वर्ण *)p - विस्थापनम्, आकार + विस्थापनम्, new_आकार, 1);
 
-  if (cp == (char *)-1) return 0;
+  यदि (cp == (वर्ण *)-1) प्रत्यागम 0;
 
-  p = (mchunkptr)(cp + offset);
+  p = (mchunkptr)(cp + विस्थापनम्);
 
-  assert(aligned_OK(chunk2mem(p)));
+  प्रतिज्ञा(aligned_OK(chunk2mem(p)));
 
-  assert((p->prev_size == offset));
-  set_head(p, (new_size - offset)|IS_MMAPPED);
+  प्रतिज्ञा((p->पूर्व_आकार == विस्थापनम्));
+  समुच्चयः_शीर्ष(p, (new_आकार - विस्थापनम्)|IS_MMAPPED);
 
-  mmapped_mem -= size + offset;
-  mmapped_mem += new_size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  mmapped_mem -= आकार + विस्थापनम्;
+  mmapped_mem += new_आकार;
+  यदि ((अचिह्नित दीर्घ)mmapped_mem > (अचिह्नित दीर्घ)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
-    max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  यदि ((अचिह्नित दीर्घ)(mmapped_mem + sbrked_mem) > (अचिह्नित दीर्घ)max_योग_mem)
+    max_योग_mem = mmapped_mem + sbrked_mem;
+  प्रत्यागम p;
 }
 
-#endif /* HAVE_MREMAP */
+#यदि_अन्तः /* HAVE_MREMAP */
 
-#endif /* HAVE_MMAP */
+#यदि_अन्तः /* HAVE_MMAP */
 
 /*
   Extend the top-most chunk by obtaining memory from system.
   Main interface to sbrk (but see also malloc_trim).
 */
 
-#if __STD_C
-static void malloc_extend_top(INTERNAL_SIZE_T nb)
-#else
-static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
-#endif
+#यदि __STD_C
+स्थिर शून्य malloc_extend_शिखरम्(आन्तरिकम्_आकार_T nb)
+#अन्यथा
+स्थिर शून्य malloc_extend_शिखरम्(nb) आन्तरिकम्_आकार_T nb;
+#यदि_अन्तः
 {
-  char*     brk;                  /* return value from sbrk */
-  INTERNAL_SIZE_T front_misalign; /* unusable bytes at front of sbrked space */
-  INTERNAL_SIZE_T correction;     /* bytes for 2nd sbrk call */
-  char*     new_brk;              /* return of 2nd sbrk call */
-  INTERNAL_SIZE_T top_size;       /* new size of top chunk */
+  वर्ण*     brk;                  /* return value from sbrk */
+  आन्तरिकम्_आकार_T front_misalign; /* unusable bytes at front of sbrked space */
+  आन्तरिकम्_आकार_T correction;     /* bytes for 2nd sbrk call */
+  वर्ण*     new_brk;              /* return of 2nd sbrk call */
+  आन्तरिकम्_आकार_T शिखरम्_आकार;       /* new size of top chunk */
 
-  mchunkptr old_top     = top;  /* Record state of old top */
-  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
-  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+  mchunkptr old_शिखरम्     = शिखरम्;  /* Record state of old top */
+  आन्तरिकम्_आकार_T old_शिखरम्_आकार = chunksize(old_शिखरम्);
+  वर्ण*     old_अन्तः      = (वर्ण*)(chunk_at_विस्थापनम्(old_शिखरम्, old_शिखरम्_आकार));
 
   /* Pad request with top_pad plus minimal overhead */
 
-  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
-  unsigned long pagesz    = malloc_getpagesize;
+  आन्तरिकम्_आकार_T    sbrk_आकार     = nb + शिखरम्_pad + MINSIZE;
+  अचिह्नित दीर्घ pagesz    = malloc_getpagesize;
 
   /* If not the first time through, round to preserve page boundary */
   /* Otherwise, we need to correct to a page size below anyway. */
   /* (We also correct below if an intervening foreign sbrk call.) */
 
-  if (sbrk_base != (char*)(-1))
-    sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
+  यदि (sbrk_आधारः != (वर्ण*)(-1))
+    sbrk_आकार = (sbrk_आकार + (pagesz - 1)) & ~(pagesz - 1);
 
-  brk = (char*)(MORECORE (sbrk_size));
+  brk = (वर्ण*)(MORECORE (sbrk_आकार));
 
   /* Fail if sbrk failed or if a foreign sbrk call killed our space */
-  if (brk == (char*)(MORECORE_FAILURE) ||
-      (brk < old_end && old_top != initial_top))
-    return;
+  यदि (brk == (वर्ण*)(MORECORE_FAILURE) ||
+      (brk < old_अन्तः && old_शिखरम् != initial_शिखरम्))
+    प्रत्यागम;
 
-  sbrked_mem += sbrk_size;
+  sbrked_mem += sbrk_आकार;
 
-  if (brk == old_end) /* can just add bytes to current top */
+  यदि (brk == old_अन्तः) /* can just add bytes to current top */
   {
-    top_size = sbrk_size + old_top_size;
-    set_head(top, top_size | PREV_INUSE);
+    शिखरम्_आकार = sbrk_आकार + old_शिखरम्_आकार;
+    समुच्चयः_शीर्ष(शिखरम्, शिखरम्_आकार | पूर्व_INUSE);
   }
-  else
+  अन्यथा
   {
-    if (sbrk_base == (char*)(-1))  /* First time through. Record base */
-      sbrk_base = brk;
-    else  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
-      sbrked_mem += brk - (char*)old_end;
+    यदि (sbrk_आधारः == (वर्ण*)(-1))  /* First time through. Record base */
+      sbrk_आधारः = brk;
+    अन्यथा  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
+      sbrked_mem += brk - (वर्ण*)old_अन्तः;
 
     /* Guarantee alignment of first new chunk made from this space */
-    front_misalign = (unsigned long)chunk2mem(brk) & MALLOC_ALIGN_MASK;
-    if (front_misalign > 0)
+    front_misalign = (अचिह्नित दीर्घ)chunk2mem(brk) & MALLOC_ALIGN_आवरणम्;
+    यदि (front_misalign > 0)
     {
       correction = (MALLOC_ALIGNMENT) - front_misalign;
       brk += correction;
     }
-    else
+    अन्यथा
       correction = 0;
 
     /* Guarantee the next brk will be at a page boundary */
 
-    correction += ((((unsigned long)(brk + sbrk_size))+(pagesz-1)) &
-		   ~(pagesz - 1)) - ((unsigned long)(brk + sbrk_size));
+    correction += ((((अचिह्नित दीर्घ)(brk + sbrk_आकार))+(pagesz-1)) &
+		   ~(pagesz - 1)) - ((अचिह्नित दीर्घ)(brk + sbrk_आकार));
 
     /* Allocate correction */
-    new_brk = (char*)(MORECORE (correction));
-    if (new_brk == (char*)(MORECORE_FAILURE)) return;
+    new_brk = (वर्ण*)(MORECORE (correction));
+    यदि (new_brk == (वर्ण*)(MORECORE_FAILURE)) प्रत्यागम;
 
     sbrked_mem += correction;
 
-    top = (mchunkptr)brk;
-    top_size = new_brk - brk + correction;
-    set_head(top, top_size | PREV_INUSE);
+    शिखरम् = (mchunkptr)brk;
+    शिखरम्_आकार = new_brk - brk + correction;
+    समुच्चयः_शीर्ष(शिखरम्, शिखरम्_आकार | पूर्व_INUSE);
 
-    if (old_top != initial_top)
+    यदि (old_शिखरम् != initial_शिखरम्)
     {
 
       /* There must have been an intervening foreign sbrk call. */
       /* A double fencepost is necessary to prevent consolidation */
 
       /* If not enough space to do this, then user did something very wrong */
-      if (old_top_size < MINSIZE)
+      यदि (old_शिखरम्_आकार < MINSIZE)
       {
-	set_head(top, PREV_INUSE); /* will force null return from malloc */
-	return;
+	समुच्चयः_शीर्ष(शिखरम्, पूर्व_INUSE); /* will force null return from malloc */
+	प्रत्यागम;
       }
 
       /* Also keep size a multiple of MALLOC_ALIGNMENT */
-      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
-      set_head_size(old_top, old_top_size);
-      chunk_at_offset(old_top, old_top_size          )->size =
-	SIZE_SZ|PREV_INUSE;
-      chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
-	SIZE_SZ|PREV_INUSE;
+      old_शिखरम्_आकार = (old_शिखरम्_आकार - 3*आकार_SZ) & ~MALLOC_ALIGN_आवरणम्;
+      समुच्चयः_शीर्ष_आकार(old_शिखरम्, old_शिखरम्_आकार);
+      chunk_at_विस्थापनम्(old_शिखरम्, old_शिखरम्_आकार          )->आकार =
+	आकार_SZ|पूर्व_INUSE;
+      chunk_at_विस्थापनम्(old_शिखरम्, old_शिखरम्_आकार + आकार_SZ)->आकार =
+	आकार_SZ|पूर्व_INUSE;
       /* If possible, release the rest. */
-      if (old_top_size >= MINSIZE)
-	fREe(chunk2mem(old_top));
+      यदि (old_शिखरम्_आकार >= MINSIZE)
+	fREe(chunk2mem(old_शिखरम्));
     }
   }
 
-  if ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem)
+  यदि ((अचिह्नित दीर्घ)sbrked_mem > (अचिह्नित दीर्घ)max_sbrked_mem)
     max_sbrked_mem = sbrked_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
-    max_total_mem = mmapped_mem + sbrked_mem;
+  यदि ((अचिह्नित दीर्घ)(mmapped_mem + sbrked_mem) > (अचिह्नित दीर्घ)max_योग_mem)
+    max_योग_mem = mmapped_mem + sbrked_mem;
 
   /* We always land on a page boundary */
-  assert(((unsigned long)((char*)top + top_size) & (pagesz - 1)) == 0);
+  प्रतिज्ञा(((अचिह्नित दीर्घ)((वर्ण*)शिखरम् + शिखरम्_आकार) & (pagesz - 1)) == 0);
 }
 
 /* Main public routines */
@@ -1239,101 +1239,101 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-Void_t* mALLOc_impl(size_t bytes)
-#else
-Void_t* mALLOc_impl(bytes) size_t bytes;
-#endif
+#यदि __STD_C
+Void_t* mALLOc_impl(size_t अष्टकानि)
+#अन्यथा
+Void_t* mALLOc_impl(अष्टकानि) size_t अष्टकानि;
+#यदि_अन्तः
 {
   mchunkptr victim;                  /* inspected/selected chunk */
-  INTERNAL_SIZE_T victim_size;       /* its size */
-  int       idx;                     /* index for bin traversal */
+  आन्तरिकम्_आकार_T victim_आकार;       /* its size */
+  पूर्णाङ्क       idx;                     /* index for bin traversal */
   mbinptr   bin;                     /* associated bin */
   mchunkptr remainder;               /* remainder from a split */
-  long      remainder_size;          /* its size */
-  int       remainder_index;         /* its bin index */
-  unsigned long block;               /* block traverser bit */
-  int       startidx;                /* first bin of a traversed block */
+  दीर्घ      remainder_आकार;          /* its size */
+  पूर्णाङ्क       remainder_सूचकांक;         /* its bin index */
+  अचिह्नित दीर्घ खण्डम्;               /* block traverser bit */
+  पूर्णाङ्क       startidx;                /* first bin of a traversed block */
   mchunkptr fwd;                     /* misc temp for linking */
   mchunkptr bck;                     /* misc temp for linking */
   mbinptr q;                         /* misc temp */
 
-  INTERNAL_SIZE_T nb;
+  आन्तरिकम्_आकार_T nb;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT))
-		return malloc_simple(bytes);
-#endif
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (!(gd->flags & GD_FLG_पूर्णम्_MALLOC_INIT))
+		प्रत्यागम malloc_simple(अष्टकानि);
+#यदि_अन्तः
 
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+  यदि (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    यदि (--malloc_max_allocs < 0)
+      प्रत्यागम रिक्त;
   }
 
   /* check if mem_malloc_init() was run */
-  if ((mem_malloc_start == 0) && (mem_malloc_end == 0)) {
+  यदि ((mem_malloc_start == 0) && (mem_malloc_अन्तः == 0)) {
     /* not initialized yet */
-    return NULL;
+    प्रत्यागम रिक्त;
   }
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  यदि (अष्टकानि > CONFIG_SYS_MALLOC_LEN || (दीर्घ)अष्टकानि < 0)
+     प्रत्यागम रिक्त;
 
-  nb = request2size(bytes);  /* padded request size; */
+  nb = request2size(अष्टकानि);  /* padded request size; */
 
   /* Check for exact match in a bin */
 
-  if (is_small_request(nb))  /* Faster version for small requests */
+  यदि (is_small_request(nb))  /* Faster version for small requests */
   {
-    idx = smallbin_index(nb);
+    idx = smallbin_सूचकांक(nb);
 
     /* No traversal or size check necessary for small bins.  */
 
     q = bin_at(idx);
-    victim = last(q);
+    victim = चरमः(q);
 
     /* Also scan the next one, since it would have a remainder < MINSIZE */
-    if (victim == q)
+    यदि (victim == q)
     {
-      q = next_bin(q);
-      victim = last(q);
+      q = अग्र_bin(q);
+      victim = चरमः(q);
     }
-    if (victim != q)
+    यदि (victim != q)
     {
-      victim_size = chunksize(victim);
+      victim_आकार = chunksize(victim);
       unlink(victim, bck, fwd);
-      set_inuse_bit_at_offset(victim, victim_size);
+      समुच्चयः_inuse_bit_at_विस्थापनम्(victim, victim_आकार);
       check_malloced_chunk(victim, nb);
-      VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+      प्रत्यागम chunk2mem(victim);
     }
 
     idx += 2; /* Set for bin scan below. We've already scanned 2 bins. */
 
   }
-  else
+  अन्यथा
   {
-    idx = bin_index(nb);
+    idx = bin_सूचकांक(nb);
     bin = bin_at(idx);
 
-    for (victim = last(bin); victim != bin; victim = victim->bk)
+    प्रति (victim = चरमः(bin); victim != bin; victim = victim->bk)
     {
-      victim_size = chunksize(victim);
-      remainder_size = victim_size - nb;
+      victim_आकार = chunksize(victim);
+      remainder_आकार = victim_आकार - nb;
 
-      if (remainder_size >= (long)MINSIZE) /* too big */
+      यदि (remainder_आकार >= (दीर्घ)MINSIZE) /* too big */
       {
 	--idx; /* adjust to rescan below after checking last remainder */
-	break;
+	भङ्ग;
       }
 
-      else if (remainder_size >= 0) /* exact fit */
+      अन्यथा यदि (remainder_आकार >= 0) /* exact fit */
       {
 	unlink(victim, bck, fwd);
-	set_inuse_bit_at_offset(victim, victim_size);
+	समुच्चयः_inuse_bit_at_विस्थापनम्(victim, victim_आकार);
 	check_malloced_chunk(victim, nb);
-        VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	return chunk2mem(victim);
+        VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+	प्रत्यागम chunk2mem(victim);
       }
     }
 
@@ -1343,36 +1343,36 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 
   /* Try to use the last split-off remainder */
 
-  if ( (victim = last_remainder->fd) != last_remainder)
+  यदि ( (victim = चरमः_remainder->fd) != चरमः_remainder)
   {
-    victim_size = chunksize(victim);
-    remainder_size = victim_size - nb;
+    victim_आकार = chunksize(victim);
+    remainder_आकार = victim_आकार - nb;
 
-    if (remainder_size >= (long)MINSIZE) /* re-split */
+    यदि (remainder_आकार >= (दीर्घ)MINSIZE) /* re-split */
     {
-      remainder = chunk_at_offset(victim, nb);
-      set_head(victim, nb | PREV_INUSE);
-      link_last_remainder(remainder);
-      set_head(remainder, remainder_size | PREV_INUSE);
-      set_foot(remainder, remainder_size);
+      remainder = chunk_at_विस्थापनम्(victim, nb);
+      समुच्चयः_शीर्ष(victim, nb | पूर्व_INUSE);
+      link_चरमः_remainder(remainder);
+      समुच्चयः_शीर्ष(remainder, remainder_आकार | पूर्व_INUSE);
+      समुच्चयः_foot(remainder, remainder_आकार);
       check_malloced_chunk(victim, nb);
-      VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+      प्रत्यागम chunk2mem(victim);
     }
 
-    clear_last_remainder;
+    clear_चरमः_remainder;
 
-    if (remainder_size >= 0)  /* exhaust */
+    यदि (remainder_आकार >= 0)  /* exhaust */
     {
-      set_inuse_bit_at_offset(victim, victim_size);
+      समुच्चयः_inuse_bit_at_विस्थापनम्(victim, victim_आकार);
       check_malloced_chunk(victim, nb);
-      VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+      प्रत्यागम chunk2mem(victim);
     }
 
     /* Else place in bin */
 
-    frontlink(victim, victim_size, remainder_index, bck, fwd);
+    frontlink(victim, victim_आकार, remainder_सूचकांक, bck, fwd);
   }
 
   /*
@@ -1380,122 +1380,122 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
      search for best fitting chunk by scanning bins in blockwidth units.
   */
 
-  if ( (block = idx2binblock(idx)) <= binblocks_r)
+  यदि ( (खण्डम् = idx2binblock(idx)) <= binblocks_r)
   {
 
     /* Get to the first marked block */
 
-    if ( (block & binblocks_r) == 0)
+    यदि ( (खण्डम् & binblocks_r) == 0)
     {
       /* force to an even block boundary */
       idx = (idx & ~(BINBLOCKWIDTH - 1)) + BINBLOCKWIDTH;
-      block <<= 1;
-      while ((block & binblocks_r) == 0)
+      खण्डम् <<= 1;
+      यावत् ((खण्डम् & binblocks_r) == 0)
       {
 	idx += BINBLOCKWIDTH;
-	block <<= 1;
+	खण्डम् <<= 1;
       }
     }
 
     /* For each possibly nonempty block ... */
-    for (;;)
+    प्रति (;;)
     {
       startidx = idx;          /* (track incomplete blocks) */
       q = bin = bin_at(idx);
 
       /* For each bin in this block ... */
-      do
+      कुरु
       {
 	/* Find and use first big enough chunk ... */
 
-	for (victim = last(bin); victim != bin; victim = victim->bk)
+	प्रति (victim = चरमः(bin); victim != bin; victim = victim->bk)
 	{
-	  victim_size = chunksize(victim);
-	  remainder_size = victim_size - nb;
+	  victim_आकार = chunksize(victim);
+	  remainder_आकार = victim_आकार - nb;
 
-	  if (remainder_size >= (long)MINSIZE) /* split */
+	  यदि (remainder_आकार >= (दीर्घ)MINSIZE) /*विभज*/
 	  {
-	    remainder = chunk_at_offset(victim, nb);
-	    set_head(victim, nb | PREV_INUSE);
+	    remainder = chunk_at_विस्थापनम्(victim, nb);
+	    समुच्चयः_शीर्ष(victim, nb | पूर्व_INUSE);
 	    unlink(victim, bck, fwd);
-	    link_last_remainder(remainder);
-	    set_head(remainder, remainder_size | PREV_INUSE);
-	    set_foot(remainder, remainder_size);
+	    link_चरमः_remainder(remainder);
+	    समुच्चयः_शीर्ष(remainder, remainder_आकार | पूर्व_INUSE);
+	    समुच्चयः_foot(remainder, remainder_आकार);
 	    check_malloced_chunk(victim, nb);
-	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+	    प्रत्यागम chunk2mem(victim);
 	  }
 
-	  else if (remainder_size >= 0)  /* take */
+	  अन्यथा यदि (remainder_आकार >= 0)  /* take */
 	  {
-	    set_inuse_bit_at_offset(victim, victim_size);
+	    समुच्चयः_inuse_bit_at_विस्थापनम्(victim, victim_आकार);
 	    unlink(victim, bck, fwd);
 	    check_malloced_chunk(victim, nb);
-	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+	    प्रत्यागम chunk2mem(victim);
 	  }
 
 	}
 
-       bin = next_bin(bin);
+       bin = अग्र_bin(bin);
 
-      } while ((++idx & (BINBLOCKWIDTH - 1)) != 0);
+      } यावत् ((++idx & (BINBLOCKWIDTH - 1)) != 0);
 
       /* Clear out the block bit. */
 
-      do   /* Possibly backtrack to try to clear a partial block */
+      कुरु   /* Possibly backtrack to try to clear a partial block */
       {
-	if ((startidx & (BINBLOCKWIDTH - 1)) == 0)
+	यदि ((startidx & (BINBLOCKWIDTH - 1)) == 0)
 	{
-	  av_[1] = (mbinptr)(binblocks_r & ~block);
-	  break;
+	  av_[1] = (mbinptr)(binblocks_r & ~खण्डम्);
+	  भङ्ग;
 	}
 	--startidx;
-       q = prev_bin(q);
-      } while (first(q) == q);
+       q = पूर्व_bin(q);
+      } यावत् (first(q) == q);
 
       /* Get to the next possibly nonempty block */
 
-      if ( (block <<= 1) <= binblocks_r && (block != 0) )
+      यदि ( (खण्डम् <<= 1) <= binblocks_r && (खण्डम् != 0) )
       {
-	while ((block & binblocks_r) == 0)
+	यावत् ((खण्डम् & binblocks_r) == 0)
 	{
 	  idx += BINBLOCKWIDTH;
-	  block <<= 1;
+	  खण्डम् <<= 1;
 	}
       }
-      else
-	break;
+      अन्यथा
+	भङ्ग;
     }
   }
 
   /* Try to use top chunk */
 
   /* Require that there be a remainder, ensuring top always exists  */
-  if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+  यदि ( (remainder_आकार = chunksize(शिखरम्) - nb) < (दीर्घ)MINSIZE)
   {
 
-#if HAVE_MMAP
+#यदि HAVE_MMAP
     /* If big and would otherwise need to extend, try to use mmap instead */
-    if ((unsigned long)nb >= (unsigned long)mmap_threshold &&
+    यदि ((अचिह्नित दीर्घ)nb >= (अचिह्नित दीर्घ)mmap_देहली &&
 	(victim = mmap_chunk(nb)))
-      VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
-#endif
+      VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+      प्रत्यागम chunk2mem(victim);
+#यदि_अन्तः
 
     /* Try to extend */
-    malloc_extend_top(nb);
-    if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
-      return NULL; /* propagate failure */
+    malloc_extend_शिखरम्(nb);
+    यदि ( (remainder_आकार = chunksize(शिखरम्) - nb) < (दीर्घ)MINSIZE)
+      प्रत्यागम रिक्त; /* propagate failure */
   }
 
-  victim = top;
-  set_head(victim, nb | PREV_INUSE);
-  top = chunk_at_offset(victim, nb);
-  set_head(top, remainder_size | PREV_INUSE);
+  victim = शिखरम्;
+  समुच्चयः_शीर्ष(victim, nb | पूर्व_INUSE);
+  शिखरम् = chunk_at_विस्थापनम्(victim, nb);
+  समुच्चयः_शीर्ष(शिखरम्, remainder_आकार | पूर्व_INUSE);
   check_malloced_chunk(victim, nb);
-  VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-  return chunk2mem(victim);
+  VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(victim), अष्टकानि, आकार_SZ, false);
+  प्रत्यागम chunk2mem(victim);
 
 }
 
@@ -1521,103 +1521,103 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-void fREe_impl(Void_t* mem)
-#else
-void fREe_impl(mem) Void_t* mem;
-#endif
+#यदि __STD_C
+शून्य fREe_impl(Void_t* mem)
+#अन्यथा
+शून्य fREe_impl(mem) Void_t* mem;
+#यदि_अन्तः
 {
   mchunkptr p;         /* chunk corresponding to mem */
-  INTERNAL_SIZE_T hd;  /* its head field */
-  INTERNAL_SIZE_T sz;  /* its size */
-  int       idx;       /* its bin index */
-  mchunkptr next;      /* next contiguous chunk */
-  INTERNAL_SIZE_T nextsz; /* its size */
-  INTERNAL_SIZE_T prevsz; /* size of previous contiguous chunk */
+  आन्तरिकम्_आकार_T hd;  /* its head field */
+  आन्तरिकम्_आकार_T sz;  /* its size */
+  पूर्णाङ्क       idx;       /* its bin index */
+  mchunkptr अग्र;      /* next contiguous chunk */
+  आन्तरिकम्_आकार_T nextsz; /* its size */
+  आन्तरिकम्_आकार_T prevsz; /* size of previous contiguous chunk */
   mchunkptr bck;       /* misc temp for linking */
   mchunkptr fwd;       /* misc temp for linking */
-  int       islr;      /* track whether merging with last_remainder */
+  पूर्णाङ्क       islr;      /* track whether merging with last_remainder */
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	/* free() is a no-op - all the memory will be freed on relocation */
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
-		VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
-		return;
+	यदि (!(gd->flags & GD_FLG_पूर्णम्_MALLOC_INIT)) {
+		VALGRIND_FREELIKE_खण्डम्(mem, आकार_SZ);
+		प्रत्यागम;
 	}
-#endif
+#यदि_अन्तः
 
-  if (mem == NULL)                              /* free(0) has no effect */
-    return;
+  यदि (mem == रिक्त)                              /* free(0) has no effect */
+    प्रत्यागम;
 
   p = mem2chunk(mem);
-  hd = p->size;
+  hd = p->आकार;
 
-#if HAVE_MMAP
-  if (hd & IS_MMAPPED)                       /* release mmapped memory. */
+#यदि HAVE_MMAP
+  यदि (hd & IS_MMAPPED)                       /* release mmapped memory. */
   {
     munmap_chunk(p);
-    return;
+    प्रत्यागम;
   }
-#endif
+#यदि_अन्तः
 
   check_inuse_chunk(p);
 
-  sz = hd & ~PREV_INUSE;
-  next = chunk_at_offset(p, sz);
-  nextsz = chunksize(next);
-  VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
+  sz = hd & ~पूर्व_INUSE;
+  अग्र = chunk_at_विस्थापनम्(p, sz);
+  nextsz = chunksize(अग्र);
+  VALGRIND_FREELIKE_खण्डम्(mem, आकार_SZ);
 
-  if (next == top)                            /* merge with top */
+  यदि (अग्र == शिखरम्)                            /* merge with top */
   {
     sz += nextsz;
 
-    if (!(hd & PREV_INUSE))                    /* consolidate backward */
+    यदि (!(hd & पूर्व_INUSE))                    /* consolidate backward */
     {
-      prevsz = p->prev_size;
-      p = chunk_at_offset(p, -((long) prevsz));
+      prevsz = p->पूर्व_आकार;
+      p = chunk_at_विस्थापनम्(p, -((दीर्घ) prevsz));
       sz += prevsz;
       unlink(p, bck, fwd);
     }
 
-    set_head(p, sz | PREV_INUSE);
-    top = p;
-    if ((unsigned long)(sz) >= (unsigned long)trim_threshold)
-      malloc_trim(top_pad);
-    return;
+    समुच्चयः_शीर्ष(p, sz | पूर्व_INUSE);
+    शिखरम् = p;
+    यदि ((अचिह्नित दीर्घ)(sz) >= (अचिह्नित दीर्घ)trim_देहली)
+      malloc_trim(शिखरम्_pad);
+    प्रत्यागम;
   }
 
-  set_head(next, nextsz);                    /* clear inuse bit */
+  समुच्चयः_शीर्ष(अग्र, nextsz);                    /* clear inuse bit */
 
   islr = 0;
 
-  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+  यदि (!(hd & पूर्व_INUSE))                    /* consolidate backward */
   {
-    prevsz = p->prev_size;
-    p = chunk_at_offset(p, -((long) prevsz));
+    prevsz = p->पूर्व_आकार;
+    p = chunk_at_विस्थापनम्(p, -((दीर्घ) prevsz));
     sz += prevsz;
 
-    if (p->fd == last_remainder)             /* keep as last_remainder */
+    यदि (p->fd == चरमः_remainder)             /* keep as last_remainder */
       islr = 1;
-    else
+    अन्यथा
       unlink(p, bck, fwd);
   }
 
-  if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+  यदि (!(inuse_bit_at_विस्थापनम्(अग्र, nextsz)))   /* consolidate forward */
   {
     sz += nextsz;
 
-    if (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
+    यदि (!islr && अग्र->fd == चरमः_remainder)  /* re-insert last_remainder */
     {
       islr = 1;
-      link_last_remainder(p);
+      link_चरमः_remainder(p);
     }
-    else
-      unlink(next, bck, fwd);
+    अन्यथा
+      unlink(अग्र, bck, fwd);
   }
 
-  set_head(p, sz | PREV_INUSE);
-  set_foot(p, sz);
-  if (!islr)
+  समुच्चयः_शीर्ष(p, sz | पूर्व_INUSE);
+  समुच्चयः_foot(p, sz);
+  यदि (!islr)
     frontlink(p, sz, idx, bck, fwd);
 }
 
@@ -1656,228 +1656,228 @@ void fREe_impl(mem) Void_t* mem;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-Void_t* rEALLOc_impl(Void_t* oldmem, size_t bytes)
-#else
-Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
-#endif
+#यदि __STD_C
+Void_t* rEALLOc_impl(Void_t* oldmem, size_t अष्टकानि)
+#अन्यथा
+Void_t* rEALLOc_impl(oldmem, अष्टकानि) Void_t* oldmem; size_t अष्टकानि;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T    nb;      /* padded request size */
+  आन्तरिकम्_आकार_T    nb;      /* padded request size */
 
   mchunkptr oldp;             /* chunk corresponding to oldmem */
-  INTERNAL_SIZE_T    oldsize; /* its size */
+  आन्तरिकम्_आकार_T    oldsize; /* its size */
 
   mchunkptr newp;             /* chunk to return */
-  INTERNAL_SIZE_T    newsize; /* its size */
+  आन्तरिकम्_आकार_T    newsize; /* its size */
   Void_t*   newmem;           /* corresponding user mem */
 
-  mchunkptr next;             /* next contiguous chunk after oldp */
-  INTERNAL_SIZE_T  nextsize;  /* its size */
+  mchunkptr अग्र;             /* next contiguous chunk after oldp */
+  आन्तरिकम्_आकार_T  nextsize;  /* its size */
 
-  mchunkptr prev;             /* previous contiguous chunk before oldp */
-  INTERNAL_SIZE_T  prevsize;  /* its size */
+  mchunkptr पूर्व;             /* previous contiguous chunk before oldp */
+  आन्तरिकम्_आकार_T  prevsize;  /* its size */
 
   mchunkptr remainder;        /* holds split off extra space from newp */
-  INTERNAL_SIZE_T  remainder_size;   /* its size */
+  आन्तरिकम्_आकार_T  remainder_आकार;   /* its size */
 
   mchunkptr bck;              /* misc temp for linking */
   mchunkptr fwd;              /* misc temp for linking */
 
-#ifdef REALLOC_ZERO_BYTES_FREES
-  if (!bytes) {
+#यदि_परिभाषितम् REALLOC_ZERO_अष्टकानि_FREES
+  यदि (!अष्टकानि) {
 	fREe_impl(oldmem);
-	return NULL;
+	प्रत्यागम रिक्त;
   }
-#endif
+#यदि_अन्तः
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  यदि (अष्टकानि > CONFIG_SYS_MALLOC_LEN || (दीर्घ)अष्टकानि < 0)
+     प्रत्यागम रिक्त;
 
   /* realloc of null is supposed to be same as malloc */
-  if (oldmem == NULL) return mALLOc_impl(bytes);
+  यदि (oldmem == रिक्त) प्रत्यागम mALLOc_impl(अष्टकानि);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (!(gd->flags & GD_FLG_पूर्णम्_MALLOC_INIT)) {
 		/* This is harder to support and should not be needed */
 		panic("pre-reloc realloc() is not supported");
 	}
-#endif
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+#यदि_अन्तः
+  यदि (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    यदि (--malloc_max_allocs < 0)
+      प्रत्यागम रिक्त;
   }
 
   newp    = oldp    = mem2chunk(oldmem);
   newsize = oldsize = chunksize(oldp);
 
-  nb = request2size(bytes);
+  nb = request2size(अष्टकानि);
 
-#if HAVE_MMAP
-  if (chunk_is_mmapped(oldp))
+#यदि HAVE_MMAP
+  यदि (chunk_is_mmapped(oldp))
   {
-#if HAVE_MREMAP
+#यदि HAVE_MREMAP
     newp = mremap_chunk(oldp, nb);
-    if(newp) return chunk2mem(newp);
-#endif
+    यदि(newp) प्रत्यागम chunk2mem(newp);
+#यदि_अन्तः
     /* Note the extra SIZE_SZ overhead. */
-    if(oldsize - SIZE_SZ >= nb) return oldmem; /* do nothing */
+    यदि(oldsize - आकार_SZ >= nb) प्रत्यागम oldmem; /* do nothing */
     /* Must alloc, copy, free. */
-    newmem = mALLOc_impl(bytes);
-    if (!newmem)
-	return NULL; /* propagate failure */
-    MALLOC_COPY(newmem, oldmem, oldsize - 2*SIZE_SZ);
+    newmem = mALLOc_impl(अष्टकानि);
+    यदि (!newmem)
+	प्रत्यागम रिक्त; /* propagate failure */
+    MALLOC_COPY(newmem, oldmem, oldsize - 2*आकार_SZ);
     munmap_chunk(oldp);
-    return newmem;
+    प्रत्यागम newmem;
   }
-#endif
+#यदि_अन्तः
 
   check_inuse_chunk(oldp);
 
-  if ((long)(oldsize) < (long)(nb))
+  यदि ((दीर्घ)(oldsize) < (दीर्घ)(nb))
   {
 
     /* Try expanding forward */
 
-    next = chunk_at_offset(oldp, oldsize);
-    if (next == top || !inuse(next))
+    अग्र = chunk_at_विस्थापनम्(oldp, oldsize);
+    यदि (अग्र == शिखरम् || !inuse(अग्र))
     {
-      nextsize = chunksize(next);
+      nextsize = chunksize(अग्र);
 
       /* Forward into top only if a remainder */
-      if (next == top)
+      यदि (अग्र == शिखरम्)
       {
-	if ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
+	यदि ((दीर्घ)(nextsize + newsize) >= (दीर्घ)(nb + MINSIZE))
 	{
 	  newsize += nextsize;
-	  top = chunk_at_offset(oldp, nb);
-	  set_head(top, (newsize - nb) | PREV_INUSE);
-	  set_head_size(oldp, nb);
-	  VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
-	  VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
-	  return chunk2mem(oldp);
+	  शिखरम् = chunk_at_विस्थापनम्(oldp, nb);
+	  समुच्चयः_शीर्ष(शिखरम्, (newsize - nb) | पूर्व_INUSE);
+	  समुच्चयः_शीर्ष_आकार(oldp, nb);
+	  VALGRIND_RESIZEINPLACE_खण्डम्(chunk2mem(oldp), 0, अष्टकानि, आकार_SZ);
+	  VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), अष्टकानि);
+	  प्रत्यागम chunk2mem(oldp);
 	}
       }
 
       /* Forward into next chunk */
-      else if (((long)(nextsize + newsize) >= (long)(nb)))
+      अन्यथा यदि (((दीर्घ)(nextsize + newsize) >= (दीर्घ)(nb)))
       {
-	unlink(next, bck, fwd);
+	unlink(अग्र, bck, fwd);
 	newsize  += nextsize;
-	VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
-	VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
-	goto split;
+	VALGRIND_RESIZEINPLACE_खण्डम्(chunk2mem(oldp), 0, अष्टकानि, आकार_SZ);
+	VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), अष्टकानि);
+	गच्छ विभज;
       }
     }
-    else
+    अन्यथा
     {
-      next = NULL;
+      अग्र = रिक्त;
       nextsize = 0;
     }
 
     /* Try shifting backwards. */
 
-    if (!prev_inuse(oldp))
+    यदि (!पूर्व_inuse(oldp))
     {
-      prev = prev_chunk(oldp);
-      prevsize = chunksize(prev);
+      पूर्व = पूर्व_chunk(oldp);
+      prevsize = chunksize(पूर्व);
 
       /* try forward + backward first to save a later consolidation */
 
-      if (next != NULL)
+      यदि (अग्र != रिक्त)
       {
 	/* into top */
-	if (next == top)
+	यदि (अग्र == शिखरम्)
 	{
-	  if ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
+	  यदि ((दीर्घ)(nextsize + prevsize + newsize) >= (दीर्घ)(nb + MINSIZE))
 	  {
-	    unlink(prev, bck, fwd);
-	    newp = prev;
+	    unlink(पूर्व, bck, fwd);
+	    newp = पूर्व;
 	    newsize += prevsize + nextsize;
 	    newmem = chunk2mem(newp);
-	    VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
-	    MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	    top = chunk_at_offset(newp, nb);
-	    set_head(top, (newsize - nb) | PREV_INUSE);
-	    set_head_size(newp, nb);
-	    VALGRIND_FREELIKE_BLOCK(oldmem, SIZE_SZ);
-	    return newmem;
+	    VALGRIND_MALLOCLIKE_खण्डम्(newmem, अष्टकानि, आकार_SZ, false);
+	    MALLOC_COPY(newmem, oldmem, oldsize - आकार_SZ);
+	    शिखरम् = chunk_at_विस्थापनम्(newp, nb);
+	    समुच्चयः_शीर्ष(शिखरम्, (newsize - nb) | पूर्व_INUSE);
+	    समुच्चयः_शीर्ष_आकार(newp, nb);
+	    VALGRIND_FREELIKE_खण्डम्(oldmem, आकार_SZ);
+	    प्रत्यागम newmem;
 	  }
 	}
 
 	/* into next chunk */
-	else if (((long)(nextsize + prevsize + newsize) >= (long)(nb)))
+	अन्यथा यदि (((दीर्घ)(nextsize + prevsize + newsize) >= (दीर्घ)(nb)))
 	{
-	  unlink(next, bck, fwd);
-	  unlink(prev, bck, fwd);
-	  newp = prev;
+	  unlink(अग्र, bck, fwd);
+	  unlink(पूर्व, bck, fwd);
+	  newp = पूर्व;
 	  newsize += nextsize + prevsize;
 	  newmem = chunk2mem(newp);
-	  VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
-	  MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	  goto split;
+	  VALGRIND_MALLOCLIKE_खण्डम्(newmem, अष्टकानि, आकार_SZ, false);
+	  MALLOC_COPY(newmem, oldmem, oldsize - आकार_SZ);
+	  गच्छ विभज;
 	}
       }
 
       /* backward only */
-      if (prev != NULL && (long)(prevsize + newsize) >= (long)nb)
+      यदि (पूर्व != रिक्त && (दीर्घ)(prevsize + newsize) >= (दीर्घ)nb)
       {
-	unlink(prev, bck, fwd);
-	newp = prev;
+	unlink(पूर्व, bck, fwd);
+	newp = पूर्व;
 	newsize += prevsize;
 	newmem = chunk2mem(newp);
-	VALGRIND_MALLOCLIKE_BLOCK(newmem, bytes, SIZE_SZ, false);
-	MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
-	goto split;
+	VALGRIND_MALLOCLIKE_खण्डम्(newmem, अष्टकानि, आकार_SZ, false);
+	MALLOC_COPY(newmem, oldmem, oldsize - आकार_SZ);
+	गच्छ विभज;
       }
     }
 
     /* Must allocate */
 
-    newmem = mALLOc_impl (bytes);
+    newmem = mALLOc_impl (अष्टकानि);
 
-    if (newmem == NULL)  /* propagate failure */
-      return NULL;
+    यदि (newmem == रिक्त)  /* propagate failure */
+      प्रत्यागम रिक्त;
 
     /* Avoid copy if newp is next chunk after oldp. */
     /* (This can only happen when new chunk is sbrk'ed.) */
 
-    if ( (newp = mem2chunk(newmem)) == next_chunk(oldp))
+    यदि ( (newp = mem2chunk(newmem)) == अग्र_chunk(oldp))
     {
       newsize += chunksize(newp);
       newp = oldp;
-      goto split;
+      गच्छ विभज;
     }
 
     /* Otherwise copy, free, and exit */
-    MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
+    MALLOC_COPY(newmem, oldmem, oldsize - आकार_SZ);
     fREe_impl(oldmem);
-    return newmem;
-  } else {
-    VALGRIND_RESIZEINPLACE_BLOCK(oldmem, 0, bytes, SIZE_SZ);
-    VALGRIND_MAKE_MEM_DEFINED(oldmem, bytes);
+    प्रत्यागम newmem;
+  } अन्यथा {
+    VALGRIND_RESIZEINPLACE_खण्डम्(oldmem, 0, अष्टकानि, आकार_SZ);
+    VALGRIND_MAKE_MEM_DEFINED(oldmem, अष्टकानि);
   }
 
- split:  /* split off extra room in old or expanded chunk */
+ विभज:  /* split off extra room in old or expanded chunk */
 
-  if (newsize - nb >= MINSIZE) /* split off remainder */
+  यदि (newsize - nb >= MINSIZE) /* split off remainder */
   {
-    remainder = chunk_at_offset(newp, nb);
-    remainder_size = newsize - nb;
-    set_head_size(newp, nb);
-    set_head(remainder, remainder_size | PREV_INUSE);
-    set_inuse_bit_at_offset(remainder, remainder_size);
-    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(remainder), remainder_size, SIZE_SZ,
+    remainder = chunk_at_विस्थापनम्(newp, nb);
+    remainder_आकार = newsize - nb;
+    समुच्चयः_शीर्ष_आकार(newp, nb);
+    समुच्चयः_शीर्ष(remainder, remainder_आकार | पूर्व_INUSE);
+    समुच्चयः_inuse_bit_at_विस्थापनम्(remainder, remainder_आकार);
+    VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(remainder), remainder_आकार, आकार_SZ,
 			      false);
     fREe_impl(chunk2mem(remainder)); /* let free() deal with it */
   }
-  else
+  अन्यथा
   {
-    set_head_size(newp, newsize);
-    set_inuse_bit_at_offset(newp, newsize);
+    समुच्चयः_शीर्ष_आकार(newp, newsize);
+    समुच्चयः_inuse_bit_at_विस्थापनम्(newp, newsize);
   }
 
   check_inuse_chunk(newp);
-  return chunk2mem(newp);
+  प्रत्यागम chunk2mem(newp);
 }
 
 /*
@@ -1899,43 +1899,43 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-Void_t* mEMALIGn_impl(size_t alignment, size_t bytes)
-#else
-Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
-#endif
+#यदि __STD_C
+Void_t* mEMALIGn_impl(size_t alignment, size_t अष्टकानि)
+#अन्यथा
+Void_t* mEMALIGn_impl(alignment, अष्टकानि) size_t alignment; size_t अष्टकानि;
+#यदि_अन्तः
 {
-  INTERNAL_SIZE_T    nb;      /* padded  request size */
-  char*     m;                /* memory returned by malloc call */
+  आन्तरिकम्_आकार_T    nb;      /* padded  request size */
+  वर्ण*     m;                /* memory returned by malloc call */
   mchunkptr p;                /* corresponding chunk */
-  char*     brk;              /* alignment point within p */
+  वर्ण*     brk;              /* alignment point within p */
   mchunkptr newp;             /* chunk to return */
-  INTERNAL_SIZE_T  newsize;   /* its size */
-  INTERNAL_SIZE_T  leadsize;  /* leading space befor alignment point */
+  आन्तरिकम्_आकार_T  newsize;   /* its size */
+  आन्तरिकम्_आकार_T  leadsize;  /* leading space befor alignment point */
   mchunkptr remainder;        /* spare room at end to split off */
-  long      remainder_size;   /* its size */
+  दीर्घ      remainder_आकार;   /* its size */
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  यदि (अष्टकानि > CONFIG_SYS_MALLOC_LEN || (दीर्घ)अष्टकानि < 0)
+     प्रत्यागम रिक्त;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
-		return memalign_simple(alignment, bytes);
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (!(gd->flags & GD_FLG_पूर्णम्_MALLOC_INIT)) {
+		प्रत्यागम memalign_simple(alignment, अष्टकानि);
 	}
-#endif
+#यदि_अन्तः
 
   /* If need less alignment than we give anyway, just relay to malloc */
 
-  if (alignment <= MALLOC_ALIGNMENT) return mALLOc_impl(bytes);
+  यदि (alignment <= MALLOC_ALIGNMENT) प्रत्यागम mALLOc_impl(अष्टकानि);
 
   /* Otherwise, ensure that it is at least a minimum chunk size */
 
-  if (alignment <  MINSIZE) alignment = MINSIZE;
+  यदि (alignment <  MINSIZE) alignment = MINSIZE;
 
   /* Call malloc with worst case padding to hit alignment. */
 
-  nb = request2size(bytes);
-  m  = (char*)(mALLOc_impl(nb + alignment + MINSIZE));
+  nb = request2size(अष्टकानि);
+  m  = (वर्ण*)(mALLOc_impl(nb + alignment + MINSIZE));
 
   /*
   * The attempt to over-allocate (with a size large enough to guarantee the
@@ -1945,51 +1945,51 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   * the allocation now succeeds and just happens to be aligned, we can still
   * fulfill the user's request.
   */
-  if (m == NULL) {
+  यदि (m == रिक्त) {
     size_t extra, extra2;
     /*
      * Use bytes not nb, since mALLOc internally calls request2size too, and
      * each call increases the size to allocate, to account for the header.
      */
-    m  = (char*)(mALLOc_impl(bytes));
+    m  = (वर्ण*)(mALLOc_impl(अष्टकानि));
     /* Aligned -> return it */
-    if ((((unsigned long)(m)) % alignment) == 0)
-      return m;
+    यदि ((((अचिह्नित दीर्घ)(m)) % alignment) == 0)
+      प्रत्यागम m;
     /*
      * Otherwise, try again, requesting enough extra space to be able to
      * acquire alignment.
      */
     fREe_impl(m);
     /* Add in extra bytes to match misalignment of unexpanded allocation */
-    extra = alignment - (((unsigned long)(m)) % alignment);
-    m  = (char*)(mALLOc_impl(bytes + extra));
+    extra = alignment - (((अचिह्नित दीर्घ)(m)) % alignment);
+    m  = (वर्ण*)(mALLOc_impl(अष्टकानि + extra));
     /*
      * m might not be the same as before. Validate that the previous value of
      * extra still works for the current value of m.
      * If (!m), extra2=alignment so 
      */
-    if (m) {
-      extra2 = alignment - (((unsigned long)(m)) % alignment);
-      if (extra2 > extra) {
+    यदि (m) {
+      extra2 = alignment - (((अचिह्नित दीर्घ)(m)) % alignment);
+      यदि (extra2 > extra) {
         fREe_impl(m);
-        m = NULL;
+        m = रिक्त;
       }
     }
     /* Fall through to original NULL check and chunk splitting logic */
   }
 
-  if (m == NULL) return NULL; /* propagate failure */
+  यदि (m == रिक्त) प्रत्यागम रिक्त; /* propagate failure */
 
   p = mem2chunk(m);
 
-  if ((((unsigned long)(m)) % alignment) == 0) /* aligned */
+  यदि ((((अचिह्नित दीर्घ)(m)) % alignment) == 0) /* aligned */
   {
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
-      return chunk2mem(p); /* nothing more to do */
-#endif
+#यदि HAVE_MMAP
+    यदि(chunk_is_mmapped(p))
+      प्रत्यागम chunk2mem(p); /* nothing more to do */
+#यदि_अन्तः
   }
-  else /* misaligned */
+  अन्यथा /* misaligned */
   {
     /*
       Find an aligned spot inside chunk.
@@ -2000,50 +2000,50 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
       this is always possible.
     */
 
-    brk = (char*)mem2chunk(((unsigned long)(m + alignment - 1)) & -((signed) alignment));
-    if ((long)(brk - (char*)(p)) < MINSIZE) brk = brk + alignment;
+    brk = (वर्ण*)mem2chunk(((अचिह्नित दीर्घ)(m + alignment - 1)) & -((चिह्नित) alignment));
+    यदि ((दीर्घ)(brk - (वर्ण*)(p)) < MINSIZE) brk = brk + alignment;
 
     newp = (mchunkptr)brk;
-    leadsize = brk - (char*)(p);
+    leadsize = brk - (वर्ण*)(p);
     newsize = chunksize(p) - leadsize;
 
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
+#यदि HAVE_MMAP
+    यदि(chunk_is_mmapped(p))
     {
-      newp->prev_size = p->prev_size + leadsize;
-      set_head(newp, newsize|IS_MMAPPED);
-      return chunk2mem(newp);
+      newp->पूर्व_आकार = p->पूर्व_आकार + leadsize;
+      समुच्चयः_शीर्ष(newp, newsize|IS_MMAPPED);
+      प्रत्यागम chunk2mem(newp);
     }
-#endif
+#यदि_अन्तः
 
     /* give back leader, use the rest */
 
-    set_head(newp, newsize | PREV_INUSE);
-    set_inuse_bit_at_offset(newp, newsize);
-    set_head_size(p, leadsize);
+    समुच्चयः_शीर्ष(newp, newsize | पूर्व_INUSE);
+    समुच्चयः_inuse_bit_at_विस्थापनम्(newp, newsize);
+    समुच्चयः_शीर्ष_आकार(p, leadsize);
     fREe_impl(chunk2mem(p));
     p = newp;
-    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(p), bytes, SIZE_SZ, false);
+    VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(p), अष्टकानि, आकार_SZ, false);
 
-    assert (newsize >= nb && (((unsigned long)(chunk2mem(p))) % alignment) == 0);
+    प्रतिज्ञा (newsize >= nb && (((अचिह्नित दीर्घ)(chunk2mem(p))) % alignment) == 0);
   }
 
   /* Also give back spare room at the end */
 
-  remainder_size = chunksize(p) - nb;
+  remainder_आकार = chunksize(p) - nb;
 
-  if (remainder_size >= (long)MINSIZE)
+  यदि (remainder_आकार >= (दीर्घ)MINSIZE)
   {
-    remainder = chunk_at_offset(p, nb);
-    set_head(remainder, remainder_size | PREV_INUSE);
-    set_head_size(p, nb);
-    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(remainder), remainder_size, SIZE_SZ,
+    remainder = chunk_at_विस्थापनम्(p, nb);
+    समुच्चयः_शीर्ष(remainder, remainder_आकार | पूर्व_INUSE);
+    समुच्चयः_शीर्ष_आकार(p, nb);
+    VALGRIND_MALLOCLIKE_खण्डम्(chunk2mem(remainder), remainder_आकार, आकार_SZ,
 			      false);
     fREe_impl(chunk2mem(remainder));
   }
 
   check_inuse_chunk(p);
-  return chunk2mem(p);
+  प्रत्यागम chunk2mem(p);
 
 }
 
@@ -2053,13 +2053,13 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     be figured out from all the includes/defines above.)
 */
 
-#if __STD_C
-Void_t* vALLOc(size_t bytes)
-#else
-Void_t* vALLOc(bytes) size_t bytes;
-#endif
+#यदि __STD_C
+Void_t* vALLOc(size_t अष्टकानि)
+#अन्यथा
+Void_t* vALLOc(अष्टकानि) size_t अष्टकानि;
+#यदि_अन्तः
 {
-  return mEMALIGn (malloc_getpagesize, bytes);
+  प्रत्यागम mEMALIGn (malloc_getpagesize, अष्टकानि);
 }
 
 /*
@@ -2067,14 +2067,14 @@ Void_t* vALLOc(bytes) size_t bytes;
   that will accommodate request
 */
 
-#if __STD_C
-Void_t* pvALLOc(size_t bytes)
-#else
-Void_t* pvALLOc(bytes) size_t bytes;
-#endif
+#यदि __STD_C
+Void_t* pvALLOc(size_t अष्टकानि)
+#अन्यथा
+Void_t* pvALLOc(अष्टकानि) size_t अष्टकानि;
+#यदि_अन्तः
 {
   size_t pagesize = malloc_getpagesize;
-  return mEMALIGn (pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
+  प्रत्यागम mEMALIGn (pagesize, (अष्टकानि + pagesize - 1) & ~(pagesize - 1));
 }
 
 /*
@@ -2084,61 +2084,61 @@ Void_t* pvALLOc(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
-Void_t* cALLOc_impl(size_t n, size_t elem_size)
-#else
-Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
-#endif
+#यदि __STD_C
+Void_t* cALLOc_impl(size_t n, size_t elem_आकार)
+#अन्यथा
+Void_t* cALLOc_impl(n, elem_आकार) size_t n; size_t elem_आकार;
+#यदि_अन्तः
 {
   mchunkptr p;
-  INTERNAL_SIZE_T csz;
+  आन्तरिकम्_आकार_T csz;
 
-  INTERNAL_SIZE_T sz = n * elem_size;
+  आन्तरिकम्_आकार_T sz = n * elem_आकार;
 
   /* check if expand_top called, in which case don't need to clear */
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
-  mchunkptr oldtop = top;
-  INTERNAL_SIZE_T oldtopsize = chunksize(top);
-#endif
-#endif
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#यदि MORECORE_CLEARS
+  mchunkptr oldtop = शिखरम्;
+  आन्तरिकम्_आकार_T oldtopsize = chunksize(शिखरम्);
+#यदि_अन्तः
+#यदि_अन्तः
   Void_t* mem = mALLOc_impl (sz);
 
-  if ((long)n < 0) return NULL;
+  यदि ((दीर्घ)n < 0) प्रत्यागम रिक्त;
 
-  if (mem == NULL)
-    return NULL;
-  else
+  यदि (mem == रिक्त)
+    प्रत्यागम रिक्त;
+  अन्यथा
   {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
-		memset(mem, 0, sz);
-		return mem;
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	यदि (!(gd->flags & GD_FLG_पूर्णम्_MALLOC_INIT)) {
+		स्मृतिं_पूरय(mem, 0, sz);
+		प्रत्यागम mem;
 	}
-#endif
+#यदि_अन्तः
     p = mem2chunk(mem);
 
     /* Two optional cases in which clearing not necessary */
 
-#if HAVE_MMAP
-    if (chunk_is_mmapped(p)) return mem;
-#endif
+#यदि HAVE_MMAP
+    यदि (chunk_is_mmapped(p)) प्रत्यागम mem;
+#यदि_अन्तः
 
     csz = chunksize(p);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
-    if (p == oldtop && csz > oldtopsize)
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#यदि MORECORE_CLEARS
+    यदि (p == oldtop && csz > oldtopsize)
     {
       /* clear only the bytes from non-freshly-sbrked memory */
       csz = oldtopsize;
     }
-#endif
-#endif
+#यदि_अन्तः
+#यदि_अन्तः
 
-    MALLOC_ZERO(mem, csz - SIZE_SZ);
+    MALLOC_ZERO(mem, csz - आकार_SZ);
     VALGRIND_MAKE_MEM_DEFINED(mem, sz);
-    return mem;
+    प्रत्यागम mem;
   }
 }
 
@@ -2149,100 +2149,100 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 
 */
 
-#if !defined(INTERNAL_LINUX_C_LIB) || !defined(__ELF__)
-#if __STD_C
-void cfree(Void_t *mem)
-#else
-void cfree(mem) Void_t *mem;
-#endif
+#यदि !defined(आन्तरिकम्_LINUX_C_LIB) || !defined(__ELF__)
+#यदि __STD_C
+शून्य cfree(Void_t *mem)
+#अन्यथा
+शून्य cfree(mem) Void_t *mem;
+#यदि_अन्तः
 {
   fREe(mem);
 }
-#endif
+#यदि_अन्तः
 
-#ifdef MCHECK_HEAP_PROTECTION
- #include "mcheck_core.inc.h"
- #if !__STD_C
-  #error "must have __STD_C"
- #endif
+#यदि_परिभाषितम् MCHECK_HEAP_PROTECTION
+ #अन्तर्भाव "mcheck_core.inc.h"
+ #यदि !__STD_C
+  #दोषः "must have __STD_C"
+ #यदि_अन्तः
 
-Void_t *mALLOc(size_t bytes)
+Void_t *mALLOc(size_t अष्टकानि)
 {
 	mcheck_pedantic_prehook();
-	size_t fullsz = mcheck_alloc_prehook(bytes);
-	void *p = mALLOc_impl(fullsz);
+	size_t fullsz = mcheck_alloc_prehook(अष्टकानि);
+	शून्य *p = mALLOc_impl(fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_posthook(p, bytes);
+	यदि (!p)
+		प्रत्यागम p;
+	प्रत्यागम mcheck_alloc_posthook(p, अष्टकानि);
 }
 
-void fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
+शून्य fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
 
-Void_t *rEALLOc(Void_t *oldmem, size_t bytes)
+Void_t *rEALLOc(Void_t *oldmem, size_t अष्टकानि)
 {
 	mcheck_pedantic_prehook();
-	if (bytes == 0) {
-		if (oldmem)
+	यदि (अष्टकानि == 0) {
+		यदि (oldmem)
 			fREe(oldmem);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
-	if (oldmem == NULL)
-		return mALLOc(bytes);
+	यदि (oldmem == रिक्त)
+		प्रत्यागम mALLOc(अष्टकानि);
 
-	void *p = mcheck_reallocfree_prehook(oldmem);
-	size_t newsz = mcheck_alloc_prehook(bytes);
+	शून्य *p = mcheck_reallocfree_prehook(oldmem);
+	size_t newsz = mcheck_alloc_prehook(अष्टकानि);
 
 	p = rEALLOc_impl(p, newsz);
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, bytes);
+	यदि (!p)
+		प्रत्यागम p;
+	प्रत्यागम mcheck_alloc_noclean_posthook(p, अष्टकानि);
 }
 
-Void_t *mEMALIGn(size_t alignment, size_t bytes)
+Void_t *mEMALIGn(size_t alignment, size_t अष्टकानि)
 {
 	mcheck_pedantic_prehook();
-	size_t fullsz = mcheck_memalign_prehook(alignment, bytes);
-	void *p = mEMALIGn_impl(alignment, fullsz);
+	size_t fullsz = mcheck_memalign_prehook(alignment, अष्टकानि);
+	शून्य *p = mEMALIGn_impl(alignment, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_memalign_posthook(alignment, p, bytes);
+	यदि (!p)
+		प्रत्यागम p;
+	प्रत्यागम mcheck_memalign_posthook(alignment, p, अष्टकानि);
 }
 
 // pvALLOc, vALLOc - redirect to mEMALIGn, defined here, so they need no wrapping.
 
-Void_t *cALLOc(size_t n, size_t elem_size)
+Void_t *cALLOc(size_t n, size_t elem_आकार)
 {
 	mcheck_pedantic_prehook();
 	// NB: here is no overflow check.
-	size_t fullsz = mcheck_alloc_prehook(n * elem_size);
-	void *p = cALLOc_impl(1, fullsz);
+	size_t fullsz = mcheck_alloc_prehook(n * elem_आकार);
+	शून्य *p = cALLOc_impl(1, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, n * elem_size);
+	यदि (!p)
+		प्रत्यागम p;
+	प्रत्यागम mcheck_alloc_noclean_posthook(p, n * elem_आकार);
 }
 
 // mcheck API {
-int mcheck_pedantic(mcheck_abortfunc_t f)
+पूर्णाङ्क mcheck_pedantic(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 1);
-	return 0;
+	प्रत्यागम 0;
 }
 
-int mcheck(mcheck_abortfunc_t f)
+पूर्णाङ्क mcheck(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 0);
-	return 0;
+	प्रत्यागम 0;
 }
 
-void mcheck_check_all(void) { mcheck_pedantic_check(); }
+शून्य mcheck_check_all(शून्य) { mcheck_pedantic_check(); }
 
-enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
+गणना mcheck_status mprobe(शून्य *__ptr) { प्रत्यागम mcheck_mprobe(__ptr); }
 // mcheck API }
-#endif
+#यदि_अन्तः
 
 /*
 
@@ -2267,57 +2267,57 @@ enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
 
 */
 
-#if __STD_C
-int malloc_trim(size_t pad)
-#else
-int malloc_trim(pad) size_t pad;
-#endif
+#यदि __STD_C
+पूर्णाङ्क malloc_trim(size_t pad)
+#अन्यथा
+पूर्णाङ्क malloc_trim(pad) size_t pad;
+#यदि_अन्तः
 {
-  long  top_size;        /* Amount of top-most memory */
-  long  extra;           /* Amount to release */
-  char* current_brk;     /* address returned by pre-check sbrk call */
-  char* new_brk;         /* address returned by negative sbrk call */
+  दीर्घ  शिखरम्_आकार;        /* Amount of top-most memory */
+  दीर्घ  extra;           /* Amount to release */
+  वर्ण* current_brk;     /* address returned by pre-check sbrk call */
+  वर्ण* new_brk;         /* address returned by negative sbrk call */
 
-  unsigned long pagesz = malloc_getpagesize;
+  अचिह्नित दीर्घ pagesz = malloc_getpagesize;
 
-  top_size = chunksize(top);
-  extra = ((top_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
+  शिखरम्_आकार = chunksize(शिखरम्);
+  extra = ((शिखरम्_आकार - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
 
-  if (extra < (long)pagesz)  /* Not enough memory to release */
-    return 0;
+  यदि (extra < (दीर्घ)pagesz)  /* Not enough memory to release */
+    प्रत्यागम 0;
 
-  else
+  अन्यथा
   {
     /* Test to make sure no one else called sbrk */
-    current_brk = (char*)(MORECORE (0));
-    if (current_brk != (char*)(top) + top_size)
-      return 0;     /* Apparently we don't own memory; must fail */
+    current_brk = (वर्ण*)(MORECORE (0));
+    यदि (current_brk != (वर्ण*)(शिखरम्) + शिखरम्_आकार)
+      प्रत्यागम 0;     /* Apparently we don't own memory; must fail */
 
-    else
+    अन्यथा
     {
-      new_brk = (char*)(MORECORE (-extra));
+      new_brk = (वर्ण*)(MORECORE (-extra));
 
-      if (new_brk == (char*)(MORECORE_FAILURE)) /* sbrk failed? */
+      यदि (new_brk == (वर्ण*)(MORECORE_FAILURE)) /* sbrk failed? */
       {
 	/* Try to figure out what we have */
-	current_brk = (char*)(MORECORE (0));
-	top_size = current_brk - (char*)top;
-	if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+	current_brk = (वर्ण*)(MORECORE (0));
+	शिखरम्_आकार = current_brk - (वर्ण*)शिखरम्;
+	यदि (शिखरम्_आकार >= (दीर्घ)MINSIZE) /* if not, we are very very dead! */
 	{
-	  sbrked_mem = current_brk - sbrk_base;
-	  set_head(top, top_size | PREV_INUSE);
+	  sbrked_mem = current_brk - sbrk_आधारः;
+	  समुच्चयः_शीर्ष(शिखरम्, शिखरम्_आकार | पूर्व_INUSE);
 	}
-	check_chunk(top);
-	return 0;
+	check_chunk(शिखरम्);
+	प्रत्यागम 0;
       }
 
-      else
+      अन्यथा
       {
 	/* Success. Adjust top accordingly. */
-	set_head(top, (top_size - extra) | PREV_INUSE);
+	समुच्चयः_शीर्ष(शिखरम्, (शिखरम्_आकार - extra) | पूर्व_INUSE);
 	sbrked_mem -= extra;
-	check_chunk(top);
-	return 1;
+	check_chunk(शिखरम्);
+	प्रत्यागम 1;
       }
     }
   }
@@ -2334,55 +2334,55 @@ int malloc_trim(pad) size_t pad;
 
 */
 
-#if __STD_C
+#यदि __STD_C
 size_t malloc_usable_size(Void_t* mem)
-#else
+#अन्यथा
 size_t malloc_usable_size(mem) Void_t* mem;
-#endif
+#यदि_अन्तः
 {
   mchunkptr p;
-  if (mem == NULL)
-    return 0;
-  else
+  यदि (mem == रिक्त)
+    प्रत्यागम 0;
+  अन्यथा
   {
     p = mem2chunk(mem);
-    if(!chunk_is_mmapped(p))
+    यदि(!chunk_is_mmapped(p))
     {
-      if (!inuse(p)) return 0;
+      यदि (!inuse(p)) प्रत्यागम 0;
       check_inuse_chunk(p);
-      return chunksize(p) - SIZE_SZ;
+      प्रत्यागम chunksize(p) - आकार_SZ;
     }
-    return chunksize(p) - 2*SIZE_SZ;
+    प्रत्यागम chunksize(p) - 2*आकार_SZ;
   }
 }
 
 /* Utility to update current_mallinfo for malloc_stats and mallinfo() */
 
-#ifdef DEBUG
-static void malloc_update_mallinfo(void)
+#यदि_परिभाषितम् DEBUG
+स्थिर शून्य malloc_update_mallinfo(शून्य)
 {
-  int i;
+  पूर्णाङ्क i;
   mbinptr b;
   mchunkptr p;
-#ifdef DEBUG
+#यदि_परिभाषितम् DEBUG
   mchunkptr q;
-#endif
+#यदि_अन्तः
 
-  INTERNAL_SIZE_T avail = chunksize(top);
-  int   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
+  आन्तरिकम्_आकार_T avail = chunksize(शिखरम्);
+  पूर्णाङ्क   navail = ((दीर्घ)(avail) >= (दीर्घ)MINSIZE)? 1 : 0;
 
-  for (i = 1; i < NAV; ++i)
+  प्रति (i = 1; i < NAV; ++i)
   {
     b = bin_at(i);
-    for (p = last(b); p != b; p = p->bk)
+    प्रति (p = चरमः(b); p != b; p = p->bk)
     {
-#ifdef DEBUG
+#यदि_परिभाषितम् DEBUG
       check_free_chunk(p);
-      for (q = next_chunk(p);
-	   q < top && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
-	   q = next_chunk(q))
+      प्रति (q = अग्र_chunk(p);
+	   q < शिखरम् && inuse(q) && (दीर्घ)(chunksize(q)) >= (दीर्घ)MINSIZE;
+	   q = अग्र_chunk(q))
 	check_inuse_chunk(q);
-#endif
+#यदि_अन्तः
       avail += chunksize(p);
       navail++;
     }
@@ -2393,10 +2393,10 @@ static void malloc_update_mallinfo(void)
   current_mallinfo.fordblks = avail;
   current_mallinfo.hblks = n_mmaps;
   current_mallinfo.hblkhd = mmapped_mem;
-  current_mallinfo.keepcost = chunksize(top);
+  current_mallinfo.keepcost = chunksize(शिखरम्);
 
 }
-#endif	/* DEBUG */
+#यदि_अन्तः	/* DEBUG */
 
 /*
 
@@ -2413,34 +2413,34 @@ static void malloc_update_mallinfo(void)
 
 */
 
-#ifdef DEBUG
-void malloc_stats(void)
+#यदि_परिभाषितम् DEBUG
+शून्य malloc_stats(शून्य)
 {
   malloc_update_mallinfo();
-  printf("max system bytes = %10u\n",
-	  (unsigned int)(max_total_mem));
-  printf("system bytes     = %10u\n",
-	  (unsigned int)(sbrked_mem + mmapped_mem));
-  printf("in use bytes     = %10u\n",
-	  (unsigned int)(current_mallinfo.uordblks + mmapped_mem));
-#if HAVE_MMAP
-  printf("max mmap regions = %10u\n",
-	  (unsigned int)max_n_mmaps);
-#endif
+  प्रारूप_लिख("max system bytes = %10u\n",
+	  (अचिह्नित पूर्णाङ्क)(max_योग_mem));
+  प्रारूप_लिख("system bytes     = %10u\n",
+	  (अचिह्नित पूर्णाङ्क)(sbrked_mem + mmapped_mem));
+  प्रारूप_लिख("in use bytes     = %10u\n",
+	  (अचिह्नित पूर्णाङ्क)(current_mallinfo.uordblks + mmapped_mem));
+#यदि HAVE_MMAP
+  प्रारूप_लिख("max mmap regions = %10u\n",
+	  (अचिह्नित पूर्णाङ्क)max_n_mmaps);
+#यदि_अन्तः
 }
-#endif	/* DEBUG */
+#यदि_अन्तः	/* DEBUG */
 
 /*
   mallinfo returns a copy of updated current mallinfo.
 */
 
-#ifdef DEBUG
-struct mallinfo mALLINFo(void)
+#यदि_परिभाषितम् DEBUG
+संरचना mallinfo mALLINFo(शून्य)
 {
   malloc_update_mallinfo();
-  return current_mallinfo;
+  प्रत्यागम current_mallinfo;
 }
-#endif	/* DEBUG */
+#यदि_अन्तः	/* DEBUG */
 
 /*
   mallopt:
@@ -2455,50 +2455,50 @@ struct mallinfo mALLINFo(void)
 
 */
 
-#if __STD_C
-int mALLOPt(int param_number, int value)
-#else
-int mALLOPt(param_number, value) int param_number; int value;
-#endif
+#यदि __STD_C
+पूर्णाङ्क mALLOPt(पूर्णाङ्क param_सङ्ख्या, पूर्णाङ्क मानम्)
+#अन्यथा
+पूर्णाङ्क mALLOPt(param_सङ्ख्या, मानम्) पूर्णाङ्क param_सङ्ख्या; पूर्णाङ्क मानम्;
+#यदि_अन्तः
 {
-  switch(param_number)
+  विकल्प(param_सङ्ख्या)
   {
-    case M_TRIM_THRESHOLD:
-      trim_threshold = value; return 1;
-    case M_TOP_PAD:
-      top_pad = value; return 1;
-    case M_MMAP_THRESHOLD:
-      mmap_threshold = value; return 1;
-    case M_MMAP_MAX:
-#if HAVE_MMAP
-      n_mmaps_max = value; return 1;
-#else
-      if (value != 0) return 0; else  n_mmaps_max = value; return 1;
-#endif
+    पक्ष M_TRIM_THRESHOLD:
+      trim_देहली = मानम्; प्रत्यागम 1;
+    पक्ष M_TOP_PAD:
+      शिखरम्_pad = मानम्; प्रत्यागम 1;
+    पक्ष M_MMAP_THRESHOLD:
+      mmap_देहली = मानम्; प्रत्यागम 1;
+    पक्ष M_MMAP_MAX:
+#यदि HAVE_MMAP
+      n_mmaps_max = मानम्; प्रत्यागम 1;
+#अन्यथा
+      यदि (मानम् != 0) प्रत्यागम 0; अन्यथा  n_mmaps_max = मानम्; प्रत्यागम 1;
+#यदि_अन्तः
 
-    default:
-      return 0;
+    स्वभाव:
+      प्रत्यागम 0;
   }
 }
 
-int initf_malloc(void)
+पूर्णाङ्क initf_malloc(शून्य)
 {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	assert(gd->malloc_base);	/* Set up by crt0.S */
-	gd->malloc_limit = CONFIG_VAL(SYS_MALLOC_F_LEN);
+#यदि CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	प्रतिज्ञा(gd->malloc_आधारः);	/* Set up by crt0.S */
+	gd->malloc_सीमा = CONFIG_VAL(SYS_MALLOC_F_LEN);
 	gd->malloc_ptr = 0;
-#endif
+#यदि_अन्तः
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void malloc_enable_testing(int max_allocs)
+शून्य malloc_enable_testing(पूर्णाङ्क max_allocs)
 {
 	malloc_testing = true;
 	malloc_max_allocs = max_allocs;
 }
 
-void malloc_disable_testing(void)
+शून्य malloc_disable_testing(शून्य)
 {
 	malloc_testing = false;
 }

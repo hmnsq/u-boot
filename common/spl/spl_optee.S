@@ -8,5 +8,5 @@
 
 ENTRY(spl_optee_entry)
 	ldr lr, =CONFIG_TEXT_BASE
-	mov pc, r3
+	चालय pc, r3
 ENDPROC(spl_optee_entry)

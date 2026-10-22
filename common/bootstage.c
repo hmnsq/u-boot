@@ -8,218 +8,218 @@
  * permits accurate timestamping of each.
  */
 
-#define LOG_CATEGORY	LOGC_BOOT
+#परिभाषय LOG_CATEGORY	LOGC_BOOT
 
-#include <bootstage.h>
-#include <hang.h>
-#include <log.h>
-#include <malloc.h>
-#include <sort.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <linux/compiler.h>
-#include <linux/libfdt.h>
+#अन्तर्भाव <bootstage.h>
+#अन्तर्भाव <hang.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <sort.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <linux/compiler.h>
+#अन्तर्भाव <linux/libfdt.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_दत्त_PTR;
 
-enum {
-	RECORD_COUNT = CONFIG_VAL(BOOTSTAGE_RECORD_COUNT),
+गणना {
+	लेखः_गणनम् = CONFIG_VAL(BOOTSTAGE_लेखः_गणनम्),
 };
 
-struct bootstage_record {
+संरचना bootstage_लेखः {
 	ulong time_us;
 	uint32_t start_us;
-	const char *name;
-	int flags;		/* see enum bootstage_flags */
-	enum bootstage_id id;
+	ध्रुव वर्ण *name;
+	पूर्णाङ्क flags;		/* see enum bootstage_flags */
+	गणना bootstage_id id;
 };
 
-struct bootstage_data {
-	uint rec_count;
-	uint next_id;
-	struct bootstage_record record[RECORD_COUNT];
+संरचना bootstage_दत्त {
+	uint rec_गणनम्;
+	uint अग्र_id;
+	संरचना bootstage_लेखः लेखः[लेखः_गणनम्];
 };
 
-enum {
-	BOOTSTAGE_VERSION	= 0,
+गणना {
+	BOOTSTAGE_संस्करणम्	= 0,
 	BOOTSTAGE_MAGIC		= 0xb00757a3,
 	BOOTSTAGE_DIGITS	= 9,
 };
 
-struct bootstage_hdr {
+संरचना bootstage_hdr {
 	u32 version;		/* BOOTSTAGE_VERSION */
-	u32 count;		/* Number of records */
-	u32 size;		/* Total data size (non-zero if valid) */
+	u32 गणनम्;		/* Number of records */
+	u32 आकार;		/* Total data size (non-zero if valid) */
 	u32 magic;		/* Magic number */
-	u32 next_id;		/* Next ID to use for bootstage */
+	u32 अग्र_id;		/* Next ID to use for bootstage */
 };
 
-int bootstage_relocate(void *to)
+पूर्णाङ्क bootstage_relocate(शून्य *गन्तव्यम्)
 {
-	struct bootstage_data *data;
-	int i;
-	char *ptr;
+	संरचना bootstage_दत्त *दत्त;
+	पूर्णाङ्क i;
+	वर्ण *ptr;
 
-	debug("Copying bootstage from %p to %p\n", gd->bootstage, to);
-	memcpy(to, gd->bootstage, sizeof(struct bootstage_data));
-	data = gd->bootstage = to;
+	debug("Copying bootstage from %p to %p\n", gd->bootstage, गन्तव्यम्);
+	स्मृतिं_प्रतिलिख(गन्तव्यम्, gd->bootstage, परिमाण(संरचना bootstage_दत्त));
+	दत्त = gd->bootstage = गन्तव्यम्;
 
 	/* Figure out where to relocate the strings to */
-	ptr = (char *)(data + 1);
+	ptr = (वर्ण *)(दत्त + 1);
 
 	/*
 	 * Duplicate all strings.  They may point to an old location in the
 	 * program .text section that can eventually get trashed.
 	 */
-	debug("Relocating %d records\n", data->rec_count);
-	for (i = 0; i < data->rec_count; i++) {
-		const char *from = data->record[i].name;
+	debug("Relocating %d records\n", दत्त->rec_गणनम्);
+	प्रति (i = 0; i < दत्त->rec_गणनम्; i++) {
+		ध्रुव वर्ण *from = दत्त->लेखः[i].name;
 
-		if (!from)
-			continue;
-		strcpy(ptr, from);
-		data->record[i].name = ptr;
-		ptr += strlen(ptr) + 1;
+		यदि (!from)
+			अनुवर्त;
+		वाक्यं_प्रतिलिख(ptr, from);
+		दत्त->लेखः[i].name = ptr;
+		ptr += वाक्यदैर्घ्यम्(ptr) + 1;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-struct bootstage_record *find_id(struct bootstage_data *data,
-				 enum bootstage_id id)
+संरचना bootstage_लेखः *find_id(संरचना bootstage_दत्त *दत्त,
+				 गणना bootstage_id id)
 {
-	struct bootstage_record *rec;
-	struct bootstage_record *end;
+	संरचना bootstage_लेखः *rec;
+	संरचना bootstage_लेखः *अन्तः_2;
 
-	for (rec = data->record, end = rec + data->rec_count; rec < end;
+	प्रति (rec = दत्त->लेखः, अन्तः_2 = rec + दत्त->rec_गणनम्; rec < अन्तः_2;
 	     rec++) {
-		if (rec->id == id)
-			return rec;
+		यदि (rec->id == id)
+			प्रत्यागम rec;
 	}
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-struct bootstage_record *ensure_id(struct bootstage_data *data,
-				   enum bootstage_id id)
+संरचना bootstage_लेखः *ensure_id(संरचना bootstage_दत्त *दत्त,
+				   गणना bootstage_id id)
 {
-	struct bootstage_record *rec;
+	संरचना bootstage_लेखः *rec;
 
-	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
-		rec = &data->record[data->rec_count++];
+	rec = find_id(दत्त, id);
+	यदि (!rec && दत्त->rec_गणनम् < लेखः_गणनम्) {
+		rec = &दत्त->लेखः[दत्त->rec_गणनम्++];
 		rec->id = id;
-		return rec;
+		प्रत्यागम rec;
 	}
 
-	return rec;
+	प्रत्यागम rec;
 }
 
-ulong bootstage_add_record(enum bootstage_id id, const char *name,
-			   int flags, ulong mark)
+ulong bootstage_सङ्कलय_लेखः(गणना bootstage_id id, ध्रुव वर्ण *name,
+			   पूर्णाङ्क flags, ulong mark)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec;
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	संरचना bootstage_लेखः *rec;
 
 	/*
 	 * initf_bootstage() is called very early during boot but since hang()
 	 * calls bootstage_error() we can be called before bootstage is set up.
 	 * Add a check to avoid this.
 	 */
-	if (!data)
-		return mark;
-	if (flags & BOOTSTAGEF_ALLOC)
-		id = data->next_id++;
+	यदि (!दत्त)
+		प्रत्यागम mark;
+	यदि (flags & BOOTSTAGEF_ALLOC)
+		id = दत्त->अग्र_id++;
 
 	/* Only record the first event for each */
-	rec = find_id(data, id);
-	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
-			rec = &data->record[data->rec_count++];
+	rec = find_id(दत्त, id);
+	यदि (!rec) {
+		यदि (दत्त->rec_गणनम् < लेखः_गणनम्) {
+			rec = &दत्त->लेखः[दत्त->rec_गणनम्++];
 			rec->time_us = mark;
 			rec->name = name;
 			rec->flags = flags;
 			rec->id = id;
-		} else {
+		} अन्यथा {
 			log_warning("Bootstage space exhausted\n");
 		}
 	}
 
 	/* Tell the board about this progress */
-	show_boot_progress(flags & BOOTSTAGEF_ERROR ? -id : id);
+	show_boot_प्रगतिः(flags & BOOTSTAGEF_ERROR ? -id : id);
 
-	return mark;
+	प्रत्यागम mark;
 }
 
-ulong bootstage_error_name(enum bootstage_id id, const char *name)
+ulong bootstage_error_name(गणना bootstage_id id, ध्रुव वर्ण *name)
 {
-	return bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
+	प्रत्यागम bootstage_सङ्कलय_लेखः(id, name, BOOTSTAGEF_ERROR,
 				    timer_get_boot_us());
 }
 
-ulong bootstage_mark_name(enum bootstage_id id, const char *name)
+ulong bootstage_mark_name(गणना bootstage_id id, ध्रुव वर्ण *name)
 {
-	int flags = 0;
+	पूर्णाङ्क flags = 0;
 
-	if (id == BOOTSTAGE_ID_ALLOC)
+	यदि (id == BOOTSTAGE_ID_ALLOC)
 		flags = BOOTSTAGEF_ALLOC;
 
-	return bootstage_add_record(id, name, flags, timer_get_boot_us());
+	प्रत्यागम bootstage_सङ्कलय_लेखः(id, name, flags, timer_get_boot_us());
 }
 
-ulong bootstage_mark_code(const char *file, const char *func, int linenum)
+ulong bootstage_mark_संहिता(ध्रुव वर्ण *file, ध्रुव वर्ण *func, पूर्णाङ्क linenum)
 {
-	char *str, *p;
-	__maybe_unused char *end;
-	int len = 0;
+	वर्ण *str, *p;
+	__maybe_unused वर्ण *अन्तः_2;
+	पूर्णाङ्क len = 0;
 
 	/* First work out the length we need to allocate */
-	if (linenum != -1)
+	यदि (linenum != -1)
 		len = 11;
-	if (func)
-		len += strlen(func);
-	if (file)
-		len += strlen(file);
+	यदि (func)
+		len += वाक्यदैर्घ्यम्(func);
+	यदि (file)
+		len += वाक्यदैर्घ्यम्(file);
 
-	str = malloc(len + 1);
+	str = स्मृतिं_देहि(len + 1);
 	p = str;
-	end = p + len;
-	if (file)
-		p += snprintf(p, end - p, "%s,", file);
-	if (linenum != -1)
-		p += snprintf(p, end - p, "%d", linenum);
-	if (func)
-		p += snprintf(p, end - p, ": %s", func);
+	अन्तः_2 = p + len;
+	यदि (file)
+		p += snprintf(p, अन्तः_2 - p, "%s,", file);
+	यदि (linenum != -1)
+		p += snprintf(p, अन्तः_2 - p, "%d", linenum);
+	यदि (func)
+		p += snprintf(p, अन्तः_2 - p, ": %s", func);
 
-	return bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
+	प्रत्यागम bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
 }
 
-uint32_t bootstage_start(enum bootstage_id id, const char *name)
+uint32_t bootstage_start(गणना bootstage_id id, ध्रुव वर्ण *name)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	संरचना bootstage_लेखः *rec = ensure_id(दत्त, id);
 	ulong start_us = timer_get_boot_us();
 
-	if (rec) {
+	यदि (rec) {
 		rec->start_us = start_us;
 		rec->name = name;
 	}
 
-	return start_us;
+	प्रत्यागम start_us;
 }
 
-uint32_t bootstage_accum(enum bootstage_id id)
+uint32_t bootstage_accum(गणना bootstage_id id)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	संरचना bootstage_लेखः *rec = ensure_id(दत्त, id);
 	uint32_t duration;
 
-	if (!rec)
-		return 0;
+	यदि (!rec)
+		प्रत्यागम 0;
 	duration = (uint32_t)timer_get_boot_us() - rec->start_us;
 	rec->time_us += duration;
 
-	return duration;
+	प्रत्यागम duration;
 }
 
 /**
@@ -230,128 +230,128 @@ uint32_t bootstage_accum(enum bootstage_id id)
  * @param rec	Boot stage record to get the name from
  * Return: pointer to name, either from the record or pointing to buf.
  */
-static const char *get_record_name(char *buf, int len,
-				   const struct bootstage_record *rec)
+स्थिर ध्रुव वर्ण *get_लेखः_name(वर्ण *buf, पूर्णाङ्क len,
+				   ध्रुव संरचना bootstage_लेखः *rec)
 {
-	if (rec->name)
-		return rec->name;
-	else if (rec->id >= BOOTSTAGE_ID_USER)
+	यदि (rec->name)
+		प्रत्यागम rec->name;
+	अन्यथा यदि (rec->id >= BOOTSTAGE_ID_USER)
 		snprintf(buf, len, "user_%d", rec->id - BOOTSTAGE_ID_USER);
-	else
+	अन्यथा
 		snprintf(buf, len, "id=%d", rec->id);
 
-	return buf;
+	प्रत्यागम buf;
 }
 
-static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
+स्थिर uint32_t print_time_लेखः(संरचना bootstage_लेखः *rec, uint32_t पूर्व)
 {
-	char buf[20];
+	वर्ण buf[20];
 
-	if (prev == -1U) {
-		printf("%11s", "");
+	यदि (पूर्व == -1U) {
+		प्रारूप_लिख("%11s", "");
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-	} else {
-		if (prev > rec->time_us)
-			prev = 0;
+	} अन्यथा {
+		यदि (पूर्व > rec->time_us)
+			पूर्व = 0;
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
+		print_grouped_ull(rec->time_us - पूर्व, BOOTSTAGE_DIGITS);
 	}
-	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
+	प्रारूप_लिख("  %s\n", get_लेखः_name(buf, परिमाण(buf), rec));
 
-	return rec->time_us;
+	प्रत्यागम rec->time_us;
 }
 
-#ifdef CONFIG_OF_LIBFDT
+#यदि_परिभाषितम् CONFIG_सम्बन्धि_LIBFDT
 /**
  * Add all bootstage timings to a device tree.
  *
  * @param blob	Device tree blob
  * Return: 0 on success, != 0 on failure.
  */
-static int add_bootstages_devicetree(struct fdt_header *blob)
+स्थिर पूर्णाङ्क सङ्कलय_bootstages_devicetree(संरचना fdt_शीर्षकम् *blob)
 {
-	struct bootstage_data *data = gd->bootstage;
-	int bootstage;
-	char buf[20];
-	int recnum;
-	int i;
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	पूर्णाङ्क bootstage;
+	वर्ण buf[20];
+	पूर्णाङ्क recnum;
+	पूर्णाङ्क i;
 
-	if (!blob)
-		return 0;
+	यदि (!blob)
+		प्रत्यागम 0;
 
 	/*
 	 * Create the node for bootstage.
 	 * The address of flat device tree is set up by the command bootm.
 	 */
-	bootstage = fdt_add_subnode(blob, 0, "bootstage");
-	if (bootstage < 0)
-		return -EINVAL;
+	bootstage = fdt_सङ्कलय_subnode(blob, 0, "bootstage");
+	यदि (bootstage < 0)
+		प्रत्यागम -EINVAL;
 
 	/*
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
-	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
-		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+	प्रति (recnum = दत्त->rec_गणनम् - 1, i = 0; recnum >= 0; recnum--, i++) {
+		संरचना bootstage_लेखः *rec = &दत्त->लेखः[recnum];
+		पूर्णाङ्क ग्रन्थिः;
 
-		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
-			continue;
+		यदि (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
+			अनुवर्त;
 
-		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
-			break;
+		ग्रन्थिः = fdt_सङ्कलय_subnode(blob, bootstage, simple_itoa(i));
+		यदि (ग्रन्थिः < 0)
+			भङ्ग;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
-				       get_record_name(buf, sizeof(buf), rec)))
-			return -EINVAL;
+		यदि (fdt_setprop_string(blob, ग्रन्थिः, "name",
+				       get_लेखः_name(buf, परिमाण(buf), rec)))
+			प्रत्यागम -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
+		यदि (fdt_setprop_cell(blob, ग्रन्थिः,
 				rec->start_us ? "accum" : "mark",
 				rec->time_us))
-			return -EINVAL;
+			प्रत्यागम -EINVAL;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bootstage_fdt_add_report(void)
+पूर्णाङ्क bootstage_fdt_सङ्कलय_report(शून्य)
 {
-	if (add_bootstages_devicetree(working_fdt))
-		puts("bootstage: Failed to add to device tree\n");
+	यदि (सङ्कलय_bootstages_devicetree(working_fdt))
+		पङ्क्तिं_लिख("bootstage: Failed to add to device tree\n");
 
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
-void bootstage_report(void)
+शून्य bootstage_report(शून्य)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = data->record;
-	uint32_t prev;
-	int i;
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	संरचना bootstage_लेखः *rec = दत्त->लेखः;
+	uint32_t पूर्व;
+	पूर्णाङ्क i;
 
-	printf("Timer summary in microseconds (%d records):\n",
-	       data->rec_count);
-	printf("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
+	प्रारूप_लिख("Timer summary in microseconds (%d records):\n",
+	       दत्त->rec_गणनम्);
+	प्रारूप_लिख("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
 
-	prev = print_time_record(rec, 0);
+	पूर्व = print_time_लेखः(rec, 0);
 
-	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
-		if (rec->id && !rec->start_us)
-			prev = print_time_record(rec, prev);
+	प्रति (i = 1, rec++; i < दत्त->rec_गणनम्; i++, rec++) {
+		यदि (rec->id && !rec->start_us)
+			पूर्व = print_time_लेखः(rec, पूर्व);
 	}
-	if (data->rec_count > RECORD_COUNT)
-		printf("Overflowed internal boot id table by %d entries\n"
+	यदि (दत्त->rec_गणनम् > लेखः_गणनम्)
+		प्रारूप_लिख("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		       data->rec_count - RECORD_COUNT);
+		       दत्त->rec_गणनम् - लेखः_गणनम्);
 
-	puts("\nAccumulated time:\n");
-	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
-		if (rec->start_us)
-			prev = print_time_record(rec, -1);
+	पङ्क्तिं_लिख("\nAccumulated time:\n");
+	प्रति (i = 0, rec = दत्त->लेखः; i < दत्त->rec_गणनम्; i++, rec++) {
+		यदि (rec->start_us)
+			पूर्व = print_time_लेखः(rec, -1);
 	}
 }
 
@@ -366,186 +366,186 @@ void bootstage_report(void)
  * @param data	Data to write to buffer
  * @param size	Size of data
  */
-static void append_data(char **ptrp, char *end, const void *data, int size)
+स्थिर शून्य append_दत्त(वर्ण **ptrp, वर्ण *अन्तः_2, ध्रुव शून्य *दत्त, पूर्णाङ्क आकार)
 {
-	char *ptr = *ptrp;
+	वर्ण *ptr = *ptrp;
 
-	*ptrp += size;
-	if (*ptrp > end)
-		return;
+	*ptrp += आकार;
+	यदि (*ptrp > अन्तः_2)
+		प्रत्यागम;
 
-	memcpy(ptr, data, size);
+	स्मृतिं_प्रतिलिख(ptr, दत्त, आकार);
 }
 
-int bootstage_stash(void *base, int size)
+पूर्णाङ्क bootstage_stash(शून्य *आधारः, पूर्णाङ्क आकार)
 {
-	const struct bootstage_data *data = gd->bootstage;
-	struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	const struct bootstage_record *rec;
-	char buf[20];
-	char *ptr = base, *end = ptr + size;
-	int i;
+	ध्रुव संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	संरचना bootstage_hdr *hdr = (संरचना bootstage_hdr *)आधारः;
+	ध्रुव संरचना bootstage_लेखः *rec;
+	वर्ण buf[20];
+	वर्ण *ptr = आधारः, *अन्तः_2 = ptr + आकार;
+	पूर्णाङ्क i;
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	यदि (hdr + 1 > (संरचना bootstage_hdr *)अन्तः_2) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -ENOSPC;
+		प्रत्यागम -ENOSPC;
 	}
 
 	/* Write an arbitrary version number */
-	hdr->version = BOOTSTAGE_VERSION;
+	hdr->version = BOOTSTAGE_संस्करणम्;
 
-	hdr->count = data->rec_count;
-	hdr->size = 0;
+	hdr->गणनम् = दत्त->rec_गणनम्;
+	hdr->आकार = 0;
 	hdr->magic = BOOTSTAGE_MAGIC;
-	hdr->next_id = data->next_id;
-	ptr += sizeof(*hdr);
+	hdr->अग्र_id = दत्त->अग्र_id;
+	ptr += परिमाण(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-		append_data(&ptr, end, rec, sizeof(*rec));
+	प्रति (rec = दत्त->लेखः, i = 0; i < दत्त->rec_गणनम्; i++, rec++)
+		append_दत्त(&ptr, अन्तः_2, rec, परिमाण(*rec));
 
 	/* Write the name strings */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
-		const char *name;
+	प्रति (rec = दत्त->लेखः, i = 0; i < दत्त->rec_गणनम्; i++, rec++) {
+		ध्रुव वर्ण *name;
 
-		name = get_record_name(buf, sizeof(buf), rec);
-		append_data(&ptr, end, name, strlen(name) + 1);
+		name = get_लेखः_name(buf, परिमाण(buf), rec);
+		append_दत्त(&ptr, अन्तः_2, name, वाक्यदैर्घ्यम्(name) + 1);
 	}
 
 	/* Check for buffer overflow */
-	if (ptr > end) {
+	यदि (ptr > अन्तः_2) {
 		debug("%s: Not enough space for bootstage stash\n", __func__);
-		return -ENOSPC;
+		प्रत्यागम -ENOSPC;
 	}
 
 	/* Update total data size */
-	hdr->size = ptr - (char *)base;
-	debug("Stashed %d records\n", hdr->count);
+	hdr->आकार = ptr - (वर्ण *)आधारः;
+	debug("Stashed %d records\n", hdr->गणनम्);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int bootstage_unstash(const void *base, int size)
+पूर्णाङ्क bootstage_unstash(ध्रुव शून्य *आधारः, पूर्णाङ्क आकार)
 {
-	const struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	struct bootstage_data *data = gd->bootstage;
-	const char *ptr = base, *end = ptr + size;
-	struct bootstage_record *rec;
-	uint rec_size;
-	int i;
+	ध्रुव संरचना bootstage_hdr *hdr = (संरचना bootstage_hdr *)आधारः;
+	संरचना bootstage_दत्त *दत्त = gd->bootstage;
+	ध्रुव वर्ण *ptr = आधारः, *अन्तः_2 = ptr + आकार;
+	संरचना bootstage_लेखः *rec;
+	uint rec_आकार;
+	पूर्णाङ्क i;
 
-	if (size == -1)
-		end = (char *)(~(uintptr_t)0);
+	यदि (आकार == -1)
+		अन्तः_2 = (वर्ण *)(~(uintptr_t)0);
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	यदि (hdr + 1 > (संरचना bootstage_hdr *)अन्तः_2) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -EPERM;
+		प्रत्यागम -EPERM;
 	}
 
-	if (hdr->magic != BOOTSTAGE_MAGIC) {
+	यदि (hdr->magic != BOOTSTAGE_MAGIC) {
 		debug("%s: Invalid bootstage magic\n", __func__);
-		return -ENOENT;
+		प्रत्यागम -ENOENT;
 	}
 
-	if (ptr + hdr->size > end) {
+	यदि (ptr + hdr->आकार > अन्तः_2) {
 		debug("%s: Bootstage data runs past buffer end\n", __func__);
-		return -ENOSPC;
+		प्रत्यागम -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	यदि (hdr->गणनम् * परिमाण(*rec) > hdr->आकार) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
-			"only %d bytes is available\n", __func__, hdr->count,
-		      (ulong)hdr->count * sizeof(*rec), hdr->size);
-		return -ENOSPC;
+			"only %d bytes is available\n", __func__, hdr->गणनम्,
+		      (ulong)hdr->गणनम् * परिमाण(*rec), hdr->आकार);
+		प्रत्यागम -ENOSPC;
 	}
 
-	if (hdr->version != BOOTSTAGE_VERSION) {
+	यदि (hdr->version != BOOTSTAGE_संस्करणम्) {
 		debug("%s: Bootstage data version %#0x unrecognised\n",
 		      __func__, hdr->version);
-		return -EINVAL;
+		प्रत्यागम -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	यदि (दत्त->rec_गणनम् + hdr->गणनम् > लेखः_गणनम्) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
-		return -ENOSPC;
+		      __func__, hdr->गणनम्, लेखः_गणनम् - दत्त->rec_गणनम्);
+		प्रत्यागम -ENOSPC;
 	}
 
-	ptr += sizeof(*hdr);
+	ptr += परिमाण(*hdr);
 
 	/* Read the records */
-	rec_size = hdr->count * sizeof(*data->record);
-	memcpy(data->record + data->rec_count, ptr, rec_size);
+	rec_आकार = hdr->गणनम् * परिमाण(*दत्त->लेखः);
+	स्मृतिं_प्रतिलिख(दत्त->लेखः + दत्त->rec_गणनम्, ptr, rec_आकार);
 
 	/* Read the name strings */
-	ptr += rec_size;
-	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
+	ptr += rec_आकार;
+	प्रति (rec = दत्त->लेखः + दत्त->rec_गणनम्, i = 0; i < hdr->गणनम्;
 	     i++, rec++) {
 		rec->name = ptr;
-		if (xpl_phase() == PHASE_SPL)
+		यदि (xpl_phase() == PHASE_SPL)
 			rec->name = strdup(ptr);
 
 		/* Assume no data corruption here */
-		ptr += strlen(ptr) + 1;
+		ptr += वाक्यदैर्घ्यम्(ptr) + 1;
 	}
 
 	/* Mark the records as read */
-	data->rec_count += hdr->count;
-	data->next_id = hdr->next_id;
-	debug("Unstashed %d records\n", hdr->count);
+	दत्त->rec_गणनम् += hdr->गणनम्;
+	दत्त->अग्र_id = hdr->अग्र_id;
+	debug("Unstashed %d records\n", hdr->गणनम्);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
-int _bootstage_stash_default(void)
+#यदि IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
+पूर्णाङ्क _bootstage_stash_default(शून्य)
 {
-	return bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
-			       CONFIG_BOOTSTAGE_STASH_SIZE);
+	प्रत्यागम bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
+			       CONFIG_BOOTSTAGE_STASH_आकार);
 }
 
-int _bootstage_unstash_default(void)
+पूर्णाङ्क _bootstage_unstash_default(शून्य)
 {
-	const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
-				       CONFIG_BOOTSTAGE_STASH_SIZE);
+	ध्रुव शून्य *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
+				       CONFIG_BOOTSTAGE_STASH_आकार);
 
-	return bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+	प्रत्यागम bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_आकार);
 }
-#endif
+#यदि_अन्तः
 
-int bootstage_get_size(bool add_strings)
+पूर्णाङ्क bootstage_get_आकार(bool सङ्कलय_वाक्यानि)
 {
-	int size;
+	पूर्णाङ्क आकार;
 
-	size = sizeof(struct bootstage_data);
-	if (add_strings) {
-		struct bootstage_data *data = gd->bootstage;
-		struct bootstage_record *rec;
-		int i;
+	आकार = परिमाण(संरचना bootstage_दत्त);
+	यदि (सङ्कलय_वाक्यानि) {
+		संरचना bootstage_दत्त *दत्त = gd->bootstage;
+		संरचना bootstage_लेखः *rec;
+		पूर्णाङ्क i;
 
-		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-			if (rec->name)
-				size += strlen(rec->name) + 1;
+		प्रति (rec = दत्त->लेखः, i = 0; i < दत्त->rec_गणनम्; i++, rec++)
+			यदि (rec->name)
+				आकार += वाक्यदैर्घ्यम्(rec->name) + 1;
 	}
 
-	return size;
+	प्रत्यागम आकार;
 }
 
-int bootstage_init(bool first)
+पूर्णाङ्क bootstage_init(bool first)
 {
-	struct bootstage_data *data;
-	int size = sizeof(struct bootstage_data);
+	संरचना bootstage_दत्त *दत्त;
+	पूर्णाङ्क आकार = परिमाण(संरचना bootstage_दत्त);
 
-	gd->bootstage = (struct bootstage_data *)malloc(size);
-	if (!gd->bootstage)
-		return -ENOMEM;
-	data = gd->bootstage;
-	memset(data, '\0', size);
-	if (first) {
-		data->next_id = BOOTSTAGE_ID_USER;
-		bootstage_add_record(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
+	gd->bootstage = (संरचना bootstage_दत्त *)स्मृतिं_देहि(आकार);
+	यदि (!gd->bootstage)
+		प्रत्यागम -ENOMEM;
+	दत्त = gd->bootstage;
+	स्मृतिं_पूरय(दत्त, '\0', आकार);
+	यदि (first) {
+		दत्त->अग्र_id = BOOTSTAGE_ID_USER;
+		bootstage_सङ्कलय_लेखः(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
