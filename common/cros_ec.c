@@ -16,12 +16,12 @@
 struct udevice *board_get_cros_ec_dev(void)
 {
 	struct udevice *dev;
-	int ret;
+	整数 ret;
 
 	ret = uclass_get_device(UCLASS_CROS_EC, 0, &dev);
-	if (ret) {
+	もし (ret) {
 		debug("%s: Error %d\n", __func__, ret);
-		return NULL;
+		戻る NULL;
 	}
-	return dev;
+	戻る dev;
 }

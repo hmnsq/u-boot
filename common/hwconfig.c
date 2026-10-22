@@ -17,7 +17,7 @@
 #include <asm/global_data.h>
 #include <linux/types.h>
 #include <linux/string.h>
-#else
+#否则
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,32 +39,32 @@ static const char *hwconfig_parse(const char *opts, size_t maxlen,
 next:
 	str = strstr(opts, opt);
 	end = str + optlen;
-	if (end - start > maxlen)
-		return NULL;
+	もし (end - start > maxlen)
+		戻る NULL;
 
-	if (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
+	もし (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
 			(strpbrk(end, stopchs) == end || *end == eqch ||
 			 *end == '\0')) {
 		const char *arg_end;
 
-		if (!arglen)
-			return str;
+		もし (!arglen)
+			戻る str;
 
-		if (*end != eqch)
-			return NULL;
+		もし (*end != eqch)
+			戻る NULL;
 
 		arg_end = strpbrk(str, stopchs);
-		if (!arg_end)
+		もし (!arg_end)
 			*arglen = min(maxlen, strlen(str)) - optlen - 1;
-		else
+		否则
 			*arglen = arg_end - end - 1;
 
-		return end + 1;
-	} else if (str) {
+		戻る end + 1;
+	} 否则 もし (str) {
 		opts = end;
 		goto next;
 	}
-	return NULL;
+	戻る NULL;
 }
 
 const char cpu_hwconfig[] __attribute__((weak)) = "";
@@ -76,36 +76,36 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
 	const char *ret;
 
 	/* if we are passed a buffer use it, otherwise try the environment */
-	if (!env_hwconfig) {
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-		if (!(gd->flags & GD_FLG_ENV_READY) &&
+	もし (!env_hwconfig) {
+#もし CONFIG_IS_ENABLED(ENV_SUPPORT)
+		もし (!(gd->flags & GD_FLG_ENV_READY) &&
 		    gd->env_valid != ENV_VALID)
-#else
-		if (true)
+#否则
+		もし (true)
 #endif
 		{
 			printf("WARNING: Calling __hwconfig without a buffer "
 					"and before environment is ready\n");
-			return NULL;
+			戻る NULL;
 		}
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#もし CONFIG_IS_ENABLED(ENV_SUPPORT)
 		env_hwconfig = env_get("hwconfig");
 #endif
 	}
 
-	if (env_hwconfig) {
+	もし (env_hwconfig) {
 		ret = hwconfig_parse(env_hwconfig, strlen(env_hwconfig),
 				      opt, ";", ':', arglen);
-		if (ret)
-			return ret;
+		もし (ret)
+			戻る ret;
 	}
 
 	ret = hwconfig_parse(board_hwconfig, strlen(board_hwconfig),
 			opt, ";", ':', arglen);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 
-	return hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
+	戻る hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
 			opt, ";", ':', arglen);
 }
 
@@ -129,9 +129,9 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
  * that the board file only calls things that are actually used, so
  * hwconfig() will always return true result.
  */
-int hwconfig_f(const char *opt, char *buf)
+整数 hwconfig_f(const char *opt, char *buf)
 {
-	return !!__hwconfig(opt, NULL, buf);
+	戻る !!__hwconfig(opt, NULL, buf);
 }
 
 /*
@@ -149,7 +149,7 @@ int hwconfig_f(const char *opt, char *buf)
  */
 const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
 {
-	return __hwconfig(opt, arglen, buf);
+	戻る __hwconfig(opt, arglen, buf);
 }
 
 /*
@@ -166,16 +166,16 @@ const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns a non-zero
  * value, i.e. the argument matches.
  */
-int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
+整数 hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
 {
 	const char *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_arg_f(opt, &arglen, buf);
-	if (!argstr || arglen != strlen(arg))
-		return 0;
+	もし (!argstr || arglen != strlen(arg))
+		戻る 0;
 
-	return !strncmp(argstr, arg, arglen);
+	戻る !strncmp(argstr, arg, arglen);
 }
 
 /*
@@ -190,15 +190,15 @@ int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
  * "dr_usb" is an option, "mode" is a sub-option, and "peripheral" is its
  * argument.
  */
-int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
+整数 hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
 {
 	size_t arglen;
 	const char *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return 0;
-	return !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
+	もし (!arg)
+		戻る 0;
+	戻る !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
 }
 
 /*
@@ -218,9 +218,9 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
 	const char *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return NULL;
-	return hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
+	もし (!arg)
+		戻る NULL;
+	戻る hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
 }
 
 /*
@@ -233,21 +233,21 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
  * This call is similar to hwconfig_arg_cmp_f, except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-int hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
+整数 hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
 			  const char *subarg, char *buf)
 {
 	const char *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_subarg_f(opt, subopt, &arglen, buf);
-	if (!argstr || arglen != strlen(subarg))
-		return 0;
+	もし (!argstr || arglen != strlen(subarg))
+		戻る 0;
 
-	return !strncmp(argstr, subarg, arglen);
+	戻る !strncmp(argstr, subarg, arglen);
 }
 
 #ifdef HWCONFIG_TEST
-int main()
+整数 メインページ()
 {
 	const char *ret;
 	size_t len;
@@ -256,25 +256,25 @@ int main()
 			   "key3;:,:=;key4", 1);
 
 	ret = hwconfig_arg("key1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
+	printf("%zd %.*s\n", len, (整数)len, ret);
 	assert(len == 29);
 	assert(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
 	assert(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
 
 	ret = hwconfig_subarg("key1", "subkey1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
+	printf("%zd %.*s\n", len, (整数)len, ret);
 	assert(len == 6);
 	assert(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
 	assert(!strncmp(ret, "value1", len));
 
 	ret = hwconfig_subarg("key1", "subkey2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
+	printf("%zd %.*s\n", len, (整数)len, ret);
 	assert(len == 6);
 	assert(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
 	assert(!strncmp(ret, "value2", len));
 
 	ret = hwconfig_arg("key2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
+	printf("%zd %.*s\n", len, (整数)len, ret);
 	assert(len == 6);
 	assert(hwconfig_arg_cmp("key2", "value3"));
 	assert(!strncmp(ret, "value3", len));
@@ -289,6 +289,6 @@ int main()
 	assert(hwconfig("") == 0);
 	assert(hwconfig("key3") == 0);
 
-	return 0;
+	戻る 0;
 }
 #endif /* HWCONFIG_TEST */

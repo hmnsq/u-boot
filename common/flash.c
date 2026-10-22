@@ -24,15 +24,15 @@
  * If necessary you have to map the second bank at lower addresses.
  */
 void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+flash_protect(整数 flag, ulong from, ulong to, flash_info_t *info)
 {
 	ulong b_end;
 	short s_end;
-	int i;
+	整数 i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	もし (!info || info->sector_count == 0 || info->size == 0 || to < from) {
+		戻る;
 	}
 
 	s_end = info->sector_count - 1;	/* index of last sector */
@@ -46,12 +46,12 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
+	もし (info->flash_id == FLASH_UNKNOWN ||
 	    to < info->start[0] || from > b_end) {
-		return;
+		戻る;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
+	ために (i=0; i<info->sector_count; ++i) {
 		ulong end;		/* last address in current sect	*/
 
 		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
@@ -59,19 +59,19 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		もし (from <= end && to >= info->start[i]) {
+			もし (flag & FLAG_PROTECT_CLEAR) {
+#もし defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#否则
 				info->protect[i] = 0;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			否则 もし (flag & FLAG_PROTECT_SET) {
+#もし defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#否则
 				info->protect[i] = 1;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
@@ -87,10 +87,10 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	整数 i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
+	ために (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		もし (info->flash_id != FLASH_UNKNOWN &&
 		    addr >= info->start[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
@@ -98,11 +98,11 @@ addr2info(ulong addr)
 		     * Please don't change this unless you understand this.
 		     */
 		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+			戻る (info);
 		}
 	}
 
-	return (NULL);
+	戻る (NULL);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,10 +118,10 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
+整数
 flash_write(char *src, ulong addr, ulong cnt)
 {
-	int i;
+	整数 i;
 	ulong         end        = addr + cnt - 1;
 	flash_info_t *info_first = addr2info(addr);
 	flash_info_t *info_last  = addr2info(end);
@@ -130,56 +130,56 @@ flash_write(char *src, ulong addr, ulong cnt)
 	__maybe_unused char *addr_orig = (char *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	もし (cnt == 0) {
+		戻る (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	もし (!info_first || !info_last) {
+		戻る (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
+	ために (info = info_first; info <= info_last; ++info) {
 		ulong b_end = info->start[0] + info->size;	/* bank end addr */
 		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
+		ために (i=0; i<info->sector_count; ++i) {
 			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			もし ((end >= info->start[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				戻る (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	ために (info = info_first; info <= info_last && cnt>0; ++info) {
 		ulong len;
 
 		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		もし (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		もし ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			戻る (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
+#もし defined(CONFIG_FLASH_VERIFY)
+	もし (memcmp(src_orig, addr_orig, cnt_orig)) {
 		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+		戻る FL_ERR_PROG_ERROR;
 	}
 #endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	戻る (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+void flash_perror(整数 err)
 {
 	switch (err) {
 	case FL_ERR_OK:

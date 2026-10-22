@@ -39,16 +39,16 @@ void cli_ch_init(struct cli_ch_state *cch)
  * @actp: Returns the action to take
  * Returns: Output character if *actp is ESC_CONVERTED, else 0
  */
-static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
+static 整数 cli_ch_esc(struct cli_ch_state *cch, 整数 ichar,
 		      enum cli_esc_state_t *actp)
 {
 	enum cli_esc_state_t act = ESC_REJECT;
 
 	switch (cch->esc_len) {
 	case 1:
-		if (ichar == '[' || ichar == 'O')
+		もし (ichar == '[' || ichar == 'O')
 			act = ESC_SAVE;
-		else
+		否则
 			act = ESC_CONVERTED;
 		break;
 	case 2:
@@ -83,7 +83,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 		case '4':
 		case '7':
 		case '8':
-			if (cch->esc_save[1] == '[') {
+			もし (cch->esc_save[1] == '[') {
 				/* see if next character is ~ */
 				act = ESC_SAVE;
 			}
@@ -111,7 +111,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 			}
 			break;
 		case '0':
-			if (cch->esc_save[2] == '2')
+			もし (cch->esc_save[2] == '2')
 				act = ESC_SAVE;
 			break;
 		}
@@ -125,7 +125,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 		}
 		break;
 	case 5:
-		if (ichar == '~') {	/* bracketed paste */
+		もし (ichar == '~') {	/* bracketed paste */
 			ichar = 0;
 			act = ESC_CONVERTED;
 		}
@@ -133,45 +133,45 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 
 	*actp = act;
 
-	return ichar;
+	戻る ichar;
 }
 
-int cli_ch_process(struct cli_ch_state *cch, int ichar)
+整数 cli_ch_process(struct cli_ch_state *cch, 整数 ichar)
 {
 	/*
 	 * ichar=0x0 when error occurs in U-Boot getchar() or when the caller
 	 * wants to check if there are more characters saved in the escape
 	 * sequence
 	 */
-	if (!ichar) {
-		if (cch->emitting) {
-			if (cch->emit_upto < cch->esc_len)
-				return cch->esc_save[cch->emit_upto++];
+	もし (!ichar) {
+		もし (cch->emitting) {
+			もし (cch->emit_upto < cch->esc_len)
+				戻る cch->esc_save[cch->emit_upto++];
 			cch->emit_upto = 0;
 			cch->emitting = false;
 			cch->esc_len = 0;
 		}
-		return 0;
-	} else if (ichar == -ETIMEDOUT) {
+		戻る 0;
+	} 否则 もし (ichar == -ETIMEDOUT) {
 		/*
 		 * If we are in an escape sequence but nothing has followed the
 		 * Escape character, then the user probably just pressed the
 		 * Escape key. Return it and clear the sequence.
 		 */
-		if (cch->esc_len) {
+		もし (cch->esc_len) {
 			cch->esc_len = 0;
-			return '\e';
+			戻る '\e';
 		}
 
 		/* Otherwise there is nothing to return */
-		return 0;
+		戻る 0;
 	}
 
-	if (ichar == '\n' || ichar == '\r')
-		return '\n';
+	もし (ichar == '\n' || ichar == '\r')
+		戻る '\n';
 
 	/* handle standard linux xterm esc sequences for arrow key, etc. */
-	if (cch->esc_len != 0) {
+	もし (cch->esc_len != 0) {
 		enum cli_esc_state_t act;
 
 		ichar = cli_ch_esc(cch, ichar, &act);
@@ -190,7 +190,7 @@ int cli_ch_process(struct cli_ch_state *cch, int ichar)
 			cch->esc_save[cch->esc_len++] = ichar;
 			ichar = cch->esc_save[cch->emit_upto++];
 			cch->emitting = true;
-			return ichar;
+			戻る ichar;
 		case ESC_CONVERTED:
 			/* valid escape sequence, return the resulting char */
 			cch->esc_len = 0;
@@ -198,16 +198,16 @@ int cli_ch_process(struct cli_ch_state *cch, int ichar)
 		}
 	}
 
-	if (ichar == '\e') {
-		if (!cch->esc_len) {
+	もし (ichar == '\e') {
+		もし (!cch->esc_len) {
 			cch->esc_save[cch->esc_len] = ichar;
 			cch->esc_len = 1;
-		} else {
+		} 否则 {
 			puts("impossible condition #876\n");
 			cch->esc_len = 0;
 		}
-		return 0;
+		戻る 0;
 	}
 
-	return ichar;
+	戻る ichar;
 }

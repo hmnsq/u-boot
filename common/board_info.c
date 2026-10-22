@@ -9,9 +9,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-int __weak checkboard(void)
+整数 __weak checkboard(void)
 {
-	return 0;
+	戻る 0;
 }
 
 static const struct to_show {
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+static 整数 try_sysinfo(void)
 {
 	struct udevice *dev;
 	char str[80];
-	int ret;
+	整数 ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 
 	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+	もし (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
 		const struct to_show *item;
 
-		for (item = to_show; item->id; item++) {
+		ために (item = to_show; item->id; item++) {
 			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+			もし (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	戻る 0;
 }
 
-int show_board_info(void)
+整数 show_board_info(void)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	もし (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		整数 ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		もし (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
+		もし (ret) {
 			const char *model;
 
 			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			もし (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	戻る checkboard();
 }

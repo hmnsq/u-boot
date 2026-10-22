@@ -17,36 +17,36 @@
 
 __weak bool arch_check_dst_in_secure(void *start, ulong size)
 {
-	return false;
+	戻る false;
 }
 
 __weak void *arch_get_container_trampoline(void)
 {
-	return NULL;
+	戻る NULL;
 }
 
 static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
 					  struct spl_load_info *info,
 					  struct container_hdr *container,
-					  int image_index,
+					  整数 image_index,
 					  ulong container_offset)
 {
 	struct boot_img_t *images;
 	ulong offset, size;
 	void *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	もし (image_index > container->num_images) {
 		debug("Invalid image number\n");
-		return NULL;
+		戻る NULL;
 	}
 
 	images = (struct boot_img_t *)((u8 *)container +
 				       sizeof(struct container_hdr));
 
-	if (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
+	もし (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
 		printf("%s: image%d offset not aligned to %u\n",
 		       __func__, image_index, spl_get_bl_len(info));
-		return NULL;
+		戻る NULL;
 	}
 
 	size = ALIGN(images[image_index].size, spl_get_bl_len(info));
@@ -56,43 +56,43 @@ static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
 	      container, offset, size);
 
 	buf = map_sysmem(images[image_index].dst, images[image_index].size);
-	if (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
+	もし (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
 	    arch_check_dst_in_secure(buf, size)) {
 		trampoline = arch_get_container_trampoline();
-		if (!trampoline) {
+		もし (!trampoline) {
 			printf("%s: trampoline size is zero\n", __func__);
-			return NULL;
+			戻る NULL;
 		}
 
-		if (info->read(info, offset, size, trampoline) < images[image_index].size) {
+		もし (info->read(info, offset, size, trampoline) < images[image_index].size) {
 			printf("%s: failed to load image to a trampoline buffer\n", __func__);
-			return NULL;
+			戻る NULL;
 		}
 
 		memcpy(buf, trampoline, images[image_index].size);
-	} else {
-		if (info->read(info, offset, size, buf) < images[image_index].size) {
+	} 否则 {
+		もし (info->read(info, offset, size, buf) < images[image_index].size) {
 				printf("%s: failed to load image to a non-secure region\n", __func__);
-			return NULL;
+			戻る NULL;
 		}
 	}
 
 #ifdef CONFIG_AHAB_BOOT
 	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_index].size - 1));
-	if (ahab_verify_cntr_image(&images[image_index], image_index))
-		return NULL;
+	もし (ahab_verify_cntr_image(&images[image_index], image_index))
+		戻る NULL;
 #endif
 
-	return &images[image_index];
+	戻る &images[image_index];
 }
 
-static int read_auth_container(struct spl_image_info *spl_image,
+static 整数 read_auth_container(struct spl_image_info *spl_image,
 			       struct spl_load_info *info, ulong offset)
 {
 	struct container_hdr *container = NULL;
 	struct container_hdr *authhdr;
 	u16 length;
-	int i, size, ret = 0;
+	整数 i, size, ret = 0;
 
 	size = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
 
@@ -101,24 +101,24 @@ static int read_auth_container(struct spl_image_info *spl_image,
 	 * no need malloc
 	 */
 	container = malloc(size);
-	if (!container)
-		return -ENOMEM;
+	もし (!container)
+		戻る -ENOMEM;
 
 	debug("%s: container: %p offset: %lu size: %u\n", __func__,
 	      container, offset, size);
-	if (info->read(info, offset, size, container) <
+	もし (info->read(info, offset, size, container) <
 	    CONTAINER_HDR_ALIGNMENT) {
 		ret = -EIO;
 		goto end;
 	}
 
-	if (!valid_container_hdr(container)) {
+	もし (!valid_container_hdr(container)) {
 		log_err("Wrong container header\n");
 		ret = -ENOENT;
 		goto end;
 	}
 
-	if (!container->num_images) {
+	もし (!container->num_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
 		goto end;
@@ -127,17 +127,17 @@ static int read_auth_container(struct spl_image_info *spl_image,
 	length = container->length_lsb + (container->length_msb << 8);
 	debug("Container length %u\n", length);
 
-	if (length > CONTAINER_HDR_ALIGNMENT) {
+	もし (length > CONTAINER_HDR_ALIGNMENT) {
 		size = ALIGN(length, spl_get_bl_len(info));
 
 		free(container);
 		container = malloc(size);
-		if (!container)
-			return -ENOMEM;
+		もし (!container)
+			戻る -ENOMEM;
 
 		debug("%s: container: %p offset: %lu size: %u\n",
 		      __func__, container, offset, size);
-		if (info->read(info, offset, size, container) < length) {
+		もし (info->read(info, offset, size, container) < length) {
 			ret = -EIO;
 			goto end;
 		}
@@ -147,23 +147,23 @@ static int read_auth_container(struct spl_image_info *spl_image,
 
 #ifdef CONFIG_AHAB_BOOT
 	authhdr = ahab_auth_cntr_hdr(authhdr, length);
-	if (!authhdr) {
+	もし (!authhdr) {
 		ret = -EINVAL;
 		goto end_auth;
 	}
 #endif
 
-	for (i = 0; i < authhdr->num_images; i++) {
+	ために (i = 0; i < authhdr->num_images; i++) {
 		struct boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
 							   offset);
 
-		if (!image) {
+		もし (!image) {
 			ret = -EINVAL;
 			goto end_auth;
 		}
 
-		if (i == 0) {
+		もし (i == 0) {
 			spl_image->load_addr = image->dst;
 			spl_image->entry_point = image->entry;
 		}
@@ -177,11 +177,11 @@ end_auth:
 end:
 	free(container);
 
-	return ret;
+	戻る ret;
 }
 
-int spl_load_imx_container(struct spl_image_info *spl_image,
+整数 spl_load_imx_container(struct spl_image_info *spl_image,
 			   struct spl_load_info *info, ulong offset)
 {
-	return read_auth_container(spl_image, info, offset);
+	戻る read_auth_container(spl_image, info, offset);
 }

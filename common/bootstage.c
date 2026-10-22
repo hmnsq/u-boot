@@ -30,7 +30,7 @@ struct bootstage_record {
 	ulong time_us;
 	uint32_t start_us;
 	const char *name;
-	int flags;		/* see enum bootstage_flags */
+	整数 flags;		/* see enum bootstage_flags */
 	enum bootstage_id id;
 };
 
@@ -54,10 +54,10 @@ struct bootstage_hdr {
 	u32 next_id;		/* Next ID to use for bootstage */
 };
 
-int bootstage_relocate(void *to)
+整数 bootstage_relocate(void *to)
 {
 	struct bootstage_data *data;
-	int i;
+	整数 i;
 	char *ptr;
 
 	debug("Copying bootstage from %p to %p\n", gd->bootstage, to);
@@ -72,17 +72,17 @@ int bootstage_relocate(void *to)
 	 * program .text section that can eventually get trashed.
 	 */
 	debug("Relocating %d records\n", data->rec_count);
-	for (i = 0; i < data->rec_count; i++) {
+	ために (i = 0; i < data->rec_count; i++) {
 		const char *from = data->record[i].name;
 
-		if (!from)
+		もし (!from)
 			continue;
 		strcpy(ptr, from);
 		data->record[i].name = ptr;
 		ptr += strlen(ptr) + 1;
 	}
 
-	return 0;
+	戻る 0;
 }
 
 struct bootstage_record *find_id(struct bootstage_data *data,
@@ -91,13 +91,13 @@ struct bootstage_record *find_id(struct bootstage_data *data,
 	struct bootstage_record *rec;
 	struct bootstage_record *end;
 
-	for (rec = data->record, end = rec + data->rec_count; rec < end;
+	ために (rec = data->record, end = rec + data->rec_count; rec < end;
 	     rec++) {
-		if (rec->id == id)
-			return rec;
+		もし (rec->id == id)
+			戻る rec;
 	}
 
-	return NULL;
+	戻る NULL;
 }
 
 struct bootstage_record *ensure_id(struct bootstage_data *data,
@@ -106,17 +106,17 @@ struct bootstage_record *ensure_id(struct bootstage_data *data,
 	struct bootstage_record *rec;
 
 	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
+	もし (!rec && data->rec_count < RECORD_COUNT) {
 		rec = &data->record[data->rec_count++];
 		rec->id = id;
-		return rec;
+		戻る rec;
 	}
 
-	return rec;
+	戻る rec;
 }
 
 ulong bootstage_add_record(enum bootstage_id id, const char *name,
-			   int flags, ulong mark)
+			   整数 flags, ulong mark)
 {
 	struct bootstage_data *data = gd->bootstage;
 	struct bootstage_record *rec;
@@ -126,21 +126,21 @@ ulong bootstage_add_record(enum bootstage_id id, const char *name,
 	 * calls bootstage_error() we can be called before bootstage is set up.
 	 * Add a check to avoid this.
 	 */
-	if (!data)
-		return mark;
-	if (flags & BOOTSTAGEF_ALLOC)
+	もし (!data)
+		戻る mark;
+	もし (flags & BOOTSTAGEF_ALLOC)
 		id = data->next_id++;
 
 	/* Only record the first event for each */
 	rec = find_id(data, id);
-	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
+	もし (!rec) {
+		もし (data->rec_count < RECORD_COUNT) {
 			rec = &data->record[data->rec_count++];
 			rec->time_us = mark;
 			rec->name = name;
 			rec->flags = flags;
 			rec->id = id;
-		} else {
+		} 否则 {
 			log_warning("Bootstage space exhausted\n");
 		}
 	}
@@ -148,50 +148,50 @@ ulong bootstage_add_record(enum bootstage_id id, const char *name,
 	/* Tell the board about this progress */
 	show_boot_progress(flags & BOOTSTAGEF_ERROR ? -id : id);
 
-	return mark;
+	戻る mark;
 }
 
 ulong bootstage_error_name(enum bootstage_id id, const char *name)
 {
-	return bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
+	戻る bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
 				    timer_get_boot_us());
 }
 
 ulong bootstage_mark_name(enum bootstage_id id, const char *name)
 {
-	int flags = 0;
+	整数 flags = 0;
 
-	if (id == BOOTSTAGE_ID_ALLOC)
+	もし (id == BOOTSTAGE_ID_ALLOC)
 		flags = BOOTSTAGEF_ALLOC;
 
-	return bootstage_add_record(id, name, flags, timer_get_boot_us());
+	戻る bootstage_add_record(id, name, flags, timer_get_boot_us());
 }
 
-ulong bootstage_mark_code(const char *file, const char *func, int linenum)
+ulong bootstage_mark_code(const char *file, const char *func, 整数 linenum)
 {
 	char *str, *p;
 	__maybe_unused char *end;
-	int len = 0;
+	整数 len = 0;
 
 	/* First work out the length we need to allocate */
-	if (linenum != -1)
+	もし (linenum != -1)
 		len = 11;
-	if (func)
+	もし (func)
 		len += strlen(func);
-	if (file)
+	もし (file)
 		len += strlen(file);
 
 	str = malloc(len + 1);
 	p = str;
 	end = p + len;
-	if (file)
+	もし (file)
 		p += snprintf(p, end - p, "%s,", file);
-	if (linenum != -1)
+	もし (linenum != -1)
 		p += snprintf(p, end - p, "%d", linenum);
-	if (func)
+	もし (func)
 		p += snprintf(p, end - p, ": %s", func);
 
-	return bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
+	戻る bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
 }
 
 uint32_t bootstage_start(enum bootstage_id id, const char *name)
@@ -200,12 +200,12 @@ uint32_t bootstage_start(enum bootstage_id id, const char *name)
 	struct bootstage_record *rec = ensure_id(data, id);
 	ulong start_us = timer_get_boot_us();
 
-	if (rec) {
+	もし (rec) {
 		rec->start_us = start_us;
 		rec->name = name;
 	}
 
-	return start_us;
+	戻る start_us;
 }
 
 uint32_t bootstage_accum(enum bootstage_id id)
@@ -214,12 +214,12 @@ uint32_t bootstage_accum(enum bootstage_id id)
 	struct bootstage_record *rec = ensure_id(data, id);
 	uint32_t duration;
 
-	if (!rec)
-		return 0;
+	もし (!rec)
+		戻る 0;
 	duration = (uint32_t)timer_get_boot_us() - rec->start_us;
 	rec->time_us += duration;
 
-	return duration;
+	戻る duration;
 }
 
 /**
@@ -230,35 +230,35 @@ uint32_t bootstage_accum(enum bootstage_id id)
  * @param rec	Boot stage record to get the name from
  * Return: pointer to name, either from the record or pointing to buf.
  */
-static const char *get_record_name(char *buf, int len,
+static const char *get_record_name(char *buf, 整数 len,
 				   const struct bootstage_record *rec)
 {
-	if (rec->name)
-		return rec->name;
-	else if (rec->id >= BOOTSTAGE_ID_USER)
+	もし (rec->name)
+		戻る rec->name;
+	否则 もし (rec->id >= BOOTSTAGE_ID_USER)
 		snprintf(buf, len, "user_%d", rec->id - BOOTSTAGE_ID_USER);
-	else
+	否则
 		snprintf(buf, len, "id=%d", rec->id);
 
-	return buf;
+	戻る buf;
 }
 
 static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
 {
 	char buf[20];
 
-	if (prev == -1U) {
+	もし (prev == -1U) {
 		printf("%11s", "");
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-	} else {
-		if (prev > rec->time_us)
+	} 否则 {
+		もし (prev > rec->time_us)
 			prev = 0;
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
 		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
 	}
 	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
 
-	return rec->time_us;
+	戻る rec->time_us;
 }
 
 #ifdef CONFIG_OF_LIBFDT
@@ -268,61 +268,61 @@ static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
  * @param blob	Device tree blob
  * Return: 0 on success, != 0 on failure.
  */
-static int add_bootstages_devicetree(struct fdt_header *blob)
+static 整数 add_bootstages_devicetree(struct fdt_header *blob)
 {
 	struct bootstage_data *data = gd->bootstage;
-	int bootstage;
+	整数 bootstage;
 	char buf[20];
-	int recnum;
-	int i;
+	整数 recnum;
+	整数 i;
 
-	if (!blob)
-		return 0;
+	もし (!blob)
+		戻る 0;
 
 	/*
 	 * Create the node for bootstage.
 	 * The address of flat device tree is set up by the command bootm.
 	 */
 	bootstage = fdt_add_subnode(blob, 0, "bootstage");
-	if (bootstage < 0)
-		return -EINVAL;
+	もし (bootstage < 0)
+		戻る -EINVAL;
 
 	/*
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
-	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
+	ために (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
 		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+		整数 node;
 
-		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
+		もし (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
 			continue;
 
 		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
+		もし (node < 0)
 			break;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
+		もし (fdt_setprop_string(blob, node, "name",
 				       get_record_name(buf, sizeof(buf), rec)))
-			return -EINVAL;
+			戻る -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
+		もし (fdt_setprop_cell(blob, node,
 				rec->start_us ? "accum" : "mark",
 				rec->time_us))
-			return -EINVAL;
+			戻る -EINVAL;
 	}
 
-	return 0;
+	戻る 0;
 }
 
-int bootstage_fdt_add_report(void)
+整数 bootstage_fdt_add_report(void)
 {
-	if (add_bootstages_devicetree(working_fdt))
+	もし (add_bootstages_devicetree(working_fdt))
 		puts("bootstage: Failed to add to device tree\n");
 
-	return 0;
+	戻る 0;
 }
 #endif
 
@@ -331,7 +331,7 @@ void bootstage_report(void)
 	struct bootstage_data *data = gd->bootstage;
 	struct bootstage_record *rec = data->record;
 	uint32_t prev;
-	int i;
+	整数 i;
 
 	printf("Timer summary in microseconds (%d records):\n",
 	       data->rec_count);
@@ -339,18 +339,18 @@ void bootstage_report(void)
 
 	prev = print_time_record(rec, 0);
 
-	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
-		if (rec->id && !rec->start_us)
+	ために (i = 1, rec++; i < data->rec_count; i++, rec++) {
+		もし (rec->id && !rec->start_us)
 			prev = print_time_record(rec, prev);
 	}
-	if (data->rec_count > RECORD_COUNT)
+	もし (data->rec_count > RECORD_COUNT)
 		printf("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
 		       data->rec_count - RECORD_COUNT);
 
 	puts("\nAccumulated time:\n");
-	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
-		if (rec->start_us)
+	ために (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
+		もし (rec->start_us)
 			prev = print_time_record(rec, -1);
 	}
 }
@@ -366,29 +366,29 @@ void bootstage_report(void)
  * @param data	Data to write to buffer
  * @param size	Size of data
  */
-static void append_data(char **ptrp, char *end, const void *data, int size)
+static void append_data(char **ptrp, char *end, const void *data, 整数 size)
 {
 	char *ptr = *ptrp;
 
 	*ptrp += size;
-	if (*ptrp > end)
-		return;
+	もし (*ptrp > end)
+		戻る;
 
 	memcpy(ptr, data, size);
 }
 
-int bootstage_stash(void *base, int size)
+整数 bootstage_stash(void *base, 整数 size)
 {
 	const struct bootstage_data *data = gd->bootstage;
 	struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
 	const struct bootstage_record *rec;
 	char buf[20];
 	char *ptr = base, *end = ptr + size;
-	int i;
+	整数 i;
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	もし (hdr + 1 > (struct bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -ENOSPC;
+		戻る -ENOSPC;
 	}
 
 	/* Write an arbitrary version number */
@@ -401,11 +401,11 @@ int bootstage_stash(void *base, int size)
 	ptr += sizeof(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
+	ために (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
 		append_data(&ptr, end, rec, sizeof(*rec));
 
 	/* Write the name strings */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
+	ために (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
 		const char *name;
 
 		name = get_record_name(buf, sizeof(buf), rec);
@@ -413,63 +413,63 @@ int bootstage_stash(void *base, int size)
 	}
 
 	/* Check for buffer overflow */
-	if (ptr > end) {
+	もし (ptr > end) {
 		debug("%s: Not enough space for bootstage stash\n", __func__);
-		return -ENOSPC;
+		戻る -ENOSPC;
 	}
 
 	/* Update total data size */
 	hdr->size = ptr - (char *)base;
 	debug("Stashed %d records\n", hdr->count);
 
-	return 0;
+	戻る 0;
 }
 
-int bootstage_unstash(const void *base, int size)
+整数 bootstage_unstash(const void *base, 整数 size)
 {
 	const struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
 	struct bootstage_data *data = gd->bootstage;
 	const char *ptr = base, *end = ptr + size;
 	struct bootstage_record *rec;
 	uint rec_size;
-	int i;
+	整数 i;
 
-	if (size == -1)
+	もし (size == -1)
 		end = (char *)(~(uintptr_t)0);
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	もし (hdr + 1 > (struct bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -EPERM;
+		戻る -EPERM;
 	}
 
-	if (hdr->magic != BOOTSTAGE_MAGIC) {
+	もし (hdr->magic != BOOTSTAGE_MAGIC) {
 		debug("%s: Invalid bootstage magic\n", __func__);
-		return -ENOENT;
+		戻る -ENOENT;
 	}
 
-	if (ptr + hdr->size > end) {
+	もし (ptr + hdr->size > end) {
 		debug("%s: Bootstage data runs past buffer end\n", __func__);
-		return -ENOSPC;
+		戻る -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	もし (hdr->count * sizeof(*rec) > hdr->size) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
 			"only %d bytes is available\n", __func__, hdr->count,
 		      (ulong)hdr->count * sizeof(*rec), hdr->size);
-		return -ENOSPC;
+		戻る -ENOSPC;
 	}
 
-	if (hdr->version != BOOTSTAGE_VERSION) {
+	もし (hdr->version != BOOTSTAGE_VERSION) {
 		debug("%s: Bootstage data version %#0x unrecognised\n",
 		      __func__, hdr->version);
-		return -EINVAL;
+		戻る -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	もし (data->rec_count + hdr->count > RECORD_COUNT) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
 		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
-		return -ENOSPC;
+		戻る -ENOSPC;
 	}
 
 	ptr += sizeof(*hdr);
@@ -480,10 +480,10 @@ int bootstage_unstash(const void *base, int size)
 
 	/* Read the name strings */
 	ptr += rec_size;
-	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
+	ために (rec = data->record + data->rec_count, i = 0; i < hdr->count;
 	     i++, rec++) {
 		rec->name = ptr;
-		if (xpl_phase() == PHASE_SPL)
+		もし (xpl_phase() == PHASE_SPL)
 			rec->name = strdup(ptr);
 
 		/* Assume no data corruption here */
@@ -495,57 +495,57 @@ int bootstage_unstash(const void *base, int size)
 	data->next_id = hdr->next_id;
 	debug("Unstashed %d records\n", hdr->count);
 
-	return 0;
+	戻る 0;
 }
 
-#if IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
-int _bootstage_stash_default(void)
+#もし IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
+整数 _bootstage_stash_default(void)
 {
-	return bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
+	戻る bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
 			       CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 
-int _bootstage_unstash_default(void)
+整数 _bootstage_unstash_default(void)
 {
 	const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
 				       CONFIG_BOOTSTAGE_STASH_SIZE);
 
-	return bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+	戻る bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 #endif
 
-int bootstage_get_size(bool add_strings)
+整数 bootstage_get_size(bool add_strings)
 {
-	int size;
+	整数 size;
 
 	size = sizeof(struct bootstage_data);
-	if (add_strings) {
+	もし (add_strings) {
 		struct bootstage_data *data = gd->bootstage;
 		struct bootstage_record *rec;
-		int i;
+		整数 i;
 
-		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-			if (rec->name)
+		ために (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
+			もし (rec->name)
 				size += strlen(rec->name) + 1;
 	}
 
-	return size;
+	戻る size;
 }
 
-int bootstage_init(bool first)
+整数 bootstage_init(bool first)
 {
 	struct bootstage_data *data;
-	int size = sizeof(struct bootstage_data);
+	整数 size = sizeof(struct bootstage_data);
 
 	gd->bootstage = (struct bootstage_data *)malloc(size);
-	if (!gd->bootstage)
-		return -ENOMEM;
+	もし (!gd->bootstage)
+		戻る -ENOMEM;
 	data = gd->bootstage;
 	memset(data, '\0', size);
-	if (first) {
+	もし (first) {
 		data->next_id = BOOTSTAGE_ID_USER;
 		bootstage_add_record(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
 	}
 
-	return 0;
+	戻る 0;
 }

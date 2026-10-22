@@ -11,43 +11,43 @@
 #include <ubispl.h>
 #include <spl.h>
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-int spl_ubi_load_image_os(struct spl_image_info *spl_image,
+#もし IS_ENABLED(CONFIG_SPL_OS_BOOT)
+整数 spl_ubi_load_image_os(struct spl_image_info *spl_image,
 			  struct spl_boot_device *bootdev,
 			  struct ubispl_info *info)
 {
 	struct legacy_img_hdr *header;
 	struct ubispl_load volumes[2];
-	int err;
+	整数 err;
 
 	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_KERNEL_ID;
 	volumes[0].load_addr = (void *)CONFIG_SYS_LOAD_ADDR;
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#もし IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	volumes[1].vol_id = CONFIG_SPL_UBI_LOAD_ARGS_ID;
 	volumes[1].load_addr = (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR;
 
 	err = ubispl_load_volumes(info, volumes, 2);
-#else
+#否则
 	err = ubispl_load_volumes(info, volumes, 1);
 #endif
-	if (err)
-		return err;
+	もし (err)
+		戻る err;
 
 	header = (struct legacy_img_hdr *)volumes[0].load_addr;
 	spl_parse_image_header(spl_image, bootdev, header);
 	puts("Linux loaded.\n");
 
-	return 0;
+	戻る 0;
 }
 #endif
 
-int spl_ubi_load_image(struct spl_image_info *spl_image,
+整数 spl_ubi_load_image(struct spl_image_info *spl_image,
 		       struct spl_boot_device *bootdev)
 {
 	struct legacy_img_hdr *header;
 	struct ubispl_info info;
 	struct ubispl_load volumes[2];
-	int ret = 1;
+	整数 ret = 1;
 
 	switch (bootdev->boot_device) {
 #ifdef CONFIG_SPL_NAND_SUPPORT
@@ -74,15 +74,15 @@ int spl_ubi_load_image(struct spl_image_info *spl_image,
 	info.leb_start = CONFIG_SPL_UBI_LEB_START;
 	info.peb_count = CONFIG_SPL_UBI_MAX_PEBS - info.peb_offset;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#もし CONFIG_IS_ENABLED(OS_BOOT)
+	もし (!spl_start_uboot()) {
 		ret = spl_ubi_load_image_os(spl_image, bootdev, &info);
-		if (!ret)
-			return 0;
+		もし (!ret)
+			戻る 0;
 
 		printf("%s: Failed in falcon boot: %d", __func__, ret);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return ret;
+		もし (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			戻る ret;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -93,20 +93,20 @@ int spl_ubi_load_image(struct spl_image_info *spl_image,
 	strncpy(volumes[0].name,
 		CONFIG_SPL_UBI_LOAD_MONITOR_VOLNAME,
 		UBI_VOL_NAME_MAX + 1);
-#else
+#否则
 	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_MONITOR_ID;
 #endif
 	volumes[0].load_addr = (void *)header;
 
 	ret = ubispl_load_volumes(&info, volumes, 1);
-	if (!ret)
+	もし (!ret)
 		spl_parse_image_header(spl_image, bootdev, header);
 out:
 #ifdef CONFIG_SPL_NAND_SUPPORT
-	if (bootdev->boot_device == BOOT_DEVICE_NAND)
+	もし (bootdev->boot_device == BOOT_DEVICE_NAND)
 		nand_deselect();
 #endif
-	return ret;
+	戻る ret;
 }
 /* Use priorty 0 so that Ubi will override NAND and ONENAND methods */
 SPL_LOAD_IMAGE_METHOD("NAND", 0, BOOT_DEVICE_NAND, spl_ubi_load_image);
