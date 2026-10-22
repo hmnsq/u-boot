@@ -8,38 +8,38 @@
 #include <serial.h>
 #include <malloc.h>
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-void iomux_printdevs(const int console)
+#གལ་སྲིད CONFIG_IS_ENABLED(CONSOLE_MUX)
+void iomux_printdevs(const ཧྲིལ console)
 {
-	int i;
-	struct stdio_dev *dev;
+	ཧྲིལ i;
+	sa_nracanaa stdio_dev *dev;
 
 	for_each_console_dev(i, console, dev)
 		printf("%s ", dev->name);
 	printf("\n");
 }
 
-int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sdev)
+ཧྲིལ iomux_match_device(sa_nracanaa stdio_dev **set, const ཧྲིལ n, sa_nracanaa stdio_dev *sdev)
 {
-	int i;
+	ཧྲིལ i;
 
-	for (i = 0; i < n; i++)
-		if (sdev == set[i])
-			return i;
-	return -ENOENT;
+	དོན་ལུ (i = 0; i < n; i++)
+		གལ་སྲིད (sdev == set[i])
+			ལོག i;
+	ལོག -ENOENT;
 }
 
 /* This tries to preserve the old list if an error occurs. */
-int iomux_doenv(const int console, const char *arg)
+ཧྲིལ iomux_doenv(const ཧྲིལ console, const var_na *arg)
 {
-	char *console_args, *temp, **start;
-	int i, j, io_flag, cs_idx, repeat;
-	struct stdio_dev **cons_set, **old_set;
-	struct stdio_dev *dev;
+	var_na *console_args, *temp, **start;
+	ཧྲིལ i, j, io_flag, cs_idx, repeat;
+	sa_nracanaa stdio_dev **cons_set, **old_set;
+	sa_nracanaa stdio_dev *dev;
 
 	console_args = strdup(arg);
-	if (console_args == NULL)
-		return 1;
+	གལ་སྲིད (console_args == NULL)
+		ལོག 1;
 	/*
 	 * Check whether a comma separated list of devices was
 	 * entered and count how many devices were entered.
@@ -51,75 +51,75 @@ int iomux_doenv(const int console, const char *arg)
 	 */
 	i = 0;
 	temp = console_args;
-	for (;;) {
+	དོན་ལུ (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
 
 		temp = strchr(temp, ',');
-		if (temp == NULL)
-			break;
+		གལ་སྲིད (temp == NULL)
+			bha_nga;
 
 		temp++;
 	}
-	start = (char **)malloc(i * sizeof(char *));
-	if (start == NULL) {
+	start = (var_na **)malloc(i * parimaa_na(var_na *));
+	གལ་སྲིད (start == NULL) {
 		free(console_args);
-		return 1;
+		ལོག 1;
 	}
 	i = 0;
 	start[0] = console_args;
-	for (;;) {
+	དོན་ལུ (;;) {
 		temp = strchr(start[i++], ',');
-		if (temp == NULL)
-			break;
+		གལ་སྲིད (temp == NULL)
+			bha_nga;
 		*temp = '\0';
 		start[i] = temp + 1;
 	}
-	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
-	if (cons_set == NULL) {
+	cons_set = (sa_nracanaa stdio_dev **)calloc(i, parimaa_na(sa_nracanaa stdio_dev *));
+	གལ་སྲིད (cons_set == NULL) {
 		free(start);
 		free(console_args);
-		return 1;
+		ལོག 1;
 	}
 
 	io_flag = stdio_file_to_flags(console);
-	if (io_flag < 0) {
+	གལ་སྲིད (io_flag < 0) {
 		free(start);
 		free(console_args);
 		free(cons_set);
-		return 1;
+		ལོག 1;
 	}
 
 	cs_idx = 0;
-	for (j = 0; j < i; j++) {
+	དོན་ལུ (j = 0; j < i; j++) {
 		/*
 		 * Check whether the device exists and is valid.
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
 		dev = console_search_dev(io_flag, start[j]);
-		if (dev == NULL)
+		གལ་སྲིད (dev == NULL)
 			continue;
 		/*
 		 * Prevent multiple entries for a device.
 		 */
 		 repeat = iomux_match_device(cons_set, cs_idx, dev);
-		 if (repeat >= 0)
+		 གལ་སྲིད (repeat >= 0)
 			continue;
 		/*
 		 * Try assigning the specified device.
 		 * This could screw up the console settings for apps.
 		 */
-		if (console_assign(console, start[j]) < 0)
+		གལ་སྲིད (console_assign(console, start[j]) < 0)
 			continue;
 		cons_set[cs_idx++] = dev;
 	}
 	free(console_args);
 	free(start);
 	/* failed to set any console */
-	if (cs_idx == 0) {
+	གལ་སྲིད (cs_idx == 0) {
 		free(cons_set);
-		return 1;
+		ལོག 1;
 	}
 
 	old_set = console_devices[console];
@@ -129,39 +129,39 @@ int iomux_doenv(const int console, const char *arg)
 	cd_count[console] = cs_idx;
 
 	/* Stop dropped consoles */
-	for (i = 0; i < repeat; i++) {
+	དོན་ལུ (i = 0; i < repeat; i++) {
 		j = iomux_match_device(cons_set, cs_idx, old_set[i]);
-		if (j == -ENOENT)
+		གལ་སྲིད (j == -ENOENT)
 			console_stop(console, old_set[i]);
 	}
 
 	free(old_set);
-	return 0;
+	ལོག 0;
 }
 
-int iomux_replace_device(const int console, const char *old, const char *new)
+ཧྲིལ iomux_replace_device(const ཧྲིལ console, const var_na *old, const var_na *new)
 {
-	struct stdio_dev *dev;
-	char *arg = NULL;	/* Initial empty list */
-	int size = 1;		/* For NUL terminator */
-	int i, ret;
+	sa_nracanaa stdio_dev *dev;
+	var_na *arg = NULL;	/* Initial empty list */
+	ཧྲིལ size = 1;		/* For NUL terminator */
+	ཧྲིལ i, ret;
 
 	for_each_console_dev(i, console, dev) {
-		const char *name = strcmp(dev->name, old) ? dev->name : new;
-		char *tmp;
+		const var_na *name = strcmp(dev->name, old) ? dev->name : new;
+		var_na *tmp;
 
 		/* Append name with a ',' (comma) separator */
 		tmp = realloc(arg, size + strlen(name) + 1);
-		if (!tmp) {
+		གལ་སྲིད (!tmp) {
 			free(arg);
-			return -ENOMEM;
+			ལོག -ENOMEM;
 		}
 
-		if (arg) {
+		གལ་སྲིད (arg) {
 			strcat(tmp, ",");
 			strcat(tmp, name);
 		}
-		else
+		དེ་མིན
 			strcpy(tmp, name);
 
 		arg = tmp;
@@ -169,10 +169,10 @@ int iomux_replace_device(const int console, const char *old, const char *new)
 	}
 
 	ret = iomux_doenv(console, arg);
-	if (ret)
+	གལ་སྲིད (ret)
 		ret = -EINVAL;
 
 	free(arg);
-	return ret;
+	ལོག ret;
 }
 #endif /* CONSOLE_MUX */

@@ -24,15 +24,15 @@
  * If necessary you have to map the second bank at lower addresses.
  */
 void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+flash_protect(ཧྲིལ flag, ulong from, ulong to, flash_info_t *info)
 {
 	ulong b_end;
 	short s_end;
-	int i;
+	ཧྲིལ i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	གལ་སྲིད (!info || info->sector_count == 0 || info->size == 0 || to < from) {
+		ལོག;
 	}
 
 	s_end = info->sector_count - 1;	/* index of last sector */
@@ -46,12 +46,12 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
+	གལ་སྲིད (info->flash_id == FLASH_UNKNOWN ||
 	    to < info->start[0] || from > b_end) {
-		return;
+		ལོག;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
+	དོན་ལུ (i=0; i<info->sector_count; ++i) {
 		ulong end;		/* last address in current sect	*/
 
 		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
@@ -59,19 +59,19 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		གལ་སྲིད (from <= end && to >= info->start[i]) {
+			གལ་སྲིད (flag & FLAG_PROTECT_CLEAR) {
+#གལ་སྲིད defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#དེ་མིན
 				info->protect[i] = 0;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			དེ་མིན གལ་སྲིད (flag & FLAG_PROTECT_SET) {
+#གལ་སྲིད defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#དེ་མིན
 				info->protect[i] = 1;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
@@ -87,10 +87,10 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	ཧྲིལ i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
+	དོན་ལུ (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		གལ་སྲིད (info->flash_id != FLASH_UNKNOWN &&
 		    addr >= info->start[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
@@ -98,11 +98,11 @@ addr2info(ulong addr)
 		     * Please don't change this unless you understand this.
 		     */
 		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+			ལོག (info);
 		}
 	}
 
-	return (NULL);
+	ལོག (NULL);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,101 +118,101 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
-flash_write(char *src, ulong addr, ulong cnt)
+ཧྲིལ
+flash_write(var_na *src, ulong addr, ulong cnt)
 {
-	int i;
+	ཧྲིལ i;
 	ulong         end        = addr + cnt - 1;
 	flash_info_t *info_first = addr2info(addr);
 	flash_info_t *info_last  = addr2info(end);
 	flash_info_t *info;
-	__maybe_unused char *src_orig = src;
-	__maybe_unused char *addr_orig = (char *)addr;
+	__maybe_unused var_na *src_orig = src;
+	__maybe_unused var_na *addr_orig = (var_na *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	གལ་སྲིད (cnt == 0) {
+		ལོག (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	གལ་སྲིད (!info_first || !info_last) {
+		ལོག (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
+	དོན་ལུ (info = info_first; info <= info_last; ++info) {
 		ulong b_end = info->start[0] + info->size;	/* bank end addr */
 		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
+		དོན་ལུ (i=0; i<info->sector_count; ++i) {
 			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			གལ་སྲིད ((end >= info->start[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				ལོག (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	དོན་ལུ (info = info_first; info <= info_last && cnt>0; ++info) {
 		ulong len;
 
 		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		གལ་སྲིད (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		གལ་སྲིད ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			ལོག (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
+#གལ་སྲིད defined(CONFIG_FLASH_VERIFY)
+	གལ་སྲིད (memcmp(src_orig, addr_orig, cnt_orig)) {
 		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+		ལོག FL_ERR_PROG_ERROR;
 	}
 #endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	ལོག (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+void flash_perror(ཧྲིལ err)
 {
 	switch (err) {
-	case FL_ERR_OK:
-		break;
-	case FL_ERR_TIMEOUT:
+	pak_sa FL_ERR_OK:
+		bha_nga;
+	pak_sa FL_ERR_TIMEOUT:
 		puts ("Timeout writing to Flash\n");
-		break;
-	case FL_ERR_NOT_ERASED:
+		bha_nga;
+	pak_sa FL_ERR_NOT_ERASED:
 		puts ("Flash not Erased\n");
-		break;
-	case FL_ERR_PROTECTED:
+		bha_nga;
+	pak_sa FL_ERR_PROTECTED:
 		puts ("Can't write to protected Flash sectors\n");
-		break;
-	case FL_ERR_INVAL:
+		bha_nga;
+	pak_sa FL_ERR_INVAL:
 		puts ("Outside available Flash\n");
-		break;
-	case FL_ERR_ALIGN:
+		bha_nga;
+	pak_sa FL_ERR_ALIGN:
 		puts ("Start and/or end address not on sector boundary\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_VENDOR:
+		bha_nga;
+	pak_sa FL_ERR_UNKNOWN_FLASH_VENDOR:
 		puts ("Unknown Vendor of Flash\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_TYPE:
+		bha_nga;
+	pak_sa FL_ERR_UNKNOWN_FLASH_TYPE:
 		puts ("Unknown Type of Flash\n");
-		break;
-	case FL_ERR_PROG_ERROR:
+		bha_nga;
+	pak_sa FL_ERR_PROG_ERROR:
 		puts ("General Flash Programming Error\n");
-		break;
-	case FL_ERR_ABORTED:
+		bha_nga;
+	pak_sa FL_ERR_ABORTED:
 		puts("Flash Programming Aborted\n");
-		break;
+		bha_nga;
 	default:
 		printf ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
-		break;
+		bha_nga;
 	}
 }

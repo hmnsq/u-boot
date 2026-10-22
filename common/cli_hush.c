@@ -104,10 +104,10 @@
 
 /* #include <dmalloc.h> */
 
-#if 1
+#གལ་སྲིད 1
 #include "busybox.h"
 #include "cmdedit.h"
-#else
+#དེ་མིན
 #define applet_name "hush"
 #include "standalone.h"
 #define hush_main main
@@ -129,8 +129,8 @@
 #define syntax() syntax_err()
 #define xstrdup strdup
 #define error_msg printf
-#else
-typedef enum {
+#དེ་མིན
+typedef ga_nanaa {
 	REDIRECT_INPUT     = 1,
 	REDIRECT_OVERWRITE = 2,
 	REDIRECT_APPEND    = 3,
@@ -140,7 +140,7 @@ typedef enum {
 
 /* The descrip member of this structure is only used to make debugging
  * output pretty */
-struct {int mode; int default_fd; char *descrip;} redir_table[] = {
+sa_nracanaa {ཧྲིལ mode; ཧྲིལ default_fd; var_na *descrip;} redir_table[] = {
 	{ 0,                         0, "()" },
 	{ O_RDONLY,                  0, "<"  },
 	{ O_CREAT|O_TRUNC|O_WRONLY,  1, ">"  },
@@ -150,7 +150,7 @@ struct {int mode; int default_fd; char *descrip;} redir_table[] = {
 };
 #endif
 
-typedef enum {
+typedef ga_nanaa {
 	PIPE_SEQ = 1,
 	PIPE_AND = 2,
 	PIPE_OR  = 3,
@@ -158,7 +158,7 @@ typedef enum {
 } pipe_style;
 
 /* might eventually control execution */
-typedef enum {
+typedef ga_nanaa {
 	RES_NONE  = 0,
 	RES_IF    = 1,
 	RES_THEN  = 2,
@@ -189,130 +189,130 @@ typedef enum {
 #define FLAG_START (1<<RES_XXXX)
 
 /* This holds pointers to the various results of parsing */
-struct p_context {
-	struct child_prog *child;
-	struct pipe *list_head;
-	struct pipe *pipe;
+sa_nracanaa p_context {
+	sa_nracanaa child_prog *child;
+	sa_nracanaa pipe *list_head;
+	sa_nracanaa pipe *pipe;
 #ifndef __U_BOOT__
-	struct redir_struct *pending_redirect;
+	sa_nracanaa redir_struct *pending_redirect;
 #endif
 	reserved_style w;
-	int old_flag;				/* for figuring out valid reserved words */
-	struct p_context *stack;
-	int type;			/* define type of parser : ";$" common or special symbol */
+	ཧྲིལ old_flag;				/* for figuring out valid reserved words */
+	sa_nracanaa p_context *stack;
+	ཧྲིལ type;			/* define type of parser : ";$" common or special symbol */
 	/* How about quoting status? */
 };
 
 #ifndef __U_BOOT__
-struct redir_struct {
+sa_nracanaa redir_struct {
 	redir_type type;			/* type of redirection */
-	int fd;						/* file descriptor being redirected */
-	int dup;					/* -1, or file descriptor being duplicated */
-	struct redir_struct *next;	/* pointer to the next redirect in the list */
+	ཧྲིལ fd;						/* file descriptor being redirected */
+	ཧྲིལ dup;					/* -1, or file descriptor being duplicated */
+	sa_nracanaa redir_struct *next;	/* pointer to the next redirect in the list */
 	glob_t word;				/* *word.gl_pathv is the filename */
 };
 #endif
 
-struct child_prog {
+sa_nracanaa child_prog {
 #ifndef __U_BOOT__
 	pid_t pid;					/* 0 if exited */
 #endif
-	char **argv;				/* program name and arguments */
+	var_na **argv;				/* program name and arguments */
 	/* was quoted when parsed; copy of struct o_string.nonnull field */
-	int *argv_nonnull;
+	ཧྲིལ *argv_nonnull;
 #ifdef __U_BOOT__
-	int    argc;                            /* number of program arguments */
+	ཧྲིལ    argc;                            /* number of program arguments */
 #endif
-	struct pipe *group;			/* if non-NULL, first in group or subshell */
+	sa_nracanaa pipe *group;			/* if non-NULL, first in group or subshell */
 #ifndef __U_BOOT__
-	int subshell;				/* flag, non-zero if group must be forked */
-	struct redir_struct *redirects;	/* I/O redirections */
+	ཧྲིལ subshell;				/* flag, non-zero if group must be forked */
+	sa_nracanaa redir_struct *redirects;	/* I/O redirections */
 	glob_t glob_result;			/* result of parameter globbing */
-	int is_stopped;				/* is the program currently running? */
-	struct pipe *family;		/* pointer back to the child's parent pipe */
+	ཧྲིལ is_stopped;				/* is the program currently running? */
+	sa_nracanaa pipe *family;		/* pointer back to the child's parent pipe */
 #endif
-	int sp;				/* number of SPECIAL_VAR_SYMBOL */
-	int type;
+	ཧྲིལ sp;				/* number of SPECIAL_VAR_SYMBOL */
+	ཧྲིལ type;
 };
 
-struct pipe {
+sa_nracanaa pipe {
 #ifndef __U_BOOT__
-	int jobid;					/* job number */
+	ཧྲིལ jobid;					/* job number */
 #endif
-	int num_progs;				/* total number of programs in job */
+	ཧྲིལ num_progs;				/* total number of programs in job */
 #ifndef __U_BOOT__
-	int running_progs;			/* number of programs running */
-	char *text;					/* name of job */
-	char *cmdbuf;				/* buffer various argv's point into */
+	ཧྲིལ running_progs;			/* number of programs running */
+	var_na *text;					/* name of job */
+	var_na *cmdbuf;				/* buffer various argv's point into */
 	pid_t pgrp;					/* process group ID for the job */
 #endif
-	struct child_prog *progs;	/* array of commands in pipe */
-	struct pipe *next;			/* to track background commands */
+	sa_nracanaa child_prog *progs;	/* array of commands in pipe */
+	sa_nracanaa pipe *next;			/* to track background commands */
 #ifndef __U_BOOT__
-	int stopped_progs;			/* number of programs alive, but stopped */
-	int job_context;			/* bitmask defining current context */
+	ཧྲིལ stopped_progs;			/* number of programs alive, but stopped */
+	ཧྲིལ job_context;			/* bitmask defining current context */
 #endif
 	pipe_style followup;		/* PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND */
 	reserved_style r_mode;		/* supports if, for, while, until */
 };
 
 #ifndef __U_BOOT__
-struct close_me {
-	int fd;
-	struct close_me *next;
+sa_nracanaa close_me {
+	ཧྲིལ fd;
+	sa_nracanaa close_me *next;
 };
 #endif
 
-struct variables {
-	char *name;
-	char *value;
-	int flg_export;
-	int flg_read_only;
-	struct variables *next;
+sa_nracanaa variables {
+	var_na *name;
+	var_na *value;
+	ཧྲིལ flg_export;
+	ཧྲིལ flg_read_only;
+	sa_nracanaa variables *next;
 };
 
 /* globals, connect us to the outside world
  * the first three support $?, $#, and $1 */
 #ifndef __U_BOOT__
-char **global_argv;
-unsigned int global_argc;
+var_na **global_argv;
+unsigned ཧྲིལ global_argc;
 #endif
-static unsigned int last_return_code;
+static unsigned ཧྲིལ last_return_code;
 #ifndef __U_BOOT__
-extern char **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
+extern var_na **environ; /* This is in <unistd.h>, but protected with __USE_GNU */
 #endif
 
 /* "globals" within this file */
 static uchar *ifs;
-static char map[256];
+static var_na map[256];
 #ifndef __U_BOOT__
-static int fake_mode;
-static int interactive;
-static struct close_me *close_me_head;
-static const char *cwd;
-static struct pipe *job_list;
-static unsigned int last_bg_pid;
-static unsigned int last_jobid;
-static unsigned int shell_terminal;
-static char *PS1;
-static char *PS2;
-struct variables shell_ver = { "HUSH_VERSION", "0.01", 1, 1, 0 };
-struct variables *top_vars = &shell_ver;
-#else
-static int flag_repeat = 0;
-static int do_repeat = 0;
-static struct variables *top_vars = NULL ;
+static ཧྲིལ fake_mode;
+static ཧྲིལ interactive;
+static sa_nracanaa close_me *close_me_head;
+static const var_na *cwd;
+static sa_nracanaa pipe *job_list;
+static unsigned ཧྲིལ last_bg_pid;
+static unsigned ཧྲིལ last_jobid;
+static unsigned ཧྲིལ shell_terminal;
+static var_na *PS1;
+static var_na *PS2;
+sa_nracanaa variables shell_ver = { "HUSH_VERSION", "0.01", 1, 1, 0 };
+sa_nracanaa variables *top_vars = &shell_ver;
+#དེ་མིན
+static ཧྲིལ flag_repeat = 0;
+static ཧྲིལ do_repeat = 0;
+static sa_nracanaa variables *top_vars = NULL ;
 #endif /*__U_BOOT__ */
 
 #define B_CHUNK (100)
 #define B_NOSPAC 1
 
-typedef struct {
-	char *data;
-	int length;
-	int maxlen;
-	int quote;
-	int nonnull;
+typedef sa_nracanaa {
+	var_na *data;
+	ཧྲིལ length;
+	ཧྲིལ maxlen;
+	ཧྲིལ quote;
+	ཧྲིལ nonnull;
 } o_string;
 #define NULL_O_STRING {NULL,0,0,0,0}
 /* used for initialization:
@@ -320,18 +320,18 @@ typedef struct {
 
 /* I can almost use ordinary FILE *.  Is open_memstream() universally
  * available?  Where is it documented? */
-struct in_str {
-	const unsigned char *p;
+sa_nracanaa in_str {
+	const unsigned var_na *p;
 #ifndef __U_BOOT__
-	char peek_buf[2];
+	var_na peek_buf[2];
 #endif
-	int __promptme;
-	int promptmode;
+	ཧྲིལ __promptme;
+	ཧྲིལ promptmode;
 #ifndef __U_BOOT__
 	FILE *file;
 #endif
-	int (*get) (struct in_str *);
-	int (*peek) (struct in_str *);
+	ཧྲིལ (*get) (sa_nracanaa in_str *);
+	ཧྲིལ (*peek) (sa_nracanaa in_str *);
 };
 #define b_getch(input) ((input)->get(input))
 #define b_peek(input) ((input)->peek(input))
@@ -339,33 +339,33 @@ struct in_str {
 #ifndef __U_BOOT__
 #define JOB_STATUS_FORMAT "[%d] %-22s %.40s\n"
 
-struct built_in_command {
-	char *cmd;					/* name */
-	char *descr;				/* description */
-	int (*function) (struct child_prog *);	/* function ptr */
+sa_nracanaa built_in_command {
+	var_na *cmd;					/* name */
+	var_na *descr;				/* description */
+	ཧྲིལ (*function) (sa_nracanaa child_prog *);	/* function ptr */
 };
 #endif
 
 /* define DEBUG_SHELL for debugging output (obviously ;-)) */
-#if 0
+#གལ་སྲིད 0
 #define DEBUG_SHELL
 #endif
 
 /* This should be in utility.c */
 #ifdef DEBUG_SHELL
 #ifndef __U_BOOT__
-static void debug_printf(const char *format, ...)
+static void debug_printf(const var_na *format, ...)
 {
 	va_list args;
 	va_start(args, format);
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
-#else
+#དེ་མིན
 #define debug_printf(fmt,args...)	printf (fmt ,##args)
 #endif
-#else
-static inline void debug_printf(const char *format, ...) { }
+#དེ་མིན
+static anta_hstha void debug_printf(const var_na *format, ...) { }
 #endif
 #define final_printf debug_printf
 
@@ -373,8 +373,8 @@ static inline void debug_printf(const char *format, ...) { }
 static void syntax_err(void) {
 	 printf("syntax error\n");
 }
-#else
-static void __syntax(char *file, int line) {
+#དེ་མིན
+static void __syntax(var_na *file, ཧྲིལ line) {
 	error_msg("syntax error %s:%d", file, line);
 }
 #define syntax() __syntax(__FILE__, __LINE__)
@@ -383,111 +383,111 @@ static void __syntax(char *file, int line) {
 #ifdef __U_BOOT__
 static void *xmalloc(size_t size);
 static void *xrealloc(void *ptr, size_t size);
-#else
+#དེ་མིན
 /* Index of subroutines: */
 /*   function prototypes for builtins */
-static int builtin_cd(struct child_prog *child);
-static int builtin_env(struct child_prog *child);
-static int builtin_eval(struct child_prog *child);
-static int builtin_exec(struct child_prog *child);
-static int builtin_exit(struct child_prog *child);
-static int builtin_export(struct child_prog *child);
-static int builtin_fg_bg(struct child_prog *child);
-static int builtin_help(struct child_prog *child);
-static int builtin_jobs(struct child_prog *child);
-static int builtin_pwd(struct child_prog *child);
-static int builtin_read(struct child_prog *child);
-static int builtin_set(struct child_prog *child);
-static int builtin_shift(struct child_prog *child);
-static int builtin_source(struct child_prog *child);
-static int builtin_umask(struct child_prog *child);
-static int builtin_unset(struct child_prog *child);
-static int builtin_not_written(struct child_prog *child);
+static ཧྲིལ builtin_cd(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_env(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_eval(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_exec(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_exit(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_export(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_fg_bg(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_help(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_jobs(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_pwd(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_read(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_set(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_shift(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_source(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_umask(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_unset(sa_nracanaa child_prog *child);
+static ཧྲིལ builtin_not_written(sa_nracanaa child_prog *child);
 #endif
 /*   o_string manipulation: */
-static int b_check_space(o_string *o, int len);
-static int b_addchr(o_string *o, int ch);
+static ཧྲིལ b_check_space(o_string *o, ཧྲིལ len);
+static ཧྲིལ b_addchr(o_string *o, ཧྲིལ ch);
 static void b_reset(o_string *o);
-static int b_addqchr(o_string *o, int ch, int quote);
+static ཧྲིལ b_addqchr(o_string *o, ཧྲིལ ch, ཧྲིལ quote);
 #ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i);
+static ཧྲིལ b_adduint(o_string *o, unsigned ཧྲིལ i);
 #endif
 /*  in_str manipulations: */
-static int static_get(struct in_str *i);
-static int static_peek(struct in_str *i);
-static int file_get(struct in_str *i);
-static int file_peek(struct in_str *i);
+static ཧྲིལ static_get(sa_nracanaa in_str *i);
+static ཧྲིལ static_peek(sa_nracanaa in_str *i);
+static ཧྲིལ file_get(sa_nracanaa in_str *i);
+static ཧྲིལ file_peek(sa_nracanaa in_str *i);
 #ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, FILE *f);
-#else
-static void setup_file_in_str(struct in_str *i);
+static void setup_file_in_str(sa_nracanaa in_str *i, FILE *f);
+#དེ་མིན
+static void setup_file_in_str(sa_nracanaa in_str *i);
 #endif
-static void setup_string_in_str(struct in_str *i, const char *s);
+static void setup_string_in_str(sa_nracanaa in_str *i, const var_na *s);
 #ifndef __U_BOOT__
 /*  close_me manipulations: */
-static void mark_open(int fd);
-static void mark_closed(int fd);
+static void mark_open(ཧྲིལ fd);
+static void mark_closed(ཧྲིལ fd);
 static void close_all(void);
 #endif
 /*  "run" the final data structures: */
-static char *indenter(int i);
-static int free_pipe_list(struct pipe *head, int indent);
-static int free_pipe(struct pipe *pi, int indent);
+static var_na *indenter(ཧྲིལ i);
+static ཧྲིལ free_pipe_list(sa_nracanaa pipe *head, ཧྲིལ indent);
+static ཧྲིལ free_pipe(sa_nracanaa pipe *pi, ཧྲིལ indent);
 /*  really run the final data structures: */
 #ifndef __U_BOOT__
-static int setup_redirects(struct child_prog *prog, int squirrel[]);
+static ཧྲིལ setup_redirects(sa_nracanaa child_prog *prog, ཧྲིལ squirrel[]);
 #endif
-static int run_list_real(struct pipe *pi);
+static ཧྲིལ run_list_real(sa_nracanaa pipe *pi);
 #ifndef __U_BOOT__
-static void pseudo_exec(struct child_prog *child) __attribute__ ((noreturn));
+static void pseudo_exec(sa_nracanaa child_prog *child) __attribute__ ((noreturn));
 #endif
-static int run_pipe_real(struct pipe *pi);
+static ཧྲིལ run_pipe_real(sa_nracanaa pipe *pi);
 /*   extended glob support: */
 #ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob);
-static int glob_needed(const char *s);
-static int xglob(o_string *dest, int flags, glob_t *pglob);
+static ཧྲིལ globhack(const var_na *src, ཧྲིལ flags, glob_t *pglob);
+static ཧྲིལ glob_needed(const var_na *s);
+static ཧྲིལ xglob(o_string *dest, ཧྲིལ flags, glob_t *pglob);
 #endif
 /*   variable assignment: */
-static int is_assignment(const char *s);
+static ཧྲིལ is_assignment(const var_na *s);
 /*   data structure manipulation: */
 #ifndef __U_BOOT__
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style, struct in_str *input);
+static ཧྲིལ setup_redirect(sa_nracanaa p_context *ctx, ཧྲིལ fd, redir_type style, sa_nracanaa in_str *input);
 #endif
-static void initialize_context(struct p_context *ctx);
-static int done_word(o_string *dest, struct p_context *ctx);
-static int done_command(struct p_context *ctx);
-static int done_pipe(struct p_context *ctx, pipe_style type);
+static void initialize_context(sa_nracanaa p_context *ctx);
+static ཧྲིལ done_word(o_string *dest, sa_nracanaa p_context *ctx);
+static ཧྲིལ done_command(sa_nracanaa p_context *ctx);
+static ཧྲིལ done_pipe(sa_nracanaa p_context *ctx, pipe_style type);
 /*   primary string parsing: */
 #ifndef __U_BOOT__
-static int redirect_dup_num(struct in_str *input);
-static int redirect_opt_num(o_string *o);
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end);
-static int parse_group(o_string *dest, struct p_context *ctx, struct in_str *input, int ch);
+static ཧྲིལ redirect_dup_num(sa_nracanaa in_str *input);
+static ཧྲིལ redirect_opt_num(o_string *o);
+static ཧྲིལ process_command_subs(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input, ཧྲིལ subst_end);
+static ཧྲིལ parse_group(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input, ཧྲིལ ch);
 #endif
-static char *lookup_param(char *src);
-static char *make_string(char **inp, int *nonnull);
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input);
+static var_na *lookup_param(var_na *src);
+static var_na *make_string(var_na **inp, ཧྲིལ *nonnull);
+static ཧྲིལ handle_dollar(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input);
 #ifndef __U_BOOT__
-static int parse_string(o_string *dest, struct p_context *ctx, const char *src);
+static ཧྲིལ parse_string(o_string *dest, sa_nracanaa p_context *ctx, const var_na *src);
 #endif
-static int parse_stream(o_string *dest, struct p_context *ctx, struct in_str *input0, int end_trigger);
+static ཧྲིལ parse_stream(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input0, ཧྲིལ end_trigger);
 /*   setup: */
-static int parse_stream_outer(struct in_str *inp, int flag);
+static ཧྲིལ parse_stream_outer(sa_nracanaa in_str *inp, ཧྲིལ flag);
 #ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag);
-static int parse_file_outer(FILE *f);
+static ཧྲིལ parse_string_outer(const var_na *s, ཧྲིལ flag);
+static ཧྲིལ parse_file_outer(FILE *f);
 #endif
 #ifndef __U_BOOT__
 /*   job management: */
-static int checkjobs(struct pipe* fg_pipe);
-static void insert_bg_job(struct pipe *pi);
-static void remove_bg_job(struct pipe *pi);
+static ཧྲིལ checkjobs(sa_nracanaa pipe* fg_pipe);
+static void insert_bg_job(sa_nracanaa pipe *pi);
+static void remove_bg_job(sa_nracanaa pipe *pi);
 #endif
 /*     local variable support */
-static char **make_list_in(char **inp, char *name);
-static char *insert_var_value(char *inp);
-static char *insert_var_value_sub(char *inp, int tag_subst);
+static var_na **make_list_in(var_na **inp, var_na *name);
+static var_na *insert_var_value(var_na *inp);
+static var_na *insert_var_value_sub(var_na *inp, ཧྲིལ tag_subst);
 
 #ifndef __U_BOOT__
 /* Table of built-in functions.  They can be forked or not, depending on
@@ -496,7 +496,7 @@ static char *insert_var_value_sub(char *inp, int tag_subst);
  * in the parent shell process.  If forked, of course they can not.
  * For example, 'unset foo | whatever' will parse and run, but foo will
  * still be set at the end. */
-static struct built_in_command bltins[] = {
+static sa_nracanaa built_in_command bltins[] = {
 	{"bg", "Resume a job in the background", builtin_fg_bg},
 	{"break", "Exit for, while or until loop", builtin_not_written},
 	{"cd", "Change working directory", builtin_cd},
@@ -523,295 +523,295 @@ static struct built_in_command bltins[] = {
 	{NULL, NULL, NULL}
 };
 
-static const char *set_cwd(void)
+static const var_na *set_cwd(void)
 {
-	if(cwd==unknown)
+	གལ་སྲིད(cwd==unknown)
 		cwd = NULL;     /* xgetcwd(arg) called free(arg) */
-	cwd = xgetcwd((char *)cwd);
-	if (!cwd)
+	cwd = xgetcwd((var_na *)cwd);
+	གལ་སྲིད (!cwd)
 		cwd = unknown;
-	return cwd;
+	ལོག cwd;
 }
 
 /* built-in 'eval' handler */
-static int builtin_eval(struct child_prog *child)
+static ཧྲིལ builtin_eval(sa_nracanaa child_prog *child)
 {
-	char *str = NULL;
-	int rcode = EXIT_SUCCESS;
+	var_na *str = NULL;
+	ཧྲིལ rcode = EXIT_SUCCESS;
 
-	if (child->argv[1]) {
+	གལ་སྲིད (child->argv[1]) {
 		str = make_string(child->argv + 1);
 		parse_string_outer(str, FLAG_EXIT_FROM_LOOP |
 					FLAG_PARSE_SEMICOLON);
 		free(str);
 		rcode = last_return_code;
 	}
-	return rcode;
+	ལོག rcode;
 }
 
 /* built-in 'cd <path>' handler */
-static int builtin_cd(struct child_prog *child)
+static ཧྲིལ builtin_cd(sa_nracanaa child_prog *child)
 {
-	char *newdir;
-	if (child->argv[1] == NULL)
+	var_na *newdir;
+	གལ་སྲིད (child->argv[1] == NULL)
 		newdir = env_get("HOME");
-	else
+	དེ་མིན
 		newdir = child->argv[1];
-	if (chdir(newdir)) {
+	གལ་སྲིད (chdir(newdir)) {
 		printf("cd: %s: %s\n", newdir, strerror(errno));
-		return EXIT_FAILURE;
+		ལོག EXIT_FAILURE;
 	}
 	set_cwd();
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'env' handler */
-static int builtin_env(struct child_prog *dummy)
+static ཧྲིལ builtin_env(sa_nracanaa child_prog *dummy)
 {
-	char **e = environ;
-	if (e == NULL) return EXIT_FAILURE;
-	for (; *e; e++) {
+	var_na **e = environ;
+	གལ་སྲིད (e == NULL) ལོག EXIT_FAILURE;
+	དོན་ལུ (; *e; e++) {
 		puts(*e);
 	}
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'exec' handler */
-static int builtin_exec(struct child_prog *child)
+static ཧྲིལ builtin_exec(sa_nracanaa child_prog *child)
 {
-	if (child->argv[1] == NULL)
-		return EXIT_SUCCESS;   /* Really? */
+	གལ་སྲིད (child->argv[1] == NULL)
+		ལོག EXIT_SUCCESS;   /* Really? */
 	child->argv++;
 	pseudo_exec(child);
 	/* never returns */
 }
 
 /* built-in 'exit' handler */
-static int builtin_exit(struct child_prog *child)
+static ཧྲིལ builtin_exit(sa_nracanaa child_prog *child)
 {
-	if (child->argv[1] == NULL)
+	གལ་སྲིད (child->argv[1] == NULL)
 		exit(last_return_code);
 	exit (atoi(child->argv[1]));
 }
 
 /* built-in 'export VAR=value' handler */
-static int builtin_export(struct child_prog *child)
+static ཧྲིལ builtin_export(sa_nracanaa child_prog *child)
 {
-	int res = 0;
-	char *name = child->argv[1];
+	ཧྲིལ res = 0;
+	var_na *name = child->argv[1];
 
-	if (name == NULL) {
-		return (builtin_env(child));
+	གལ་སྲིད (name == NULL) {
+		ལོག (builtin_env(child));
 	}
 
 	name = strdup(name);
 
-	if(name) {
-		char *value = strchr(name, '=');
+	གལ་སྲིད(name) {
+		var_na *value = strchr(name, '=');
 
-		if (!value) {
-			char *tmp;
+		གལ་སྲིད (!value) {
+			var_na *tmp;
 			/* They are exporting something without an =VALUE */
 
 			value = get_local_var(name);
-			if (value) {
+			གལ་སྲིད (value) {
 				size_t ln = strlen(name);
 
 				tmp = realloc(name, ln+strlen(value)+2);
-				if(tmp==NULL)
+				གལ་སྲིད(tmp==NULL)
 					res = -1;
-				else {
+				དེ་མིན {
 					sprintf(tmp+ln, "=%s", value);
 					name = tmp;
 				}
-			} else {
+			} དེ་མིན {
 				/* bash does not return an error when trying to export
 				 * an undefined variable.  Do likewise. */
 				res = 1;
 			}
 		}
 	}
-	if (res<0)
+	གལ་སྲིད (res<0)
 		perror_msg("export");
-	else if(res==0)
+	དེ་མིན གལ་སྲིད(res==0)
 		res = set_local_var(name, 1);
-	else
+	དེ་མིན
 		res = 0;
 	free(name);
-	return res;
+	ལོག res;
 }
 
 /* built-in 'fg' and 'bg' handler */
-static int builtin_fg_bg(struct child_prog *child)
+static ཧྲིལ builtin_fg_bg(sa_nracanaa child_prog *child)
 {
-	int i, jobnum;
-	struct pipe *pi=NULL;
+	ཧྲིལ i, jobnum;
+	sa_nracanaa pipe *pi=NULL;
 
-	if (!interactive)
-		return EXIT_FAILURE;
+	གལ་སྲིད (!interactive)
+		ལོག EXIT_FAILURE;
 	/* If they gave us no args, assume they want the last backgrounded task */
-	if (!child->argv[1]) {
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == last_jobid) {
-				break;
+	གལ་སྲིད (!child->argv[1]) {
+		དོན་ལུ (pi = job_list; pi; pi = pi->next) {
+			གལ་སྲིད (pi->jobid == last_jobid) {
+				bha_nga;
 			}
 		}
-		if (!pi) {
+		གལ་སྲིད (!pi) {
 			error_msg("%s: no current job", child->argv[0]);
-			return EXIT_FAILURE;
+			ལོག EXIT_FAILURE;
 		}
-	} else {
-		if (sscanf(child->argv[1], "%%%d", &jobnum) != 1) {
+	} དེ་མིན {
+		གལ་སྲིད (sscanf(child->argv[1], "%%%d", &jobnum) != 1) {
 			error_msg("%s: bad argument '%s'", child->argv[0], child->argv[1]);
-			return EXIT_FAILURE;
+			ལོག EXIT_FAILURE;
 		}
-		for (pi = job_list; pi; pi = pi->next) {
-			if (pi->jobid == jobnum) {
-				break;
+		དོན་ལུ (pi = job_list; pi; pi = pi->next) {
+			གལ་སྲིད (pi->jobid == jobnum) {
+				bha_nga;
 			}
 		}
-		if (!pi) {
+		གལ་སྲིད (!pi) {
 			error_msg("%s: %d: no such job", child->argv[0], jobnum);
-			return EXIT_FAILURE;
+			ལོག EXIT_FAILURE;
 		}
 	}
 
-	if (*child->argv[0] == 'f') {
+	གལ་སྲིད (*child->argv[0] == 'f') {
 		/* Put the job into the foreground.  */
 		tcsetpgrp(shell_terminal, pi->pgrp);
 	}
 
 	/* Restart the processes in the job */
-	for (i = 0; i < pi->num_progs; i++)
+	དོན་ལུ (i = 0; i < pi->num_progs; i++)
 		pi->progs[i].is_stopped = 0;
 
-	if ( (i=kill(- pi->pgrp, SIGCONT)) < 0) {
-		if (i == ESRCH) {
+	གལ་སྲིད ( (i=kill(- pi->pgrp, SIGCONT)) < 0) {
+		གལ་སྲིད (i == ESRCH) {
 			remove_bg_job(pi);
-		} else {
+		} དེ་མིན {
 			perror_msg("kill (SIGCONT)");
 		}
 	}
 
 	pi->stopped_progs = 0;
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'help' handler */
-static int builtin_help(struct child_prog *dummy)
+static ཧྲིལ builtin_help(sa_nracanaa child_prog *dummy)
 {
-	struct built_in_command *x;
+	sa_nracanaa built_in_command *x;
 
 	printf("\nBuilt-in commands:\n");
 	printf("-------------------\n");
-	for (x = bltins; x->cmd; x++) {
-		if (x->descr==NULL)
+	དོན་ལུ (x = bltins; x->cmd; x++) {
+		གལ་སྲིད (x->descr==NULL)
 			continue;
 		printf("%s\t%s\n", x->cmd, x->descr);
 	}
 	printf("\n\n");
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'jobs' handler */
-static int builtin_jobs(struct child_prog *child)
+static ཧྲིལ builtin_jobs(sa_nracanaa child_prog *child)
 {
-	struct pipe *job;
-	char *status_string;
+	sa_nracanaa pipe *job;
+	var_na *status_string;
 
-	for (job = job_list; job; job = job->next) {
-		if (job->running_progs == job->stopped_progs)
+	དོན་ལུ (job = job_list; job; job = job->next) {
+		གལ་སྲིད (job->running_progs == job->stopped_progs)
 			status_string = "Stopped";
-		else
+		དེ་མིན
 			status_string = "Running";
 
 		printf(JOB_STATUS_FORMAT, job->jobid, status_string, job->text);
 	}
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'pwd' handler */
-static int builtin_pwd(struct child_prog *dummy)
+static ཧྲིལ builtin_pwd(sa_nracanaa child_prog *dummy)
 {
 	puts(set_cwd());
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'read VAR' handler */
-static int builtin_read(struct child_prog *child)
+static ཧྲིལ builtin_read(sa_nracanaa child_prog *child)
 {
-	int res;
+	ཧྲིལ res;
 
-	if (child->argv[1]) {
-		char string[BUFSIZ];
-		char *var = 0;
+	གལ་སྲིད (child->argv[1]) {
+		var_na string[BUFSIZ];
+		var_na *var = 0;
 
 		string[0] = 0;  /* In case stdin has only EOF */
 		/* read string */
-		fgets(string, sizeof(string), stdin);
+		fgets(string, parimaa_na(string), stdin);
 		chomp(string);
 		var = malloc(strlen(child->argv[1])+strlen(string)+2);
-		if(var) {
+		གལ་སྲིད(var) {
 			sprintf(var, "%s=%s", child->argv[1], string);
 			res = set_local_var(var, 0);
-		} else
+		} དེ་མིན
 			res = -1;
-		if (res)
+		གལ་སྲིད (res)
 			fprintf(stderr, "read: %m\n");
 		free(var);      /* So not move up to avoid breaking errno */
-		return res;
-	} else {
-		do res=getchar(); while(res!='\n' && res!=EOF);
-		return 0;
+		ལོག res;
+	} དེ་མིན {
+		do res=getchar(); སྐབས(res!='\n' && res!=EOF);
+		ལོག 0;
 	}
 }
 
 /* built-in 'set VAR=value' handler */
-static int builtin_set(struct child_prog *child)
+static ཧྲིལ builtin_set(sa_nracanaa child_prog *child)
 {
-	char *temp = child->argv[1];
-	struct variables *e;
+	var_na *temp = child->argv[1];
+	sa_nracanaa variables *e;
 
-	if (temp == NULL)
-		for(e = top_vars; e; e=e->next)
+	གལ་སྲིད (temp == NULL)
+		དོན་ལུ(e = top_vars; e; e=e->next)
 			printf("%s=%s\n", e->name, e->value);
-	else
+	དེ་མིན
 		set_local_var(temp, 0);
 
-		return EXIT_SUCCESS;
+		ལོག EXIT_SUCCESS;
 }
 
 /* Built-in 'shift' handler */
-static int builtin_shift(struct child_prog *child)
+static ཧྲིལ builtin_shift(sa_nracanaa child_prog *child)
 {
-	int n=1;
-	if (child->argv[1]) {
+	ཧྲིལ n=1;
+	གལ་སྲིད (child->argv[1]) {
 		n=atoi(child->argv[1]);
 	}
-	if (n>=0 && n<global_argc) {
+	གལ་སྲིད (n>=0 && n<global_argc) {
 		/* XXX This probably breaks $0 */
 		global_argc -= n;
 		global_argv += n;
-		return EXIT_SUCCESS;
-	} else {
-		return EXIT_FAILURE;
+		ལོག EXIT_SUCCESS;
+	} དེ་མིན {
+		ལོག EXIT_FAILURE;
 	}
 }
 
 /* Built-in '.' handler (read-in and execute commands from file) */
-static int builtin_source(struct child_prog *child)
+static ཧྲིལ builtin_source(sa_nracanaa child_prog *child)
 {
 	FILE *input;
-	int status;
+	ཧྲིལ status;
 
-	if (child->argv[1] == NULL)
-		return EXIT_FAILURE;
+	གལ་སྲིད (child->argv[1] == NULL)
+		ལོག EXIT_FAILURE;
 
 	/* XXX search through $PATH is missing */
 	input = fopen(child->argv[1], "r");
-	if (!input) {
+	གལ་སྲིད (!input) {
 		error_msg("Couldn't open file '%s'", child->argv[1]);
-		return EXIT_FAILURE;
+		ལོག EXIT_FAILURE;
 	}
 
 	/* Now run the file */
@@ -822,72 +822,72 @@ static int builtin_source(struct child_prog *child)
 	status = parse_file_outer(input);
 	mark_closed(fileno(input));
 	fclose(input);
-	return (status);
+	ལོག (status);
 }
 
-static int builtin_umask(struct child_prog *child)
+static ཧྲིལ builtin_umask(sa_nracanaa child_prog *child)
 {
 	mode_t new_umask;
-	const char *arg = child->argv[1];
-	char *end;
-	if (arg) {
+	const var_na *arg = child->argv[1];
+	var_na *end;
+	གལ་སྲིད (arg) {
 		new_umask=strtoul(arg, &end, 8);
-		if (*end!='\0' || end == arg) {
-			return EXIT_FAILURE;
+		གལ་སྲིད (*end!='\0' || end == arg) {
+			ལོག EXIT_FAILURE;
 		}
-	} else {
-		printf("%.3o\n", (unsigned int) (new_umask=umask(0)));
+	} དེ་མིན {
+		printf("%.3o\n", (unsigned ཧྲིལ) (new_umask=umask(0)));
 	}
 	umask(new_umask);
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
 /* built-in 'unset VAR' handler */
-static int builtin_unset(struct child_prog *child)
+static ཧྲིལ builtin_unset(sa_nracanaa child_prog *child)
 {
 	/* bash returned already true */
 	unset_local_var(child->argv[1]);
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }
 
-static int builtin_not_written(struct child_prog *child)
+static ཧྲིལ builtin_not_written(sa_nracanaa child_prog *child)
 {
 	printf("builtin_%s not written\n",child->argv[0]);
-	return EXIT_FAILURE;
+	ལོག EXIT_FAILURE;
 }
 #endif
 
-static int b_check_space(o_string *o, int len)
+static ཧྲིལ b_check_space(o_string *o, ཧྲིལ len)
 {
 	/* It would be easy to drop a more restrictive policy
 	 * in here, such as setting a maximum string length */
-	if (o->length + len > o->maxlen) {
-		char *old_data = o->data;
+	གལ་སྲིད (o->length + len > o->maxlen) {
+		var_na *old_data = o->data;
 		/* assert (data == NULL || o->maxlen != 0); */
 		o->maxlen += max(2*len, B_CHUNK);
 		o->data = realloc(o->data, 1 + o->maxlen);
-		if (o->data == NULL) {
+		གལ་སྲིད (o->data == NULL) {
 			free(old_data);
 		}
 	}
-	return o->data == NULL;
+	ལོག o->data == NULL;
 }
 
-static int b_addchr(o_string *o, int ch)
+static ཧྲིལ b_addchr(o_string *o, ཧྲིལ ch)
 {
 	debug_printf("b_addchr: %c %d %p\n", ch, o->length, o);
-	if (b_check_space(o, 1)) return B_NOSPAC;
+	གལ་སྲིད (b_check_space(o, 1)) ལོག B_NOSPAC;
 	o->data[o->length] = ch;
 	o->length++;
 	o->data[o->length] = '\0';
-	return 0;
+	ལོག 0;
 }
 
 static void b_reset(o_string *o)
 {
 	o->length = 0;
 	o->nonnull = 0;
-	if (o->data != NULL) *o->data = '\0';
+	གལ་སྲིད (o->data != NULL) *o->data = '\0';
 }
 
 static void b_free(o_string *o)
@@ -901,65 +901,65 @@ static void b_free(o_string *o)
 /* My analysis of quoting semantics tells me that state information
  * is associated with a destination, not a source.
  */
-static int b_addqchr(o_string *o, int ch, int quote)
+static ཧྲིལ b_addqchr(o_string *o, ཧྲིལ ch, ཧྲིལ quote)
 {
-	if (quote && strchr("*?[\\",ch)) {
-		int rc;
+	གལ་སྲིད (quote && strchr("*?[\\",ch)) {
+		ཧྲིལ rc;
 		rc = b_addchr(o, '\\');
-		if (rc) return rc;
+		གལ་སྲིད (rc) ལོག rc;
 	}
-	return b_addchr(o, ch);
+	ལོག b_addchr(o, ch);
 }
 
 #ifndef __U_BOOT__
-static int b_adduint(o_string *o, unsigned int i)
+static ཧྲིལ b_adduint(o_string *o, unsigned ཧྲིལ i)
 {
-	int r;
-	char *p = simple_itoa(i);
+	ཧྲིལ r;
+	var_na *p = simple_itoa(i);
 	/* no escape checking necessary */
-	do r=b_addchr(o, *p++); while (r==0 && *p);
-	return r;
+	do r=b_addchr(o, *p++); སྐབས (r==0 && *p);
+	ལོག r;
 }
 #endif
 
-static int static_get(struct in_str *i)
+static ཧྲིལ static_get(sa_nracanaa in_str *i)
 {
-	int ch = *i->p++;
-	if (ch=='\0') return EOF;
-	return ch;
+	ཧྲིལ ch = *i->p++;
+	གལ་སྲིད (ch=='\0') ལོག EOF;
+	ལོག ch;
 }
 
-static int static_peek(struct in_str *i)
+static ཧྲིལ static_peek(sa_nracanaa in_str *i)
 {
-	return *i->p;
+	ལོག *i->p;
 }
 
 #ifndef __U_BOOT__
-static inline void cmdedit_set_initial_prompt(void)
+static anta_hstha void cmdedit_set_initial_prompt(void)
 {
 #ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
 	PS1 = NULL;
-#else
+#དེ་མིན
 	PS1 = env_get("PS1");
-	if(PS1==0)
+	གལ་སྲིད(PS1==0)
 		PS1 = "\\w \\$ ";
 #endif
 }
 
-static inline void setup_prompt_string(int promptmode, char **prompt_str)
+static anta_hstha void setup_prompt_string(ཧྲིལ promptmode, var_na **prompt_str)
 {
 	debug_printf("setup_prompt_string %d ",promptmode);
 #ifndef CONFIG_FEATURE_SH_FANCY_PROMPT
 	/* Set up the prompt */
-	if (promptmode == 1) {
+	གལ་སྲིད (promptmode == 1) {
 		free(PS1);
 		PS1=xmalloc(strlen(cwd)+4);
 		sprintf(PS1, "%s %s", cwd, ( geteuid() != 0 ) ?  "$ ":"# ");
 		*prompt_str = PS1;
-	} else {
+	} དེ་མིན {
 		*prompt_str = PS2;
 	}
-#else
+#དེ་མིན
 	*prompt_str = (promptmode==1)? PS1 : PS2;
 #endif
 	debug_printf("result %s\n",*prompt_str);
@@ -967,34 +967,34 @@ static inline void setup_prompt_string(int promptmode, char **prompt_str)
 #endif
 
 #ifdef __U_BOOT__
-static int uboot_cli_readline(struct in_str *i)
+static ཧྲིལ uboot_cli_readline(sa_nracanaa in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	var_na *prompt;
+	var_na __maybe_unused *ps_prompt = NULL;
 
-	if (i->promptmode == 1)
+	གལ་སྲིད (i->promptmode == 1)
 		prompt = CONFIG_SYS_PROMPT;
-	else
+	དེ་མིན
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
 
 #ifdef CONFIG_CMDLINE_PS_SUPPORT
-	if (i->promptmode == 1)
+	གལ་སྲིད (i->promptmode == 1)
 		ps_prompt = env_get("PS1");
-	else
+	དེ་མིན
 		ps_prompt = env_get("PS2");
-	if (ps_prompt)
+	གལ་སྲིད (ps_prompt)
 		prompt = ps_prompt;
 #endif
 
-	return cli_readline(prompt);
+	ལོག cli_readline(prompt);
 }
 #endif
 
-static void get_user_input(struct in_str *i)
+static void get_user_input(sa_nracanaa in_str *i)
 {
 #ifndef __U_BOOT__
-	char *prompt_str;
-	static char the_command[BUFSIZ];
+	var_na *prompt_str;
+	static var_na the_command[BUFSIZ];
 
 	setup_prompt_string(i->promptmode, &prompt_str);
 #ifdef CONFIG_FEATURE_COMMAND_EDITING
@@ -1005,7 +1005,7 @@ static void get_user_input(struct in_str *i)
 	 ** child processes (rob@sysgo.de)
 	 */
 	cmdedit_read_input(prompt_str, the_command);
-#else
+#དེ་མིན
 	fputs(prompt_str, stdout);
 	fflush(stdout);
 	the_command[0]=fgetc(i->file);
@@ -1013,66 +1013,66 @@ static void get_user_input(struct in_str *i)
 #endif
 	fflush(stdout);
 	i->p = the_command;
-#else
-	int n;
-	static char the_command[CONFIG_SYS_CBSIZE + 1];
+#དེ་མིན
+	ཧྲིལ n;
+	static var_na the_command[CONFIG_SYS_CBSIZE + 1];
 
 	bootretry_reset_cmd_timeout();
 	i->__promptme = 1;
 	n = uboot_cli_readline(i);
 
 #ifdef CONFIG_BOOT_RETRY_TIME
-	if (n == -2) {
+	གལ་སྲིད (n == -2) {
 	  puts("\nTimeout waiting for command\n");
 #  ifdef CONFIG_RESET_TO_RETRY
 	  do_reset(NULL, 0, 0, NULL);
 #  elif IS_ENABLED(CONFIG_RETRY_BOOTCMD)
 	strcpy(console_buffer, "run bootcmd\n");
-# else
+# དེ་མིན
 #	error "This only works with CONFIG_RESET_TO_RETRY or CONFIG_BOOT_RETRY_COMMAND enabled"
 #  endif
 	}
 #endif
-	if (n == -1 ) {
+	གལ་སྲིད (n == -1 ) {
 		flag_repeat = 0;
 		i->__promptme = 0;
 	}
 	n = strlen(console_buffer);
 	console_buffer[n] = '\n';
 	console_buffer[n+1]= '\0';
-	if (had_ctrlc()) flag_repeat = 0;
+	གལ་སྲིད (had_ctrlc()) flag_repeat = 0;
 	clear_ctrlc();
 	do_repeat = 0;
-	if (i->promptmode == 1) {
-		if (console_buffer[0] == '\n'&& flag_repeat == 0) {
+	གལ་སྲིད (i->promptmode == 1) {
+		གལ་སྲིད (console_buffer[0] == '\n'&& flag_repeat == 0) {
 			strcpy(the_command,console_buffer);
 		}
-		else {
-			if (console_buffer[0] != '\n') {
+		དེ་མིན {
+			གལ་སྲིད (console_buffer[0] != '\n') {
 				strcpy(the_command,console_buffer);
 				flag_repeat = 1;
 			}
-			else {
+			དེ་མིན {
 				do_repeat = 1;
 			}
 		}
 		i->p = the_command;
 	}
-	else {
-		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer)
+	དེ་མིན {
+		གལ་སྲིད (console_buffer[0] != '\n') {
+			གལ་སྲིད (strlen(the_command) + strlen(console_buffer)
 			    < CONFIG_SYS_CBSIZE) {
 				n = strlen(the_command);
 				the_command[n-1] = ' ';
 				strcpy(&the_command[n],console_buffer);
 			}
-			else {
+			དེ་མིན {
 				the_command[0] = '\n';
 				the_command[1] = '\0';
 				flag_repeat = 0;
 			}
 		}
-		if (i->__promptme == 0) {
+		གལ་སྲིད (i->__promptme == 0) {
 			the_command[0] = '\n';
 			the_command[1] = '\0';
 		}
@@ -1083,22 +1083,22 @@ static void get_user_input(struct in_str *i)
 
 /* This is the magic location that prints prompts
  * and gets data back from the user */
-static int file_get(struct in_str *i)
+static ཧྲིལ file_get(sa_nracanaa in_str *i)
 {
-	int ch;
+	ཧྲིལ ch;
 
 	ch = 0;
 	/* If there is data waiting, eat it up */
-	if (i->p && *i->p) {
+	གལ་སྲིད (i->p && *i->p) {
 		ch = *i->p++;
-	} else {
+	} དེ་མིན {
 		/* need to double check i->file because we might be doing something
 		 * more complicated by now, like sourcing or substituting. */
 #ifndef __U_BOOT__
-		if (i->__promptme && interactive && i->file == stdin) {
-			while(! i->p || (interactive && strlen(i->p)==0) ) {
-#else
-			while(! i->p  || strlen(i->p)==0 ) {
+		གལ་སྲིད (i->__promptme && interactive && i->file == stdin) {
+			སྐབས(! i->p || (interactive && strlen(i->p)==0) ) {
+#དེ་མིན
+			སྐབས(! i->p  || strlen(i->p)==0 ) {
 #endif
 				get_user_input(i);
 			}
@@ -1106,11 +1106,11 @@ static int file_get(struct in_str *i)
 #ifndef __U_BOOT__
 			i->__promptme = 0;
 #endif
-			if (i->p && *i->p) {
+			གལ་སྲིད (i->p && *i->p) {
 				ch = *i->p++;
 			}
 #ifndef __U_BOOT__
-		} else {
+		} དེ་མིན {
 			ch = fgetc(i->file);
 		}
 
@@ -1118,35 +1118,35 @@ static int file_get(struct in_str *i)
 		debug_printf("b_getch: got a %d\n", ch);
 	}
 #ifndef __U_BOOT__
-	if (ch == '\n') i->__promptme=1;
+	གལ་སྲིད (ch == '\n') i->__promptme=1;
 #endif
-	return ch;
+	ལོག ch;
 }
 
 /* All the callers guarantee this routine will never be
  * used right after a newline, so prompting is not needed.
  */
-static int file_peek(struct in_str *i)
+static ཧྲིལ file_peek(sa_nracanaa in_str *i)
 {
 #ifndef __U_BOOT__
-	if (i->p && *i->p) {
+	གལ་སྲིད (i->p && *i->p) {
 #endif
-		return *i->p;
+		ལོག *i->p;
 #ifndef __U_BOOT__
-	} else {
+	} དེ་མིན {
 		i->peek_buf[0] = fgetc(i->file);
 		i->peek_buf[1] = '\0';
 		i->p = i->peek_buf;
 		debug_printf("b_peek: got a %d\n", *i->p);
-		return *i->p;
+		ལོག *i->p;
 	}
 #endif
 }
 
 #ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, FILE *f)
-#else
-static void setup_file_in_str(struct in_str *i)
+static void setup_file_in_str(sa_nracanaa in_str *i, FILE *f)
+#དེ་མིན
+static void setup_file_in_str(sa_nracanaa in_str *i)
 #endif
 {
 	i->peek = file_peek;
@@ -1159,7 +1159,7 @@ static void setup_file_in_str(struct in_str *i)
 	i->p = NULL;
 }
 
-static void setup_string_in_str(struct in_str *i, const char *s)
+static void setup_string_in_str(sa_nracanaa in_str *i, const var_na *s)
 {
 	i->peek = static_peek;
 	i->get = static_get;
@@ -1169,18 +1169,18 @@ static void setup_string_in_str(struct in_str *i, const char *s)
 }
 
 #ifndef __U_BOOT__
-static void mark_open(int fd)
+static void mark_open(ཧྲིལ fd)
 {
-	struct close_me *new = xmalloc(sizeof(struct close_me));
+	sa_nracanaa close_me *new = xmalloc(parimaa_na(sa_nracanaa close_me));
 	new->fd = fd;
 	new->next = close_me_head;
 	close_me_head = new;
 }
 
-static void mark_closed(int fd)
+static void mark_closed(ཧྲིལ fd)
 {
-	struct close_me *tmp;
-	if (close_me_head == NULL || close_me_head->fd != fd)
+	sa_nracanaa close_me *tmp;
+	གལ་སྲིད (close_me_head == NULL || close_me_head->fd != fd)
 		error_msg_and_die("corrupt close_me");
 	tmp = close_me_head;
 	close_me_head = close_me_head->next;
@@ -1189,8 +1189,8 @@ static void mark_closed(int fd)
 
 static void close_all(void)
 {
-	struct close_me *c;
-	for (c=close_me_head; c; c=c->next) {
+	sa_nracanaa close_me *c;
+	དོན་ལུ (c=close_me_head; c; c=c->next) {
 		close(c->fd);
 	}
 	close_me_head = NULL;
@@ -1198,51 +1198,51 @@ static void close_all(void)
 
 /* squirrel != NULL means we squirrel away copies of stdin, stdout,
  * and stderr if they are redirected. */
-static int setup_redirects(struct child_prog *prog, int squirrel[])
+static ཧྲིལ setup_redirects(sa_nracanaa child_prog *prog, ཧྲིལ squirrel[])
 {
-	int openfd, mode;
-	struct redir_struct *redir;
+	ཧྲིལ openfd, mode;
+	sa_nracanaa redir_struct *redir;
 
-	for (redir=prog->redirects; redir; redir=redir->next) {
-		if (redir->dup == -1 && redir->word.gl_pathv == NULL) {
+	དོན་ལུ (redir=prog->redirects; redir; redir=redir->next) {
+		གལ་སྲིད (redir->dup == -1 && redir->word.gl_pathv == NULL) {
 			/* something went wrong in the parse.  Pretend it didn't happen */
 			continue;
 		}
-		if (redir->dup == -1) {
+		གལ་སྲིད (redir->dup == -1) {
 			mode=redir_table[redir->type].mode;
 			openfd = open(redir->word.gl_pathv[0], mode, 0666);
-			if (openfd < 0) {
+			གལ་སྲིད (openfd < 0) {
 			/* this could get lost if stderr has been redirected, but
 			   bash and ash both lose it as well (though zsh doesn't!) */
 				perror_msg("error opening %s", redir->word.gl_pathv[0]);
-				return 1;
+				ལོག 1;
 			}
-		} else {
+		} དེ་མིན {
 			openfd = redir->dup;
 		}
 
-		if (openfd != redir->fd) {
-			if (squirrel && redir->fd < 3) {
+		གལ་སྲིད (openfd != redir->fd) {
+			གལ་སྲིད (squirrel && redir->fd < 3) {
 				squirrel[redir->fd] = dup(redir->fd);
 			}
-			if (openfd == -3) {
+			གལ་སྲིད (openfd == -3) {
 				close(openfd);
-			} else {
+			} དེ་མིན {
 				dup2(openfd, redir->fd);
-				if (redir->dup == -1)
+				གལ་སྲིད (redir->dup == -1)
 					close (openfd);
 			}
 		}
 	}
-	return 0;
+	ལོག 0;
 }
 
-static void restore_redirects(int squirrel[])
+static void restore_redirects(ཧྲིལ squirrel[])
 {
-	int i, fd;
-	for (i=0; i<3; i++) {
+	ཧྲིལ i, fd;
+	དོན་ལུ (i=0; i<3; i++) {
 		fd = squirrel[i];
-		if (fd != -1) {
+		གལ་སྲིད (fd != -1) {
 			/* No error checking.  I sure wouldn't know what
 			 * to do with an error if I found one! */
 			dup2(fd, i);
@@ -1255,17 +1255,17 @@ static void restore_redirects(int squirrel[])
 /* XXX no exit() here.  If you don't exec, use _exit instead.
  * The at_exit handlers apparently confuse the calling process,
  * in particular stdin handling.  Not sure why? */
-static void pseudo_exec(struct child_prog *child)
+static void pseudo_exec(sa_nracanaa child_prog *child)
 {
-	int i, rcode;
-	char *p;
-	struct built_in_command *x;
-	if (child->argv) {
-		for (i=0; is_assignment(child->argv[i]); i++) {
+	ཧྲིལ i, rcode;
+	var_na *p;
+	sa_nracanaa built_in_command *x;
+	གལ་སྲིད (child->argv) {
+		དོན་ལུ (i=0; is_assignment(child->argv[i]); i++) {
 			debug_printf("pid %d environment modification: %s\n",getpid(),child->argv[i]);
 			p = insert_var_value(child->argv[i]);
 			putenv(strdup(p));
-			if (p != child->argv[i]) free(p);
+			གལ་སྲིད (p != child->argv[i]) free(p);
 		}
 		child->argv+=i;  /* XXX this hack isn't so horrible, since we are about
 					to exit, and therefore don't need to keep data
@@ -1273,7 +1273,7 @@ static void pseudo_exec(struct child_prog *child)
 		/* If a variable is assigned in a forest, and nobody listens,
 		 * was it ever really set?
 		 */
-		if (child->argv[0] == NULL) {
+		གལ་སྲིད (child->argv[0] == NULL) {
 			_exit(EXIT_SUCCESS);
 		}
 
@@ -1283,8 +1283,8 @@ static void pseudo_exec(struct child_prog *child)
 		 * easier to waste a few CPU cycles than it is to figure out
 		 * if this is one of those cases.
 		 */
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[0], x->cmd) == 0 ) {
+		དོན་ལུ (x = bltins; x->cmd; x++) {
+			གལ་སྲིད (strcmp(child->argv[0], x->cmd) == 0 ) {
 				debug_printf("builtin exec %s\n", child->argv[0]);
 				rcode = x->function(child);
 				fflush(stdout);
@@ -1303,9 +1303,9 @@ static void pseudo_exec(struct child_prog *child)
 		 * to find ourself... */
 #ifdef CONFIG_FEATURE_SH_STANDALONE_SHELL
 		{
-			int argc_l;
-			char** argv_l=child->argv;
-			char *name = child->argv[0];
+			ཧྲིལ argc_l;
+			var_na** argv_l=child->argv;
+			var_na *name = child->argv[0];
 
 #ifdef CONFIG_FEATURE_SH_APPLETS_ALWAYS_WIN
 			/* Following discussions from November 2000 on the busybox mailing
@@ -1320,7 +1320,7 @@ static void pseudo_exec(struct child_prog *child)
 			name = get_last_path_component(name);
 #endif
 			/* Count argc for use in a second... */
-			for(argc_l=0;*argv_l!=NULL; argv_l++, argc_l++);
+			དོན་ལུ(argc_l=0;*argv_l!=NULL; argv_l++, argc_l++);
 			optind = 1;
 			debug_printf("running applet %s\n", name);
 			run_applet_by_name(name, argc_l, child->argv);
@@ -1330,41 +1330,41 @@ static void pseudo_exec(struct child_prog *child)
 		execvp(child->argv[0],child->argv);
 		perror_msg("couldn't exec: %s",child->argv[0]);
 		_exit(1);
-	} else if (child->group) {
+	} དེ་མིན གལ་སྲིད (child->group) {
 		debug_printf("runtime nesting to group\n");
 		interactive=0;    /* crucial!!!! */
 		rcode = run_list_real(child->group);
 		/* OK to leak memory by not calling free_pipe_list,
 		 * since this process is about to exit */
 		_exit(rcode);
-	} else {
+	} དེ་མིན {
 		/* Can happen.  See what bash does with ">foo" by itself. */
 		debug_printf("trying to pseudo_exec null command\n");
 		_exit(EXIT_SUCCESS);
 	}
 }
 
-static void insert_bg_job(struct pipe *pi)
+static void insert_bg_job(sa_nracanaa pipe *pi)
 {
-	struct pipe *thejob;
+	sa_nracanaa pipe *thejob;
 
 	/* Linear search for the ID of the job to use */
 	pi->jobid = 1;
-	for (thejob = job_list; thejob; thejob = thejob->next)
-		if (thejob->jobid >= pi->jobid)
+	དོན་ལུ (thejob = job_list; thejob; thejob = thejob->next)
+		གལ་སྲིད (thejob->jobid >= pi->jobid)
 			pi->jobid = thejob->jobid + 1;
 
 	/* add thejob to the list of running jobs */
-	if (!job_list) {
-		thejob = job_list = xmalloc(sizeof(*thejob));
-	} else {
-		for (thejob = job_list; thejob->next; thejob = thejob->next) /* nothing */;
-		thejob->next = xmalloc(sizeof(*thejob));
+	གལ་སྲིད (!job_list) {
+		thejob = job_list = xmalloc(parimaa_na(*thejob));
+	} དེ་མིན {
+		དོན་ལུ (thejob = job_list; thejob->next; thejob = thejob->next) /* nothing */;
+		thejob->next = xmalloc(parimaa_na(*thejob));
 		thejob = thejob->next;
 	}
 
 	/* physically copy the struct job */
-	memcpy(thejob, pi, sizeof(struct pipe));
+	memcpy(thejob, pi, parimaa_na(sa_nracanaa pipe));
 	thejob->next = NULL;
 	thejob->running_progs = thejob->num_progs;
 	thejob->stopped_progs = 0;
@@ -1372,9 +1372,9 @@ static void insert_bg_job(struct pipe *pi)
 
 	/*if (pi->progs[0] && pi->progs[0].argv && pi->progs[0].argv[0]) */
 	{
-		char *bar=thejob->text;
-		char **foo=pi->progs[0].argv;
-		while(foo && *foo) {
+		var_na *bar=thejob->text;
+		var_na **foo=pi->progs[0].argv;
+		སྐབས(foo && *foo) {
 			bar += sprintf(bar, "%s ", *foo++);
 		}
 	}
@@ -1387,21 +1387,21 @@ static void insert_bg_job(struct pipe *pi)
 }
 
 /* remove a backgrounded job */
-static void remove_bg_job(struct pipe *pi)
+static void remove_bg_job(sa_nracanaa pipe *pi)
 {
-	struct pipe *prev_pipe;
+	sa_nracanaa pipe *prev_pipe;
 
-	if (pi == job_list) {
+	གལ་སྲིད (pi == job_list) {
 		job_list = pi->next;
-	} else {
+	} དེ་མིན {
 		prev_pipe = job_list;
-		while (prev_pipe->next != pi)
+		སྐབས (prev_pipe->next != pi)
 			prev_pipe = prev_pipe->next;
 		prev_pipe->next = pi->next;
 	}
-	if (job_list)
+	གལ་སྲིད (job_list)
 		last_jobid = job_list->jobid;
-	else
+	དེ་མིན
 		last_jobid = 0;
 
 	pi->stopped_progs = 0;
@@ -1411,78 +1411,78 @@ static void remove_bg_job(struct pipe *pi)
 
 /* Checks to see if any processes have exited -- if they
    have, figure out why and see if a job has completed */
-static int checkjobs(struct pipe* fg_pipe)
+static ཧྲིལ checkjobs(sa_nracanaa pipe* fg_pipe)
 {
-	int attributes;
-	int status;
-	int prognum = 0;
-	struct pipe *pi;
+	ཧྲིལ attributes;
+	ཧྲིལ status;
+	ཧྲིལ prognum = 0;
+	sa_nracanaa pipe *pi;
 	pid_t childpid;
 
 	attributes = WUNTRACED;
-	if (fg_pipe==NULL) {
+	གལ་སྲིད (fg_pipe==NULL) {
 		attributes |= WNOHANG;
 	}
 
-	while ((childpid = waitpid(-1, &status, attributes)) > 0) {
-		if (fg_pipe) {
-			int i, rcode = 0;
-			for (i=0; i < fg_pipe->num_progs; i++) {
-				if (fg_pipe->progs[i].pid == childpid) {
-					if (i==fg_pipe->num_progs-1)
+	སྐབས ((childpid = waitpid(-1, &status, attributes)) > 0) {
+		གལ་སྲིད (fg_pipe) {
+			ཧྲིལ i, rcode = 0;
+			དོན་ལུ (i=0; i < fg_pipe->num_progs; i++) {
+				གལ་སྲིད (fg_pipe->progs[i].pid == childpid) {
+					གལ་སྲིད (i==fg_pipe->num_progs-1)
 						rcode=WEXITSTATUS(status);
 					(fg_pipe->num_progs)--;
-					return(rcode);
+					ལོག(rcode);
 				}
 			}
 		}
 
-		for (pi = job_list; pi; pi = pi->next) {
+		དོན་ལུ (pi = job_list; pi; pi = pi->next) {
 			prognum = 0;
-			while (prognum < pi->num_progs && pi->progs[prognum].pid != childpid) {
+			སྐབས (prognum < pi->num_progs && pi->progs[prognum].pid != childpid) {
 				prognum++;
 			}
-			if (prognum < pi->num_progs)
-				break;
+			གལ་སྲིད (prognum < pi->num_progs)
+				bha_nga;
 		}
 
-		if(pi==NULL) {
+		གལ་སྲིད(pi==NULL) {
 			debug_printf("checkjobs: pid %d was not in our list!\n", childpid);
 			continue;
 		}
 
-		if (WIFEXITED(status) || WIFSIGNALED(status)) {
+		གལ་སྲིད (WIFEXITED(status) || WIFSIGNALED(status)) {
 			/* child exited */
 			pi->running_progs--;
 			pi->progs[prognum].pid = 0;
 
-			if (!pi->running_progs) {
+			གལ་སྲིད (!pi->running_progs) {
 				printf(JOB_STATUS_FORMAT, pi->jobid, "Done", pi->text);
 				remove_bg_job(pi);
 			}
-		} else {
+		} དེ་མིན {
 			/* child stopped */
 			pi->stopped_progs++;
 			pi->progs[prognum].is_stopped = 1;
 
-#if 0
+#གལ་སྲིད 0
 			/* Printing this stuff is a pain, since it tends to
 			 * overwrite the prompt an inconveinient moments.  So
 			 * don't do that.  */
-			if (pi->stopped_progs == pi->num_progs) {
+			གལ་སྲིད (pi->stopped_progs == pi->num_progs) {
 				printf("\n"JOB_STATUS_FORMAT, pi->jobid, "Stopped", pi->text);
 			}
 #endif
 		}
 	}
 
-	if (childpid == -1 && errno != ECHILD)
+	གལ་སྲིད (childpid == -1 && errno != ECHILD)
 		perror_msg("waitpid");
 
 	/* move the shell to the foreground */
 	/*if (interactive && tcsetpgrp(shell_terminal, getpgid(0))) */
 	/*	perror_msg("tcsetpgrp-2"); */
-	return -1;
+	ལོག -1;
 }
 
 /* Figure out our controlling tty, checking in order stderr,
@@ -1490,23 +1490,23 @@ static int checkjobs(struct pipe* fg_pipe)
  * we belong to the foreground process group associated with
  * that tty.  The value of shell_terminal is needed in order to call
  * tcsetpgrp(shell_terminal, ...); */
-void controlling_tty(int check_pgrp)
+void controlling_tty(ཧྲིལ check_pgrp)
 {
 	pid_t curpgrp;
 
-	if ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
+	གལ་སྲིད ((curpgrp = tcgetpgrp(shell_terminal = 2)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 0)) < 0
 			&& (curpgrp = tcgetpgrp(shell_terminal = 1)) < 0)
 		goto shell_terminal_error;
 
-	if (check_pgrp && curpgrp != getpgid(0))
+	གལ་སྲིད (check_pgrp && curpgrp != getpgid(0))
 		goto shell_terminal_error;
 
-	return;
+	ལོག;
 
 shell_terminal_error:
 		shell_terminal = -1;
-		return;
+		ལོག;
 }
 #endif
 
@@ -1526,28 +1526,28 @@ shell_terminal_error:
  * now has its stdout directed to the input of the appropriate pipe,
  * so this routine is noticeably simpler.
  */
-static int run_pipe_real(struct pipe *pi)
+static ཧྲིལ run_pipe_real(sa_nracanaa pipe *pi)
 {
-	int i;
+	ཧྲིལ i;
 #ifndef __U_BOOT__
-	int nextin, nextout;
-	int pipefds[2];				/* pipefds[0] is for reading */
-	struct child_prog *child;
-	struct built_in_command *x;
-	char *p;
-# if __GNUC__
+	ཧྲིལ nextin, nextout;
+	ཧྲིལ pipefds[2];				/* pipefds[0] is for reading */
+	sa_nracanaa child_prog *child;
+	sa_nracanaa built_in_command *x;
+	var_na *p;
+# གལ་སྲིད __GNUC__
 	/* Avoid longjmp clobbering */
 	(void) &i;
 	(void) &nextin;
 	(void) &nextout;
 	(void) &child;
 # endif
-#else
-	int nextin;
-	int flag = do_repeat ? CMD_FLAG_REPEAT : 0;
-	struct child_prog *child;
-	char *p;
-# if __GNUC__
+#དེ་མིན
+	ཧྲིལ nextin;
+	ཧྲིལ flag = do_repeat ? CMD_FLAG_REPEAT : 0;
+	sa_nracanaa child_prog *child;
+	var_na *p;
+# གལ་སྲིད __GNUC__
 	/* Avoid longjmp clobbering */
 	(void) &i;
 	(void) &nextin;
@@ -1564,29 +1564,29 @@ static int run_pipe_real(struct pipe *pi)
 	 * Builtins within pipes have to fork anyway, and are handled in
 	 * pseudo_exec.  "echo foo | read bar" doesn't work on bash, either.
 	 */
-	if (pi->num_progs == 1) child = & (pi->progs[0]);
+	གལ་སྲིད (pi->num_progs == 1) child = & (pi->progs[0]);
 #ifndef __U_BOOT__
-	if (pi->num_progs == 1 && child->group && child->subshell == 0) {
-		int squirrel[] = {-1, -1, -1};
-		int rcode;
+	གལ་སྲིད (pi->num_progs == 1 && child->group && child->subshell == 0) {
+		ཧྲིལ squirrel[] = {-1, -1, -1};
+		ཧྲིལ rcode;
 		debug_printf("non-subshell grouping\n");
 		setup_redirects(child, squirrel);
 		/* XXX could we merge code with following builtin case,
 		 * by creating a pseudo builtin that calls run_list_real? */
 		rcode = run_list_real(child->group);
 		restore_redirects(squirrel);
-#else
-		if (pi->num_progs == 1 && child->group) {
-		int rcode;
+#དེ་མིན
+		གལ་སྲིད (pi->num_progs == 1 && child->group) {
+		ཧྲིལ rcode;
 		debug_printf("non-subshell grouping\n");
 		rcode = run_list_real(child->group);
 #endif
-		return rcode;
-	} else if (pi->num_progs == 1 && pi->progs[0].argv != NULL) {
-		for (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
-		if (i!=0 && child->argv[i]==NULL) {
+		ལོག rcode;
+	} དེ་མིན གལ་སྲིད (pi->num_progs == 1 && pi->progs[0].argv != NULL) {
+		དོན་ལུ (i=0; is_assignment(child->argv[i]); i++) { /* nothing */ }
+		གལ་སྲིད (i!=0 && child->argv[i]==NULL) {
 			/* assignments, but no command: set the local environment */
-			for (i=0; child->argv[i]!=NULL; i++) {
+			དོན་ལུ (i=0; child->argv[i]!=NULL; i++) {
 
 				/* Ok, this case is tricky.  We have to decide if this is a
 				 * local variable, or an already exported variable.  If it is
@@ -1594,55 +1594,55 @@ static int run_pipe_real(struct pipe *pi)
 				 * not exported, we need only set this as a local variable.
 				 * This junk is all to decide whether or not to export this
 				 * variable. */
-				int export_me=0;
-				char *name, *value;
+				ཧྲིལ export_me=0;
+				var_na *name, *value;
 				name = xstrdup(child->argv[i]);
 				debug_printf("Local environment set: %s\n", name);
 				value = strchr(name, '=');
-				if (value)
+				གལ་སྲིད (value)
 					*value=0;
 #ifndef __U_BOOT__
-				if ( get_local_var(name)) {
+				གལ་སྲིད ( get_local_var(name)) {
 					export_me=1;
 				}
 #endif
 				free(name);
 				p = insert_var_value(child->argv[i]);
 				set_local_var(p, export_me);
-				if (p != child->argv[i]) free(p);
+				གལ་སྲིད (p != child->argv[i]) free(p);
 			}
-			return EXIT_SUCCESS;   /* don't worry about errors in set_local_var() yet */
+			ལོག EXIT_SUCCESS;   /* don't worry about errors in set_local_var() yet */
 		}
-		for (i = 0; is_assignment(child->argv[i]); i++) {
+		དོན་ལུ (i = 0; is_assignment(child->argv[i]); i++) {
 			p = insert_var_value(child->argv[i]);
 #ifndef __U_BOOT__
 			putenv(strdup(p));
-#else
+#དེ་མིན
 			set_local_var(p, 0);
 #endif
-			if (p != child->argv[i]) {
+			གལ་སྲིད (p != child->argv[i]) {
 				child->sp--;
 				free(p);
 			}
 		}
-		if (child->sp) {
-			char * str = NULL;
+		གལ་སྲིད (child->sp) {
+			var_na * str = NULL;
 
 			str = make_string(child->argv + i,
 					  child->argv_nonnull + i);
 			parse_string_outer(str, FLAG_EXIT_FROM_LOOP | FLAG_REPARSING);
 			free(str);
-			return last_return_code;
+			ལོག last_return_code;
 		}
 #ifndef __U_BOOT__
-		for (x = bltins; x->cmd; x++) {
-			if (strcmp(child->argv[i], x->cmd) == 0 ) {
-				int squirrel[] = {-1, -1, -1};
-				int rcode;
-				if (x->function == builtin_exec && child->argv[i+1]==NULL) {
+		དོན་ལུ (x = bltins; x->cmd; x++) {
+			གལ་སྲིད (strcmp(child->argv[i], x->cmd) == 0 ) {
+				ཧྲིལ squirrel[] = {-1, -1, -1};
+				ཧྲིལ rcode;
+				གལ་སྲིད (x->function == builtin_exec && child->argv[i+1]==NULL) {
 					debug_printf("magic exec\n");
 					setup_redirects(child,NULL);
-					return EXIT_SUCCESS;
+					ལོག EXIT_SUCCESS;
 				}
 				debug_printf("builtin inline %s\n", child->argv[0]);
 				/* XXX setup_redirects acts on file descriptors, not FILEs.
@@ -1657,58 +1657,58 @@ static int run_pipe_real(struct pipe *pi)
 				child->argv -= i;
 				restore_redirects(squirrel);
 			}
-			return rcode;
+			ལོག rcode;
 		}
-#else
+#དེ་མིན
 		/* check ";", because ,example , argv consist from
 		 * "help;flinfo" must not execute
 		 */
-		if (strchr(child->argv[i], ';')) {
+		གལ་སྲིད (strchr(child->argv[i], ';')) {
 			printf("Unknown command '%s' - try 'help' or use "
 					"'run' command\n", child->argv[i]);
-			return -1;
+			ལོག -1;
 		}
 		/* Process the command */
-		return cmd_process(flag, child->argc - i, child->argv + i,
+		ལོག cmd_process(flag, child->argc - i, child->argv + i,
 				   &flag_repeat, NULL);
 #endif
 	}
 #ifndef __U_BOOT__
 
-	for (i = 0; i < pi->num_progs; i++) {
+	དོན་ལུ (i = 0; i < pi->num_progs; i++) {
 		child = & (pi->progs[i]);
 
 		/* pipes are inserted between pairs of commands */
-		if ((i + 1) < pi->num_progs) {
-			if (pipe(pipefds)<0) perror_msg_and_die("pipe");
+		གལ་སྲིད ((i + 1) < pi->num_progs) {
+			གལ་སྲིད (pipe(pipefds)<0) perror_msg_and_die("pipe");
 			nextout = pipefds[1];
-		} else {
+		} དེ་མིན {
 			nextout=1;
 			pipefds[0] = -1;
 		}
 
 		/* XXX test for failed fork()? */
-		if (!(child->pid = fork())) {
+		གལ་སྲིད (!(child->pid = fork())) {
 			/* Set the handling for job control signals back to the default.  */
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			signal(SIGTERM, SIG_DFL);
-			signal(SIGTSTP, SIG_DFL);
-			signal(SIGTTIN, SIG_DFL);
-			signal(SIGTTOU, SIG_DFL);
-			signal(SIGCHLD, SIG_DFL);
+			sa_nkeeta(SIGINT, SIG_DFL);
+			sa_nkeeta(SIGQUIT, SIG_DFL);
+			sa_nkeeta(SIGTERM, SIG_DFL);
+			sa_nkeeta(SIGTSTP, SIG_DFL);
+			sa_nkeeta(SIGTTIN, SIG_DFL);
+			sa_nkeeta(SIGTTOU, SIG_DFL);
+			sa_nkeeta(SIGCHLD, SIG_DFL);
 
 			close_all();
 
-			if (nextin != 0) {
+			གལ་སྲིད (nextin != 0) {
 				dup2(nextin, 0);
 				close(nextin);
 			}
-			if (nextout != 1) {
+			གལ་སྲིད (nextout != 1) {
 				dup2(nextout, 1);
 				close(nextout);
 			}
-			if (pipefds[0]!=-1) {
+			གལ་སྲིད (pipefds[0]!=-1) {
 				close(pipefds[0]);  /* opposite end of our output pipe */
 			}
 
@@ -1716,13 +1716,13 @@ static int run_pipe_real(struct pipe *pi)
 			 * and the pipe fd is available for dup'ing. */
 			setup_redirects(child,NULL);
 
-			if (interactive && pi->followup!=PIPE_BG) {
+			གལ་སྲིད (interactive && pi->followup!=PIPE_BG) {
 				/* If we (the child) win the race, put ourselves in the process
 				 * group whose leader is the first process in this pipe. */
-				if (pi->pgrp < 0) {
+				གལ་སྲིད (pi->pgrp < 0) {
 					pi->pgrp = getpid();
 				}
-				if (setpgid(0, pi->pgrp) == 0) {
+				གལ་སྲིད (setpgid(0, pi->pgrp) == 0) {
 					tcsetpgrp(2, pi->pgrp);
 				}
 			}
@@ -1732,16 +1732,16 @@ static int run_pipe_real(struct pipe *pi)
 
 		/* put our child in the process group whose leader is the
 		   first process in this pipe */
-		if (pi->pgrp < 0) {
+		གལ་སྲིད (pi->pgrp < 0) {
 			pi->pgrp = child->pid;
 		}
 		/* Don't check for errors.  The child may be dead already,
 		 * in which case setpgid returns error code EACCES. */
 		setpgid(child->pid, pi->pgrp);
 
-		if (nextin != 0)
+		གལ་སྲིད (nextin != 0)
 			close(nextin);
-		if (nextout != 1)
+		གལ་སྲིད (nextout != 1)
 			close(nextout);
 
 		/* If there isn't another process, nextin is garbage
@@ -1749,35 +1749,35 @@ static int run_pipe_real(struct pipe *pi)
 		nextin = pipefds[0];
 	}
 #endif
-	return -1;
+	ལོག -1;
 }
 
-static int run_list_real(struct pipe *pi)
+static ཧྲིལ run_list_real(sa_nracanaa pipe *pi)
 {
-	char *save_name = NULL;
-	char **list = NULL;
-	char **save_list = NULL;
-	struct pipe *rpipe;
-	int flag_rep = 0;
+	var_na *save_name = NULL;
+	var_na **list = NULL;
+	var_na **save_list = NULL;
+	sa_nracanaa pipe *rpipe;
+	ཧྲིལ flag_rep = 0;
 #ifndef __U_BOOT__
-	int save_num_progs;
+	ཧྲིལ save_num_progs;
 #endif
-	int rcode=0, flag_skip=1;
-	int flag_restore = 0;
-	int if_code=0, next_if_code=0;  /* need double-buffer to handle elif */
+	ཧྲིལ rcode=0, flag_skip=1;
+	ཧྲིལ flag_restore = 0;
+	ཧྲིལ if_code=0, next_if_code=0;  /* need double-buffer to handle elif */
 	reserved_style rmode, skip_more_in_this_rmode=RES_XXXX;
 	/* check syntax for "for" */
-	for (rpipe = pi; rpipe; rpipe = rpipe->next) {
-		if ((rpipe->r_mode == RES_IN ||
+	དོན་ལུ (rpipe = pi; rpipe; rpipe = rpipe->next) {
+		གལ་སྲིད ((rpipe->r_mode == RES_IN ||
 		    rpipe->r_mode == RES_FOR) &&
 		    (rpipe->next == NULL)) {
 				syntax();
 #ifdef __U_BOOT__
 				flag_repeat = 0;
 #endif
-				return 1;
+				ལོག 1;
 		}
-		if ((rpipe->r_mode == RES_IN &&
+		གལ་སྲིད ((rpipe->r_mode == RES_IN &&
 			(rpipe->next->r_mode == RES_IN &&
 			rpipe->next->progs->argv != NULL))||
 			(rpipe->r_mode == RES_FOR &&
@@ -1786,41 +1786,41 @@ static int run_list_real(struct pipe *pi)
 #ifdef __U_BOOT__
 				flag_repeat = 0;
 #endif
-				return 1;
+				ལོག 1;
 		}
 	}
-	for (; pi; pi = (flag_restore != 0) ? rpipe : pi->next) {
-		if (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
+	དོན་ལུ (; pi; pi = (flag_restore != 0) ? rpipe : pi->next) {
+		གལ་སྲིད (pi->r_mode == RES_WHILE || pi->r_mode == RES_UNTIL ||
 			pi->r_mode == RES_FOR) {
 #ifdef __U_BOOT__
 				/* check Ctrl-C */
 				ctrlc();
-				if ((had_ctrlc())) {
-					return 1;
+				གལ་སྲིད ((had_ctrlc())) {
+					ལོག 1;
 				}
 #endif
 				flag_restore = 0;
-				if (!rpipe) {
+				གལ་སྲིད (!rpipe) {
 					flag_rep = 0;
 					rpipe = pi;
 				}
 		}
 		rmode = pi->r_mode;
 		debug_printf("rmode=%d  if_code=%d  next_if_code=%d skip_more=%d\n", rmode, if_code, next_if_code, skip_more_in_this_rmode);
-		if (rmode == skip_more_in_this_rmode && flag_skip) {
-			if (pi->followup == PIPE_SEQ) flag_skip=0;
+		གལ་སྲིད (rmode == skip_more_in_this_rmode && flag_skip) {
+			གལ་སྲིད (pi->followup == PIPE_SEQ) flag_skip=0;
 			continue;
 		}
 		flag_skip = 1;
 		skip_more_in_this_rmode = RES_XXXX;
-		if (rmode == RES_THEN || rmode == RES_ELSE) if_code = next_if_code;
-		if (rmode == RES_THEN &&  if_code) continue;
-		if (rmode == RES_ELSE && !if_code) continue;
-		if (rmode == RES_ELIF && !if_code) break;
-		if (rmode == RES_FOR && pi->num_progs) {
-			if (!list) {
+		གལ་སྲིད (rmode == RES_THEN || rmode == RES_ELSE) if_code = next_if_code;
+		གལ་སྲིད (rmode == RES_THEN &&  if_code) continue;
+		གལ་སྲིད (rmode == RES_ELSE && !if_code) continue;
+		གལ་སྲིད (rmode == RES_ELIF && !if_code) bha_nga;
+		གལ་སྲིད (rmode == RES_FOR && pi->num_progs) {
+			གལ་སྲིད (!list) {
 				/* if no variable values after "in" we skip "for" */
-				if (!pi->next->progs->argv) continue;
+				གལ་སྲིད (!pi->next->progs->argv) continue;
 				/* create list of variable values */
 				list = make_list_in(pi->next->progs->argv,
 					pi->progs->argv[0]);
@@ -1829,7 +1829,7 @@ static int run_list_real(struct pipe *pi)
 				pi->progs->argv[0] = NULL;
 				flag_rep = 1;
 			}
-			if (!(*list)) {
+			གལ་སྲིད (!(*list)) {
 				free(pi->progs->argv[0]);
 				free(save_list);
 				list = NULL;
@@ -1840,7 +1840,7 @@ static int run_list_real(struct pipe *pi)
 					pi->progs->argv[0];
 #endif
 				continue;
-			} else {
+			} དེ་མིན {
 				/* insert new value from list for variable */
 				free(pi->progs->argv[0]);
 				pi->progs->argv[0] = *list++;
@@ -1850,108 +1850,108 @@ static int run_list_real(struct pipe *pi)
 #endif
 			}
 		}
-		if (rmode == RES_IN) continue;
-		if (rmode == RES_DO) {
-			if (!flag_rep) continue;
+		གལ་སྲིད (rmode == RES_IN) continue;
+		གལ་སྲིད (rmode == RES_DO) {
+			གལ་སྲིད (!flag_rep) continue;
 		}
-		if (rmode == RES_DONE) {
-			if (flag_rep) {
+		གལ་སྲིད (rmode == RES_DONE) {
+			གལ་སྲིད (flag_rep) {
 				flag_restore = 1;
-			} else {
+			} དེ་མིན {
 				rpipe = NULL;
 			}
 		}
-		if (pi->num_progs == 0) continue;
+		གལ་སྲིད (pi->num_progs == 0) continue;
 #ifndef __U_BOOT__
 		save_num_progs = pi->num_progs; /* save number of programs */
 #endif
 		rcode = run_pipe_real(pi);
 		debug_printf("run_pipe_real returned %d\n",rcode);
 #ifndef __U_BOOT__
-		if (rcode!=-1) {
+		གལ་སྲིད (rcode!=-1) {
 			/* We only ran a builtin: rcode was set by the return value
 			 * of run_pipe_real(), and we don't need to wait for anything. */
-		} else if (pi->followup==PIPE_BG) {
+		} དེ་མིན གལ་སྲིད (pi->followup==PIPE_BG) {
 			/* XXX check bash's behavior with nontrivial pipes */
 			/* XXX compute jobid */
 			/* XXX what does bash do with attempts to background builtins? */
 			insert_bg_job(pi);
 			rcode = EXIT_SUCCESS;
-		} else {
-			if (interactive) {
+		} དེ་མིན {
+			གལ་སྲིད (interactive) {
 				/* move the new process group into the foreground */
-				if (tcsetpgrp(shell_terminal, pi->pgrp) && errno != ENOTTY)
+				གལ་སྲིད (tcsetpgrp(shell_terminal, pi->pgrp) && errno != ENOTTY)
 					perror_msg("tcsetpgrp-3");
 				rcode = checkjobs(pi);
 				/* move the shell to the foreground */
-				if (tcsetpgrp(shell_terminal, getpgid(0)) && errno != ENOTTY)
+				གལ་སྲིད (tcsetpgrp(shell_terminal, getpgid(0)) && errno != ENOTTY)
 					perror_msg("tcsetpgrp-4");
-			} else {
+			} དེ་མིན {
 				rcode = checkjobs(pi);
 			}
 			debug_printf("checkjobs returned %d\n",rcode);
 		}
 		last_return_code=rcode;
-#else
-		if (rcode < -1) {
+#དེ་མིན
+		གལ་སྲིད (rcode < -1) {
 			last_return_code = -rcode - 2;
-			return -2;	/* exit */
+			ལོག -2;	/* exit */
 		}
 		last_return_code = rcode;
 #endif
 #ifndef __U_BOOT__
 		pi->num_progs = save_num_progs; /* restore number of programs */
 #endif
-		if ( rmode == RES_IF || rmode == RES_ELIF )
+		གལ་སྲིད ( rmode == RES_IF || rmode == RES_ELIF )
 			next_if_code=rcode;  /* can be overwritten a number of times */
-		if (rmode == RES_WHILE)
+		གལ་སྲིད (rmode == RES_WHILE)
 			flag_rep = !last_return_code;
-		if (rmode == RES_UNTIL)
+		གལ་སྲིད (rmode == RES_UNTIL)
 			flag_rep = last_return_code;
-		if ( (rcode==EXIT_SUCCESS && pi->followup==PIPE_OR) ||
+		གལ་སྲིད ( (rcode==EXIT_SUCCESS && pi->followup==PIPE_OR) ||
 		     (rcode!=EXIT_SUCCESS && pi->followup==PIPE_AND) )
 			skip_more_in_this_rmode=rmode;
 #ifndef __U_BOOT__
 		checkjobs(NULL);
 #endif
 	}
-	return rcode;
+	ལོག rcode;
 }
 
 /* broken, of course, but OK for testing */
-static char *indenter(int i)
+static var_na *indenter(ཧྲིལ i)
 {
-	static char blanks[]="                                    ";
-	return &blanks[sizeof(blanks)-i-1];
+	static var_na blanks[]="                                    ";
+	ལོག &blanks[parimaa_na(blanks)-i-1];
 }
 
 /* return code is the exit status of the pipe */
-static int free_pipe(struct pipe *pi, int indent)
+static ཧྲིལ free_pipe(sa_nracanaa pipe *pi, ཧྲིལ indent)
 {
-	char **p;
-	struct child_prog *child;
+	var_na **p;
+	sa_nracanaa child_prog *child;
 #ifndef __U_BOOT__
-	struct redir_struct *r, *rnext;
+	sa_nracanaa redir_struct *r, *rnext;
 #endif
-	int a, i, ret_code=0;
-	char *ind = indenter(indent);
+	ཧྲིལ a, i, ret_code=0;
+	var_na *ind = indenter(indent);
 
 #ifndef __U_BOOT__
-	if (pi->stopped_progs > 0)
-		return ret_code;
+	གལ་སྲིད (pi->stopped_progs > 0)
+		ལོག ret_code;
 	final_printf("%s run pipe: (pid %d)\n",ind,getpid());
 #endif
-	for (i=0; i<pi->num_progs; i++) {
+	དོན་ལུ (i=0; i<pi->num_progs; i++) {
 		child = &pi->progs[i];
 		final_printf("%s  command %d:\n",ind,i);
-		if (child->argv) {
-			for (a=0,p=child->argv; *p; a++,p++) {
+		གལ་སྲིད (child->argv) {
+			དོན་ལུ (a=0,p=child->argv; *p; a++,p++) {
 				final_printf("%s   argv[%d] = %s\n",ind,a,*p);
 			}
 #ifndef __U_BOOT__
 			globfree(&child->glob_result);
-#else
-			for (a = 0; a < child->argc; a++) {
+#དེ་མིན
+			དོན་ལུ (a = 0; a < child->argc; a++) {
 				free(child->argv[a]);
 			}
 			free(child->argv);
@@ -1959,25 +1959,25 @@ static int free_pipe(struct pipe *pi, int indent)
 			child->argc = 0;
 #endif
 			child->argv=NULL;
-		} else if (child->group) {
+		} དེ་མིན གལ་སྲིད (child->group) {
 #ifndef __U_BOOT__
 			final_printf("%s   begin group (subshell:%d)\n",ind, child->subshell);
 #endif
 			ret_code = free_pipe_list(child->group,indent+3);
 			final_printf("%s   end group\n",ind);
-		} else {
+		} དེ་མིན {
 			final_printf("%s   (nil)\n",ind);
 		}
 #ifndef __U_BOOT__
-		for (r=child->redirects; r; r=rnext) {
+		དོན་ལུ (r=child->redirects; r; r=rnext) {
 			final_printf("%s   redirect %d%s", ind, r->fd, redir_table[r->type].descrip);
-			if (r->dup == -1) {
+			གལ་སྲིད (r->dup == -1) {
 				/* guard against the case >$FOO, where foo is unset or blank */
-				if (r->word.gl_pathv) {
+				གལ་སྲིད (r->word.gl_pathv) {
 					final_printf(" %s\n", *r->word.gl_pathv);
 					globfree(&r->word);
 				}
-			} else {
+			} དེ་མིན {
 				final_printf("&%d\n", r->dup);
 			}
 			rnext=r->next;
@@ -1988,15 +1988,15 @@ static int free_pipe(struct pipe *pi, int indent)
 	}
 	free(pi->progs);   /* children are an array, they get freed all at once */
 	pi->progs=NULL;
-	return ret_code;
+	ལོག ret_code;
 }
 
-static int free_pipe_list(struct pipe *head, int indent)
+static ཧྲིལ free_pipe_list(sa_nracanaa pipe *head, ཧྲིལ indent)
 {
-	int rcode=0;   /* if list has no members */
-	struct pipe *pi, *next;
-	char *ind = indenter(indent);
-	for (pi=head; pi; pi=next) {
+	ཧྲིལ rcode=0;   /* if list has no members */
+	sa_nracanaa pipe *pi, *next;
+	var_na *ind = indenter(indent);
+	དོན་ལུ (pi=head; pi; pi=next) {
 		final_printf("%s pipe reserved mode %d\n", ind, pi->r_mode);
 		rcode = free_pipe(pi, indent);
 		final_printf("%s pipe followup code %d\n", ind, pi->followup);
@@ -2004,15 +2004,15 @@ static int free_pipe_list(struct pipe *head, int indent)
 		pi->next=NULL;
 		free(pi);
 	}
-	return rcode;
+	ལོག rcode;
 }
 
 /* Select which version we will use */
-static int run_list(struct pipe *pi)
+static ཧྲིལ run_list(sa_nracanaa pipe *pi)
 {
-	int rcode=0;
+	ཧྲིལ rcode=0;
 #ifndef __U_BOOT__
-	if (fake_mode==0) {
+	གལ་སྲིད (fake_mode==0) {
 #endif
 		rcode = run_list_real(pi);
 #ifndef __U_BOOT__
@@ -2022,7 +2022,7 @@ static int run_list(struct pipe *pi)
 	 * In the long run that function can be merged with run_list_real,
 	 * but doing that now would hobble the debugging effort. */
 	free_pipe_list(pi,0);
-	return rcode;
+	ལོག rcode;
 }
 
 /* The API for glob is arguably broken.  This routine pushes a non-matching
@@ -2033,132 +2033,132 @@ static int run_list(struct pipe *pi)
  * XXX broken if the last character is '\\', check that before calling.
  */
 #ifndef __U_BOOT__
-static int globhack(const char *src, int flags, glob_t *pglob)
+static ཧྲིལ globhack(const var_na *src, ཧྲིལ flags, glob_t *pglob)
 {
-	int cnt=0, pathc;
-	const char *s;
-	char *dest;
-	for (cnt=1, s=src; s && *s; s++) {
-		if (*s == '\\') s++;
+	ཧྲིལ cnt=0, pathc;
+	const var_na *s;
+	var_na *dest;
+	དོན་ལུ (cnt=1, s=src; s && *s; s++) {
+		གལ་སྲིད (*s == '\\') s++;
 		cnt++;
 	}
 	dest = malloc(cnt);
-	if (!dest) return GLOB_NOSPACE;
-	if (!(flags & GLOB_APPEND)) {
+	གལ་སྲིད (!dest) ལོག GLOB_NOSPACE;
+	གལ་སྲིད (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathv=NULL;
 		pglob->gl_pathc=0;
 		pglob->gl_offs=0;
 		pglob->gl_offs=0;
 	}
 	pathc = ++pglob->gl_pathc;
-	pglob->gl_pathv = realloc(pglob->gl_pathv, (pathc+1)*sizeof(*pglob->gl_pathv));
-	if (pglob->gl_pathv == NULL) return GLOB_NOSPACE;
+	pglob->gl_pathv = realloc(pglob->gl_pathv, (pathc+1)*parimaa_na(*pglob->gl_pathv));
+	གལ་སྲིད (pglob->gl_pathv == NULL) ལོག GLOB_NOSPACE;
 	pglob->gl_pathv[pathc-1]=dest;
 	pglob->gl_pathv[pathc]=NULL;
-	for (s=src; s && *s; s++, dest++) {
-		if (*s == '\\') s++;
+	དོན་ལུ (s=src; s && *s; s++, dest++) {
+		གལ་སྲིད (*s == '\\') s++;
 		*dest = *s;
 	}
 	*dest='\0';
-	return 0;
+	ལོག 0;
 }
 
 /* XXX broken if the last character is '\\', check that before calling */
-static int glob_needed(const char *s)
+static ཧྲིལ glob_needed(const var_na *s)
 {
-	for (; *s; s++) {
-		if (*s == '\\') s++;
-		if (strchr("*[?",*s)) return 1;
+	དོན་ལུ (; *s; s++) {
+		གལ་སྲིད (*s == '\\') s++;
+		གལ་སྲིད (strchr("*[?",*s)) ལོག 1;
 	}
-	return 0;
+	ལོག 0;
 }
 
-#if 0
+#གལ་སྲིད 0
 static void globprint(glob_t *pglob)
 {
-	int i;
+	ཧྲིལ i;
 	debug_printf("glob_t at %p:\n", pglob);
 	debug_printf("  gl_pathc=%d  gl_pathv=%p  gl_offs=%d  gl_flags=%d\n",
 		pglob->gl_pathc, pglob->gl_pathv, pglob->gl_offs, pglob->gl_flags);
-	for (i=0; i<pglob->gl_pathc; i++)
+	དོན་ལུ (i=0; i<pglob->gl_pathc; i++)
 		debug_printf("pglob->gl_pathv[%d] = %p = %s\n", i,
 			pglob->gl_pathv[i], pglob->gl_pathv[i]);
 }
 #endif
 
-static int xglob(o_string *dest, int flags, glob_t *pglob)
+static ཧྲིལ xglob(o_string *dest, ཧྲིལ flags, glob_t *pglob)
 {
-	int gr;
+	ཧྲིལ gr;
 
 	/* short-circuit for null word */
 	/* we can code this better when the debug_printf's are gone */
-	if (dest->length == 0) {
-		if (dest->nonnull) {
+	གལ་སྲིད (dest->length == 0) {
+		གལ་སྲིད (dest->nonnull) {
 			/* bash man page calls this an "explicit" null */
 			gr = globhack(dest->data, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
-		} else {
-			return 0;
+		} དེ་མིན {
+			ལོག 0;
 		}
-	} else if (glob_needed(dest->data)) {
+	} དེ་མིན གལ་སྲིད (glob_needed(dest->data)) {
 		gr = glob(dest->data, flags, NULL, pglob);
 		debug_printf("glob returned %d\n",gr);
-		if (gr == GLOB_NOMATCH) {
+		གལ་སྲིད (gr == GLOB_NOMATCH) {
 			/* quote removal, or more accurately, backslash removal */
 			gr = globhack(dest->data, flags, pglob);
 			debug_printf("globhack returned %d\n",gr);
 		}
-	} else {
+	} དེ་མིན {
 		gr = globhack(dest->data, flags, pglob);
 		debug_printf("globhack returned %d\n",gr);
 	}
-	if (gr == GLOB_NOSPACE)
+	གལ་སྲིད (gr == GLOB_NOSPACE)
 		error_msg_and_die("out of memory during glob");
-	if (gr != 0) { /* GLOB_ABORTED ? */
+	གལ་སྲིད (gr != 0) { /* GLOB_ABORTED ? */
 		error_msg("glob(3) error %d",gr);
 	}
 	/* globprint(glob_target); */
-	return gr;
+	ལོག gr;
 }
 #endif
 
 #ifdef __U_BOOT__
-static char *get_dollar_var(char ch);
+static var_na *get_dollar_var(var_na ch);
 #endif
 
 /* This is used to get/check local shell variables */
-char *get_local_var(const char *s)
+var_na *get_local_var(const var_na *s)
 {
-	struct variables *cur;
+	sa_nracanaa variables *cur;
 
-	if (!s)
-		return NULL;
+	གལ་སྲིད (!s)
+		ལོག NULL;
 
 #ifdef __U_BOOT__
-	if (*s == '$')
-		return get_dollar_var(s[1]);
+	གལ་སྲིད (*s == '$')
+		ལོག get_dollar_var(s[1]);
 #endif
 
-	for (cur = top_vars; cur; cur=cur->next)
-		if(strcmp(cur->name, s)==0)
-			return cur->value;
-	return NULL;
+	དོན་ལུ (cur = top_vars; cur; cur=cur->next)
+		གལ་སྲིད(strcmp(cur->name, s)==0)
+			ལོག cur->value;
+	ལོག NULL;
 }
 
 /* This is used to set local shell variables
    flg_export==0 if only local (not exporting) variable
    flg_export==1 if "new" exporting environ
    flg_export>1  if current startup environ (not call putenv()) */
-int set_local_var(const char *s, int flg_export)
+ཧྲིལ set_local_var(const var_na *s, ཧྲིལ flg_export)
 {
-	char *name, *value;
-	int result=0;
-	struct variables *cur;
+	var_na *name, *value;
+	ཧྲིལ result=0;
+	sa_nracanaa variables *cur;
 
 #ifdef __U_BOOT__
 	/* might be possible! */
-	if (!isalpha(*s))
-		return -1;
+	གལ་སྲིད (!isalpha(*s))
+		ལོག -1;
 #endif
 
 	name=strdup(s);
@@ -2167,99 +2167,99 @@ int set_local_var(const char *s, int flg_export)
 	 * NAME=VALUE format.  So the first order of business is to
 	 * split 's' on the '=' into 'name' and 'value' */
 	value = strchr(name, '=');
-	if (!value) {
+	གལ་སྲིད (!value) {
 		free(name);
-		return -1;
+		ལོག -1;
 	}
 	*value++ = 0;
 
-	if (!*value) {
+	གལ་སྲིད (!*value) {
 		unset_local_var(name);
 		free(name);
-		return 0;
+		ལོག 0;
 	}
 
-	for(cur = top_vars; cur; cur = cur->next) {
-		if(strcmp(cur->name, name)==0)
-			break;
+	དོན་ལུ(cur = top_vars; cur; cur = cur->next) {
+		གལ་སྲིད(strcmp(cur->name, name)==0)
+			bha_nga;
 	}
 
-	if(cur) {
-		if(strcmp(cur->value, value)==0) {
-			if(flg_export>0 && cur->flg_export==0)
+	གལ་སྲིད(cur) {
+		གལ་སྲིད(strcmp(cur->value, value)==0) {
+			གལ་སྲིད(flg_export>0 && cur->flg_export==0)
 				cur->flg_export=flg_export;
-			else
+			དེ་མིན
 				result++;
-		} else {
-			if(cur->flg_read_only) {
+		} དེ་མིན {
+			གལ་སྲིད(cur->flg_read_only) {
 				error_msg("%s: readonly variable", name);
 				result = -1;
-			} else {
-				if(flg_export>0 || cur->flg_export>1)
+			} དེ་མིན {
+				གལ་སྲིད(flg_export>0 || cur->flg_export>1)
 					cur->flg_export=1;
 				free(cur->value);
 
 				cur->value = strdup(value);
 			}
 		}
-	} else {
-		cur = malloc(sizeof(struct variables));
-		if(!cur) {
+	} དེ་མིན {
+		cur = malloc(parimaa_na(sa_nracanaa variables));
+		གལ་སྲིད(!cur) {
 			result = -1;
-		} else {
+		} དེ་མིན {
 			cur->name = strdup(name);
-			if (cur->name == NULL) {
+			གལ་སྲིད (cur->name == NULL) {
 				free(cur);
 				result = -1;
-			} else {
-				struct variables *bottom = top_vars;
+			} དེ་མིན {
+				sa_nracanaa variables *bottom = top_vars;
 				cur->value = strdup(value);
 				cur->next = NULL;
 				cur->flg_export = flg_export;
 				cur->flg_read_only = 0;
-				while(bottom->next) bottom=bottom->next;
+				སྐབས(bottom->next) bottom=bottom->next;
 				bottom->next = cur;
 			}
 		}
 	}
 
 #ifndef __U_BOOT__
-	if(result==0 && cur->flg_export==1) {
+	གལ་སྲིད(result==0 && cur->flg_export==1) {
 		*(value-1) = '=';
 		result = putenv(name);
-	} else {
+	} དེ་མིན {
 #endif
 		free(name);
 #ifndef __U_BOOT__
-		if(result>0)            /* equivalent to previous set */
+		གལ་སྲིད(result>0)            /* equivalent to previous set */
 			result = 0;
 	}
 #endif
-	return result;
+	ལོག result;
 }
 
-void unset_local_var(const char *name)
+void unset_local_var(const var_na *name)
 {
-	struct variables *cur;
+	sa_nracanaa variables *cur;
 
-	if (name) {
-		for (cur = top_vars; cur; cur=cur->next) {
-			if(strcmp(cur->name, name)==0)
-				break;
+	གལ་སྲིད (name) {
+		དོན་ལུ (cur = top_vars; cur; cur=cur->next) {
+			གལ་སྲིད(strcmp(cur->name, name)==0)
+				bha_nga;
 		}
-		if (cur != NULL) {
-			struct variables *next = top_vars;
-			if(cur->flg_read_only) {
+		གལ་སྲིད (cur != NULL) {
+			sa_nracanaa variables *next = top_vars;
+			གལ་སྲིད(cur->flg_read_only) {
 				error_msg("%s: readonly variable", name);
-				return;
-			} else {
+				ལོག;
+			} དེ་མིན {
 #ifndef __U_BOOT__
-				if(cur->flg_export)
+				གལ་སྲིད(cur->flg_export)
 					unenv_set(cur->name);
 #endif
 				free(cur->name);
 				free(cur->value);
-				while (next->next != cur)
+				སྐབས (next->next != cur)
 					next = next->next;
 				next->next = cur->next;
 			}
@@ -2268,15 +2268,15 @@ void unset_local_var(const char *name)
 	}
 }
 
-static int is_assignment(const char *s)
+static ཧྲིལ is_assignment(const var_na *s)
 {
-	if (s == NULL)
-		return 0;
+	གལ་སྲིད (s == NULL)
+		ལོག 0;
 
-	if (!isalpha(*s)) return 0;
+	གལ་སྲིད (!isalpha(*s)) ལོག 0;
 	++s;
-	while(isalnum(*s) || *s=='_') ++s;
-	return *s=='=';
+	སྐབས(isalnum(*s) || *s=='_') ++s;
+	ལོག *s=='=';
 }
 
 #ifndef __U_BOOT__
@@ -2284,24 +2284,24 @@ static int is_assignment(const char *s)
  * for file descriptor duplication, e.g., "2>&1".
  * Return code is 0 normally, 1 if a syntax error is detected in src.
  * Resource errors (in xmalloc) cause the process to exit */
-static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
-	struct in_str *input)
+static ཧྲིལ setup_redirect(sa_nracanaa p_context *ctx, ཧྲིལ fd, redir_type style,
+	sa_nracanaa in_str *input)
 {
-	struct child_prog *child=ctx->child;
-	struct redir_struct *redir = child->redirects;
-	struct redir_struct *last_redir=NULL;
+	sa_nracanaa child_prog *child=ctx->child;
+	sa_nracanaa redir_struct *redir = child->redirects;
+	sa_nracanaa redir_struct *last_redir=NULL;
 
 	/* Create a new redir_struct and drop it onto the end of the linked list */
-	while(redir) {
+	སྐབས(redir) {
 		last_redir=redir;
 		redir=redir->next;
 	}
-	redir = xmalloc(sizeof(struct redir_struct));
+	redir = xmalloc(parimaa_na(sa_nracanaa redir_struct));
 	redir->next=NULL;
 	redir->word.gl_pathv=NULL;
-	if (last_redir) {
+	གལ་སྲིད (last_redir) {
 		last_redir->next=redir;
-	} else {
+	} དེ་མིན {
 		child->redirects=redir;
 	}
 
@@ -2312,13 +2312,13 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 
 	/* Check for a '2>&1' type redirect */
 	redir->dup = redirect_dup_num(input);
-	if (redir->dup == -2) return 1;  /* syntax error */
-	if (redir->dup != -1) {
+	གལ་སྲིད (redir->dup == -2) ལོག 1;  /* syntax error */
+	གལ་སྲིད (redir->dup != -1) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
 		debug_printf("Duplicating redirect '%d>&%d'\n", redir->fd, redir->dup);
-	} else {
+	} དེ་མིན {
 		/* We do _not_ try to open the file that src points to,
 		 * since we need to return and let src be expanded first.
 		 * Set ctx->pending_redirect, so we know what to do at the
@@ -2326,23 +2326,23 @@ static int setup_redirect(struct p_context *ctx, int fd, redir_type style,
 		 */
 		ctx->pending_redirect = redir;
 	}
-	return 0;
+	ལོག 0;
 }
 #endif
 
-static struct pipe *new_pipe(void)
+static sa_nracanaa pipe *new_pipe(void)
 {
-	struct pipe *pi;
-	pi = xmalloc(sizeof(struct pipe));
+	sa_nracanaa pipe *pi;
+	pi = xmalloc(parimaa_na(sa_nracanaa pipe));
 	pi->num_progs = 0;
 	pi->progs = NULL;
 	pi->next = NULL;
 	pi->followup = 0;  /* invalid */
 	pi->r_mode = RES_NONE;
-	return pi;
+	ལོག pi;
 }
 
-static void initialize_context(struct p_context *ctx)
+static void initialize_context(sa_nracanaa p_context *ctx)
 {
 	ctx->pipe=NULL;
 #ifndef __U_BOOT__
@@ -2364,9 +2364,9 @@ static void initialize_context(struct p_context *ctx)
  * should handle if, then, elif, else, fi, for, while, until, do, done.
  * case, function, and select are obnoxious, save those for later.
  */
-struct reserved_combo {
-	char *literal;
-	int code;
+sa_nracanaa reserved_combo {
+	var_na *literal;
+	ཧྲིལ code;
 	long flag;
 };
 /* Mostly a list of accepted follow-up reserved words.
@@ -2374,7 +2374,7 @@ struct reserved_combo {
  * to turn the compound list into a command.
  * FLAG_START means the word must start a new compound list.
  */
-static struct reserved_combo reserved_list[] = {
+static sa_nracanaa reserved_combo reserved_list[] = {
 	{ "if",    RES_IF,    FLAG_THEN | FLAG_START },
 	{ "then",  RES_THEN,  FLAG_ELIF | FLAG_ELSE | FLAG_FI },
 	{ "elif",  RES_ELIF,  FLAG_THEN },
@@ -2387,38 +2387,38 @@ static struct reserved_combo reserved_list[] = {
 	{ "do",    RES_DO,    FLAG_DONE },
 	{ "done",  RES_DONE,  FLAG_END  }
 };
-#define NRES (sizeof(reserved_list)/sizeof(struct reserved_combo))
+#define NRES (parimaa_na(reserved_list)/parimaa_na(sa_nracanaa reserved_combo))
 
-static int reserved_word(o_string *dest, struct p_context *ctx)
+static ཧྲིལ reserved_word(o_string *dest, sa_nracanaa p_context *ctx)
 {
-	struct reserved_combo *r;
-	for (r=reserved_list;
+	sa_nracanaa reserved_combo *r;
+	དོན་ལུ (r=reserved_list;
 		r<reserved_list+NRES; r++) {
-		if (strcmp(dest->data, r->literal) == 0) {
+		གལ་སྲིད (strcmp(dest->data, r->literal) == 0) {
 			debug_printf("found reserved word %s, code %d\n",r->literal,r->code);
-			if (r->flag & FLAG_START) {
-				struct p_context *new = xmalloc(sizeof(struct p_context));
+			གལ་སྲིད (r->flag & FLAG_START) {
+				sa_nracanaa p_context *new = xmalloc(parimaa_na(sa_nracanaa p_context));
 				debug_printf("push stack\n");
-				if (ctx->w == RES_IN || ctx->w == RES_FOR) {
+				གལ་སྲིད (ctx->w == RES_IN || ctx->w == RES_FOR) {
 					syntax();
 					free(new);
 					ctx->w = RES_SNTX;
 					b_reset(dest);
-					return 1;
+					ལོག 1;
 				}
 				*new = *ctx;   /* physical copy */
 				initialize_context(ctx);
 				ctx->stack=new;
-			} else if ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
+			} དེ་མིན གལ་སྲིད ( ctx->w == RES_NONE || ! (ctx->old_flag & (1<<r->code))) {
 				syntax();
 				ctx->w = RES_SNTX;
 				b_reset(dest);
-				return 1;
+				ལོག 1;
 			}
 			ctx->w=r->code;
 			ctx->old_flag = r->flag;
-			if (ctx->old_flag & FLAG_END) {
-				struct p_context *old;
+			གལ་སྲིད (ctx->old_flag & FLAG_END) {
+				sa_nracanaa p_context *old;
 				debug_printf("pop stack\n");
 				done_pipe(ctx,PIPE_SEQ);
 				old = ctx->stack;
@@ -2430,74 +2430,74 @@ static int reserved_word(o_string *dest, struct p_context *ctx)
 				free(old);
 			}
 			b_reset (dest);
-			return 1;
+			ལོག 1;
 		}
 	}
-	return 0;
+	ལོག 0;
 }
 
 /* normal return is 0.
  * Syntax or xglob errors return 1. */
-static int done_word(o_string *dest, struct p_context *ctx)
+static ཧྲིལ done_word(o_string *dest, sa_nracanaa p_context *ctx)
 {
-	struct child_prog *child=ctx->child;
+	sa_nracanaa child_prog *child=ctx->child;
 #ifndef __U_BOOT__
 	glob_t *glob_target;
-	int gr, flags = 0;
-#else
-	char *str, *s;
-	int argc, cnt;
+	ཧྲིལ gr, flags = 0;
+#དེ་མིན
+	var_na *str, *s;
+	ཧྲིལ argc, cnt;
 #endif
 
 	debug_printf("done_word: %s %p\n", dest->data, child);
-	if (dest->length == 0 && !dest->nonnull) {
+	གལ་སྲིད (dest->length == 0 && !dest->nonnull) {
 		debug_printf("  true null, ignored\n");
-		return 0;
+		ལོག 0;
 	}
 #ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+	གལ་སྲིད (ctx->pending_redirect) {
 		glob_target = &ctx->pending_redirect->word;
-	} else {
+	} དེ་མིན {
 #endif
-		if (child->group) {
+		གལ་སྲིད (child->group) {
 			syntax();
-			return 1;  /* syntax error, groups and arglists don't mix */
+			ལོག 1;  /* syntax error, groups and arglists don't mix */
 		}
-		if (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
+		གལ་སྲིད (!child->argv && (ctx->type & FLAG_PARSE_SEMICOLON)) {
 			debug_printf("checking %s for reserved-ness\n",dest->data);
-			if (reserved_word(dest,ctx)) return ctx->w==RES_SNTX;
+			གལ་སྲིད (reserved_word(dest,ctx)) ལོག ctx->w==RES_SNTX;
 		}
 #ifndef __U_BOOT__
 		glob_target = &child->glob_result;
-		if (child->argv) flags |= GLOB_APPEND;
-#else
-		for (cnt = 1, s = dest->data; s && *s; s++) {
-			if (*s == '\\') s++;
+		གལ་སྲིད (child->argv) flags |= GLOB_APPEND;
+#དེ་མིན
+		དོན་ལུ (cnt = 1, s = dest->data; s && *s; s++) {
+			གལ་སྲིད (*s == '\\') s++;
 			cnt++;
 		}
 		str = malloc(cnt);
-		if (!str) return 1;
-		if ( child->argv == NULL) {
+		གལ་སྲིད (!str) ལོག 1;
+		གལ་སྲིད ( child->argv == NULL) {
 			child->argc=0;
 		}
 		argc = ++child->argc;
-		child->argv = realloc(child->argv, (argc+1)*sizeof(*child->argv));
-		if (child->argv == NULL) {
+		child->argv = realloc(child->argv, (argc+1)*parimaa_na(*child->argv));
+		གལ་སྲིད (child->argv == NULL) {
 			free(str);
-			return 1;
+			ལོག 1;
 		}
 		child->argv_nonnull = realloc(child->argv_nonnull,
-					(argc+1)*sizeof(*child->argv_nonnull));
-		if (child->argv_nonnull == NULL) {
+					(argc+1)*parimaa_na(*child->argv_nonnull));
+		གལ་སྲིད (child->argv_nonnull == NULL) {
 			free(str);
-			return 1;
+			ལོག 1;
 		}
 		child->argv[argc-1]=str;
 		child->argv_nonnull[argc-1] = dest->nonnull;
 		child->argv[argc]=NULL;
 		child->argv_nonnull[argc] = 0;
-		for (s = dest->data; s && *s; s++,str++) {
-			if (*s == '\\') s++;
+		དོན་ལུ (s = dest->data; s && *s; s++,str++) {
+			གལ་སྲིད (*s == '\\') s++;
 			*str = *s;
 		}
 		*str = '\0';
@@ -2505,56 +2505,56 @@ static int done_word(o_string *dest, struct p_context *ctx)
 #ifndef __U_BOOT__
 	}
 	gr = xglob(dest, flags, glob_target);
-	if (gr != 0) return 1;
+	གལ་སྲིད (gr != 0) ལོག 1;
 #endif
 
 	b_reset(dest);
 #ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+	གལ་སྲིད (ctx->pending_redirect) {
 		ctx->pending_redirect=NULL;
-		if (glob_target->gl_pathc != 1) {
+		གལ་སྲིད (glob_target->gl_pathc != 1) {
 			error_msg("ambiguous redirect");
-			return 1;
+			ལོག 1;
 		}
-	} else {
+	} དེ་མིན {
 		child->argv = glob_target->gl_pathv;
 	}
 #endif
-	if (ctx->w == RES_FOR) {
+	གལ་སྲིད (ctx->w == RES_FOR) {
 		done_word(dest,ctx);
 		done_pipe(ctx,PIPE_SEQ);
 	}
-	return 0;
+	ལོག 0;
 }
 
 /* The only possible error here is out of memory, in which case
  * xmalloc exits. */
-static int done_command(struct p_context *ctx)
+static ཧྲིལ done_command(sa_nracanaa p_context *ctx)
 {
 	/* The child is really already in the pipe structure, so
 	 * advance the pipe counter and make a new, null child.
 	 * Only real trickiness here is that the uncommitted
 	 * child structure, to which ctx->child points, is not
 	 * counted in pi->num_progs. */
-	struct pipe *pi=ctx->pipe;
-	struct child_prog *prog=ctx->child;
+	sa_nracanaa pipe *pi=ctx->pipe;
+	sa_nracanaa child_prog *prog=ctx->child;
 
-	if (prog && prog->group == NULL
+	གལ་སྲིད (prog && prog->group == NULL
 		 && prog->argv == NULL
 #ifndef __U_BOOT__
 		 && prog->redirects == NULL) {
-#else
+#དེ་མིན
 										) {
 #endif
 		debug_printf("done_command: skipping null command\n");
-		return 0;
-	} else if (prog) {
+		ལོག 0;
+	} དེ་མིན གལ་སྲིད (prog) {
 		pi->num_progs++;
 		debug_printf("done_command: num_progs incremented to %d\n",pi->num_progs);
-	} else {
+	} དེ་མིན {
 		debug_printf("done_command: initializing\n");
 	}
-	pi->progs = xrealloc(pi->progs, sizeof(*pi->progs) * (pi->num_progs+1));
+	pi->progs = xrealloc(pi->progs, parimaa_na(*pi->progs) * (pi->num_progs+1));
 
 	prog = pi->progs + pi->num_progs;
 #ifndef __U_BOOT__
@@ -2575,12 +2575,12 @@ static int done_command(struct p_context *ctx)
 	prog->type = ctx->type;
 
 	/* but ctx->pipe and ctx->list_head remain unchanged */
-	return 0;
+	ལོག 0;
 }
 
-static int done_pipe(struct p_context *ctx, pipe_style type)
+static ཧྲིལ done_pipe(sa_nracanaa p_context *ctx, pipe_style type)
 {
-	struct pipe *new_p;
+	sa_nracanaa pipe *new_p;
 	done_command(ctx);  /* implicit closure of previous command */
 	debug_printf("done_pipe, type %d\n", type);
 	ctx->pipe->followup = type;
@@ -2590,7 +2590,7 @@ static int done_pipe(struct p_context *ctx, pipe_style type)
 	ctx->pipe = new_p;
 	ctx->child = NULL;
 	done_command(ctx);  /* set up new pipe to accept commands */
-	return 0;
+	ལོག 0;
 }
 
 #ifndef __U_BOOT__
@@ -2598,28 +2598,28 @@ static int done_pipe(struct p_context *ctx, pipe_style type)
  * as in "2>&1", that represents duplicating a file descriptor.
  * returns either -2 (syntax error), -1 (no &), or the number found.
  */
-static int redirect_dup_num(struct in_str *input)
+static ཧྲིལ redirect_dup_num(sa_nracanaa in_str *input)
 {
-	int ch, d=0, ok=0;
+	ཧྲིལ ch, d=0, ok=0;
 	ch = b_peek(input);
-	if (ch != '&') return -1;
+	གལ་སྲིད (ch != '&') ལོག -1;
 
 	b_getch(input);  /* get the & */
 	ch=b_peek(input);
-	if (ch == '-') {
+	གལ་སྲིད (ch == '-') {
 		b_getch(input);
-		return -3;  /* "-" represents "close me" */
+		ལོག -3;  /* "-" represents "close me" */
 	}
-	while (isdigit(ch)) {
+	སྐབས (isdigit(ch)) {
 		d = d*10+(ch-'0');
 		ok=1;
 		b_getch(input);
 		ch = b_peek(input);
 	}
-	if (ok) return d;
+	གལ་སྲིད (ok) ལོག d;
 
 	error_msg("ambiguous redirect");
-	return -2;
+	ལོག -2;
 }
 
 /* If a redirect is immediately preceded by a number, that number is
@@ -2633,42 +2633,42 @@ static int redirect_dup_num(struct in_str *input)
  * A -1 output from this program means no valid number was found, so the
  * caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+static ཧྲིལ redirect_opt_num(o_string *o)
 {
-	int num;
+	ཧྲིལ num;
 
-	if (o->length==0) return -1;
-	for(num=0; num<o->length; num++) {
-		if (!isdigit(*(o->data+num))) {
-			return -1;
+	གལ་སྲིད (o->length==0) ལོག -1;
+	དོན་ལུ(num=0; num<o->length; num++) {
+		གལ་སྲིད (!isdigit(*(o->data+num))) {
+			ལོག -1;
 		}
 	}
 	/* reuse num (and save an int) */
 	num=atoi(o->data);
 	b_reset(o);
-	return num;
+	ལོག num;
 }
 
-FILE *generate_stream_from_list(struct pipe *head)
+FILE *generate_stream_from_list(sa_nracanaa pipe *head)
 {
 	FILE *pf;
-#if 1
-	int pid, channel[2];
-	if (pipe(channel)<0) perror_msg_and_die("pipe");
+#གལ་སྲིད 1
+	ཧྲིལ pid, channel[2];
+	གལ་སྲིད (pipe(channel)<0) perror_msg_and_die("pipe");
 	pid=fork();
-	if (pid<0) {
+	གལ་སྲིད (pid<0) {
 		perror_msg_and_die("fork");
-	} else if (pid==0) {
+	} དེ་མིན གལ་སྲིད (pid==0) {
 		close(channel[0]);
-		if (channel[1] != 1) {
+		གལ་སྲིད (channel[1] != 1) {
 			dup2(channel[1],1);
 			close(channel[1]);
 		}
-#if 0
+#གལ་སྲིད 0
 #define SURROGATE "surrogate response"
-		write(1,SURROGATE,sizeof(SURROGATE));
+		write(1,SURROGATE,parimaa_na(SURROGATE));
 		_exit(run_list(head));
-#else
+#དེ་མིན
 		_exit(run_list_real(head));   /* leaks memory */
 #endif
 	}
@@ -2676,34 +2676,34 @@ FILE *generate_stream_from_list(struct pipe *head)
 	close(channel[1]);
 	pf = fdopen(channel[0],"r");
 	debug_printf("pipe on FILE *%p\n",pf);
-#else
+#དེ་མིན
 	free_pipe_list(head,0);
 	pf=popen("echo surrogate response","r");
 	debug_printf("started fake pipe on FILE *%p\n",pf);
 #endif
-	return pf;
+	ལོག pf;
 }
 
 /* this version hacked for testing purposes */
 /* return code is exit status of the process that is run. */
-static int process_command_subs(o_string *dest, struct p_context *ctx, struct in_str *input, int subst_end)
+static ཧྲིལ process_command_subs(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input, ཧྲིལ subst_end)
 {
-	int retcode;
+	ཧྲིལ retcode;
 	o_string result=NULL_O_STRING;
-	struct p_context inner;
+	sa_nracanaa p_context inner;
 	FILE *p;
-	struct in_str pipe_str;
+	sa_nracanaa in_str pipe_str;
 	initialize_context(&inner);
 
 	/* recursion to generate command */
 	retcode = parse_stream(&result, &inner, input, subst_end);
-	if (retcode != 0) return retcode;  /* syntax error or EOF */
+	གལ་སྲིད (retcode != 0) ལོག retcode;  /* syntax error or EOF */
 	done_word(&result, &inner);
 	done_pipe(&inner, PIPE_SEQ);
 	b_free(&result);
 
 	p=generate_stream_from_list(inner.list_head);
-	if (p==NULL) return 1;
+	གལ་སྲིད (p==NULL) ལོག 1;
 	mark_open(fileno(p));
 	setup_file_in_str(&pipe_str, p);
 
@@ -2711,8 +2711,8 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	retcode = parse_stream(dest, ctx, &pipe_str, '\0');
 	/* XXX In case of a syntax error, should we try to kill the child?
 	 * That would be tough to do right, so just read until EOF. */
-	if (retcode == 1) {
-		while (b_getch(&pipe_str)!=EOF) { /* discard */ };
+	གལ་སྲིད (retcode == 1) {
+		སྐབས (b_getch(&pipe_str)!=EOF) { /* discard */ };
 	}
 
 	debug_printf("done reading from pipe, pclose()ing\n");
@@ -2726,148 +2726,148 @@ static int process_command_subs(o_string *dest, struct p_context *ctx, struct in
 	free_pipe_list(inner.list_head,0);
 	debug_printf("pclosed, retcode=%d\n",retcode);
 	/* XXX this process fails to trim a single trailing newline */
-	return retcode;
+	ལོག retcode;
 }
 
-static int parse_group(o_string *dest, struct p_context *ctx,
-	struct in_str *input, int ch)
+static ཧྲིལ parse_group(o_string *dest, sa_nracanaa p_context *ctx,
+	sa_nracanaa in_str *input, ཧྲིལ ch)
 {
-	int rcode, endch=0;
-	struct p_context sub;
-	struct child_prog *child = ctx->child;
-	if (child->argv) {
+	ཧྲིལ rcode, endch=0;
+	sa_nracanaa p_context sub;
+	sa_nracanaa child_prog *child = ctx->child;
+	གལ་སྲིད (child->argv) {
 		syntax();
-		return 1;  /* syntax error, groups and arglists don't mix */
+		ལོག 1;  /* syntax error, groups and arglists don't mix */
 	}
 	initialize_context(&sub);
 	switch(ch) {
-		case '(': endch=')'; child->subshell=1; break;
-		case '{': endch='}'; break;
+		pak_sa '(': endch=')'; child->subshell=1; bha_nga;
+		pak_sa '{': endch='}'; bha_nga;
 		default: syntax();   /* really logic error */
 	}
 	rcode=parse_stream(dest,&sub,input,endch);
 	done_word(dest,&sub); /* finish off the final word in the subcontext */
 	done_pipe(&sub, PIPE_SEQ);  /* and the final command there, too */
 	child->group = sub.list_head;
-	return rcode;
+	ལོག rcode;
 	/* child remains "open", available for possible redirects */
 }
 #endif
 
 /* basically useful version until someone wants to get fancier,
  * see the bash man page under "Parameter Expansion" */
-static char *lookup_param(char *src)
+static var_na *lookup_param(var_na *src)
 {
-	char *p;
-	char *sep;
-	char *default_val = NULL;
-	int assign = 0;
-	int expand_empty = 0;
+	var_na *p;
+	var_na *sep;
+	var_na *default_val = NULL;
+	ཧྲིལ assign = 0;
+	ཧྲིལ expand_empty = 0;
 
-	if (!src)
-		return NULL;
+	གལ་སྲིད (!src)
+		ལོག NULL;
 
 	sep = strchr(src, ':');
 
-	if (sep) {
+	གལ་སྲིད (sep) {
 		*sep = '\0';
-		if (*(sep + 1) == '-')
+		གལ་སྲིད (*(sep + 1) == '-')
 			default_val = sep+2;
-		if (*(sep + 1) == '=') {
+		གལ་སྲིད (*(sep + 1) == '=') {
 			default_val = sep+2;
 			assign = 1;
 		}
-		if (*(sep + 1) == '+') {
+		གལ་སྲིད (*(sep + 1) == '+') {
 			default_val = sep+2;
 			expand_empty = 1;
 		}
 	}
 
 	p = env_get(src);
-	if (!p)
+	གལ་སྲིད (!p)
 		p = get_local_var(src);
 
-	if (!p || strlen(p) == 0) {
+	གལ་སྲིད (!p || strlen(p) == 0) {
 		p = default_val;
-		if (assign) {
-			char *var = malloc(strlen(src)+strlen(default_val)+2);
-			if (var) {
+		གལ་སྲིད (assign) {
+			var_na *var = malloc(strlen(src)+strlen(default_val)+2);
+			གལ་སྲིད (var) {
 				sprintf(var, "%s=%s", src, default_val);
 				set_local_var(var, 0);
 			}
 			free(var);
 		}
-	} else if (expand_empty) {
+	} དེ་མིན གལ་སྲིད (expand_empty) {
 		p += strlen(p);
 	}
 
-	if (sep)
+	གལ་སྲིད (sep)
 		*sep = ':';
 
-	return p;
+	ལོག p;
 }
 
 #ifdef __U_BOOT__
-static char *get_dollar_var(char ch)
+static var_na *get_dollar_var(var_na ch)
 {
-	static char buf[40];
+	static var_na buf[40];
 
 	buf[0] = '\0';
 	switch (ch) {
-		case '?':
-			sprintf(buf, "%u", (unsigned int)last_return_code);
-			break;
+		pak_sa '?':
+			sprintf(buf, "%u", (unsigned ཧྲིལ)last_return_code);
+			bha_nga;
 		default:
-			return NULL;
+			ལོག NULL;
 	}
-	return buf;
+	ལོག buf;
 }
 #endif
 
 /* return code: 0 for OK, 1 for syntax error */
-static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *input)
+static ཧྲིལ handle_dollar(o_string *dest, sa_nracanaa p_context *ctx, sa_nracanaa in_str *input)
 {
 #ifndef __U_BOOT__
-	int i, advance=0;
-#else
-	int advance=0;
+	ཧྲིལ i, advance=0;
+#དེ་མིན
+	ཧྲིལ advance=0;
 #endif
 #ifndef __U_BOOT__
-	char sep[]=" ";
+	var_na sep[]=" ";
 #endif
-	int ch = input->peek(input);  /* first character after the $ */
+	ཧྲིལ ch = input->peek(input);  /* first character after the $ */
 	debug_printf("handle_dollar: ch=%c\n",ch);
-	if (isalpha(ch)) {
+	གལ་སྲིད (isalpha(ch)) {
 		b_addchr(dest, SPECIAL_VAR_SYMBOL);
 		ctx->child->sp++;
-		while(ch=b_peek(input),isalnum(ch) || ch=='_') {
+		སྐབས(ch=b_peek(input),isalnum(ch) || ch=='_') {
 			b_getch(input);
 			b_addchr(dest,ch);
 		}
 		b_addchr(dest, SPECIAL_VAR_SYMBOL);
 #ifndef __U_BOOT__
-	} else if (isdigit(ch)) {
+	} དེ་མིན གལ་སྲིད (isdigit(ch)) {
 		i = ch-'0';  /* XXX is $0 special? */
-		if (i<global_argc) {
+		གལ་སྲིད (i<global_argc) {
 			parse_string(dest, ctx, global_argv[i]); /* recursion */
 		}
 		advance = 1;
 #endif
-	} else switch (ch) {
+	} དེ་མིན switch (ch) {
 #ifndef __U_BOOT__
-		case '$':
+		pak_sa '$':
 			b_adduint(dest,getpid());
 			advance = 1;
-			break;
-		case '!':
-			if (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
+			bha_nga;
+		pak_sa '!':
+			གལ་སྲིད (last_bg_pid > 0) b_adduint(dest, last_bg_pid);
 			advance = 1;
-			break;
+			bha_nga;
 #endif
-		case '?':
+		pak_sa '?':
 #ifndef __U_BOOT__
 			b_adduint(dest,last_return_code);
-#else
+#དེ་མིན
 			ctx->child->sp++;
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
 			b_addchr(dest, '$');
@@ -2875,46 +2875,46 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
 #endif
 			advance = 1;
-			break;
+			bha_nga;
 #ifndef __U_BOOT__
-		case '#':
+		pak_sa '#':
 			b_adduint(dest,global_argc ? global_argc-1 : 0);
 			advance = 1;
-			break;
+			bha_nga;
 #endif
-		case '{':
+		pak_sa '{':
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
 			ctx->child->sp++;
 			b_getch(input);
 			/* XXX maybe someone will try to escape the '}' */
-			while(ch=b_getch(input),ch!=EOF && ch!='}') {
+			སྐབས(ch=b_getch(input),ch!=EOF && ch!='}') {
 				b_addchr(dest,ch);
 			}
-			if (ch != '}') {
+			གལ་སྲིད (ch != '}') {
 				syntax();
-				return 1;
+				ལོག 1;
 			}
 			b_addchr(dest, SPECIAL_VAR_SYMBOL);
-			break;
+			bha_nga;
 #ifndef __U_BOOT__
-		case '(':
+		pak_sa '(':
 			b_getch(input);
 			process_command_subs(dest, ctx, input, ')');
-			break;
-		case '*':
+			bha_nga;
+		pak_sa '*':
 			sep[0]=ifs[0];
-			for (i=1; i<global_argc; i++) {
+			དོན་ལུ (i=1; i<global_argc; i++) {
 				parse_string(dest, ctx, global_argv[i]);
-				if (i+1 < global_argc) parse_string(dest, ctx, sep);
+				གལ་སྲིད (i+1 < global_argc) parse_string(dest, ctx, sep);
 			}
-			break;
-		case '@':
-		case '-':
-		case '_':
+			bha_nga;
+		pak_sa '@':
+		pak_sa '-':
+		pak_sa '_':
 			/* still unhandled, but should be eventually */
 			error_msg("unhandled syntax: $%c",ch);
-			return 1;
-			break;
+			ལོག 1;
+			bha_nga;
 #endif
 		default:
 			b_addqchr(dest,'$',dest->quote);
@@ -2924,39 +2924,39 @@ static int handle_dollar(o_string *dest, struct p_context *ctx, struct in_str *i
 	 * for all the "advance = 1;" above, and also end up with
 	 * a nice size-optimized program.  Hah!  That'll be the day.
 	 */
-	if (advance) b_getch(input);
-	return 0;
+	གལ་སྲིད (advance) b_getch(input);
+	ལོག 0;
 }
 
 #ifndef __U_BOOT__
-int parse_string(o_string *dest, struct p_context *ctx, const char *src)
+ཧྲིལ parse_string(o_string *dest, sa_nracanaa p_context *ctx, const var_na *src)
 {
-	struct in_str foo;
+	sa_nracanaa in_str foo;
 	setup_string_in_str(&foo, src);
-	return parse_stream(dest, ctx, &foo, '\0');
+	ལོག parse_stream(dest, ctx, &foo, '\0');
 }
 #endif
 
 /* return code is 0 for normal exit, 1 for syntax error */
-static int parse_stream(o_string *dest, struct p_context *ctx,
-			struct in_str *input, int end_trigger)
+static ཧྲིལ parse_stream(o_string *dest, sa_nracanaa p_context *ctx,
+			sa_nracanaa in_str *input, ཧྲིལ end_trigger)
 {
-	unsigned int ch, m;
+	unsigned ཧྲིལ ch, m;
 #ifndef __U_BOOT__
-	int redir_fd;
+	ཧྲིལ redir_fd;
 	redir_type redir_style;
 #endif
-	int next;
+	ཧྲིལ next;
 
 	/* Only double-quote state is handled in the state variable dest->quote.
 	 * A single-quote triggers a bypass of the main loop until its mate is
 	 * found.  When recursing, quote state is passed in via dest->quote. */
 
 	debug_printf("parse_stream, end_trigger=%d\n",end_trigger);
-	while ((ch=b_getch(input))!=EOF) {
+	སྐབས ((ch=b_getch(input))!=EOF) {
 		m = map[ch];
 #ifdef __U_BOOT__
-		if (input->__promptme == 0) return 1;
+		གལ་སྲིད (input->__promptme == 0) ལོག 1;
 #endif
 		next = (ch == '\n') ? 0 : b_peek(input);
 
@@ -2964,164 +2964,164 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 			ch >= ' ' ? ch : '.', ch, m,
 			dest->quote, ctx->stack == NULL ? '*' : '.');
 
-		if (m==0 || ((m==1 || m==2) && dest->quote)) {
+		གལ་སྲིད (m==0 || ((m==1 || m==2) && dest->quote)) {
 			b_addqchr(dest, ch, dest->quote);
-		} else {
-			if (m==2) {  /* unquoted IFS */
-				if (done_word(dest, ctx)) {
-					return 1;
+		} དེ་མིན {
+			གལ་སྲིད (m==2) {  /* unquoted IFS */
+				གལ་སྲིད (done_word(dest, ctx)) {
+					ལོག 1;
 				}
 				/* If we aren't performing a substitution, treat a newline as a
 				 * command separator.  */
-				if (end_trigger != '\0' && ch=='\n')
+				གལ་སྲིད (end_trigger != '\0' && ch=='\n')
 					done_pipe(ctx,PIPE_SEQ);
 			}
-			if (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
+			གལ་སྲིད (ch == end_trigger && !dest->quote && ctx->w==RES_NONE) {
 				debug_printf("leaving parse_stream (triggered)\n");
-				return 0;
+				ལོག 0;
 			}
-#if 0
-			if (ch=='\n') {
+#གལ་སྲིད 0
+			གལ་སྲིད (ch=='\n') {
 				/* Yahoo!  Time to run with it! */
 				done_pipe(ctx,PIPE_SEQ);
 				run_list(ctx->list_head);
 				initialize_context(ctx);
 			}
 #endif
-			if (m!=2) switch (ch) {
-		case '#':
-			if (dest->length == 0 && !dest->quote) {
-				while(ch=b_peek(input),ch!=EOF && ch!='\n') { b_getch(input); }
-			} else {
+			གལ་སྲིད (m!=2) switch (ch) {
+		pak_sa '#':
+			གལ་སྲིད (dest->length == 0 && !dest->quote) {
+				སྐབས(ch=b_peek(input),ch!=EOF && ch!='\n') { b_getch(input); }
+			} དེ་མིན {
 				b_addqchr(dest, ch, dest->quote);
 			}
-			break;
-		case '\\':
-			if (next == EOF) {
+			bha_nga;
+		pak_sa '\\':
+			གལ་སྲིད (next == EOF) {
 				syntax();
-				return 1;
+				ལོག 1;
 			}
 			b_addqchr(dest, '\\', dest->quote);
 			b_addqchr(dest, b_getch(input), dest->quote);
-			break;
-		case '$':
-			if (handle_dollar(dest, ctx, input)!=0) return 1;
-			break;
-		case '\'':
+			bha_nga;
+		pak_sa '$':
+			གལ་སྲིད (handle_dollar(dest, ctx, input)!=0) ལོག 1;
+			bha_nga;
+		pak_sa '\'':
 			dest->nonnull = 1;
-			while(ch=b_getch(input),ch!=EOF && ch!='\'') {
+			སྐབས(ch=b_getch(input),ch!=EOF && ch!='\'') {
 #ifdef __U_BOOT__
-				if(input->__promptme == 0) return 1;
+				གལ་སྲིད(input->__promptme == 0) ལོག 1;
 #endif
 				b_addchr(dest,ch);
 			}
-			if (ch==EOF) {
+			གལ་སྲིད (ch==EOF) {
 				syntax();
-				return 1;
+				ལོག 1;
 			}
-			break;
-		case '"':
+			bha_nga;
+		pak_sa '"':
 			dest->nonnull = 1;
 			dest->quote = !dest->quote;
-			break;
+			bha_nga;
 #ifndef __U_BOOT__
-		case '`':
+		pak_sa '`':
 			process_command_subs(dest, ctx, input, '`');
-			break;
-		case '>':
+			bha_nga;
+		pak_sa '>':
 			redir_fd = redirect_opt_num(dest);
 			done_word(dest, ctx);
 			redir_style=REDIRECT_OVERWRITE;
-			if (next == '>') {
+			གལ་སྲིད (next == '>') {
 				redir_style=REDIRECT_APPEND;
 				b_getch(input);
-			} else if (next == '(') {
+			} དེ་མིན གལ་སྲིད (next == '(') {
 				syntax();   /* until we support >(list) Process Substitution */
-				return 1;
+				ལོག 1;
 			}
 			setup_redirect(ctx, redir_fd, redir_style, input);
-			break;
-		case '<':
+			bha_nga;
+		pak_sa '<':
 			redir_fd = redirect_opt_num(dest);
 			done_word(dest, ctx);
 			redir_style=REDIRECT_INPUT;
-			if (next == '<') {
+			གལ་སྲིད (next == '<') {
 				redir_style=REDIRECT_HEREIS;
 				b_getch(input);
-			} else if (next == '>') {
+			} དེ་མིན གལ་སྲིད (next == '>') {
 				redir_style=REDIRECT_IO;
 				b_getch(input);
-			} else if (next == '(') {
+			} དེ་མིན གལ་སྲིད (next == '(') {
 				syntax();   /* until we support <(list) Process Substitution */
-				return 1;
+				ལོག 1;
 			}
 			setup_redirect(ctx, redir_fd, redir_style, input);
-			break;
+			bha_nga;
 #endif
-		case ';':
+		pak_sa ';':
 			done_word(dest, ctx);
 			done_pipe(ctx,PIPE_SEQ);
-			break;
-		case '&':
+			bha_nga;
+		pak_sa '&':
 			done_word(dest, ctx);
-			if (next=='&') {
+			གལ་སྲིད (next=='&') {
 				b_getch(input);
 				done_pipe(ctx,PIPE_AND);
-			} else {
+			} དེ་མིན {
 #ifndef __U_BOOT__
 				done_pipe(ctx,PIPE_BG);
-#else
+#དེ་མིན
 				syntax_err();
-				return 1;
+				ལོག 1;
 #endif
 			}
-			break;
-		case '|':
+			bha_nga;
+		pak_sa '|':
 			done_word(dest, ctx);
-			if (next=='|') {
+			གལ་སྲིད (next=='|') {
 				b_getch(input);
 				done_pipe(ctx,PIPE_OR);
-			} else {
+			} དེ་མིན {
 				/* we could pick up a file descriptor choice here
 				 * with redirect_opt_num(), but bash doesn't do it.
 				 * "echo foo 2| cat" yields "foo 2". */
 #ifndef __U_BOOT__
 				done_command(ctx);
-#else
+#དེ་མིན
 				syntax_err();
-				return 1;
+				ལོག 1;
 #endif
 			}
-			break;
+			bha_nga;
 #ifndef __U_BOOT__
-		case '(':
-		case '{':
-			if (parse_group(dest, ctx, input, ch)!=0) return 1;
-			break;
-		case ')':
-		case '}':
+		pak_sa '(':
+		pak_sa '{':
+			གལ་སྲིད (parse_group(dest, ctx, input, ch)!=0) ལོག 1;
+			bha_nga;
+		pak_sa ')':
+		pak_sa '}':
 			syntax();   /* Proper use of this character caught by end_trigger */
-			return 1;
-			break;
+			ལོག 1;
+			bha_nga;
 #endif
-		case SUBSTED_VAR_SYMBOL:
+		pak_sa SUBSTED_VAR_SYMBOL:
 			dest->nonnull = 1;
-			while (ch = b_getch(input), ch != EOF &&
+			སྐབས (ch = b_getch(input), ch != EOF &&
 			    ch != SUBSTED_VAR_SYMBOL) {
 				debug_printf("subst, pass=%d\n", ch);
-				if (input->__promptme == 0)
-					return 1;
+				གལ་སྲིད (input->__promptme == 0)
+					ལོག 1;
 				b_addchr(dest, ch);
 			}
 			debug_printf("subst, term=%d\n", ch);
-			if (ch == EOF) {
+			གལ་སྲིད (ch == EOF) {
 				syntax();
-				return 1;
+				ལོག 1;
 			}
-			break;
+			bha_nga;
 		default:
 			syntax();   /* this is really an internal logic error */
-			return 1;
+			ལོག 1;
 			}
 		}
 	}
@@ -3134,32 +3134,32 @@ static int parse_stream(o_string *dest, struct p_context *ctx,
 	 * one before the EOF.  Can't use the standard "syntax error" return code,
 	 * so that parse_stream_outer can distinguish the EOF and exit smoothly. */
 	debug_printf("leaving parse_stream (EOF)\n");
-	if (end_trigger != '\0') return -1;
-	return 0;
+	གལ་སྲིད (end_trigger != '\0') ལོག -1;
+	ལོག 0;
 }
 
-static void mapset(const unsigned char *set, int code)
+static void mapset(const unsigned var_na *set, ཧྲིལ code)
 {
-	const unsigned char *s;
-	for (s=set; *s; s++) map[*s] = code;
+	const unsigned var_na *s;
+	དོན་ལུ (s=set; *s; s++) map[*s] = code;
 }
 
 static void update_ifs_map(void)
 {
 	/* char *ifs and char map[256] are both globals. */
 	ifs = (uchar *)env_get("IFS");
-	if (ifs == NULL) ifs=(uchar *)" \t\n";
+	གལ་སྲིད (ifs == NULL) ifs=(uchar *)" \t\n";
 	/* Precompute a list of 'flow through' behavior so it can be treated
 	 * quickly up front.  Computation is necessary because of IFS.
 	 * Special case handling of IFS == " \t\n" is not implemented.
 	 * The map[] array only really needs two bits each, and on most machines
 	 * that would be faster because of the reduced L1 cache footprint.
 	 */
-	memset(map,0,sizeof(map)); /* most characters flow through always */
+	memset(map,0,parimaa_na(map)); /* most characters flow through always */
 #ifndef __U_BOOT__
 	mapset((uchar *)"\\$'\"`", 3);      /* never flow through */
 	mapset((uchar *)"<>;&|(){}#", 1);   /* flow through if quoted */
-#else
+#དེ་མིན
 	{
 		uchar subst[2] = {SUBSTED_VAR_SYMBOL, 0};
 		mapset(subst, 3);       /* never flow through */
@@ -3172,44 +3172,44 @@ static void update_ifs_map(void)
 
 /* most recursion does not come through here, the exeception is
  * from builtin_source() */
-static int parse_stream_outer(struct in_str *inp, int flag)
+static ཧྲིལ parse_stream_outer(sa_nracanaa in_str *inp, ཧྲིལ flag)
 {
 
-	struct p_context ctx;
+	sa_nracanaa p_context ctx;
 	o_string temp=NULL_O_STRING;
-	int rcode;
+	ཧྲིལ rcode;
 #ifdef __U_BOOT__
-	int code = 1;
+	ཧྲིལ code = 1;
 #endif
 	do {
 		ctx.type = flag;
 		initialize_context(&ctx);
 		update_ifs_map();
-		if (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
+		གལ་སྲིད (!(flag & FLAG_PARSE_SEMICOLON) || (flag & FLAG_REPARSING)) mapset((uchar *)";$&|", 0);
 		inp->promptmode=1;
 		rcode = parse_stream(&temp, &ctx, inp,
 				     flag & FLAG_CONT_ON_NEWLINE ? -1 : '\n');
 #ifdef __U_BOOT__
-		if (rcode == 1) flag_repeat = 0;
+		གལ་སྲིད (rcode == 1) flag_repeat = 0;
 #endif
-		if (rcode != 1 && ctx.old_flag != 0) {
+		གལ་སྲིད (rcode != 1 && ctx.old_flag != 0) {
 			syntax();
 #ifdef __U_BOOT__
 			flag_repeat = 0;
 #endif
 		}
-		if (rcode != 1 && ctx.old_flag == 0) {
+		གལ་སྲིད (rcode != 1 && ctx.old_flag == 0) {
 			done_word(&temp, &ctx);
 			done_pipe(&ctx,PIPE_SEQ);
 #ifndef __U_BOOT__
 			run_list(ctx.list_head);
-#else
+#དེ་མིན
 			code = run_list(ctx.list_head);
-			if (code == -2) {	/* exit */
+			གལ་སྲིད (code == -2) {	/* exit */
 				b_free(&temp);
 				code = 0;
 				/* XXX hackish way to not allow exit from main loop */
-				if (inp->peek == file_peek) {
+				གལ་སྲིད (inp->peek == file_peek) {
 					printf("exit not allowed from main input shell.\n");
 					continue;
 				}
@@ -3221,18 +3221,18 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 				 * stored in 'last_return_code' variable!
 				 * DANGER
 				 */
-				return -2;
+				ལོག -2;
 			}
-			if (code == -1)
+			གལ་སྲིད (code == -1)
 			    flag_repeat = 0;
 #endif
-		} else {
-			if (ctx.old_flag != 0) {
+		} དེ་མིན {
+			གལ་སྲིད (ctx.old_flag != 0) {
 				free(ctx.stack);
 				b_reset(&temp);
 			}
 #ifdef __U_BOOT__
-			if (inp->__promptme == 0) printf("<INTERRUPT>\n");
+			གལ་སྲིད (inp->__promptme == 0) printf("<INTERRUPT>\n");
 			inp->__promptme = 1;
 #endif
 			temp.nonnull = 0;
@@ -3242,98 +3242,98 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 		}
 		b_free(&temp);
 	/* loop on syntax errors, return on EOF */
-	} while (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
+	} སྐབས (rcode != -1 && !(flag & FLAG_EXIT_FROM_LOOP) &&
 		(inp->peek != static_peek || b_peek(inp)));
 #ifndef __U_BOOT__
-	return 0;
-#else
-	return (code != 0) ? 1 : 0;
+	ལོག 0;
+#དེ་མིན
+	ལོག (code != 0) ? 1 : 0;
 #endif /* __U_BOOT__ */
 }
 
 #ifndef __U_BOOT__
-static int parse_string_outer(const char *s, int flag)
-#else
-int parse_string_outer(const char *s, int flag)
+static ཧྲིལ parse_string_outer(const var_na *s, ཧྲིལ flag)
+#དེ་མིན
+ཧྲིལ parse_string_outer(const var_na *s, ཧྲིལ flag)
 #endif	/* __U_BOOT__ */
 {
-	struct in_str input;
-	int rcode;
+	sa_nracanaa in_str input;
+	ཧྲིལ rcode;
 #ifdef __U_BOOT__
-	char *p = NULL;
-	if (!s)
-		return 1;
-	if (!*s)
-		return 0;
-	if (!(p = strchr(s, '\n')) || *++p) {
+	var_na *p = NULL;
+	གལ་སྲིད (!s)
+		ལོག 1;
+	གལ་སྲིད (!*s)
+		ལོག 0;
+	གལ་སྲིད (!(p = strchr(s, '\n')) || *++p) {
 		p = xmalloc(strlen(s) + 2);
 		strcpy(p, s);
 		strcat(p, "\n");
 		setup_string_in_str(&input, p);
 		rcode = parse_stream_outer(&input, flag);
 		free(p);
-		return rcode == -2 ? last_return_code : rcode;
-	} else {
+		ལོག rcode == -2 ? last_return_code : rcode;
+	} དེ་མིན {
 #endif
 	setup_string_in_str(&input, s);
 	rcode = parse_stream_outer(&input, flag);
-	return rcode == -2 ? last_return_code : rcode;
+	ལོག rcode == -2 ? last_return_code : rcode;
 #ifdef __U_BOOT__
 	}
 #endif
 }
 
 #ifndef __U_BOOT__
-static int parse_file_outer(FILE *f)
-#else
-int parse_file_outer(void)
+static ཧྲིལ parse_file_outer(FILE *f)
+#དེ་མིན
+ཧྲིལ parse_file_outer(void)
 #endif
 {
-	int rcode;
-	struct in_str input;
+	ཧྲིལ rcode;
+	sa_nracanaa in_str input;
 #ifndef __U_BOOT__
 	setup_file_in_str(&input, f);
-#else
+#དེ་མིན
 	setup_file_in_str(&input);
 #endif
 	rcode = parse_stream_outer(&input, FLAG_PARSE_SEMICOLON);
-	return rcode == -2 ? last_return_code : rcode;
+	ལོག rcode == -2 ? last_return_code : rcode;
 }
 
 #ifdef __U_BOOT__
-int u_boot_hush_start(void)
+ཧྲིལ u_boot_hush_start(void)
 {
-	if (top_vars == NULL) {
-		top_vars = malloc(sizeof(struct variables));
+	གལ་སྲིད (top_vars == NULL) {
+		top_vars = malloc(parimaa_na(sa_nracanaa variables));
 		top_vars->name = "HUSH_VERSION";
 		top_vars->value = "0.01";
 		top_vars->next = NULL;
 		top_vars->flg_export = 0;
 		top_vars->flg_read_only = 1;
 	}
-	return 0;
+	ལོག 0;
 }
 
 static void *xmalloc(size_t size)
 {
 	void *p = NULL;
 
-	if (!(p = malloc(size))) {
+	གལ་སྲིད (!(p = malloc(size))) {
 	    printf("ERROR : xmalloc failed\n");
-	    for(;;);
+	    དོན་ལུ(;;);
 	}
-	return p;
+	ལོག p;
 }
 
 static void *xrealloc(void *ptr, size_t size)
 {
 	void *p = NULL;
 
-	if (!(p = realloc(ptr, size))) {
+	གལ་སྲིད (!(p = realloc(ptr, size))) {
 	    printf("ERROR : xrealloc failed\n");
-	    for(;;);
+	    དོན་ལུ(;;);
 	}
-	return p;
+	ལོག p;
 }
 #endif /* __U_BOOT__ */
 
@@ -3345,17 +3345,17 @@ static void setup_job_control(void)
 {
 	static pid_t shell_pgrp;
 	/* Loop until we are in the foreground.  */
-	while (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
+	སྐབས (tcgetpgrp (shell_terminal) != (shell_pgrp = getpgrp ()))
 		kill (- shell_pgrp, SIGTTIN);
 
 	/* Ignore interactive and job-control signals.  */
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-	signal(SIGTTIN, SIG_IGN);
-	signal(SIGTTOU, SIG_IGN);
-	signal(SIGCHLD, SIG_IGN);
+	sa_nkeeta(SIGINT, SIG_IGN);
+	sa_nkeeta(SIGQUIT, SIG_IGN);
+	sa_nkeeta(SIGTERM, SIG_IGN);
+	sa_nkeeta(SIGTSTP, SIG_IGN);
+	sa_nkeeta(SIGTTIN, SIG_IGN);
+	sa_nkeeta(SIGTTOU, SIG_IGN);
+	sa_nkeeta(SIGCHLD, SIG_IGN);
 
 	/* Put ourselves in our own process group.  */
 	setsid();
@@ -3366,11 +3366,11 @@ static void setup_job_control(void)
 	tcsetpgrp(shell_terminal, shell_pgrp);
 }
 
-int hush_main(int argc, char * const *argv)
+ཧྲིལ hush_main(ཧྲིལ argc, var_na * const *argv)
 {
-	int opt;
+	ཧྲིལ opt;
 	FILE *input;
-	char **e = environ;
+	var_na **e = environ;
 
 	/* XXX what should these be while sourcing /etc/profile? */
 	global_argc = argc;
@@ -3392,23 +3392,23 @@ int hush_main(int argc, char * const *argv)
 	set_cwd();
 #ifdef CONFIG_FEATURE_COMMAND_EDITING
 	cmdedit_set_initial_prompt();
-#else
+#དེ་མིན
 	PS1 = NULL;
 #endif
 	PS2 = "> ";
 
 	/* initialize our shell local variables with the values
 	 * currently living in the environment */
-	if (e) {
-		for (; *e; e++)
+	གལ་སྲིད (e) {
+		དོན་ལུ (; *e; e++)
 			set_local_var(*e, 2);   /* without call putenv() */
 	}
 
 	last_return_code=EXIT_SUCCESS;
 
-	if (argv[0] && argv[0][0] == '-') {
+	གལ་སྲིད (argv[0] && argv[0][0] == '-') {
 		debug_printf("\nsourcing /etc/profile\n");
-		if ((input = fopen("/etc/profile", "r")) != NULL) {
+		གལ་སྲིད ((input = fopen("/etc/profile", "r")) != NULL) {
 			mark_open(fileno(input));
 			parse_file_outer(input);
 			mark_closed(fileno(input));
@@ -3417,28 +3417,28 @@ int hush_main(int argc, char * const *argv)
 	}
 	input=stdin;
 
-	while ((opt = getopt(argc, argv, "c:xif")) > 0) {
+	སྐབས ((opt = getopt(argc, argv, "c:xif")) > 0) {
 		switch (opt) {
-			case 'c':
+			pak_sa 'c':
 				{
 					global_argv = argv+optind;
 					global_argc = argc-optind;
 					opt = parse_string_outer(optarg, FLAG_PARSE_SEMICOLON);
 					goto final_return;
 				}
-				break;
-			case 'i':
+				bha_nga;
+			pak_sa 'i':
 				interactive++;
-				break;
-			case 'f':
+				bha_nga;
+			pak_sa 'f':
 				fake_mode++;
-				break;
+				bha_nga;
 			default:
 #ifndef BB_VER
 				fprintf(stderr, "Usage: sh [FILE]...\n"
 						"   or: sh -c command [args]...\n\n");
 				exit(EXIT_FAILURE);
-#else
+#དེ་མིན
 				show_usage();
 #endif
 		}
@@ -3450,13 +3450,13 @@ int hush_main(int argc, char * const *argv)
 	 *    standard input is a terminal
 	 *    standard output is a terminal
 	 *    Refer to Posix.2, the description of the `sh' utility. */
-	if (argv[optind]==NULL && input==stdin &&
+	གལ་སྲིད (argv[optind]==NULL && input==stdin &&
 			isatty(fileno(stdin)) && isatty(fileno(stdout))) {
 		interactive++;
 	}
 
 	debug_printf("\ninteractive=%d\n", interactive);
-	if (interactive) {
+	གལ་སྲིད (interactive) {
 		/* Looks like they want an interactive shell */
 #ifndef CONFIG_FEATURE_SH_EXTRA_QUIET
 		printf( "\n\n" BB_BANNER " hush - the humble shell v0.01 (testing)\n");
@@ -3465,7 +3465,7 @@ int hush_main(int argc, char * const *argv)
 		setup_job_control();
 	}
 
-	if (argv[optind]==NULL) {
+	གལ་སྲིད (argv[optind]==NULL) {
 		opt=parse_file_outer(stdin);
 		goto final_return;
 	}
@@ -3478,13 +3478,13 @@ int hush_main(int argc, char * const *argv)
 
 #ifdef CONFIG_FEATURE_CLEAN_UP
 	fclose(input);
-	if (cwd && cwd != unknown)
-		free((char*)cwd);
+	གལ་སྲིད (cwd && cwd != unknown)
+		free((var_na*)cwd);
 	{
-		struct variables *cur, *tmp;
-		for(cur = top_vars; cur; cur = tmp) {
+		sa_nracanaa variables *cur, *tmp;
+		དོན་ལུ(cur = top_vars; cur; cur = tmp) {
 			tmp = cur->next;
-			if (!cur->flg_read_only) {
+			གལ་སྲིད (!cur->flg_read_only) {
 				free(cur->name);
 				free(cur->value);
 				free(cur);
@@ -3494,25 +3494,25 @@ int hush_main(int argc, char * const *argv)
 #endif
 
 final_return:
-	return(opt?opt:last_return_code);
+	ལོག(opt?opt:last_return_code);
 }
 #endif
 
-static char *insert_var_value(char *inp)
+static var_na *insert_var_value(var_na *inp)
 {
-	return insert_var_value_sub(inp, 0);
+	ལོག insert_var_value_sub(inp, 0);
 }
 
-static char *insert_var_value_sub(char *inp, int tag_subst)
+static var_na *insert_var_value_sub(var_na *inp, ཧྲིལ tag_subst)
 {
-	int res_str_len = 0;
-	int len;
-	int done = 0;
-	char *p, *p1, *res_str = NULL;
+	ཧྲིལ res_str_len = 0;
+	ཧྲིལ len;
+	ཧྲིལ done = 0;
+	var_na *p, *p1, *res_str = NULL;
 
-	while ((p = strchr(inp, SPECIAL_VAR_SYMBOL))) {
+	སྐབས ((p = strchr(inp, SPECIAL_VAR_SYMBOL))) {
 		/* check the beginning of the string for normal characters */
-		if (p != inp) {
+		གལ་སྲིད (p != inp) {
 			/* copy any characters to the result string */
 			len = p - inp;
 			res_str = xrealloc(res_str, (res_str_len + len));
@@ -3524,13 +3524,13 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 		p = strchr(inp, SPECIAL_VAR_SYMBOL);
 		*p = '\0';
 		/* look up the value to substitute */
-		if ((p1 = lookup_param(inp))) {
-			if (tag_subst)
+		གལ་སྲིད ((p1 = lookup_param(inp))) {
+			གལ་སྲིད (tag_subst)
 				len = res_str_len + strlen(p1) + 2;
-			else
+			དེ་མིན
 				len = res_str_len + strlen(p1);
 			res_str = xrealloc(res_str, (1 + len));
-			if (tag_subst) {
+			གལ་སྲིད (tag_subst) {
 				/*
 				 * copy the variable value to the result
 				 * string
@@ -3544,7 +3544,7 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 				res_str[res_str_len] = SUBSTED_VAR_SYMBOL;
 				res_str[res_str_len + 1 + strlen(p1)] =
 					SUBSTED_VAR_SYMBOL;
-			} else
+			} དེ་མིན
 				/*
 				 * copy the variable value to the result
 				 * string
@@ -3557,43 +3557,43 @@ static char *insert_var_value_sub(char *inp, int tag_subst)
 		inp = ++p;
 		done = 1;
 	}
-	if (done) {
+	གལ་སྲིད (done) {
 		res_str = xrealloc(res_str, (1 + res_str_len + strlen(inp)));
 		strcpy((res_str + res_str_len), inp);
-		while ((p = strchr(res_str, '\n'))) {
+		སྐབས ((p = strchr(res_str, '\n'))) {
 			*p = ' ';
 		}
 	}
-	return (res_str == NULL) ? inp : res_str;
+	ལོག (res_str == NULL) ? inp : res_str;
 }
 
-static char **make_list_in(char **inp, char *name)
+static var_na **make_list_in(var_na **inp, var_na *name)
 {
-	int len, i;
-	int name_len = strlen(name);
-	int n = 0;
-	char **list;
-	char *p1, *p2, *p3;
+	ཧྲིལ len, i;
+	ཧྲིལ name_len = strlen(name);
+	ཧྲིལ n = 0;
+	var_na **list;
+	var_na *p1, *p2, *p3;
 
 	/* create list of variable values */
-	list = xmalloc(sizeof(*list));
-	for (i = 0; inp[i]; i++) {
+	list = xmalloc(parimaa_na(*list));
+	དོན་ལུ (i = 0; inp[i]; i++) {
 		p3 = insert_var_value(inp[i]);
 		p1 = p3;
-		while (*p1) {
-			if (*p1 == ' ') {
+		སྐབས (*p1) {
+			གལ་སྲིད (*p1 == ' ') {
 				p1++;
 				continue;
 			}
-			if ((p2 = strchr(p1, ' '))) {
+			གལ་སྲིད ((p2 = strchr(p1, ' '))) {
 				len = p2 - p1;
-			} else {
+			} དེ་མིན {
 				len = strlen(p1);
 				p2 = p1 + len;
 			}
 			/* we use n + 2 in realloc for list,because we add
 			 * new element and then we will add NULL element */
-			list = xrealloc(list, sizeof(*list) * (n + 2));
+			list = xrealloc(list, parimaa_na(*list) * (n + 2));
 			list[n] = xmalloc(2 + name_len + len);
 			strcpy(list[n], name);
 			strcat(list[n], "=");
@@ -3601,10 +3601,10 @@ static char **make_list_in(char **inp, char *name)
 			list[n++][name_len + len + 1] = '\0';
 			p1 = p2;
 		}
-		if (p3 != inp[i]) free(p3);
+		གལ་སྲིད (p3 != inp[i]) free(p3);
 	}
 	list[n] = NULL;
-	return list;
+	ལོག list;
 }
 
 /*
@@ -3612,84 +3612,84 @@ static char **make_list_in(char **inp, char *name)
  * inp     - array of argument strings to flatten
  * nonnull - indicates argument was quoted when originally parsed
  */
-static char *make_string(char **inp, int *nonnull)
+static var_na *make_string(var_na **inp, ཧྲིལ *nonnull)
 {
-	char *p;
-	char *str = NULL;
-	int n;
-	int len = 2;
-	char *noeval_str;
-	int noeval = 0;
+	var_na *p;
+	var_na *str = NULL;
+	ཧྲིལ n;
+	ཧྲིལ len = 2;
+	var_na *noeval_str;
+	ཧྲིལ noeval = 0;
 
 	noeval_str = get_local_var("HUSH_NO_EVAL");
-	if (noeval_str != NULL && *noeval_str != '0' && *noeval_str != '\0')
+	གལ་སྲིད (noeval_str != NULL && *noeval_str != '0' && *noeval_str != '\0')
 		noeval = 1;
-	for (n = 0; inp[n]; n++) {
+	དོན་ལུ (n = 0; inp[n]; n++) {
 		p = insert_var_value_sub(inp[n], noeval);
-		char *new_str = xrealloc(str, (len + strlen(p) + (2 * nonnull[n])));
-		if (!new_str) {
+		var_na *new_str = xrealloc(str, (len + strlen(p) + (2 * nonnull[n])));
+		གལ་སྲིད (!new_str) {
 			free(str);
-			if (p != inp[n]) free(p);
-			return NULL;
+			གལ་སྲིད (p != inp[n]) free(p);
+			ལོག NULL;
 		}
 		str = new_str;
-		if (n) {
+		གལ་སྲིད (n) {
 			strcat(str, " ");
-		} else {
+		} དེ་མིན {
 			*str = '\0';
 		}
-		if (nonnull[n])
+		གལ་སྲིད (nonnull[n])
 			strcat(str, "'");
 		strcat(str, p);
-		if (nonnull[n])
+		གལ་སྲིད (nonnull[n])
 			strcat(str, "'");
 		len = strlen(str) + 3;
-		if (p != inp[n]) free(p);
+		གལ་སྲིད (p != inp[n]) free(p);
 	}
 	len = strlen(str);
 	*(str + len) = '\n';
 	*(str + len + 1) = '\0';
-	return str;
+	ལོག str;
 }
 
 #ifdef __U_BOOT__
-static int do_showvar(struct cmd_tbl *cmdtp, int flag, int argc,
-		      char *const argv[])
+static ཧྲིལ do_showvar(sa_nracanaa cmd_tbl *cmdtp, ཧྲིལ flag, ཧྲིལ argc,
+		      var_na *const argv[])
 {
-	int i, k;
-	int rcode = 0;
-	struct variables *cur;
+	ཧྲིལ i, k;
+	ཧྲིལ rcode = 0;
+	sa_nracanaa variables *cur;
 
-	if (argc == 1) {		/* Print all env variables	*/
-		for (cur = top_vars; cur; cur = cur->next) {
+	གལ་སྲིད (argc == 1) {		/* Print all env variables	*/
+		དོན་ལུ (cur = top_vars; cur; cur = cur->next) {
 			printf ("%s=%s\n", cur->name, cur->value);
-			if (ctrlc ()) {
+			གལ་སྲིད (ctrlc ()) {
 				puts ("\n ** Abort\n");
-				return 1;
+				ལོག 1;
 			}
 		}
-		return 0;
+		ལོག 0;
 	}
-	for (i = 1; i < argc; ++i) {	/* print single env variables	*/
-		char *name = argv[i];
+	དོན་ལུ (i = 1; i < argc; ++i) {	/* print single env variables	*/
+		var_na *name = argv[i];
 
 		k = -1;
-		for (cur = top_vars; cur; cur = cur->next) {
-			if(strcmp (cur->name, name) == 0) {
+		དོན་ལུ (cur = top_vars; cur; cur = cur->next) {
+			གལ་སྲིད(strcmp (cur->name, name) == 0) {
 				k = 0;
 				printf ("%s=%s\n", cur->name, cur->value);
 			}
-			if (ctrlc ()) {
+			གལ་སྲིད (ctrlc ()) {
 				puts ("\n ** Abort\n");
-				return 1;
+				ལོག 1;
 			}
 		}
-		if (k < 0) {
+		གལ་སྲིད (k < 0) {
 			printf ("## Error: \"%s\" not defined\n", name);
 			rcode ++;
 		}
 	}
-	return rcode;
+	ལོག rcode;
 }
 
 U_BOOT_CMD(

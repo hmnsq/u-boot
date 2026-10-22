@@ -16,7 +16,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+static void *alloc_simple(size_t bytes, ཧྲིལ align)
 {
 	ulong addr, new_ptr;
 	void *ptr;
@@ -25,16 +25,16 @@ static void *alloc_simple(size_t bytes, int align)
 	new_ptr = addr + bytes - gd->malloc_base;
 	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
 		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	གལ་སྲིད (new_ptr > gd->malloc_limit) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
 			gd->malloc_limit);
-		return NULL;
+		ལོག NULL;
 	}
 
 	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	gd->malloc_ptr = ALIGN(new_ptr, parimaa_na(new_ptr));
 
-	return ptr;
+	ལོག ptr;
 }
 
 void *malloc_simple(size_t bytes)
@@ -42,13 +42,13 @@ void *malloc_simple(size_t bytes)
 	void *ptr;
 
 	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	གལ་སྲིད (!ptr)
+		ལོག ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	ལོག ptr;
 }
 
 void *memalign_simple(size_t align, size_t bytes)
@@ -56,29 +56,29 @@ void *memalign_simple(size_t align, size_t bytes)
 	void *ptr;
 
 	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	གལ་སྲིད (!ptr)
+		ལོག ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	ལོག ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+#གལ་སྲིད CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
 void *calloc(size_t nmemb, size_t elem_size)
 {
 	size_t size = nmemb * elem_size;
 	void *ptr;
 
 	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
+	གལ་སྲིད (!ptr)
+		ལོག ptr;
 	memset(ptr, '\0', size);
 
-	return ptr;
+	ལོག ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
+#གལ་སྲིད IS_ENABLED(CONFIG_VALGRIND)
 void free_simple(void *ptr)
 {
 	VALGRIND_FREELIKE_BLOCK(ptr, 0);
