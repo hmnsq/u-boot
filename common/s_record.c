@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#അന്തര്ഭാവ <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+സ്ഥിതം പൂർണ്ണസംഖ്യ hex1_bin (അക്ഷരം  c);
+സ്ഥിതം പൂർണ്ണസംഖ്യ hex2_bin (അക്ഷരം *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+പൂർണ്ണസംഖ്യ srec_decode (അക്ഷരം *നിവേശം, പൂർണ്ണസംഖ്യ *എണ്ണം, ulong *addr, അക്ഷരം *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	പൂർണ്ണസംഖ്യ	i;
+	പൂർണ്ണസംഖ്യ	v;				/* conversion buffer	*/
+	പൂർണ്ണസംഖ്യ	srec_type;			/* S-Record type	*/
+	unsigned അക്ഷരം chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	വേണ്ടി (; *നിവേശം; ++നിവേശം) {
+		എങ്കിൽ (*നിവേശം == 'S') {		/* skip 'S' */
+			++നിവേശം;
+			നിർത്തുക;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	എങ്കിൽ (*നിവേശം == '\0') {			/* no more data?	*/
+		തിരികെ (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *നിവേശം++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	എങ്കിൽ ((*എണ്ണം = hex2_bin(നിവേശം)) < 0) {
+		തിരികെ (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *എണ്ണം;
+	നിവേശം  += 2;
 
-	switch (v) {				/* record type		*/
+	തിരഞ്ഞെടുപ്പ് (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	അവസ്ഥ '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		*എണ്ണം   -= 3;			/* - checksum and addr	*/
+		നിർത്തുക;
+	അവസ്ഥ '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*എണ്ണം   -= 3;			/* - checksum and addr	*/
+		നിർത്തുക;
+	അവസ്ഥ '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*എണ്ണം   -= 4;			/* - checksum and addr	*/
+		നിർത്തുക;
+	അവസ്ഥ '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*എണ്ണം   -= 5;			/* - checksum and addr	*/
+		നിർത്തുക;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	അവസ്ഥ '5':			/* count record, addr field contains */
+		srec_type = SREC_എണ്ണം;	/* a 2 byte record counter	*/
+		*എണ്ണം    = 0;			/* no data		*/
+		നിർത്തുക;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	അവസ്ഥ '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*എണ്ണം   -= 5;			/* - checksum and addr	*/
+		നിർത്തുക;
+	അവസ്ഥ '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*എണ്ണം   -= 4;			/* - checksum and addr	*/
+		നിർത്തുക;
+	അവസ്ഥ '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*എണ്ണം   -= 3;			/* - checksum and addr	*/
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	തിരഞ്ഞെടുപ്പ് (v) {
+	അവസ്ഥ '3':				/* 4 byte addr field	*/
+	അവസ്ഥ '7':
+		എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+			തിരികെ (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		നിവേശം  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	അവസ്ഥ '2':				/* 3 byte addr field	*/
+	അവസ്ഥ '8':
+		എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+			തിരികെ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		നിവേശം  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	അവസ്ഥ '0':				/* 2 byte addr field	*/
+	അവസ്ഥ '1':
+	അവസ്ഥ '5':
+	അവസ്ഥ '9':
+		എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+			തിരികെ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		നിവേശം  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+			തിരികെ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		നിവേശം  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	വേണ്ടി (i=0; i < *എണ്ണം; ++i) {
+		എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+			തിരികെ (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		നിവേശം  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	എങ്കിൽ ((v = hex2_bin(നിവേശം)) < 0) {
+		തിരികെ (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	എങ്കിൽ ((unsigned അക്ഷരം)v != (unsigned അക്ഷരം)~chksum) {
+		തിരികെ (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	തിരികെ (srec_type);
 }
 
-static int hex1_bin (char c)
+സ്ഥിതം പൂർണ്ണസംഖ്യ hex1_bin (അക്ഷരം c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	എങ്കിൽ (c >= '0' && c <= '9')
+		തിരികെ (c - '0');
+	എങ്കിൽ (c >= 'a' && c <= 'f')
+		തിരികെ (c + 10 - 'a');
+	എങ്കിൽ (c >= 'A' && c <= 'F')
+		തിരികെ (c + 10 - 'A');
+	തിരികെ (-1);
 }
 
-static int hex2_bin (char *s)
+സ്ഥിതം പൂർണ്ണസംഖ്യ hex2_bin (അക്ഷരം *s)
 {
-	int i, j;
+	പൂർണ്ണസംഖ്യ i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	എങ്കിൽ ((i = hex1_bin(*s++)) < 0) {
+		തിരികെ (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	എങ്കിൽ ((j = hex1_bin(*s)) < 0) {
+		തിരികെ (-1);
 	}
 
-	return ((i<<4) + j);
+	തിരികെ ((i<<4) + j);
 }

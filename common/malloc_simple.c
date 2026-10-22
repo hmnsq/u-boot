@@ -7,86 +7,86 @@
 
 #define LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <mapmem.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <asm/io.h>
+#അന്തര്ഭാവ <valgrind/valgrind.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+സ്ഥിതം ശൂന്യം *alloc_simple(size_t bytes, പൂർണ്ണസംഖ്യ align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	ശൂന്യം *ptr;
 
 	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
 	new_ptr = addr + bytes - gd->malloc_base;
 	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
 		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	എങ്കിൽ (new_ptr > gd->malloc_limit) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
 			gd->malloc_limit);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	gd->malloc_ptr = ALIGN(new_ptr, വലുപ്പം(new_ptr));
 
-	return ptr;
+	തിരികെ ptr;
 }
 
-void *malloc_simple(size_t bytes)
+ശൂന്യം *malloc_simple(size_t bytes)
 {
-	void *ptr;
+	ശൂന്യം *ptr;
 
 	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	എങ്കിൽ (!ptr)
+		തിരികെ ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	തിരികെ ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+ശൂന്യം *memalign_simple(size_t align, size_t bytes)
 {
-	void *ptr;
+	ശൂന്യം *ptr;
 
 	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	എങ്കിൽ (!ptr)
+		തിരികെ ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	തിരികെ ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+ശൂന്യം *calloc(size_t nmemb, size_t elem_size)
 {
 	size_t size = nmemb * elem_size;
-	void *ptr;
+	ശൂന്യം *ptr;
 
 	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
+	എങ്കിൽ (!ptr)
+		തിരികെ ptr;
 	memset(ptr, '\0', size);
 
-	return ptr;
+	തിരികെ ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#എങ്കിൽ IS_ENABLED(CONFIG_VALGRIND)
+ശൂന്യം free_simple(ശൂന്യം *ptr)
 {
 	VALGRIND_FREELIKE_BLOCK(ptr, 0);
 }
 #endif
 #endif
 
-void malloc_simple_info(void)
+ശൂന്യം malloc_simple_info(ശൂന്യം)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

@@ -3,27 +3,27 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#അന്തര്ഭാവ <config.h>
+#അന്തര്ഭാവ <fdt_support.h>
+#അന്തര്ഭാവ <image.h>
+#അന്തര്ഭാവ <imx_container.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <spl.h>
+#അന്തര്ഭാവ <spl_load.h>
+#അന്തര്ഭാവ <asm/io.h>
+#അന്തര്ഭാവ <mapmem.h>
+#അന്തര്ഭാവ <nand.h>
+#അന്തര്ഭാവ <linux/libfdt_env.h>
+#അന്തര്ഭാവ <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_page(ശൂന്യം)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	തിരികെ CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#എങ്കിൽ defined(CONFIG_SPL_NAND_RAW_ONLY)
+സ്ഥിതം പൂർണ്ണസംഖ്യ spl_nand_load_image(ഘടന spl_image_info *spl_image,
+			ഘടന spl_boot_device *bootdev)
 {
 	nand_init();
 
@@ -38,112 +38,112 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	spl_set_header_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	തിരികെ 0;
 }
-#else
+#അല്ലെങ്കിൽ
 
 __weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
 {
-	return offs;
+	തിരികെ offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+സ്ഥിതം ulong spl_nand_read(ഘടന spl_load_info *load, ulong offs, ulong size,
+			   ശൂന്യം *dst)
 {
-	int err;
+	പൂർണ്ണസംഖ്യ err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
 	      __func__, offs, size, dst);
 
-	sector = *(int *)load->priv;
+	sector = *(പൂർണ്ണസംഖ്യ *)load->priv;
 	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
 	err = nand_spl_load_image(offs, size, dst);
 	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	എങ്കിൽ (err)
+		തിരികെ 0;
 
-	return size;
+	തിരികെ size;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+സ്ഥിതം പൂർണ്ണസംഖ്യ spl_nand_load_element(ഘടന spl_image_info *spl_image,
+				 ഘടന spl_boot_device *bootdev, പൂർണ്ണസംഖ്യ offset)
 {
-	struct spl_load_info load;
+	ഘടന spl_load_info load;
 
 	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	തിരികെ spl_load(spl_image, bootdev, &load, 0, offset);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+സ്ഥിതം പൂർണ്ണസംഖ്യ spl_nand_load_image_os(ഘടന spl_image_info *spl_image,
+				  ഘടന spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	പൂർണ്ണസംഖ്യ err;
+	ഘടന legacy_img_hdr *header = spl_get_load_buffer(0, വലുപ്പം(*header));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
+	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, വലുപ്പം(*header),
+			    (ശൂന്യം *)header);
 	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	എങ്കിൽ (header->ih_os != IH_OS_LINUX)
+		തിരികെ -EINVAL;
 
 	/* happy - was a linux */
 	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
 				  spl_image->size,
-				  (void *)spl_image->load_addr);
+				  (ശൂന്യം *)spl_image->load_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
+	പൂർണ്ണസംഖ്യ *src, *dst;
 	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+			    (ശൂന്യം *)CONFIG_TEXT_BASE);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	വേണ്ടി (dst = (പൂർണ്ണസംഖ്യ *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+	    src = (പൂർണ്ണസംഖ്യ *)CONFIG_TEXT_BASE;
+	     src < (പൂർണ്ണസംഖ്യ *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+സ്ഥിതം പൂർണ്ണസംഖ്യ spl_nand_load_image(ഘടന spl_image_info *spl_image,
+			       ഘടന spl_boot_device *bootdev)
 {
-	int err;
+	പൂർണ്ണസംഖ്യ err;
 
 #ifdef CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#അല്ലെങ്കിൽ
 	debug("spl: nand - using hw ecc\n");
 #endif
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#എങ്കിൽ CONFIG_IS_ENABLED(OS_BOOT)
+	എങ്കിൽ (!spl_start_uboot()) {
 		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+		എങ്കിൽ (!err)
+			തിരികെ 0;
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		എങ്കിൽ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			തിരികെ err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -157,14 +157,14 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	/* Load u-boot */
 	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
 #ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
+#എങ്കിൽ CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	എങ്കിൽ (err)
 		err = spl_nand_load_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
 #endif
 #endif
 	nand_deselect();
-	return err;
+	തിരികെ err;
 }
 #endif
 /* Use priorty 1 so that Ubi can override this */

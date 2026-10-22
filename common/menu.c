@@ -4,16 +4,16 @@
  * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
  */
 
-#include <ansi.h>
-#include <cli.h>
-#include <malloc.h>
-#include <errno.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <watchdog.h>
+#അന്തര്ഭാവ <ansi.h>
+#അന്തര്ഭാവ <cli.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <linux/ctype.h>
+#അന്തര്ഭാവ <linux/delay.h>
+#അന്തര്ഭാവ <linux/list.h>
+#അന്തര്ഭാവ <watchdog.h>
 
-#include "menu.h"
+#അന്തര്ഭാവ "menu.h"
 
 #define ansi 1
 
@@ -24,10 +24,10 @@
  * by menu_item_destroy, and the consumer of the interface never sees that
  * this struct is used at all.
  */
-struct menu_item {
-	char *key;
-	void *data;
-	struct list_head list;
+ഘടന menu_item {
+	അക്ഷരം *താക്കോൽ;
+	ശൂന്യം *data;
+	ഘടന list_head list;
 };
 
 /*
@@ -36,18 +36,18 @@ struct menu_item {
  * in menu.h, but the full definition is here to prevent consumers from
  * relying on its contents.
  */
-struct menu {
-	struct menu_item *default_item;
-	int timeout;
-	char *title;
-	int prompt;
-	void (*display_statusline)(struct menu *);
-	void (*item_data_print)(void *);
-	char *(*item_choice)(void *);
-	bool (*need_reprint)(void *);
-	void *item_choice_data;
-	struct list_head items;
-	int item_cnt;
+ഘടന menu {
+	ഘടന menu_item *default_item;
+	പൂർണ്ണസംഖ്യ timeout;
+	അക്ഷരം *title;
+	പൂർണ്ണസംഖ്യ prompt;
+	ശൂന്യം (*display_statusline)(ഘടന menu *);
+	ശൂന്യം (*item_data_print)(ശൂന്യം *);
+	അക്ഷരം *(*item_choice)(ശൂന്യം *);
+	bool (*need_reprint)(ശൂന്യം *);
+	ശൂന്യം *item_choice_data;
+	ഘടന list_head ഇനങ്ങൾ;
+	പൂർണ്ണസംഖ്യ item_cnt;
 };
 
 /*
@@ -58,24 +58,24 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
-		void *(*callback)(struct menu *, struct menu_item *, void *),
-		void *extra)
+സ്ഥിതം വരിയിൽ ശൂന്യം *menu_ഇനങ്ങൾ_iter(ഘടന menu *m,
+		ശൂന്യം *(*callback)(ഘടന menu *, ഘടന menu_item *, ശൂന്യം *),
+		ശൂന്യം *extra)
 {
-	struct list_head *pos, *n;
-	struct menu_item *item;
-	void *ret;
+	ഘടന list_head *pos, *n;
+	ഘടന menu_item *item;
+	ശൂന്യം *ret;
 
-	list_for_each_safe(pos, n, &m->items) {
-		item = list_entry(pos, struct menu_item, list);
+	list_for_each_safe(pos, n, &m->ഇനങ്ങൾ) {
+		item = list_entry(pos, ഘടന menu_item, list);
 
 		ret = callback(m, item, extra);
 
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
@@ -83,55 +83,55 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+സ്ഥിതം വരിയിൽ ശൂന്യം *menu_item_print(ഘടന menu *m,
+				ഘടന menu_item *item,
+				ശൂന്യം *extra)
 {
-	if (!m->item_data_print) {
-		puts(item->key);
+	എങ്കിൽ (!m->item_data_print) {
+		puts(item->താക്കോൽ);
 		putc('\n');
-	} else {
+	} അല്ലെങ്കിൽ {
 		m->item_data_print(item->data);
 	}
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
  * Free the memory used by a menu item. This includes the memory used by its
  * key.
  */
-static inline void *menu_item_destroy(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+സ്ഥിതം വരിയിൽ ശൂന്യം *menu_item_destroy(ഘടന menu *m,
+				ഘടന menu_item *item,
+				ശൂന്യം *extra)
 {
-	if (item->key)
-		free(item->key);
+	എങ്കിൽ (item->താക്കോൽ)
+		സ്വതന്ത്രം(item->താക്കോൽ);
 
-	free(item);
+	സ്വതന്ത്രം(item);
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
  * Display a menu so the user can make a choice of an item. First display its
  * title, if any, and then each item in the menu.
  */
-static inline void menu_display(struct menu *m)
+സ്ഥിതം വരിയിൽ ശൂന്യം menu_display(ഘടന menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	എങ്കിൽ (m->need_reprint) {
+		എങ്കിൽ (!m->need_reprint(m->item_choice_data))
+			തിരികെ;
 	}
 
-	if (m->title) {
+	എങ്കിൽ (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	എങ്കിൽ (m->display_statusline)
 		m->display_statusline(m);
 
-	menu_items_iter(m, menu_item_print, NULL);
+	menu_ഇനങ്ങൾ_iter(m, menu_item_print, ശൂന്യ);
 }
 
 /*
@@ -142,45 +142,45 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
-			struct menu_item *item, void *extra)
+സ്ഥിതം വരിയിൽ ശൂന്യം *menu_item_താക്കോൽ_match(ഘടന menu *m,
+			ഘടന menu_item *item, ശൂന്യം *extra)
 {
-	char *item_key = extra;
+	അക്ഷരം *item_താക്കോൽ = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	എങ്കിൽ (!item_താക്കോൽ || !item->താക്കോൽ) {
+		എങ്കിൽ (item_താക്കോൽ == item->താക്കോൽ)
+			തിരികെ item;
 
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	എങ്കിൽ (strcmp(item->താക്കോൽ, item_താക്കോൽ) == 0)
+		തിരികെ item;
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+സ്ഥിതം വരിയിൽ ഘടന menu_item *menu_item_by_താക്കോൽ(ഘടന menu *m,
+							അക്ഷരം *item_താക്കോൽ)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	തിരികെ menu_ഇനങ്ങൾ_iter(m, menu_item_താക്കോൽ_match, item_താക്കോൽ);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+പൂർണ്ണസംഖ്യ menu_default_choice(ഘടന menu *m, ശൂന്യം **choice)
 {
-	if (m->default_item) {
+	എങ്കിൽ (m->default_item) {
 		*choice = m->default_item->data;
-		return 1;
+		തിരികെ 1;
 	}
 
-	return -ENOENT;
+	തിരികെ -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ menu_interactive_choice(ഘടന menu *m, ശൂന്യം **choice)
 {
-	char cbuf[CONFIG_SYS_CBSIZE];
-	struct menu_item *choice_item = NULL;
-	int readret;
+	അക്ഷരം cbuf[CONFIG_SYS_CBSIZE];
+	ഘടന menu_item *choice_item = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ readret;
 
-	while (!choice_item) {
+	ആകുമ്പോൾ (!choice_item) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
+		എങ്കിൽ (!m->item_choice) {
 			readret = cli_readline_into_buffer("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
-				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
+			എങ്കിൽ (readret >= 0) {
+				choice_item = menu_item_by_താക്കോൽ(m, cbuf);
+				എങ്കിൽ (!choice_item)
 					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
+			} അല്ലെങ്കിൽ എങ്കിൽ (readret == -1)  {
 				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+				തിരികെ -EINTR;
+			} അല്ലെങ്കിൽ {
+				തിരികെ menu_default_choice(m, choice);
 			}
-		} else {
-			char *key = m->item_choice(m->item_choice_data);
+		} അല്ലെങ്കിൽ {
+			അക്ഷരം *താക്കോൽ = m->item_choice(m->item_choice_data);
 
-			if (key)
-				choice_item = menu_item_by_key(m, key);
+			എങ്കിൽ (താക്കോൽ)
+				choice_item = menu_item_by_താക്കോൽ(m, താക്കോൽ);
 		}
 
-		if (!choice_item)
+		എങ്കിൽ (!choice_item)
 			m->timeout = 0;
 	}
 
 	*choice = choice_item->data;
 
-	return 1;
+	തിരികെ 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+പൂർണ്ണസംഖ്യ menu_default_set(ഘടന menu *m, അക്ഷരം *item_താക്കോൽ)
 {
-	struct menu_item *item;
+	ഘടന menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	എങ്കിൽ (!m)
+		തിരികെ -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_താക്കോൽ(m, item_താക്കോൽ);
 
-	if (!item)
-		return -ENOENT;
+	എങ്കിൽ (!item)
+		തിരികെ -ENOENT;
 
 	m->default_item = item;
 
-	return 1;
+	തിരികെ 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+പൂർണ്ണസംഖ്യ menu_get_choice(ഘടന menu *m, ശൂന്യം **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	എങ്കിൽ (!m || !choice)
+		തിരികെ -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	എങ്കിൽ (!m->item_cnt)
+		തിരികെ -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	എങ്കിൽ (!m->prompt)
+		തിരികെ menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	തിരികെ menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,37 +309,37 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+പൂർണ്ണസംഖ്യ menu_item_add(ഘടന menu *m, അക്ഷരം *item_താക്കോൽ, ശൂന്യം *item_data)
 {
-	struct menu_item *item;
+	ഘടന menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	എങ്കിൽ (!m)
+		തിരികെ -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_താക്കോൽ(m, item_താക്കോൽ);
 
-	if (item) {
+	എങ്കിൽ (item) {
 		item->data = item_data;
-		return 1;
+		തിരികെ 1;
 	}
 
-	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	item = malloc(വലുപ്പം *item);
+	എങ്കിൽ (!item)
+		തിരികെ -ENOMEM;
 
-	item->key = strdup(item_key);
+	item->താക്കോൽ = strdup(item_താക്കോൽ);
 
-	if (!item->key) {
-		free(item);
-		return -ENOMEM;
+	എങ്കിൽ (!item->താക്കോൽ) {
+		സ്വതന്ത്രം(item);
+		തിരികെ -ENOMEM;
 	}
 
 	item->data = item_data;
 
-	list_add_tail(&item->list, &m->items);
+	list_add_tail(&item->list, &m->ഇനങ്ങൾ);
 	m->item_cnt++;
 
-	return 1;
+	തിരികെ 1;
 }
 
 /*
@@ -377,21 +377,21 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
-				void (*display_statusline)(struct menu *),
-				void (*item_data_print)(void *),
-				char *(*item_choice)(void *),
-				bool (*need_reprint)(void *),
-				void *item_choice_data)
+ഘടന menu *menu_create(അക്ഷരം *title, പൂർണ്ണസംഖ്യ timeout, പൂർണ്ണസംഖ്യ prompt,
+				ശൂന്യം (*display_statusline)(ഘടന menu *),
+				ശൂന്യം (*item_data_print)(ശൂന്യം *),
+				അക്ഷരം *(*item_choice)(ശൂന്യം *),
+				bool (*need_reprint)(ശൂന്യം *),
+				ശൂന്യം *item_choice_data)
 {
-	struct menu *m;
+	ഘടന menu *m;
 
-	m = malloc(sizeof *m);
+	m = malloc(വലുപ്പം *m);
 
-	if (!m)
-		return NULL;
+	എങ്കിൽ (!m)
+		തിരികെ ശൂന്യ;
 
-	m->default_item = NULL;
+	m->default_item = ശൂന്യ;
 	m->prompt = prompt;
 	m->timeout = timeout;
 	m->display_statusline = display_statusline;
@@ -401,18 +401,18 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->item_choice_data = item_choice_data;
 	m->item_cnt = 0;
 
-	if (title) {
+	എങ്കിൽ (title) {
 		m->title = strdup(title);
-		if (!m->title) {
-			free(m);
-			return NULL;
+		എങ്കിൽ (!m->title) {
+			സ്വതന്ത്രം(m);
+			തിരികെ ശൂന്യ;
 		}
-	} else
-		m->title = NULL;
+	} അല്ലെങ്കിൽ
+		m->title = ശൂന്യ;
 
-	INIT_LIST_HEAD(&m->items);
+	INIT_LIST_HEAD(&m->ഇനങ്ങൾ);
 
-	return m;
+	തിരികെ m;
 }
 
 /*
@@ -422,61 +422,61 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+പൂർണ്ണസംഖ്യ menu_destroy(ഘടന menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	എങ്കിൽ (!m)
+		തിരികെ -EINVAL;
 
-	menu_items_iter(m, menu_item_destroy, NULL);
+	menu_ഇനങ്ങൾ_iter(m, menu_item_destroy, ശൂന്യ);
 
-	if (m->title)
-		free(m->title);
+	എങ്കിൽ (m->title)
+		സ്വതന്ത്രം(m->title);
 
-	free(m);
+	സ്വതന്ത്രം(m);
 
-	return 1;
+	തിരികെ 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+സ്ഥിതം പൂർണ്ണസംഖ്യ bootmenu_conv_shortcut_താക്കോൽ(ഘടന bootmenu_data *menu, പൂർണ്ണസംഖ്യ ichar)
 {
-	int shortcut_key;
+	പൂർണ്ണസംഖ്യ shortcut_താക്കോൽ;
 
 	ichar = tolower(ichar);
-	switch (ichar) {
+	തിരഞ്ഞെടുപ്പ് (ichar) {
 	/* a-z for bootmenu entry > 9 */
-	case 'a' ... 'z':
-		shortcut_key = ichar - 'a' + 9;
-		break;
+	അവസ്ഥ 'a' ... 'z':
+		shortcut_താക്കോൽ = ichar - 'a' + 9;
+		നിർത്തുക;
 	/* 1-9 for bootmenu entry <= 9 */
-	case '1' ... '9':
-		shortcut_key = ichar - '1';
-		break;
+	അവസ്ഥ '1' ... '9':
+		shortcut_താക്കോൽ = ichar - '1';
+		നിർത്തുക;
 	/* Reserve 0 for last option (aka Exit) */
-	case '0':
-	default:
-		return -1;
+	അവസ്ഥ '0':
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ -1;
 	}
 
-	return shortcut_key;
+	തിരികെ shortcut_താക്കോൽ;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
-					 struct cli_ch_state *cch)
+എണ്ണൽ bootmenu_താക്കോൽ bootmenu_autoboot_loop(ഘടന bootmenu_data *menu,
+					 ഘടന cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	എണ്ണൽ bootmenu_താക്കോൽ താക്കോൽ = BKEY_NONE;
+	പൂർണ്ണസംഖ്യ i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	ആകുമ്പോൾ (menu->delay > 0) {
+		പൂർണ്ണസംഖ്യ ichar;
 
-		if (ansi)
-			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
+		എങ്കിൽ (ansi)
+			printf(ANSI_CURSOR_POSITION, menu->എണ്ണം + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
+		വേണ്ടി (i = 0; i < 100; ++i) {
+			എങ്കിൽ (!tstc()) {
 				schedule();
 				mdelay(10);
-				continue;
+				തുടരുക;
 			}
 
 			menu->delay = -1;
@@ -484,112 +484,112 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 
 			ichar = cli_ch_process(cch, c);
 
-			switch (ichar) {
-			case '\0':
-				key = BKEY_NONE;
-				break;
-			case '\n':
-				key = BKEY_SELECT;
-				break;
-			case 0x3: /* ^C */
-				key = BKEY_QUIT;
-				break;
-			case 'A' ... 'Z':
-			case 'a' ... 'z':
-			case '0' ... '9':
-				key = BKEY_SHORTCUT;
-				break;
-			default:
-				key = BKEY_NONE;
-				break;
+			തിരഞ്ഞെടുപ്പ് (ichar) {
+			അവസ്ഥ '\0':
+				താക്കോൽ = BKEY_NONE;
+				നിർത്തുക;
+			അവസ്ഥ '\n':
+				താക്കോൽ = BKEY_SELECT;
+				നിർത്തുക;
+			അവസ്ഥ 0x3: /* ^C */
+				താക്കോൽ = BKEY_QUIT;
+				നിർത്തുക;
+			അവസ്ഥ 'A' ... 'Z':
+			അവസ്ഥ 'a' ... 'z':
+			അവസ്ഥ '0' ... '9':
+				താക്കോൽ = BKEY_SHORTCUT;
+				നിർത്തുക;
+			സ്ഥിരസ്ഥിതി:
+				താക്കോൽ = BKEY_NONE;
+				നിർത്തുക;
 			}
-			break;
+			നിർത്തുക;
 		}
 
-		if (key == BKEY_SHORTCUT)
-			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
+		എങ്കിൽ (താക്കോൽ == BKEY_SHORTCUT)
+			cch->shortcut_താക്കോൽ = bootmenu_conv_shortcut_താക്കോൽ(menu, ichar);
 
-		if (menu->delay < 0)
-			break;
+		എങ്കിൽ (menu->delay < 0)
+			നിർത്തുക;
 
 		--menu->delay;
 	}
 
-	if (ansi)
-		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
+	എങ്കിൽ (ansi)
+		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_വരി, menu->എണ്ണം + 5, 1);
 
-	if (menu->delay == 0)
-		key = BKEY_SELECT;
+	എങ്കിൽ (menu->delay == 0)
+		താക്കോൽ = BKEY_SELECT;
 
-	return key;
+	തിരികെ താക്കോൽ;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+എണ്ണൽ bootmenu_താക്കോൽ bootmenu_conv_താക്കോൽ(പൂർണ്ണസംഖ്യ ichar)
 {
-	enum bootmenu_key key;
+	എണ്ണൽ bootmenu_താക്കോൽ താക്കോൽ;
 
-	switch (ichar) {
-	case '\n':
+	തിരഞ്ഞെടുപ്പ് (ichar) {
+	അവസ്ഥ '\n':
 		/* enter key was pressed */
-		key = BKEY_SELECT;
-		break;
-	case CTL_CH('c'):
-	case '\e':
+		താക്കോൽ = BKEY_SELECT;
+		നിർത്തുക;
+	അവസ്ഥ CTL_CH('c'):
+	അവസ്ഥ '\e':
 		/* ^C was pressed */
-		key = BKEY_QUIT;
-		break;
-	case CTL_CH('p'):
-		key = BKEY_UP;
-		break;
-	case CTL_CH('n'):
-		key = BKEY_DOWN;
-		break;
-	case CTL_CH('s'):
-		key = BKEY_SAVE;
-		break;
-	case '+':
-		key = BKEY_PLUS;
-		break;
-	case '-':
-		key = BKEY_MINUS;
-		break;
-	case ' ':
-		key = BKEY_SPACE;
-		break;
-	default:
-		key = BKEY_NONE;
-		break;
+		താക്കോൽ = BKEY_QUIT;
+		നിർത്തുക;
+	അവസ്ഥ CTL_CH('p'):
+		താക്കോൽ = BKEY_UP;
+		നിർത്തുക;
+	അവസ്ഥ CTL_CH('n'):
+		താക്കോൽ = BKEY_DOWN;
+		നിർത്തുക;
+	അവസ്ഥ CTL_CH('s'):
+		താക്കോൽ = BKEY_SAVE;
+		നിർത്തുക;
+	അവസ്ഥ '+':
+		താക്കോൽ = BKEY_PLUS;
+		നിർത്തുക;
+	അവസ്ഥ '-':
+		താക്കോൽ = BKEY_MINUS;
+		നിർത്തുക;
+	അവസ്ഥ ' ':
+		താക്കോൽ = BKEY_SPACE;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		താക്കോൽ = BKEY_NONE;
+		നിർത്തുക;
 	}
 
-	return key;
+	തിരികെ താക്കോൽ;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
-				struct cli_ch_state *cch)
+എണ്ണൽ bootmenu_താക്കോൽ bootmenu_loop(ഘടന bootmenu_data *menu,
+				ഘടന cli_ch_state *cch)
 {
-	enum bootmenu_key key;
-	int c, errchar = 0;
+	എണ്ണൽ bootmenu_താക്കോൽ താക്കോൽ;
+	പൂർണ്ണസംഖ്യ c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
+	എങ്കിൽ (!c) {
+		ആകുമ്പോൾ (!c && !tstc()) {
 			schedule();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		എങ്കിൽ (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
 	}
 
-	key = bootmenu_conv_key(c);
+	താക്കോൽ = bootmenu_conv_താക്കോൽ(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
-		key = BKEY_SHORTCUT;
-		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
+	എങ്കിൽ (താക്കോൽ == BKEY_NONE && isalnum(c)) {
+		താക്കോൽ = BKEY_SHORTCUT;
+		cch->shortcut_താക്കോൽ = bootmenu_conv_shortcut_താക്കോൽ(menu, c);
 	}
 
-	return key;
+	തിരികെ താക്കോൽ;
 }

@@ -9,103 +9,103 @@
  */
 
 #ifndef HWCONFIG_TEST
-#include <config.h>
-#include <env.h>
-#include <exports.h>
-#include <hwconfig.h>
-#include <log.h>
-#include <asm/global_data.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#അന്തര്ഭാവ <config.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <exports.h>
+#അന്തര്ഭാവ <hwconfig.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <linux/types.h>
+#അന്തര്ഭാവ <linux/string.h>
+#അല്ലെങ്കിൽ
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <assert.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif /* HWCONFIG_TEST */
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char *hwconfig_parse(const char *opts, size_t maxlen,
-				  const char *opt, char *stopchs, char eqch,
+സ്ഥിതം സ്ഥിരം അക്ഷരം *hwconfig_parse(സ്ഥിരം അക്ഷരം *opts, size_t maxlen,
+				  സ്ഥിരം അക്ഷരം *opt, അക്ഷരം *stopchs, അക്ഷരം eqch,
 				  size_t *arglen)
 {
 	size_t optlen = strlen(opt);
-	char *str;
-	const char *start = opts;
-	const char *end;
+	അക്ഷരം *str;
+	സ്ഥിരം അക്ഷരം *start = opts;
+	സ്ഥിരം അക്ഷരം *end;
 
 next:
 	str = strstr(opts, opt);
 	end = str + optlen;
-	if (end - start > maxlen)
-		return NULL;
+	എങ്കിൽ (end - start > maxlen)
+		തിരികെ ശൂന്യ;
 
-	if (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
+	എങ്കിൽ (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
 			(strpbrk(end, stopchs) == end || *end == eqch ||
 			 *end == '\0')) {
-		const char *arg_end;
+		സ്ഥിരം അക്ഷരം *arg_end;
 
-		if (!arglen)
-			return str;
+		എങ്കിൽ (!arglen)
+			തിരികെ str;
 
-		if (*end != eqch)
-			return NULL;
+		എങ്കിൽ (*end != eqch)
+			തിരികെ ശൂന്യ;
 
 		arg_end = strpbrk(str, stopchs);
-		if (!arg_end)
+		എങ്കിൽ (!arg_end)
 			*arglen = min(maxlen, strlen(str)) - optlen - 1;
-		else
+		അല്ലെങ്കിൽ
 			*arglen = arg_end - end - 1;
 
-		return end + 1;
-	} else if (str) {
+		തിരികെ end + 1;
+	} അല്ലെങ്കിൽ എങ്കിൽ (str) {
 		opts = end;
-		goto next;
+		പോകുക next;
 	}
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-const char cpu_hwconfig[] __attribute__((weak)) = "";
-const char board_hwconfig[] __attribute__((weak)) = "";
+സ്ഥിരം അക്ഷരം cpu_hwconfig[] __attribute__((weak)) = "";
+സ്ഥിരം അക്ഷരം board_hwconfig[] __attribute__((weak)) = "";
 
-static const char *__hwconfig(const char *opt, size_t *arglen,
-			      const char *env_hwconfig)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *__hwconfig(സ്ഥിരം അക്ഷരം *opt, size_t *arglen,
+			      സ്ഥിരം അക്ഷരം *env_hwconfig)
 {
-	const char *ret;
+	സ്ഥിരം അക്ഷരം *ret;
 
 	/* if we are passed a buffer use it, otherwise try the environment */
-	if (!env_hwconfig) {
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-		if (!(gd->flags & GD_FLG_ENV_READY) &&
+	എങ്കിൽ (!env_hwconfig) {
+#എങ്കിൽ CONFIG_IS_ENABLED(ENV_SUPPORT)
+		എങ്കിൽ (!(gd->flags & GD_FLG_ENV_READY) &&
 		    gd->env_valid != ENV_VALID)
-#else
-		if (true)
+#അല്ലെങ്കിൽ
+		എങ്കിൽ (true)
 #endif
 		{
 			printf("WARNING: Calling __hwconfig without a buffer "
 					"and before environment is ready\n");
-			return NULL;
+			തിരികെ ശൂന്യ;
 		}
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#എങ്കിൽ CONFIG_IS_ENABLED(ENV_SUPPORT)
 		env_hwconfig = env_get("hwconfig");
 #endif
 	}
 
-	if (env_hwconfig) {
+	എങ്കിൽ (env_hwconfig) {
 		ret = hwconfig_parse(env_hwconfig, strlen(env_hwconfig),
 				      opt, ";", ':', arglen);
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
 	ret = hwconfig_parse(board_hwconfig, strlen(board_hwconfig),
 			opt, ";", ':', arglen);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	return hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
+	തിരികെ hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
 			opt, ";", ':', arglen);
 }
 
@@ -129,9 +129,9 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
  * that the board file only calls things that are actually used, so
  * hwconfig() will always return true result.
  */
-int hwconfig_f(const char *opt, char *buf)
+പൂർണ്ണസംഖ്യ hwconfig_f(സ്ഥിരം അക്ഷരം *opt, അക്ഷരം *buf)
 {
-	return !!__hwconfig(opt, NULL, buf);
+	തിരികെ !!__hwconfig(opt, ശൂന്യ, buf);
 }
 
 /*
@@ -147,9 +147,9 @@ int hwconfig_f(const char *opt, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns "", and
  * arglen is set to 0.
  */
-const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
+സ്ഥിരം അക്ഷരം *hwconfig_arg_f(സ്ഥിരം അക്ഷരം *opt, size_t *arglen, അക്ഷരം *buf)
 {
-	return __hwconfig(opt, arglen, buf);
+	തിരികെ __hwconfig(opt, arglen, buf);
 }
 
 /*
@@ -166,16 +166,16 @@ const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns a non-zero
  * value, i.e. the argument matches.
  */
-int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
+പൂർണ്ണസംഖ്യ hwconfig_arg_cmp_f(സ്ഥിരം അക്ഷരം *opt, സ്ഥിരം അക്ഷരം *arg, അക്ഷരം *buf)
 {
-	const char *argstr;
+	സ്ഥിരം അക്ഷരം *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_arg_f(opt, &arglen, buf);
-	if (!argstr || arglen != strlen(arg))
-		return 0;
+	എങ്കിൽ (!argstr || arglen != strlen(arg))
+		തിരികെ 0;
 
-	return !strncmp(argstr, arg, arglen);
+	തിരികെ !strncmp(argstr, arg, arglen);
 }
 
 /*
@@ -190,15 +190,15 @@ int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
  * "dr_usb" is an option, "mode" is a sub-option, and "peripheral" is its
  * argument.
  */
-int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
+പൂർണ്ണസംഖ്യ hwconfig_sub_f(സ്ഥിരം അക്ഷരം *opt, സ്ഥിരം അക്ഷരം *subopt, അക്ഷരം *buf)
 {
 	size_t arglen;
-	const char *arg;
+	സ്ഥിരം അക്ഷരം *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return 0;
-	return !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
+	എങ്കിൽ (!arg)
+		തിരികെ 0;
+	തിരികെ !!hwconfig_parse(arg, arglen, subopt, ",;", '=', ശൂന്യ);
 }
 
 /*
@@ -211,16 +211,16 @@ int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
  * This call is similar to hwconfig_arg_f(), except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-const char *hwconfig_subarg_f(const char *opt, const char *subopt,
-			      size_t *subarglen, char *buf)
+സ്ഥിരം അക്ഷരം *hwconfig_subarg_f(സ്ഥിരം അക്ഷരം *opt, സ്ഥിരം അക്ഷരം *subopt,
+			      size_t *subarglen, അക്ഷരം *buf)
 {
 	size_t arglen;
-	const char *arg;
+	സ്ഥിരം അക്ഷരം *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return NULL;
-	return hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
+	എങ്കിൽ (!arg)
+		തിരികെ ശൂന്യ;
+	തിരികെ hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
 }
 
 /*
@@ -233,62 +233,62 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
  * This call is similar to hwconfig_arg_cmp_f, except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-int hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
-			  const char *subarg, char *buf)
+പൂർണ്ണസംഖ്യ hwconfig_subarg_cmp_f(സ്ഥിരം അക്ഷരം *opt, സ്ഥിരം അക്ഷരം *subopt,
+			  സ്ഥിരം അക്ഷരം *subarg, അക്ഷരം *buf)
 {
-	const char *argstr;
+	സ്ഥിരം അക്ഷരം *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_subarg_f(opt, subopt, &arglen, buf);
-	if (!argstr || arglen != strlen(subarg))
-		return 0;
+	എങ്കിൽ (!argstr || arglen != strlen(subarg))
+		തിരികെ 0;
 
-	return !strncmp(argstr, subarg, arglen);
+	തിരികെ !strncmp(argstr, subarg, arglen);
 }
 
 #ifdef HWCONFIG_TEST
-int main()
+പൂർണ്ണസംഖ്യ പ്രധാന()
 {
-	const char *ret;
+	സ്ഥിരം അക്ഷരം *ret;
 	size_t len;
 
 	env_set("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
 			   "key3;:,:=;key4", 1);
 
 	ret = hwconfig_arg("key1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 29);
-	assert(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
-	assert(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
+	printf("%zd %.*s\n", len, (പൂർണ്ണസംഖ്യ)len, ret);
+	പ്രതിജ്ഞാ(len == 29);
+	പ്രതിജ്ഞാ(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
+	പ്രതിജ്ഞാ(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
 
 	ret = hwconfig_subarg("key1", "subkey1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
-	assert(!strncmp(ret, "value1", len));
+	printf("%zd %.*s\n", len, (പൂർണ്ണസംഖ്യ)len, ret);
+	പ്രതിജ്ഞാ(len == 6);
+	പ്രതിജ്ഞാ(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
+	പ്രതിജ്ഞാ(!strncmp(ret, "value1", len));
 
 	ret = hwconfig_subarg("key1", "subkey2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
-	assert(!strncmp(ret, "value2", len));
+	printf("%zd %.*s\n", len, (പൂർണ്ണസംഖ്യ)len, ret);
+	പ്രതിജ്ഞാ(len == 6);
+	പ്രതിജ്ഞാ(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
+	പ്രതിജ്ഞാ(!strncmp(ret, "value2", len));
 
 	ret = hwconfig_arg("key2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_arg_cmp("key2", "value3"));
-	assert(!strncmp(ret, "value3", len));
+	printf("%zd %.*s\n", len, (പൂർണ്ണസംഖ്യ)len, ret);
+	പ്രതിജ്ഞാ(len == 6);
+	പ്രതിജ്ഞാ(hwconfig_arg_cmp("key2", "value3"));
+	പ്രതിജ്ഞാ(!strncmp(ret, "value3", len));
 
-	assert(hwconfig("key3"));
-	assert(hwconfig_arg("key4", &len) == NULL);
-	assert(hwconfig_arg("bogus", &len) == NULL);
+	പ്രതിജ്ഞാ(hwconfig("key3"));
+	പ്രതിജ്ഞാ(hwconfig_arg("key4", &len) == ശൂന്യ);
+	പ്രതിജ്ഞാ(hwconfig_arg("bogus", &len) == ശൂന്യ);
 
 	unenv_set("hwconfig");
 
-	assert(hwconfig(NULL) == 0);
-	assert(hwconfig("") == 0);
-	assert(hwconfig("key3") == 0);
+	പ്രതിജ്ഞാ(hwconfig(ശൂന്യ) == 0);
+	പ്രതിജ്ഞാ(hwconfig("") == 0);
+	പ്രതിജ്ഞാ(hwconfig("key3") == 0);
 
-	return 0;
+	തിരികെ 0;
 }
 #endif /* HWCONFIG_TEST */

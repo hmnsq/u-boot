@@ -8,38 +8,38 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#അന്തര്ഭാവ <cyclic.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <linux/errno.h>
+#അന്തര്ഭാവ <linux/list.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <u-boot/schedule.h>
+#അന്തര്ഭാവ <uthread.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-void hw_watchdog_reset(void);
+ശൂന്യം hw_watchdog_reset(ശൂന്യം);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+സ്ഥിതം bool cyclic_is_registered(സ്ഥിരം ഘടന cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	സ്ഥിരം ഘടന cyclic_info *c;
 
 	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+		എങ്കിൽ (c == cyclic)
+			തിരികെ true;
 	}
 
-	return false;
+	തിരികെ false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+ശൂന്യം cyclic_register(ഘടന cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, സ്ഥിരം അക്ഷരം *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	memset(cyclic, 0, വലുപ്പം(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
@@ -49,18 +49,18 @@ void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
 	hlist_add_head(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+ശൂന്യം cyclic_unregister(ഘടന cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	എങ്കിൽ (!cyclic_is_registered(cyclic))
+		തിരികെ;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+സ്ഥിതം ശൂന്യം cyclic_run(ശൂന്യം)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	ഘടന cyclic_info *cyclic;
+	ഘടന hlist_കണ്ണി *tmp;
 	u64 now, after, cpu_time;
 
 	/*
@@ -73,12 +73,12 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	എങ്കിൽ (hlist_empty(&gd->cyclic_list))
+		തിരികെ;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	എങ്കിൽ (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		തിരികെ;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
@@ -87,7 +87,7 @@ static void cyclic_run(void)
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		എങ്കിൽ (time_after_eq64(now, cyclic->next_call)) {
 			/* Call cyclic function and account it's cpu-time */
 			cyclic->next_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
@@ -98,7 +98,7 @@ static void cyclic_run(void)
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			എങ്കിൽ ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
 				       cyclic->name, cpu_time,
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+ശൂന്യം schedule(ശൂന്യം)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	എങ്കിൽ (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
+	എങ്കിൽ (gd)
 		cyclic_run();
 
 	uthread_schedule();
 }
 
-int cyclic_unregister_all(void)
+പൂർണ്ണസംഖ്യ cyclic_unregister_all(ശൂന്യം)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	ഘടന cyclic_info *cyclic;
+	ഘടന hlist_കണ്ണി *tmp;
 
 	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	തിരികെ 0;
 }

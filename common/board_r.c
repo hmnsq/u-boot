@@ -9,127 +9,127 @@
  * Marius Groeger <mgroeger@sysgo.de>
  */
 
-#include <config.h>
-#include <api.h>
-#include <bootstage.h>
-#include <cpu_func.h>
-#include <cyclic.h>
-#include <display_options.h>
-#include <exports.h>
+#അന്തര്ഭാവ <config.h>
+#അന്തര്ഭാവ <api.h>
+#അന്തര്ഭാവ <bootstage.h>
+#അന്തര്ഭാവ <cpu_func.h>
+#അന്തര്ഭാവ <cyclic.h>
+#അന്തര്ഭാവ <display_options.h>
+#അന്തര്ഭാവ <exports.h>
 #ifdef CONFIG_MTD_NOR_FLASH
-#include <flash.h>
+#അന്തര്ഭാവ <flash.h>
 #endif
-#include <hang.h>
-#include <image.h>
-#include <irq_func.h>
-#include <lmb.h>
-#include <log.h>
-#include <net.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <u-boot/crc.h>
-#include <binman.h>
-#include <command.h>
-#include <console.h>
-#include <dm.h>
-#include <efi_loader.h>
-#include <env.h>
-#include <env_internal.h>
-#include <fdtdec.h>
-#include <init.h>
-#include <initcall.h>
-#include <kgdb.h>
-#include <irq_func.h>
-#include <led.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <miiphy.h>
-#include <mmc.h>
-#include <mux.h>
-#include <nand.h>
-#include <of_live.h>
-#include <onenand_uboot.h>
-#include <pvblock.h>
-#include <scsi.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <timer.h>
-#include <trace.h>
-#include <watchdog.h>
-#include <xen.h>
-#include <asm/sections.h>
-#include <dm/root.h>
-#include <dm/ofnode.h>
-#include <linux/compiler.h>
-#include <linux/err.h>
-#include <wdt.h>
-#include <asm-generic/gpio.h>
-#include <relocate.h>
+#അന്തര്ഭാവ <hang.h>
+#അന്തര്ഭാവ <image.h>
+#അന്തര്ഭാവ <irq_func.h>
+#അന്തര്ഭാവ <lmb.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <net.h>
+#അന്തര്ഭാവ <asm/cache.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <u-boot/crc.h>
+#അന്തര്ഭാവ <binman.h>
+#അന്തര്ഭാവ <command.h>
+#അന്തര്ഭാവ <console.h>
+#അന്തര്ഭാവ <dm.h>
+#അന്തര്ഭാവ <efi_loader.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <env_internal.h>
+#അന്തര്ഭാവ <fdtdec.h>
+#അന്തര്ഭാവ <init.h>
+#അന്തര്ഭാവ <initcall.h>
+#അന്തര്ഭാവ <kgdb.h>
+#അന്തര്ഭാവ <irq_func.h>
+#അന്തര്ഭാവ <led.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <mapmem.h>
+#അന്തര്ഭാവ <miiphy.h>
+#അന്തര്ഭാവ <mmc.h>
+#അന്തര്ഭാവ <mux.h>
+#അന്തര്ഭാവ <nand.h>
+#അന്തര്ഭാവ <of_live.h>
+#അന്തര്ഭാവ <onenand_uboot.h>
+#അന്തര്ഭാവ <pvblock.h>
+#അന്തര്ഭാവ <scsi.h>
+#അന്തര്ഭാവ <serial.h>
+#അന്തര്ഭാവ <stdio_dev.h>
+#അന്തര്ഭാവ <timer.h>
+#അന്തര്ഭാവ <trace.h>
+#അന്തര്ഭാവ <watchdog.h>
+#അന്തര്ഭാവ <xen.h>
+#അന്തര്ഭാവ <asm/sections.h>
+#അന്തര്ഭാവ <dm/root.h>
+#അന്തര്ഭാവ <dm/ofnode.h>
+#അന്തര്ഭാവ <linux/compiler.h>
+#അന്തര്ഭാവ <linux/err.h>
+#അന്തര്ഭാവ <wdt.h>
+#അന്തര്ഭാവ <asm-generic/gpio.h>
+#അന്തര്ഭാവ <relocate.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 ulong monitor_flash_len;
 
-__weak int board_flash_wp_on(void)
+__weak പൂർണ്ണസംഖ്യ board_flash_wp_on(ശൂന്യം)
 {
 	/*
 	 * Most flashes can't be detected when write protection is enabled,
 	 * so provide a way to let U-Boot gracefully ignore write protected
 	 * devices.
 	 */
-	return 0;
+	തിരികെ 0;
 }
 
-__weak int cpu_secondary_init_r(void)
+__weak പൂർണ്ണസംഖ്യ cpu_secondary_init_r(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_trace(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_trace(ശൂന്യം)
 {
 #ifdef CONFIG_TRACE
 	trace_init(gd->trace_buff, CONFIG_TRACE_BUFFER_SIZE);
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_reloc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_reloc(ശൂന്യം)
 {
 	/* tell others: relocation done */
 	gd->flags |= GD_FLG_RELOC | GD_FLG_FULL_MALLOC_INIT;
 
-	return 0;
+	തിരികെ 0;
 }
 
-#if defined(CONFIG_ARM) || defined(CONFIG_RISCV)
+#എങ്കിൽ defined(CONFIG_ARM) || defined(CONFIG_RISCV)
 /*
  * Some of these functions are needed purely because the functions they
  * call return void. If we change them to return 0, these stubs can go away.
  */
-static int initr_caches(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_caches(ശൂന്യം)
 {
 	/* Enable caches */
 	enable_caches();
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-__weak int fixup_cpu(void)
+__weak പൂർണ്ണസംഖ്യ fixup_cpu(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_reloc_global_data(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_reloc_global_data(ശൂന്യം)
 {
 #ifdef __ARM__
 	monitor_flash_len = _end - __image_copy_start;
-#elif defined(CONFIG_RISCV)
+#അല്ലെങ്കിലെങ്കിൽ defined(CONFIG_RISCV)
 	monitor_flash_len = (ulong)_end - (ulong)_start;
-#elif !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
+#അല്ലെങ്കിലെങ്കിൽ !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
 	monitor_flash_len = (ulong)__init_end - gd->relocaddr;
 #endif
-#if defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
+#എങ്കിൽ defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
 	/*
 	 * The gd->cpu pointer is set to an address in flash before relocation.
 	 * We need to update it to point to the same CPU entry in RAM.
@@ -156,7 +156,7 @@ static int initr_reloc_global_data(void)
 	 * __dtb_dt_begin. After U-Boot ELF self-relocation to RAM top address
 	 * it is worth to update fdt_blob in global_data
 	 */
-	if (IS_ENABLED(CONFIG_OF_EMBED))
+	എങ്കിൽ (IS_ENABLED(CONFIG_OF_EMBED))
 		fdtdec_setup_embed();
 
 #ifdef CONFIG_EFI_LOADER
@@ -167,8 +167,8 @@ static int initr_reloc_global_data(void)
 	 */
 	efi_save_gd();
 
-	if (!(gd->flags & GD_FLG_SKIP_RELOC))
-		efi_runtime_relocate(gd->relocaddr, NULL);
+	എങ്കിൽ (!(gd->flags & GD_FLG_SKIP_RELOC))
+		efi_runtime_relocate(gd->relocaddr, ശൂന്യ);
 
 #endif
 	/*
@@ -179,7 +179,7 @@ static int initr_reloc_global_data(void)
 	 * random addresses.
 	 *
 	 */
-	if (IS_ENABLED(CONFIG_MMU_PGPROT)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_MMU_PGPROT)) {
 		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__start_rodata),
 				 (size_t)(uintptr_t)(__end_rodata - __start_rodata),
 				 MMU_ATTR_RO);
@@ -191,36 +191,36 @@ static int initr_reloc_global_data(void)
 				 MMU_ATTR_RX);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-__weak int arch_initr_trap(void)
+__weak പൂർണ്ണസംഖ്യ arch_initr_trap(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-#if defined(CONFIG_SYS_INIT_RAM_LOCK) && defined(CONFIG_E500)
-static int initr_unlock_ram_in_cache(void)
+#എങ്കിൽ defined(CONFIG_SYS_INIT_RAM_LOCK) && defined(CONFIG_E500)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_unlock_ram_in_cache(ശൂന്യം)
 {
 	unlock_ram_in_cache();	/* it's time to unlock D-cache in e500 */
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-static int initr_barrier(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_barrier(ശൂന്യം)
 {
 #ifdef CONFIG_PPC
 	/* TODO: Can we not use dmb() macros for this? */
 	asm("sync ; isync");
 #endif
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_malloc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_malloc(ശൂന്യം)
 {
 	ulong start;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	debug("Pre-reloc malloc() used %#x bytes (%d KB)\n", gd->malloc_ptr,
 	      gd->malloc_ptr / 1024);
 #endif
@@ -232,119 +232,119 @@ static int initr_malloc(void)
 	start = gd->relocaddr - TOTAL_MALLOC_LEN;
 	gd_set_malloc_start(start);
 	mem_malloc_init(start, TOTAL_MALLOC_LEN);
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_of_live(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_of_live(ശൂന്യം)
 {
-	if (CONFIG_IS_ENABLED(OF_LIVE)) {
-		int ret;
+	എങ്കിൽ (CONFIG_IS_ENABLED(OF_LIVE)) {
+		പൂർണ്ണസംഖ്യ ret;
 
 		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
 		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
+				    (ഘടന device_കണ്ണി **)gd_of_വേര്_ptr());
 		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
 #ifdef CONFIG_DM
-static int initr_dm(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_dm(ശൂന്യം)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 	oftree_reset();
 
 	/* Drop the pre-reloc driver model and start a new one */
-	gd->dm_root = NULL;
+	gd->dm_വേര് = ശൂന്യ;
 #ifdef CONFIG_TIMER
-	gd->timer = NULL;
+	gd->timer = ശൂന്യ;
 #endif
 	bootstage_start(BOOTSTAGE_ID_ACCUM_DM_R, "dm_r");
 	ret = dm_init_and_scan(false);
 	bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_R);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	return dm_autoprobe();
+	തിരികെ dm_autoprobe();
 }
 #endif
 
-static int initr_dm_devices(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_dm_devices(ശൂന്യം)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
-	if (IS_ENABLED(CONFIG_TIMER_EARLY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_TIMER_EARLY)) {
 		ret = dm_timer_init();
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
-	if (IS_ENABLED(CONFIG_MULTIPLEXER)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_MULTIPLEXER)) {
 		/*
 		 * Initialize the multiplexer controls to their default state.
 		 * This must be done early as other drivers may unknowingly
 		 * rely on it.
 		 */
 		ret = dm_mux_init();
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_bootstage(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_bootstage(ശൂന്യം)
 {
 	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_R, "board_init_r");
 
-	return 0;
+	തിരികെ 0;
 }
 
-__weak int power_init_board(void)
+__weak പൂർണ്ണസംഖ്യ power_init_board(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_announce(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_announce(ശൂന്യം)
 {
 	debug("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
-	return 0;
+	തിരികെ 0;
 }
 
-static int __maybe_unused initr_binman(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ __maybe_unused initr_binman(ശൂന്യം)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 	ret = binman_init();
-	if (ret)
+	എങ്കിൽ (ret)
 		printf("binman_init failed:%d\n", ret);
 
-	return ret;
+	തിരികെ ret;
 }
 
-#if defined(CONFIG_MTD_NOR_FLASH)
-__weak int is_flash_available(void)
+#എങ്കിൽ defined(CONFIG_MTD_NOR_FLASH)
+__weak പൂർണ്ണസംഖ്യ is_flash_available(ശൂന്യം)
 {
-	return 1;
+	തിരികെ 1;
 }
 
-static int initr_flash(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_flash(ശൂന്യം)
 {
 	ulong flash_size = 0;
-	struct bd_info *bd = gd->bd;
+	ഘടന bd_info *bd = gd->bd;
 
-	if (!is_flash_available())
-		return 0;
+	എങ്കിൽ (!is_flash_available())
+		തിരികെ 0;
 
 	puts("Flash: ");
 
-	if (board_flash_wp_on())
+	എങ്കിൽ (board_flash_wp_on())
 		printf("Uninitialized - Write Protect On\n");
-	else
+	അല്ലെങ്കിൽ
 		flash_size = flash_init();
 
 	print_size(flash_size, "");
@@ -354,8 +354,8 @@ static int initr_flash(void)
 	 *
 	 * NOTE: Maybe we should add some schedule()? XXX
 	 */
-	if (env_get_yesno("flashchecksum") == 1) {
-		const uchar *flash_base = (const uchar *)CFG_SYS_FLASH_BASE;
+	എങ്കിൽ (env_get_yesno("flashchecksum") == 1) {
+		സ്ഥിരം uchar *flash_base = (സ്ഥിരം uchar *)CFG_SYS_FLASH_BASE;
 
 		printf("  CRC: %08X", crc32(0,
 					    flash_base,
@@ -371,57 +371,57 @@ static int initr_flash(void)
 	/* size of FLASH memory (final value) */
 	bd->bi_flashsize = flash_size;
 
-#if defined(CONFIG_SYS_UPDATE_FLASH_SIZE)
+#എങ്കിൽ defined(CONFIG_SYS_UPDATE_FLASH_SIZE)
 	/* Make a update of the Memctrl. */
 	update_flash_size(flash_size);
 #endif
 
-#if defined(CONFIG_OXC) || defined(CONFIG_RMU)
+#എങ്കിൽ defined(CONFIG_OXC) || defined(CONFIG_RMU)
 	/* flash mapped at end of memory map */
 	bd->bi_flashoffset = CONFIG_TEXT_BASE + flash_size;
-#elif CONFIG_SYS_MONITOR_BASE == CFG_SYS_FLASH_BASE
+#അല്ലെങ്കിലെങ്കിൽ CONFIG_SYS_MONITOR_BASE == CFG_SYS_FLASH_BASE
 	bd->bi_flashoffset = monitor_flash_len;	/* reserved area for monitor */
 #endif
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
 #ifdef CONFIG_CMD_NAND
 /* go init the NAND */
-static int initr_nand(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_nand(ശൂന്യം)
 {
 	puts("NAND:  ");
 	nand_init();
 	printf("%lu MiB\n", nand_size() / 1024);
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-#if defined(CONFIG_CMD_ONENAND)
+#എങ്കിൽ defined(CONFIG_CMD_ONENAND)
 /* go init the NAND */
-static int initr_onenand(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_onenand(ശൂന്യം)
 {
 	puts("NAND:  ");
 	onenand_init();
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
 #ifdef CONFIG_MMC
-static int initr_mmc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_mmc(ശൂന്യം)
 {
 	puts("MMC:   ");
 	mmc_initialize(gd->bd);
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
 #ifdef CONFIG_PVBLOCK
-static int initr_pvblock(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_pvblock(ശൂന്യം)
 {
 	puts("PVBLOCK: ");
 	pvblock_init();
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
@@ -436,29 +436,29 @@ static int initr_pvblock(void)
  *
  * Return: 0 if environment should not be loaded, !=0 if it is ok to load
  */
-static int should_load_env(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ should_load_env(ശൂന്യം)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
-		return ofnode_conf_read_int("load-environment", 1);
+	എങ്കിൽ (IS_ENABLED(CONFIG_OF_CONTROL))
+		തിരികെ ofnode_conf_read_int("load-environment", 1);
 
-	return 1;
+	തിരികെ 1;
 }
 
-static int initr_env(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_env(ശൂന്യം)
 {
 	/* initialize environment */
-	if (should_load_env())
+	എങ്കിൽ (should_load_env())
 		env_relocate();
-	else
-		env_set_default(NULL, 0);
+	അല്ലെങ്കിൽ
+		env_set_default(ശൂന്യ, 0);
 
 	env_import_fdt();
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	എങ്കിൽ (IS_ENABLED(CONFIG_OF_CONTROL))
 		env_set_hex("fdtcontroladdr",
 			    (unsigned long)map_to_sysmem(gd->fdt_blob));
 
-	#if (IS_ENABLED(CONFIG_SAVE_PREV_BL_INITRAMFS_START_ADDR) || \
+	#എങ്കിൽ (IS_ENABLED(CONFIG_SAVE_PREV_BL_INITRAMFS_START_ADDR) || \
 						IS_ENABLED(CONFIG_SAVE_PREV_BL_FDT_ADDR))
 		save_prev_bl_data();
 	#endif
@@ -466,97 +466,97 @@ static int initr_env(void)
 	/* Initialize from environment */
 	image_load_addr = env_get_ulong("loadaddr", 16, image_load_addr);
 
-	return 0;
+	തിരികെ 0;
 }
 
 #ifdef CONFIG_SYS_MALLOC_BOOTPARAMS
-static int initr_malloc_bootparams(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_malloc_bootparams(ശൂന്യം)
 {
 	gd->bd->bi_boot_params = (ulong)malloc(CONFIG_SYS_BOOTPARAMS_LEN);
-	if (!gd->bd->bi_boot_params) {
+	എങ്കിൽ (!gd->bd->bi_boot_params) {
 		puts("WARNING: Cannot allocate space for boot parameters\n");
-		return -ENOMEM;
+		തിരികെ -ENOMEM;
 	}
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-static int initr_boot_led_blink(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_boot_led_blink(ശൂന്യം)
 {
 	led_boot_blink();
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int initr_boot_led_on(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_boot_led_on(ശൂന്യം)
 {
 	led_boot_on();
 
-	return 0;
+	തിരികെ 0;
 }
 
-#if CONFIG_IS_ENABLED(NET)
-static int initr_net(void)
+#എങ്കിൽ CONFIG_IS_ENABLED(NET)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_net(ശൂന്യം)
 {
 	puts("Net:   ");
 	eth_initialize();
-#if defined(CONFIG_RESET_PHY_R)
+#എങ്കിൽ defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");
 	reset_phy();
 #endif
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
 #ifdef CONFIG_POST
-static int initr_post(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_post(ശൂന്യം)
 {
-	post_run(NULL, POST_RAM | post_bootmode_get(0));
-	return 0;
+	post_run(ശൂന്യ, POST_RAM | post_bootmode_get(0));
+	തിരികെ 0;
 }
 #endif
 
-#if defined(CFG_PRAM)
+#എങ്കിൽ defined(CFG_PRAM)
 /*
  * Export available size of memory for Linux, taking into account the
  * protected RAM at top of memory
  */
-int initr_mem(void)
+പൂർണ്ണസംഖ്യ initr_mem(ശൂന്യം)
 {
 	ulong pram = 0;
-	char memsz[32];
+	അക്ഷരം memsz[32];
 
 	pram = env_get_ulong("pram", 10, CFG_PRAM);
-	sprintf(memsz, "%ldk", (long int)((gd->ram_size / 1024) - pram));
+	sprintf(memsz, "%ldk", (long പൂർണ്ണസംഖ്യ)((gd->ram_size / 1024) - pram));
 	env_set("mem", memsz);
 
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-static int initr_lmb(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ initr_lmb(ശൂന്യം)
 {
-	if (CONFIG_IS_ENABLED(LMB))
-		return lmb_init();
-	else
-		return 0;
+	എങ്കിൽ (CONFIG_IS_ENABLED(LMB))
+		തിരികെ lmb_init();
+	അല്ലെങ്കിൽ
+		തിരികെ 0;
 }
 
-static int dm_announce(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ dm_announce(ശൂന്യം)
 {
-	int device_count;
-	int uclass_count;
+	പൂർണ്ണസംഖ്യ device_എണ്ണം;
+	പൂർണ്ണസംഖ്യ uclass_എണ്ണം;
 
-	if (IS_ENABLED(CONFIG_DM)) {
-		dm_get_stats(&device_count, &uclass_count);
-		printf("Core:  %d devices, %d uclasses", device_count,
-		       uclass_count);
-		if (CONFIG_IS_ENABLED(OF_REAL))
+	എങ്കിൽ (IS_ENABLED(CONFIG_DM)) {
+		dm_get_stats(&device_എണ്ണം, &uclass_എണ്ണം);
+		printf("Core:  %d devices, %d uclasses", device_എണ്ണം,
+		       uclass_എണ്ണം);
+		എങ്കിൽ (CONFIG_IS_ENABLED(OF_REAL))
 			printf(", devicetree: %s", fdtdec_get_srcname());
-		if (CONFIG_IS_ENABLED(UPL))
+		എങ്കിൽ (CONFIG_IS_ENABLED(UPL))
 			printf(", universal payload active");
 		printf("\n");
-		if (IS_ENABLED(CONFIG_OF_HAS_PRIOR_STAGE) &&
+		എങ്കിൽ (IS_ENABLED(CONFIG_OF_HAS_PRIOR_STAGE) &&
 		    (gd->fdt_src == FDTSRC_SEPARATE ||
 		     gd->fdt_src == FDTSRC_EMBED)) {
 			printf("Warning: Unexpected devicetree source (not from a prior stage)");
@@ -564,25 +564,25 @@ static int dm_announce(void)
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int run_main_loop(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ run_main_loop(ശൂന്യം)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 #ifdef CONFIG_SANDBOX
 	sandbox_main_loop_init();
 #endif
 
 	ret = event_notify_null(EVT_MAIN_LOOP);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
 	/* main_loop() can return to retry autoboot, if so just run it again */
-	for (;;)
+	വേണ്ടി (;;)
 		main_loop();
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -592,7 +592,7 @@ static int run_main_loop(void)
  * TODO: perhaps reset the watchdog in the initcall function after each call?
  */
 
-static void initcall_run_r(void)
+സ്ഥിതം ശൂന്യം initcall_run_r(ശൂന്യം)
 {
 	/*
 	 * Please do not add logic to this function (variables, if (), etc.).
@@ -602,7 +602,7 @@ static void initcall_run_r(void)
 	INITCALL(initr_reloc);
 	INITCALL(event_init);
 	/* TODO: could x86/PPC have this also perhaps? */
-#if CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
+#എങ്കിൽ CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
 	INITCALL(initr_caches);
 	/* Note: For Freescale LS2 SoCs, new MMU table is created in DDR.
 	 *	 A temporary mapping of IFC high region is since removed,
@@ -612,27 +612,27 @@ static void initcall_run_r(void)
 	 */
 #endif
 	INITCALL(initr_reloc_global_data);
-#if CONFIG_IS_ENABLED(SYS_INIT_RAM_LOCK) && CONFIG_IS_ENABLED(E500)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_INIT_RAM_LOCK) && CONFIG_IS_ENABLED(E500)
 	INITCALL(initr_unlock_ram_in_cache);
 #endif
 	INITCALL(initr_barrier);
 	INITCALL(initr_malloc);
 	INITCALL(log_init);
 	INITCALL(initr_bootstage); /* Needs malloc() but has its own timer */
-#if CONFIG_IS_ENABLED(CONSOLE_RECORD)
+#എങ്കിൽ CONFIG_IS_ENABLED(CONSOLE_RECORD)
 	INITCALL(console_record_init);
 #endif
-#if CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_MEMORY)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_MEMORY)
 	INITCALL(noncached_init);
 #endif
 	INITCALL(initr_of_live);
-#if CONFIG_IS_ENABLED(DM)
+#എങ്കിൽ CONFIG_IS_ENABLED(DM)
 	INITCALL(initr_dm);
 #endif
-#if CONFIG_IS_ENABLED(ADDR_MAP)
+#എങ്കിൽ CONFIG_IS_ENABLED(ADDR_MAP)
 	INITCALL(init_addr_map);
 #endif
-#if CONFIG_IS_ENABLED(BOARD_INIT)
+#എങ്കിൽ CONFIG_IS_ENABLED(BOARD_INIT)
 	INITCALL(board_init);	/* Setup chipselects */
 #endif
 	/*
@@ -641,17 +641,17 @@ static void initcall_run_r(void)
 	 * davinci SOC's is added. Remove this check once all the board
 	 * implement this.
 	 */
-#if CONFIG_IS_ENABLED(CLOCKS)
+#എങ്കിൽ CONFIG_IS_ENABLED(CLOCKS)
 	INITCALL(set_cpu_clk_info);
 #endif
 	INITCALL(initr_lmb);
-#if CONFIG_IS_ENABLED(EFI_LOADER)
+#എങ്കിൽ CONFIG_IS_ENABLED(EFI_LOADER)
 	INITCALL(efi_memory_init);
 #endif
-#if CONFIG_IS_ENABLED(BINMAN_FDT)
+#എങ്കിൽ CONFIG_IS_ENABLED(BINMAN_FDT)
 	INITCALL(initr_binman);
 #endif
-#if CONFIG_IS_ENABLED(FSP_VERSION2)
+#എങ്കിൽ CONFIG_IS_ENABLED(FSP_VERSION2)
 	INITCALL(arch_fsp_init_r);
 #endif
 	INITCALL(initr_dm_devices);
@@ -659,68 +659,68 @@ static void initcall_run_r(void)
 	INITCALL(serial_initialize);
 	INITCALL(initr_announce);
 	INITCALL(dm_announce);
-#if CONFIG_IS_ENABLED(WDT)
+#എങ്കിൽ CONFIG_IS_ENABLED(WDT)
 	INITCALL(initr_watchdog);
 #endif
 	WATCHDOG_RESET();
 	INITCALL(arch_initr_trap);
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
+#എങ്കിൽ CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
 	INITCALL(board_early_init_r);
 #endif
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(POST)
+#എങ്കിൽ CONFIG_IS_ENABLED(POST)
 	INITCALL(post_output_backlog);
 #endif
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#എങ്കിൽ CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do early PCI configuration _before_ the flash gets initialised,
 	 * because PCU resources are crucial for flash access on some boards.
 	 */
 	INITCALL(pci_init);
 #endif
-#if CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
+#എങ്കിൽ CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
 	INITCALL(arch_early_init_r);
 #endif
 	INITCALL(power_init_board);
-#if CONFIG_IS_ENABLED(MTD_NOR_FLASH)
+#എങ്കിൽ CONFIG_IS_ENABLED(MTD_NOR_FLASH)
 	INITCALL(initr_flash);
 #endif
 	WATCHDOG_RESET();
-#if IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
+#എങ്കിൽ IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
 	/* initialize higher level parts of CPU like time base and timers */
 	INITCALL(cpu_init_r);
 #endif
-#if CONFIG_IS_ENABLED(EFI_LOADER)
+#എങ്കിൽ CONFIG_IS_ENABLED(EFI_LOADER)
 	INITCALL(efi_init_early);
 #endif
-#if CONFIG_IS_ENABLED(CMD_NAND)
+#എങ്കിൽ CONFIG_IS_ENABLED(CMD_NAND)
 	INITCALL(initr_nand);
 #endif
-#if CONFIG_IS_ENABLED(CMD_ONENAND)
+#എങ്കിൽ CONFIG_IS_ENABLED(CMD_ONENAND)
 	INITCALL(initr_onenand);
 #endif
-#if CONFIG_IS_ENABLED(MMC)
+#എങ്കിൽ CONFIG_IS_ENABLED(MMC)
 	INITCALL(initr_mmc);
 #endif
-#if CONFIG_IS_ENABLED(XEN)
+#എങ്കിൽ CONFIG_IS_ENABLED(XEN)
 	INITCALL(xen_init);
 #endif
-#if CONFIG_IS_ENABLED(PVBLOCK)
+#എങ്കിൽ CONFIG_IS_ENABLED(PVBLOCK)
 	INITCALL(initr_pvblock);
 #endif
 	INITCALL(initr_env);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
 	INITCALL(initr_malloc_bootparams);
 #endif
 	WATCHDOG_RESET();
 	INITCALL(cpu_secondary_init_r);
-#if CONFIG_IS_ENABLED(ID_EEPROM)
+#എങ്കിൽ CONFIG_IS_ENABLED(ID_EEPROM)
 	INITCALL(mac_read_from_eeprom);
 #endif
 	INITCALL_EVT(EVT_SETTINGS_R);
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#എങ്കിൽ CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do pci configuration
 	 */
@@ -728,55 +728,55 @@ static void initcall_run_r(void)
 #endif
 	INITCALL(stdio_add_devices);
 	INITCALL(jumptable_init);
-#if CONFIG_IS_ENABLED(API)
+#എങ്കിൽ CONFIG_IS_ENABLED(API)
 	INITCALL(api_init);
 #endif
 	INITCALL(console_init_r);	/* fully init console as a device */
-#if CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
+#എങ്കിൽ CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
 	INITCALL(console_announce_r);
 	INITCALL(show_board_info);
 #endif
 	/* miscellaneous arch-dependent init */
-#if CONFIG_IS_ENABLED(ARCH_MISC_INIT)
+#എങ്കിൽ CONFIG_IS_ENABLED(ARCH_MISC_INIT)
 	INITCALL(arch_misc_init);
 #endif
 	/* miscellaneous platform-dependent init */
-#if CONFIG_IS_ENABLED(MISC_INIT_R)
+#എങ്കിൽ CONFIG_IS_ENABLED(MISC_INIT_R)
 	INITCALL(misc_init_r);
 #endif
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(CMD_KGDB)
+#എങ്കിൽ CONFIG_IS_ENABLED(CMD_KGDB)
 	INITCALL(kgdb_init);
 #endif
 	INITCALL(interrupt_init);
-#if defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
+#എങ്കിൽ defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
 	INITCALL(timer_init);		/* initialize timer */
 #endif
 	INITCALL(initr_boot_led_blink);
 	/* PPC has a udelay(20) here dating from 2002. Why? */
-#if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
+#എങ്കിൽ CONFIG_IS_ENABLED(BOARD_LATE_INIT)
 	INITCALL(board_late_init);
 #endif
-#if CONFIG_IS_ENABLED(PCI_ENDPOINT)
+#എങ്കിൽ CONFIG_IS_ENABLED(PCI_ENDPOINT)
 	INITCALL(pci_ep_init);
 #endif
-#if CONFIG_IS_ENABLED(NET)
+#എങ്കിൽ CONFIG_IS_ENABLED(NET)
 	WATCHDOG_RESET();
 	INITCALL(initr_net);
 #endif
-#if CONFIG_IS_ENABLED(POST)
+#എങ്കിൽ CONFIG_IS_ENABLED(POST)
 	INITCALL(initr_post);
 #endif
 	WATCHDOG_RESET();
 	INITCALL_EVT(EVT_LAST_STAGE_INIT);
-#if defined(CFG_PRAM)
+#എങ്കിൽ defined(CFG_PRAM)
 	INITCALL(initr_mem);
 #endif
 	INITCALL(initr_boot_led_on);
 	INITCALL(run_main_loop);
 }
 
-void board_init_r(gd_t *new_gd, ulong dest_addr)
+ശൂന്യം board_init_r(gd_t *new_gd, ulong dest_addr)
 {
 	/*
 	 * The pre-relocation drivers may be using memory that has now gone
@@ -793,12 +793,12 @@ void board_init_r(gd_t *new_gd, ulong dest_addr)
 	 * TODO(sjg@chromium.org): Consider doing this for all archs, or
 	 * dropping the new_gd parameter.
 	 */
-	if (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
+	എങ്കിൽ (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
 		arch_setup_gd(new_gd);
 
-#if defined(CONFIG_RISCV)
+#എങ്കിൽ defined(CONFIG_RISCV)
 	set_gd(new_gd);
-#elif !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+#അല്ലെങ്കിലെങ്കിൽ !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
 	gd = new_gd;
 #endif
 	gd->flags &= ~GD_FLG_LOG_READY;

@@ -6,187 +6,187 @@
 
 #define LOG_CATEGORY	LOGC_CONSOLE
 
-#include <console.h>
-#include <debug_uart.h>
-#include <display_options.h>
-#include <dm.h>
-#include <env.h>
-#include <stdarg.h>
-#include <iomux.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <os.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <exports.h>
-#include <env_internal.h>
-#include <video_console.h>
-#include <watchdog.h>
-#include <asm/global_data.h>
-#include <linux/delay.h>
+#അന്തര്ഭാവ <console.h>
+#അന്തര്ഭാവ <debug_uart.h>
+#അന്തര്ഭാവ <display_options.h>
+#അന്തര്ഭാവ <dm.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <iomux.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <mapmem.h>
+#അന്തര്ഭാവ <os.h>
+#അന്തര്ഭാവ <serial.h>
+#അന്തര്ഭാവ <stdio_dev.h>
+#അന്തര്ഭാവ <exports.h>
+#അന്തര്ഭാവ <env_internal.h>
+#അന്തര്ഭാവ <video_console.h>
+#അന്തര്ഭാവ <watchdog.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <linux/delay.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #define CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
-	int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ on_console(സ്ഥിരം അക്ഷരം *name, സ്ഥിരം അക്ഷരം *മൂല്യം, എണ്ണൽ env_op op,
+	പൂർണ്ണസംഖ്യ flags)
 {
-	int console = -1;
+	പൂർണ്ണസംഖ്യ console = -1;
 
 	/* Check for console redirection */
-	if (strcmp(name, "stdin") == 0)
+	എങ്കിൽ (strcmp(name, "stdin") == 0)
 		console = stdin;
-	else if (strcmp(name, "stdout") == 0)
+	അല്ലെങ്കിൽ എങ്കിൽ (strcmp(name, "stdout") == 0)
 		console = stdout;
-	else if (strcmp(name, "stderr") == 0)
+	അല്ലെങ്കിൽ എങ്കിൽ (strcmp(name, "stderr") == 0)
 		console = stderr;
 
 	/* if not actually setting a console variable, we don't care */
-	if (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
-		return 0;
+	എങ്കിൽ (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
+		തിരികെ 0;
 
-	switch (op) {
-	case env_op_create:
-	case env_op_overwrite:
+	തിരഞ്ഞെടുപ്പ് (op) {
+	അവസ്ഥ env_op_create:
+	അവസ്ഥ env_op_overwrite:
 
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
-				return 1;
-		} else {
+		എങ്കിൽ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			എങ്കിൽ (iomux_doenv(console, മൂല്യം))
+				തിരികെ 1;
+		} അല്ലെങ്കിൽ {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
-				return 1;
+			എങ്കിൽ (console_assign(console, മൂല്യം) < 0)
+				തിരികെ 1;
 		}
 
-		return 0;
+		തിരികെ 0;
 
-	case env_op_delete:
-		if ((flags & H_FORCE) == 0)
+	അവസ്ഥ env_op_delete:
+		എങ്കിൽ ((flags & H_FORCE) == 0)
 			printf("Can't delete \"%s\"\n", name);
-		return 1;
+		തിരികെ 1;
 
-	default:
-		return 0;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ 0;
 	}
 }
 U_BOOT_ENV_CALLBACK(console, on_console);
 
 #ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
-	int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ on_silent(സ്ഥിരം അക്ഷരം *name, സ്ഥിരം അക്ഷരം *മൂല്യം, എണ്ണൽ env_op op,
+	പൂർണ്ണസംഖ്യ flags)
 {
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
-		if (flags & H_INTERACTIVE)
-			return 0;
+	എങ്കിൽ (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
+		എങ്കിൽ (flags & H_INTERACTIVE)
+			തിരികെ 0;
 
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
-		if ((flags & H_INTERACTIVE) == 0)
-			return 0;
+	എങ്കിൽ (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
+		എങ്കിൽ ((flags & H_INTERACTIVE) == 0)
+			തിരികെ 0;
 
-	if (value != NULL)
+	എങ്കിൽ (മൂല്യം != ശൂന്യ)
 		gd->flags |= GD_FLG_SILENT;
-	else
+	അല്ലെങ്കിൽ
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return 0;
+	തിരികെ 0;
 }
 U_BOOT_ENV_CALLBACK(silent, on_silent);
 #endif
 
 #ifdef CONFIG_CONSOLE_RECORD
 /* helper function: access to gd->console_out and gd->console_in */
-static void console_record_putc(const char c)
+സ്ഥിതം ശൂന്യം console_record_putc(സ്ഥിരം അക്ഷരം c)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start &&
-	     !membuf_putbyte((struct membuf *)&gd->console_out, c))
+	എങ്കിൽ (!(gd->flags & GD_FLG_RECORD))
+		തിരികെ;
+	എങ്കിൽ  (gd->console_out.start &&
+	     !membuf_putbyte((ഘടന membuf *)&gd->console_out, c))
 		gd->flags |= GD_FLG_RECORD_OVF;
 }
 
-static void console_record_puts(const char *s)
+സ്ഥിതം ശൂന്യം console_record_puts(സ്ഥിരം അക്ഷരം *s)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start) {
-		int len = strlen(s);
+	എങ്കിൽ (!(gd->flags & GD_FLG_RECORD))
+		തിരികെ;
+	എങ്കിൽ  (gd->console_out.start) {
+		പൂർണ്ണസംഖ്യ len = strlen(s);
 
-		if (membuf_put((struct membuf *)&gd->console_out, s, len) !=
+		എങ്കിൽ (membuf_put((ഘടന membuf *)&gd->console_out, s, len) !=
 		    len)
 			gd->flags |= GD_FLG_RECORD_OVF;
 	}
 }
 
-static int console_record_getc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_record_getc(ശൂന്യം)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return -1;
-	if (!gd->console_in.start)
-		return -1;
+	എങ്കിൽ (!(gd->flags & GD_FLG_RECORD))
+		തിരികെ -1;
+	എങ്കിൽ (!gd->console_in.start)
+		തിരികെ -1;
 
-	return membuf_getbyte((struct membuf *)&gd->console_in);
+	തിരികെ membuf_getbyte((ഘടന membuf *)&gd->console_in);
 }
 
-static int console_record_tstc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_record_tstc(ശൂന്യം)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return 0;
-	if (gd->console_in.start) {
-		if (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
-			return 1;
+	എങ്കിൽ (!(gd->flags & GD_FLG_RECORD))
+		തിരികെ 0;
+	എങ്കിൽ (gd->console_in.start) {
+		എങ്കിൽ (membuf_peekbyte((ഘടന membuf *)&gd->console_in) != -1)
+			തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
-#else
-static void console_record_putc(char c)
+#അല്ലെങ്കിൽ
+സ്ഥിതം ശൂന്യം console_record_putc(അക്ഷരം c)
 {
 }
 
-static void console_record_puts(const char *s)
+സ്ഥിതം ശൂന്യം console_record_puts(സ്ഥിരം അക്ഷരം *s)
 {
 }
 
-static int console_record_getc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_record_getc(ശൂന്യം)
 {
-	return -1;
+	തിരികെ -1;
 }
 
-static int console_record_tstc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_record_tstc(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /*
  * if overwrite_console returns 1, the stdin, stderr and stdout
  * are switched to the serial port, else the settings in the
  * environment are used
  */
 #ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
+ബാഹ്യ പൂർണ്ണസംഖ്യ overwrite_console(ശൂന്യം);
 #define OVERWRITE_CONSOLE overwrite_console()
-#else
+#അല്ലെങ്കിൽ
 #define OVERWRITE_CONSOLE 0
 #endif /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-static int console_setfile(int file, struct stdio_dev * dev)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_setfile(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev * dev)
 {
-	int error = 0;
+	പൂർണ്ണസംഖ്യ error = 0;
 
-	if (dev == NULL)
-		return -1;
+	എങ്കിൽ (dev == ശൂന്യ)
+		തിരികെ -1;
 
-	switch (file) {
-	case stdin:
-	case stdout:
-	case stderr:
+	തിരഞ്ഞെടുപ്പ് (file) {
+	അവസ്ഥ stdin:
+	അവസ്ഥ stdout:
+	അവസ്ഥ stderr:
 		error = console_start(file, dev);
-		if (error)
-			break;
+		എങ്കിൽ (error)
+			നിർത്തുക;
 
 		/* Assign the new device (leaving the existing one started) */
 		stdio_devices[file] = dev;
@@ -196,24 +196,24 @@ static int console_setfile(int file, struct stdio_dev * dev)
 		 * Update monitor functions
 		 * (to use the console stuff by other applications)
 		 */
-		switch (file) {
-		case stdin:
+		തിരഞ്ഞെടുപ്പ് (file) {
+		അവസ്ഥ stdin:
 			gd->jt->getc = getchar;
 			gd->jt->tstc = tstc;
-			break;
-		case stdout:
+			നിർത്തുക;
+		അവസ്ഥ stdout:
 			gd->jt->putc  = putc;
 			gd->jt->puts  = puts;
 			STDIO_DEV_ASSIGN_FLUSH(gd->jt, flush);
 			gd->jt->printf = printf;
-			break;
+			നിർത്തുക;
 		}
 #endif
-		break;
-	default:		/* Invalid file ID */
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:		/* Invalid file ID */
 		error = -1;
 	}
-	return error;
+	തിരികെ error;
 }
 
 /**
@@ -223,33 +223,33 @@ static int console_setfile(int file, struct stdio_dev * dev)
  * Return: true if this device is in the serial uclass (or for pre-driver-model,
  * whether it is called "serial".
  */
-static bool console_dev_is_serial(struct stdio_dev *sdev)
+സ്ഥിതം bool console_dev_is_serial(ഘടന stdio_dev *sdev)
 {
 	bool is_serial;
 
-	if (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
-		struct udevice *dev = sdev->priv;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
+		ഘടന udevice *dev = sdev->priv;
 
 		is_serial = device_get_uclass_id(dev) == UCLASS_SERIAL;
-	} else {
+	} അല്ലെങ്കിൽ {
 		is_serial = !strcmp(sdev->name, "serial");
 	}
 
-	return is_serial;
+	തിരികെ is_serial;
 }
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
+#എങ്കിൽ CONFIG_IS_ENABLED(CONSOLE_MUX)
 /** Console I/O multiplexing *******************************************/
 
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
-static struct stdio_dev *tstcdev;
-struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+സ്ഥിതം ഘടന stdio_dev *tstcdev;
+ഘടന stdio_dev **console_devices[MAX_FILES];
+പൂർണ്ണസംഖ്യ cd_എണ്ണം[MAX_FILES];
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+സ്ഥിതം ശൂന്യം console_devices_set(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
-	cd_count[file] = 1;
+	cd_എണ്ണം[file] = 1;
 }
 
 /**
@@ -263,18 +263,18 @@ static void console_devices_set(int file, struct stdio_dev *dev)
  * other words, we start console once before first STDIO device wants it and
  * stop after the last is gone.
  */
-static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+സ്ഥിതം bool console_needs_start_stop(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *sdev)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
-		if (i == file)
-			continue;
+	വേണ്ടി (i = 0; i < ARRAY_SIZE(cd_എണ്ണം); i++) {
+		എങ്കിൽ (i == file)
+			തുടരുക;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
-			return false;
+		എങ്കിൽ (iomux_match_device(console_devices[i], cd_എണ്ണം[i], sdev) >= 0)
+			തിരികെ false;
 	}
-	return true;
+	തിരികെ true;
 }
 
 /*
@@ -283,51 +283,51 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
  * only from fgetc() which assures it.
  * No attempt is made to demultiplex multiple input sources.
  */
-static int console_getc(int file)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_getc(പൂർണ്ണസംഖ്യ file)
 {
-	unsigned char ret;
+	unsigned അക്ഷരം ret;
 
 	/* This is never called with testcdev == NULL */
 	ret = tstcdev->getc(tstcdev);
-	tstcdev = NULL;
-	return ret;
+	tstcdev = ശൂന്യ;
+	തിരികെ ret;
 }
 
 /*  Upper layer may have already called tstc(): check the saved result */
-static bool console_has_tstc(void)
+സ്ഥിതം bool console_has_tstc(ശൂന്യം)
 {
-	return !!tstcdev;
+	തിരികെ !!tstcdev;
 }
 
-static int console_tstc(int file)
+സ്ഥിതം പൂർണ്ണസംഖ്യ console_tstc(പൂർണ്ണസംഖ്യ file)
 {
-	int i, ret;
-	struct stdio_dev *dev;
-	int prev;
+	പൂർണ്ണസംഖ്യ i, ret;
+	ഘടന stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ prev;
 
 	prev = disable_ctrlc(1);
 	for_each_console_dev(i, file, dev) {
-		if (dev->tstc != NULL) {
+		എങ്കിൽ (dev->tstc != ശൂന്യ) {
 			ret = dev->tstc(dev);
-			if (ret > 0) {
+			എങ്കിൽ (ret > 0) {
 				tstcdev = dev;
 				disable_ctrlc(prev);
-				return ret;
+				തിരികെ ret;
 			}
 		}
 	}
 	disable_ctrlc(prev);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void console_putc(int file, const char c)
+സ്ഥിതം ശൂന്യം console_putc(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം c)
 {
-	int i;
-	struct stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ i;
+	ഘടന stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->putc != NULL)
+		എങ്കിൽ (dev->putc != ശൂന്യ)
 			dev->putc(dev, c);
 	}
 }
@@ -340,330 +340,330 @@ static void console_putc(int file, const char c)
  *	else
  * @s: String to output
  */
-static void console_puts_select(int file, bool serial_only, const char *s)
+സ്ഥിതം ശൂന്യം console_puts_select(പൂർണ്ണസംഖ്യ file, bool serial_only, സ്ഥിരം അക്ഷരം *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ i;
+	ഘടന stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
 		bool is_serial = console_dev_is_serial(dev);
 
-		if (dev->puts && serial_only == is_serial)
+		എങ്കിൽ (dev->puts && serial_only == is_serial)
 			dev->puts(dev, s);
 	}
 }
 
-void console_puts_select_stderr(bool serial_only, const char *s)
+ശൂന്യം console_puts_select_stderr(bool serial_only, സ്ഥിരം അക്ഷരം *s)
 {
-	if (gd->flags & GD_FLG_DEVINIT)
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT)
 		console_puts_select(stderr, serial_only, s);
 }
 
-int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
+പൂർണ്ണസംഖ്യ console_printf_select_stderr(bool serial_only, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-	char buf[CONFIG_SYS_PBSIZE];
+	അക്ഷരം buf[CONFIG_SYS_PBSIZE];
 	va_list args;
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 	va_start(args, fmt);
 
 	/* For this to work, buf must be larger than anything we ever want to
 	 * print.
 	 */
-	ret = vscnprintf(buf, sizeof(buf), fmt, args);
+	ret = vscnprintf(buf, വലുപ്പം(buf), fmt, args);
 	va_end(args);
 	console_puts_select_stderr(serial_only, buf);
 
-	return ret;
+	തിരികെ ret;
 }
 
-static void console_puts(int file, const char *s)
+സ്ഥിതം ശൂന്യം console_puts(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ i;
+	ഘടന stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->puts != NULL)
+		എങ്കിൽ (dev->puts != ശൂന്യ)
 			dev->puts(dev, s);
 	}
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void console_flush(int file)
+സ്ഥിതം ശൂന്യം console_flush(പൂർണ്ണസംഖ്യ file)
 {
-	int i;
-	struct stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ i;
+	ഘടന stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->flush != NULL)
+		എങ്കിൽ (dev->flush != ശൂന്യ)
 			dev->flush(dev);
 	}
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+സ്ഥിതം വരിയിൽ ശൂന്യം console_doenv(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *dev)
 {
 	iomux_doenv(file, dev->name);
 }
 #endif
-#else
+#അല്ലെങ്കിൽ
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+സ്ഥിതം ശൂന്യം console_devices_set(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *dev)
 {
 }
 
-static inline bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+സ്ഥിതം വരിയിൽ bool console_needs_start_stop(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *sdev)
 {
-	return true;
+	തിരികെ true;
 }
 
-static inline int console_getc(int file)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ console_getc(പൂർണ്ണസംഖ്യ file)
 {
-	return stdio_devices[file]->getc(stdio_devices[file]);
+	തിരികെ stdio_devices[file]->getc(stdio_devices[file]);
 }
 
-static bool console_has_tstc(void)
+സ്ഥിതം bool console_has_tstc(ശൂന്യം)
 {
-	return false;
+	തിരികെ false;
 }
 
-static inline int console_tstc(int file)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ console_tstc(പൂർണ്ണസംഖ്യ file)
 {
-	return stdio_devices[file]->tstc(stdio_devices[file]);
+	തിരികെ stdio_devices[file]->tstc(stdio_devices[file]);
 }
 
-static inline void console_putc(int file, const char c)
+സ്ഥിതം വരിയിൽ ശൂന്യം console_putc(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം c)
 {
 	stdio_devices[file]->putc(stdio_devices[file], c);
 }
 
-void console_puts_select(int file, bool serial_only, const char *s)
+ശൂന്യം console_puts_select(പൂർണ്ണസംഖ്യ file, bool serial_only, സ്ഥിരം അക്ഷരം *s)
 {
-	if ((gd->flags & GD_FLG_DEVINIT) &&
+	എങ്കിൽ ((gd->flags & GD_FLG_DEVINIT) &&
 	    serial_only == console_dev_is_serial(stdio_devices[file]))
 		stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
-static inline void console_puts(int file, const char *s)
+സ്ഥിതം വരിയിൽ ശൂന്യം console_puts(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം *s)
 {
 	stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static inline void console_flush(int file)
+സ്ഥിതം വരിയിൽ ശൂന്യം console_flush(പൂർണ്ണസംഖ്യ file)
 {
-	if (stdio_devices[file]->flush)
+	എങ്കിൽ (stdio_devices[file]->flush)
 		stdio_devices[file]->flush(stdio_devices[file]);
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+സ്ഥിതം വരിയിൽ ശൂന്യം console_doenv(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *dev)
 {
 	console_setfile(file, dev);
 }
 #endif
 #endif /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
 
-static void __maybe_unused console_setfile_and_devices(int file, struct stdio_dev *dev)
+സ്ഥിതം ശൂന്യം __maybe_unused console_setfile_and_devices(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *dev)
 {
 	console_setfile(file, dev);
 	console_devices_set(file, dev);
 }
 
-int console_start(int file, struct stdio_dev *sdev)
+പൂർണ്ണസംഖ്യ console_start(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *sdev)
 {
-	int error;
+	പൂർണ്ണസംഖ്യ error;
 
-	if (!console_needs_start_stop(file, sdev))
-		return 0;
+	എങ്കിൽ (!console_needs_start_stop(file, sdev))
+		തിരികെ 0;
 
 	/* Start new device */
-	if (sdev->start) {
+	എങ്കിൽ (sdev->start) {
 		error = sdev->start(sdev);
 		/* If it's not started don't use it */
-		if (error < 0)
-			return error;
+		എങ്കിൽ (error < 0)
+			തിരികെ error;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-void console_stop(int file, struct stdio_dev *sdev)
+ശൂന്യം console_stop(പൂർണ്ണസംഖ്യ file, ഘടന stdio_dev *sdev)
 {
-	if (!console_needs_start_stop(file, sdev))
-		return;
+	എങ്കിൽ (!console_needs_start_stop(file, sdev))
+		തിരികെ;
 
-	if (sdev->stop)
+	എങ്കിൽ (sdev->stop)
 		sdev->stop(sdev);
 }
 
 /** U-Boot INITIAL CONSOLE-NOT COMPATIBLE FUNCTIONS *************************/
 
-int serial_printf(const char *fmt, ...)
+പൂർണ്ണസംഖ്യ serial_printf(സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	അക്ഷരം printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
+	i = vscnprintf(printbuffer, വലുപ്പം(printbuffer), fmt, args);
 	va_end(args);
 
 	serial_puts(printbuffer);
-	return i;
+	തിരികെ i;
 }
 
-int fgetc(int file)
+പൂർണ്ണസംഖ്യ fgetc(പൂർണ്ണസംഖ്യ file)
 {
-	if ((unsigned int)file < MAX_FILES) {
+	എങ്കിൽ ((unsigned പൂർണ്ണസംഖ്യ)file < MAX_FILES) {
 		/*
 		 * Effectively poll for input wherever it may be available.
 		 */
-		for (;;) {
+		വേണ്ടി (;;) {
 			schedule();
-			if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			എങ്കിൽ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 				/*
 				 * Upper layer may have already called tstc() so
 				 * check for that first.
 				 */
-				if (console_has_tstc())
-					return console_getc(file);
+				എങ്കിൽ (console_has_tstc())
+					തിരികെ console_getc(file);
 				console_tstc(file);
-			} else {
-				if (console_tstc(file))
-					return console_getc(file);
+			} അല്ലെങ്കിൽ {
+				എങ്കിൽ (console_tstc(file))
+					തിരികെ console_getc(file);
 			}
 
 			/*
 			 * If the watchdog must be rate-limited then it should
 			 * already be handled in board-specific code.
 			 */
-			if (IS_ENABLED(CONFIG_WATCHDOG))
+			എങ്കിൽ (IS_ENABLED(CONFIG_WATCHDOG))
 				udelay(1);
 		}
 	}
 
-	return -1;
+	തിരികെ -1;
 }
 
-int ftstc(int file)
+പൂർണ്ണസംഖ്യ ftstc(പൂർണ്ണസംഖ്യ file)
 {
-	if ((unsigned int)file < MAX_FILES)
-		return console_tstc(file);
+	എങ്കിൽ ((unsigned പൂർണ്ണസംഖ്യ)file < MAX_FILES)
+		തിരികെ console_tstc(file);
 
-	return -1;
+	തിരികെ -1;
 }
 
-void fputc(int file, const char c)
+ശൂന്യം fputc(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം c)
 {
-	if ((unsigned int)file < MAX_FILES)
+	എങ്കിൽ ((unsigned പൂർണ്ണസംഖ്യ)file < MAX_FILES)
 		console_putc(file, c);
 }
 
-void fputs(int file, const char *s)
+ശൂന്യം fputs(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം *s)
 {
-	if ((unsigned int)file < MAX_FILES)
+	എങ്കിൽ ((unsigned പൂർണ്ണസംഖ്യ)file < MAX_FILES)
 		console_puts(file, s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void fflush(int file)
+ശൂന്യം fflush(പൂർണ്ണസംഖ്യ file)
 {
-	if ((unsigned int)file < MAX_FILES)
+	എങ്കിൽ ((unsigned പൂർണ്ണസംഖ്യ)file < MAX_FILES)
 		console_flush(file);
 }
 #endif
 
-int fprintf(int file, const char *fmt, ...)
+പൂർണ്ണസംഖ്യ fprintf(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	അക്ഷരം printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
+	i = vscnprintf(printbuffer, വലുപ്പം(printbuffer), fmt, args);
 	va_end(args);
 
 	/* Send to desired file */
 	fputs(file, printbuffer);
-	return i;
+	തിരികെ i;
 }
 
 /** U-Boot INITIAL CONSOLE-COMPATIBLE FUNCTION *****************************/
 
-int getchar(void)
+പൂർണ്ണസംഖ്യ getchar(ശൂന്യം)
 {
-	int ch;
+	പൂർണ്ണസംഖ്യ ch;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		തിരികെ 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	എങ്കിൽ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		തിരികെ 0;
 
 	ch = console_record_getc();
-	if (ch != -1)
-		return ch;
+	എങ്കിൽ (ch != -1)
+		തിരികെ ch;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT) {
 		/* Get from the standard input */
-		return fgetc(stdin);
+		തിരികെ fgetc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_getc();
+	തിരികെ serial_getc();
 }
 
-int tstc(void)
+പൂർണ്ണസംഖ്യ tstc(ശൂന്യം)
 {
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		തിരികെ 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	എങ്കിൽ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		തിരികെ 0;
 
-	if (console_record_tstc())
-		return 1;
+	എങ്കിൽ (console_record_tstc())
+		തിരികെ 1;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT) {
 		/* Test the standard input */
-		return ftstc(stdin);
+		തിരികെ ftstc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_tstc();
+	തിരികെ serial_tstc();
 }
 
 /**
  * console_flush_stdin() - drops all pending characters from stdin
  */
-void console_flush_stdin(void)
+ശൂന്യം console_flush_stdin(ശൂന്യം)
 {
-	while (tstc())
-		(void)getchar();
+	ആകുമ്പോൾ (tstc())
+		(ശൂന്യം)getchar();
 }
 
 #define PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
 #define PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
 
-#if CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+#എങ്കിൽ CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
 #define CIRC_BUF_IDX(idx) ((idx) % (unsigned long)CONFIG_VAL(PRE_CON_BUF_SZ))
 
-static void pre_console_putc(const char c)
+സ്ഥിതം ശൂന്യം pre_console_putc(സ്ഥിരം അക്ഷരം c)
 {
-	char *buffer;
+	അക്ഷരം *buffer;
 
-	if (gd->precon_buf_idx < 0)
-		return;
+	എങ്കിൽ (gd->precon_buf_idx < 0)
+		തിരികെ;
 
 	buffer = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
 
@@ -672,126 +672,126 @@ static void pre_console_putc(const char c)
 	unmap_sysmem(buffer);
 }
 
-static void pre_console_puts(const char *s)
+സ്ഥിതം ശൂന്യം pre_console_puts(സ്ഥിരം അക്ഷരം *s)
 {
-	if (gd->precon_buf_idx < 0)
-		return;
+	എങ്കിൽ (gd->precon_buf_idx < 0)
+		തിരികെ;
 
-	while (*s)
+	ആകുമ്പോൾ (*s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+സ്ഥിതം ശൂന്യം print_pre_console_buffer(പൂർണ്ണസംഖ്യ flushpoint)
 {
 	long in = 0, out = 0;
-	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
-	char *buf_in;
+	അക്ഷരം buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
+	അക്ഷരം *buf_in;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		തിരികെ;
 
 	buf_in = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
-	if (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
+	എങ്കിൽ (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
 		in = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
 
-	while (in < gd->precon_buf_idx)
+	ആകുമ്പോൾ (in < gd->precon_buf_idx)
 		buf_out[out++] = buf_in[CIRC_BUF_IDX(in++)];
 	unmap_sysmem(buf_in);
 
 	buf_out[out] = 0;
 
 	gd->precon_buf_idx = -1;
-	switch (flushpoint) {
-	case PRE_CONSOLE_FLUSHPOINT1_SERIAL:
+	തിരഞ്ഞെടുപ്പ് (flushpoint) {
+	അവസ്ഥ PRE_CONSOLE_FLUSHPOINT1_SERIAL:
 		puts(buf_out);
-		break;
-	case PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
+		നിർത്തുക;
+	അവസ്ഥ PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
 		console_puts_select(stdout, false, buf_out);
-		break;
+		നിർത്തുക;
 	}
 	gd->precon_buf_idx = in;
 }
-#else
-static inline void pre_console_putc(const char c) {}
-static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
+#അല്ലെങ്കിൽ
+സ്ഥിതം വരിയിൽ ശൂന്യം pre_console_putc(സ്ഥിരം അക്ഷരം c) {}
+സ്ഥിതം വരിയിൽ ശൂന്യം pre_console_puts(സ്ഥിരം അക്ഷരം *s) {}
+സ്ഥിതം വരിയിൽ ശൂന്യം print_pre_console_buffer(പൂർണ്ണസംഖ്യ flushpoint) {}
 #endif
 
-void putc(const char c)
+ശൂന്യം putc(സ്ഥിരം അക്ഷരം c)
 {
-	if (!gd)
-		return;
+	എങ്കിൽ (!gd)
+		തിരികെ;
 
 	console_record_putc(c);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_putc(c);
-		return;
+		തിരികെ;
 	}
 
 	/* if we don't have a console yet, use the debug UART */
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printch(c);
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	എങ്കിൽ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		എങ്കിൽ (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_putc(c);
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		തിരികെ;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_putc(c);
+	എങ്കിൽ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		തിരികെ pre_console_putc(c);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputc(stdout, c);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Send directly to the handler */
 		pre_console_putc(c);
 		serial_putc(c);
 	}
 }
 
-void puts(const char *s)
+ശൂന്യം puts(സ്ഥിരം അക്ഷരം *s)
 {
-	if (!gd)
-		return;
+	എങ്കിൽ (!gd)
+		തിരികെ;
 
 	console_record_puts(s);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_puts(s);
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printascii(s);
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	എങ്കിൽ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		എങ്കിൽ (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_puts(s);
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		തിരികെ;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_puts(s);
+	എങ്കിൽ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		തിരികെ pre_console_puts(s);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputs(stdout, s);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Send directly to the handler */
 		pre_console_puts(s);
 		serial_puts(s);
@@ -799,33 +799,33 @@ void puts(const char *s)
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void flush(void)
+ശൂന്യം flush(ശൂന്യം)
 {
-	if (!gd)
-		return;
+	എങ്കിൽ (!gd)
+		തിരികെ;
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_flush();
-		return;
+		തിരികെ;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
+		തിരികെ;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		തിരികെ;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	എങ്കിൽ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		തിരികെ;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return;
+	എങ്കിൽ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		തിരികെ;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	എങ്കിൽ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fflush(stdout);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Send directly to the handler */
 		serial_flush();
 	}
@@ -833,205 +833,205 @@ void flush(void)
 #endif
 
 #ifdef CONFIG_CONSOLE_RECORD
-int console_record_init(void)
+പൂർണ്ണസംഖ്യ console_record_init(ശൂന്യം)
 {
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
-	ret = membuf_new((struct membuf *)&gd->console_out,
+	ret = membuf_new((ഘടന membuf *)&gd->console_out,
 			 gd->flags & GD_FLG_RELOC ?
 				CONFIG_CONSOLE_RECORD_OUT_SIZE :
 				CONFIG_CONSOLE_RECORD_OUT_SIZE_F);
-	if (ret)
-		return ret;
-	ret = membuf_new((struct membuf *)&gd->console_in,
+	എങ്കിൽ (ret)
+		തിരികെ ret;
+	ret = membuf_new((ഘടന membuf *)&gd->console_in,
 			 CONFIG_CONSOLE_RECORD_IN_SIZE);
 
 	/* Start recording from the beginning */
 	gd->flags |= GD_FLG_RECORD;
 
-	return ret;
+	തിരികെ ret;
 }
 
-void console_record_reset(void)
+ശൂന്യം console_record_reset(ശൂന്യം)
 {
-	membuf_purge((struct membuf *)&gd->console_out);
-	membuf_purge((struct membuf *)&gd->console_in);
+	membuf_purge((ഘടന membuf *)&gd->console_out);
+	membuf_purge((ഘടന membuf *)&gd->console_in);
 	gd->flags &= ~GD_FLG_RECORD_OVF;
 }
 
-int console_record_reset_enable(void)
+പൂർണ്ണസംഖ്യ console_record_reset_enable(ശൂന്യം)
 {
 	console_record_reset();
 	gd->flags |= GD_FLG_RECORD;
 
-	return 0;
+	തിരികെ 0;
 }
 
-int console_record_readline(char *str, int maxlen)
+പൂർണ്ണസംഖ്യ console_record_readline(അക്ഷരം *str, പൂർണ്ണസംഖ്യ maxlen)
 {
-	if (gd->flags & GD_FLG_RECORD_OVF)
-		return -ENOSPC;
-	if (console_record_isempty())
-		return -ENOENT;
+	എങ്കിൽ (gd->flags & GD_FLG_RECORD_OVF)
+		തിരികെ -ENOSPC;
+	എങ്കിൽ (console_record_isempty())
+		തിരികെ -ENOENT;
 
-	return membuf_readline((struct membuf *)&gd->console_out, str,
+	തിരികെ membuf_readline((ഘടന membuf *)&gd->console_out, str,
 				maxlen, '\0', false);
 }
 
-int console_record_avail(void)
+പൂർണ്ണസംഖ്യ console_record_avail(ശൂന്യം)
 {
-	return membuf_avail((struct membuf *)&gd->console_out);
+	തിരികെ membuf_avail((ഘടന membuf *)&gd->console_out);
 }
 
-bool console_record_isempty(void)
+bool console_record_isempty(ശൂന്യം)
 {
-	return membuf_isempty((struct membuf *)&gd->console_out);
+	തിരികെ membuf_isempty((ഘടന membuf *)&gd->console_out);
 }
 
-int console_in_puts(const char *str)
+പൂർണ്ണസംഖ്യ console_in_puts(സ്ഥിരം അക്ഷരം *str)
 {
-	return membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
+	തിരികെ membuf_put((ഘടന membuf *)&gd->console_in, str, strlen(str));
 }
 
 #endif
 
 /* test if ctrl-c was pressed */
-static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
-int ctrlc(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ ctrlc_disabled = 0;	/* see disable_ctrl() */
+സ്ഥിതം പൂർണ്ണസംഖ്യ ctrlc_was_pressed = 0;
+പൂർണ്ണസംഖ്യ ctrlc(ശൂന്യം)
 {
-	if (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
-		if (tstc()) {
-			switch (getchar()) {
-			case 0x03:		/* ^C - Control C */
+	എങ്കിൽ (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
+		എങ്കിൽ (tstc()) {
+			തിരഞ്ഞെടുപ്പ് (getchar()) {
+			അവസ്ഥ 0x03:		/* ^C - Control C */
 				ctrlc_was_pressed = 1;
-				return 1;
-			default:
-				break;
+				തിരികെ 1;
+			സ്ഥിരസ്ഥിതി:
+				നിർത്തുക;
 			}
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 /* Reads user's confirmation.
    Returns 1 if user's input is "y", "Y", "yes" or "YES"
 */
-int confirm_yesno(void)
+പൂർണ്ണസംഖ്യ confirm_yesno(ശൂന്യം)
 {
-	int i;
-	char str_input[5];
+	പൂർണ്ണസംഖ്യ i;
+	അക്ഷരം str_നിവേശം[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
-		str_input[i] = getchar();
-		putc(str_input[i]);
-		if (str_input[i] == '\r')
-			break;
+	ആകുമ്പോൾ (i < വലുപ്പം(str_നിവേശം)) {
+		str_നിവേശം[i] = getchar();
+		putc(str_നിവേശം[i]);
+		എങ്കിൽ (str_നിവേശം[i] == '\r')
+			നിർത്തുക;
 		i++;
 	}
 	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
-	    strncmp(str_input, "Y\r", 2) == 0 ||
-	    strncmp(str_input, "yes\r", 4) == 0 ||
-	    strncmp(str_input, "YES\r", 4) == 0)
-		return 1;
-	return 0;
+	എങ്കിൽ (strncmp(str_നിവേശം, "y\r", 2) == 0 ||
+	    strncmp(str_നിവേശം, "Y\r", 2) == 0 ||
+	    strncmp(str_നിവേശം, "yes\r", 4) == 0 ||
+	    strncmp(str_നിവേശം, "YES\r", 4) == 0)
+		തിരികെ 1;
+	തിരികെ 0;
 }
 /* pass 1 to disable ctrlc() checking, 0 to enable.
  * returns previous state
  */
-int disable_ctrlc(int disable)
+പൂർണ്ണസംഖ്യ disable_ctrlc(പൂർണ്ണസംഖ്യ disable)
 {
-	int prev = ctrlc_disabled;	/* save previous state */
+	പൂർണ്ണസംഖ്യ prev = ctrlc_disabled;	/* save previous state */
 
 	ctrlc_disabled = disable;
-	return prev;
+	തിരികെ prev;
 }
 
-int had_ctrlc (void)
+പൂർണ്ണസംഖ്യ had_ctrlc (ശൂന്യം)
 {
-	return ctrlc_was_pressed;
+	തിരികെ ctrlc_was_pressed;
 }
 
-void clear_ctrlc(void)
+ശൂന്യം clear_ctrlc(ശൂന്യം)
 {
 	ctrlc_was_pressed = 0;
 }
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+ഘടന stdio_dev *console_തിരയൽ_dev(പൂർണ്ണസംഖ്യ flags, സ്ഥിരം അക്ഷരം *name)
 {
-	struct stdio_dev *dev;
+	ഘടന stdio_dev *dev;
 
 	dev = stdio_get_by_name(name);
-	if (dev && (dev->flags & flags))
-		return dev;
+	എങ്കിൽ (dev && (dev->flags & flags))
+		തിരികെ dev;
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-int console_assign(int file, const char *devname)
+പൂർണ്ണസംഖ്യ console_assign(പൂർണ്ണസംഖ്യ file, സ്ഥിരം അക്ഷരം *devname)
 {
-	int flag;
-	struct stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ flag;
+	ഘടന stdio_dev *dev;
 
 	/* Check for valid file */
 	flag = stdio_file_to_flags(file);
-	if (flag < 0)
-		return flag;
+	എങ്കിൽ (flag < 0)
+		തിരികെ flag;
 
 	/* Check for valid device name */
 
-	dev = console_search_dev(flag, devname);
+	dev = console_തിരയൽ_dev(flag, devname);
 
-	if (dev)
-		return console_setfile(file, dev);
+	എങ്കിൽ (dev)
+		തിരികെ console_setfile(file, dev);
 
-	return -1;
+	തിരികെ -1;
 }
 
 /* return true if the 'silent' flag is removed */
-static bool console_update_silent(void)
+സ്ഥിതം bool console_update_silent(ശൂന്യം)
 {
 	unsigned long flags = gd->flags;
 
-	if (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
-		return false;
+	എങ്കിൽ (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
+		തിരികെ false;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		തിരികെ false;
 	}
 
-	if (env_get("silent")) {
+	എങ്കിൽ (env_get("silent")) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		തിരികെ false;
 	}
 
 	gd->flags &= ~GD_FLG_SILENT;
 
-	return !!(flags & GD_FLG_SILENT);
+	തിരികെ !!(flags & GD_FLG_SILENT);
 }
 
-int console_announce_r(void)
+പൂർണ്ണസംഖ്യ console_announce_r(ശൂന്യം)
 {
-#if !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+#എങ്കിൽ !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+	അക്ഷരം buf[DISPLAY_OPTIONS_BANNER_LENGTH];
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, വലുപ്പം(buf));
 
 	console_puts_select(stdout, false, buf);
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
 
 /* Called before relocation - use serial functions */
-int console_init_f(void)
+പൂർണ്ണസംഖ്യ console_init_f(ശൂന്യം)
 {
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
@@ -1039,10 +1039,10 @@ int console_init_f(void)
 
 	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
-	return 0;
+	തിരികെ 0;
 }
 
-int console_clear(void)
+പൂർണ്ണസംഖ്യ console_clear(ശൂന്യം)
 {
 	/*
 	 * Send clear screen and home
@@ -1052,36 +1052,36 @@ int console_clear(void)
 	 * displays
 	 */
 	printf(CSI "2J" CSI "1;1H");
-	if (IS_ENABLED(CONFIG_VIDEO_ANSI))
-		return 0;
+	എങ്കിൽ (IS_ENABLED(CONFIG_VIDEO_ANSI))
+		തിരികെ 0;
 
-	if (IS_ENABLED(CONFIG_VIDEO)) {
-		struct udevice *dev;
-		int ret;
+	എങ്കിൽ (IS_ENABLED(CONFIG_VIDEO)) {
+		ഘടന udevice *dev;
+		പൂർണ്ണസംഖ്യ ret;
 
 		ret = uclass_first_device_err(UCLASS_VIDEO_CONSOLE, &dev);
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 		ret = vidconsole_clear_and_reset(dev);
-		if (ret)
-			return ret;
+		എങ്കിൽ (ret)
+			തിരികെ ret;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static char *get_stdio(const u8 std)
+സ്ഥിതം അക്ഷരം *get_stdio(സ്ഥിരം u8 std)
 {
-	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
+	തിരികെ stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
-static void stdio_print_current_devices(void)
+സ്ഥിതം ശൂന്യം stdio_print_current_devices(ശൂന്യം)
 {
-	char *stdinname = NULL;
-	char *stdoutname = NULL;
-	char *stderrname = NULL;
+	അക്ഷരം *stdinname = ശൂന്യ;
+	അക്ഷരം *stdoutname = ശൂന്യ;
+	അക്ഷരം *stderrname = ശൂന്യ;
 
-	if (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
+	എങ്കിൽ (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
 	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)) {
 		/* stdin stdout and stderr are in environment */
 		stdinname  = env_get("stdin");
@@ -1104,20 +1104,20 @@ static void stdio_print_current_devices(void)
 	printf("%s\n", stderrname);
 }
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#എങ്കിൽ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+പൂർണ്ണസംഖ്യ console_init_r(ശൂന്യം)
 {
-	char *stdinname, *stdoutname, *stderrname;
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL, *errdev = NULL;
-	int i;
-	int iomux_err = 0;
-	int flushpoint;
+	അക്ഷരം *stdinname, *stdoutname, *stderrname;
+	ഘടന stdio_dev *inputdev = ശൂന്യ, *outputdev = ശൂന്യ, *errdev = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ iomux_err = 0;
+	പൂർണ്ണസംഖ്യ flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	എങ്കിൽ (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	അല്ലെങ്കിൽ
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/* set default handlers at first */
@@ -1133,76 +1133,76 @@ int console_init_r(void)
 	stdoutname = env_get("stdout");
 	stderrname = env_get("stderr");
 
-	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+	എങ്കിൽ (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
+		inputdev  = console_തിരയൽ_dev(DEV_FLAGS_നിവേശം,  stdinname);
+		outputdev = console_തിരയൽ_dev(DEV_FLAGS_OUTPUT, stdoutname);
+		errdev    = console_തിരയൽ_dev(DEV_FLAGS_OUTPUT, stderrname);
+		എങ്കിൽ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 			iomux_err = iomux_doenv(stdin, stdinname);
 			iomux_err += iomux_doenv(stdout, stdoutname);
 			iomux_err += iomux_doenv(stderr, stderrname);
-			if (!iomux_err)
+			എങ്കിൽ (!iomux_err)
 				/* Successful, so skip all the code below. */
-				goto done;
+				പോകുക done;
 		}
 	}
 	/* if the devices are overwritten or not found, use default device */
-	if (inputdev == NULL) {
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
+	എങ്കിൽ (inputdev == ശൂന്യ) {
+		inputdev  = console_തിരയൽ_dev(DEV_FLAGS_നിവേശം,  "serial");
 	}
-	if (outputdev == NULL) {
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	എങ്കിൽ (outputdev == ശൂന്യ) {
+		outputdev = console_തിരയൽ_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
-	if (errdev == NULL) {
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	എങ്കിൽ (errdev == ശൂന്യ) {
+		errdev    = console_തിരയൽ_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	എങ്കിൽ (outputdev != ശൂന്യ) {
 		/* need to set a console if not done above. */
 		console_doenv(stdout, outputdev);
 	}
-	if (errdev != NULL) {
+	എങ്കിൽ (errdev != ശൂന്യ) {
 		/* need to set a console if not done above. */
 		console_doenv(stderr, errdev);
 	}
-	if (inputdev != NULL) {
+	എങ്കിൽ (inputdev != ശൂന്യ) {
 		/* need to set a console if not done above. */
 		console_doenv(stdin, inputdev);
 	}
 
 done:
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	എങ്കിൽ (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
-	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
-		for (i = 0; i < MAX_FILES; i++)
+		വേണ്ടി (i = 0; i < MAX_FILES; i++)
 			env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	തിരികെ 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#അല്ലെങ്കിൽ /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+പൂർണ്ണസംഖ്യ console_init_r(ശൂന്യം)
 {
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL;
-	int i;
-	struct list_head *list = stdio_get_list();
-	struct list_head *pos;
-	struct stdio_dev *dev;
-	int flushpoint;
+	ഘടന stdio_dev *inputdev = ശൂന്യ, *outputdev = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ i;
+	ഘടന list_head *list = stdio_get_list();
+	ഘടന list_head *pos;
+	ഘടന stdio_dev *dev;
+	പൂർണ്ണസംഖ്യ flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	എങ്കിൽ (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	അല്ലെങ്കിൽ
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/*
@@ -1211,84 +1211,84 @@ int console_init_r(void)
 	 * console to serial console in this case or suppress it if
 	 * "silent" mode was requested.
 	 */
-	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
-		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
+	എങ്കിൽ (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
+		എങ്കിൽ (!(gd->flags & GD_FLG_SILENT))
+			outputdev = console_തിരയൽ_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
 	/* Scan devices looking for input and output devices */
 	list_for_each(pos, list) {
-		dev = list_entry(pos, struct stdio_dev, list);
+		dev = list_entry(pos, ഘടന stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		എങ്കിൽ ((dev->flags & DEV_FLAGS_നിവേശം) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
-		if ((dev->flags & DEV_FLAGS_OUTPUT) &&
+		എങ്കിൽ ((dev->flags & DEV_FLAGS_OUTPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !outputdev))
 			outputdev = dev;
 
 		/* The current serial console is the preferred stdio. */
-		if (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
-			break;
+		എങ്കിൽ (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
+			നിർത്തുക;
 	}
 
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	എങ്കിൽ (outputdev != ശൂന്യ) {
 		console_setfile_and_devices(stdout, outputdev);
 		console_setfile_and_devices(stderr, outputdev);
 	}
 
 	/* Initializes input console */
-	if (inputdev != NULL)
+	എങ്കിൽ (inputdev != ശൂന്യ)
 		console_setfile_and_devices(stdin, inputdev);
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	എങ്കിൽ (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
 	/* Setting environment variables */
-	for (i = 0; i < MAX_FILES; i++) {
+	വേണ്ടി (i = 0; i < MAX_FILES; i++) {
 		env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	തിരികെ 0;
 }
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-int console_remove_by_name(const char *name)
+പൂർണ്ണസംഖ്യ console_remove_by_name(സ്ഥിരം അക്ഷരം *name)
 {
-	int err = 0;
+	പൂർണ്ണസംഖ്യ err = 0;
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	int fnum;
+#എങ്കിൽ CONFIG_IS_ENABLED(CONSOLE_MUX)
+	പൂർണ്ണസംഖ്യ fnum;
 
 	log_debug("removing console device %s\n", name);
-	for (fnum = 0; fnum < MAX_FILES; fnum++) {
-		struct stdio_dev **src, **dest;
-		int i;
+	വേണ്ടി (fnum = 0; fnum < MAX_FILES; fnum++) {
+		ഘടന stdio_dev **src, **dest;
+		പൂർണ്ണസംഖ്യ i;
 
-		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
+		log_debug("file %d: %d devices: ", fnum, cd_എണ്ണം[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
-			struct stdio_dev *sdev = *src;
-			int ret = 0;
+		വേണ്ടി (i = 0; i < cd_എണ്ണം[fnum]; i++, src++) {
+			ഘടന stdio_dev *sdev = *src;
+			പൂർണ്ണസംഖ്യ ret = 0;
 
-			if (!strcmp(sdev->name, name))
+			എങ്കിൽ (!strcmp(sdev->name, name))
 				ret = stdio_deregister_dev(sdev, true);
-			else
+			അല്ലെങ്കിൽ
 				*dest++ = *src;
-			if (ret && !err)
+			എങ്കിൽ (ret && !err)
 				err = ret;
 		}
-		cd_count[fnum] = dest - console_devices[fnum];
-		log_debug("now %d\n", cd_count[fnum]);
+		cd_എണ്ണം[fnum] = dest - console_devices[fnum];
+		log_debug("now %d\n", cd_എണ്ണം[fnum]);
 	}
 #endif /* CONSOLE_MUX */
 
-	return err;
+	തിരികെ err;
 }

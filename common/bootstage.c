@@ -10,137 +10,137 @@
 
 #define LOG_CATEGORY	LOGC_BOOT
 
-#include <bootstage.h>
-#include <hang.h>
-#include <log.h>
-#include <malloc.h>
-#include <sort.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <linux/compiler.h>
-#include <linux/libfdt.h>
+#അന്തര്ഭാവ <bootstage.h>
+#അന്തര്ഭാവ <hang.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <sort.h>
+#അന്തര്ഭാവ <spl.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <linux/compiler.h>
+#അന്തര്ഭാവ <linux/libfdt.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-enum {
-	RECORD_COUNT = CONFIG_VAL(BOOTSTAGE_RECORD_COUNT),
+എണ്ണൽ {
+	RECORD_എണ്ണം = CONFIG_VAL(BOOTSTAGE_RECORD_എണ്ണം),
 };
 
-struct bootstage_record {
+ഘടന bootstage_record {
 	ulong time_us;
 	uint32_t start_us;
-	const char *name;
-	int flags;		/* see enum bootstage_flags */
-	enum bootstage_id id;
+	സ്ഥിരം അക്ഷരം *name;
+	പൂർണ്ണസംഖ്യ flags;		/* see enum bootstage_flags */
+	എണ്ണൽ bootstage_id id;
 };
 
-struct bootstage_data {
-	uint rec_count;
+ഘടന bootstage_data {
+	uint rec_എണ്ണം;
 	uint next_id;
-	struct bootstage_record record[RECORD_COUNT];
+	ഘടന bootstage_record record[RECORD_എണ്ണം];
 };
 
-enum {
+എണ്ണൽ {
 	BOOTSTAGE_VERSION	= 0,
 	BOOTSTAGE_MAGIC		= 0xb00757a3,
 	BOOTSTAGE_DIGITS	= 9,
 };
 
-struct bootstage_hdr {
+ഘടന bootstage_hdr {
 	u32 version;		/* BOOTSTAGE_VERSION */
-	u32 count;		/* Number of records */
+	u32 എണ്ണം;		/* Number of records */
 	u32 size;		/* Total data size (non-zero if valid) */
 	u32 magic;		/* Magic number */
 	u32 next_id;		/* Next ID to use for bootstage */
 };
 
-int bootstage_relocate(void *to)
+പൂർണ്ണസംഖ്യ bootstage_relocate(ശൂന്യം *to)
 {
-	struct bootstage_data *data;
-	int i;
-	char *ptr;
+	ഘടന bootstage_data *data;
+	പൂർണ്ണസംഖ്യ i;
+	അക്ഷരം *ptr;
 
 	debug("Copying bootstage from %p to %p\n", gd->bootstage, to);
-	memcpy(to, gd->bootstage, sizeof(struct bootstage_data));
+	memcpy(to, gd->bootstage, വലുപ്പം(ഘടന bootstage_data));
 	data = gd->bootstage = to;
 
 	/* Figure out where to relocate the strings to */
-	ptr = (char *)(data + 1);
+	ptr = (അക്ഷരം *)(data + 1);
 
 	/*
 	 * Duplicate all strings.  They may point to an old location in the
 	 * program .text section that can eventually get trashed.
 	 */
-	debug("Relocating %d records\n", data->rec_count);
-	for (i = 0; i < data->rec_count; i++) {
-		const char *from = data->record[i].name;
+	debug("Relocating %d records\n", data->rec_എണ്ണം);
+	വേണ്ടി (i = 0; i < data->rec_എണ്ണം; i++) {
+		സ്ഥിരം അക്ഷരം *from = data->record[i].name;
 
-		if (!from)
-			continue;
+		എങ്കിൽ (!from)
+			തുടരുക;
 		strcpy(ptr, from);
 		data->record[i].name = ptr;
 		ptr += strlen(ptr) + 1;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-struct bootstage_record *find_id(struct bootstage_data *data,
-				 enum bootstage_id id)
+ഘടന bootstage_record *find_id(ഘടന bootstage_data *data,
+				 എണ്ണൽ bootstage_id id)
 {
-	struct bootstage_record *rec;
-	struct bootstage_record *end;
+	ഘടന bootstage_record *rec;
+	ഘടന bootstage_record *end;
 
-	for (rec = data->record, end = rec + data->rec_count; rec < end;
+	വേണ്ടി (rec = data->record, end = rec + data->rec_എണ്ണം; rec < end;
 	     rec++) {
-		if (rec->id == id)
-			return rec;
+		എങ്കിൽ (rec->id == id)
+			തിരികെ rec;
 	}
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-struct bootstage_record *ensure_id(struct bootstage_data *data,
-				   enum bootstage_id id)
+ഘടന bootstage_record *ensure_id(ഘടന bootstage_data *data,
+				   എണ്ണൽ bootstage_id id)
 {
-	struct bootstage_record *rec;
+	ഘടന bootstage_record *rec;
 
 	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
-		rec = &data->record[data->rec_count++];
+	എങ്കിൽ (!rec && data->rec_എണ്ണം < RECORD_എണ്ണം) {
+		rec = &data->record[data->rec_എണ്ണം++];
 		rec->id = id;
-		return rec;
+		തിരികെ rec;
 	}
 
-	return rec;
+	തിരികെ rec;
 }
 
-ulong bootstage_add_record(enum bootstage_id id, const char *name,
-			   int flags, ulong mark)
+ulong bootstage_add_record(എണ്ണൽ bootstage_id id, സ്ഥിരം അക്ഷരം *name,
+			   പൂർണ്ണസംഖ്യ flags, ulong mark)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec;
+	ഘടന bootstage_data *data = gd->bootstage;
+	ഘടന bootstage_record *rec;
 
 	/*
 	 * initf_bootstage() is called very early during boot but since hang()
 	 * calls bootstage_error() we can be called before bootstage is set up.
 	 * Add a check to avoid this.
 	 */
-	if (!data)
-		return mark;
-	if (flags & BOOTSTAGEF_ALLOC)
+	എങ്കിൽ (!data)
+		തിരികെ mark;
+	എങ്കിൽ (flags & BOOTSTAGEF_ALLOC)
 		id = data->next_id++;
 
 	/* Only record the first event for each */
 	rec = find_id(data, id);
-	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
-			rec = &data->record[data->rec_count++];
+	എങ്കിൽ (!rec) {
+		എങ്കിൽ (data->rec_എണ്ണം < RECORD_എണ്ണം) {
+			rec = &data->record[data->rec_എണ്ണം++];
 			rec->time_us = mark;
 			rec->name = name;
 			rec->flags = flags;
 			rec->id = id;
-		} else {
+		} അല്ലെങ്കിൽ {
 			log_warning("Bootstage space exhausted\n");
 		}
 	}
@@ -148,78 +148,78 @@ ulong bootstage_add_record(enum bootstage_id id, const char *name,
 	/* Tell the board about this progress */
 	show_boot_progress(flags & BOOTSTAGEF_ERROR ? -id : id);
 
-	return mark;
+	തിരികെ mark;
 }
 
-ulong bootstage_error_name(enum bootstage_id id, const char *name)
+ulong bootstage_error_name(എണ്ണൽ bootstage_id id, സ്ഥിരം അക്ഷരം *name)
 {
-	return bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
+	തിരികെ bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
 				    timer_get_boot_us());
 }
 
-ulong bootstage_mark_name(enum bootstage_id id, const char *name)
+ulong bootstage_mark_name(എണ്ണൽ bootstage_id id, സ്ഥിരം അക്ഷരം *name)
 {
-	int flags = 0;
+	പൂർണ്ണസംഖ്യ flags = 0;
 
-	if (id == BOOTSTAGE_ID_ALLOC)
+	എങ്കിൽ (id == BOOTSTAGE_ID_ALLOC)
 		flags = BOOTSTAGEF_ALLOC;
 
-	return bootstage_add_record(id, name, flags, timer_get_boot_us());
+	തിരികെ bootstage_add_record(id, name, flags, timer_get_boot_us());
 }
 
-ulong bootstage_mark_code(const char *file, const char *func, int linenum)
+ulong bootstage_mark_code(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *func, പൂർണ്ണസംഖ്യ linenum)
 {
-	char *str, *p;
-	__maybe_unused char *end;
-	int len = 0;
+	അക്ഷരം *str, *p;
+	__maybe_unused അക്ഷരം *end;
+	പൂർണ്ണസംഖ്യ len = 0;
 
 	/* First work out the length we need to allocate */
-	if (linenum != -1)
+	എങ്കിൽ (linenum != -1)
 		len = 11;
-	if (func)
+	എങ്കിൽ (func)
 		len += strlen(func);
-	if (file)
+	എങ്കിൽ (file)
 		len += strlen(file);
 
 	str = malloc(len + 1);
 	p = str;
 	end = p + len;
-	if (file)
+	എങ്കിൽ (file)
 		p += snprintf(p, end - p, "%s,", file);
-	if (linenum != -1)
+	എങ്കിൽ (linenum != -1)
 		p += snprintf(p, end - p, "%d", linenum);
-	if (func)
+	എങ്കിൽ (func)
 		p += snprintf(p, end - p, ": %s", func);
 
-	return bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
+	തിരികെ bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
 }
 
-uint32_t bootstage_start(enum bootstage_id id, const char *name)
+uint32_t bootstage_start(എണ്ണൽ bootstage_id id, സ്ഥിരം അക്ഷരം *name)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	ഘടന bootstage_data *data = gd->bootstage;
+	ഘടന bootstage_record *rec = ensure_id(data, id);
 	ulong start_us = timer_get_boot_us();
 
-	if (rec) {
+	എങ്കിൽ (rec) {
 		rec->start_us = start_us;
 		rec->name = name;
 	}
 
-	return start_us;
+	തിരികെ start_us;
 }
 
-uint32_t bootstage_accum(enum bootstage_id id)
+uint32_t bootstage_accum(എണ്ണൽ bootstage_id id)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	ഘടന bootstage_data *data = gd->bootstage;
+	ഘടന bootstage_record *rec = ensure_id(data, id);
 	uint32_t duration;
 
-	if (!rec)
-		return 0;
+	എങ്കിൽ (!rec)
+		തിരികെ 0;
 	duration = (uint32_t)timer_get_boot_us() - rec->start_us;
 	rec->time_us += duration;
 
-	return duration;
+	തിരികെ duration;
 }
 
 /**
@@ -230,35 +230,35 @@ uint32_t bootstage_accum(enum bootstage_id id)
  * @param rec	Boot stage record to get the name from
  * Return: pointer to name, either from the record or pointing to buf.
  */
-static const char *get_record_name(char *buf, int len,
-				   const struct bootstage_record *rec)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *get_record_name(അക്ഷരം *buf, പൂർണ്ണസംഖ്യ len,
+				   സ്ഥിരം ഘടന bootstage_record *rec)
 {
-	if (rec->name)
-		return rec->name;
-	else if (rec->id >= BOOTSTAGE_ID_USER)
+	എങ്കിൽ (rec->name)
+		തിരികെ rec->name;
+	അല്ലെങ്കിൽ എങ്കിൽ (rec->id >= BOOTSTAGE_ID_USER)
 		snprintf(buf, len, "user_%d", rec->id - BOOTSTAGE_ID_USER);
-	else
+	അല്ലെങ്കിൽ
 		snprintf(buf, len, "id=%d", rec->id);
 
-	return buf;
+	തിരികെ buf;
 }
 
-static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
+സ്ഥിതം uint32_t print_time_record(ഘടന bootstage_record *rec, uint32_t prev)
 {
-	char buf[20];
+	അക്ഷരം buf[20];
 
-	if (prev == -1U) {
+	എങ്കിൽ (prev == -1U) {
 		printf("%11s", "");
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-	} else {
-		if (prev > rec->time_us)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (prev > rec->time_us)
 			prev = 0;
 		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
 		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
 	}
-	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
+	printf("  %s\n", get_record_name(buf, വലുപ്പം(buf), rec));
 
-	return rec->time_us;
+	തിരികെ rec->time_us;
 }
 
 #ifdef CONFIG_OF_LIBFDT
@@ -268,89 +268,89 @@ static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
  * @param blob	Device tree blob
  * Return: 0 on success, != 0 on failure.
  */
-static int add_bootstages_devicetree(struct fdt_header *blob)
+സ്ഥിതം പൂർണ്ണസംഖ്യ add_bootstages_devicetree(ഘടന fdt_header *blob)
 {
-	struct bootstage_data *data = gd->bootstage;
-	int bootstage;
-	char buf[20];
-	int recnum;
-	int i;
+	ഘടന bootstage_data *data = gd->bootstage;
+	പൂർണ്ണസംഖ്യ bootstage;
+	അക്ഷരം buf[20];
+	പൂർണ്ണസംഖ്യ recnum;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (!blob)
-		return 0;
+	എങ്കിൽ (!blob)
+		തിരികെ 0;
 
 	/*
 	 * Create the node for bootstage.
 	 * The address of flat device tree is set up by the command bootm.
 	 */
 	bootstage = fdt_add_subnode(blob, 0, "bootstage");
-	if (bootstage < 0)
-		return -EINVAL;
+	എങ്കിൽ (bootstage < 0)
+		തിരികെ -EINVAL;
 
 	/*
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
-	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
-		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+	വേണ്ടി (recnum = data->rec_എണ്ണം - 1, i = 0; recnum >= 0; recnum--, i++) {
+		ഘടന bootstage_record *rec = &data->record[recnum];
+		പൂർണ്ണസംഖ്യ കണ്ണി;
 
-		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
-			continue;
+		എങ്കിൽ (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
+			തുടരുക;
 
-		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
-			break;
+		കണ്ണി = fdt_add_subnode(blob, bootstage, simple_itoa(i));
+		എങ്കിൽ (കണ്ണി < 0)
+			നിർത്തുക;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
-				       get_record_name(buf, sizeof(buf), rec)))
-			return -EINVAL;
+		എങ്കിൽ (fdt_setprop_string(blob, കണ്ണി, "name",
+				       get_record_name(buf, വലുപ്പം(buf), rec)))
+			തിരികെ -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
+		എങ്കിൽ (fdt_setprop_cell(blob, കണ്ണി,
 				rec->start_us ? "accum" : "mark",
 				rec->time_us))
-			return -EINVAL;
+			തിരികെ -EINVAL;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-int bootstage_fdt_add_report(void)
+പൂർണ്ണസംഖ്യ bootstage_fdt_add_report(ശൂന്യം)
 {
-	if (add_bootstages_devicetree(working_fdt))
+	എങ്കിൽ (add_bootstages_devicetree(working_fdt))
 		puts("bootstage: Failed to add to device tree\n");
 
-	return 0;
+	തിരികെ 0;
 }
 #endif
 
-void bootstage_report(void)
+ശൂന്യം bootstage_report(ശൂന്യം)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = data->record;
+	ഘടന bootstage_data *data = gd->bootstage;
+	ഘടന bootstage_record *rec = data->record;
 	uint32_t prev;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	printf("Timer summary in microseconds (%d records):\n",
-	       data->rec_count);
+	       data->rec_എണ്ണം);
 	printf("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
 
 	prev = print_time_record(rec, 0);
 
-	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
-		if (rec->id && !rec->start_us)
+	വേണ്ടി (i = 1, rec++; i < data->rec_എണ്ണം; i++, rec++) {
+		എങ്കിൽ (rec->id && !rec->start_us)
 			prev = print_time_record(rec, prev);
 	}
-	if (data->rec_count > RECORD_COUNT)
+	എങ്കിൽ (data->rec_എണ്ണം > RECORD_എണ്ണം)
 		printf("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		       data->rec_count - RECORD_COUNT);
+		       data->rec_എണ്ണം - RECORD_എണ്ണം);
 
 	puts("\nAccumulated time:\n");
-	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
-		if (rec->start_us)
+	വേണ്ടി (i = 0, rec = data->record; i < data->rec_എണ്ണം; i++, rec++) {
+		എങ്കിൽ (rec->start_us)
 			prev = print_time_record(rec, -1);
 	}
 }
@@ -366,124 +366,124 @@ void bootstage_report(void)
  * @param data	Data to write to buffer
  * @param size	Size of data
  */
-static void append_data(char **ptrp, char *end, const void *data, int size)
+സ്ഥിതം ശൂന്യം append_data(അക്ഷരം **ptrp, അക്ഷരം *end, സ്ഥിരം ശൂന്യം *data, പൂർണ്ണസംഖ്യ size)
 {
-	char *ptr = *ptrp;
+	അക്ഷരം *ptr = *ptrp;
 
 	*ptrp += size;
-	if (*ptrp > end)
-		return;
+	എങ്കിൽ (*ptrp > end)
+		തിരികെ;
 
 	memcpy(ptr, data, size);
 }
 
-int bootstage_stash(void *base, int size)
+പൂർണ്ണസംഖ്യ bootstage_stash(ശൂന്യം *base, പൂർണ്ണസംഖ്യ size)
 {
-	const struct bootstage_data *data = gd->bootstage;
-	struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	const struct bootstage_record *rec;
-	char buf[20];
-	char *ptr = base, *end = ptr + size;
-	int i;
+	സ്ഥിരം ഘടന bootstage_data *data = gd->bootstage;
+	ഘടന bootstage_hdr *hdr = (ഘടന bootstage_hdr *)base;
+	സ്ഥിരം ഘടന bootstage_record *rec;
+	അക്ഷരം buf[20];
+	അക്ഷരം *ptr = base, *end = ptr + size;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	എങ്കിൽ (hdr + 1 > (ഘടന bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -ENOSPC;
+		തിരികെ -ENOSPC;
 	}
 
 	/* Write an arbitrary version number */
 	hdr->version = BOOTSTAGE_VERSION;
 
-	hdr->count = data->rec_count;
+	hdr->എണ്ണം = data->rec_എണ്ണം;
 	hdr->size = 0;
 	hdr->magic = BOOTSTAGE_MAGIC;
 	hdr->next_id = data->next_id;
-	ptr += sizeof(*hdr);
+	ptr += വലുപ്പം(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-		append_data(&ptr, end, rec, sizeof(*rec));
+	വേണ്ടി (rec = data->record, i = 0; i < data->rec_എണ്ണം; i++, rec++)
+		append_data(&ptr, end, rec, വലുപ്പം(*rec));
 
 	/* Write the name strings */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
-		const char *name;
+	വേണ്ടി (rec = data->record, i = 0; i < data->rec_എണ്ണം; i++, rec++) {
+		സ്ഥിരം അക്ഷരം *name;
 
-		name = get_record_name(buf, sizeof(buf), rec);
+		name = get_record_name(buf, വലുപ്പം(buf), rec);
 		append_data(&ptr, end, name, strlen(name) + 1);
 	}
 
 	/* Check for buffer overflow */
-	if (ptr > end) {
+	എങ്കിൽ (ptr > end) {
 		debug("%s: Not enough space for bootstage stash\n", __func__);
-		return -ENOSPC;
+		തിരികെ -ENOSPC;
 	}
 
 	/* Update total data size */
-	hdr->size = ptr - (char *)base;
-	debug("Stashed %d records\n", hdr->count);
+	hdr->size = ptr - (അക്ഷരം *)base;
+	debug("Stashed %d records\n", hdr->എണ്ണം);
 
-	return 0;
+	തിരികെ 0;
 }
 
-int bootstage_unstash(const void *base, int size)
+പൂർണ്ണസംഖ്യ bootstage_unstash(സ്ഥിരം ശൂന്യം *base, പൂർണ്ണസംഖ്യ size)
 {
-	const struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	struct bootstage_data *data = gd->bootstage;
-	const char *ptr = base, *end = ptr + size;
-	struct bootstage_record *rec;
+	സ്ഥിരം ഘടന bootstage_hdr *hdr = (ഘടന bootstage_hdr *)base;
+	ഘടന bootstage_data *data = gd->bootstage;
+	സ്ഥിരം അക്ഷരം *ptr = base, *end = ptr + size;
+	ഘടന bootstage_record *rec;
 	uint rec_size;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (size == -1)
-		end = (char *)(~(uintptr_t)0);
+	എങ്കിൽ (size == -1)
+		end = (അക്ഷരം *)(~(uintptr_t)0);
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	എങ്കിൽ (hdr + 1 > (ഘടന bootstage_hdr *)end) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -EPERM;
+		തിരികെ -EPERM;
 	}
 
-	if (hdr->magic != BOOTSTAGE_MAGIC) {
+	എങ്കിൽ (hdr->magic != BOOTSTAGE_MAGIC) {
 		debug("%s: Invalid bootstage magic\n", __func__);
-		return -ENOENT;
+		തിരികെ -ENOENT;
 	}
 
-	if (ptr + hdr->size > end) {
+	എങ്കിൽ (ptr + hdr->size > end) {
 		debug("%s: Bootstage data runs past buffer end\n", __func__);
-		return -ENOSPC;
+		തിരികെ -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	എങ്കിൽ (hdr->എണ്ണം * വലുപ്പം(*rec) > hdr->size) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
-			"only %d bytes is available\n", __func__, hdr->count,
-		      (ulong)hdr->count * sizeof(*rec), hdr->size);
-		return -ENOSPC;
+			"only %d bytes is available\n", __func__, hdr->എണ്ണം,
+		      (ulong)hdr->എണ്ണം * വലുപ്പം(*rec), hdr->size);
+		തിരികെ -ENOSPC;
 	}
 
-	if (hdr->version != BOOTSTAGE_VERSION) {
+	എങ്കിൽ (hdr->version != BOOTSTAGE_VERSION) {
 		debug("%s: Bootstage data version %#0x unrecognised\n",
 		      __func__, hdr->version);
-		return -EINVAL;
+		തിരികെ -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	എങ്കിൽ (data->rec_എണ്ണം + hdr->എണ്ണം > RECORD_എണ്ണം) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
-		return -ENOSPC;
+		      __func__, hdr->എണ്ണം, RECORD_എണ്ണം - data->rec_എണ്ണം);
+		തിരികെ -ENOSPC;
 	}
 
-	ptr += sizeof(*hdr);
+	ptr += വലുപ്പം(*hdr);
 
 	/* Read the records */
-	rec_size = hdr->count * sizeof(*data->record);
-	memcpy(data->record + data->rec_count, ptr, rec_size);
+	rec_size = hdr->എണ്ണം * വലുപ്പം(*data->record);
+	memcpy(data->record + data->rec_എണ്ണം, ptr, rec_size);
 
 	/* Read the name strings */
 	ptr += rec_size;
-	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
+	വേണ്ടി (rec = data->record + data->rec_എണ്ണം, i = 0; i < hdr->എണ്ണം;
 	     i++, rec++) {
 		rec->name = ptr;
-		if (xpl_phase() == PHASE_SPL)
+		എങ്കിൽ (xpl_phase() == PHASE_SPL)
 			rec->name = strdup(ptr);
 
 		/* Assume no data corruption here */
@@ -491,61 +491,61 @@ int bootstage_unstash(const void *base, int size)
 	}
 
 	/* Mark the records as read */
-	data->rec_count += hdr->count;
+	data->rec_എണ്ണം += hdr->എണ്ണം;
 	data->next_id = hdr->next_id;
-	debug("Unstashed %d records\n", hdr->count);
+	debug("Unstashed %d records\n", hdr->എണ്ണം);
 
-	return 0;
+	തിരികെ 0;
 }
 
-#if IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
-int _bootstage_stash_default(void)
+#എങ്കിൽ IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
+പൂർണ്ണസംഖ്യ _bootstage_stash_default(ശൂന്യം)
 {
-	return bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
+	തിരികെ bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
 			       CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 
-int _bootstage_unstash_default(void)
+പൂർണ്ണസംഖ്യ _bootstage_unstash_default(ശൂന്യം)
 {
-	const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
+	സ്ഥിരം ശൂന്യം *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
 				       CONFIG_BOOTSTAGE_STASH_SIZE);
 
-	return bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+	തിരികെ bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
 }
 #endif
 
-int bootstage_get_size(bool add_strings)
+പൂർണ്ണസംഖ്യ bootstage_get_size(bool add_strings)
 {
-	int size;
+	പൂർണ്ണസംഖ്യ size;
 
-	size = sizeof(struct bootstage_data);
-	if (add_strings) {
-		struct bootstage_data *data = gd->bootstage;
-		struct bootstage_record *rec;
-		int i;
+	size = വലുപ്പം(ഘടന bootstage_data);
+	എങ്കിൽ (add_strings) {
+		ഘടന bootstage_data *data = gd->bootstage;
+		ഘടന bootstage_record *rec;
+		പൂർണ്ണസംഖ്യ i;
 
-		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-			if (rec->name)
+		വേണ്ടി (rec = data->record, i = 0; i < data->rec_എണ്ണം; i++, rec++)
+			എങ്കിൽ (rec->name)
 				size += strlen(rec->name) + 1;
 	}
 
-	return size;
+	തിരികെ size;
 }
 
-int bootstage_init(bool first)
+പൂർണ്ണസംഖ്യ bootstage_init(bool first)
 {
-	struct bootstage_data *data;
-	int size = sizeof(struct bootstage_data);
+	ഘടന bootstage_data *data;
+	പൂർണ്ണസംഖ്യ size = വലുപ്പം(ഘടന bootstage_data);
 
-	gd->bootstage = (struct bootstage_data *)malloc(size);
-	if (!gd->bootstage)
-		return -ENOMEM;
+	gd->bootstage = (ഘടന bootstage_data *)malloc(size);
+	എങ്കിൽ (!gd->bootstage)
+		തിരികെ -ENOMEM;
 	data = gd->bootstage;
 	memset(data, '\0', size);
-	if (first) {
+	എങ്കിൽ (first) {
 		data->next_id = BOOTSTAGE_ID_USER;
 		bootstage_add_record(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
 	}
 
-	return 0;
+	തിരികെ 0;
 }

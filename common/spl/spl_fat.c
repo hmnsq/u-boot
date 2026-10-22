@@ -8,143 +8,143 @@
  * FAT Image Functions copied from spl_mmc.c
  */
 
-#include <env.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <fat.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/libfdt.h>
-#include <asm/cache.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <spl.h>
+#അന്തര്ഭാവ <spl_load.h>
+#അന്തര്ഭാവ <fat.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <image.h>
+#അന്തര്ഭാവ <linux/libfdt.h>
+#അന്തര്ഭാവ <asm/cache.h>
 
-static int fat_registered;
+സ്ഥിതം പൂർണ്ണസംഖ്യ fat_registered;
 
-void spl_fat_force_reregister(void)
+ശൂന്യം spl_fat_force_reregister(ശൂന്യം)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+സ്ഥിതം പൂർണ്ണസംഖ്യ spl_register_fat_device(ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition)
 {
-	int err = 0;
+	പൂർണ്ണസംഖ്യ err = 0;
 
-	if (fat_registered)
-		return err;
+	എങ്കിൽ (fat_registered)
+		തിരികെ err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
+	എങ്കിൽ (err) {
 		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+		തിരികെ err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	തിരികെ err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+സ്ഥിതം ulong spl_fit_read(ഘടന spl_load_info *load, ulong file_offset,
+			  ulong size, ശൂന്യം *buf)
 {
-	struct legacy_img_hdr *header;
+	ഘടന legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	പൂർണ്ണസംഖ്യ ret;
+	അക്ഷരം *filename = load->priv;
 
 	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	എങ്കിൽ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (ഘടന legacy_img_hdr *)buf;
+		എങ്കിൽ (image_get_magic(header) != FDT_MAGIC)
+			തിരികെ size;
 	}
 
-	return actread;
+	തിരികെ actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+പൂർണ്ണസംഖ്യ spl_load_image_fat(ഘടന spl_image_info *spl_image,
+		       ഘടന spl_boot_device *bootdev,
+		       ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition,
+		       സ്ഥിരം അക്ഷരം *filename)
 {
-	int err;
+	പൂർണ്ണസംഖ്യ err;
 	loff_t size;
-	struct spl_load_info load;
+	ഘടന spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		goto end;
+	എങ്കിൽ (err)
+		പോകുക end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	എങ്കിൽ (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = fat_size(filename, &size);
-		if (err)
-			goto end;
-	} else {
+		എങ്കിൽ (err)
+			പോകുക end;
+	} അല്ലെങ്കിൽ {
 		size = 0;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename,
+	spl_load_init(&load, spl_fit_read, (ശൂന്യം *)filename,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
 
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0) {
+	എങ്കിൽ (err < 0) {
 		spl_fat_force_reregister();
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	തിരികെ err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#എങ്കിൽ CONFIG_IS_ENABLED(OS_BOOT)
+പൂർണ്ണസംഖ്യ spl_load_image_fat_os(ഘടന spl_image_info *spl_image,
+			  ഘടന spl_boot_device *bootdev,
+			  ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition)
 {
-	int err;
-	__maybe_unused char *file;
+	പൂർണ്ണസംഖ്യ err;
+	__maybe_unused അക്ഷരം *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	എങ്കിൽ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		പോകുക defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	എങ്കിൽ (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		എങ്കിൽ (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			പോകുക defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		എങ്കിൽ (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
+				file, (ശൂന്യം *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+			എങ്കിൽ (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				പോകുക defaults;
 			}
-			return 0;
-		} else
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 #endif
 
-	} else
+	} അല്ലെങ്കിൽ
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
@@ -152,26 +152,26 @@ defaults:
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
+			    (ശൂന്യം *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+	എങ്കിൽ (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		തിരികെ -1;
 	}
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#അല്ലെങ്കിൽ
+പൂർണ്ണസംഖ്യ spl_load_image_fat_os(ഘടന spl_image_info *spl_image,
+			  ഘടന spl_boot_device *bootdev,
+			  ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition)
 {
-	return -ENOSYS;
+	തിരികെ -ENOSYS;
 }
 #endif

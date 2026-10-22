@@ -9,20 +9,20 @@
 
 #define LOG_CATEGORY	LOGC_EVENT
 
-#include <event.h>
-#include <event_internal.h>
-#include <log.h>
-#include <linker_lists.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <relocate.h>
+#അന്തര്ഭാവ <event.h>
+#അന്തര്ഭാവ <event_internal.h>
+#അന്തര്ഭാവ <log.h>
+#അന്തര്ഭാവ <linker_lists.h>
+#അന്തര്ഭാവ <malloc.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <linux/errno.h>
+#അന്തര്ഭാവ <linux/list.h>
+#അന്തര്ഭാവ <relocate.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#എങ്കിൽ CONFIG_IS_ENABLED(EVENT_DEBUG)
+സ്ഥിരം അക്ഷരം *സ്ഥിരം type_name[] = {
 	"none",
 	"test",
 
@@ -56,41 +56,41 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
+_Static_assert(ARRAY_SIZE(type_name) == EVT_എണ്ണം, "event type_name size");
 #endif
 
-const char *event_type_name(enum event_t type)
+സ്ഥിരം അക്ഷരം *event_type_name(എണ്ണൽ event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#എങ്കിൽ CONFIG_IS_ENABLED(EVENT_DEBUG)
+	എങ്കിൽ (type < ARRAY_SIZE(type_name))
+		തിരികെ type_name[type];
+	അല്ലെങ്കിൽ
+		തിരികെ "(unknown)";
+#അല്ലെങ്കിൽ
+	തിരികെ "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+സ്ഥിതം പൂർണ്ണസംഖ്യ notify_static(ഘടന event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	ഘടന evspy_info *start =
+		ll_entry_start(ഘടന evspy_info, evspy_info);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ n_ents = ll_entry_എണ്ണം(ഘടന evspy_info, evspy_info);
+	ഘടന evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	വേണ്ടി (spy = start; spy != start + n_ents; spy++) {
+		എങ്കിൽ (spy->type == ev->type) {
+			പൂർണ്ണസംഖ്യ ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			എങ്കിൽ (spy->flags & EVSPYF_SIMPLE) {
+				സ്ഥിരം ഘടന evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (ഘടന evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
-				ret = spy->func(NULL, ev);
+			} അല്ലെങ്കിൽ {
+				ret = spy->func(ശൂന്യ, ev);
 			}
 
 			/*
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			എങ്കിൽ (ret)
+				തിരികെ log_സന്ദേശം_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int notify_dynamic(struct event *ev)
+സ്ഥിതം പൂർണ്ണസംഖ്യ notify_dynamic(ഘടന event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ഘടന event_state *state = gd_event_state();
+	ഘടന event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_കണ്ണി) {
+		എങ്കിൽ (spy->type == ev->type) {
+			പൂർണ്ണസംഖ്യ ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,99 +126,99 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			എങ്കിൽ (ret)
+				തിരികെ log_സന്ദേശം_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+പൂർണ്ണസംഖ്യ event_notify(എണ്ണൽ event_t type, ശൂന്യം *data, പൂർണ്ണസംഖ്യ size)
 {
-	struct event event;
-	int ret;
+	ഘടന event event;
+	പൂർണ്ണസംഖ്യ ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+	എങ്കിൽ (size > വലുപ്പം(event.data))
+		തിരികെ log_സന്ദേശം_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	എങ്കിൽ (ret)
+		തിരികെ log_സന്ദേശം_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	എങ്കിൽ (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		എങ്കിൽ (ret)
+			തിരികെ log_സന്ദേശം_ret("dyn", ret);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-int event_notify_null(enum event_t type)
+പൂർണ്ണസംഖ്യ event_notify_null(എണ്ണൽ event_t type)
 {
-	return event_notify(type, NULL, 0);
+	തിരികെ event_notify(type, ശൂന്യ, 0);
 }
 
-void event_show_spy_list(void)
+ശൂന്യം event_show_spy_list(ശൂന്യം)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	ഘടന evspy_info *start =
+		ll_entry_start(ഘടന evspy_info, evspy_info);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ n_ents = ll_entry_എണ്ണം(ഘടന evspy_info, evspy_info);
+	ഘടന evspy_info *spy;
+	സ്ഥിരം പൂർണ്ണസംഖ്യ size = വലുപ്പം(ulong) * 2;
 
 	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	വേണ്ടി (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
 		       spy->type, event_type_name(spy->type), size, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#എങ്കിൽ CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+സ്ഥിതം ശൂന്യം spy_free(ഘടന event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_കണ്ണി);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+പൂർണ്ണസംഖ്യ event_register(സ്ഥിരം അക്ഷരം *id, എണ്ണൽ event_t type, event_handler_t func, ശൂന്യം *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	ഘടന event_state *state = gd_event_state();
+	ഘടന event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = malloc(വലുപ്പം(*spy));
+	എങ്കിൽ (!spy)
+		തിരികെ log_സന്ദേശം_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_add_tail(&spy->sibling_കണ്ണി, &state->spy_head);
 
-	return 0;
+	തിരികെ 0;
 }
 
-int event_uninit(void)
+പൂർണ്ണസംഖ്യ event_uninit(ശൂന്യം)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ഘടന event_state *state = gd_event_state();
+	ഘടന event_spy *spy, *next;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_കണ്ണി)
 		spy_free(spy);
 
-	return 0;
+	തിരികെ 0;
 }
 
-int event_init(void)
+പൂർണ്ണസംഖ്യ event_init(ശൂന്യം)
 {
-	struct event_state *state = gd_event_state();
+	ഘടന event_state *state = gd_event_state();
 
 	INIT_LIST_HEAD(&state->spy_head);
 
-	return 0;
+	തിരികെ 0;
 }
 #endif /* EVENT_DYNAMIC */

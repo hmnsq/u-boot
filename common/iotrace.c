@@ -5,12 +5,12 @@
 
 #define IOTRACE_IMPL
 
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/bug.h>
-#include <u-boot/crc.h>
+#അന്തര്ഭാവ <mapmem.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <asm/io.h>
+#അന്തര്ഭാവ <linux/bug.h>
+#അന്തര്ഭാവ <u-boot/crc.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -26,7 +26,7 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
+സ്ഥിതം ഘടന iotrace {
 	ulong start;
 	ulong size;
 	ulong needed_size;
@@ -37,9 +37,9 @@ static struct iotrace {
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+സ്ഥിതം ശൂന്യം add_record(പൂർണ്ണസംഖ്യ flags, സ്ഥിരം ശൂന്യം *ptr, ulong മൂല്യം)
 {
-	struct iotrace_record srec, *rec = &srec;
+	ഘടന iotrace_record srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,125 +47,125 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	എങ്കിൽ (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		തിരികെ;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
+	എങ്കിൽ (iotrace.region_size)
+		എങ്കിൽ ((ulong)ptr < iotrace.region_start ||
 		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+			തിരികെ;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
+	എങ്കിൽ (iotrace.offset + വലുപ്പം(*rec) < iotrace.size) {
+		rec = (ഘടന iotrace_record *)map_sysmem(
 					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+					വലുപ്പം(മൂല്യം));
+	} അല്ലെങ്കിൽ {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_size += വലുപ്പം(ഘടന iotrace_record);
+		തിരികെ;
 	}
 
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
 	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->മൂല്യം = മൂല്യം;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.crc32 = crc32(iotrace.crc32, (unsigned അക്ഷരം *)rec,
+			      വലുപ്പം(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_size += വലുപ്പം(ഘടന iotrace_record);
+	iotrace.offset += വലുപ്പം(ഘടന iotrace_record);
 }
 
-u32 iotrace_readl(const void *ptr)
+u32 iotrace_readl(സ്ഥിരം ശൂന്യം *ptr)
 {
 	u32 v;
 
 	v = readl(ptr);
 	add_record(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	തിരികെ v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+ശൂന്യം iotrace_writel(ulong മൂല്യം, ശൂന്യം *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	add_record(IOT_32 | IOT_WRITE, ptr, മൂല്യം);
+	writel(മൂല്യം, ptr);
 }
 
-u16 iotrace_readw(const void *ptr)
+u16 iotrace_readw(സ്ഥിരം ശൂന്യം *ptr)
 {
 	u32 v;
 
 	v = readw(ptr);
 	add_record(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	തിരികെ v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+ശൂന്യം iotrace_writew(ulong മൂല്യം, ശൂന്യം *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	add_record(IOT_16 | IOT_WRITE, ptr, മൂല്യം);
+	writew(മൂല്യം, ptr);
 }
 
-u8 iotrace_readb(const void *ptr)
+u8 iotrace_readb(സ്ഥിരം ശൂന്യം *ptr)
 {
 	u32 v;
 
 	v = readb(ptr);
 	add_record(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	തിരികെ v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+ശൂന്യം iotrace_writeb(ulong മൂല്യം, ശൂന്യം *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	add_record(IOT_8 | IOT_WRITE, ptr, മൂല്യം);
+	writeb(മൂല്യം, ptr);
 }
 
-void iotrace_reset_checksum(void)
+ശൂന്യം iotrace_reset_checksum(ശൂന്യം)
 {
 	iotrace.crc32 = 0;
 }
 
-u32 iotrace_get_checksum(void)
+u32 iotrace_get_checksum(ശൂന്യം)
 {
-	return iotrace.crc32;
+	തിരികെ iotrace.crc32;
 }
 
-void iotrace_set_region(ulong start, ulong size)
+ശൂന്യം iotrace_set_region(ulong start, ulong size)
 {
 	iotrace.region_start = start;
 	iotrace.region_size = size;
 }
 
-void iotrace_reset_region(void)
+ശൂന്യം iotrace_reset_region(ശൂന്യം)
 {
 	iotrace.region_start = 0;
 	iotrace.region_size = 0;
 }
 
-void iotrace_get_region(ulong *start, ulong *size)
+ശൂന്യം iotrace_get_region(ulong *start, ulong *size)
 {
 	*start = iotrace.region_start;
 	*size = iotrace.region_size;
 }
 
-void iotrace_set_enabled(int enable)
+ശൂന്യം iotrace_set_enabled(പൂർണ്ണസംഖ്യ enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+പൂർണ്ണസംഖ്യ iotrace_get_enabled(ശൂന്യം)
 {
-	return iotrace.enabled;
+	തിരികെ iotrace.enabled;
 }
 
-void iotrace_set_buffer(ulong start, ulong size)
+ശൂന്യം iotrace_set_buffer(ulong start, ulong size)
 {
 	iotrace.start = start;
 	iotrace.size = size;
@@ -173,11 +173,11 @@ void iotrace_set_buffer(ulong start, ulong size)
 	iotrace.crc32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+ശൂന്യം iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *എണ്ണം)
 {
 	*start = iotrace.start;
 	*size = iotrace.size;
 	*needed_size = iotrace.needed_size;
 	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*എണ്ണം = iotrace.offset / വലുപ്പം(ഘടന iotrace_record);
 }

@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <dm.h>
-#include <init.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <linux/libfdt.h>
-#include <linux/compiler.h>
+#അന്തര്ഭാവ <dm.h>
+#അന്തര്ഭാവ <init.h>
+#അന്തര്ഭാവ <sysinfo.h>
+#അന്തര്ഭാവ <asm/global_data.h>
+#അന്തര്ഭാവ <linux/libfdt.h>
+#അന്തര്ഭാവ <linux/compiler.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-int __weak checkboard(void)
+പൂർണ്ണസംഖ്യ __weak checkboard(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
+സ്ഥിതം സ്ഥിരം ഘടന to_show {
+	സ്ഥിരം അക്ഷരം *name;
+	എണ്ണൽ sysinfo_id id;
 } to_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
 	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ try_sysinfo(ശൂന്യം)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	ഘടന udevice *dev;
+	അക്ഷരം str[80];
+	പൂർണ്ണസംഖ്യ ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, വലുപ്പം(str), str);
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	എങ്കിൽ (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		സ്ഥിരം ഘടന to_show *item;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+		വേണ്ടി (item = to_show; item->id; item++) {
+			ret = sysinfo_get_str(dev, item->id, വലുപ്പം(str), str);
+			എങ്കിൽ (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-int show_board_info(void)
+പൂർണ്ണസംഖ്യ show_board_info(ശൂന്യം)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	എങ്കിൽ (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		പൂർണ്ണസംഖ്യ ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		എങ്കിൽ (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		എങ്കിൽ (ret) {
+			സ്ഥിരം അക്ഷരം *model;
 
-			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			model = fdt_getprop(gd->fdt_blob, 0, "model", ശൂന്യ);
+			എങ്കിൽ (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	തിരികെ checkboard();
 }

@@ -12,15 +12,15 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <malloc.h>         /* malloc, free, realloc*/
+#അന്തര്ഭാവ <linux/ctype.h>    /* isalpha, isdigit */
+#അന്തര്ഭാവ <console.h>
+#അന്തര്ഭാവ <bootretry.h>
+#അന്തര്ഭാവ <cli.h>
+#അന്തര്ഭാവ <cli_hush.h>
+#അന്തര്ഭാവ <command.h>        /* find_cmd */
+#അന്തര്ഭാവ <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
@@ -42,14 +42,14 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#എങ്കിൽ CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+തരനിർവചനം signed അക്ഷരം smallint;
+തരനിർവചനം unsigned അക്ഷരം smalluint;
+#അല്ലെങ്കിൽ
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
+തരനിർവചനം പൂർണ്ണസംഖ്യ smallint;
+തരനിർവചനം unsigned smalluint;
 #endif
 
 /*
@@ -59,7 +59,7 @@ typedef unsigned smalluint;
 #define ALIGN2			__attribute__((aligned(2)))
 #define ALIGN4			__attribute__((aligned(4)))
 #define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#define ALIGN_PTR		__attribute__((aligned(വലുപ്പം(ശൂന്യം*))))
 
 /*
  * Miscellaneous compiler/platform defines.
@@ -82,106 +82,106 @@ typedef unsigned smalluint;
  */
 #define utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+സ്ഥിതം ശൂന്യം __noreturn xfunc_die(ശൂന്യം)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#define bb_error_സന്ദേശം_and_die(format, ...) ചെയ്യുക { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} ആകുമ്പോൾ (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#define bb_simple_error_സന്ദേശം_and_die(സന്ദേശം) ചെയ്യുക { \
+panic_str("HUSH: " സന്ദേശം); \
+} ആകുമ്പോൾ (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+സ്ഥിതം പൂർണ്ണസംഖ്യ __maybe_unused fdprintf(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *format, ...)
 {
 	va_list args;
 	uint i;
 
-	assert(fd == 2);
+	പ്രതിജ്ഞാ(fd == 2);
 
 	va_start(args, format);
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	തിരികെ i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+സ്ഥിതം ശൂന്യം bb_verror_സന്ദേശം(സ്ഥിരം അക്ഷരം *s, va_list p, സ്ഥിരം അക്ഷരം* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+സ്ഥിതം ശൂന്യം bb_error_സന്ദേശം(സ്ഥിരം അക്ഷരം *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
+	bb_verror_സന്ദേശം(s, p, ശൂന്യ);
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+സ്ഥിതം ശൂന്യം bb_simple_error_സന്ദേശം(സ്ഥിരം അക്ഷരം *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_സന്ദേശം("%s", s);
 }
 
-static void *xmalloc(size_t size)
+സ്ഥിതം ശൂന്യം *xmalloc(size_t size)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	ശൂന്യം *p = ശൂന്യ;
+	എങ്കിൽ (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	തിരികെ p;
 }
 
-static void *xzalloc(size_t size)
+സ്ഥിതം ശൂന്യം *xzalloc(size_t size)
 {
-	void *p = xmalloc(size);
+	ശൂന്യം *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	തിരികെ p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+സ്ഥിതം ശൂന്യം *xrealloc(ശൂന്യം *ptr, size_t size)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	ശൂന്യം *p = ശൂന്യ;
+	എങ്കിൽ (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	തിരികെ p;
 }
 
-static void *xmemdup(const void *s, int n)
+സ്ഥിതം ശൂന്യം *xmemdup(സ്ഥിരം ശൂന്യം *s, പൂർണ്ണസംഖ്യ n)
 {
-	return memcpy(xmalloc(n), s, n);
+	തിരികെ memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
 #define xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+സ്ഥിതം ശൂന്യം *mempcpy(ശൂന്യം *dest, സ്ഥിരം ശൂന്യം *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	തിരികെ memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+സ്ഥിതം ശൂന്യം overlapping_strcpy(അക്ഷരം *dst, സ്ഥിരം അക്ഷരം *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	എങ്കിൽ (dst != src) {
+		ആകുമ്പോൾ ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+സ്ഥിതം അക്ഷരം* skip_whitespace(സ്ഥിരം അക്ഷരം *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	ആകുമ്പോൾ (*s == ' ' || (unsigned അക്ഷരം)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	തിരികെ (അക്ഷരം *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+സ്ഥിതം അക്ഷരം* skip_non_whitespace(സ്ഥിരം അക്ഷരം *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	ആകുമ്പോൾ (*s != '\0' && *s != ' ' && (unsigned അക്ഷരം)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	തിരികെ (അക്ഷരം *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#define is_name(c)	((c) == '_' || isalpha((unsigned അക്ഷരം)(c)))
+#define is_in_name(c)	((c) == '_' || isalnum((unsigned അക്ഷരം)(c)))
 
-static const char* endofname(const char *name)
+സ്ഥിതം സ്ഥിരം അക്ഷരം* endofname(സ്ഥിരം അക്ഷരം *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	എങ്കിൽ (!is_name(*name))
+		തിരികെ name;
+	ആകുമ്പോൾ (*++name) {
+		എങ്കിൽ (!is_in_name(*name))
+			നിർത്തുക;
 	}
-	return name;
+	തിരികെ name;
 }
 
 /**
@@ -226,45 +226,45 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+സ്ഥിതം size_t list_size(അക്ഷരം **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	വേണ്ടി (size = 0; list[size] != ശൂന്യ; size++);
 
-	return size;
+	തിരികെ size;
 }
 
-static int varcmp(const char *p, const char *q)
+സ്ഥിതം പൂർണ്ണസംഖ്യ varcmp(സ്ഥിരം അക്ഷരം *p, സ്ഥിരം അക്ഷരം *q)
 {
-	int c, d;
+	പൂർണ്ണസംഖ്യ c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	ആകുമ്പോൾ ((c = *p) == (d = *q)) {
+		എങ്കിൽ (c == '\0' || c == '=')
+			പോകുക out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	എങ്കിൽ (c == '=')
 		c = '\0';
-	if (d == '=')
+	എങ്കിൽ (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	തിരികെ c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+ഘടന in_str;
+സ്ഥിതം പൂർണ്ണസംഖ്യ u_boot_cli_readline(ഘടന in_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+ഘടന in_str;
+സ്ഥിതം പൂർണ്ണസംഖ്യ u_boot_cli_readline(ഘടന in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+സ്ഥിതം uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
+സ്ഥിതം സ്ഥിരം അക്ഷരം defifsvar[] __aligned(1) = "IFS= \t\n";
 #define defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
@@ -281,43 +281,43 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#അന്തര്ഭാവ "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+പൂർണ്ണസംഖ്യ u_boot_hush_start_modern(ശൂന്യം)
 {
 	INIT_G();
-	return 0;
+	തിരികെ 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+സ്ഥിതം പൂർണ്ണസംഖ്യ u_boot_cli_readline(ഘടന in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	അക്ഷരം *prompt;
+	അക്ഷരം __maybe_unused *ps_prompt = ശൂന്യ;
 
-	if (!G.promptmode)
+	എങ്കിൽ (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	അല്ലെങ്കിൽ
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#അല്ലെങ്കിൽ
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	എങ്കിൽ (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		എങ്കിൽ (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		അല്ലെങ്കിൽ
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		എങ്കിൽ (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	തിരികെ cli_readline(prompt);
 }

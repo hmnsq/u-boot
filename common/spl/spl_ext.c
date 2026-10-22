@@ -1,131 +1,131 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <ext4fs.h>
-#include <errno.h>
-#include <image.h>
+#അന്തര്ഭാവ <env.h>
+#അന്തര്ഭാവ <part.h>
+#അന്തര്ഭാവ <spl.h>
+#അന്തര്ഭാവ <spl_load.h>
+#അന്തര്ഭാവ <ext4fs.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+സ്ഥിതം ulong spl_fit_read(ഘടന spl_load_info *load, ulong file_offset,
+			  ulong size, ശൂന്യം *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	ഘടന legacy_img_hdr *header;
+	പൂർണ്ണസംഖ്യ ret;
 	loff_t actlen;
 
 	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	എങ്കിൽ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (ഘടന legacy_img_hdr *)buf;
+		എങ്കിൽ (image_get_magic(header) != FDT_MAGIC)
+			തിരികെ size;
 	}
 
-	return actlen;
+	തിരികെ actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+പൂർണ്ണസംഖ്യ spl_load_image_ext(ഘടന spl_image_info *spl_image,
+		       ഘടന spl_boot_device *bootdev,
+		       ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition,
+		       സ്ഥിരം അക്ഷരം *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	ഘടന disk_partition part_info = {};
+	ഘടന spl_load_info load;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	എങ്കിൽ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		തിരികെ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	എങ്കിൽ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		തിരികെ -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	എങ്കിൽ (err < 0) {
 		puts("spl: ext4fs_open failed\n");
-		goto end;
+		പോകുക end;
 	}
 
-	spl_load_init(&load, spl_fit_read, NULL, 1);
+	spl_load_init(&load, spl_fit_read, ശൂന്യ, 1);
 	err = spl_load(spl_image, bootdev, &load, filelen, 0);
 
 end:
-	if (err < 0)
+	എങ്കിൽ (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	തിരികെ err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#എങ്കിൽ CONFIG_IS_ENABLED(OS_BOOT)
+പൂർണ്ണസംഖ്യ spl_load_image_ext_os(ഘടന spl_image_info *spl_image,
+			  ഘടന spl_boot_device *bootdev,
+			  ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition)
 {
-	int err;
+	പൂർണ്ണസംഖ്യ err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	ഘടന disk_partition part_info = {};
+	__maybe_unused അക്ഷരം *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	എങ്കിൽ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		തിരികെ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	എങ്കിൽ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	എങ്കിൽ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		പോകുക defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	എങ്കിൽ (file) {
 		err = spl_load_image_ext(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		എങ്കിൽ (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			പോകുക defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		ext4fs_set_blk_dev(block_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		എങ്കിൽ (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			എങ്കിൽ (err < 0) {
 				puts("spl: ext4fs_open failed\n");
-				goto defaults;
+				പോകുക defaults;
 			}
-			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+			err = ext4fs_read((ശൂന്യം *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
+			എങ്കിൽ (err < 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				പോകുക defaults;
 			}
-			return 0;
-		} else {
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
 #endif
-	} else {
+	} അല്ലെങ്കിൽ {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
@@ -134,31 +134,31 @@ defaults:
 	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#എങ്കിൽ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	ext4fs_set_blk_dev(block_dev, &part_info);
 	ext4fs_mount();
 	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	എങ്കിൽ (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
-	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
+	err = ext4fs_read((ശൂന്യം *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
+	എങ്കിൽ (err < 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		തിരികെ -1;
 	}
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#അല്ലെങ്കിൽ
+പൂർണ്ണസംഖ്യ spl_load_image_ext_os(ഘടന spl_image_info *spl_image,
+			  ഘടന spl_boot_device *bootdev,
+			  ഘടന blk_desc *block_dev, പൂർണ്ണസംഖ്യ partition)
 {
-	return -ENOSYS;
+	തിരികെ -ENOSYS;
 }
 #endif
