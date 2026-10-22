@@ -9,14 +9,14 @@
  * Copyright (C) Nalin Dahyabhai <bigfun@pobox.com>
  */
 
-#include <edid.h>
-#include <errno.h>
-#include <fdtdec.h>
-#include <log.h>
-#include <linux/ctype.h>
-#include <linux/string.h>
+#ضمن <edid.h>
+#ضمن <errno.h>
+#ضمن <fdtdec.h>
+#ضمن <log.h>
+#ضمن <linux/ctype.h>
+#ضمن <linux/string.h>
 
-#if CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
+#ܐܢ CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
 #define TIMING(c, ha, hfp, hbp, hsl, va, vfp, vbp, vsl, f)	\
 	.pixelclock = { (c), (c), (c) },			\
 	.hactive = { (ha), (ha), (ha) },			\
@@ -29,7 +29,7 @@
 	.vsync_len = { (vsl), (vsl), (vsl) },			\
 	.flags = (f)
 
-static const struct display_timing dmt_timings[] = {
+ساكن ثابت بنية display_timing dmt_timings[] = {
 	{ TIMING(31500000, 640, 32, 64, 96, 350, 32, 3, 60,
 		 DISPLAY_FLAGS_HSYNC_HIGH | DISPLAY_FLAGS_VSYNC_LOW) },
 	{ TIMING(31500000, 640, 32, 64, 96, 400, 1, 3, 41,
@@ -209,57 +209,57 @@ static const struct display_timing dmt_timings[] = {
 };
 #endif
 
-int edid_check_info(struct edid1_info *edid_info)
+صحيح edid_check_info(بنية edid1_info *edid_info)
 {
-	if ((edid_info == NULL) || (edid_info->version == 0))
-		return -1;
+	ܐܢ ((edid_info == عدم) || (edid_info->version == 0))
+		ܦܢܐ -1;
 
-	if (memcmp(edid_info->header, "\x0\xff\xff\xff\xff\xff\xff\x0", 8))
-		return -1;
+	ܐܢ (memcmp(edid_info->header, "\x0\xff\xff\xff\xff\xff\xff\x0", 8))
+		ܦܢܐ -1;
 
-	if (edid_info->version == 0xff && edid_info->revision == 0xff)
-		return -1;
+	ܐܢ (edid_info->version == 0xff && edid_info->revision == 0xff)
+		ܦܢܐ -1;
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-int edid_check_checksum(u8 *edid_block)
+صحيح edid_check_checksum(u8 *edid_block)
 {
 	u8 checksum = 0;
-	int i;
+	صحيح i;
 
-	for (i = 0; i < 128; i++)
+	لكل (i = 0; i < 128; i++)
 		checksum += edid_block[i];
 
-	return (checksum == 0) ? 0 : -EINVAL;
+	ܦܢܐ (checksum == 0) ? 0 : -EINVAL;
 }
 
-int edid_get_ranges(struct edid1_info *edid, unsigned int *hmin,
-		    unsigned int *hmax, unsigned int *vmin,
-		    unsigned int *vmax)
+صحيح edid_get_ranges(بنية edid1_info *edid, unsigned صحيح *hmin,
+		    unsigned صحيح *hmax, unsigned صحيح *vmin,
+		    unsigned صحيح *vmax)
 {
-	int i;
-	struct edid_monitor_descriptor *monitor;
+	صحيح i;
+	بنية edid_monitor_descriptor *monitor;
 
 	*hmin = *hmax = *vmin = *vmax = 0;
-	if (edid_check_info(edid))
-		return -1;
+	ܐܢ (edid_check_info(edid))
+		ܦܢܐ -1;
 
-	for (i = 0; i < ARRAY_SIZE(edid->monitor_details.descriptor); i++) {
+	لكل (i = 0; i < ARRAY_SIZE(edid->monitor_details.descriptor); i++) {
 		monitor = &edid->monitor_details.descriptor[i];
-		if (monitor->type == EDID_MONITOR_DESCRIPTOR_RANGE) {
+		ܐܢ (monitor->type == EDID_MONITOR_DESCRIPTOR_RANGE) {
 			*hmin = monitor->data.range_data.horizontal_min;
 			*hmax = monitor->data.range_data.horizontal_max;
 			*vmin = monitor->data.range_data.vertical_min;
 			*vmax = monitor->data.range_data.vertical_max;
-			return 0;
+			ܦܢܐ 0;
 		}
 	}
-	return -1;
+	ܦܢܐ -1;
 }
 
 /* Set all parts of a timing entry to the same value */
-static void set_entry(struct timing_entry *entry, u32 value)
+ساكن فراغ set_entry(بنية timing_entry *entry, u32 value)
 {
 	entry->min = value;
 	entry->typ = value;
@@ -272,12 +272,12 @@ static void set_entry(struct timing_entry *entry, u32 value)
  * @buf:	Pointer to EDID detailed timing record
  * @timing:	Place to put timing
  */
-static void decode_timing(u8 *buf, struct display_timing *timing)
+ساكن فراغ decode_timing(u8 *buf, بنية display_timing *timing)
 {
 	uint x_mm, y_mm;
-	unsigned int ha, hbl, hso, hspw, hborder;
-	unsigned int va, vbl, vso, vspw, vborder;
-	struct edid_detailed_timing *t = (struct edid_detailed_timing *)buf;
+	unsigned صحيح ha, hbl, hso, hspw, hborder;
+	unsigned صحيح va, vbl, vso, vspw, vborder;
+	بنية edid_detailed_timing *t = (بنية edid_detailed_timing *)buf;
 
 	/* Edid contains pixel clock in terms of 10KHz */
 	set_entry(&timing->pixelclock, (buf[0] + (buf[1] << 8)) * 10000);
@@ -305,16 +305,16 @@ static void decode_timing(u8 *buf, struct display_timing *timing)
 	set_entry(&timing->vsync_len, vspw);
 
 	timing->flags = 0;
-	if (EDID_DETAILED_TIMING_FLAG_HSYNC_POLARITY(*t))
+	ܐܢ (EDID_DETAILED_TIMING_FLAG_HSYNC_POLARITY(*t))
 		timing->flags |= DISPLAY_FLAGS_HSYNC_HIGH;
-	else
+	ܐܚܪܢܐ
 		timing->flags |= DISPLAY_FLAGS_HSYNC_LOW;
-	if (EDID_DETAILED_TIMING_FLAG_VSYNC_POLARITY(*t))
+	ܐܢ (EDID_DETAILED_TIMING_FLAG_VSYNC_POLARITY(*t))
 		timing->flags |= DISPLAY_FLAGS_VSYNC_HIGH;
-	else
+	ܐܚܪܢܐ
 		timing->flags |= DISPLAY_FLAGS_VSYNC_LOW;
 
-	if (EDID_DETAILED_TIMING_FLAG_INTERLACED(*t))
+	ܐܢ (EDID_DETAILED_TIMING_FLAG_INTERLACED(*t))
 		timing->flags = DISPLAY_FLAGS_INTERLACED;
 
 	debug("Detailed mode clock %u Hz, %d mm x %d mm\n"
@@ -333,147 +333,147 @@ static void decode_timing(u8 *buf, struct display_timing *timing)
  * @param info	CEA extension block
  * Return: true if block is found
  */
-static bool cea_is_hdmi_vsdb_present(struct edid_cea861_info *info)
+ساكن bool cea_is_hdmi_vsdb_present(بنية edid_cea861_info *info)
 {
 	u8 end, i = 0;
 
 	/* check for end of data block */
 	end = info->dtd_offset;
-	if (end == 0)
-		end = sizeof(info->data);
-	if (end < 4 || end > sizeof(info->data))
-		return false;
+	ܐܢ (end == 0)
+		end = حجم(info->data);
+	ܐܢ (end < 4 || end > حجم(info->data))
+		ܦܢܐ false;
 	end -= 4;
 
-	while (i < end) {
+	ܟܡܐ (i < end) {
 		/* Look for vendor specific data block of appropriate size */
-		if ((EDID_CEA861_DB_TYPE(*info, i) == EDID_CEA861_DB_VENDOR) &&
+		ܐܢ ((EDID_CEA861_DB_TYPE(*info, i) == EDID_CEA861_DB_VENDOR) &&
 		    (EDID_CEA861_DB_LEN(*info, i) >= 5)) {
 			u8 *db = &info->data[i + 1];
 			u32 oui = db[0] | (db[1] << 8) | (db[2] << 16);
 
-			if (oui == HDMI_IEEE_OUI)
-				return true;
+			ܐܢ (oui == HDMI_IEEE_OUI)
+				ܦܢܐ true;
 		}
 		i += EDID_CEA861_DB_LEN(*info, i) + 1;
 	}
 
-	return false;
+	ܦܢܐ false;
 }
 
-static bool edid_find_valid_detailed_timing(void *buf, int count,
-					    struct display_timing *timing,
-					    bool (*mode_valid)(void *priv,
-						const struct display_timing *timing),
-					    void *mode_valid_priv)
+ساكن bool edid_find_valid_detailed_timing(فراغ *buf, صحيح count,
+					    بنية display_timing *timing,
+					    bool (*mode_valid)(فراغ *priv,
+						ثابت بنية display_timing *timing),
+					    فراغ *mode_valid_priv)
 {
-	struct edid_detailed_timing *t = buf;
+	بنية edid_detailed_timing *t = buf;
 	bool found = false;
-	int i;
+	صحيح i;
 
-	for (i = 0; i < count && !found; i++, t++)
-		if (EDID_DETAILED_TIMING_PIXEL_CLOCK(*t) != 0) {
+	لكل (i = 0; i < count && !found; i++, t++)
+		ܐܢ (EDID_DETAILED_TIMING_PIXEL_CLOCK(*t) != 0) {
 			decode_timing((u8 *)t, timing);
-			if (mode_valid)
+			ܐܢ (mode_valid)
 				found = mode_valid(mode_valid_priv,
 						   timing);
-			else
+			ܐܚܪܢܐ
 				found = true;
 		}
 
-	return found;
+	ܦܢܐ found;
 }
 
-static bool edid_get_standard_timing(struct edid1_info *edid, int i, unsigned int *x,
-				     unsigned int *y, unsigned int *freq)
+ساكن bool edid_get_standard_timing(بنية edid1_info *edid, صحيح i, unsigned صحيح *x,
+				     unsigned صحيح *y, unsigned صحيح *freq)
 {
-	unsigned int aspect = 10000;
-	unsigned char xres, vfreq;
+	unsigned صحيح aspect = 10000;
+	unsigned حرف xres, vfreq;
 
 	xres = EDID1_INFO_STANDARD_TIMING_XRESOLUTION(*edid, i);
 	vfreq = EDID1_INFO_STANDARD_TIMING_VFREQ(*edid, i);
-	if (xres != vfreq || (xres != 0 && xres != 1) ||
+	ܐܢ (xres != vfreq || (xres != 0 && xres != 1) ||
 	    (vfreq != 0 && vfreq != 1)) {
-		switch (EDID1_INFO_STANDARD_TIMING_ASPECT(*edid, i)) {
-		case ASPECT_625: // 16:10
+		بدل (EDID1_INFO_STANDARD_TIMING_ASPECT(*edid, i)) {
+		حالة ASPECT_625: // 16:10
 			aspect = 6250;
-			break;
-		case ASPECT_75: // 4:3
+			اكسر;
+		حالة ASPECT_75: // 4:3
 			aspect = 7500;
-			break;
-		case ASPECT_8: // 5:4
+			اكسر;
+		حالة ASPECT_8: // 5:4
 			aspect = 8000;
-			break;
-		case ASPECT_5625: // 16:9
+			اكسر;
+		حالة ASPECT_5625: // 16:9
 			aspect = 5625;
-			break;
+			اكسر;
 		}
 
 		*x = (xres + 31) * 8;
 		*y = *x * aspect / 10000;
 		*freq = (vfreq & 0x3f) + 60;
 
-		return true;
+		ܦܢܐ true;
 	}
 
-	return false;
+	ܦܢܐ false;
 }
 
-#if CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
-static bool edid_find_valid_standard_timing(struct edid1_info *buf,
-					    struct display_timing *timing,
-					    bool (*mode_valid)(void *priv,
-						const struct display_timing *timing),
-					    void *mode_valid_priv)
+#ܐܢ CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
+ساكن bool edid_find_valid_standard_timing(بنية edid1_info *buf,
+					    بنية display_timing *timing,
+					    bool (*mode_valid)(فراغ *priv,
+						ثابت بنية display_timing *timing),
+					    فراغ *mode_valid_priv)
 {
-	unsigned int x, y, freq;
+	unsigned صحيح x, y, freq;
 	bool found = false;
-	int i, k;
+	صحيح i, k;
 
-	for (i = 0; i < ARRAY_SIZE(buf->standard_timings); i++) {
-		if (!edid_get_standard_timing(buf, i, &x, &y, &freq))
-			continue;
+	لكل (i = 0; i < ARRAY_SIZE(buf->standard_timings); i++) {
+		ܐܢ (!edid_get_standard_timing(buf, i, &x, &y, &freq))
+			استمر;
 
-		for (k = 0; k < ARRAY_SIZE(dmt_timings); k++) {
-			const struct display_timing *dt = &dmt_timings[k];
+		لكل (k = 0; k < ARRAY_SIZE(dmt_timings); k++) {
+			ثابت بنية display_timing *dt = &dmt_timings[k];
 
-			if (dt->hactive.typ == x && dt->vactive.typ == y) {
+			ܐܢ (dt->hactive.typ == x && dt->vactive.typ == y) {
 				found = mode_valid(mode_valid_priv, dt);
-				if (found) {
-					memcpy(timing, dt, sizeof(*timing));
-					return true;
+				ܐܢ (found) {
+					memcpy(timing, dt, حجم(*timing));
+					ܦܢܐ true;
 				}
 			}
 		}
 	}
 
-	return found;
+	ܦܢܐ found;
 }
 #endif
 
-int edid_get_timing_validate(u8 *buf, int buf_size,
-			     struct display_timing *timing,
-			     int *panel_bits_per_colourp,
-			     bool (*mode_valid)(void *priv,
-					const struct display_timing *timing),
-			     void *mode_valid_priv)
+صحيح edid_get_timing_validate(u8 *buf, صحيح buf_size,
+			     بنية display_timing *timing,
+			     صحيح *panel_bits_per_colourp,
+			     bool (*mode_valid)(فراغ *priv,
+					ثابت بنية display_timing *timing),
+			     فراغ *mode_valid_priv)
 {
-	struct edid1_info *edid = (struct edid1_info *)buf;
+	بنية edid1_info *edid = (بنية edid1_info *)buf;
 	bool found;
 
-	if (buf_size < sizeof(*edid) || edid_check_info(edid)) {
+	ܐܢ (buf_size < حجم(*edid) || edid_check_info(edid)) {
 		debug("%s: Invalid buffer\n", __func__);
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 	}
 
-	if (!EDID1_INFO_VIDEO_INPUT_DIGITAL(*edid)) {
+	ܐܢ (!EDID1_INFO_VIDEO_INPUT_DIGITAL(*edid)) {
 		debug("%s: Not a digital display\n", __func__);
-		return -ENOSYS;
+		ܦܢܐ -ENOSYS;
 	}
 
-	if (!EDID1_INFO_FEATURE_PREFERRED_TIMING_MODE(*edid)) {
+	ܐܢ (!EDID1_INFO_FEATURE_PREFERRED_TIMING_MODE(*edid)) {
 		debug("%s: No preferred timing\n", __func__);
-		return -ENOENT;
+		ܦܢܐ -ENOENT;
 	}
 
 	/* Look for detailed timing in base EDID */
@@ -481,58 +481,58 @@ int edid_get_timing_validate(u8 *buf, int buf_size,
 						timing, mode_valid, mode_valid_priv);
 
 	/* Look for detailed timing in CTA-861 Extension Block */
-	if (!found && edid->extension_flag && buf_size >= EDID_EXT_SIZE) {
-		struct edid_cea861_info *info =
-			(struct edid_cea861_info *)(buf + sizeof(*edid));
+	ܐܢ (!found && edid->extension_flag && buf_size >= EDID_EXT_SIZE) {
+		بنية edid_cea861_info *info =
+			(بنية edid_cea861_info *)(buf + حجم(*edid));
 
-		if (info->extension_tag == EDID_CEA861_EXTENSION_TAG) {
-			int count = EDID_CEA861_DTD_COUNT(*info);
-			int offset = info->dtd_offset;
-			int size = count * sizeof(struct edid_detailed_timing);
+		ܐܢ (info->extension_tag == EDID_CEA861_EXTENSION_TAG) {
+			صحيح count = EDID_CEA861_DTD_COUNT(*info);
+			صحيح offset = info->dtd_offset;
+			صحيح size = count * حجم(بنية edid_detailed_timing);
 
-			if (offset >= 4 && offset + size < EDID_SIZE)
+			ܐܢ (offset >= 4 && offset + size < EDID_SIZE)
 				found = edid_find_valid_detailed_timing(
 					(u8 *)info + offset, count, timing,
 					mode_valid, mode_valid_priv);
 		}
 	}
 
-#if CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
+#ܐܢ CONFIG_IS_ENABLED(I2C_EDID_STANDARD)
 	/* Look for timing in Standard Timings */
-	if (!found)
+	ܐܢ (!found)
 		found = edid_find_valid_standard_timing(edid, timing, mode_valid,
 							mode_valid_priv);
 #endif
 
-	if (!found)
-		return -EINVAL;
+	ܐܢ (!found)
+		ܦܢܐ -EINVAL;
 
-	if (edid->version != 1 || edid->revision < 4) {
+	ܐܢ (edid->version != 1 || edid->revision < 4) {
 		debug("%s: EDID version %d.%d does not have required info\n",
 		      __func__, edid->version, edid->revision);
 		*panel_bits_per_colourp = -1;
-	} else  {
+	} ܐܚܪܢܐ  {
 		*panel_bits_per_colourp =
 			((edid->video_input_definition & 0x70) >> 3) + 4;
 	}
 
 	timing->hdmi_monitor = false;
-	if (edid->extension_flag && (buf_size >= EDID_EXT_SIZE)) {
-		struct edid_cea861_info *info =
-			(struct edid_cea861_info *)(buf + sizeof(*edid));
+	ܐܢ (edid->extension_flag && (buf_size >= EDID_EXT_SIZE)) {
+		بنية edid_cea861_info *info =
+			(بنية edid_cea861_info *)(buf + حجم(*edid));
 
-		if (info->extension_tag == EDID_CEA861_EXTENSION_TAG)
+		ܐܢ (info->extension_tag == EDID_CEA861_EXTENSION_TAG)
 			timing->hdmi_monitor = cea_is_hdmi_vsdb_present(info);
 	}
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-int edid_get_timing(u8 *buf, int buf_size, struct display_timing *timing,
-		    int *panel_bits_per_colourp)
+صحيح edid_get_timing(u8 *buf, صحيح buf_size, بنية display_timing *timing,
+		    صحيح *panel_bits_per_colourp)
 {
-	return edid_get_timing_validate(buf, buf_size, timing,
-					panel_bits_per_colourp, NULL, NULL);
+	ܦܢܐ edid_get_timing_validate(buf, buf_size, timing,
+					panel_bits_per_colourp, عدم, عدم);
 }
 
 /**
@@ -541,9 +541,9 @@ int edid_get_timing(u8 *buf, int buf_size, struct display_timing *timing,
  * @param string	The string to be snipped
  * Return: the snipped string
  */
-static char *snip(char *string)
+ساكن حرف *snip(حرف *string)
 {
-	char *s;
+	حرف *s;
 
 	/*
 	 * This is always a 13 character buffer
@@ -552,11 +552,11 @@ static char *snip(char *string)
 	string[12] = '\0';
 	s = &string[strlen(string) - 1];
 
-	while (s >= string && (isspace(*s) || *s == '\n' || *s == '\r' ||
+	ܟܡܐ (s >= string && (isspace(*s) || *s == '\n' || *s == '\r' ||
 			*s == '\0'))
 		*(s--) = '\0';
 
-	return string;
+	ܦܢܐ string;
 }
 
 /**
@@ -565,24 +565,24 @@ static char *snip(char *string)
  * @param monitor	The EDID monitor descriptor block
  * @have_timing		Modifies to 1 if the desciptor contains timing info
  */
-static void edid_print_dtd(struct edid_monitor_descriptor *monitor,
-			   unsigned int *have_timing)
+ساكن فراغ edid_print_dtd(بنية edid_monitor_descriptor *monitor,
+			   unsigned صحيح *have_timing)
 {
-	unsigned char *bytes = (unsigned char *)monitor;
-	struct edid_detailed_timing *timing =
-			(struct edid_detailed_timing *)monitor;
+	unsigned حرف *bytes = (unsigned حرف *)monitor;
+	بنية edid_detailed_timing *timing =
+			(بنية edid_detailed_timing *)monitor;
 
-	if (bytes[0] == 0 && bytes[1] == 0) {
-		if (monitor->type == EDID_MONITOR_DESCRIPTOR_SERIAL)
+	ܐܢ (bytes[0] == 0 && bytes[1] == 0) {
+		ܐܢ (monitor->type == EDID_MONITOR_DESCRIPTOR_SERIAL)
 			printf("Monitor serial number: %s\n",
 			       snip(monitor->data.string));
-		else if (monitor->type == EDID_MONITOR_DESCRIPTOR_ASCII)
+		ܐܚܪܢܐ ܐܢ (monitor->type == EDID_MONITOR_DESCRIPTOR_ASCII)
 			printf("Monitor ID: %s\n",
 			       snip(monitor->data.string));
-		else if (monitor->type == EDID_MONITOR_DESCRIPTOR_NAME)
+		ܐܚܪܢܐ ܐܢ (monitor->type == EDID_MONITOR_DESCRIPTOR_NAME)
 			printf("Monitor name: %s\n",
 			       snip(monitor->data.string));
-		else if (monitor->type == EDID_MONITOR_DESCRIPTOR_RANGE)
+		ܐܚܪܢܐ ܐܢ (monitor->type == EDID_MONITOR_DESCRIPTOR_RANGE)
 			printf("Monitor range limits, horizontal sync: "
 			       "%d-%d kHz, vertical refresh: "
 			       "%d-%d Hz, max pixel clock: "
@@ -592,7 +592,7 @@ static void edid_print_dtd(struct edid_monitor_descriptor *monitor,
 			       monitor->data.range_data.vertical_min,
 			       monitor->data.range_data.vertical_max,
 			       monitor->data.range_data.pixel_clock_max * 10);
-	} else {
+	} ܐܚܪܢܐ {
 		uint32_t pixclock, h_active, h_blanking, v_active, v_blanking;
 		uint32_t h_total, v_total, vfreq;
 
@@ -604,9 +604,9 @@ static void edid_print_dtd(struct edid_monitor_descriptor *monitor,
 
 		h_total = h_active + h_blanking;
 		v_total = v_active + v_blanking;
-		if (v_total > 0 && h_total > 0)
+		ܐܢ (v_total > 0 && h_total > 0)
 			vfreq = pixclock / (v_total * h_total);
-		else
+		ܐܚܪܢܐ
 			vfreq = 1; /* Error case */
 		printf("\t%dx%d\%c\t%d Hz (detailed)\n", h_active,
 		       v_active, h_active > 1000 ? ' ' : '\t', vfreq);
@@ -620,7 +620,7 @@ static void edid_print_dtd(struct edid_monitor_descriptor *monitor,
  * @param edid_info     The EDID info to be printed
  * @param name		Returns the string of the manufacturer name
  */
-static void edid_get_manufacturer_name(struct edid1_info *edid, char *name)
+ساكن فراغ edid_get_manufacturer_name(بنية edid1_info *edid, حرف *name)
 {
 	name[0] = EDID1_INFO_MANUFACTURER_NAME_CHAR1(*edid) + 'A' - 1;
 	name[1] = EDID1_INFO_MANUFACTURER_NAME_CHAR2(*edid) + 'A' - 1;
@@ -628,16 +628,16 @@ static void edid_get_manufacturer_name(struct edid1_info *edid, char *name)
 	name[3] = '\0';
 }
 
-void edid_print_info(struct edid1_info *edid_info)
+فراغ edid_print_info(بنية edid1_info *edid_info)
 {
-	int i;
-	char manufacturer[4];
-	unsigned int have_timing = 0;
+	صحيح i;
+	حرف manufacturer[4];
+	unsigned صحيح have_timing = 0;
 	uint32_t serial_number;
 
-	if (edid_check_info(edid_info)) {
+	ܐܢ (edid_check_info(edid_info)) {
 		printf("Not a valid EDID\n");
-		return;
+		ܦܢܐ;
 	}
 
 	printf("EDID version: %d.%d\n",
@@ -649,12 +649,12 @@ void edid_print_info(struct edid1_info *edid_info)
 	printf("Manufacturer: %s\n", manufacturer);
 
 	serial_number = EDID1_INFO_SERIAL_NUMBER(*edid_info);
-	if (serial_number != 0xffffffff) {
-		if (strcmp(manufacturer, "MAG") == 0)
+	ܐܢ (serial_number != 0xffffffff) {
+		ܐܢ (strcmp(manufacturer, "MAG") == 0)
 			serial_number -= 0x7000000;
-		if (strcmp(manufacturer, "OQI") == 0)
+		ܐܢ (strcmp(manufacturer, "OQI") == 0)
 			serial_number -= 456150000;
-		if (strcmp(manufacturer, "VSC") == 0)
+		ܐܢ (strcmp(manufacturer, "VSC") == 0)
 			serial_number -= 640000000;
 	}
 	printf("Serial number: %08x\n", serial_number);
@@ -690,47 +690,47 @@ void edid_print_info(struct edid1_info *edid_info)
 	       EDID1_INFO_FEATURE_STANDBY(*edid_info) ? "" : "no ", "standby");
 
 	printf("Estabilished timings:\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_720X400_70(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_720X400_70(*edid_info))
 		printf("\t720x400\t\t70 Hz (VGA 640x400, IBM)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_720X400_88(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_720X400_88(*edid_info))
 		printf("\t720x400\t\t88 Hz (XGA2)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_640X480_60(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_640X480_60(*edid_info))
 		printf("\t640x480\t\t60 Hz (VGA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_640X480_67(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_640X480_67(*edid_info))
 		printf("\t640x480\t\t67 Hz (Mac II, Apple)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_640X480_72(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_640X480_72(*edid_info))
 		printf("\t640x480\t\t72 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_640X480_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_640X480_75(*edid_info))
 		printf("\t640x480\t\t75 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_800X600_56(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_800X600_56(*edid_info))
 		printf("\t800x600\t\t56 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_800X600_60(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_800X600_60(*edid_info))
 		printf("\t800x600\t\t60 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_800X600_72(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_800X600_72(*edid_info))
 		printf("\t800x600\t\t72 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_800X600_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_800X600_75(*edid_info))
 		printf("\t800x600\t\t75 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_832X624_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_832X624_75(*edid_info))
 		printf("\t832x624\t\t75 Hz (Mac II)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1024X768_87I(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1024X768_87I(*edid_info))
 		printf("\t1024x768\t87 Hz Interlaced (8514A)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1024X768_60(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1024X768_60(*edid_info))
 		printf("\t1024x768\t60 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1024X768_70(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1024X768_70(*edid_info))
 		printf("\t1024x768\t70 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1024X768_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1024X768_75(*edid_info))
 		printf("\t1024x768\t75 Hz (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1280X1024_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1280X1024_75(*edid_info))
 		printf("\t1280x1024\t75 (VESA)\n");
-	if (EDID1_INFO_ESTABLISHED_TIMING_1152X870_75(*edid_info))
+	ܐܢ (EDID1_INFO_ESTABLISHED_TIMING_1152X870_75(*edid_info))
 		printf("\t1152x870\t75 (Mac II)\n");
 
 	/* Standard timings. */
 	printf("Standard timings:\n");
-	for (i = 0; i < ARRAY_SIZE(edid_info->standard_timings); i++) {
-		unsigned int x, y, freq;
+	لكل (i = 0; i < ARRAY_SIZE(edid_info->standard_timings); i++) {
+		unsigned صحيح x, y, freq;
 
-		if (edid_get_standard_timing(edid_info, i, &x, &y, &freq)) {
+		ܐܢ (edid_get_standard_timing(edid_info, i, &x, &y, &freq)) {
 			printf("\t%dx%d%c\t%d Hz\n", x, y,
 			       x > 1000 ? ' ' : '\t', freq);
 			have_timing = 1;
@@ -738,12 +738,12 @@ void edid_print_info(struct edid1_info *edid_info)
 	}
 
 	/* Detailed timing information. */
-	for (i = 0; i < ARRAY_SIZE(edid_info->monitor_details.descriptor);
+	لكل (i = 0; i < ARRAY_SIZE(edid_info->monitor_details.descriptor);
 			i++) {
 		edid_print_dtd(&edid_info->monitor_details.descriptor[i],
 			       &have_timing);
 	}
 
-	if (!have_timing)
+	ܐܢ (!have_timing)
 		printf("\tNone\n");
 }

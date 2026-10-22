@@ -344,28 +344,28 @@
 //usage:	"Unix shell interpreter"
 
 #ifndef __U_BOOT__
-#if !(defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) \
+#ܐܢ !(defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) \
 	|| defined(__APPLE__) \
     )
 # include <malloc.h>   /* for malloc_trim */
 #endif
-#include <glob.h>
+#ضمن <glob.h>
 /* #include <dmalloc.h> */
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 # include <fnmatch.h>
 #endif
-#include <sys/times.h>
-#include <sys/utsname.h> /* for setting $HOSTNAME */
+#ضمن <sys/times.h>
+#ضمن <sys/utsname.h> /* for setting $HOSTNAME */
 
-#include "busybox.h"  /* for APPLET_IS_NOFORK/NOEXEC */
-#include "unicode.h"
-#include "shell_common.h"
-#include "math.h"
-#include "match.h"
-#if ENABLE_HUSH_RANDOM_SUPPORT
+#ضمن "busybox.h"  /* for APPLET_IS_NOFORK/NOEXEC */
+#ضمن "unicode.h"
+#ضمن "shell_common.h"
+#ضمن "math.h"
+#ضمن "match.h"
+#ܐܢ ENABLE_HUSH_RANDOM_SUPPORT
 # include "random.h"
-#else
-# define CLEAR_RANDOM_T(rnd) ((void)0)
+#ܐܚܪܢܐ
+# define CLEAR_RANDOM_T(rnd) ((فراغ)0)
 #endif
 #ifndef O_CLOEXEC
 # define O_CLOEXEC 0
@@ -374,9 +374,9 @@
 # define F_DUPFD_CLOEXEC F_DUPFD
 #endif
 
-#if ENABLE_FEATURE_SH_EMBEDDED_SCRIPTS && !ENABLE_SHELL_ASH
+#ܐܢ ENABLE_FEATURE_SH_EMBEDDED_SCRIPTS && !ENABLE_SHELL_ASH
 # include "embedded_scripts.h"
-#else
+#ܐܚܪܢܐ
 # define NUM_SCRIPTS 0
 #endif
 #endif /* !__U_BOOT__ */
@@ -412,7 +412,7 @@
  */
 #define ENABLE_HUSH_DOLLAR_OPS 1
 
-#if BUILD_AS_NOMMU
+#ܐܢ BUILD_AS_NOMMU
 # undef BB_MMU
 # undef USE_FOR_NOMMU
 # undef USE_FOR_MMU
@@ -422,8 +422,8 @@
 #endif
 
 #ifndef __U_BOOT__
-#include "NUM_APPLETS.h"
-#if NUM_APPLETS == 1
+#ضمن "NUM_APPLETS.h"
+#ܐܢ NUM_APPLETS == 1
 /* STANDALONE does not make sense, and won't compile */
 # undef ENABLE_FEATURE_SH_STANDALONE
 # undef IF_FEATURE_SH_STANDALONE
@@ -434,7 +434,7 @@
 #endif
 #endif /* __U_BOOT__ */
 
-#if !ENABLE_HUSH_INTERACTIVE
+#ܐܢ !ENABLE_HUSH_INTERACTIVE
 # undef ENABLE_FEATURE_EDITING
 # define ENABLE_FEATURE_EDITING 0
 # undef ENABLE_FEATURE_EDITING_FANCY_PROMPT
@@ -444,11 +444,11 @@
 #endif
 
 /* Do we support ANY keywords? */
-#if ENABLE_HUSH_IF || ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_IF || ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
 # define HAS_KEYWORDS 1
 # define IF_HAS_KEYWORDS(...) __VA_ARGS__
 # define IF_HAS_NO_KEYWORDS(...)
-#else
+#ܐܚܪܢܐ
 # define HAS_KEYWORDS 0
 # define IF_HAS_KEYWORDS(...)
 # define IF_HAS_NO_KEYWORDS(...) __VA_ARGS__
@@ -456,24 +456,24 @@
 
 /* If you comment out one of these below, it will be #defined later
  * to perform debug printfs to stderr: */
-#define debug_printf(...)         do {} while (0)
+#define debug_printf(...)         ܥܒܕ {} ܟܡܐ (0)
 /* Finer-grained debug switches */
-#define debug_printf_parse(...)   do {} while (0)
-#define debug_printf_heredoc(...) do {} while (0)
-#define debug_print_tree(a, b)    do {} while (0)
-#define debug_printf_exec(...)    do {} while (0)
-#define debug_printf_env(...)     do {} while (0)
-#define debug_printf_jobs(...)    do {} while (0)
-#define debug_printf_expand(...)  do {} while (0)
-#define debug_printf_varexp(...)  do {} while (0)
-#define debug_printf_glob(...)    do {} while (0)
-#define debug_printf_redir(...)   do {} while (0)
-#define debug_printf_list(...)    do {} while (0)
-#define debug_printf_subst(...)   do {} while (0)
-#define debug_printf_prompt(...)  do {} while (0)
-#define debug_printf_clean(...)   do {} while (0)
+#define debug_printf_parse(...)   ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_heredoc(...) ܥܒܕ {} ܟܡܐ (0)
+#define debug_print_tree(a, b)    ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_exec(...)    ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_env(...)     ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_jobs(...)    ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_expand(...)  ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_varexp(...)  ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_glob(...)    ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_redir(...)   ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_list(...)    ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_subst(...)   ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_prompt(...)  ܥܒܕ {} ܟܡܐ (0)
+#define debug_printf_clean(...)   ܥܒܕ {} ܟܡܐ (0)
 
-#define ERR_PTR ((void*)(long)1)
+#define ERR_PTR ((فراغ*)(long)1)
 
 #define JOB_STATUS_FORMAT    "[%u] %-22s %.40s\n"
 
@@ -481,17 +481,17 @@
 #ifndef __U_BOOT__
 #define SPECIAL_VARS_STR     ("_*@$!?#-" + 1)
 #define NUMERIC_SPECVARS_STR ("_*@$!?#-" + 3)
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 #define SPECIAL_VARS_STR     "*@$!?#-"
 #define NUMERIC_SPECVARS_STR "$!?#-"
 #endif /* __U_BOOT__ */
-#if BASH_PATTERN_SUBST
+#ܐܢ BASH_PATTERN_SUBST
 /* Support / and // replace ops */
 /* Note that // is stored as \ in "encoded" string representation */
 # define VAR_ENCODED_SUBST_OPS      "\\/%#:-=+?"
 # define VAR_SUBST_OPS             ("\\/%#:-=+?" + 1)
 # define MINUS_PLUS_EQUAL_QUESTION ("\\/%#:-=+?" + 5)
-#else
+#ܐܚܪܢܐ
 # define VAR_ENCODED_SUBST_OPS      "%#:-=+?"
 # define VAR_SUBST_OPS              "%#:-=+?"
 # define MINUS_PLUS_EQUAL_QUESTION ("%#:-=+?" + 3)
@@ -502,41 +502,41 @@
 /* The "variable" with name "\1" emits string "\3". Testcase: "echo ^C" */
 #define SPECIAL_VAR_QUOTED_SVS   1
 
-struct variable;
+بنية variable;
 
-static const char hush_version_str[] ALIGN1 = "HUSH_VERSION="BB_VER;
+ساكن ثابت حرف hush_version_str[] ALIGN1 = "HUSH_VERSION="BB_VER;
 
 /* This supports saving pointers malloced in vfork child,
  * to be freed in the parent.
  */
-#if !BB_MMU
-typedef struct nommu_save_t {
-	struct variable *old_vars;
-	char **argv;
-	char **argv_from_re_execing;
+#ܐܢ !BB_MMU
+تعريفنوع بنية nommu_save_t {
+	بنية variable *old_vars;
+	حرف **argv;
+	حرف **argv_from_re_execing;
 } nommu_save_t;
 #endif
 
-enum {
+تعداد {
 	RES_NONE  = 0,
-#if ENABLE_HUSH_IF
+#ܐܢ ENABLE_HUSH_IF
 	RES_IF    ,
 	RES_THEN  ,
 	RES_ELIF  ,
 	RES_ELSE  ,
 	RES_FI    ,
 #endif
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	RES_FOR   ,
 	RES_WHILE ,
 	RES_UNTIL ,
 	RES_DO    ,
 	RES_DONE  ,
 #endif
-#if ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
 	RES_IN    ,
 #endif
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 	RES_CASE  ,
 	/* three pseudo-keywords support contrived "case" syntax: */
 	RES_CASE_IN,   /* "case ... IN", turns into RES_MATCH when IN is observed */
@@ -548,18 +548,18 @@ enum {
 	RES_SNTX
 };
 
-typedef struct o_string {
-	char *data;
-	int length; /* position where data is appended */
-	int maxlen;
-	int o_expflags;
+تعريفنوع بنية o_string {
+	حرف *data;
+	صحيح length; /* position where data is appended */
+	صحيح maxlen;
+	صحيح o_expflags;
 	/* At least some part of the string was inside '' or "",
 	 * possibly empty one: word"", wo''rd etc. */
 	smallint has_quoted_part;
 	smallint has_empty_slot;
 	smallint ended_in_ifs;
 } o_string;
-enum {
+تعداد {
 	EXP_FLAG_SINGLEWORD     = 0x80, /* must be 0x80 */
 	EXP_FLAG_GLOB           = 0x2,
 	/* Protect newly added chars against globbing
@@ -567,10 +567,10 @@ enum {
 	EXP_FLAG_ESC_GLOB_CHARS = 0x1,
 };
 /* Used for initialization: o_string foo = NULL_O_STRING; */
-#define NULL_O_STRING { NULL }
+#define NULL_O_STRING { عدم }
 
 #ifndef debug_printf_parse
-static const char *const assignment_flag[] ALIGN_PTR = {
+ساكن ثابت حرف *ثابت assignment_flag[] ALIGN_PTR = {
 	"MAYBE_ASSIGNMENT",
 	"DEFINITELY_ASSIGNMENT",
 	"NOT_ASSIGNMENT",
@@ -585,28 +585,28 @@ static const char *const assignment_flag[] ALIGN_PTR = {
  * Since we now can, we incorporate linked list of all opened HFILEs
  * into the struct (used to be a separate mini-list).
  */
-typedef struct HFILE {
-	char *cur;
-	char *end;
-	struct HFILE *next_hfile;
-	int fd;
-	char buf[1024];
+تعريفنوع بنية HFILE {
+	حرف *cur;
+	حرف *end;
+	بنية HFILE *next_hfile;
+	صحيح fd;
+	حرف buf[1024];
 } HFILE;
 
-typedef struct in_str {
-	const char *p;
-	int peek_buf[2];
-	int last_char;
+تعريفنوع بنية in_str {
+	ثابت حرف *p;
+	صحيح peek_buf[2];
+	صحيح last_char;
 	HFILE *file;
 } in_str;
 
 #ifndef __U_BOOT__
 /* The descrip member of this structure is only used to make
  * debugging output pretty */
-static const struct {
+ساكن ثابت بنية {
 	int32_t mode;
-	signed char default_fd;
-	char descrip[3];
+	signed حرف default_fd;
+	حرف descrip[3];
 } redir_table[] ALIGN4 = {
 	{ O_RDONLY,                  0, "<"  },
 	{ O_CREAT|O_TRUNC|O_WRONLY,  1, ">"  },
@@ -617,12 +617,12 @@ static const struct {
 /*	{ O_RDONLY,                 77, "<<" }, */
 };
 
-struct redir_struct {
-	struct redir_struct *next;
-	char *rd_filename;          /* filename */
-	int rd_fd;                  /* fd to redirect */
+بنية redir_struct {
+	بنية redir_struct *next;
+	حرف *rd_filename;          /* filename */
+	صحيح rd_fd;                  /* fd to redirect */
 	/* fd to redirect to, or -3 if rd_fd is to be closed (n>&-) */
-	int rd_dup;
+	صحيح rd_dup;
 	smallint rd_type;           /* (enum redir_type) */
 	/* note: for heredocs, rd_filename contains heredoc delimiter,
 	 * and subsequently heredoc itself; and rd_dup is a bitmask:
@@ -630,7 +630,7 @@ struct redir_struct {
 	 * bit 1: is heredoc quoted (<<'delim' syntax) ?
 	 */
 };
-typedef enum redir_type {
+تعريفنوع تعداد redir_type {
 	REDIRECT_INPUT     = 0,
 	REDIRECT_OVERWRITE = 1,
 	REDIRECT_APPEND    = 2,
@@ -649,37 +649,37 @@ typedef enum redir_type {
 
 #endif /* !__U_BOOT__ */
 
-struct command {
+بنية command {
 #ifndef __U_BOOT__
 	pid_t pid;                  /* 0 if exited */
 #endif /* !__U_BOOT__ */
 	unsigned assignment_cnt;    /* how many argv[i] are assignments? */
-#if ENABLE_HUSH_LINENO_VAR
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 	unsigned lineno;
 #endif
 	smallint cmd_type;          /* CMD_xxx */
 #define CMD_NORMAL   0
 #define CMD_SUBSHELL 1
-#if BASH_TEST2
+#ܐܢ BASH_TEST2
 /* used for "[[ EXPR ]]" */
 # define CMD_TEST2_SINGLEWORD_NOGLOB 2
 #endif
-#if BASH_TEST2 || ENABLE_HUSH_LOCAL || ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY
+#ܐܢ BASH_TEST2 || ENABLE_HUSH_LOCAL || ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY
 /* used to prevent word splitting and globbing in "export v=t*" */
 # define CMD_SINGLEWORD_NOGLOB 3
 #endif
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 # define CMD_FUNCDEF 4
 #endif
 
 	smalluint cmd_exitcode;
 	/* if non-NULL, this "command" is { list }, ( list ), or a compound statement */
-	struct pipe *group;
-#if !BB_MMU
-	char *group_as_string;
+	بنية pipe *group;
+#ܐܢ !BB_MMU
+	حرف *group_as_string;
 #endif
-#if ENABLE_HUSH_FUNCTIONS
-	struct function *child_func;
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+	بنية function *child_func;
 /* This field is used to prevent a bug here:
  * while...do f1() {a;}; f1; f1() {b;}; f1; done
  * When we execute "f1() {a;}" cmd, we create new function and clear
@@ -696,9 +696,9 @@ struct command {
  */
 #endif
 #ifdef __U_BOOT__
-	int argc; /* number of program arguments */
+	صحيح argc; /* number of program arguments */
 #endif
-	char **argv;                /* command name and arguments */
+	حرف **argv;                /* command name and arguments */
 /* argv vector may contain variable references (^Cvar^C, ^C0^C etc)
  * and on execution these are substituted with their values.
  * Substitution can make _several_ words out of one argv[n]!
@@ -706,7 +706,7 @@ struct command {
  * References of the form ^C`cmd arg^C are `cmd arg` substitutions.
  */
 #ifndef __U_BOOT__
-	struct redir_struct *redirects; /* I/O redirections */
+	بنية redir_struct *redirects; /* I/O redirections */
 #endif /* !__U_BOOT__ */
 };
 /* Is there anything in this command at all? */
@@ -714,28 +714,28 @@ struct command {
 #define IS_NULL_CMD(cmd) \
 	(!(cmd)->group && !(cmd)->argv && !(cmd)->redirects)
 
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 #define IS_NULL_CMD(cmd) \
 	(!(cmd)->group && !(cmd)->argv)
 #endif /* __U_BOOT__ */
-struct pipe {
-	struct pipe *next;
-	int num_cmds;               /* total number of commands in pipe */
+بنية pipe {
+	بنية pipe *next;
+	صحيح num_cmds;               /* total number of commands in pipe */
 #ifndef __U_BOOT__
-	int alive_cmds;             /* number of commands running (not exited) */
-	int stopped_cmds;           /* number of commands alive, but stopped */
-#if ENABLE_HUSH_JOB
+	صحيح alive_cmds;             /* number of commands running (not exited) */
+	صحيح stopped_cmds;           /* number of commands alive, but stopped */
+#ܐܢ ENABLE_HUSH_JOB
 	unsigned jobid;             /* job number */
 	pid_t pgrp;                 /* process group ID for the job */
-	char *cmdtext;              /* name of job */
+	حرف *cmdtext;              /* name of job */
 #endif
 #endif /* !__U_BOOT__ */
-	struct command *cmds;       /* array of commands in pipe */
+	بنية command *cmds;       /* array of commands in pipe */
 	smallint followup;          /* PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND */
 	IF_HAS_KEYWORDS(smallint pi_inverted;) /* "! cmd | cmd" */
 	IF_HAS_KEYWORDS(smallint res_word;) /* needed for if, for, while, until... */
 };
-typedef enum pipe_style {
+تعريفنوع تعداد pipe_style {
 	PIPE_SEQ = 0,
 	PIPE_AND = 1,
 	PIPE_OR  = 2,
@@ -746,30 +746,30 @@ typedef enum pipe_style {
 	((pi)->num_cmds == 0 IF_HAS_KEYWORDS( && (pi)->res_word == RES_NONE))
 
 /* This holds pointers to the various results of parsing */
-struct parse_context {
+بنية parse_context {
 	/* linked list of pipes */
-	struct pipe *list_head;
+	بنية pipe *list_head;
 	/* last pipe (being constructed right now) */
-	struct pipe *pipe;
+	بنية pipe *pipe;
 	/* last command in pipe (being constructed right now) */
-	struct command *command;
+	بنية command *command;
 #ifndef __U_BOOT__
 	/* last redirect in command->redirects list */
-	struct redir_struct *pending_redirect;
+	بنية redir_struct *pending_redirect;
 #endif /* !__U_BOOT__ */
 	o_string word;
-#if !BB_MMU
+#ܐܢ !BB_MMU
 	o_string as_string;
 #endif
 	smallint is_assignment; /* 0:maybe, 1:yes, 2:no, 3:keyword */
-#if HAS_KEYWORDS
+#ܐܢ HAS_KEYWORDS
 	smallint ctx_res_w;
 	smallint ctx_inverted; /* "! cmd | cmd" */
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 	smallint ctx_dsemicolon; /* ";;" seen */
 #endif
 	/* bitmask of FLAG_xxx, for figuring out valid reserved words */
-	int old_flag;
+	صحيح old_flag;
 	/* group we are enclosed in:
 	 * example: "if pipe1; pipe2; then pipe3; fi"
 	 * when we see "if" or "then", we malloc and copy current context,
@@ -779,10 +779,10 @@ struct parse_context {
 	 * copy ->stack into current context, and delete ->stack.
 	 * (parsing of { list } and ( list ) doesn't use this method)
 	 */
-	struct parse_context *stack;
+	بنية parse_context *stack;
 #endif
 };
-enum {
+تعداد {
 	MAYBE_ASSIGNMENT      = 0,
 	DEFINITELY_ASSIGNMENT = 1,
 	NOT_ASSIGNMENT        = 2,
@@ -798,10 +798,10 @@ enum {
  * and thus setenv is unusable (leaky) for shell's purposes */
 #define setenv(...) setenv_is_leaky_dont_use()
 #endif /* !__U_BOOT__ */
-struct variable {
-	struct variable *next;
-	char *varstr;        /* points to "name=" portion */
-	int max_len;         /* if > 0, name is part of initial env; else name is malloced */
+بنية variable {
+	بنية variable *next;
+	حرف *varstr;        /* points to "name=" portion */
+	صحيح max_len;         /* if > 0, name is part of initial env; else name is malloced */
 #ifndef __U_BOOT__
 	uint16_t var_nest_level;
 	smallint flg_export; /* putenv should be done on this var */
@@ -809,19 +809,19 @@ struct variable {
 #endif /* !__U_BOOT__ */
 };
 
-enum {
+تعداد {
 	BC_BREAK = 1,
 	BC_CONTINUE = 2,
 };
 
-#if ENABLE_HUSH_FUNCTIONS
-struct function {
-	struct function *next;
-	char *name;
-	struct command *parent_cmd;
-	struct pipe *body;
-# if !BB_MMU
-	char *body_as_string;
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+بنية function {
+	بنية function *next;
+	حرف *name;
+	بنية command *parent_cmd;
+	بنية pipe *body;
+# ܐܢ !BB_MMU
+	حرف *body_as_string;
 # endif
 };
 #endif
@@ -856,19 +856,19 @@ struct function {
  * vi              off
  * xtrace          off
  */
-static const char o_opt_strings[] ALIGN1 =
+ساكن ثابت حرف o_opt_strings[] ALIGN1 =
 	"pipefail\0"
 	"noexec\0"
 	"errexit\0"
-#if ENABLE_HUSH_MODE_X
+#ܐܢ ENABLE_HUSH_MODE_X
 	"xtrace\0"
 #endif
 	;
-enum {
+تعداد {
 	OPT_O_PIPEFAIL,
 	OPT_O_NOEXEC,
 	OPT_O_ERREXIT,
-#if ENABLE_HUSH_MODE_X
+#ܐܢ ENABLE_HUSH_MODE_X
 	OPT_O_XTRACE,
 #endif
 	NUM_OPT_O
@@ -876,7 +876,7 @@ enum {
 
 /* "Globals" within this file */
 /* Sorted roughly by size (smaller offsets == smaller code) */
-struct globals {
+بنية globals {
 #ifndef __U_BOOT__
 	/* interactive_fd != 0 means we are an interactive shell.
 	 * If we are, then saved_tty_pgrp can also be != 0, meaning
@@ -889,40 +889,40 @@ struct globals {
 	 * and will take it back when the group is stopped (^Z)
 	 * or killed (^C).
 	 */
-#if ENABLE_HUSH_INTERACTIVE
+#ܐܢ ENABLE_HUSH_INTERACTIVE
 	/* 'interactive_fd' is a fd# open to ctty, if we have one
 	 * _AND_ if we decided to act interactively */
-	int interactive_fd;
-	IF_NOT_FEATURE_EDITING_FANCY_PROMPT(char *PS1;)
+	صحيح interactive_fd;
+	IF_NOT_FEATURE_EDITING_FANCY_PROMPT(حرف *PS1;)
 # define G_interactive_fd (G.interactive_fd)
-#else
+#ܐܚܪܢܐ
 # define G_interactive_fd 0
 #endif
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 # define G_interactive_fd 0
 #endif /* __U_BOOT__ */
 #ifndef __U_BOOT__
-#if ENABLE_FEATURE_EDITING
+#ܐܢ ENABLE_FEATURE_EDITING
 	line_input_t *line_input_state;
 #endif
 	pid_t root_pid;
 	pid_t root_ppid;
 	pid_t last_bg_pid;
-#if ENABLE_HUSH_RANDOM_SUPPORT
+#ܐܢ ENABLE_HUSH_RANDOM_SUPPORT
 	random_t random_gen;
 #endif
-#if ENABLE_HUSH_JOB
-	int run_list_level;
+#ܐܢ ENABLE_HUSH_JOB
+	صحيح run_list_level;
 	unsigned last_jobid;
 	pid_t saved_tty_pgrp;
-	struct pipe *job_list;
+	بنية pipe *job_list;
 # define G_saved_tty_pgrp (G.saved_tty_pgrp)
-#else
+#ܐܚܪܢܐ
 # define G_saved_tty_pgrp 0
 #endif
 #endif /* !__U_BOOT__ */
 	/* How deeply are we in context where "set -e" is ignored */
-	int errexit_depth;
+	صحيح errexit_depth;
 #ifndef __U_BOOT__
 	/* "set -e" rules (do we follow them correctly?):
 	 * Exit if pipe, list, or compound command exits with a non-zero status.
@@ -941,33 +941,33 @@ struct globals {
 	 * the compound command or the command containing the function call completes.
 	 */
 
-	char o_opt[NUM_OPT_O];
-#if ENABLE_HUSH_MODE_X
+	حرف o_opt[NUM_OPT_O];
+#ܐܢ ENABLE_HUSH_MODE_X
 # define G_x_mode (G.o_opt[OPT_O_XTRACE])
-#else
+#ܐܚܪܢܐ
 # define G_x_mode 0
 #endif
-	char opt_s;
-	char opt_c;
+	حرف opt_s;
+	حرف opt_c;
 #endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_INTERACTIVE
+#ܐܢ ENABLE_HUSH_INTERACTIVE
 	smallint promptmode; /* 0: PS1, 1: PS2 */
 #endif
 	/* set by signal handler if SIGINT is received _and_ its trap is not set */
 	smallint flag_SIGINT;
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	smallint flag_break_continue;
 #endif
 #endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	/* 0: outside of a function (or sourced file)
 	 * -1: inside of a function, ok to use return builtin
 	 * 1: return is invoked, skip all till end of func
 	 */
 	smallint flag_return_in_progress;
 # define G_flag_return_in_progress (G.flag_return_in_progress)
-#else
+#ܐܚܪܢܐ
 # define G_flag_return_in_progress 0
 #endif
 	smallint exiting; /* used to prevent EXIT trap recursion */
@@ -976,62 +976,62 @@ struct globals {
 	smalluint expand_exitcode;
 	smalluint last_bg_pid_exitcode;
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_SET
+#ܐܢ ENABLE_HUSH_SET
 	/* are global_argv and global_argv[1..n] malloced? (note: not [0]) */
 	smalluint global_args_malloced;
 # define G_global_args_malloced (G.global_args_malloced)
-#else
+#ܐܚܪܢܐ
 # define G_global_args_malloced 0
 #endif
-#if ENABLE_HUSH_BASH_COMPAT
-	int dead_job_exitcode; /* for "wait -n" */
+#ܐܢ ENABLE_HUSH_BASH_COMPAT
+	صحيح dead_job_exitcode; /* for "wait -n" */
 #endif
 #endif /* !__U_BOOT__ */
 	/* how many non-NULL argv's we have. NB: $# + 1 */
-	int global_argc;
-	char **global_argv;
-#if !BB_MMU
-	char *argv0_for_re_execing;
+	صحيح global_argc;
+	حرف **global_argv;
+#ܐܢ !BB_MMU
+	حرف *argv0_for_re_execing;
 #endif
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 #ifndef __U_BOOT__
 	unsigned depth_break_continue;
 #endif /* !__U_BOOT__ */
 	unsigned depth_of_loop;
 #endif
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_GETOPTS
+#ܐܢ ENABLE_HUSH_GETOPTS
 	unsigned getopt_count;
 #endif
 #endif /* !__U_BOOT__ */
-	const char *ifs;
+	ثابت حرف *ifs;
 #ifdef __U_BOOT__
-	int flag_repeat;
-	int do_repeat;
-	int run_command_flags;
+	صحيح flag_repeat;
+	صحيح do_repeat;
+	صحيح run_command_flags;
 #endif /* __U_BOOT__ */
-	char *ifs_whitespace; /* = G.ifs or malloced */
+	حرف *ifs_whitespace; /* = G.ifs or malloced */
 #ifndef __U_BOOT__
-	const char *cwd;
+	ثابت حرف *cwd;
 #endif /* !__U_BOOT__ */
-	struct variable *top_var;
-	char **expanded_assignments;
-	struct variable **shadowed_vars_pp;
+	بنية variable *top_var;
+	حرف **expanded_assignments;
+	بنية variable **shadowed_vars_pp;
 	unsigned var_nest_level;
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_FUNCTIONS
-# if ENABLE_HUSH_LOCAL
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+# ܐܢ ENABLE_HUSH_LOCAL
 	unsigned func_nest_level; /* solely to prevent "local v" in non-functions */
 # endif
-	struct function *top_func;
+	بنية function *top_func;
 #endif
 	/* Signal and trap handling */
-#if ENABLE_HUSH_FAST
+#ܐܢ ENABLE_HUSH_FAST
 	unsigned count_SIGCHLD;
 	unsigned handled_SIGCHLD;
 	smallint we_have_children;
 #endif
-#if ENABLE_HUSH_LINENO_VAR
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 	unsigned parse_lineno;
 	unsigned execute_lineno;
 #endif
@@ -1045,153 +1045,153 @@ struct globals {
 	 * Other than these two times, never modified.
 	 */
 	unsigned special_sig_mask;
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	unsigned fatal_sig_mask;
 # define G_fatal_sig_mask (G.fatal_sig_mask)
-#else
+#ܐܚܪܢܐ
 # define G_fatal_sig_mask 0
 #endif
-#if ENABLE_HUSH_TRAP
-	int pre_trap_exitcode;
-# if ENABLE_HUSH_FUNCTIONS
-	int return_exitcode;
+#ܐܢ ENABLE_HUSH_TRAP
+	صحيح pre_trap_exitcode;
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+	صحيح return_exitcode;
 # endif
-	char **traps; /* char *traps[NSIG] */
+	حرف **traps; /* char *traps[NSIG] */
 # define G_traps G.traps
-#else
-# define G_traps ((char**)NULL)
+#ܐܚܪܢܐ
+# define G_traps ((حرف**)عدم)
 #endif
 	sigset_t pending_set;
-#if ENABLE_HUSH_MEMLEAK
+#ܐܢ ENABLE_HUSH_MEMLEAK
 	unsigned long memleak_value;
 #endif
-#if ENABLE_HUSH_MODE_X
+#ܐܢ ENABLE_HUSH_MODE_X
 	unsigned x_mode_depth;
 	/* "set -x" output should not be redirectable with subsequent 2>FILE.
 	 * We dup fd#2 to x_mode_fd when "set -x" is executed, and use it
 	 * for all subsequent output.
 	 */
-	int x_mode_fd;
+	صحيح x_mode_fd;
 	o_string x_mode_buf;
 #endif
 #endif /* !__U_BOOT__ */
-#if HUSH_DEBUG >= 2
-	int debug_indent;
+#ܐܢ HUSH_DEBUG >= 2
+	صحيح debug_indent;
 #endif
 #ifndef __U_BOOT__
-	struct sigaction sa;
-	char optstring_buf[sizeof("eixcs")];
-#if BASH_EPOCH_VARS
-	char epoch_buf[sizeof("%llu.nnnnnn") + sizeof(long long)*3];
+	بنية sigaction sa;
+	حرف optstring_buf[حجم("eixcs")];
+#ܐܢ BASH_EPOCH_VARS
+	حرف epoch_buf[حجم("%llu.nnnnnn") + حجم(long long)*3];
 #endif
-#if ENABLE_FEATURE_EDITING
-	char user_input_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
+#ܐܢ ENABLE_FEATURE_EDITING
+	حرف user_input_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
 #endif
 #endif /* !__U_BOOT__ */
 };
 #ifdef __U_BOOT__
-struct globals *ptr_to_globals;
+بنية globals *ptr_to_globals;
 #endif /* __U_BOOT__ */
 #define G (*ptr_to_globals)
 /* Not #defining name to G.name - this quickly gets unwieldy
  * (too many defines). Also, I actually prefer to see when a variable
  * is global, thus "G." prefix is a useful hint */
 #ifdef __U_BOOT__
-#define SET_PTR_TO_GLOBALS(x) do { \
-	(*(struct globals**)&ptr_to_globals) = (void*)(x); \
+#define SET_PTR_TO_GLOBALS(x) ܥܒܕ { \
+	(*(بنية globals**)&ptr_to_globals) = (فراغ*)(x); \
 	barrier(); \
-} while (0)
-#define INIT_G() do { \
-	SET_PTR_TO_GLOBALS(xzalloc(sizeof(G))); \
+} ܟܡܐ (0)
+#define INIT_G() ܥܒܕ { \
+	SET_PTR_TO_GLOBALS(xzalloc(حجم(G))); \
 	G.promptmode = 1; \
-} while (0)
-#else /* !__U_BOOT__ */
-#define INIT_G() do { \
-	SET_PTR_TO_GLOBALS(xzalloc(sizeof(G))); \
+} ܟܡܐ (0)
+#ܐܚܪܢܐ /* !__U_BOOT__ */
+#define INIT_G() ܥܒܕ { \
+	SET_PTR_TO_GLOBALS(xzalloc(حجم(G))); \
 	/* memset(&G.sa, 0, sizeof(G.sa)); */  \
 	sigfillset(&G.sa.sa_mask); \
 	G.sa.sa_flags = SA_RESTART; \
-} while (0)
+} ܟܡܐ (0)
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
 /* Function prototypes for builtins */
-static int builtin_cd(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_ECHO
-static int builtin_echo(char **argv) FAST_FUNC;
+ساكن صحيح builtin_cd(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_ECHO
+ساكن صحيح builtin_echo(حرف **argv) FAST_FUNC;
 #endif
-static int builtin_eval(char **argv) FAST_FUNC;
-static int builtin_exec(char **argv) FAST_FUNC;
-static int builtin_exit(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_EXPORT
-static int builtin_export(char **argv) FAST_FUNC;
+ساكن صحيح builtin_eval(حرف **argv) FAST_FUNC;
+ساكن صحيح builtin_exec(حرف **argv) FAST_FUNC;
+ساكن صحيح builtin_exit(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_EXPORT
+ساكن صحيح builtin_export(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_READONLY
-static int builtin_readonly(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_READONLY
+ساكن صحيح builtin_readonly(حرف **argv) FAST_FUNC;
 #endif
-static int builtin_false(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_JOB
-static int builtin_fg_bg(char **argv) FAST_FUNC;
-static int builtin_jobs(char **argv) FAST_FUNC;
+ساكن صحيح builtin_false(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_JOB
+ساكن صحيح builtin_fg_bg(حرف **argv) FAST_FUNC;
+ساكن صحيح builtin_jobs(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_GETOPTS
-static int builtin_getopts(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_GETOPTS
+ساكن صحيح builtin_getopts(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_HELP
-static int builtin_help(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_HELP
+ساكن صحيح builtin_help(حرف **argv) FAST_FUNC;
 #endif
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
-static int builtin_history(char **argv) FAST_FUNC;
+#ܐܢ MAX_HISTORY && ENABLE_FEATURE_EDITING
+ساكن صحيح builtin_history(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_LOCAL
-static int builtin_local(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_LOCAL
+ساكن صحيح builtin_local(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_MEMLEAK
-static int builtin_memleak(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_MEMLEAK
+ساكن صحيح builtin_memleak(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_PRINTF
-static int builtin_printf(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_PRINTF
+ساكن صحيح builtin_printf(حرف **argv) FAST_FUNC;
 #endif
-static int builtin_pwd(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_READ
-static int builtin_read(char **argv) FAST_FUNC;
+ساكن صحيح builtin_pwd(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_READ
+ساكن صحيح builtin_read(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_SET
-static int builtin_set(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_SET
+ساكن صحيح builtin_set(حرف **argv) FAST_FUNC;
 #endif
-static int builtin_shift(char **argv) FAST_FUNC;
-static int builtin_source(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_TEST || BASH_TEST2
-static int builtin_test(char **argv) FAST_FUNC;
+ساكن صحيح builtin_shift(حرف **argv) FAST_FUNC;
+ساكن صحيح builtin_source(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_TEST || BASH_TEST2
+ساكن صحيح builtin_test(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_TRAP
-static int builtin_trap(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_TRAP
+ساكن صحيح builtin_trap(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_TYPE
-static int builtin_type(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_TYPE
+ساكن صحيح builtin_type(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_TIMES
-static int builtin_times(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_TIMES
+ساكن صحيح builtin_times(حرف **argv) FAST_FUNC;
 #endif
-static int builtin_true(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_UMASK
-static int builtin_umask(char **argv) FAST_FUNC;
+ساكن صحيح builtin_true(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_UMASK
+ساكن صحيح builtin_umask(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_UNSET
-static int builtin_unset(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_UNSET
+ساكن صحيح builtin_unset(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_KILL
-static int builtin_kill(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_KILL
+ساكن صحيح builtin_kill(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_WAIT
-static int builtin_wait(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_WAIT
+ساكن صحيح builtin_wait(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_LOOPS
-static int builtin_break(char **argv) FAST_FUNC;
-static int builtin_continue(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_LOOPS
+ساكن صحيح builtin_break(حرف **argv) FAST_FUNC;
+ساكن صحيح builtin_continue(حرف **argv) FAST_FUNC;
 #endif
-#if ENABLE_HUSH_FUNCTIONS
-static int builtin_return(char **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+ساكن صحيح builtin_return(حرف **argv) FAST_FUNC;
 #endif
 
 /* Table of built-in functions.  They can be forked or not, depending on
@@ -1200,119 +1200,119 @@ static int builtin_return(char **argv) FAST_FUNC;
  * in the parent shell process.  If forked, of course they cannot.
  * For example, 'unset foo | whatever' will parse and run, but foo will
  * still be set at the end. */
-struct built_in_command {
-	const char *b_cmd;
-	int (*b_function)(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_HELP
-	const char *b_descr;
+بنية built_in_command {
+	ثابت حرف *b_cmd;
+	صحيح (*b_function)(حرف **argv) FAST_FUNC;
+#ܐܢ ENABLE_HUSH_HELP
+	ثابت حرف *b_descr;
 # define BLTIN(cmd, func, help) { cmd, func, help }
-#else
+#ܐܚܪܢܐ
 # define BLTIN(cmd, func, help) { cmd, func }
 #endif
 };
 
-static const struct built_in_command bltins1[] ALIGN_PTR = {
+ساكن ثابت بنية built_in_command bltins1[] ALIGN_PTR = {
 	BLTIN("."        , builtin_source  , "Run commands in file"),
-	BLTIN(":"        , builtin_true    , NULL),
-#if ENABLE_HUSH_JOB
+	BLTIN(":"        , builtin_true    , عدم),
+#ܐܢ ENABLE_HUSH_JOB
 	BLTIN("bg"       , builtin_fg_bg   , "Resume job in background"),
 #endif
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	BLTIN("break"    , builtin_break   , "Exit loop"),
 #endif
 	BLTIN("cd"       , builtin_cd      , "Change directory"),
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	BLTIN("continue" , builtin_continue, "Start new loop iteration"),
 #endif
 	BLTIN("eval"     , builtin_eval    , "Construct and run shell command"),
 	BLTIN("exec"     , builtin_exec    , "Execute command, don't return to shell"),
-	BLTIN("exit"     , builtin_exit    , NULL),
-#if ENABLE_HUSH_EXPORT
+	BLTIN("exit"     , builtin_exit    , عدم),
+#ܐܢ ENABLE_HUSH_EXPORT
 	BLTIN("export"   , builtin_export  , "Set environment variables"),
 #endif
-	BLTIN("false"    , builtin_false   , NULL),
-#if ENABLE_HUSH_JOB
+	BLTIN("false"    , builtin_false   , عدم),
+#ܐܢ ENABLE_HUSH_JOB
 	BLTIN("fg"       , builtin_fg_bg   , "Bring job to foreground"),
 #endif
-#if ENABLE_HUSH_GETOPTS
-	BLTIN("getopts"  , builtin_getopts , NULL),
+#ܐܢ ENABLE_HUSH_GETOPTS
+	BLTIN("getopts"  , builtin_getopts , عدم),
 #endif
-#if ENABLE_HUSH_HELP
-	BLTIN("help"     , builtin_help    , NULL),
+#ܐܢ ENABLE_HUSH_HELP
+	BLTIN("help"     , builtin_help    , عدم),
 #endif
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
+#ܐܢ MAX_HISTORY && ENABLE_FEATURE_EDITING
 	BLTIN("history"  , builtin_history , "Show history"),
 #endif
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	BLTIN("jobs"     , builtin_jobs    , "List jobs"),
 #endif
-#if ENABLE_HUSH_KILL
+#ܐܢ ENABLE_HUSH_KILL
 	BLTIN("kill"     , builtin_kill    , "Send signals to processes"),
 #endif
-#if ENABLE_HUSH_LOCAL
+#ܐܢ ENABLE_HUSH_LOCAL
 	BLTIN("local"    , builtin_local   , "Set local variables"),
 #endif
-#if ENABLE_HUSH_MEMLEAK
-	BLTIN("memleak"  , builtin_memleak , NULL),
+#ܐܢ ENABLE_HUSH_MEMLEAK
+	BLTIN("memleak"  , builtin_memleak , عدم),
 #endif
-#if ENABLE_HUSH_READ
+#ܐܢ ENABLE_HUSH_READ
 	BLTIN("read"     , builtin_read    , "Input into variable"),
 #endif
-#if ENABLE_HUSH_READONLY
+#ܐܢ ENABLE_HUSH_READONLY
 	BLTIN("readonly" , builtin_readonly, "Make variables read-only"),
 #endif
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	BLTIN("return"   , builtin_return  , "Return from function"),
 #endif
-#if ENABLE_HUSH_SET
+#ܐܢ ENABLE_HUSH_SET
 	BLTIN("set"      , builtin_set     , "Set positional parameters"),
 #endif
 	BLTIN("shift"    , builtin_shift   , "Shift positional parameters"),
-#if BASH_SOURCE
-	BLTIN("source"   , builtin_source  , NULL),
+#ܐܢ BASH_SOURCE
+	BLTIN("source"   , builtin_source  , عدم),
 #endif
-#if ENABLE_HUSH_TIMES
-	BLTIN("times"    , builtin_times   , NULL),
+#ܐܢ ENABLE_HUSH_TIMES
+	BLTIN("times"    , builtin_times   , عدم),
 #endif
-#if ENABLE_HUSH_TRAP
+#ܐܢ ENABLE_HUSH_TRAP
 	BLTIN("trap"     , builtin_trap    , "Trap signals"),
 #endif
-	BLTIN("true"     , builtin_true    , NULL),
-#if ENABLE_HUSH_TYPE
+	BLTIN("true"     , builtin_true    , عدم),
+#ܐܢ ENABLE_HUSH_TYPE
 	BLTIN("type"     , builtin_type    , "Show command type"),
 #endif
-#if ENABLE_HUSH_ULIMIT
+#ܐܢ ENABLE_HUSH_ULIMIT
 	BLTIN("ulimit"   , shell_builtin_ulimit, "Control resource limits"),
 #endif
-#if ENABLE_HUSH_UMASK
+#ܐܢ ENABLE_HUSH_UMASK
 	BLTIN("umask"    , builtin_umask   , "Set file creation mask"),
 #endif
-#if ENABLE_HUSH_UNSET
+#ܐܢ ENABLE_HUSH_UNSET
 	BLTIN("unset"    , builtin_unset   , "Unset variables"),
 #endif
-#if ENABLE_HUSH_WAIT
+#ܐܢ ENABLE_HUSH_WAIT
 	BLTIN("wait"     , builtin_wait    , "Wait for process to finish"),
 #endif
 };
 /* These builtins won't be used if we are on NOMMU and need to re-exec
  * (it's cheaper to run an external program in this case):
  */
-static const struct built_in_command bltins2[] ALIGN_PTR = {
-#if ENABLE_HUSH_TEST
-	BLTIN("["        , builtin_test    , NULL),
+ساكن ثابت بنية built_in_command bltins2[] ALIGN_PTR = {
+#ܐܢ ENABLE_HUSH_TEST
+	BLTIN("["        , builtin_test    , عدم),
 #endif
-#if BASH_TEST2
-	BLTIN("[["       , builtin_test    , NULL),
+#ܐܢ BASH_TEST2
+	BLTIN("[["       , builtin_test    , عدم),
 #endif
-#if ENABLE_HUSH_ECHO
-	BLTIN("echo"     , builtin_echo    , NULL),
+#ܐܢ ENABLE_HUSH_ECHO
+	BLTIN("echo"     , builtin_echo    , عدم),
 #endif
-#if ENABLE_HUSH_PRINTF
-	BLTIN("printf"   , builtin_printf  , NULL),
+#ܐܢ ENABLE_HUSH_PRINTF
+	BLTIN("printf"   , builtin_printf  , عدم),
 #endif
-	BLTIN("pwd"      , builtin_pwd     , NULL),
-#if ENABLE_HUSH_TEST
-	BLTIN("test"     , builtin_test    , NULL),
+	BLTIN("pwd"      , builtin_pwd     , عدم),
+#ܐܢ ENABLE_HUSH_TEST
+	BLTIN("test"     , builtin_test    , عدم),
 #endif
 };
 
@@ -1320,15 +1320,15 @@ static const struct built_in_command bltins2[] ALIGN_PTR = {
 
 /* Debug printouts.
  */
-#if HUSH_DEBUG >= 2
+#ܐܢ HUSH_DEBUG >= 2
 /* prevent disasters with G.debug_indent < 0 */
 # define indent() fdprintf(2, "%*s", (G.debug_indent * 2) & 0xff, "")
 # define debug_enter() (G.debug_indent++)
 # define debug_leave() (G.debug_indent--)
-#else
-# define indent()      ((void)0)
-# define debug_enter() ((void)0)
-# define debug_leave() ((void)0)
+#ܐܚܪܢܐ
+# define indent()      ((فراغ)0)
+# define debug_enter() ((فراغ)0)
+# define debug_leave() ((فراغ)0)
 #endif
 
 #ifndef debug_printf
@@ -1354,14 +1354,14 @@ static const struct built_in_command bltins2[] ALIGN_PTR = {
 #ifndef debug_printf_jobs
 # define debug_printf_jobs(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_JOBS 1
-#else
+#ܐܚܪܢܐ
 # define DEBUG_JOBS 0
 #endif
 
 #ifndef debug_printf_expand
 # define debug_printf_expand(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_EXPAND 1
-#else
+#ܐܚܪܢܐ
 # define DEBUG_EXPAND 0
 #endif
 
@@ -1372,7 +1372,7 @@ static const struct built_in_command bltins2[] ALIGN_PTR = {
 #ifndef debug_printf_glob
 # define debug_printf_glob(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_GLOB 1
-#else
+#ܐܚܪܢܐ
 # define DEBUG_GLOB 0
 #endif
 
@@ -1395,52 +1395,52 @@ static const struct built_in_command bltins2[] ALIGN_PTR = {
 #ifndef debug_printf_clean
 # define debug_printf_clean(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_CLEAN 1
-#else
+#ܐܚܪܢܐ
 # define DEBUG_CLEAN 0
 #endif
 
-#if DEBUG_EXPAND
-static void debug_print_strings(const char *prefix, char **vv)
+#ܐܢ DEBUG_EXPAND
+ساكن فراغ debug_print_strings(ثابت حرف *prefix, حرف **vv)
 {
 	indent();
 	fdprintf(2, "%s:\n", prefix);
-	while (*vv)
+	ܟܡܐ (*vv)
 		fdprintf(2, " '%s'\n", *vv++);
 }
-#else
-# define debug_print_strings(prefix, vv) ((void)0)
+#ܐܚܪܢܐ
+# define debug_print_strings(prefix, vv) ((فراغ)0)
 #endif
 
 /* Leak hunting. Use hush_leaktool.sh for post-processing.
  */
-#if LEAK_HUNTING
-static void *xxmalloc(int lineno, size_t size)
+#ܐܢ LEAK_HUNTING
+ساكن فراغ *xxmalloc(صحيح lineno, size_t size)
 {
-	void *ptr = xmalloc((size + 0xff) & ~0xff);
+	فراغ *ptr = xmalloc((size + 0xff) & ~0xff);
 	fdprintf(2, "line %d: malloc %p\n", lineno, ptr);
-	return ptr;
+	ܦܢܐ ptr;
 }
-static void *xxrealloc(int lineno, void *ptr, size_t size)
+ساكن فراغ *xxrealloc(صحيح lineno, فراغ *ptr, size_t size)
 {
 	ptr = xrealloc(ptr, (size + 0xff) & ~0xff);
 	fdprintf(2, "line %d: realloc %p\n", lineno, ptr);
-	return ptr;
+	ܦܢܐ ptr;
 }
-static char *xxstrdup(int lineno, const char *str)
+ساكن حرف *xxstrdup(صحيح lineno, ثابت حرف *str)
 {
-	char *ptr = xstrdup(str);
+	حرف *ptr = xstrdup(str);
 	fdprintf(2, "line %d: strdup %p\n", lineno, ptr);
-	return ptr;
+	ܦܢܐ ptr;
 }
-static void xxfree(void *ptr)
+ساكن فراغ xxfree(فراغ *ptr)
 {
 	fdprintf(2, "free %p\n", ptr);
-	free(ptr);
+	حرر(ptr);
 }
 # define xmalloc(s)     xxmalloc(__LINE__, s)
 # define xrealloc(p, s) xxrealloc(__LINE__, p, s)
 # define xstrdup(s)     xxstrdup(__LINE__, s)
-# define free(p)        xxfree(p)
+# define حرر(p)        xxfree(p)
 #endif
 
 /* Syntax and runtime errors. They always abort scripts.
@@ -1448,7 +1448,7 @@ static void xxfree(void *ptr)
  * and return to the prompt.
  * HUSH_DEBUG >= 2 prints line number in this file where it was detected.
  */
-#if HUSH_DEBUG < 2
+#ܐܢ HUSH_DEBUG < 2
 # define msg_and_die_if_script(lineno, ...)     msg_and_die_if_script(__VA_ARGS__)
 # define syntax_error(lineno, msg)              syntax_error(msg)
 # define syntax_error_at(lineno, msg)           syntax_error_at(msg)
@@ -1457,48 +1457,48 @@ static void xxfree(void *ptr)
 # define syntax_error_unexpected_ch(lineno, ch) syntax_error_unexpected_ch(ch)
 #endif
 
-static void die_if_script(void)
+ساكن فراغ die_if_script(فراغ)
 {
-	if (!G_interactive_fd) {
-		if (G.last_exitcode) /* sometines it's 2, not 1 (bash compat) */
+	ܐܢ (!G_interactive_fd) {
+		ܐܢ (G.last_exitcode) /* sometines it's 2, not 1 (bash compat) */
 			xfunc_error_retval = G.last_exitcode;
 		xfunc_die();
 	}
 }
 
 #ifdef __U_BOOT__
-static void __maybe_unused msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
-#else /* !__U_BOOT__ */
-static void msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
+ساكن فراغ __maybe_unused msg_and_die_if_script(unsigned lineno, ثابت حرف *fmt, ...)
+#ܐܚܪܢܐ /* !__U_BOOT__ */
+ساكن فراغ msg_and_die_if_script(unsigned lineno, ثابت حرف *fmt, ...)
 #endif /* !__U_BOOT__ */
 {
 	va_list p;
 
-#if HUSH_DEBUG >= 2
+#ܐܢ HUSH_DEBUG >= 2
 	bb_error_msg("hush.c:%u", lineno);
 #endif
 	va_start(p, fmt);
-	bb_verror_msg(fmt, p, NULL);
+	bb_verror_msg(fmt, p, عدم);
 	va_end(p);
 	die_if_script();
 }
 
-static void syntax_error(unsigned lineno UNUSED_PARAM, const char *msg)
+ساكن فراغ syntax_error(unsigned lineno UNUSED_PARAM, ثابت حرف *msg)
 {
-	if (msg)
+	ܐܢ (msg)
 		bb_error_msg("syntax error: %s", msg);
-	else
+	ܐܚܪܢܐ
 		bb_simple_error_msg("syntax error");
 	die_if_script();
 }
 
-static void syntax_error_at(unsigned lineno UNUSED_PARAM, const char *msg)
+ساكن فراغ syntax_error_at(unsigned lineno UNUSED_PARAM, ثابت حرف *msg)
 {
 	bb_error_msg("syntax error at '%s'", msg);
 	die_if_script();
 }
 
-static void syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, const char *s)
+ساكن فراغ syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, ثابت حرف *s)
 {
 	bb_error_msg("syntax error: unterminated %s", s);
 //? source4.tests fails: in bash, echo ${^} in script does not terminate the script
@@ -1506,32 +1506,32 @@ static void syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, const char *s)
 //	die_if_script();
 }
 
-static void syntax_error_unterm_ch(unsigned lineno, char ch)
+ساكن فراغ syntax_error_unterm_ch(unsigned lineno, حرف ch)
 {
-	char msg[2] = { ch, '\0' };
+	حرف msg[2] = { ch, '\0' };
 	syntax_error_unterm_str(lineno, msg);
 }
 
-static void syntax_error_unexpected_ch(unsigned lineno UNUSED_PARAM, int ch)
+ساكن فراغ syntax_error_unexpected_ch(unsigned lineno UNUSED_PARAM, صحيح ch)
 {
-	char msg[2];
+	حرف msg[2];
 	msg[0] = ch;
 	msg[1] = '\0';
-#if HUSH_DEBUG >= 2
+#ܐܢ HUSH_DEBUG >= 2
 	bb_error_msg("hush.c:%u", lineno);
 #endif
 	bb_error_msg("syntax error: unexpected %s", ch == EOF ? "EOF" : msg);
 	die_if_script();
 }
 
-#if HUSH_DEBUG < 2
+#ܐܢ HUSH_DEBUG < 2
 # undef msg_and_die_if_script
 # undef syntax_error
 # undef syntax_error_at
 # undef syntax_error_unterm_ch
 # undef syntax_error_unterm_str
 # undef syntax_error_unexpected_ch
-#else
+#ܐܚܪܢܐ
 # define msg_and_die_if_script(...)     msg_and_die_if_script(__LINE__, __VA_ARGS__)
 # define syntax_error(msg)              syntax_error(__LINE__, msg)
 # define syntax_error_at(msg)           syntax_error_at(__LINE__, msg)
@@ -1543,20 +1543,20 @@ static void syntax_error_unexpected_ch(unsigned lineno UNUSED_PARAM, int ch)
 /* Utility functions
  */
 /* Replace each \x with x in place, return ptr past NUL. */
-static char *unbackslash(char *src)
+ساكن حرف *unbackslash(حرف *src)
 {
 #ifdef __U_BOOT__
-	char *dst = src = (char *)strchrnul(src, '\\');
-#else /* !__U_BOOT__ */
-	char *dst = src = strchrnul(src, '\\');
+	حرف *dst = src = (حرف *)strchrnul(src, '\\');
+#ܐܚܪܢܐ /* !__U_BOOT__ */
+	حرف *dst = src = strchrnul(src, '\\');
 #endif /* !__U_BOOT__ */
-	while (1) {
-		if (*src == '\\') {
+	ܟܡܐ (1) {
+		ܐܢ (*src == '\\') {
 			src++;
-			if (*src != '\0') {
+			ܐܢ (*src != '\0') {
 				/* \x -> x */
 				*dst++ = *src++;
-				continue;
+				استمر;
 			}
 			/* else: "\<nul>". Do not delete this backslash.
 			 * Testcase: eval 'echo ok\'
@@ -1564,100 +1564,100 @@ static char *unbackslash(char *src)
 			*dst++ = '\\';
 			/* fallthrough */
 		}
-		if ((*dst++ = *src++) == '\0')
-			break;
+		ܐܢ ((*dst++ = *src++) == '\0')
+			اكسر;
 	}
-	return dst;
+	ܦܢܐ dst;
 }
 
-static char **add_strings_to_strings(char **strings, char **add, int need_to_dup)
+ساكن حرف **add_strings_to_strings(حرف **strings, حرف **add, صحيح need_to_dup)
 {
-	int i;
+	صحيح i;
 	unsigned count1;
 	unsigned count2;
-	char **v;
+	حرف **v;
 
 	v = strings;
 	count1 = 0;
-	if (v) {
-		while (*v) {
+	ܐܢ (v) {
+		ܟܡܐ (*v) {
 			count1++;
 			v++;
 		}
 	}
 	count2 = 0;
 	v = add;
-	while (*v) {
+	ܟܡܐ (*v) {
 		count2++;
 		v++;
 	}
-	v = xrealloc(strings, (count1 + count2 + 1) * sizeof(char*));
-	v[count1 + count2] = NULL;
+	v = xrealloc(strings, (count1 + count2 + 1) * حجم(حرف*));
+	v[count1 + count2] = عدم;
 	i = count2;
-	while (--i >= 0)
+	ܟܡܐ (--i >= 0)
 		v[count1 + i] = (need_to_dup ? xstrdup(add[i]) : add[i]);
-	return v;
+	ܦܢܐ v;
 }
-#if LEAK_HUNTING
-static char **xx_add_strings_to_strings(int lineno, char **strings, char **add, int need_to_dup)
+#ܐܢ LEAK_HUNTING
+ساكن حرف **xx_add_strings_to_strings(صحيح lineno, حرف **strings, حرف **add, صحيح need_to_dup)
 {
-	char **ptr = add_strings_to_strings(strings, add, need_to_dup);
+	حرف **ptr = add_strings_to_strings(strings, add, need_to_dup);
 	fdprintf(2, "line %d: add_strings_to_strings %p\n", lineno, ptr);
-	return ptr;
+	ܦܢܐ ptr;
 }
 #define add_strings_to_strings(strings, add, need_to_dup) \
 	xx_add_strings_to_strings(__LINE__, strings, add, need_to_dup)
 #endif
 
 /* Note: takes ownership of "add" ptr (it is not strdup'ed) */
-static char **add_string_to_strings(char **strings, char *add)
+ساكن حرف **add_string_to_strings(حرف **strings, حرف *add)
 {
-	char *v[2];
+	حرف *v[2];
 	v[0] = add;
-	v[1] = NULL;
-	return add_strings_to_strings(strings, v, /*dup:*/ 0);
+	v[1] = عدم;
+	ܦܢܐ add_strings_to_strings(strings, v, /*dup:*/ 0);
 }
 
-#if LEAK_HUNTING
-static char **xx_add_string_to_strings(int lineno, char **strings, char *add)
+#ܐܢ LEAK_HUNTING
+ساكن حرف **xx_add_string_to_strings(صحيح lineno, حرف **strings, حرف *add)
 {
-	char **ptr = add_string_to_strings(strings, add);
+	حرف **ptr = add_string_to_strings(strings, add);
 	fdprintf(2, "line %d: add_string_to_strings %p\n", lineno, ptr);
-	return ptr;
+	ܦܢܐ ptr;
 }
 #define add_string_to_strings(strings, add) \
 	xx_add_string_to_strings(__LINE__, strings, add)
 #endif
 
-static void free_strings(char **strings)
+ساكن فراغ free_strings(حرف **strings)
 {
-	char **v;
+	حرف **v;
 
-	if (!strings)
-		return;
+	ܐܢ (!strings)
+		ܦܢܐ;
 	v = strings;
-	while (*v) {
-		free(*v);
+	ܟܡܐ (*v) {
+		حرر(*v);
 		v++;
 	}
-	free(strings);
+	حرر(strings);
 }
 
 #ifndef __U_BOOT__
-static int dup_CLOEXEC(int fd, int avoid_fd)
+ساكن صحيح dup_CLOEXEC(صحيح fd, صحيح avoid_fd)
 {
-	int newfd;
+	صحيح newfd;
  repeat:
 	newfd = fcntl(fd, F_DUPFD_CLOEXEC, avoid_fd + 1);
-	if (newfd >= 0) {
-		if (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
+	ܐܢ (newfd >= 0) {
+		ܐܢ (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
 			close_on_exec_on(newfd);
-	} else { /* newfd < 0 */
-		if (errno == EBUSY)
-			goto repeat;
-		if (errno == EINTR)
-			goto repeat;
-		if (errno != EBADF) {
+	} ܐܚܪܢܐ { /* newfd < 0 */
+		ܐܢ (errno == EBUSY)
+			اذهب repeat;
+		ܐܢ (errno == EINTR)
+			اذهب repeat;
+		ܐܢ (errno != EBADF) {
 			/* "echo >&9999" gets EINVAL trying to save fd 1 to above 9999.
 			 * We could try saving it _below_ 9999 instead (how?), but
 			 * this probably means that dup2(9999,1) to effectuate >&9999
@@ -1668,147 +1668,147 @@ static int dup_CLOEXEC(int fd, int avoid_fd)
 			bb_perror_msg("fcntl(%d,F_DUPFD,%d)", fd, avoid_fd + 1);
 		}
 	}
-	return newfd;
+	ܦܢܐ newfd;
 }
 
-static int xdup_CLOEXEC_and_close(int fd, int avoid_fd)
+ساكن صحيح xdup_CLOEXEC_and_close(صحيح fd, صحيح avoid_fd)
 {
-	int newfd;
+	صحيح newfd;
  repeat:
 	newfd = fcntl(fd, F_DUPFD_CLOEXEC, avoid_fd + 1);
-	if (newfd < 0) {
-		if (errno == EBUSY)
-			goto repeat;
-		if (errno == EINTR)
-			goto repeat;
+	ܐܢ (newfd < 0) {
+		ܐܢ (errno == EBUSY)
+			اذهب repeat;
+		ܐܢ (errno == EINTR)
+			اذهب repeat;
 		/* fd was not open? */
-		if (errno == EBADF)
-			return fd;
+		ܐܢ (errno == EBADF)
+			ܦܢܐ fd;
 		xfunc_die();
 	}
-	if (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
+	ܐܢ (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
 		close_on_exec_on(newfd);
 	close(fd);
-	return newfd;
+	ܦܢܐ newfd;
 }
 
 /* Manipulating HFILEs */
-static HFILE *hfopen(const char *name)
+ساكن HFILE *hfopen(ثابت حرف *name)
 {
 	HFILE *fp;
-	int fd;
+	صحيح fd;
 
 	fd = STDIN_FILENO;
-	if (name) {
+	ܐܢ (name) {
 		fd = open(name, O_RDONLY | O_CLOEXEC);
-		if (fd < 0)
-			return NULL;
-		if (O_CLOEXEC == 0) /* ancient libc */
+		ܐܢ (fd < 0)
+			ܦܢܐ عدم;
+		ܐܢ (O_CLOEXEC == 0) /* ancient libc */
 			close_on_exec_on(fd);
 	}
 
-	fp = xmalloc(sizeof(*fp));
-	if (name == NULL)
+	fp = xmalloc(حجم(*fp));
+	ܐܢ (name == عدم)
 		G.HFILE_stdin = fp;
 	fp->fd = fd;
 	fp->cur = fp->end = fp->buf;
 	fp->next_hfile = G.HFILE_list;
 	G.HFILE_list = fp;
-	return fp;
+	ܦܢܐ fp;
 }
-static void hfclose(HFILE *fp)
+ساكن فراغ hfclose(HFILE *fp)
 {
 	HFILE **pp = &G.HFILE_list;
-	while (*pp) {
+	ܟܡܐ (*pp) {
 		HFILE *cur = *pp;
-		if (cur == fp) {
+		ܐܢ (cur == fp) {
 			*pp = cur->next_hfile;
-			break;
+			اكسر;
 		}
 		pp = &cur->next_hfile;
 	}
-	if (fp->fd >= 0)
+	ܐܢ (fp->fd >= 0)
 		close(fp->fd);
-	free(fp);
+	حرر(fp);
 }
-static int refill_HFILE_and_getc(HFILE *fp)
+ساكن صحيح refill_HFILE_and_getc(HFILE *fp)
 {
-	int n;
+	صحيح n;
 
-	if (fp->fd < 0) {
+	ܐܢ (fp->fd < 0) {
 		/* Already saw EOF */
-		return EOF;
+		ܦܢܐ EOF;
 	}
-#if ENABLE_HUSH_INTERACTIVE && !ENABLE_FEATURE_EDITING
+#ܐܢ ENABLE_HUSH_INTERACTIVE && !ENABLE_FEATURE_EDITING
 	/* If user presses ^C, read() restarts after SIGINT (we use SA_RESTART).
 	 * IOW: ^C will not immediately stop line input.
 	 * But poll() is different: it does NOT restart after signals.
 	 */
-	if (fp == G.HFILE_stdin) {
-		struct pollfd pfd[1];
+	ܐܢ (fp == G.HFILE_stdin) {
+		بنية pollfd pfd[1];
 		pfd[0].fd = fp->fd;
 		pfd[0].events = POLLIN;
 		n = poll(pfd, 1, -1);
-		if (n < 0
+		ܐܢ (n < 0
 		 /*&& errno == EINTR - assumed true */
 		 && sigismember(&G.pending_set, SIGINT)
 		) {
-			return '\0';
+			ܦܢܐ '\0';
 		}
 	}
-#else
+#ܐܚܪܢܐ
 /* if FEATURE_EDITING=y, we do not use this routine for interactive input */
 #endif
 	/* Try to buffer more input */
-	n = safe_read(fp->fd, fp->buf, sizeof(fp->buf));
-	if (n < 0) {
+	n = safe_read(fp->fd, fp->buf, حجم(fp->buf));
+	ܐܢ (n < 0) {
 		bb_simple_perror_msg("read error");
 		n = 0;
 	}
 	fp->cur = fp->buf;
 	fp->end = fp->buf + n;
-	if (n == 0) {
+	ܐܢ (n == 0) {
 		/* EOF/error */
 		close(fp->fd);
 		fp->fd = -1;
-		return EOF;
+		ܦܢܐ EOF;
 	}
-	return (unsigned char)(*fp->cur++);
+	ܦܢܐ (unsigned حرف)(*fp->cur++);
 }
 /* Inlined for common case of non-empty buffer.
  */
-static ALWAYS_INLINE int hfgetc(HFILE *fp)
+ساكن ALWAYS_INLINE صحيح hfgetc(HFILE *fp)
 {
-	if (fp->cur < fp->end)
-		return (unsigned char)(*fp->cur++);
+	ܐܢ (fp->cur < fp->end)
+		ܦܢܐ (unsigned حرف)(*fp->cur++);
 	/* Buffer empty */
-	return refill_HFILE_and_getc(fp);
+	ܦܢܐ refill_HFILE_and_getc(fp);
 }
-static int move_HFILEs_on_redirect(int fd, int avoid_fd)
+ساكن صحيح move_HFILEs_on_redirect(صحيح fd, صحيح avoid_fd)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
-		if (fd == fl->fd) {
+	ܟܡܐ (fl) {
+		ܐܢ (fd == fl->fd) {
 			/* We use it only on script files, they are all CLOEXEC */
 			fl->fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
 			debug_printf_redir("redirect_fd %d: matches a script fd, moving it to %d\n", fd, fl->fd);
-			return 1; /* "found and moved" */
+			ܦܢܐ 1; /* "found and moved" */
 		}
 		fl = fl->next_hfile;
 	}
-#if ENABLE_HUSH_MODE_X
-	if (G.x_mode_fd > 0 && fd == G.x_mode_fd) {
+#ܐܢ ENABLE_HUSH_MODE_X
+	ܐܢ (G.x_mode_fd > 0 && fd == G.x_mode_fd) {
 		G.x_mode_fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
-		return 1; /* "found and moved" */
+		ܦܢܐ 1; /* "found and moved" */
 	}
 #endif
-	return 0; /* "not in the list" */
+	ܦܢܐ 0; /* "not in the list" */
 }
-#if ENABLE_FEATURE_SH_STANDALONE && BB_MMU
-static void close_all_HFILE_list(void)
+#ܐܢ ENABLE_FEATURE_SH_STANDALONE && BB_MMU
+ساكن فراغ close_all_HFILE_list(فراغ)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
+	ܟܡܐ (fl) {
 		/* hfclose would also free HFILE object.
 		 * It is disastrous if we share memory with a vforked parent.
 		 * I'm not sure we never come here after vfork.
@@ -1820,39 +1820,39 @@ static void close_all_HFILE_list(void)
 		 * If we'd close it here, then e.g. interactive "set | sort"
 		 * with NOFORKed sort, would have sort's input fd closed.
 		 */
-		if (fl->fd > 0)
+		ܐܢ (fl->fd > 0)
 			/*hfclose(fl); - unsafe */
 			close(fl->fd);
 		fl = fl->next_hfile;
 	}
 }
 #endif
-static int fd_in_HFILEs(int fd)
+ساكن صحيح fd_in_HFILEs(صحيح fd)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
-		if (fl->fd == fd)
-			return 1;
+	ܟܡܐ (fl) {
+		ܐܢ (fl->fd == fd)
+			ܦܢܐ 1;
 		fl = fl->next_hfile;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
 #endif /* !__U_BOOT__ */
 
 /* Helpers for setting new $n and restoring them back
  */
-typedef struct save_arg_t {
-	char *sv_argv0;
-	char **sv_g_argv;
-	int sv_g_argc;
+تعريفنوع بنية save_arg_t {
+	حرف *sv_argv0;
+	حرف **sv_g_argv;
+	صحيح sv_g_argc;
 #ifndef __U_BOOT__
 	IF_HUSH_SET(smallint sv_g_malloced;)
 #endif /* !__U_BOOT__ */
 } save_arg_t;
 
 #ifndef __U_BOOT__
-static void save_and_replace_G_args(save_arg_t *sv, char **argv)
+ساكن فراغ save_and_replace_G_args(save_arg_t *sv, حرف **argv)
 {
 	sv->sv_argv0 = argv[0];
 	sv->sv_g_argv = G.global_argv;
@@ -1866,15 +1866,15 @@ static void save_and_replace_G_args(save_arg_t *sv, char **argv)
 	G.global_argc = 1 + string_array_len(argv + 1);
 }
 
-static void restore_G_args(save_arg_t *sv, char **argv)
+ساكن فراغ restore_G_args(save_arg_t *sv, حرف **argv)
 {
-#if ENABLE_HUSH_SET
-	if (G.global_args_malloced) {
+#ܐܢ ENABLE_HUSH_SET
+	ܐܢ (G.global_args_malloced) {
 		/* someone ran "set -- arg1 arg2 ...", undo */
-		char **pp = G.global_argv;
-		while (*++pp) /* note: does not free $0 */
-			free(*pp);
-		free(G.global_argv);
+		حرف **pp = G.global_argv;
+		ܟܡܐ (*++pp) /* note: does not free $0 */
+			حرر(*pp);
+		حرر(G.global_argv);
 	}
 #endif
 	argv[0] = sv->sv_argv0;
@@ -2026,14 +2026,14 @@ static void restore_G_args(save_arg_t *sv, char **argv)
  * are set to the default actions". bash interprets it so that traps which
  * are set to '' (ignore) are NOT reset to defaults. We do the same.
  */
-enum {
+تعداد {
 	SPECIAL_INTERACTIVE_SIGS = 0
 		| (1 << SIGTERM)
 		| (1 << SIGINT)
 		| (1 << SIGHUP)
 		,
 	SPECIAL_JOBSTOP_SIGS = 0
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 		| (1 << SIGTTIN)
 		| (1 << SIGTTOU)
 		| (1 << SIGTSTP)
@@ -2041,28 +2041,28 @@ enum {
 		,
 };
 
-static void record_pending_signo(int sig)
+ساكن فراغ record_pending_signo(صحيح sig)
 {
 	sigaddset(&G.pending_set, sig);
-#if ENABLE_FEATURE_EDITING
-	if (sig != SIGCHLD
+#ܐܢ ENABLE_FEATURE_EDITING
+	ܐܢ (sig != SIGCHLD
 	 || (G_traps && G_traps[SIGCHLD] && G_traps[SIGCHLD][0])
 	 /* ^^^ if SIGCHLD, interrupt line reading only if it has a trap */
 	) {
 		bb_got_signal = sig; /* for read_line_input: "we got a signal" */
 	}
 #endif
-#if ENABLE_HUSH_FAST
-	if (sig == SIGCHLD) {
+#ܐܢ ENABLE_HUSH_FAST
+	ܐܢ (sig == SIGCHLD) {
 		G.count_SIGCHLD++;
 //bb_error_msg("[%d] SIGCHLD_handler: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 	}
 #endif
 }
 
-static sighandler_t install_sighandler(int sig, sighandler_t handler)
+ساكن sighandler_t install_sighandler(صحيح sig, sighandler_t handler)
 {
-	struct sigaction old_sa;
+	بنية sigaction old_sa;
 
 	/* We could use signal() to install handlers... almost:
 	 * except that we need to mask ALL signals while handlers run.
@@ -2075,15 +2075,15 @@ static sighandler_t install_sighandler(int sig, sighandler_t handler)
 	/* G.sa.sa_flags = SA_RESTART;     - already done */
 	G.sa.sa_handler = handler;
 	sigaction(sig, &G.sa, &old_sa);
-	return old_sa.sa_handler;
+	ܦܢܐ old_sa.sa_handler;
 }
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static void hush_exit(int exitcode) NORETURN;
+ساكن فراغ hush_exit(صحيح exitcode) NORETURN;
 
-static void restore_ttypgrp_and__exit(void) NORETURN;
-static void restore_ttypgrp_and__exit(void)
+ساكن فراغ restore_ttypgrp_and__exit(فراغ) NORETURN;
+ساكن فراغ restore_ttypgrp_and__exit(فراغ)
 {
 	/* xfunc has failed! die die die */
 	/* no EXIT traps, this is an escape hatch! */
@@ -2091,7 +2091,7 @@ static void restore_ttypgrp_and__exit(void)
 	hush_exit(xfunc_error_retval);
 }
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 
 /* Needed only on some libc:
  * It was observed that on exit(), fgetc'ed buffered data
@@ -2106,8 +2106,8 @@ static void restore_ttypgrp_and__exit(void)
  * and in `cmd` handling.
  * If set as die_func(), this makes xfunc_die() exit via _exit(), not exit():
  */
-static void fflush_and__exit(void) NORETURN;
-static void fflush_and__exit(void)
+ساكن فراغ fflush_and__exit(فراغ) NORETURN;
+ساكن فراغ fflush_and__exit(فراغ)
 {
 	fflush_all();
 	_exit(xfunc_error_retval);
@@ -2124,12 +2124,12 @@ static void fflush_and__exit(void)
  * or called directly with -EXITCODE.
  * We also call it if xfunc is exiting.
  */
-static void sigexit(int sig) NORETURN;
-static void sigexit(int sig)
+ساكن فراغ sigexit(صحيح sig) NORETURN;
+ساكن فراغ sigexit(صحيح sig)
 {
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid) {
+	ܐܢ (G_saved_tty_pgrp && getpid() == G.root_pid) {
 		/* Disable all signals: job control, SIGPIPE, etc.
 		 * Mostly paranoid measure, to prevent infinite SIGTTOU.
 		 */
@@ -2138,62 +2138,62 @@ static void sigexit(int sig)
 	}
 
 	/* Not a signal, just exit */
-	if (sig <= 0)
+	ܐܢ (sig <= 0)
 		_exit(- sig);
 
 	kill_myself_with_sig(sig); /* does not return */
 }
-#else
+#ܐܚܪܢܐ
 
-# define disable_restore_tty_pgrp_on_exit() ((void)0)
-# define enable_restore_tty_pgrp_on_exit()  ((void)0)
+# define disable_restore_tty_pgrp_on_exit() ((فراغ)0)
+# define enable_restore_tty_pgrp_on_exit()  ((فراغ)0)
 
 #endif
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static sighandler_t pick_sighandler(unsigned sig)
+ساكن sighandler_t pick_sighandler(unsigned sig)
 {
 	sighandler_t handler = SIG_DFL;
-	if (sig < sizeof(unsigned)*8) {
+	ܐܢ (sig < حجم(unsigned)*8) {
 		unsigned sigmask = (1 << sig);
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 		/* is sig fatal? */
-		if (G_fatal_sig_mask & sigmask)
+		ܐܢ (G_fatal_sig_mask & sigmask)
 			handler = sigexit;
-		else
+		ܐܚܪܢܐ
 #endif
 		/* sig has special handling? */
-		if (G.special_sig_mask & sigmask) {
+		ܐܢ (G.special_sig_mask & sigmask) {
 			handler = record_pending_signo;
 			/* TTIN/TTOU/TSTP can't be set to record_pending_signo
 			 * in order to ignore them: they will be raised
 			 * in an endless loop when we try to do some
 			 * terminal ioctls! We do have to _ignore_ these.
 			 */
-			if (SPECIAL_JOBSTOP_SIGS & sigmask)
+			ܐܢ (SPECIAL_JOBSTOP_SIGS & sigmask)
 				handler = SIG_IGN;
 		}
 	}
-	return handler;
+	ܦܢܐ handler;
 }
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
 /* Restores tty foreground process group, and exits. */
-static void hush_exit(int exitcode)
+ساكن فراغ hush_exit(صحيح exitcode)
 {
-#if ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
+#ܐܢ ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
 	save_history(G.line_input_state); /* may be NULL */
 #endif
 
 	fflush_all();
-	if (G.exiting <= 0 && G_traps && G_traps[0] && G_traps[0][0]) {
-		char *argv[3];
+	ܐܢ (G.exiting <= 0 && G_traps && G_traps[0] && G_traps[0][0]) {
+		حرف *argv[3];
 		/* argv[0] is unused */
 		argv[1] = xstrdup(G_traps[0]); /* copy, since EXIT trap handler may modify G_traps[0] */
-		argv[2] = NULL;
+		argv[2] = عدم;
 		G.exiting = 1; /* prevent EXIT trap recursion */
 		/* Note: G_traps[0] is not cleared!
 		 * "trap" will still show it, if executed
@@ -2201,88 +2201,88 @@ static void hush_exit(int exitcode)
 		builtin_eval(argv);
 	}
 
-#if ENABLE_FEATURE_CLEAN_UP
+#ܐܢ ENABLE_FEATURE_CLEAN_UP
 	{
-		struct variable *cur_var;
-		if (G.cwd != bb_msg_unknown)
-			free((char*)G.cwd);
+		بنية variable *cur_var;
+		ܐܢ (G.cwd != bb_msg_unknown)
+			حرر((حرف*)G.cwd);
 		cur_var = G.top_var;
-		while (cur_var) {
-			struct variable *tmp = cur_var;
-			if (!cur_var->max_len)
-				free(cur_var->varstr);
+		ܟܡܐ (cur_var) {
+			بنية variable *tmp = cur_var;
+			ܐܢ (!cur_var->max_len)
+				حرر(cur_var->varstr);
 			cur_var = cur_var->next;
-			free(tmp);
+			حرر(tmp);
 		}
 	}
 #endif
 
 	fflush_all();
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	sigexit(- (exitcode & 0xff));
-#else
+#ܐܚܪܢܐ
 	_exit(exitcode);
 #endif
 }
 
 //TODO: return a mask of ALL handled sigs?
-static int check_and_run_traps(void)
+ساكن صحيح check_and_run_traps(فراغ)
 {
-	int last_sig = 0;
+	صحيح last_sig = 0;
 
-	while (1) {
-		int sig;
+	ܟܡܐ (1) {
+		صحيح sig;
 
-		if (sigisemptyset(&G.pending_set))
-			break;
+		ܐܢ (sigisemptyset(&G.pending_set))
+			اكسر;
 		sig = 0;
-		do {
+		ܥܒܕ {
 			sig++;
-			if (sigismember(&G.pending_set, sig)) {
+			ܐܢ (sigismember(&G.pending_set, sig)) {
 				sigdelset(&G.pending_set, sig);
-				goto got_sig;
+				اذهب got_sig;
 			}
-		} while (sig < NSIG);
-		break;
+		} ܟܡܐ (sig < NSIG);
+		اكسر;
  got_sig:
-#if ENABLE_HUSH_TRAP
-		if (G_traps && G_traps[sig]) {
+#ܐܢ ENABLE_HUSH_TRAP
+		ܐܢ (G_traps && G_traps[sig]) {
 			debug_printf_exec("%s: sig:%d handler:'%s'\n", __func__, sig, G.traps[sig]);
-			if (G_traps[sig][0]) {
+			ܐܢ (G_traps[sig][0]) {
 				/* We have user-defined handler */
 				smalluint save_rcode;
-				int save_pre;
-				char *argv[3];
+				صحيح save_pre;
+				حرف *argv[3];
 				/* argv[0] is unused */
 				argv[1] = xstrdup(G_traps[sig]);
 				/* why strdup? trap can modify itself: trap 'trap "echo oops" INT' INT */
-				argv[2] = NULL;
+				argv[2] = عدم;
 				save_pre = G.pre_trap_exitcode;
 				G.pre_trap_exitcode = save_rcode = G.last_exitcode;
 				builtin_eval(argv);
-				free(argv[1]);
+				حرر(argv[1]);
 				G.pre_trap_exitcode = save_pre;
 				G.last_exitcode = save_rcode;
-# if ENABLE_HUSH_FUNCTIONS
-				if (G.return_exitcode >= 0) {
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+				ܐܢ (G.return_exitcode >= 0) {
 					debug_printf_exec("trap exitcode:%d\n", G.return_exitcode);
 					G.last_exitcode = G.return_exitcode;
 				}
 # endif
 				last_sig = sig;
 			} /* else: "" trap, ignoring signal */
-			continue;
+			استمر;
 		}
 #endif
 		/* not a trap: special action */
-		switch (sig) {
-		case SIGINT:
+		بدل (sig) {
+		حالة SIGINT:
 			debug_printf_exec("%s: sig:%d default SIGINT handler\n", __func__, sig);
 			G.flag_SIGINT = 1;
 			last_sig = sig;
-			break;
-#if ENABLE_HUSH_JOB
-		case SIGHUP: {
+			اكسر;
+#ܐܢ ENABLE_HUSH_JOB
+		حالة SIGHUP: {
 			/* if (G_interactive_fd) - no need to check, the handler
 			 * is only installed if we *are* interactive */
 			{
@@ -2291,15 +2291,15 @@ static int check_and_run_traps(void)
 				 * or stopped.  Stopped jobs are sent SIGCONT
 				 * to ensure that they receive the SIGHUP."
 				 */
-				struct pipe *job;
+				بنية pipe *job;
 				debug_printf_exec("%s: sig:%d default SIGHUP handler\n", __func__, sig);
 				/* bash is observed to signal whole process groups,
 				 * not individual processes */
-				for (job = G.job_list; job; job = job->next) {
-					if (job->pgrp <= 0)
-						continue;
+				لكل (job = G.job_list; job; job = job->next) {
+					ܐܢ (job->pgrp <= 0)
+						استمر;
 					debug_printf_exec("HUPing pgrp %d\n", job->pgrp);
-					if (kill(- job->pgrp, SIGHUP) == 0)
+					ܐܢ (kill(- job->pgrp, SIGHUP) == 0)
 						kill(- job->pgrp, SIGCONT);
 				}
 			}
@@ -2307,8 +2307,8 @@ static int check_and_run_traps(void)
 			sigexit(SIGHUP);
 		}
 #endif
-#if ENABLE_HUSH_FAST
-		case SIGCHLD:
+#ܐܢ ENABLE_HUSH_FAST
+		حالة SIGCHLD:
 			debug_printf_exec("%s: sig:%d default SIGCHLD handler\n", __func__, sig);
 			G.count_SIGCHLD++;
 //bb_error_msg("[%d] check_and_run_traps: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
@@ -2316,9 +2316,9 @@ static int check_and_run_traps(void)
 			 * We don't do 'last_sig = sig' here -> NOT returning this sig.
 			 * This simplifies wait builtin a bit.
 			 */
-			break;
+			اكسر;
 #endif
-		default: /* ignored: */
+		افتراضي: /* ignored: */
 			debug_printf_exec("%s: sig:%d default handling is to ignore\n", __func__, sig);
 			/* SIGTERM, SIGQUIT, SIGTTIN, SIGTTOU, SIGTSTP */
 			/* Note:
@@ -2326,24 +2326,24 @@ static int check_and_run_traps(void)
 			 * Example: wait is not interrupted by TERM
 			 * in interactive shell, because TERM is ignored.
 			 */
-			break;
+			اكسر;
 		}
 	}
-	return last_sig;
+	ܦܢܐ last_sig;
 }
 
-static const char *get_cwd(int force)
+ساكن ثابت حرف *get_cwd(صحيح force)
 {
-	if (force || G.cwd == NULL) {
+	ܐܢ (force || G.cwd == عدم) {
 		/* xrealloc_getcwd_or_warn(arg) calls free(arg),
 		 * we must not try to free(bb_msg_unknown) */
-		if (G.cwd == bb_msg_unknown)
-			G.cwd = NULL;
-		G.cwd = xrealloc_getcwd_or_warn((char *)G.cwd);
-		if (!G.cwd)
+		ܐܢ (G.cwd == bb_msg_unknown)
+			G.cwd = عدم;
+		G.cwd = xrealloc_getcwd_or_warn((حرف *)G.cwd);
+		ܐܢ (!G.cwd)
 			G.cwd = bb_msg_unknown;
 	}
-	return G.cwd;
+	ܦܢܐ G.cwd;
 }
 
 #endif /* !__U_BOOT__ */
@@ -2351,86 +2351,86 @@ static const char *get_cwd(int force)
 /*
  * Shell and environment variable support
  */
-static struct variable **get_ptr_to_local_var(const char *name)
+ساكن بنية variable **get_ptr_to_local_var(ثابت حرف *name)
 {
-	struct variable **pp;
-	struct variable *cur;
+	بنية variable **pp;
+	بنية variable *cur;
 
 	pp = &G.top_var;
-	while ((cur = *pp) != NULL) {
-		if (varcmp(cur->varstr, name) == 0)
-			return pp;
+	ܟܡܐ ((cur = *pp) != عدم) {
+		ܐܢ (varcmp(cur->varstr, name) == 0)
+			ܦܢܐ pp;
 		pp = &cur->next;
 	}
-	return NULL;
+	ܦܢܐ عدم;
 }
 
-static const char* FAST_FUNC get_local_var_value(const char *name)
+ساكن ثابت حرف* FAST_FUNC get_local_var_value(ثابت حرف *name)
 {
-	struct variable **vpp;
+	بنية variable **vpp;
 
-	if (G.expanded_assignments) {
-		char **cpp = G.expanded_assignments;
-		while (*cpp) {
-			char *cp = *cpp;
-			if (varcmp(cp, name) == 0)
-				return strchr(cp, '=') + 1;
+	ܐܢ (G.expanded_assignments) {
+		حرف **cpp = G.expanded_assignments;
+		ܟܡܐ (*cpp) {
+			حرف *cp = *cpp;
+			ܐܢ (varcmp(cp, name) == 0)
+				ܦܢܐ strchr(cp, '=') + 1;
 			cpp++;
 		}
 	}
 
 	vpp = get_ptr_to_local_var(name);
-	if (vpp)
-		return strchr((*vpp)->varstr, '=') + 1;
+	ܐܢ (vpp)
+		ܦܢܐ strchr((*vpp)->varstr, '=') + 1;
 
 #ifndef __U_BOOT__
-	if (strcmp(name, "PPID") == 0)
-		return utoa(G.root_ppid);
+	ܐܢ (strcmp(name, "PPID") == 0)
+		ܦܢܐ utoa(G.root_ppid);
 #endif /* !__U_BOOT__ */
 	// bash compat: UID? EUID?
-#if ENABLE_HUSH_RANDOM_SUPPORT
-	if (strcmp(name, "RANDOM") == 0)
-		return utoa(next_random(&G.random_gen));
+#ܐܢ ENABLE_HUSH_RANDOM_SUPPORT
+	ܐܢ (strcmp(name, "RANDOM") == 0)
+		ܦܢܐ utoa(next_random(&G.random_gen));
 #endif
-#if ENABLE_HUSH_LINENO_VAR
-	if (strcmp(name, "LINENO") == 0)
-		return utoa(G.execute_lineno);
+#ܐܢ ENABLE_HUSH_LINENO_VAR
+	ܐܢ (strcmp(name, "LINENO") == 0)
+		ܦܢܐ utoa(G.execute_lineno);
 #endif
-#if BASH_EPOCH_VARS
+#ܐܢ BASH_EPOCH_VARS
 	{
-		const char *fmt = NULL;
-		if (strcmp(name, "EPOCHSECONDS") == 0)
+		ثابت حرف *fmt = عدم;
+		ܐܢ (strcmp(name, "EPOCHSECONDS") == 0)
 			fmt = "%llu";
-		else if (strcmp(name, "EPOCHREALTIME") == 0)
+		ܐܚܪܢܐ ܐܢ (strcmp(name, "EPOCHREALTIME") == 0)
 			fmt = "%llu.%06u";
-		if (fmt) {
-			struct timeval tv;
+		ܐܢ (fmt) {
+			بنية timeval tv;
 			xgettimeofday(&tv);
 			sprintf(G.epoch_buf, fmt, (unsigned long long)tv.tv_sec,
 					(unsigned)tv.tv_usec);
-			return G.epoch_buf;
+			ܦܢܐ G.epoch_buf;
 		}
 	}
 #endif
-	return NULL;
+	ܦܢܐ عدم;
 }
 
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_GETOPTS
-static void handle_changed_special_names(const char *name)
+#ܐܢ ENABLE_HUSH_GETOPTS
+ساكن فراغ handle_changed_special_names(ثابت حرف *name)
 {
-	if (varcmp(name, "OPTIND") == 0) {
+	ܐܢ (varcmp(name, "OPTIND") == 0) {
 		G.getopt_count = 0;
-		return;
+		ܦܢܐ;
 	}
 }
-#else
+#ܐܚܪܢܐ
 /* Do not even bother evaluating arguments */
-# define handle_changed_special_names(...) ((void)0)
+# define handle_changed_special_names(...) ((فراغ)0)
 #endif
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 /* Do not even bother evaluating arguments */
-# define handle_changed_special_names(...) ((void)0)
+# define handle_changed_special_names(...) ((فراغ)0)
 #endif /* __U_BOOT__ */
 
 /* str holds "NAME=VAL" and is expected to be malloced.
@@ -2443,49 +2443,49 @@ static void handle_changed_special_names(const char *name)
 #endif /* !__U_BOOT__ */
 #define SETFLAG_VARLVL_SHIFT   3
 #ifndef __U_BOOT__
-static int set_local_var(char *str, unsigned flags)
-#else /* __U_BOOT__ */
-int set_local_var_modern(char *str, int flags)
+ساكن صحيح set_local_var(حرف *str, unsigned flags)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+صحيح set_local_var_modern(حرف *str, صحيح flags)
 #endif /* __U_BOOT__ */
 {
-	struct variable **cur_pp;
-	struct variable *cur;
-	char *free_me = NULL;
-	char *eq_sign;
-	int name_len;
-	int retval;
+	بنية variable **cur_pp;
+	بنية variable *cur;
+	حرف *free_me = عدم;
+	حرف *eq_sign;
+	صحيح name_len;
+	صحيح retval;
 #ifndef __U_BOOT__
 	unsigned local_lvl = (flags >> SETFLAG_VARLVL_SHIFT);
 #endif /* !__U_BOOT__ */
 
 	eq_sign = strchr(str, '=');
-	if (HUSH_DEBUG && !eq_sign)
+	ܐܢ (HUSH_DEBUG && !eq_sign)
 		bb_simple_error_msg_and_die("BUG in setvar");
 
 	name_len = eq_sign - str + 1; /* including '=' */
 	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (strncmp(cur->varstr, str, name_len) != 0) {
+	ܟܡܐ ((cur = *cur_pp) != عدم) {
+		ܐܢ (strncmp(cur->varstr, str, name_len) != 0) {
 			cur_pp = &cur->next;
-			continue;
+			استمر;
 		}
 
 #ifndef __U_BOOT__
 		/* We found an existing var with this name */
-		if (cur->flg_read_only) {
+		ܐܢ (cur->flg_read_only) {
 			bb_error_msg("%s: readonly variable", str);
-			free(str);
+			حرر(str);
 //NOTE: in bash, assignment in "export READONLY_VAR=Z" fails, and sets $?=1,
 //but export per se succeeds (does put the var in env). We don't mimic that.
-			return -1;
+			ܦܢܐ -1;
 		}
-		if (flags & SETFLAG_UNEXPORT) { // && cur->flg_export ?
+		ܐܢ (flags & SETFLAG_UNEXPORT) { // && cur->flg_export ?
 			debug_printf_env("%s: unsetenv '%s'\n", __func__, str);
 			*eq_sign = '\0';
 			unsetenv(str);
 			*eq_sign = '=';
 		}
-		if (cur->var_nest_level < local_lvl) {
+		ܐܢ (cur->var_nest_level < local_lvl) {
 			/* bash 3.2.33(1) and exported vars:
 			 * # export z=z
 			 * # f() { local z=a; env | grep ^z; }
@@ -2494,7 +2494,7 @@ int set_local_var_modern(char *str, int flags)
 			 * # env | grep ^z
 			 * z=z
 			 */
-			if (cur->flg_export)
+			ܐܢ (cur->flg_export)
 				flags |= SETFLAG_EXPORT;
 			/* New variable is local ("local VAR=VAL" or
 			 * "VAR=VAL cmd")
@@ -2503,7 +2503,7 @@ int set_local_var_modern(char *str, int flags)
 			 * Remove it from global variable list:
 			 */
 			*cur_pp = cur->next;
-			if (G.shadowed_vars_pp) {
+			ܐܢ (G.shadowed_vars_pp) {
 				/* Save in "shadowed" list */
 				debug_printf_env("shadowing %s'%s'/%u by '%s'/%u\n",
 					cur->flg_export ? "exported " : "",
@@ -2511,38 +2511,38 @@ int set_local_var_modern(char *str, int flags)
 				);
 				cur->next = *G.shadowed_vars_pp;
 				*G.shadowed_vars_pp = cur;
-			} else {
+			} ܐܚܪܢܐ {
 				/* Came from pseudo_exec_argv(), no need to save: delete it */
 				debug_printf_env("shadow-deleting %s'%s'/%u by '%s'/%u\n",
 					cur->flg_export ? "exported " : "",
 					cur->varstr, cur->var_nest_level, str, local_lvl
 				);
-				if (cur->max_len == 0) /* allocated "VAR=VAL"? */
+				ܐܢ (cur->max_len == 0) /* allocated "VAR=VAL"? */
 					free_me = cur->varstr; /* then free it later */
-				free(cur);
+				حرر(cur);
 			}
-			break;
+			اكسر;
 		}
 #endif /* !__U_BOOT__ */
 
-		if (strcmp(cur->varstr + name_len, eq_sign + 1) == 0) {
+		ܐܢ (strcmp(cur->varstr + name_len, eq_sign + 1) == 0) {
 			debug_printf_env("assignement '%s' does not change anything\n", str);
  free_and_exp:
-			free(str);
-			goto exp;
+			حرر(str);
+			اذهب exp;
 		}
 
 		/* Replace the value in the found "struct variable" */
-		if (cur->max_len != 0) {
-			if (cur->max_len >= strnlen(str, cur->max_len + 1)) {
+		ܐܢ (cur->max_len != 0) {
+			ܐܢ (cur->max_len >= strnlen(str, cur->max_len + 1)) {
 				/* This one is from startup env, reuse space */
 				debug_printf_env("reusing startup env for '%s'\n", str);
 				strcpy(cur->varstr, str);
-				goto free_and_exp;
+				اذهب free_and_exp;
 			}
 			/* Can't reuse */
 			cur->max_len = 0;
-			goto set_str_and_exp;
+			اذهب set_str_and_exp;
 		}
 		/* max_len == 0 signifies "malloced" var, which we can
 		 * (and have to) free. But we can't free(cur->varstr) here:
@@ -2551,16 +2551,16 @@ int set_local_var_modern(char *str, int flags)
 		 * then putenv(new)+free(old).
 		 */
 		free_me = cur->varstr;
-		goto set_str_and_exp;
+		اذهب set_str_and_exp;
 	}
 
 	/* Not found or shadowed - create new variable struct */
 #ifndef __U_BOOT__
 	debug_printf_env("%s: alloc new var '%s'/%u\n", __func__, str, local_lvl);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	debug_printf_env("%s: alloc new var '%s'\n", __func__, str);
 #endif /* __U_BOOT__ */
-	cur = xzalloc(sizeof(*cur));
+	cur = xzalloc(حجم(*cur));
 #ifndef __U_BOOT__
 	cur->var_nest_level = local_lvl;
 #endif /* !__U_BOOT__ */
@@ -2571,21 +2571,21 @@ int set_local_var_modern(char *str, int flags)
 	cur->varstr = str;
  exp:
 #ifndef __U_BOOT__
-#if !BB_MMU || ENABLE_HUSH_READONLY
-	if (flags & SETFLAG_MAKE_RO) {
+#ܐܢ !BB_MMU || ENABLE_HUSH_READONLY
+	ܐܢ (flags & SETFLAG_MAKE_RO) {
 		cur->flg_read_only = 1;
 	}
 #endif
-	if (flags & SETFLAG_EXPORT)
+	ܐܢ (flags & SETFLAG_EXPORT)
 		cur->flg_export = 1;
 #endif /* !__U_BOOT__ */
 	retval = 0;
 #ifndef __U_BOOT__
-	if (cur->flg_export) {
-		if (flags & SETFLAG_UNEXPORT) {
+	ܐܢ (cur->flg_export) {
+		ܐܢ (flags & SETFLAG_UNEXPORT) {
 			cur->flg_export = 0;
 			/* unsetenv was already done */
-		} else {
+		} ܐܚܪܢܐ {
 			debug_printf_env("%s: putenv '%s'/%u\n", __func__, cur->varstr, cur->var_nest_level);
 			retval = putenv(cur->varstr);
 			/* fall through to "free(free_me)" -
@@ -2594,54 +2594,54 @@ int set_local_var_modern(char *str, int flags)
 		}
 	}
 #endif /* !__U_BOOT__ */
-	free(free_me);
+	حرر(free_me);
 
 	handle_changed_special_names(cur->varstr);
 
-	return retval;
+	ܦܢܐ retval;
 }
 
 #ifndef __U_BOOT__
-static int set_local_var0(char *str)
+ساكن صحيح set_local_var0(حرف *str)
 {
-	return set_local_var(str, 0);
+	ܦܢܐ set_local_var(str, 0);
 }
 
-static void FAST_FUNC set_local_var_from_halves(const char *name, const char *val)
+ساكن فراغ FAST_FUNC set_local_var_from_halves(ثابت حرف *name, ثابت حرف *val)
 {
-	char *var = xasprintf("%s=%s", name, val);
+	حرف *var = xasprintf("%s=%s", name, val);
 	set_local_var0(var);
 }
 
 /* Used at startup and after each cd */
-static void set_pwd_var(unsigned flag)
+ساكن فراغ set_pwd_var(unsigned flag)
 {
 	set_local_var(xasprintf("PWD=%s", get_cwd(/*force:*/ 1)), flag);
 }
 #endif /* !__U_BOOT__ */
 
-#if ENABLE_HUSH_UNSET || ENABLE_HUSH_GETOPTS
-static int unset_local_var(const char *name)
+#ܐܢ ENABLE_HUSH_UNSET || ENABLE_HUSH_GETOPTS
+ساكن صحيح unset_local_var(ثابت حرف *name)
 {
-	struct variable *cur;
-	struct variable **cur_pp;
+	بنية variable *cur;
+	بنية variable **cur_pp;
 
 	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (varcmp(cur->varstr, name) == 0) {
-			if (cur->flg_read_only) {
+	ܟܡܐ ((cur = *cur_pp) != عدم) {
+		ܐܢ (varcmp(cur->varstr, name) == 0) {
+			ܐܢ (cur->flg_read_only) {
 				bb_error_msg("%s: readonly variable", name);
-				return EXIT_FAILURE;
+				ܦܢܐ EXIT_FAILURE;
 			}
 
 			*cur_pp = cur->next;
 			debug_printf_env("%s: unsetenv '%s'\n", __func__, cur->varstr);
 			bb_unsetenv(cur->varstr);
-			if (!cur->max_len)
-				free(cur->varstr);
-			free(cur);
+			ܐܢ (!cur->max_len)
+				حرر(cur->varstr);
+			حرر(cur);
 
-			break;
+			اكسر;
 		}
 		cur_pp = &cur->next;
 	}
@@ -2649,7 +2649,7 @@ static int unset_local_var(const char *name)
 	/* Handle "unset LINENO" et al even if did not find the variable to unset */
 	handle_changed_special_names(name);
 
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
@@ -2657,18 +2657,18 @@ static int unset_local_var(const char *name)
 /*
  * Helpers for "var1=val1 var2=val2 cmd" feature
  */
-static void add_vars(struct variable *var)
+ساكن فراغ add_vars(بنية variable *var)
 {
-	struct variable *next;
+	بنية variable *next;
 
-	while (var) {
+	ܟܡܐ (var) {
 		next = var->next;
 		var->next = G.top_var;
 		G.top_var = var;
-		if (var->flg_export) {
+		ܐܢ (var->flg_export) {
 			debug_printf_env("%s: restoring exported '%s'/%u\n", __func__, var->varstr, var->var_nest_level);
 			putenv(var->varstr);
-		} else {
+		} ܐܚܪܢܐ {
 			debug_printf_env("%s: restoring variable '%s'/%u\n", __func__, var->varstr, var->var_nest_level);
 		}
 		var = next;
@@ -2680,27 +2680,27 @@ static void add_vars(struct variable *var)
  * which attempts to overwrite it.
  * The strings[] vector itself is freed.
  */
-static void set_vars_and_save_old(char **strings)
+ساكن فراغ set_vars_and_save_old(حرف **strings)
 {
-	char **s;
+	حرف **s;
 
-	if (!strings)
-		return;
+	ܐܢ (!strings)
+		ܦܢܐ;
 
 	s = strings;
-	while (*s) {
-		struct variable *var_p;
-		struct variable **var_pp;
-		char *eq;
+	ܟܡܐ (*s) {
+		بنية variable *var_p;
+		بنية variable **var_pp;
+		حرف *eq;
 
 		eq = strchr(*s, '=');
-		if (HUSH_DEBUG && !eq)
+		ܐܢ (HUSH_DEBUG && !eq)
 			bb_simple_error_msg_and_die("BUG in varexp4");
 		var_pp = get_ptr_to_local_var(*s);
-		if (var_pp) {
+		ܐܢ (var_pp) {
 			var_p = *var_pp;
-			if (var_p->flg_read_only) {
-				char **p;
+			ܐܢ (var_p->flg_read_only) {
+				حرف **p;
 				bb_error_msg("%s: readonly variable", *s);
 				/*
 				 * "VAR=V BLTIN" unsets VARs after BLTIN completes.
@@ -2709,10 +2709,10 @@ static void set_vars_and_save_old(char **strings)
 				 * causes doubled error message later, on unset.
 				 */
 				debug_printf_env("removing/freeing '%s' element\n", *s);
-				free(*s);
+				حرر(*s);
 				p = s;
-				do { *p = p[1]; p++; } while (*p);
-				goto next;
+				ܥܒܕ { *p = p[1]; p++; } ܟܡܐ (*p);
+				اذهب next;
 			}
 			/* below, set_local_var() with nest level will
 			 * "shadow" (remove) this variable from
@@ -2724,24 +2724,24 @@ static void set_vars_and_save_old(char **strings)
 		s++;
  next: ;
 	}
-	free(strings);
+	حرر(strings);
 }
 
 /*
  * Unicode helper
  */
-static void reinit_unicode_for_hush(void)
+ساكن فراغ reinit_unicode_for_hush(فراغ)
 {
 	/* Unicode support should be activated even if LANG is set
 	 * _during_ shell execution, not only if it was set when
 	 * shell was started. Therefore, re-check LANG every time:
 	 */
-	if (ENABLE_FEATURE_CHECK_UNICODE_IN_ENV
+	ܐܢ (ENABLE_FEATURE_CHECK_UNICODE_IN_ENV
 	 || ENABLE_UNICODE_USING_LOCALE
 	) {
-		const char *s = get_local_var_value("LC_ALL");
-		if (!s) s = get_local_var_value("LC_CTYPE");
-		if (!s) s = get_local_var_value("LANG");
+		ثابت حرف *s = get_local_var_value("LC_ALL");
+		ܐܢ (!s) s = get_local_var_value("LC_CTYPE");
+		ܐܢ (!s) s = get_local_var_value("LANG");
 		reinit_unicode(s);
 	}
 }
@@ -2751,7 +2751,7 @@ static void reinit_unicode_for_hush(void)
  * in_str support (strings, and "strings" read from files).
  */
 
-#if ENABLE_HUSH_INTERACTIVE
+#ܐܢ ENABLE_HUSH_INTERACTIVE
 #ifndef __U_BOOT__
 /* To test correct lineedit/interactive behavior, type from command line:
  *	echo $P\
@@ -2761,21 +2761,21 @@ static void reinit_unicode_for_hush(void)
  *	\
  * It exercises a lot of corner cases.
  */
-static const char *setup_prompt_string(void)
+ساكن ثابت حرف *setup_prompt_string(فراغ)
 {
-	const char *prompt_str;
+	ثابت حرف *prompt_str;
 
 	debug_printf_prompt("%s promptmode:%d\n", __func__, G.promptmode);
 
-# if ENABLE_FEATURE_EDITING_FANCY_PROMPT
+# ܐܢ ENABLE_FEATURE_EDITING_FANCY_PROMPT
 	prompt_str = get_local_var_value(G.promptmode == 0 ? "PS1" : "PS2");
-	if (!prompt_str)
+	ܐܢ (!prompt_str)
 		prompt_str = "";
-# else
+# ܐܚܪܢܐ
 	prompt_str = "> "; /* if PS2, else... */
-	if (G.promptmode == 0) { /* PS1 */
+	ܐܢ (G.promptmode == 0) { /* PS1 */
 		/* No fancy prompts supported, (re)generate "CURDIR $ " by hand */
-		free(G.PS1);
+		حرر(G.PS1);
 		/* bash uses $PWD value, even if it is set by user.
 		 * It uses current dir only if PWD is unset.
 		 * We always use current dir. */
@@ -2783,34 +2783,34 @@ static const char *setup_prompt_string(void)
 	}
 # endif
 	debug_printf("prompt_str '%s'\n", prompt_str);
-	return prompt_str;
+	ܦܢܐ prompt_str;
 }
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static int get_user_input(struct in_str *i)
-#else /* __U_BOOT__ */
-static void get_user_input(struct in_str *i)
+ساكن صحيح get_user_input(بنية in_str *i)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+ساكن فراغ get_user_input(بنية in_str *i)
 #endif /* __U_BOOT__ */
 {
 #ifndef __U_BOOT__
-# if ENABLE_FEATURE_EDITING
+# ܐܢ ENABLE_FEATURE_EDITING
 	/* In EDITING case, this function reads next input line,
 	 * saves it in i->p, then returns 1st char of it.
 	 */
-	int r;
-	const char *prompt_str;
+	صحيح r;
+	ثابت حرف *prompt_str;
 
 	prompt_str = setup_prompt_string();
-	for (;;) {
+	لكل (;;) {
 		reinit_unicode_for_hush();
 		G.flag_SIGINT = 0;
 
 		bb_got_signal = 0;
-		if (!sigisemptyset(&G.pending_set)) {
+		ܐܢ (!sigisemptyset(&G.pending_set)) {
 			/* Whoops, already got a signal, do not call read_line_input */
 			bb_got_signal = r = -1;
-		} else {
+		} ܐܚܪܢܐ {
 			/* For shell, LI_INTERRUPTIBLE is set:
 			 * read_line_input will abort on either
 			 * getting EINTR in poll() and bb_got_signal became != 0,
@@ -2829,43 +2829,43 @@ static void get_user_input(struct in_str *i)
 				G.user_input_buf, CONFIG_FEATURE_EDITING_MAX_LEN-1
 			);
 			/* read_line_input intercepts ^C, "convert" it to SIGINT */
-			if (r == 0)
-				raise(SIGINT);
+			ܐܢ (r == 0)
+				ارفع(SIGINT);
 		}
 		/* bash prints ^C (before running a trap, if any)
 		 * both on keyboard ^C and on real SIGINT (non-kbd generated).
 		 */
-		if (sigismember(&G.pending_set, SIGINT)) {
-			write(STDOUT_FILENO, "^C\n", 3);
+		ܐܢ (sigismember(&G.pending_set, SIGINT)) {
+			اكتب(STDOUT_FILENO, "^C\n", 3);
 			G.last_exitcode = 128 | SIGINT;
 		}
 		check_and_run_traps();
-		if (r == 0) /* keyboard ^C? */
-			continue; /* go back, read another input line */
-		if (r > 0) /* normal input? (no ^C, no ^D, no signals) */
-			break;
-		if (!bb_got_signal) {
+		ܐܢ (r == 0) /* keyboard ^C? */
+			استمر; /* go back, read another input line */
+		ܐܢ (r > 0) /* normal input? (no ^C, no ^D, no signals) */
+			اكسر;
+		ܐܢ (!bb_got_signal) {
 			/* r < 0: ^D/EOF/error detected (but not signal) */
 			/* ^D on interactive input goes to next line before exiting: */
-			write(STDOUT_FILENO, "\n", 1);
-			i->p = NULL;
+			اكتب(STDOUT_FILENO, "\n", 1);
+			i->p = عدم;
 			i->peek_buf[0] = r = EOF;
-			return r;
+			ܦܢܐ r;
 		}
 		/* it was a signal: go back, read another input line */
 	}
 	i->p = G.user_input_buf;
-	return (unsigned char)*i->p++;
-# else
+	ܦܢܐ (unsigned حرف)*i->p++;
+# ܐܚܪܢܐ
 	/* In !EDITING case, this function gets called for every char.
 	 * Buffering happens deeper in the call chain, in hfgetc(i->file).
 	 */
-	int r;
+	صحيح r;
 
-	for (;;) {
+	لكل (;;) {
 		G.flag_SIGINT = 0;
-		if (i->last_char == '\0' || i->last_char == '\n') {
-			const char *prompt_str = setup_prompt_string();
+		ܐܢ (i->last_char == '\0' || i->last_char == '\n') {
+			ثابت حرف *prompt_str = setup_prompt_string();
 			/* Why check_and_run_traps here? Try this interactively:
 			 * $ trap 'echo INT' INT; (sleep 2; kill -INT $$) &
 			 * $ <[enter], repeatedly...>
@@ -2881,72 +2881,72 @@ static void get_user_input(struct in_str *i)
 		 * it generates SIGINT as usual.
 		 */
 		check_and_run_traps();
-		if (r != '\0' && !G.flag_SIGINT)
-			break;
-		if (G.flag_SIGINT) {
+		ܐܢ (r != '\0' && !G.flag_SIGINT)
+			اكسر;
+		ܐܢ (G.flag_SIGINT) {
 			/* ^C or SIGINT: repeat */
 			/* bash prints ^C even on real SIGINT (non-kbd generated) */
 			/* kernel prints "^C" itself, just print newline: */
-			write(STDOUT_FILENO, "\n", 1);
+			اكتب(STDOUT_FILENO, "\n", 1);
 			G.last_exitcode = 128 | SIGINT;
 		}
 	}
-	return r;
+	ܦܢܐ r;
 # endif
-#else /* __U_BOOT__ */
-	int n;
-	int promptme;
-	static char the_command[CONFIG_SYS_CBSIZE + 1];
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	صحيح n;
+	صحيح promptme;
+	ساكن حرف the_command[CONFIG_SYS_CBSIZE + 1];
 
 	bootretry_reset_cmd_timeout();
 	promptme = 1;
 	n = u_boot_cli_readline(i);
 
 # ifdef CONFIG_BOOT_RETRY_TIME
-	if (n == -2) {
+	ܐܢ (n == -2) {
 		puts("\nTimeout waiting for command\n");
 #  ifdef CONFIG_RESET_TO_RETRY
-		do_reset(NULL, 0, 0, NULL);
+		do_reset(عدم, 0, 0, عدم);
 #  elif IS_ENABLED(CONFIG_RETRY_BOOTCMD)
 	strcpy(console_buffer, "run bootcmd\n");
-# else
+# ܐܚܪܢܐ
 #	error "This only works with CONFIG_RESET_TO_RETRY or CONFIG_BOOT_RETRY_COMMAND enabled"
 #  endif
 	}
 # endif
-	if (n == -1 ) {
+	ܐܢ (n == -1 ) {
 		G.flag_repeat = 0;
 		promptme = 0;
 	}
 	n = strlen(console_buffer);
 	console_buffer[n] = '\n';
 	console_buffer[n+1]= '\0';
-	if (had_ctrlc())
+	ܐܢ (had_ctrlc())
 		G.flag_repeat = 0;
 	clear_ctrlc();
 	G.do_repeat = 0;
 #ifndef __U_BOOT__
-	if (G.promptmode == 1) {
-#else /* __U_BOOT__ */
-	if (!G.promptmode) {
+	ܐܢ (G.promptmode == 1) {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	ܐܢ (!G.promptmode) {
 #endif /* __U_BOOT__ */
-		if (console_buffer[0] == '\n'&& G.flag_repeat == 0) {
+		ܐܢ (console_buffer[0] == '\n'&& G.flag_repeat == 0) {
 			strcpy(the_command, console_buffer);
 		}
-		else {
-			if (console_buffer[0] != '\n') {
+		ܐܚܪܢܐ {
+			ܐܢ (console_buffer[0] != '\n') {
 				strcpy(the_command, console_buffer);
 				G.flag_repeat = 1;
 			}
-			else {
+			ܐܚܪܢܐ {
 				G.do_repeat = 1;
 			}
 		}
 		i->p = the_command;
 	}
-	else {
-		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer)
+	ܐܚܪܢܐ {
+		ܐܢ (console_buffer[0] != '\n') {
+			ܐܢ (strlen(the_command) + strlen(console_buffer)
 				< CONFIG_SYS_CBSIZE) {
 				n = strlen(the_command);
 #ifdef __U_BOOT__
@@ -2955,21 +2955,21 @@ static void get_user_input(struct in_str *i)
 				 * n is greater than 0.
 				 * This bug was found by Harald Seiler.
 				 */
-				if (n > 0)
+				ܐܢ (n > 0)
 					the_command[n-1] = ' ';
 				strcpy(&the_command[n], console_buffer);
-#else /* !__U_BOOT__ */
+#ܐܚܪܢܐ /* !__U_BOOT__ */
 			the_command[n-1] = ' ';
 			strcpy(&the_command[n], console_buffer);
 #endif /* !__U_BOOT__ */
 				}
-				else {
+				ܐܚܪܢܐ {
 					the_command[0] = '\n';
 					the_command[1] = '\0';
 					G.flag_repeat = 0;
 				}
 		}
-		if (promptme == 0) {
+		ܐܢ (promptme == 0) {
 			the_command[0] = '\n';
 			the_command[1] = '\0';
 		}
@@ -2979,17 +2979,17 @@ static void get_user_input(struct in_str *i)
 }
 /* This is the magic location that prints prompts
  * and gets data back from the user */
-static int fgetc_interactive(struct in_str *i)
+ساكن صحيح fgetc_interactive(بنية in_str *i)
 {
-	int ch;
+	صحيح ch;
 #ifndef __U_BOOT__
 	/* If it's interactive stdin, get new line. */
-	if (G_interactive_fd && i->file == G.HFILE_stdin) {
+	ܐܢ (G_interactive_fd && i->file == G.HFILE_stdin) {
 #endif /* !__U_BOOT__ */
 #ifndef __U_BOOT__
 		/* Returns first char (or EOF), the rest is in i->p[] */
 		ch = get_user_input(i);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 		/* Avoid garbage value and make clang happy. */
 		ch = 0;
 		/*
@@ -2998,64 +2998,64 @@ static int fgetc_interactive(struct in_str *i)
 		 * So, we need to take the read character from i->p[].
 		 */
 		get_user_input(i);
-		if (i->p && *i->p) {
+		ܐܢ (i->p && *i->p) {
 			ch = *i->p++;
 		}
 #endif /* __U_BOOT__ */
 		G.promptmode = 1; /* PS2 */
 		debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 #ifndef __U_BOOT__
-	} else {
+	} ܐܚܪܢܐ {
 		/* Not stdin: script file, sourced file, etc */
-		do ch = hfgetc(i->file); while (ch == '\0');
+		ܥܒܕ ch = hfgetc(i->file); ܟܡܐ (ch == '\0');
 	}
 #endif /* !__U_BOOT__ */
-	return ch;
+	ܦܢܐ ch;
 }
-#else  /* !INTERACTIVE */
+#ܐܚܪܢܐ  /* !INTERACTIVE */
 #ifndef __U_BOOT__
-static ALWAYS_INLINE int fgetc_interactive(struct in_str *i)
+ساكن ALWAYS_INLINE صحيح fgetc_interactive(بنية in_str *i)
 {
-	int ch;
-	do ch = hfgetc(i->file); while (ch == '\0');
-	return ch;
+	صحيح ch;
+	ܥܒܕ ch = hfgetc(i->file); ܟܡܐ (ch == '\0');
+	ܦܢܐ ch;
 }
 #endif /* !__U_BOOT__ */
 #endif  /* !INTERACTIVE */
 
-static int i_getch(struct in_str *i)
+ساكن صحيح i_getch(بنية in_str *i)
 {
-	int ch;
+	صحيح ch;
 
 #ifndef __U_BOOT__
-	if (!i->file) {
+	ܐܢ (!i->file) {
 		/* string-based in_str */
-		ch = (unsigned char)*i->p;
-		if (ch != '\0') {
+		ch = (unsigned حرف)*i->p;
+		ܐܢ (ch != '\0') {
 			i->p++;
 			i->last_char = ch;
-#if ENABLE_HUSH_LINENO_VAR
-			if (ch == '\n') {
+#ܐܢ ENABLE_HUSH_LINENO_VAR
+			ܐܢ (ch == '\n') {
 				G.parse_lineno++;
 				debug_printf_parse("G.parse_lineno++ = %u\n", G.parse_lineno);
 			}
 #endif
-			return ch;
+			ܦܢܐ ch;
 		}
-		return EOF;
+		ܦܢܐ EOF;
 	}
 
 #endif /* !__U_BOOT__ */
 	/* FILE-based in_str */
 
-#if ENABLE_FEATURE_EDITING
+#ܐܢ ENABLE_FEATURE_EDITING
 	/* This can be stdin, check line editing char[] buffer */
-	if (i->p && *i->p != '\0') {
-		ch = (unsigned char)*i->p++;
-		goto out;
+	ܐܢ (i->p && *i->p != '\0') {
+		ch = (unsigned حرف)*i->p++;
+		اذهب out;
 #ifndef __U_BOOT__
 	}
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	/*
 	 * There are two ways for command to be called:
 	 * 1. The first one is when they are typed by the user.
@@ -3067,21 +3067,21 @@ static int i_getch(struct in_str *i)
 	 * NOTE G.run_command_flags is only set on run_command call stack, so
 	 * we use this to know if we come from user input or run_command().
 	 */
-	} else if (i->p && *i->p == '\0' && G.run_command_flags){
-		return EOF;
+	} ܐܚܪܢܐ ܐܢ (i->p && *i->p == '\0' && G.run_command_flags){
+		ܦܢܐ EOF;
 	}
 #endif /* __U_BOOT__ */
 #endif
 #ifndef __U_BOOT__
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	ch = i->peek_buf[0];
-	if (ch != 0) {
-		int ch2 = i->peek_buf[1];
+	ܐܢ (ch != 0) {
+		صحيح ch2 = i->peek_buf[1];
 		i->peek_buf[0] = ch2;
-		if (ch2 == 0) /* very likely, avoid redundant write */
-			goto out;
+		ܐܢ (ch2 == 0) /* very likely, avoid redundant write */
+			اذهب out;
 		i->peek_buf[1] = 0;
-		goto out;
+		اذهب out;
 	}
 
 #endif /* !__U_BOOT__ */
@@ -3089,56 +3089,56 @@ static int i_getch(struct in_str *i)
  out:
 	debug_printf("file_get: got '%c' %d\n", ch, ch);
 	i->last_char = ch;
-#if ENABLE_HUSH_LINENO_VAR
-	if (ch == '\n') {
+#ܐܢ ENABLE_HUSH_LINENO_VAR
+	ܐܢ (ch == '\n') {
 		G.parse_lineno++;
 		debug_printf_parse("G.parse_lineno++ = %u\n", G.parse_lineno);
 	}
 #endif
-	return ch;
+	ܦܢܐ ch;
 }
 
-static int i_peek(struct in_str *i)
+ساكن صحيح i_peek(بنية in_str *i)
 {
 #ifndef __U_BOOT__
-	int ch;
+	صحيح ch;
 
-	if (!i->file) {
+	ܐܢ (!i->file) {
 		/* string-based in_str */
 		/* Doesn't report EOF on NUL. None of the callers care. */
-		return (unsigned char)*i->p;
+		ܦܢܐ (unsigned حرف)*i->p;
 	}
 
 	/* FILE-based in_str */
 
-#if ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
+#ܐܢ ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
 	/* This can be stdin, check line editing char[] buffer */
-	if (i->p && *i->p != '\0')
-		return (unsigned char)*i->p;
+	ܐܢ (i->p && *i->p != '\0')
+		ܦܢܐ (unsigned حرف)*i->p;
 #endif
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	ch = i->peek_buf[0];
-	if (ch != 0)
-		return ch;
+	ܐܢ (ch != 0)
+		ܦܢܐ ch;
 
 	/* Need to get a new char */
 	ch = fgetc_interactive(i);
 	debug_printf("file_peek: got '%c' %d\n", ch, ch);
 
 	/* Save it by either rolling back line editing buffer, or in i->peek_buf[0] */
-#if ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
-	if (i->p) {
+#ܐܢ ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
+	ܐܢ (i->p) {
 		i->p -= 1;
-		return ch;
+		ܦܢܐ ch;
 	}
 #endif
 	i->peek_buf[0] = ch;
 	/*i->peek_buf[1] = 0; - already is */
-	return ch;
-#else /* __U_BOOT__ */
+	ܦܢܐ ch;
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	/* string-based in_str */
 	/* Doesn't report EOF on NUL. None of the callers care. */
-	return (unsigned char)*i->p;
+	ܦܢܐ (unsigned حرف)*i->p;
 #endif /* __U_BOOT__ */
 }
 
@@ -3146,10 +3146,10 @@ static int i_peek(struct in_str *i)
  * IOW: we know the previous peek saw an ordinary char, not EOF, not NUL,
  * not end-of-line. Therefore we never need to read a new editing line here.
  */
-static int i_peek2(struct in_str *i)
+ساكن صحيح i_peek2(بنية in_str *i)
 {
 #ifndef __U_BOOT__
-	int ch;
+	صحيح ch;
 #endif /* !__U_BOOT__ */
 
 	/* There are two cases when i->p[] buffer exists.
@@ -3158,8 +3158,8 @@ static int i_peek2(struct in_str *i)
 	 * In both cases, we know that i->p[0] exists and not NUL, and
 	 * the peek2 result is in i->p[1].
 	 */
-	if (i->p)
-		return (unsigned char)i->p[1];
+	ܐܢ (i->p)
+		ܦܢܐ (unsigned حرف)i->p[1];
 
 #ifndef __U_BOOT__
 	/* Now we know it is a file-based in_str. */
@@ -3167,30 +3167,30 @@ static int i_peek2(struct in_str *i)
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	/* Is there 2nd char? */
 	ch = i->peek_buf[1];
-	if (ch == 0) {
+	ܐܢ (ch == 0) {
 		/* We did not read it yet, get it now */
-		do ch = hfgetc(i->file); while (ch == '\0');
+		ܥܒܕ ch = hfgetc(i->file); ܟܡܐ (ch == '\0');
 		i->peek_buf[1] = ch;
 	}
 
 	debug_printf("file_peek2: got '%c' %d\n", ch, ch);
-	return ch;
-#else
-	return 0;
+	ܦܢܐ ch;
+#ܐܚܪܢܐ
+	ܦܢܐ 0;
 #endif /* __U_BOOT__ */
 }
 
-static int i_getch_and_eat_bkslash_nl(struct in_str *input)
+ساكن صحيح i_getch_and_eat_bkslash_nl(بنية in_str *input)
 {
-	for (;;) {
-		int ch, ch2;
+	لكل (;;) {
+		صحيح ch, ch2;
 
 		ch = i_getch(input);
-		if (ch != '\\')
-			return ch;
+		ܐܢ (ch != '\\')
+			ܦܢܐ ch;
 		ch2 = i_peek(input);
-		if (ch2 != '\n')
-			return ch;
+		ܐܢ (ch2 != '\n')
+			ܦܢܐ ch;
 		/* backslash+newline, skip it */
 		i_getch(input);
 	}
@@ -3199,17 +3199,17 @@ static int i_getch_and_eat_bkslash_nl(struct in_str *input)
 /* Note: this function _eats_ \<newline> pairs, safe to use plain
  * i_getch() after it instead of i_getch_and_eat_bkslash_nl().
  */
-static int i_peek_and_eat_bkslash_nl(struct in_str *input)
+ساكن صحيح i_peek_and_eat_bkslash_nl(بنية in_str *input)
 {
-	for (;;) {
-		int ch, ch2;
+	لكل (;;) {
+		صحيح ch, ch2;
 
 		ch = i_peek(input);
-		if (ch != '\\')
-			return ch;
+		ܐܢ (ch != '\\')
+			ܦܢܐ ch;
 		ch2 = i_peek2(input);
-		if (ch2 != '\n')
-			return ch;
+		ܐܢ (ch2 != '\n')
+			ܦܢܐ ch;
 		/* backslash+newline, skip it */
 		i_getch(input);
 		i_getch(input);
@@ -3217,21 +3217,21 @@ static int i_peek_and_eat_bkslash_nl(struct in_str *input)
 }
 
 #ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, HFILE *fp)
-#else /* __U_BOOT__ */
-static void setup_file_in_str(struct in_str *i)
+ساكن فراغ setup_file_in_str(بنية in_str *i, HFILE *fp)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+ساكن فراغ setup_file_in_str(بنية in_str *i)
 #endif /* __U_BOOT__ */
 {
-	memset(i, 0, sizeof(*i));
+	memset(i, 0, حجم(*i));
 #ifndef __U_BOOT__
 	i->file = fp;
 	/* i->p = NULL; */
 #endif /* !__U_BOOT__ */
 }
 
-static void setup_string_in_str(struct in_str *i, const char *s)
+ساكن فراغ setup_string_in_str(بنية in_str *i, ثابت حرف *s)
 {
-	memset(i, 0, sizeof(*i));
+	memset(i, 0, حجم(*i));
 	/*i->file = NULL */;
 	i->p = s;
 }
@@ -3239,113 +3239,113 @@ static void setup_string_in_str(struct in_str *i, const char *s)
 /*
  * o_string support
  */
-#define B_CHUNK  (32 * sizeof(char*))
+#define B_CHUNK  (32 * حجم(حرف*))
 
-static void o_reset_to_empty_unquoted(o_string *o)
+ساكن فراغ o_reset_to_empty_unquoted(o_string *o)
 {
 	o->length = 0;
 	o->has_quoted_part = 0;
-	if (o->data)
+	ܐܢ (o->data)
 		o->data[0] = '\0';
 }
 
-static void o_free_and_set_NULL(o_string *o)
+ساكن فراغ o_free_and_set_NULL(o_string *o)
 {
-	free(o->data);
-	memset(o, 0, sizeof(*o));
+	حرر(o->data);
+	memset(o, 0, حجم(*o));
 }
 
-static ALWAYS_INLINE void o_free(o_string *o)
+ساكن ALWAYS_INLINE فراغ o_free(o_string *o)
 {
-	free(o->data);
+	حرر(o->data);
 }
 
-static void o_grow_by(o_string *o, int len)
+ساكن فراغ o_grow_by(o_string *o, صحيح len)
 {
-	if (o->length + len > o->maxlen) {
+	ܐܢ (o->length + len > o->maxlen) {
 		o->maxlen += (2 * len) | (B_CHUNK-1);
 		o->data = xrealloc(o->data, 1 + o->maxlen);
 	}
 }
 
-static void o_addchr(o_string *o, int ch)
+ساكن فراغ o_addchr(o_string *o, صحيح ch)
 {
 	debug_printf("o_addchr: '%c' o->length=%d o=%p\n", ch, o->length, o);
-	if (o->length < o->maxlen) {
+	ܐܢ (o->length < o->maxlen) {
 		/* likely. avoid o_grow_by() call */
  add:
 		o->data[o->length] = ch;
 		o->length++;
 		o->data[o->length] = '\0';
-		return;
+		ܦܢܐ;
 	}
 	o_grow_by(o, 1);
-	goto add;
+	اذهب add;
 }
 
-#if 0
+#ܐܢ 0
 /* Valid only if we know o_string is not empty */
-static void o_delchr(o_string *o)
+ساكن فراغ o_delchr(o_string *o)
 {
 	o->length--;
 	o->data[o->length] = '\0';
 }
 #endif
 
-static void o_addblock(o_string *o, const char *str, int len)
+ساكن فراغ o_addblock(o_string *o, ثابت حرف *str, صحيح len)
 {
 	o_grow_by(o, len);
-	((char*)mempcpy(&o->data[o->length], str, len))[0] = '\0';
+	((حرف*)mempcpy(&o->data[o->length], str, len))[0] = '\0';
 	o->length += len;
 }
 
-static void o_addstr(o_string *o, const char *str)
+ساكن فراغ o_addstr(o_string *o, ثابت حرف *str)
 {
 	o_addblock(o, str, strlen(str));
 }
 
 #ifndef __U_BOOT__
-static void o_addstr_with_NUL(o_string *o, const char *str)
+ساكن فراغ o_addstr_with_NUL(o_string *o, ثابت حرف *str)
 {
 	o_addblock(o, str, strlen(str) + 1);
 }
 #endif /* !__U_BOOT__ */
 
-#if !BB_MMU
-static void nommu_addchr(o_string *o, int ch)
+#ܐܢ !BB_MMU
+ساكن فراغ nommu_addchr(o_string *o, صحيح ch)
 {
-	if (o)
+	ܐܢ (o)
 		o_addchr(o, ch);
 }
-#else
-# define nommu_addchr(o, str) ((void)0)
+#ܐܚܪܢܐ
+# define nommu_addchr(o, str) ((فراغ)0)
 #endif
 
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_MODE_X
-static void x_mode_addchr(int ch)
+#ܐܢ ENABLE_HUSH_MODE_X
+ساكن فراغ x_mode_addchr(صحيح ch)
 {
 	o_addchr(&G.x_mode_buf, ch);
 }
-static void x_mode_addstr(const char *str)
+ساكن فراغ x_mode_addstr(ثابت حرف *str)
 {
 	o_addstr(&G.x_mode_buf, str);
 }
-static void x_mode_addblock(const char *str, int len)
+ساكن فراغ x_mode_addblock(ثابت حرف *str, صحيح len)
 {
 	o_addblock(&G.x_mode_buf, str, len);
 }
-static void x_mode_prefix(void)
+ساكن فراغ x_mode_prefix(فراغ)
 {
-	int n = G.x_mode_depth;
-	do x_mode_addchr('+'); while (--n >= 0);
+	صحيح n = G.x_mode_depth;
+	ܥܒܕ x_mode_addchr('+'); ܟܡܐ (--n >= 0);
 }
-static void x_mode_flush(void)
+ساكن فراغ x_mode_flush(فراغ)
 {
-	int len = G.x_mode_buf.length;
-	if (len <= 0)
-		return;
-	if (G.x_mode_fd > 0) {
+	صحيح len = G.x_mode_buf.length;
+	ܐܢ (len <= 0)
+		ܦܢܐ;
+	ܐܢ (G.x_mode_fd > 0) {
 		G.x_mode_buf.data[len] = '\n';
 		full_write(G.x_mode_fd, G.x_mode_buf.data, len + 1);
 	}
@@ -3365,26 +3365,26 @@ static void x_mode_flush(void)
  * We have only second one.
  */
 
-#if ENABLE_HUSH_BRACE_EXPANSION
+#ܐܢ ENABLE_HUSH_BRACE_EXPANSION
 # define MAYBE_BRACES "{}"
-#else
+#ܐܚܪܢܐ
 # define MAYBE_BRACES ""
 #endif
 
 /* My analysis of quoting semantics tells me that state information
  * is associated with a destination, not a source.
  */
-static void o_addqchr(o_string *o, int ch)
+ساكن فراغ o_addqchr(o_string *o, صحيح ch)
 {
-	int sz = 1;
+	صحيح sz = 1;
 	/* '-' is included because of this case:
 	 * >filename0 >filename1 >filename9; v='-'; echo filename[0"$v"9]
 	 */
-	char *found = strchr("*?[-\\" MAYBE_BRACES, ch);
-	if (found)
+	حرف *found = strchr("*?[-\\" MAYBE_BRACES, ch);
+	ܐܢ (found)
 		sz++;
 	o_grow_by(o, sz);
-	if (found) {
+	ܐܢ (found) {
 		o->data[o->length] = '\\';
 		o->length++;
 	}
@@ -3393,10 +3393,10 @@ static void o_addqchr(o_string *o, int ch)
 	o->data[o->length] = '\0';
 }
 
-static void o_addQchr(o_string *o, int ch)
+ساكن فراغ o_addQchr(o_string *o, صحيح ch)
 {
-	int sz = 1;
-	if ((o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)
+	صحيح sz = 1;
+	ܐܢ ((o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)
 	 && strchr("*?[-\\" MAYBE_BRACES, ch)
 	) {
 		sz++;
@@ -3409,23 +3409,23 @@ static void o_addQchr(o_string *o, int ch)
 	o->data[o->length] = '\0';
 }
 
-static void o_addqblock(o_string *o, const char *str, int len)
+ساكن فراغ o_addqblock(o_string *o, ثابت حرف *str, صحيح len)
 {
-	while (len) {
-		char ch;
-		int sz;
-		int ordinary_cnt = strcspn(str, "*?[-\\" MAYBE_BRACES);
-		if (ordinary_cnt > len) /* paranoia */
+	ܟܡܐ (len) {
+		حرف ch;
+		صحيح sz;
+		صحيح ordinary_cnt = strcspn(str, "*?[-\\" MAYBE_BRACES);
+		ܐܢ (ordinary_cnt > len) /* paranoia */
 			ordinary_cnt = len;
 		o_addblock(o, str, ordinary_cnt);
-		if (ordinary_cnt == len)
-			return; /* NUL is already added by o_addblock */
+		ܐܢ (ordinary_cnt == len)
+			ܦܢܐ; /* NUL is already added by o_addblock */
 		str += ordinary_cnt;
 		len -= ordinary_cnt + 1; /* we are processing + 1 char below */
 
 		ch = *str++;
 		sz = 1;
-		if (ch) { /* it is necessarily one of "*?[-\\" MAYBE_BRACES */
+		ܐܢ (ch) { /* it is necessarily one of "*?[-\\" MAYBE_BRACES */
 			sz++;
 			o->data[o->length] = '\\';
 			o->length++;
@@ -3437,16 +3437,16 @@ static void o_addqblock(o_string *o, const char *str, int len)
 	o->data[o->length] = '\0';
 }
 
-static void o_addQblock(o_string *o, const char *str, int len)
+ساكن فراغ o_addQblock(o_string *o, ثابت حرف *str, صحيح len)
 {
-	if (!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)) {
+	ܐܢ (!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)) {
 		o_addblock(o, str, len);
-		return;
+		ܦܢܐ;
 	}
 	o_addqblock(o, str, len);
 }
 
-static void o_addQstr(o_string *o, const char *str)
+ساكن فراغ o_addQstr(o_string *o, ثابت حرف *str)
 {
 	o_addQblock(o, str, strlen(str));
 }
@@ -3461,12 +3461,12 @@ static void o_addQstr(o_string *o, const char *str)
  * o_finalize_list() operation post-processes this structure - calculates
  * and stores actual char* ptrs in list[]. Oh, it NULL terminates it as well.
  */
-#if DEBUG_EXPAND || DEBUG_GLOB
-static void debug_print_list(const char *prefix, o_string *o, int n)
+#ܐܢ DEBUG_EXPAND || DEBUG_GLOB
+ساكن فراغ debug_print_list(ثابت حرف *prefix, o_string *o, صحيح n)
 {
-	char **list = (char**)o->data;
-	int string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
-	int i = 0;
+	حرف **list = (حرف**)o->data;
+	صحيح string_start = ((n + 0xf) & ~0xf) * حجم(list[0]);
+	صحيح i = 0;
 
 	indent();
 	fdprintf(2, "%s: list:%p n:%d string_start:%d length:%d maxlen:%d glob:%d quoted:%d escape:%d\n",
@@ -3474,45 +3474,45 @@ static void debug_print_list(const char *prefix, o_string *o, int n)
 			!!(o->o_expflags & EXP_FLAG_GLOB),
 			o->has_quoted_part,
 			!!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-	while (i < n) {
+	ܟܡܐ (i < n) {
 		indent();
-		fdprintf(2, " list[%d]=%d '%s' %p\n", i, (int)(uintptr_t)list[i],
-				o->data + (int)(uintptr_t)list[i] + string_start,
-				o->data + (int)(uintptr_t)list[i] + string_start);
+		fdprintf(2, " list[%d]=%d '%s' %p\n", i, (صحيح)(uintptr_t)list[i],
+				o->data + (صحيح)(uintptr_t)list[i] + string_start,
+				o->data + (صحيح)(uintptr_t)list[i] + string_start);
 		i++;
 	}
-	if (n) {
-		const char *p = o->data + (int)(uintptr_t)list[n - 1] + string_start;
+	ܐܢ (n) {
+		ثابت حرف *p = o->data + (صحيح)(uintptr_t)list[n - 1] + string_start;
 		indent();
 #ifndef __U_BOOT__
 		fdprintf(2, " total_sz:%ld\n", (long)((p + strlen(p) + 1) - o->data));
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 		printf(" total_sz:%ld\n", (long)((p + strlen(p) + 1) - o->data));
 #endif /* __U_BOOT__ */
 	}
 }
-#else
-# define debug_print_list(prefix, o, n) ((void)0)
+#ܐܚܪܢܐ
+# define debug_print_list(prefix, o, n) ((فراغ)0)
 #endif
 
 /* n = o_save_ptr_helper(str, n) "starts new string" by storing an index value
  * in list[n] so that it points past last stored byte so far.
  * It returns n+1. */
-static int o_save_ptr_helper(o_string *o, int n)
+ساكن صحيح o_save_ptr_helper(o_string *o, صحيح n)
 {
-	char **list = (char**)o->data;
-	int string_start;
-	int string_len;
+	حرف **list = (حرف**)o->data;
+	صحيح string_start;
+	صحيح string_len;
 
-	if (!o->has_empty_slot) {
-		string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
+	ܐܢ (!o->has_empty_slot) {
+		string_start = ((n + 0xf) & ~0xf) * حجم(list[0]);
 		string_len = o->length - string_start;
-		if (!(n & 0xf)) { /* 0, 0x10, 0x20...? */
+		ܐܢ (!(n & 0xf)) { /* 0, 0x10, 0x20...? */
 			debug_printf_list("list[%d]=%d string_start=%d (growing)\n", n, string_len, string_start);
 			/* list[n] points to string_start, make space for 16 more pointers */
-			o->maxlen += 0x10 * sizeof(list[0]);
+			o->maxlen += 0x10 * حجم(list[0]);
 			o->data = xrealloc(o->data, o->maxlen + 1);
-			list = (char**)o->data;
+			list = (حرف**)o->data;
 			memmove(list + n + 0x10, list + n, string_len);
 			/*
 			 * expand_on_ifs() has a "previous argv[] ends in IFS?"
@@ -3521,31 +3521,31 @@ static int o_save_ptr_helper(o_string *o, int n)
 			 * but zero bytes, to save index check there.
 			 */
 			list[n + 0x10 - 1] = 0;
-			o->length += 0x10 * sizeof(list[0]);
-		} else {
+			o->length += 0x10 * حجم(list[0]);
+		} ܐܚܪܢܐ {
 			debug_printf_list("list[%d]=%d string_start=%d\n",
 					n, string_len, string_start);
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		/* We have empty slot at list[n], reuse without growth */
-		string_start = ((n+1 + 0xf) & ~0xf) * sizeof(list[0]); /* NB: n+1! */
+		string_start = ((n+1 + 0xf) & ~0xf) * حجم(list[0]); /* NB: n+1! */
 		string_len = o->length - string_start;
 		debug_printf_list("list[%d]=%d string_start=%d (empty slot)\n",
 				n, string_len, string_start);
 		o->has_empty_slot = 0;
 	}
 	o->has_quoted_part = 0;
-	list[n] = (char*)(uintptr_t)string_len;
-	return n + 1;
+	list[n] = (حرف*)(uintptr_t)string_len;
+	ܦܢܐ n + 1;
 }
 
 /* "What was our last o_save_ptr'ed position (byte offset relative o->data)?" */
-static int o_get_last_ptr(o_string *o, int n)
+ساكن صحيح o_get_last_ptr(o_string *o, صحيح n)
 {
-	char **list = (char**)o->data;
-	int string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
+	حرف **list = (حرف**)o->data;
+	صحيح string_start = ((n + 0xf) & ~0xf) * حجم(list[0]);
 
-	return ((int)(uintptr_t)list[n-1]) + string_start;
+	ܦܢܐ ((صحيح)(uintptr_t)list[n-1]) + string_start;
 }
 
 /*
@@ -3583,7 +3583,7 @@ static int o_get_last_ptr(o_string *o, int n)
  * should be is made using that encoded representation. Not glob pattern.
  */
 
-#if ENABLE_HUSH_BRACE_EXPANSION
+#ܐܢ ENABLE_HUSH_BRACE_EXPANSION
 /* There in a GNU extension, GLOB_BRACE, but it is not usable:
  * first, it processes even {a} (no commas), second,
  * I didn't manage to make it return strings when they don't match
@@ -3591,74 +3591,74 @@ static int o_get_last_ptr(o_string *o, int n)
  */
 
 /* Helper */
-static int glob_needed(const char *s)
+ساكن صحيح glob_needed(ثابت حرف *s)
 {
-	while (*s) {
-		if (*s == '\\') {
-			if (!s[1])
-				return 0;
+	ܟܡܐ (*s) {
+		ܐܢ (*s == '\\') {
+			ܐܢ (!s[1])
+				ܦܢܐ 0;
 			s += 2;
-			continue;
+			استمر;
 		}
-		if (*s == '*' || *s == '[' || *s == '?' || *s == '{')
-			return 1;
+		ܐܢ (*s == '*' || *s == '[' || *s == '?' || *s == '{')
+			ܦܢܐ 1;
 		s++;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 /* Return pointer to next closing brace or to comma */
-static const char *next_brace_sub(const char *cp)
+ساكن ثابت حرف *next_brace_sub(ثابت حرف *cp)
 {
 	unsigned depth = 0;
 	cp++;
-	while (*cp != '\0') {
-		if (*cp == '\\') {
-			if (*++cp == '\0')
-				break;
+	ܟܡܐ (*cp != '\0') {
+		ܐܢ (*cp == '\\') {
+			ܐܢ (*++cp == '\0')
+				اكسر;
 			cp++;
-			continue;
+			استمر;
 		}
-		if ((*cp == '}' && depth-- == 0) || (*cp == ',' && depth == 0))
-			break;
-		if (*cp++ == '{')
+		ܐܢ ((*cp == '}' && depth-- == 0) || (*cp == ',' && depth == 0))
+			اكسر;
+		ܐܢ (*cp++ == '{')
 			depth++;
 	}
 
-	return *cp != '\0' ? cp : NULL;
+	ܦܢܐ *cp != '\0' ? cp : عدم;
 }
 /* Recursive brace globber. Note: may garble pattern[]. */
-static int glob_brace(char *pattern, o_string *o, int n)
+ساكن صحيح glob_brace(حرف *pattern, o_string *o, صحيح n)
 {
-	char *new_pattern_buf;
-	const char *begin;
-	const char *next;
-	const char *rest;
-	const char *p;
+	حرف *new_pattern_buf;
+	ثابت حرف *begin;
+	ثابت حرف *next;
+	ثابت حرف *rest;
+	ثابت حرف *p;
 	size_t rest_len;
 
 	debug_printf_glob("glob_brace('%s')\n", pattern);
 
 	begin = pattern;
-	while (1) {
-		if (*begin == '\0')
-			goto simple_glob;
-		if (*begin == '{') {
+	ܟܡܐ (1) {
+		ܐܢ (*begin == '\0')
+			اذهب simple_glob;
+		ܐܢ (*begin == '{') {
 			/* Find the first sub-pattern and at the same time
 			 * find the rest after the closing brace */
 			next = next_brace_sub(begin);
-			if (next == NULL) {
+			ܐܢ (next == عدم) {
 				/* An illegal expression */
-				goto simple_glob;
+				اذهب simple_glob;
 			}
-			if (*next == '}') {
+			ܐܢ (*next == '}') {
 				/* "{abc}" with no commas - illegal
 				 * brace expr, disregard and skip it */
 				begin = next + 1;
-				continue;
+				استمر;
 			}
-			break;
+			اكسر;
 		}
-		if (*begin == '\\' && begin[1] != '\0')
+		ܐܢ (*begin == '\\' && begin[1] != '\0')
 			begin++;
 		begin++;
 	}
@@ -3667,11 +3667,11 @@ static int glob_brace(char *pattern, o_string *o, int n)
 
 	/* Now find the end of the whole brace expression */
 	rest = next;
-	while (*rest != '}') {
+	ܟܡܐ (*rest != '}') {
 		rest = next_brace_sub(rest);
-		if (rest == NULL) {
+		ܐܢ (rest == عدم) {
 			/* An illegal expression */
-			goto simple_glob;
+			اذهب simple_glob;
 		}
 		debug_printf_glob("rest:%s\n", rest);
 	}
@@ -3689,7 +3689,7 @@ static int glob_brace(char *pattern, o_string *o, int n)
 	 * GLOB_APPEND. */
 
 	p = begin + 1;
-	while (1) {
+	ܟܡܐ (1) {
 		/* Construct the new glob expression */
 		memcpy(
 			mempcpy(
@@ -3703,169 +3703,169 @@ static int glob_brace(char *pattern, o_string *o, int n)
 		 * That's why we re-copy prefix every time (1st memcpy above).
 		 */
 		n = glob_brace(new_pattern_buf, o, n);
-		if (*next == '}') {
+		ܐܢ (*next == '}') {
 			/* We saw the last entry */
-			break;
+			اكسر;
 		}
 		p = next + 1;
 		next = next_brace_sub(next);
 	}
-	free(new_pattern_buf);
-	return n;
+	حرر(new_pattern_buf);
+	ܦܢܐ n;
 
  simple_glob:
 	{
-		int gr;
+		صحيح gr;
 		glob_t globdata;
 
-		memset(&globdata, 0, sizeof(globdata));
-		gr = glob(pattern, 0, NULL, &globdata);
+		memset(&globdata, 0, حجم(globdata));
+		gr = glob(pattern, 0, عدم, &globdata);
 		debug_printf_glob("glob('%s'):%d\n", pattern, gr);
-		if (gr != 0) {
-			if (gr == GLOB_NOMATCH) {
+		ܐܢ (gr != 0) {
+			ܐܢ (gr == GLOB_NOMATCH) {
 				globfree(&globdata);
 				/* NB: garbles parameter */
 				unbackslash(pattern);
 				o_addstr_with_NUL(o, pattern);
 				debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-				return o_save_ptr_helper(o, n);
+				ܦܢܐ o_save_ptr_helper(o, n);
 			}
-			if (gr == GLOB_NOSPACE)
+			ܐܢ (gr == GLOB_NOSPACE)
 				bb_die_memory_exhausted();
 			/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 			 * but we didn't specify it. Paranoia again. */
 			bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
 		}
-		if (globdata.gl_pathv && globdata.gl_pathv[0]) {
-			char **argv = globdata.gl_pathv;
-			while (1) {
+		ܐܢ (globdata.gl_pathv && globdata.gl_pathv[0]) {
+			حرف **argv = globdata.gl_pathv;
+			ܟܡܐ (1) {
 				o_addstr_with_NUL(o, *argv);
 				n = o_save_ptr_helper(o, n);
 				argv++;
-				if (!*argv)
-					break;
+				ܐܢ (!*argv)
+					اكسر;
 			}
 		}
 		globfree(&globdata);
 	}
-	return n;
+	ܦܢܐ n;
 }
 /* Performs globbing on last list[],
  * saving each result as a new list[].
  */
-static int perform_glob(o_string *o, int n)
+ساكن صحيح perform_glob(o_string *o, صحيح n)
 {
-	char *pattern, *copy;
+	حرف *pattern, *copy;
 
 	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->data);
-	if (!o->data)
-		return o_save_ptr_helper(o, n);
+	ܐܢ (!o->data)
+		ܦܢܐ o_save_ptr_helper(o, n);
 	pattern = o->data + o_get_last_ptr(o, n);
 	debug_printf_glob("glob pattern '%s'\n", pattern);
-	if (!glob_needed(pattern)) {
+	ܐܢ (!glob_needed(pattern)) {
 		/* unbackslash last string in o in place, fix length */
 		o->length = unbackslash(pattern) - o->data;
 		debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-		return o_save_ptr_helper(o, n);
+		ܦܢܐ o_save_ptr_helper(o, n);
 	}
 
 	copy = xstrdup(pattern);
 	/* "forget" pattern in o */
 	o->length = pattern - o->data;
 	n = glob_brace(copy, o, n);
-	free(copy);
-	if (DEBUG_GLOB)
+	حرر(copy);
+	ܐܢ (DEBUG_GLOB)
 		debug_print_list("perform_glob returning", o, n);
-	return n;
+	ܦܢܐ n;
 }
 
-#else /* !HUSH_BRACE_EXPANSION */
+#ܐܚܪܢܐ /* !HUSH_BRACE_EXPANSION */
 
 /* Helper */
-static int glob_needed(const char *s)
+ساكن صحيح glob_needed(ثابت حرف *s)
 {
-	while (*s) {
-		if (*s == '\\') {
-			if (!s[1])
-				return 0;
+	ܟܡܐ (*s) {
+		ܐܢ (*s == '\\') {
+			ܐܢ (!s[1])
+				ܦܢܐ 0;
 			s += 2;
-			continue;
+			استمر;
 		}
-		if (*s == '*' || *s == '[' || *s == '?')
-			return 1;
+		ܐܢ (*s == '*' || *s == '[' || *s == '?')
+			ܦܢܐ 1;
 		s++;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 /* Performs globbing on last list[],
  * saving each result as a new list[].
  */
-static int perform_glob(o_string *o, int n)
+ساكن صحيح perform_glob(o_string *o, صحيح n)
 {
 #ifndef __U_BOOT__
 	glob_t globdata;
-	int gr;
+	صحيح gr;
 #endif /* __U_BOOT__ */
-	char *pattern;
+	حرف *pattern;
 
 	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->data);
-	if (!o->data)
-		return o_save_ptr_helper(o, n);
+	ܐܢ (!o->data)
+		ܦܢܐ o_save_ptr_helper(o, n);
 	pattern = o->data + o_get_last_ptr(o, n);
 	debug_printf_glob("glob pattern '%s'\n", pattern);
-	if (!glob_needed(pattern)) {
+	ܐܢ (!glob_needed(pattern)) {
 #ifndef __U_BOOT__
  literal:
 #endif /* __U_BOOT__ */
 		/* unbackslash last string in o in place, fix length */
 		o->length = unbackslash(pattern) - o->data;
 		debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-		return o_save_ptr_helper(o, n);
+		ܦܢܐ o_save_ptr_helper(o, n);
 	}
 
 #ifndef __U_BOOT__
-	memset(&globdata, 0, sizeof(globdata));
+	memset(&globdata, 0, حجم(globdata));
 	/* Can't use GLOB_NOCHECK: it does not unescape the string.
 	 * If we glob "*.\*" and don't find anything, we need
 	 * to fall back to using literal "*.*", but GLOB_NOCHECK
 	 * will return "*.\*"!
 	 */
-	gr = glob(pattern, 0, NULL, &globdata);
+	gr = glob(pattern, 0, عدم, &globdata);
 	debug_printf_glob("glob('%s'):%d\n", pattern, gr);
-	if (gr != 0) {
-		if (gr == GLOB_NOMATCH) {
+	ܐܢ (gr != 0) {
+		ܐܢ (gr == GLOB_NOMATCH) {
 			globfree(&globdata);
-			goto literal;
+			اذهب literal;
 		}
-		if (gr == GLOB_NOSPACE)
+		ܐܢ (gr == GLOB_NOSPACE)
 			bb_die_memory_exhausted();
 		/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 		 * but we didn't specify it. Paranoia again. */
 		bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
 	}
-	if (globdata.gl_pathv && globdata.gl_pathv[0]) {
-		char **argv = globdata.gl_pathv;
+	ܐܢ (globdata.gl_pathv && globdata.gl_pathv[0]) {
+		حرف **argv = globdata.gl_pathv;
 		/* "forget" pattern in o */
 		o->length = pattern - o->data;
-		while (1) {
+		ܟܡܐ (1) {
 			o_addstr_with_NUL(o, *argv);
 			n = o_save_ptr_helper(o, n);
 			argv++;
-			if (!*argv)
-				break;
+			ܐܢ (!*argv)
+				اكسر;
 		}
 	}
 	globfree(&globdata);
-	if (DEBUG_GLOB)
+	ܐܢ (DEBUG_GLOB)
 		debug_print_list("perform_glob returning", o, n);
-	return n;
-#else /* __U_BOOT__ */
+	ܦܢܐ n;
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	/*
 	 * NOTE We only use perform glob to call unbackslash to remove backslash
 	 * from string once expanded.
 	 * So, it seems OK to return this if no previous return was done.
 	 */
-	return o_save_ptr_helper(o, n);
+	ܦܢܐ o_save_ptr_helper(o, n);
 #endif /* __U_BOOT__ */
 }
 
@@ -3873,61 +3873,61 @@ static int perform_glob(o_string *o, int n)
 
 /* If o->o_expflags & EXP_FLAG_GLOB, glob the string so far remembered.
  * Otherwise, just finish current list[] and start new */
-static int o_save_ptr(o_string *o, int n)
+ساكن صحيح o_save_ptr(o_string *o, صحيح n)
 {
-	if (o->o_expflags & EXP_FLAG_GLOB) {
+	ܐܢ (o->o_expflags & EXP_FLAG_GLOB) {
 		/* If o->has_empty_slot, list[n] was already globbed
 		 * (if it was requested back then when it was filled)
 		 * so don't do that again! */
-		if (!o->has_empty_slot)
-			return perform_glob(o, n); /* o_save_ptr_helper is inside */
+		ܐܢ (!o->has_empty_slot)
+			ܦܢܐ perform_glob(o, n); /* o_save_ptr_helper is inside */
 	}
-	return o_save_ptr_helper(o, n);
+	ܦܢܐ o_save_ptr_helper(o, n);
 }
 
 /* "Please convert list[n] to real char* ptrs, and NULL terminate it." */
-static char **o_finalize_list(o_string *o, int n)
+ساكن حرف **o_finalize_list(o_string *o, صحيح n)
 {
-	char **list;
-	int string_start;
+	حرف **list;
+	صحيح string_start;
 
-	if (DEBUG_EXPAND)
+	ܐܢ (DEBUG_EXPAND)
 		debug_print_list("finalized", o, n);
 	debug_printf_expand("finalized n:%d\n", n);
-	list = (char**)o->data;
-	string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
-	list[--n] = NULL;
-	while (n) {
+	list = (حرف**)o->data;
+	string_start = ((n + 0xf) & ~0xf) * حجم(list[0]);
+	list[--n] = عدم;
+	ܟܡܐ (n) {
 		n--;
-		list[n] = o->data + (int)(uintptr_t)list[n] + string_start;
+		list[n] = o->data + (صحيح)(uintptr_t)list[n] + string_start;
 	}
-	return list;
+	ܦܢܐ list;
 }
 
-static void free_pipe_list(struct pipe *pi);
+ساكن فراغ free_pipe_list(بنية pipe *pi);
 
 /* Returns pi->next - next pipe in the list */
-static struct pipe *free_pipe(struct pipe *pi)
+ساكن بنية pipe *free_pipe(بنية pipe *pi)
 {
-	struct pipe *next;
-	int i;
+	بنية pipe *next;
+	صحيح i;
 
 #ifndef __U_BOOT__
 	debug_printf_clean("free_pipe (pid %d)\n", getpid());
 #endif /* !__U_BOOT__ */
-	for (i = 0; i < pi->num_cmds; i++) {
-		struct command *command;
+	لكل (i = 0; i < pi->num_cmds; i++) {
+		بنية command *command;
 #ifndef __U_BOOT__
-		struct redir_struct *r, *rnext;
+		بنية redir_struct *r, *rnext;
 #endif /* !__U_BOOT__ */
 
 		command = &pi->cmds[i];
 		debug_printf_clean("  command %d:\n", i);
-		if (command->argv) {
-			if (DEBUG_CLEAN) {
-				int a;
-				char **p;
-				for (a = 0, p = command->argv; *p; a++, p++) {
+		ܐܢ (command->argv) {
+			ܐܢ (DEBUG_CLEAN) {
+				صحيح a;
+				حرف **p;
+				لكل (a = 0, p = command->argv; *p; a++, p++) {
 					debug_printf_clean("   argv[%d] = %s\n", a, *p);
 				}
 			}
@@ -3935,7 +3935,7 @@ static struct pipe *free_pipe(struct pipe *pi)
 			//command->argv = NULL;
 		}
 		/* not "else if": on syntax error, we may have both! */
-		if (command->group) {
+		ܐܢ (command->group) {
 			debug_printf_clean("   begin group (cmd_type:%d)\n",
 					command->cmd_type);
 			free_pipe_list(command->group);
@@ -3944,51 +3944,51 @@ static struct pipe *free_pipe(struct pipe *pi)
 		}
 		/* else is crucial here.
 		 * If group != NULL, child_func is meaningless */
-#if ENABLE_HUSH_FUNCTIONS
-		else if (command->child_func) {
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+		ܐܚܪܢܐ ܐܢ (command->child_func) {
 			debug_printf_exec("cmd %p releases child func at %p\n", command, command->child_func);
-			command->child_func->parent_cmd = NULL;
+			command->child_func->parent_cmd = عدم;
 		}
 #endif
-#if !BB_MMU
-		free(command->group_as_string);
+#ܐܢ !BB_MMU
+		حرر(command->group_as_string);
 		//command->group_as_string = NULL;
 #endif
 #ifndef __U_BOOT__
-		for (r = command->redirects; r; r = rnext) {
+		لكل (r = command->redirects; r; r = rnext) {
 			debug_printf_clean("   redirect %d%s",
 					r->rd_fd, redir_table[r->rd_type].descrip);
 			/* guard against the case >$FOO, where foo is unset or blank */
-			if (r->rd_filename) {
+			ܐܢ (r->rd_filename) {
 				debug_printf_clean(" fname:'%s'\n", r->rd_filename);
-				free(r->rd_filename);
+				حرر(r->rd_filename);
 				//r->rd_filename = NULL;
 			}
 			debug_printf_clean(" rd_dup:%d\n", r->rd_dup);
 			rnext = r->next;
-			free(r);
+			حرر(r);
 		}
 		//command->redirects = NULL;
 #endif /* !__U_BOOT__ */
 	}
-	free(pi->cmds);   /* children are an array, they get freed all at once */
+	حرر(pi->cmds);   /* children are an array, they get freed all at once */
 	//pi->cmds = NULL;
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_JOB
-	free(pi->cmdtext);
+#ܐܢ ENABLE_HUSH_JOB
+	حرر(pi->cmdtext);
 	//pi->cmdtext = NULL;
 #endif
 #endif /* !__U_BOOT__ */
 
 	next = pi->next;
-	free(pi);
-	return next;
+	حرر(pi);
+	ܦܢܐ next;
 }
 
-static void free_pipe_list(struct pipe *pi)
+ساكن فراغ free_pipe_list(بنية pipe *pi)
 {
-	while (pi) {
-#if HAS_KEYWORDS
+	ܟܡܐ (pi) {
+#ܐܢ HAS_KEYWORDS
 		debug_printf_clean("pipe reserved word %d\n", pi->res_word);
 #endif
 		debug_printf_clean("pipe followup code %d\n", pi->followup);
@@ -3999,34 +3999,34 @@ static void free_pipe_list(struct pipe *pi)
 /*** Parsing routines ***/
 
 #ifndef debug_print_tree
-static void debug_print_tree(struct pipe *pi, int lvl)
+ساكن فراغ debug_print_tree(بنية pipe *pi, صحيح lvl)
 {
-	static const char *const PIPE[] ALIGN_PTR = {
+	ساكن ثابت حرف *ثابت PIPE[] ALIGN_PTR = {
 		[PIPE_SEQ] = "SEQ",
 		[PIPE_AND] = "AND",
 		[PIPE_OR ] = "OR" ,
 		[PIPE_BG ] = "BG" ,
 	};
-	static const char *RES[] = {
+	ساكن ثابت حرف *RES[] = {
 		[RES_NONE ] = "NONE" ,
-# if ENABLE_HUSH_IF
+# ܐܢ ENABLE_HUSH_IF
 		[RES_IF   ] = "IF"   ,
 		[RES_THEN ] = "THEN" ,
 		[RES_ELIF ] = "ELIF" ,
 		[RES_ELSE ] = "ELSE" ,
 		[RES_FI   ] = "FI"   ,
 # endif
-# if ENABLE_HUSH_LOOPS
+# ܐܢ ENABLE_HUSH_LOOPS
 		[RES_FOR  ] = "FOR"  ,
 		[RES_WHILE] = "WHILE",
 		[RES_UNTIL] = "UNTIL",
 		[RES_DO   ] = "DO"   ,
 		[RES_DONE ] = "DONE" ,
 # endif
-# if ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+# ܐܢ ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
 		[RES_IN   ] = "IN"   ,
 # endif
-# if ENABLE_HUSH_CASE
+# ܐܢ ENABLE_HUSH_CASE
 		[RES_CASE ] = "CASE" ,
 		[RES_CASE_IN ] = "CASE_IN" ,
 		[RES_MATCH] = "MATCH",
@@ -4036,19 +4036,19 @@ static void debug_print_tree(struct pipe *pi, int lvl)
 		[RES_XXXX ] = "XXXX" ,
 		[RES_SNTX ] = "SNTX" ,
 	};
-	static const char *const CMDTYPE[] ALIGN_PTR = {
+	ساكن ثابت حرف *ثابت CMDTYPE[] ALIGN_PTR = {
 		"{}",
 		"()",
 		"[noglob]",
-# if ENABLE_HUSH_FUNCTIONS
+# ܐܢ ENABLE_HUSH_FUNCTIONS
 		"func()",
 # endif
 	};
 
-	int pin, prn;
+	صحيح pin, prn;
 
 	pin = 0;
-	while (pi) {
+	ܟܡܐ (pi) {
 		fdprintf(2, "%*spipe %d #cmds:%d %sres_word=%s followup=%d %s\n",
 				lvl*2, "",
 				pin,
@@ -4058,36 +4058,36 @@ static void debug_print_tree(struct pipe *pi, int lvl)
 				pi->followup, PIPE[pi->followup]
 		);
 		prn = 0;
-		while (prn < pi->num_cmds) {
-			struct command *command = &pi->cmds[prn];
-			char **argv = command->argv;
+		ܟܡܐ (prn < pi->num_cmds) {
+			بنية command *command = &pi->cmds[prn];
+			حرف **argv = command->argv;
 
 			fdprintf(2, "%*s cmd %d assignment_cnt:%d",
 					lvl*2, "", prn,
 					command->assignment_cnt);
-# if ENABLE_HUSH_LINENO_VAR
+# ܐܢ ENABLE_HUSH_LINENO_VAR
 			fdprintf(2, " LINENO:%u", command->lineno);
 # endif
-			if (command->group) {
+			ܐܢ (command->group) {
 				fdprintf(2, " group %s: (argv=%p)%s%s\n",
 						CMDTYPE[command->cmd_type],
 						argv
-# if !BB_MMU
+# ܐܢ !BB_MMU
 						, " group_as_string:", command->group_as_string
-# else
+# ܐܚܪܢܐ
 						, "", ""
 # endif
 				);
 				debug_print_tree(command->group, lvl+1);
 				prn++;
-				continue;
+				استمر;
 			}
-			if (argv) while (*argv) {
+			ܐܢ (argv) ܟܡܐ (*argv) {
 				fdprintf(2, " '%s'", *argv);
 				argv++;
 			}
 #ifndef __U_BOOT__
-			if (command->redirects)
+			ܐܢ (command->redirects)
 				fdprintf(2, " {redir}");
 #endif /* __U_BOOT__ */
 			fdprintf(2, "\n");
@@ -4099,97 +4099,97 @@ static void debug_print_tree(struct pipe *pi, int lvl)
 }
 #endif /* debug_print_tree */
 
-static struct pipe *new_pipe(void)
+ساكن بنية pipe *new_pipe(فراغ)
 {
-	struct pipe *pi;
-	pi = xzalloc(sizeof(struct pipe));
+	بنية pipe *pi;
+	pi = xzalloc(حجم(بنية pipe));
 	/*pi->res_word = RES_NONE; - RES_NONE is 0 anyway */
-	return pi;
+	ܦܢܐ pi;
 }
 
 /* Command (member of a pipe) is complete, or we start a new pipe
  * if ctx->command is NULL.
  * No errors possible here.
  */
-static int done_command(struct parse_context *ctx)
+ساكن صحيح done_command(بنية parse_context *ctx)
 {
 	/* The command is really already in the pipe structure, so
 	 * advance the pipe counter and make a new, null command. */
-	struct pipe *pi = ctx->pipe;
-	struct command *command = ctx->command;
+	بنية pipe *pi = ctx->pipe;
+	بنية command *command = ctx->command;
 
-#if 0	/* Instead we emit error message at run time */
-	if (ctx->pending_redirect) {
+#ܐܢ 0	/* Instead we emit error message at run time */
+	ܐܢ (ctx->pending_redirect) {
 		/* For example, "cmd >" (no filename to redirect to) */
 		syntax_error("invalid redirect");
-		ctx->pending_redirect = NULL;
+		ctx->pending_redirect = عدم;
 	}
 #endif
 
-	if (command) {
-		if (IS_NULL_CMD(command)) {
+	ܐܢ (command) {
+		ܐܢ (IS_NULL_CMD(command)) {
 			debug_printf_parse("done_command: skipping null cmd, num_cmds=%d\n", pi->num_cmds);
-			goto clear_and_ret;
+			اذهب clear_and_ret;
 		}
 		pi->num_cmds++;
 		debug_printf_parse("done_command: ++num_cmds=%d\n", pi->num_cmds);
 		//debug_print_tree(ctx->list_head, 20);
-	} else {
+	} ܐܚܪܢܐ {
 		debug_printf_parse("done_command: initializing, num_cmds=%d\n", pi->num_cmds);
 	}
 
 	/* Only real trickiness here is that the uncommitted
 	 * command structure is not counted in pi->num_cmds. */
-	pi->cmds = xrealloc(pi->cmds, sizeof(*pi->cmds) * (pi->num_cmds+1));
+	pi->cmds = xrealloc(pi->cmds, حجم(*pi->cmds) * (pi->num_cmds+1));
 	ctx->command = command = &pi->cmds[pi->num_cmds];
  clear_and_ret:
-	memset(command, 0, sizeof(*command));
-#if ENABLE_HUSH_LINENO_VAR
+	memset(command, 0, حجم(*command));
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 	command->lineno = G.parse_lineno;
 	debug_printf_parse("command->lineno = G.parse_lineno (%u)\n", G.parse_lineno);
 #endif
-	return pi->num_cmds; /* used only for 0/nonzero check */
+	ܦܢܐ pi->num_cmds; /* used only for 0/nonzero check */
 }
 
-static void done_pipe(struct parse_context *ctx, pipe_style type)
+ساكن فراغ done_pipe(بنية parse_context *ctx, pipe_style type)
 {
-	int not_null;
+	صحيح not_null;
 
 	debug_printf_parse("done_pipe entered, followup %d\n", type);
 	/* Close previous command */
 	not_null = done_command(ctx);
-#if HAS_KEYWORDS
+#ܐܢ HAS_KEYWORDS
 	ctx->pipe->pi_inverted = ctx->ctx_inverted;
 	ctx->ctx_inverted = 0;
 	ctx->pipe->res_word = ctx->ctx_res_w;
 #endif
-	if (type == PIPE_BG && ctx->list_head != ctx->pipe) {
+	ܐܢ (type == PIPE_BG && ctx->list_head != ctx->pipe) {
 		/* Necessary since && and || have precedence over &:
 		 * "cmd1 && cmd2 &" must spawn both cmds, not only cmd2,
 		 * in a backgrounded subshell.
 		 */
-		struct pipe *pi;
-		struct command *command;
+		بنية pipe *pi;
+		بنية command *command;
 
 		/* Is this actually this construct, all pipes end with && or ||? */
 		pi = ctx->list_head;
-		while (pi != ctx->pipe) {
-			if (pi->followup != PIPE_AND && pi->followup != PIPE_OR)
-				goto no_conv;
+		ܟܡܐ (pi != ctx->pipe) {
+			ܐܢ (pi->followup != PIPE_AND && pi->followup != PIPE_OR)
+				اذهب no_conv;
 			pi = pi->next;
 		}
 
 		debug_printf_parse("BG with more than one pipe, converting to { p1 &&...pN; } &\n");
 		pi->followup = PIPE_SEQ; /* close pN _not_ with "&"! */
-		pi = xzalloc(sizeof(*pi));
+		pi = xzalloc(حجم(*pi));
 		pi->followup = PIPE_BG;
 		pi->num_cmds = 1;
-		pi->cmds = xzalloc(sizeof(pi->cmds[0]));
+		pi->cmds = xzalloc(حجم(pi->cmds[0]));
 		command = &pi->cmds[0];
-		if (CMD_NORMAL != 0) /* "if xzalloc didn't do that already" */
+		ܐܢ (CMD_NORMAL != 0) /* "if xzalloc didn't do that already" */
 			command->cmd_type = CMD_NORMAL;
 		command->group = ctx->list_head;
-#if !BB_MMU
+#ܐܢ !BB_MMU
 		command->group_as_string = xstrndup(
 			    ctx->as_string.data,
 			    ctx->as_string.length - 1 /* do not copy last char, "&" */
@@ -4200,7 +4200,7 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 		/* for cases like "cmd && &", do not be tricked by last command
 		 * being null - the entire {...} & is NOT null! */
 		not_null = 1;
-	} else {
+	} ܐܚܪܢܐ {
  no_conv:
 		ctx->pipe->followup = type;
 	}
@@ -4208,25 +4208,25 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 	/* Without this check, even just <enter> on command line generates
 	 * tree of three NOPs (!). Which is harmless but annoying.
 	 * IOW: it is safe to do it unconditionally. */
-	if (not_null
-#if ENABLE_HUSH_IF
+	ܐܢ (not_null
+#ܐܢ ENABLE_HUSH_IF
 	 || ctx->ctx_res_w == RES_FI
 #endif
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	 || ctx->ctx_res_w == RES_DONE
 	 || ctx->ctx_res_w == RES_FOR
 	 || ctx->ctx_res_w == RES_IN
 #endif
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 	 || ctx->ctx_res_w == RES_ESAC
 #endif
 	) {
-		struct pipe *new_p;
+		بنية pipe *new_p;
 		debug_printf_parse("done_pipe: adding new pipe: "
 #ifndef __U_BOOT__
 				"not_null:%d ctx->ctx_res_w:%d\n",
 				not_null, ctx->ctx_res_w);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 				"not_null:%d\n",
 				not_null);
 #endif /* __U_BOOT__ */
@@ -4239,18 +4239,18 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 		 * RES_FOR and RES_IN are NOT sticky (needed to support
 		 * cases where variable or value happens to match a keyword):
 		 */
-#if ENABLE_HUSH_LOOPS
-		if (ctx->ctx_res_w == RES_FOR
+#ܐܢ ENABLE_HUSH_LOOPS
+		ܐܢ (ctx->ctx_res_w == RES_FOR
 		 || ctx->ctx_res_w == RES_IN)
 			ctx->ctx_res_w = RES_NONE;
 #endif
-#if ENABLE_HUSH_CASE
-		if (ctx->ctx_res_w == RES_MATCH)
+#ܐܢ ENABLE_HUSH_CASE
+		ܐܢ (ctx->ctx_res_w == RES_MATCH)
 			ctx->ctx_res_w = RES_CASE_BODY;
-		if (ctx->ctx_res_w == RES_CASE)
+		ܐܢ (ctx->ctx_res_w == RES_CASE)
 			ctx->ctx_res_w = RES_CASE_IN;
 #endif
-		ctx->command = NULL; /* trick done_command below */
+		ctx->command = عدم; /* trick done_command below */
 		/* Create the memory for command, roughly:
 		 * ctx->pipe->cmds = new struct command;
 		 * ctx->command = &ctx->pipe->cmds[0];
@@ -4261,10 +4261,10 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 	debug_printf_parse("done_pipe return\n");
 }
 
-static void initialize_context(struct parse_context *ctx)
+ساكن فراغ initialize_context(بنية parse_context *ctx)
 {
-	memset(ctx, 0, sizeof(*ctx));
-	if (MAYBE_ASSIGNMENT != 0)
+	memset(ctx, 0, حجم(*ctx));
+	ܐܢ (MAYBE_ASSIGNMENT != 0)
 		ctx->is_assignment = MAYBE_ASSIGNMENT;
 	ctx->pipe = ctx->list_head = new_pipe();
 	/* Create the memory for command, roughly:
@@ -4277,23 +4277,23 @@ static void initialize_context(struct parse_context *ctx)
 /* If a reserved word is found and processed, parse context is modified
  * and 1 is returned.
  */
-#if HAS_KEYWORDS
-struct reserved_combo {
-	char literal[6];
-	unsigned char res;
-	unsigned char assignment_flag;
+#ܐܢ HAS_KEYWORDS
+بنية reserved_combo {
+	حرف literal[6];
+	unsigned حرف res;
+	unsigned حرف assignment_flag;
 	uint32_t flag;
 };
-enum {
+تعداد {
 	FLAG_END   = (1 << RES_NONE ),
-# if ENABLE_HUSH_IF
+# ܐܢ ENABLE_HUSH_IF
 	FLAG_IF    = (1 << RES_IF   ),
 	FLAG_THEN  = (1 << RES_THEN ),
 	FLAG_ELIF  = (1 << RES_ELIF ),
 	FLAG_ELSE  = (1 << RES_ELSE ),
 	FLAG_FI    = (1 << RES_FI   ),
 # endif
-# if ENABLE_HUSH_LOOPS
+# ܐܢ ENABLE_HUSH_LOOPS
 	FLAG_FOR   = (1 << RES_FOR  ),
 	FLAG_WHILE = (1 << RES_WHILE),
 	FLAG_UNTIL = (1 << RES_UNTIL),
@@ -4301,22 +4301,22 @@ enum {
 	FLAG_DONE  = (1 << RES_DONE ),
 	FLAG_IN    = (1 << RES_IN   ),
 # endif
-# if ENABLE_HUSH_CASE
+# ܐܢ ENABLE_HUSH_CASE
 	FLAG_MATCH = (1 << RES_MATCH),
 	FLAG_ESAC  = (1 << RES_ESAC ),
 # endif
 	FLAG_START = (1 << RES_XXXX ),
 };
 
-static const struct reserved_combo* match_reserved_word(o_string *word)
+ساكن ثابت بنية reserved_combo* match_reserved_word(o_string *word)
 {
 	/* Mostly a list of accepted follow-up reserved words.
 	 * FLAG_END means we are done with the sequence, and are ready
 	 * to turn the compound list into a command.
 	 * FLAG_START means the word must start a new compound list.
 	 */
-	static const struct reserved_combo reserved_list[] ALIGN4 = {
-# if ENABLE_HUSH_IF
+	ساكن ثابت بنية reserved_combo reserved_list[] ALIGN4 = {
+# ܐܢ ENABLE_HUSH_IF
 		{ "!",     RES_NONE,  NOT_ASSIGNMENT  , 0 },
 		{ "if",    RES_IF,    MAYBE_ASSIGNMENT, FLAG_THEN | FLAG_START },
 		{ "then",  RES_THEN,  MAYBE_ASSIGNMENT, FLAG_ELIF | FLAG_ELSE | FLAG_FI },
@@ -4324,7 +4324,7 @@ static const struct reserved_combo* match_reserved_word(o_string *word)
 		{ "else",  RES_ELSE,  MAYBE_ASSIGNMENT, FLAG_FI   },
 		{ "fi",    RES_FI,    NOT_ASSIGNMENT  , FLAG_END  },
 # endif
-# if ENABLE_HUSH_LOOPS
+# ܐܢ ENABLE_HUSH_LOOPS
 		{ "for",   RES_FOR,   NOT_ASSIGNMENT  , FLAG_IN | FLAG_DO | FLAG_START },
 		{ "while", RES_WHILE, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_START },
 		{ "until", RES_UNTIL, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_START },
@@ -4332,67 +4332,67 @@ static const struct reserved_combo* match_reserved_word(o_string *word)
 		{ "do",    RES_DO,    MAYBE_ASSIGNMENT, FLAG_DONE },
 		{ "done",  RES_DONE,  NOT_ASSIGNMENT  , FLAG_END  },
 # endif
-# if ENABLE_HUSH_CASE
+# ܐܢ ENABLE_HUSH_CASE
 		{ "case",  RES_CASE,  NOT_ASSIGNMENT  , FLAG_MATCH | FLAG_START },
 		{ "esac",  RES_ESAC,  NOT_ASSIGNMENT  , FLAG_END  },
 # endif
 	};
-	const struct reserved_combo *r;
+	ثابت بنية reserved_combo *r;
 
-	for (r = reserved_list; r < reserved_list + ARRAY_SIZE(reserved_list); r++) {
-		if (strcmp(word->data, r->literal) == 0)
-			return r;
+	لكل (r = reserved_list; r < reserved_list + ARRAY_SIZE(reserved_list); r++) {
+		ܐܢ (strcmp(word->data, r->literal) == 0)
+			ܦܢܐ r;
 	}
-	return NULL;
+	ܦܢܐ عدم;
 }
 /* Return NULL: not a keyword, else: keyword
  */
-static const struct reserved_combo* reserved_word(struct parse_context *ctx)
+ساكن ثابت بنية reserved_combo* reserved_word(بنية parse_context *ctx)
 {
-# if ENABLE_HUSH_CASE
-	static const struct reserved_combo reserved_match = {
+# ܐܢ ENABLE_HUSH_CASE
+	ساكن ثابت بنية reserved_combo reserved_match = {
 		"",        RES_MATCH, NOT_ASSIGNMENT , FLAG_MATCH | FLAG_ESAC
 	};
 # endif
-	const struct reserved_combo *r;
+	ثابت بنية reserved_combo *r;
 
-	if (ctx->word.has_quoted_part)
-		return 0;
+	ܐܢ (ctx->word.has_quoted_part)
+		ܦܢܐ 0;
 	r = match_reserved_word(&ctx->word);
-	if (!r)
-		return r; /* NULL */
+	ܐܢ (!r)
+		ܦܢܐ r; /* NULL */
 
 	debug_printf("found reserved word %s, res %d\n", r->literal, r->res);
-# if ENABLE_HUSH_CASE
-	if (r->res == RES_IN && ctx->ctx_res_w == RES_CASE_IN) {
+# ܐܢ ENABLE_HUSH_CASE
+	ܐܢ (r->res == RES_IN && ctx->ctx_res_w == RES_CASE_IN) {
 		/* "case word IN ..." - IN part starts first MATCH part */
 		r = &reserved_match;
-	} else
+	} ܐܚܪܢܐ
 # endif
-	if (r->flag == 0) { /* '!' */
-		if (ctx->ctx_inverted) { /* bash doesn't accept '! ! true' */
+	ܐܢ (r->flag == 0) { /* '!' */
+		ܐܢ (ctx->ctx_inverted) { /* bash doesn't accept '! ! true' */
 			syntax_error("! ! command");
 			ctx->ctx_res_w = RES_SNTX;
 		}
 		ctx->ctx_inverted = 1;
-		return r;
+		ܦܢܐ r;
 	}
-	if (r->flag & FLAG_START) {
-		struct parse_context *old;
+	ܐܢ (r->flag & FLAG_START) {
+		بنية parse_context *old;
 
-		old = xmemdup(ctx, sizeof(*ctx));
+		old = xmemdup(ctx, حجم(*ctx));
 		debug_printf_parse("push stack %p\n", old);
 		initialize_context(ctx);
 		ctx->stack = old;
-	} else if (/*ctx->ctx_res_w == RES_NONE ||*/ !(ctx->old_flag & (1 << r->res))) {
+	} ܐܚܪܢܐ ܐܢ (/*ctx->ctx_res_w == RES_NONE ||*/ !(ctx->old_flag & (1 << r->res))) {
 		syntax_error_at(ctx->word.data);
 		ctx->ctx_res_w = RES_SNTX;
-		return r;
-	} else {
+		ܦܢܐ r;
+	} ܐܚܪܢܐ {
 		/* "{...} fi" is ok. "{...} if" is not
 		 * Example:
 		 * if { echo foo; } then { echo bar; } fi */
-		if (ctx->command->group)
+		ܐܢ (ctx->command->group)
 			done_pipe(ctx, PIPE_SEQ);
 	}
 
@@ -4401,15 +4401,15 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 	ctx->is_assignment = r->assignment_flag;
 	debug_printf_parse("ctx->is_assignment='%s'\n", assignment_flag[ctx->is_assignment]);
 
-	if (ctx->old_flag & FLAG_END) {
-		struct parse_context *old;
+	ܐܢ (ctx->old_flag & FLAG_END) {
+		بنية parse_context *old;
 
 		done_pipe(ctx, PIPE_SEQ);
 		debug_printf_parse("pop stack %p\n", ctx->stack);
 		old = ctx->stack;
 		old->command->group = ctx->list_head;
 		old->command->cmd_type = CMD_NORMAL;
-# if !BB_MMU
+# ܐܢ !BB_MMU
 		/* At this point, the compound command's string is in
 		 * ctx->as_string... except for the leading keyword!
 		 * Consider this example: "echo a | if true; then echo a; fi"
@@ -4417,16 +4417,16 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 		 * with "if " remaining in old->as_string!
 		 */
 		{
-			char *str;
-			int len = old->as_string.length;
+			حرف *str;
+			صحيح len = old->as_string.length;
 			/* Concatenate halves */
 			o_addstr(&old->as_string, ctx->as_string.data);
 			o_free(&ctx->as_string);
 			/* Find where leading keyword starts in first half */
 			str = old->as_string.data + len;
-			if (str > old->as_string.data)
+			ܐܢ (str > old->as_string.data)
 				str--; /* skip whitespace after keyword */
-			while (str > old->as_string.data && isalpha(str[-1]))
+			ܟܡܐ (str > old->as_string.data && isalpha(str[-1]))
 				str--;
 			/* Ugh, we're done with this horrid hack */
 			old->command->group_as_string = xstrdup(str);
@@ -4435,9 +4435,9 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 		}
 # endif
 		*ctx = *old;   /* physical copy */
-		free(old);
+		حرر(old);
 	}
-	return r;
+	ܦܢܐ r;
 }
 #endif /* HAS_KEYWORDS */
 
@@ -4445,18 +4445,18 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
  * Normal return is 0. Syntax errors return 1.
  * Note: on return, word is reset, but not o_free'd!
  */
-static int done_word(struct parse_context *ctx)
+ساكن صحيح done_word(بنية parse_context *ctx)
 {
-	struct command *command = ctx->command;
+	بنية command *command = ctx->command;
 
 	debug_printf_parse("done_word entered: '%s' %p\n", ctx->word.data, command);
-	if (ctx->word.length == 0 && !ctx->word.has_quoted_part) {
+	ܐܢ (ctx->word.length == 0 && !ctx->word.has_quoted_part) {
 		debug_printf_parse("done_word return 0: true null, ignored\n");
-		return 0;
+		ܦܢܐ 0;
 	}
 
 #ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+	ܐܢ (ctx->pending_redirect) {
 		/* We do not glob in e.g. >*.tmp case. bash seems to glob here
 		 * only if run as "bash", not "sh" */
 		/* http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
@@ -4487,56 +4487,56 @@ static int done_word(struct parse_context *ctx)
 		 * Same with heredocs:
 		 * for <<\H delim is H; <<\\H, <<"\H", <<"\\H" - \H
 		 */
-		if (ctx->pending_redirect->rd_type == REDIRECT_HEREDOC) {
+		ܐܢ (ctx->pending_redirect->rd_type == REDIRECT_HEREDOC) {
 			unbackslash(ctx->pending_redirect->rd_filename);
 			/* Is it <<"HEREDOC"? */
-			if (ctx->word.has_quoted_part) {
+			ܐܢ (ctx->word.has_quoted_part) {
 				ctx->pending_redirect->rd_dup |= HEREDOC_QUOTED;
 			}
 		}
 		debug_printf_parse("word stored in rd_filename: '%s'\n", ctx->word.data);
-		ctx->pending_redirect = NULL;
-	} else {
+		ctx->pending_redirect = عدم;
+	} ܐܚܪܢܐ {
 #endif /* !__U_BOOT__ */
-#if HAS_KEYWORDS
-# if ENABLE_HUSH_CASE
-		if (ctx->ctx_dsemicolon
+#ܐܢ HAS_KEYWORDS
+# ܐܢ ENABLE_HUSH_CASE
+		ܐܢ (ctx->ctx_dsemicolon
 		 && strcmp(ctx->word.data, "esac") != 0 /* not "... pattern) cmd;; esac" */
 		) {
 			/* already done when ctx_dsemicolon was set to 1: */
 			/* ctx->ctx_res_w = RES_MATCH; */
 			ctx->ctx_dsemicolon = 0;
-		} else
+		} ܐܚܪܢܐ
 # endif
-# if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB
+# ܐܢ defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		ܐܢ (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB
 		 && strcmp(ctx->word.data, "]]") == 0
 		) {
 			/* allow "[[ ]] >file" etc */
 			command->cmd_type = CMD_SINGLEWORD_NOGLOB;
-		} else
+		} ܐܚܪܢܐ
 # endif
-		if (!command->argv /* if it's the first word... */
-# if ENABLE_HUSH_LOOPS
+		ܐܢ (!command->argv /* if it's the first word... */
+# ܐܢ ENABLE_HUSH_LOOPS
 		 && ctx->ctx_res_w != RES_FOR /* ...not after FOR or IN */
 		 && ctx->ctx_res_w != RES_IN
 # endif
-# if ENABLE_HUSH_CASE
+# ܐܢ ENABLE_HUSH_CASE
 		 && ctx->ctx_res_w != RES_CASE
 # endif
 		) {
-			const struct reserved_combo *reserved;
+			ثابت بنية reserved_combo *reserved;
 			reserved = reserved_word(ctx);
 			debug_printf_parse("checking for reserved-ness: %d\n", !!reserved);
-			if (reserved) {
-# if ENABLE_HUSH_LINENO_VAR
+			ܐܢ (reserved) {
+# ܐܢ ENABLE_HUSH_LINENO_VAR
 /* Case:
  * "while ...; do
  *	cmd ..."
  * If we don't close the pipe _now_, immediately after "do", lineno logic
  * sees "cmd" as starting at "do" - i.e., at the previous line.
  */
-				if (0
+				ܐܢ (0
 				 IF_HUSH_IF(|| reserved->res == RES_THEN)
 				 IF_HUSH_IF(|| reserved->res == RES_ELIF)
 				 IF_HUSH_IF(|| reserved->res == RES_ELSE)
@@ -4548,15 +4548,15 @@ static int done_word(struct parse_context *ctx)
 				o_reset_to_empty_unquoted(&ctx->word);
 				debug_printf_parse("done_word return %d\n",
 						(ctx->ctx_res_w == RES_SNTX));
-				return (ctx->ctx_res_w == RES_SNTX);
+				ܦܢܐ (ctx->ctx_res_w == RES_SNTX);
 			}
-# if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-			if (strcmp(ctx->word.data, "[[") == 0) {
+# ܐܢ defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+			ܐܢ (strcmp(ctx->word.data, "[[") == 0) {
 				command->cmd_type = CMD_TEST2_SINGLEWORD_NOGLOB;
-			} else
+			} ܐܚܪܢܐ
 # endif
-# if defined(CMD_SINGLEWORD_NOGLOB)
-			if (0
+# ܐܢ defined(CMD_SINGLEWORD_NOGLOB)
+			ܐܢ (0
 			/* In bash, local/export/readonly are special, args
 			 * are assignments and therefore expansion of them
 			 * should be "one-word" expansion:
@@ -4578,28 +4578,28 @@ static int done_word(struct parse_context *ctx)
 			) {
 				command->cmd_type = CMD_SINGLEWORD_NOGLOB;
 			}
-# else
+# ܐܚܪܢܐ
 			{ /* empty block to pair "if ... else" */ }
 # endif
 		}
 #endif /* HAS_KEYWORDS */
 
-		if (command->group) {
+		ܐܢ (command->group) {
 			/* "{ echo foo; } echo bar" - bad */
 			syntax_error_at(ctx->word.data);
 			debug_printf_parse("done_word return 1: syntax error, "
 					"groups and arglists don't mix\n");
-			return 1;
+			ܦܢܐ 1;
 		}
 
 		/* If this word wasn't an assignment, next ones definitely
 		 * can't be assignments. Even if they look like ones. */
-		if (ctx->is_assignment != DEFINITELY_ASSIGNMENT
+		ܐܢ (ctx->is_assignment != DEFINITELY_ASSIGNMENT
 		 && ctx->is_assignment != WORD_IS_KEYWORD
 		) {
 			ctx->is_assignment = NOT_ASSIGNMENT;
-		} else {
-			if (ctx->is_assignment == DEFINITELY_ASSIGNMENT) {
+		} ܐܚܪܢܐ {
+			ܐܢ (ctx->is_assignment == DEFINITELY_ASSIGNMENT) {
 				command->assignment_cnt++;
 				debug_printf_parse("++assignment_cnt=%d\n", command->assignment_cnt);
 			}
@@ -4617,14 +4617,14 @@ static int done_word(struct parse_context *ctx)
 	}
 #endif /* !__U_BOOT__ */
 
-#if ENABLE_HUSH_LOOPS
-	if (ctx->ctx_res_w == RES_FOR) {
-		if (ctx->word.has_quoted_part
+#ܐܢ ENABLE_HUSH_LOOPS
+	ܐܢ (ctx->ctx_res_w == RES_FOR) {
+		ܐܢ (ctx->word.has_quoted_part
 		 || endofname(command->argv[0])[0] != '\0'
 		) {
 			/* bash says just "not a valid identifier" */
 			syntax_error("bad for loop variable");
-			return 1;
+			ܦܢܐ 1;
 		}
 		/* Force FOR to have just one word (variable name) */
 		/* NB: basically, this makes hush see "for v in ..."
@@ -4633,9 +4633,9 @@ static int done_word(struct parse_context *ctx)
 		done_pipe(ctx, PIPE_SEQ);
 	}
 #endif
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 	/* Force CASE to have just one word */
-	if (ctx->ctx_res_w == RES_CASE) {
+	ܐܢ (ctx->ctx_res_w == RES_CASE) {
 		done_pipe(ctx, PIPE_SEQ);
 	}
 #endif
@@ -4643,7 +4643,7 @@ static int done_word(struct parse_context *ctx)
 	o_reset_to_empty_unquoted(&ctx->word);
 
 	debug_printf_parse("done_word return 0\n");
-	return 0;
+	ܦܢܐ 0;
 }
 
 #ifndef __U_BOOT__
@@ -4655,74 +4655,74 @@ static int done_word(struct parse_context *ctx)
  * REDIRFD_TO_FILE if no & was seen,
  * or the number found.
  */
-#if BB_MMU
+#ܐܢ BB_MMU
 #define parse_redir_right_fd(as_string, input) \
 	parse_redir_right_fd(input)
 #endif
-static int parse_redir_right_fd(o_string *as_string, struct in_str *input)
+ساكن صحيح parse_redir_right_fd(o_string *as_string, بنية in_str *input)
 {
-	int ch, d, ok;
+	صحيح ch, d, ok;
 
 	ch = i_peek(input);
-	if (ch != '&')
-		return REDIRFD_TO_FILE;
+	ܐܢ (ch != '&')
+		ܦܢܐ REDIRFD_TO_FILE;
 
 	ch = i_getch(input);  /* get the & */
 	nommu_addchr(as_string, ch);
 	ch = i_peek(input);
-	if (ch == '-') {
+	ܐܢ (ch == '-') {
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
-		return REDIRFD_CLOSE;
+		ܦܢܐ REDIRFD_CLOSE;
 	}
 	d = 0;
 	ok = 0;
-	while (ch != EOF && isdigit(ch)) {
+	ܟܡܐ (ch != EOF && isdigit(ch)) {
 		d = d*10 + (ch-'0');
 		ok = 1;
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
 		ch = i_peek(input);
 	}
-	if (ok) return d;
+	ܐܢ (ok) ܦܢܐ d;
 
 //TODO: this is the place to catch ">&file" bashism (redirect both fd 1 and 2)
 
 	bb_simple_error_msg("ambiguous redirect");
-	return REDIRFD_SYNTAX_ERR;
+	ܦܢܐ REDIRFD_SYNTAX_ERR;
 }
 
 /* Return code is 0 normal, 1 if a syntax error is detected
  */
-static int parse_redirect(struct parse_context *ctx,
-		int fd,
+ساكن صحيح parse_redirect(بنية parse_context *ctx,
+		صحيح fd,
 		redir_type style,
-		struct in_str *input)
+		بنية in_str *input)
 {
-	struct command *command = ctx->command;
-	struct redir_struct *redir;
-	struct redir_struct **redirp;
-	int dup_num;
+	بنية command *command = ctx->command;
+	بنية redir_struct *redir;
+	بنية redir_struct **redirp;
+	صحيح dup_num;
 
 	dup_num = REDIRFD_TO_FILE;
-	if (style != REDIRECT_HEREDOC) {
+	ܐܢ (style != REDIRECT_HEREDOC) {
 		/* Check for a '>&1' type redirect */
 		dup_num = parse_redir_right_fd(&ctx->as_string, input);
-		if (dup_num == REDIRFD_SYNTAX_ERR)
-			return 1;
-	} else {
-		int ch = i_peek_and_eat_bkslash_nl(input);
+		ܐܢ (dup_num == REDIRFD_SYNTAX_ERR)
+			ܦܢܐ 1;
+	} ܐܚܪܢܐ {
+		صحيح ch = i_peek_and_eat_bkslash_nl(input);
 		dup_num = (ch == '-'); /* HEREDOC_SKIPTABS bit is 1 */
-		if (dup_num) { /* <<-... */
+		ܐܢ (dup_num) { /* <<-... */
 			ch = i_getch(input);
 			nommu_addchr(&ctx->as_string, ch);
 			ch = i_peek(input);
 		}
 	}
 
-	if (style == REDIRECT_OVERWRITE && dup_num == REDIRFD_TO_FILE) {
-		int ch = i_peek_and_eat_bkslash_nl(input);
-		if (ch == '|') {
+	ܐܢ (style == REDIRECT_OVERWRITE && dup_num == REDIRFD_TO_FILE) {
+		صحيح ch = i_peek_and_eat_bkslash_nl(input);
+		ܐܢ (ch == '|') {
 			/* >|FILE redirect ("clobbering" >).
 			 * Since we do not support "set -o noclobber" yet,
 			 * >| and > are the same for now. Just eat |.
@@ -4734,10 +4734,10 @@ static int parse_redirect(struct parse_context *ctx,
 
 	/* Create a new redir_struct and append it to the linked list */
 	redirp = &command->redirects;
-	while ((redir = *redirp) != NULL) {
+	ܟܡܐ ((redir = *redirp) != عدم) {
 		redirp = &(redir->next);
 	}
-	*redirp = redir = xzalloc(sizeof(*redir));
+	*redirp = redir = xzalloc(حجم(*redir));
 	/* redir->next = NULL; */
 	/* redir->rd_filename = NULL; */
 	redir->rd_type = style;
@@ -4747,15 +4747,15 @@ static int parse_redirect(struct parse_context *ctx,
 				redir_table[style].descrip);
 
 	redir->rd_dup = dup_num;
-	if (style != REDIRECT_HEREDOC && dup_num != REDIRFD_TO_FILE) {
+	ܐܢ (style != REDIRECT_HEREDOC && dup_num != REDIRFD_TO_FILE) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
 		debug_printf_parse("duplicating redirect '%d>&%d'\n",
 				redir->rd_fd, redir->rd_dup);
-	} else {
-#if 0		/* Instead we emit error message at run time */
-		if (ctx->pending_redirect) {
+	} ܐܚܪܢܐ {
+#ܐܢ 0		/* Instead we emit error message at run time */
+		ܐܢ (ctx->pending_redirect) {
 			/* For example, "cmd > <file" */
 			syntax_error("invalid redirect");
 		}
@@ -4764,7 +4764,7 @@ static int parse_redirect(struct parse_context *ctx,
 		 * end of the next parsed word. */
 		ctx->pending_redirect = redir;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
 /* If a redirect is immediately preceded by a number, that number is
@@ -4787,32 +4787,32 @@ static int parse_redirect(struct parse_context *ctx,
  * A -1 return means no valid number was found,
  * the caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+ساكن صحيح redirect_opt_num(o_string *o)
 {
-	int num;
+	صحيح num;
 
-	if (o->data == NULL)
-		return -1;
-	num = bb_strtou(o->data, NULL, 10);
-	if (errno || num < 0)
-		return -1;
+	ܐܢ (o->data == عدم)
+		ܦܢܐ -1;
+	num = bb_strtou(o->data, عدم, 10);
+	ܐܢ (errno || num < 0)
+		ܦܢܐ -1;
 	o_reset_to_empty_unquoted(o);
-	return num;
+	ܦܢܐ num;
 }
 
-#if BB_MMU
+#ܐܢ BB_MMU
 #define fetch_till_str(as_string, input, word, skip_tabs) \
 	fetch_till_str(input, word, skip_tabs)
 #endif
-static char *fetch_till_str(o_string *as_string,
-		struct in_str *input,
-		const char *word,
-		int heredoc_flags)
+ساكن حرف *fetch_till_str(o_string *as_string,
+		بنية in_str *input,
+		ثابت حرف *word,
+		صحيح heredoc_flags)
 {
 	o_string heredoc = NULL_O_STRING;
 	unsigned past_EOL;
-	int prev = 0; /* not \ */
-	int ch;
+	صحيح prev = 0; /* not \ */
+	صحيح ch;
 
 	/* Starting with "" is necessary for this case:
 	 * cat <<EOF
@@ -4822,26 +4822,26 @@ static char *fetch_till_str(o_string *as_string,
 	 */
 	heredoc.data = xzalloc(1); /* start as "", not as NULL */
 
-	goto jump_in;
+	اذهب jump_in;
 
-	while (1) {
+	ܟܡܐ (1) {
 		ch = i_getch(input);
-		if (ch != EOF)
+		ܐܢ (ch != EOF)
 			nommu_addchr(as_string, ch);
-		if (ch == '\n' || ch == EOF) {
+		ܐܢ (ch == '\n' || ch == EOF) {
  check_heredoc_end:
 #ifndef __U_BOOT__
-			if ((heredoc_flags & HEREDOC_QUOTED) || prev != '\\') {
-#else /* __U_BOOT__ */
-			if (prev != '\\') {
+			ܐܢ ((heredoc_flags & HEREDOC_QUOTED) || prev != '\\') {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+			ܐܢ (prev != '\\') {
 #endif
 				/* End-of-line, and not a line continuation */
-				if (strcmp(heredoc.data + past_EOL, word) == 0) {
+				ܐܢ (strcmp(heredoc.data + past_EOL, word) == 0) {
 					heredoc.data[past_EOL] = '\0';
 					debug_printf_heredoc("parsed '%s' heredoc '%s'\n", word, heredoc.data);
-					return heredoc.data;
+					ܦܢܐ heredoc.data;
 				}
-				if (ch == '\n') {
+				ܐܢ (ch == '\n') {
 					/* This is a new line.
 					 * Remember position and backslash-escaping status.
 					 */
@@ -4850,22 +4850,22 @@ static char *fetch_till_str(o_string *as_string,
  jump_in:
 					past_EOL = heredoc.length;
 					/* Get 1st char of next line, possibly skipping leading tabs */
-					do {
+					ܥܒܕ {
 						ch = i_getch(input);
-						if (ch != EOF)
+						ܐܢ (ch != EOF)
 							nommu_addchr(as_string, ch);
 #ifndef __U_BOOT__
-					} while ((heredoc_flags & HEREDOC_SKIPTABS) && ch == '\t');
-#else /* __U_BOOT__ */
-				} while (ch == '\t');
+					} ܟܡܐ ((heredoc_flags & HEREDOC_SKIPTABS) && ch == '\t');
+#ܐܚܪܢܐ /* __U_BOOT__ */
+				} ܟܡܐ (ch == '\t');
 #endif
 					/* If this immediately ended the line,
 					 * go back to end-of-line checks.
 					 */
-					if (ch == '\n')
-						goto check_heredoc_end;
+					ܐܢ (ch == '\n')
+						اذهب check_heredoc_end;
 				}
-			} else {
+			} ܐܚܪܢܐ {
 				/* Backslash-line continuation in an unquoted
 				 * heredoc. This does not need special handling
 				 * for heredoc body (unquoted heredocs are
@@ -4879,19 +4879,19 @@ static char *fetch_till_str(o_string *as_string,
 				 */
 				heredoc.data[--heredoc.length] = '\0';
 				prev = 0; /* not '\' */
-				continue;
+				استمر;
 			}
 		}
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			o_free(&heredoc);
-			return NULL; /* error */
+			ܦܢܐ عدم; /* error */
 		}
 		o_addchr(&heredoc, ch);
 		nommu_addchr(as_string, ch);
-		if (prev == '\\' && ch == '\\')
+		ܐܢ (prev == '\\' && ch == '\\')
 			/* Correctly handle foo\\<eol> (not a line cont.) */
 			prev = 0; /* not '\' */
-		else
+		ܐܚܪܢܐ
 			prev = ch;
 	}
 }
@@ -4900,117 +4900,117 @@ static char *fetch_till_str(o_string *as_string,
 /* Look at entire parse tree for not-yet-loaded REDIRECT_HEREDOCs
  * and load them all. There should be exactly heredoc_cnt of them.
  */
-#if BB_MMU
+#ܐܢ BB_MMU
 #define fetch_heredocs(as_string, pi, heredoc_cnt, input) \
 	fetch_heredocs(pi, heredoc_cnt, input)
 #endif
-static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt, struct in_str *input)
+ساكن صحيح fetch_heredocs(o_string *as_string, بنية pipe *pi, صحيح heredoc_cnt, بنية in_str *input)
 {
-	while (pi && heredoc_cnt) {
-		int i;
-		struct command *cmd = pi->cmds;
+	ܟܡܐ (pi && heredoc_cnt) {
+		صحيح i;
+		بنية command *cmd = pi->cmds;
 
 		debug_printf_heredoc("fetch_heredocs: num_cmds:%d cmd argv0:'%s'\n",
 				pi->num_cmds,
 				cmd->argv ? cmd->argv[0] : "NONE"
 		);
-		for (i = 0; i < pi->num_cmds; i++) {
+		لكل (i = 0; i < pi->num_cmds; i++) {
 #ifndef __U_BOOT__
-			struct redir_struct *redir = cmd->redirects;
+			بنية redir_struct *redir = cmd->redirects;
 
 #endif /* !__U_BOOT__ */
 			debug_printf_heredoc("fetch_heredocs: %d cmd argv0:'%s'\n",
 					i, cmd->argv ? cmd->argv[0] : "NONE");
 #ifndef __U_BOOT__
-			while (redir) {
-				if (redir->rd_type == REDIRECT_HEREDOC) {
-					char *p;
+			ܟܡܐ (redir) {
+				ܐܢ (redir->rd_type == REDIRECT_HEREDOC) {
+					حرف *p;
 
 					redir->rd_type = REDIRECT_HEREDOC2;
 					/* redir->rd_dup is (ab)used to indicate <<- */
 					p = fetch_till_str(as_string, input,
 							redir->rd_filename, redir->rd_dup);
-					if (!p) {
+					ܐܢ (!p) {
 						syntax_error("unexpected EOF in here document");
-						return -1;
+						ܦܢܐ -1;
 					}
-					free(redir->rd_filename);
+					حرر(redir->rd_filename);
 					redir->rd_filename = p;
 					heredoc_cnt--;
 				}
 				redir = redir->next;
 			}
 #endif /* !__U_BOOT__ */
-			if (cmd->group) {
+			ܐܢ (cmd->group) {
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
 				heredoc_cnt = fetch_heredocs(as_string, cmd->group, heredoc_cnt, input);
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
-				if (heredoc_cnt < 0)
-					return heredoc_cnt; /* error */
+				ܐܢ (heredoc_cnt < 0)
+					ܦܢܐ heredoc_cnt; /* error */
 			}
 			cmd++;
 		}
 		pi = pi->next;
 	}
-	return heredoc_cnt;
+	ܦܢܐ heredoc_cnt;
 }
 
-static int run_list(struct pipe *pi);
-#if BB_MMU
+ساكن صحيح run_list(بنية pipe *pi);
+#ܐܢ BB_MMU
 #define parse_stream(pstring, heredoc_cnt_ptr, input, end_trigger) \
 	parse_stream(heredoc_cnt_ptr, input, end_trigger)
 #endif
-static struct pipe *parse_stream(char **pstring,
-		int *heredoc_cnt_ptr,
-		struct in_str *input,
-		int end_trigger);
+ساكن بنية pipe *parse_stream(حرف **pstring,
+		صحيح *heredoc_cnt_ptr,
+		بنية in_str *input,
+		صحيح end_trigger);
 
 /* Returns number of heredocs not yet consumed,
  * or -1 on error.
  */
-static int parse_group(struct parse_context *ctx,
-		struct in_str *input, int ch)
+ساكن صحيح parse_group(بنية parse_context *ctx,
+		بنية in_str *input, صحيح ch)
 {
 	/* ctx->word contains characters seen prior to ( or {.
 	 * Typically it's empty, but for function defs,
 	 * it contains function name (without '()'). */
-#if BB_MMU
-# define as_string NULL
-#else
-	char *as_string = NULL;
+#ܐܢ BB_MMU
+# define as_string عدم
+#ܐܚܪܢܐ
+	حرف *as_string = عدم;
 #endif
-	struct pipe *pipe_list;
-	int heredoc_cnt = 0;
-	int endch;
-	struct command *command = ctx->command;
+	بنية pipe *pipe_list;
+	صحيح heredoc_cnt = 0;
+	صحيح endch;
+	بنية command *command = ctx->command;
 
 	debug_printf_parse("parse_group entered\n");
-#if ENABLE_HUSH_FUNCTIONS
-	if (ch == '(' && !ctx->word.has_quoted_part) {
-		if (ctx->word.length)
-			if (done_word(ctx))
-				return -1;
-		if (!command->argv)
-			goto skip; /* (... */
-		if (command->argv[1]) { /* word word ... (... */
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+	ܐܢ (ch == '(' && !ctx->word.has_quoted_part) {
+		ܐܢ (ctx->word.length)
+			ܐܢ (done_word(ctx))
+				ܦܢܐ -1;
+		ܐܢ (!command->argv)
+			اذهب skip; /* (... */
+		ܐܢ (command->argv[1]) { /* word word ... (... */
 			syntax_error_unexpected_ch('(');
-			return -1;
+			ܦܢܐ -1;
 		}
 		/* it is "word(..." or "word (..." */
-		do
+		ܥܒܕ
 			ch = i_getch(input);
-		while (ch == ' ' || ch == '\t');
-		if (ch != ')') {
+		ܟܡܐ (ch == ' ' || ch == '\t');
+		ܐܢ (ch != ')') {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			ܦܢܐ -1;
 		}
 		nommu_addchr(&ctx->as_string, ch);
-		do
+		ܥܒܕ
 			ch = i_getch(input);
-		while (ch == ' ' || ch == '\t' || ch == '\n');
-		if (ch != '{' && ch != '(') {
+		ܟܡܐ (ch == ' ' || ch == '\t' || ch == '\n');
+		ܐܢ (ch != '{' && ch != '(') {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			ܦܢܐ -1;
 		}
 //bash allows functions named "123", "..", "return"!
 //		if (endofname(command->argv[0])[0] != '\0') {
@@ -5019,19 +5019,19 @@ static int parse_group(struct parse_context *ctx,
 //		}
 		nommu_addchr(&ctx->as_string, ch);
 		command->cmd_type = CMD_FUNCDEF;
-		goto skip;
+		اذهب skip;
 	}
 #endif
 
-#if 0 /* Prevented by caller */
-	if (command->argv /* word [word]{... */
+#ܐܢ 0 /* Prevented by caller */
+	ܐܢ (command->argv /* word [word]{... */
 	 || ctx->word.length /* word{... */
 	 || ctx->word.has_quoted_part /* ""{... */
 	) {
-		syntax_error(NULL);
+		syntax_error(عدم);
 		debug_printf_parse("parse_group return -1: "
 			"syntax error, groups and arglists don't mix\n");
-		return -1;
+		ܦܢܐ -1;
 	}
 #endif
 
@@ -5040,22 +5040,22 @@ static int parse_group(struct parse_context *ctx,
 #endif /* !__U_BOOT__ */
 
 	endch = '}';
-	if (ch == '(') {
+	ܐܢ (ch == '(') {
 		endch = ')';
 #ifndef __U_BOOT__
-		IF_HUSH_FUNCTIONS(if (command->cmd_type != CMD_FUNCDEF))
+		IF_HUSH_FUNCTIONS(ܐܢ (command->cmd_type != CMD_FUNCDEF))
 			command->cmd_type = CMD_SUBSHELL;
 #endif /* !__U_BOOT__ */
-	} else {
+	} ܐܚܪܢܐ {
 		/* bash does not allow "{echo...", requires whitespace */
 		ch = i_peek(input);
-		if (ch != ' ' && ch != '\t' && ch != '\n'
+		ܐܢ (ch != ' ' && ch != '\t' && ch != '\n'
 		 && ch != '('	/* but "{(..." is allowed (without whitespace) */
 		) {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			ܦܢܐ -1;
 		}
-		if (ch != '(') {
+		ܐܢ (ch != '(') {
 			ch = i_getch(input);
 			nommu_addchr(&ctx->as_string, ch);
 		}
@@ -5064,36 +5064,36 @@ static int parse_group(struct parse_context *ctx,
 	debug_printf_heredoc("calling parse_stream, heredoc_cnt:%d\n", heredoc_cnt);
 	pipe_list = parse_stream(&as_string, &heredoc_cnt, input, endch);
 	debug_printf_heredoc("parse_stream returned: heredoc_cnt:%d\n", heredoc_cnt);
-#if !BB_MMU
-	if (as_string)
+#ܐܢ !BB_MMU
+	ܐܢ (as_string)
 		o_addstr(&ctx->as_string, as_string);
 #endif
 
 	/* empty ()/{} or parse error? */
-	if (!pipe_list || pipe_list == ERR_PTR) {
+	ܐܢ (!pipe_list || pipe_list == ERR_PTR) {
 		/* parse_stream already emitted error msg */
-		if (!BB_MMU)
-			free(as_string);
+		ܐܢ (!BB_MMU)
+			حرر(as_string);
 		debug_printf_parse("parse_group return -1: "
 			"parse_stream returned %p\n", pipe_list);
-		return -1;
+		ܦܢܐ -1;
 	}
-#if !BB_MMU
+#ܐܢ !BB_MMU
 	as_string[strlen(as_string) - 1] = '\0'; /* plink ')' or '}' */
 	command->group_as_string = as_string;
 	debug_printf_parse("end of group, remembering as:'%s'\n",
 			command->group_as_string);
 #endif
 
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	/* Convert "f() (cmds)" to "f() {(cmds)}" */
-	if (command->cmd_type == CMD_FUNCDEF && endch == ')') {
-		struct command *cmd2;
+	ܐܢ (command->cmd_type == CMD_FUNCDEF && endch == ')') {
+		بنية command *cmd2;
 
-		cmd2 = xzalloc(sizeof(*cmd2));
+		cmd2 = xzalloc(حجم(*cmd2));
 		cmd2->cmd_type = CMD_SUBSHELL;
 		cmd2->group = pipe_list;
-# if !BB_MMU
+# ܐܢ !BB_MMU
 //UNTESTED!
 		cmd2->group_as_string = command->group_as_string;
 		command->group_as_string = xasprintf("(%s)", command->group_as_string);
@@ -5108,64 +5108,64 @@ static int parse_group(struct parse_context *ctx,
 	command->group = pipe_list;
 
 	debug_printf_parse("parse_group return %d\n", heredoc_cnt);
-	return heredoc_cnt;
+	ܦܢܐ heredoc_cnt;
 	/* command remains "open", available for possible redirects */
 #undef as_string
 }
 
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS
+#ܐܢ ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS
 /* Subroutines for copying $(...) and `...` things */
 /* '...' */
-static int add_till_single_quote(o_string *dest, struct in_str *input)
+ساكن صحيح add_till_single_quote(o_string *dest, بنية in_str *input)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	ܟܡܐ (1) {
+		صحيح ch = i_getch(input);
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (ch == '\'')
-			return 1;
+		ܐܢ (ch == '\'')
+			ܦܢܐ 1;
 		o_addchr(dest, ch);
 	}
 }
-static int add_till_single_quote_dquoted(o_string *dest, struct in_str *input)
+ساكن صحيح add_till_single_quote_dquoted(o_string *dest, بنية in_str *input)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	ܟܡܐ (1) {
+		صحيح ch = i_getch(input);
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (ch == '\'')
-			return 1;
+		ܐܢ (ch == '\'')
+			ܦܢܐ 1;
 		o_addqchr(dest, ch);
 	}
 }
 
 /* "...\"...`..`...." - do we need to handle "...$(..)..." too? */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote);
-static int add_till_double_quote(o_string *dest, struct in_str *input)
+ساكن صحيح add_till_backquote(o_string *dest, بنية in_str *input, صحيح in_dquote);
+ساكن صحيح add_till_double_quote(o_string *dest, بنية in_str *input)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	ܟܡܐ (1) {
+		صحيح ch = i_getch(input);
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (ch == '"')
-			return 1;
-		if (ch == '\\') {  /* \x. Copy both chars. */
+		ܐܢ (ch == '"')
+			ܦܢܐ 1;
+		ܐܢ (ch == '\\') {  /* \x. Copy both chars. */
 			o_addchr(dest, ch);
 			ch = i_getch(input);
 		}
 		o_addchr(dest, ch);
-		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 1))
-				return 0;
+		ܐܢ (ch == '`') {
+			ܐܢ (!add_till_backquote(dest, input, /*in_dquote:*/ 1))
+				ܦܢܐ 0;
 			o_addchr(dest, ch);
-			continue;
+			استمر;
 		}
 		//if (ch == '$') ...
 	}
@@ -5185,16 +5185,16 @@ static int add_till_double_quote(o_string *dest, struct in_str *input)
  * Example                               Output
  * echo `echo '\'TEST\`echo ZZ\`BEST`    \TESTZZBEST
  */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote)
+ساكن صحيح add_till_backquote(o_string *dest, بنية in_str *input, صحيح in_dquote)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == '`')
-			return 1;
-		if (ch == '\\') {
+	ܟܡܐ (1) {
+		صحيح ch = i_getch(input);
+		ܐܢ (ch == '`')
+			ܦܢܐ 1;
+		ܐܢ (ch == '\\') {
 			/* \x. Copy both unless it is \`, \$, \\ and maybe \" */
 			ch = i_getch(input);
-			if (ch != '`'
+			ܐܢ (ch != '`'
 			 && ch != '$'
 			 && ch != '\\'
 			 && (!in_dquote || ch != '"')
@@ -5202,9 +5202,9 @@ static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquot
 				o_addchr(dest, '\\');
 			}
 		}
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('`');
-			return 0;
+			ܦܢܐ 0;
 		}
 		o_addchr(dest, ch);
 	}
@@ -5227,164 +5227,164 @@ static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquot
  * for ${var:N[:M]} and ${var/P[/R]} parsing.
  */
 #define DOUBLE_CLOSE_CHAR_FLAG 0x80
-static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsigned end_ch)
+ساكن صحيح add_till_closing_bracket(o_string *dest, بنية in_str *input, unsigned end_ch)
 {
-	int ch;
-	char dbl = end_ch & DOUBLE_CLOSE_CHAR_FLAG;
-# if BASH_SUBSTR || BASH_PATTERN_SUBST
-	char end_char2 = end_ch >> 8;
+	صحيح ch;
+	حرف dbl = end_ch & DOUBLE_CLOSE_CHAR_FLAG;
+# ܐܢ BASH_SUBSTR || BASH_PATTERN_SUBST
+	حرف end_char2 = end_ch >> 8;
 # endif
 	end_ch &= (DOUBLE_CLOSE_CHAR_FLAG - 1);
 
-# if ENABLE_HUSH_INTERACTIVE
+# ܐܢ ENABLE_HUSH_INTERACTIVE
 	G.promptmode = 1; /* PS2 */
 # endif
 	debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 
-	while (1) {
+	ܟܡܐ (1) {
 		ch = i_getch(input);
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch(end_ch);
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (ch == end_ch
-# if BASH_SUBSTR || BASH_PATTERN_SUBST
+		ܐܢ (ch == end_ch
+# ܐܢ BASH_SUBSTR || BASH_PATTERN_SUBST
 		 || ch == end_char2
 # endif
 		) {
-			if (!dbl)
-				break;
+			ܐܢ (!dbl)
+				اكسر;
 			/* we look for closing )) of $((EXPR)) */
-			if (i_peek_and_eat_bkslash_nl(input) == end_ch) {
+			ܐܢ (i_peek_and_eat_bkslash_nl(input) == end_ch) {
 				i_getch(input); /* eat second ')' */
-				break;
+				اكسر;
 			}
 		}
 		o_addchr(dest, ch);
 		//bb_error_msg("%s:o_addchr('%c')", __func__, ch);
-		if (ch == '(' || ch == '{') {
+		ܐܢ (ch == '(' || ch == '{') {
 			ch = (ch == '(' ? ')' : '}');
-			if (!add_till_closing_bracket(dest, input, ch))
-				return 0;
+			ܐܢ (!add_till_closing_bracket(dest, input, ch))
+				ܦܢܐ 0;
 			o_addchr(dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '\'') {
-			if (!add_till_single_quote(dest, input))
-				return 0;
+		ܐܢ (ch == '\'') {
+			ܐܢ (!add_till_single_quote(dest, input))
+				ܦܢܐ 0;
 			o_addchr(dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '"') {
-			if (!add_till_double_quote(dest, input))
-				return 0;
+		ܐܢ (ch == '"') {
+			ܐܢ (!add_till_double_quote(dest, input))
+				ܦܢܐ 0;
 			o_addchr(dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 0))
-				return 0;
+		ܐܢ (ch == '`') {
+			ܐܢ (!add_till_backquote(dest, input, /*in_dquote:*/ 0))
+				ܦܢܐ 0;
 			o_addchr(dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '\\') {
+		ܐܢ (ch == '\\') {
 			/* \x. Copy verbatim. Important for  \(, \) */
 			ch = i_getch(input);
-			if (ch == EOF) {
+			ܐܢ (ch == EOF) {
 				syntax_error_unterm_ch(end_ch);
-				return 0;
+				ܦܢܐ 0;
 			}
-# if 0
-			if (ch == '\n') {
+# ܐܢ 0
+			ܐܢ (ch == '\n') {
 				/* "backslash+newline", ignore both */
 				o_delchr(dest); /* undo insertion of '\' */
-				continue;
+				استمر;
 			}
 # endif
 			o_addchr(dest, ch);
 			//bb_error_msg("%s:o_addchr('%c') after '\\'", __func__, ch);
-			continue;
+			استمر;
 		}
 	}
 	debug_printf_parse("%s return '%s' ch:'%c'\n", __func__, dest->data, ch);
-	return ch;
+	ܦܢܐ ch;
 }
 #endif /* ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS */
 
-#if BASH_DOLLAR_SQUOTE
+#ܐܢ BASH_DOLLAR_SQUOTE
 /* Return code: 1 for "found and parsed", 0 for "seen something else" */
-# if BB_MMU
+# ܐܢ BB_MMU
 #define parse_dollar_squote(as_string, dest, input) \
 	parse_dollar_squote(dest, input)
-#define as_string NULL
+#define as_string عدم
 # endif
-static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_str *input)
+ساكن صحيح parse_dollar_squote(o_string *as_string, o_string *dest, بنية in_str *input)
 {
-	int start;
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	صحيح start;
+	صحيح ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
 	debug_printf_parse("parse_dollar_squote entered: ch='%c'\n", ch);
-	if (ch != '\'')
-		return 0;
+	ܐܢ (ch != '\'')
+		ܦܢܐ 0;
 
 	dest->has_quoted_part = 1;
 	start = dest->length;
 
 	ch = i_getch(input); /* eat ' */
 	nommu_addchr(as_string, ch);
-	while (1) {
+	ܟܡܐ (1) {
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			ܦܢܐ 0;
 		}
-		if (ch == '\'')
-			break;
-		if (ch == SPECIAL_VAR_SYMBOL) {
+		ܐܢ (ch == '\'')
+			اكسر;
+		ܐܢ (ch == SPECIAL_VAR_SYMBOL) {
 			/* Convert raw ^C to corresponding special variable reference */
 			o_addchr(dest, SPECIAL_VAR_SYMBOL);
 			o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
 			/* will addchr() another SPECIAL_VAR_SYMBOL (see after the if() block) */
-		} else if (ch == '\\') {
-			static const char C_escapes[] ALIGN1 = "nrbtfav""x\\01234567";
+		} ܐܚܪܢܐ ܐܢ (ch == '\\') {
+			ساكن ثابت حرف C_escapes[] ALIGN1 = "nrbtfav""x\\01234567";
 
 			ch = i_getch(input);
 			nommu_addchr(as_string, ch);
-			if (strchr(C_escapes, ch)) {
-				char buf[4];
-				char *p = buf;
-				int cnt = 2;
+			ܐܢ (strchr(C_escapes, ch)) {
+				حرف buf[4];
+				حرف *p = buf;
+				صحيح cnt = 2;
 
 				buf[0] = ch;
-				if ((unsigned char)(ch - '0') <= 7) { /* \ooo */
-					do {
+				ܐܢ ((unsigned حرف)(ch - '0') <= 7) { /* \ooo */
+					ܥܒܕ {
 						ch = i_peek(input);
-						if ((unsigned char)(ch - '0') > 7)
-							break;
+						ܐܢ ((unsigned حرف)(ch - '0') > 7)
+							اكسر;
 						*++p = ch = i_getch(input);
 						nommu_addchr(as_string, ch);
-					} while (--cnt != 0);
-				} else if (ch == 'x') { /* \xHH */
-					do {
+					} ܟܡܐ (--cnt != 0);
+				} ܐܚܪܢܐ ܐܢ (ch == 'x') { /* \xHH */
+					ܥܒܕ {
 						ch = i_peek(input);
-						if (!isxdigit(ch))
-							break;
+						ܐܢ (!isxdigit(ch))
+							اكسر;
 						*++p = ch = i_getch(input);
 						nommu_addchr(as_string, ch);
-					} while (--cnt != 0);
-					if (cnt == 2) { /* \x but next char is "bad" */
+					} ܟܡܐ (--cnt != 0);
+					ܐܢ (cnt == 2) { /* \x but next char is "bad" */
 						ch = 'x';
-						goto unrecognized;
+						اذهب unrecognized;
 					}
 				} /* else simple seq like \\ or \t */
 				*++p = '\0';
 				p = buf;
-				ch = bb_process_escape_sequence((void*)&p);
+				ch = bb_process_escape_sequence((فراغ*)&p);
 				//bb_error_msg("buf:'%s' ch:%x", buf, ch);
-				if (ch == '\0')
-					continue; /* bash compat: $'...\0...' emits nothing */
-			} else { /* unrecognized "\z": encode both chars unless ' or " */
-				if (ch != '\'' && ch != '"') {
+				ܐܢ (ch == '\0')
+					استمر; /* bash compat: $'...\0...' emits nothing */
+			} ܐܚܪܢܐ { /* unrecognized "\z": encode both chars unless ' or " */
+				ܐܢ (ch != '\'' && ch != '"') {
  unrecognized:
 					o_addqchr(dest, '\\');
 				}
@@ -5393,53 +5393,53 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 		o_addqchr(dest, ch);
 	}
 
-	if (dest->length == start) {
+	ܐܢ (dest->length == start) {
 		/* $'', $'\0', $'\000\x00' and the like */
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 	}
 
-	return 1;
+	ܦܢܐ 1;
 # undef as_string
 }
-#else
+#ܐܚܪܢܐ
 # define parse_dollar_squote(as_string, dest, input) 0
 #endif /* BASH_DOLLAR_SQUOTE */
 #endif /* !__U_BOOT__ */
 
 /* Return code: 0 for OK, 1 for syntax error */
-#if BB_MMU
+#ܐܢ BB_MMU
 #define parse_dollar(as_string, dest, input, quote_mask) \
 	parse_dollar(dest, input, quote_mask)
-#define as_string NULL
+#define as_string عدم
 #endif
-static int parse_dollar(o_string *as_string,
+ساكن صحيح parse_dollar(o_string *as_string,
 		o_string *dest,
-		struct in_str *input, unsigned char quote_mask)
+		بنية in_str *input, unsigned حرف quote_mask)
 {
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	صحيح ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
 
 	debug_printf_parse("parse_dollar entered: ch='%c' quote_mask:0x%x\n", ch, quote_mask);
-	if (isalpha(ch)) {
+	ܐܢ (isalpha(ch)) {
  make_var:
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
  /*make_var1:*/
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		while (1) {
+		ܟܡܐ (1) {
 			debug_printf_parse(": '%c'\n", ch);
 			o_addchr(dest, ch | quote_mask);
 			quote_mask = 0;
 			ch = i_peek_and_eat_bkslash_nl(input);
-			if (!isalnum(ch) && ch != '_') {
+			ܐܢ (!isalnum(ch) && ch != '_') {
 				/* End of variable name reached */
-				break;
+				اكسر;
 			}
 			ch = i_getch(input);
 			nommu_addchr(as_string, ch);
 		}
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-	} else if (isdigit(ch)) {
+	} ܐܚܪܢܐ ܐܢ (isdigit(ch)) {
  make_one_char_var:
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
@@ -5447,19 +5447,19 @@ static int parse_dollar(o_string *as_string,
 		debug_printf_parse(": '%c'\n", ch);
 		o_addchr(dest, ch | quote_mask);
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-	} else switch (ch) {
+	} ܐܚܪܢܐ بدل (ch) {
 #ifndef __U_BOOT__
-	case '$': /* pid */
-	case '!': /* last bg pid */
+	حالة '$': /* pid */
+	حالة '!': /* last bg pid */
 #endif /* !__U_BOOT__ */
-	case '?': /* last exit code */
-	case '#': /* number of args */
-	case '*': /* args */
-	case '@': /* args */
-	case '-': /* $- option flags set by set builtin or shell options (-i etc) */
-		goto make_one_char_var;
-	case '{': {
-		char len_single_ch;
+	حالة '?': /* last exit code */
+	حالة '#': /* number of args */
+	حالة '*': /* args */
+	حالة '@': /* args */
+	حالة '-': /* $- option flags set by set builtin or shell options (-i etc) */
+		اذهب make_one_char_var;
+	حالة '{': {
+		حرف len_single_ch;
 
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 
@@ -5471,13 +5471,13 @@ static int parse_dollar(o_string *as_string,
 		 * or even ${?+subst} - operator acting on a special variable,
 		 * or the beginning of variable name.
 		 */
-		if (ch == EOF
+		ܐܢ (ch == EOF
 		 || (!strchr(_SPECIAL_VARS_STR, ch) && !isalnum(ch)) /* not one of those */
 		) {
  bad_dollar_syntax:
 			syntax_error_unterm_str("${name}");
 			debug_printf_parse("parse_dollar return 0: unterminated ${name}\n");
-			return 0;
+			ܦܢܐ 0;
 		}
 		nommu_addchr(as_string, ch);
 		len_single_ch = ch;
@@ -5488,7 +5488,7 @@ static int parse_dollar(o_string *as_string,
 		 * which check invalid constructs like ${%}.
 		 * Oh well... let's check that the var name part is fine... */
 
-		if (isdigit(len_single_ch)
+		ܐܢ (isdigit(len_single_ch)
 		 || (len_single_ch == '#' && isdigit(i_peek_and_eat_bkslash_nl(input)))
 		) {
 			/* Execution engine uses plain xatoi_positive()
@@ -5498,23 +5498,23 @@ static int parse_dollar(o_string *as_string,
 			 * e.g. ${#$var} and {#1:+WORD} are not supported).
 			 */
 			unsigned cnt = 9; /* max 9 digits for ${NN} and 8 for {#NN} */
-			while (1) {
+			ܟܡܐ (1) {
 				o_addchr(dest, ch);
 				debug_printf_parse(": '%c'\n", ch);
 				ch = i_getch_and_eat_bkslash_nl(input);
 				nommu_addchr(as_string, ch);
-				if (ch == '}')
-					break;
-				if (--cnt == 0)
-					goto bad_dollar_syntax;
-				if (len_single_ch != '#' && strchr(VAR_SUBST_OPS, ch))
+				ܐܢ (ch == '}')
+					اكسر;
+				ܐܢ (--cnt == 0)
+					اذهب bad_dollar_syntax;
+				ܐܢ (len_single_ch != '#' && strchr(VAR_SUBST_OPS, ch))
 					/* ${NN<op>...} is valid */
-					goto eat_until_closing;
-				if (!isdigit(ch))
-					goto bad_dollar_syntax;
+					اذهب eat_until_closing;
+				ܐܢ (!isdigit(ch))
+					اذهب bad_dollar_syntax;
 			}
-		} else
-		while (1) {
+		} ܐܚܪܢܐ
+		ܟܡܐ (1) {
 			unsigned pos;
 
 			o_addchr(dest, ch);
@@ -5522,11 +5522,11 @@ static int parse_dollar(o_string *as_string,
 
 			ch = i_getch(input);
 			nommu_addchr(as_string, ch);
-			if (ch == '}')
-				break;
+			ܐܢ (ch == '}')
+				اكسر;
 #ifndef __U_BOOT__
-			if (!isalnum(ch) && ch != '_') {
-#else /* __U_BOOT__ */
+			ܐܢ (!isalnum(ch) && ch != '_') {
+#ܐܚܪܢܐ /* __U_BOOT__ */
 			/*
 			 * In several places in U-Boot, we use variable like
 			 * foo# (e.g. serial#), particularly in env.
@@ -5536,21 +5536,21 @@ static int parse_dollar(o_string *as_string,
 			 * upstream hush but expansion will be done (even though
 			 * the result will be empty).
 			 */
-			if (!isalnum(ch) && ch != '_' && ch != '#') {
+			ܐܢ (!isalnum(ch) && ch != '_' && ch != '#') {
 #endif /* __U_BOOT__ */
 				unsigned end_ch;
 #ifndef __U_BOOT__
-				unsigned char last_ch;
+				unsigned حرف last_ch;
 #endif /* !__U_BOOT__ */
 				/* handle parameter expansions
 				 * http://www.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_06_02
 				 */
-				if (!strchr(VAR_SUBST_OPS, ch)) { /* ${var<bad_char>... */
-					if (len_single_ch != '#'
+				ܐܢ (!strchr(VAR_SUBST_OPS, ch)) { /* ${var<bad_char>... */
+					ܐܢ (len_single_ch != '#'
 					/*|| !strchr(SPECIAL_VARS_STR, ch) - disallow errors like ${#+} ? */
 					 || i_peek(input) != '}'
 					) {
-						goto bad_dollar_syntax;
+						اذهب bad_dollar_syntax;
 					}
 					/* else: it's "length of C" ${#C} op,
 					 * where C is a single char
@@ -5561,18 +5561,18 @@ static int parse_dollar(o_string *as_string,
 				/* Eat everything until closing '}' (or ':') */
 				end_ch = '}';
 #ifndef __U_BOOT__
-				if (BASH_SUBSTR
+				ܐܢ (BASH_SUBSTR
 				 && ch == ':'
 				 && !strchr(MINUS_PLUS_EQUAL_QUESTION, i_peek(input))
 				) {
 					/* It's ${var:N[:M]} thing */
 					end_ch = '}' * 0x100 + ':';
 				}
-				if (BASH_PATTERN_SUBST
+				ܐܢ (BASH_PATTERN_SUBST
 				 && ch == '/'
 				) {
 					/* It's ${var/[/]pattern[/repl]} thing */
-					if (i_peek(input) == '/') { /* ${var//pattern[/repl]}? */
+					ܐܢ (i_peek(input) == '/') { /* ${var//pattern[/repl]}? */
 						i_getch(input);
 						nommu_addchr(as_string, '/');
 						ch = '\\';
@@ -5587,24 +5587,24 @@ static int parse_dollar(o_string *as_string,
 				 *  v=/dev/ram; echo ${v////-}  prints -dev-ram (pattern is "/")
 				 *  v=/dev/ram; echo ${v///r/-} prints /dev-am  (pattern is "/r")
 				 */
-				if (i_peek(input) == '/') {
+				ܐܢ (i_peek(input) == '/') {
 					o_addchr(dest, i_getch(input));
 				}
 #ifndef __U_BOOT__
  again:
 #endif /* !__U_BOOT__ */
-				if (!BB_MMU)
+				ܐܢ (!BB_MMU)
 					pos = dest->length;
-#if ENABLE_HUSH_DOLLAR_OPS
+#ܐܢ ENABLE_HUSH_DOLLAR_OPS
 #ifndef __U_BOOT__
 				last_ch = add_till_closing_bracket(dest, input, end_ch);
-				if (last_ch == 0) /* error? */
-					return 0;
+				ܐܢ (last_ch == 0) /* error? */
+					ܦܢܐ 0;
 #endif /* !__U_BOOT__ */
-#else
+#ܐܚܪܢܐ
 # error Simple code to only allow ${var} is not implemented
 #endif
-				if (as_string) {
+				ܐܢ (as_string) {
 					o_addstr(as_string, dest->data + pos);
 #ifndef __U_BOOT__
 					o_addchr(as_string, last_ch);
@@ -5612,76 +5612,76 @@ static int parse_dollar(o_string *as_string,
 				}
 
 #ifndef __U_BOOT__
-				if ((BASH_SUBSTR || BASH_PATTERN_SUBST)
+				ܐܢ ((BASH_SUBSTR || BASH_PATTERN_SUBST)
 					 && (end_ch & 0xff00)
 				) {
 					/* close the first block: */
 					o_addchr(dest, SPECIAL_VAR_SYMBOL);
 					/* while parsing N from ${var:N[:M]}
 					 * or pattern from ${var/[/]pattern[/repl]} */
-					if ((end_ch & 0xff) == last_ch) {
+					ܐܢ ((end_ch & 0xff) == last_ch) {
 						/* got ':' or '/'- parse the rest */
 						end_ch = '}';
-						goto again;
+						اذهب again;
 					}
 					/* got '}' */
-					if (BASH_SUBSTR && end_ch == '}' * 0x100 + ':') {
+					ܐܢ (BASH_SUBSTR && end_ch == '}' * 0x100 + ':') {
 						/* it's ${var:N} - emulate :999999999 */
 						o_addstr(dest, "999999999");
 					} /* else: it's ${var/[/]pattern} */
 				}
 #endif /* !__U_BOOT__ */
-				break;
+				اكسر;
 			}
 			len_single_ch = 0; /* it can't be ${#C} op */
 		}
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		break;
+		اكسر;
 	}
-#if ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_TICK
-	case '(': {
+#ܐܢ ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_TICK
+	حالة '(': {
 		unsigned pos;
 
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
-# if ENABLE_FEATURE_SH_MATH
-		if (i_peek_and_eat_bkslash_nl(input) == '(') {
+# ܐܢ ENABLE_FEATURE_SH_MATH
+		ܐܢ (i_peek_and_eat_bkslash_nl(input) == '(') {
 			ch = i_getch(input);
 			nommu_addchr(as_string, ch);
 			o_addchr(dest, SPECIAL_VAR_SYMBOL);
 			o_addchr(dest, quote_mask | '+');
-			if (!BB_MMU)
+			ܐܢ (!BB_MMU)
 				pos = dest->length;
-			if (!add_till_closing_bracket(dest, input, ')' | DOUBLE_CLOSE_CHAR_FLAG))
-				return 0; /* error */
-			if (as_string) {
+			ܐܢ (!add_till_closing_bracket(dest, input, ')' | DOUBLE_CLOSE_CHAR_FLAG))
+				ܦܢܐ 0; /* error */
+			ܐܢ (as_string) {
 				o_addstr(as_string, dest->data + pos);
 				o_addchr(as_string, ')');
 				o_addchr(as_string, ')');
 			}
 			o_addchr(dest, SPECIAL_VAR_SYMBOL);
-			break;
+			اكسر;
 		}
 # endif
-# if ENABLE_HUSH_TICK
+# ܐܢ ENABLE_HUSH_TICK
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 		o_addchr(dest, quote_mask | '`');
-		if (!BB_MMU)
+		ܐܢ (!BB_MMU)
 			pos = dest->length;
-		if (!add_till_closing_bracket(dest, input, ')'))
-			return 0; /* error */
-		if (as_string) {
+		ܐܢ (!add_till_closing_bracket(dest, input, ')'))
+			ܦܢܐ 0; /* error */
+		ܐܢ (as_string) {
 			o_addstr(as_string, dest->data + pos);
 			o_addchr(as_string, ')');
 		}
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 # endif
-		break;
+		اكسر;
 	}
 #endif
-	case '_':
-		goto make_var;
-#if 0
+	حالة '_':
+		اذهب make_var;
+#ܐܢ 0
 	/* TODO: $_: */
 	/* $_ Shell or shell script name; or last argument of last command
 	 * (if last command wasn't a pipe; if it was, bash sets $_ to "");
@@ -5689,60 +5689,60 @@ static int parse_dollar(o_string *as_string,
 		ch = i_getch(input);
 		nommu_addchr(as_string, ch);
 		ch = i_peek_and_eat_bkslash_nl(input);
-		if (isalnum(ch)) { /* it's $_name or $_123 */
+		ܐܢ (isalnum(ch)) { /* it's $_name or $_123 */
 			ch = '_';
-			goto make_var1;
+			اذهب make_var1;
 		}
 		/* else: it's $_ */
 #endif
-	default:
+	افتراضي:
 		o_addQchr(dest, '$');
 	}
 	debug_printf_parse("parse_dollar return 1 (ok)\n");
-	return 1;
+	ܦܢܐ 1;
 #undef as_string
 }
 
-#if BB_MMU
+#ܐܢ BB_MMU
 #define encode_string(as_string, dest, input, dquote_end) \
 	encode_string(dest, input, dquote_end)
-#define as_string NULL
+#define as_string عدم
 #endif
-static int encode_string(o_string *as_string,
+ساكن صحيح encode_string(o_string *as_string,
 		o_string *dest,
-		struct in_str *input,
-		int dquote_end)
+		بنية in_str *input,
+		صحيح dquote_end)
 {
-	int ch;
-	int next;
+	صحيح ch;
+	صحيح next;
 
  again:
 	ch = i_getch(input);
-	if (ch != EOF)
+	ܐܢ (ch != EOF)
 		nommu_addchr(as_string, ch);
-	if (ch == dquote_end) { /* may be only '"' or EOF */
+	ܐܢ (ch == dquote_end) { /* may be only '"' or EOF */
 		debug_printf_parse("encode_string return 1 (ok)\n");
-		return 1;
+		ܦܢܐ 1;
 	}
 	/* note: can't move it above ch == dquote_end check! */
-	if (ch == EOF) {
+	ܐܢ (ch == EOF) {
 		syntax_error_unterm_ch('"');
-		return 0; /* error */
+		ܦܢܐ 0; /* error */
 	}
 	next = '\0';
-	if (ch != '\n') {
+	ܐܢ (ch != '\n') {
 		next = i_peek(input);
 	}
 	debug_printf_parse("\" ch=%c (%d) escape=%d\n",
 			ch, ch, !!(dest->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-	if (ch == '\\') {
-		if (next == EOF) {
+	ܐܢ (ch == '\\') {
+		ܐܢ (next == EOF) {
 			/* Testcase: in interactive shell a file with
 			 *  echo "unterminated string\<eof>
 			 * is sourced.
 			 */
 			syntax_error_unterm_ch('"');
-			return 0; /* error */
+			ܦܢܐ 0; /* error */
 		}
 		/* bash:
 		 * "The backslash retains its special meaning [in "..."]
@@ -5752,44 +5752,44 @@ static int encode_string(o_string *as_string,
 		 * NB: in (unquoted) heredoc, above does not apply to ",
 		 * therefore we check for it by "next == dquote_end" cond.
 		 */
-		if (next == dquote_end || strchr("$`\\\n", next)) {
+		ܐܢ (next == dquote_end || strchr("$`\\\n", next)) {
 			ch = i_getch(input); /* eat next */
-			if (ch == '\n')
-				goto again; /* skip \<newline> */
+			ܐܢ (ch == '\n')
+				اذهب again; /* skip \<newline> */
 		} /* else: ch remains == '\\', and we double it below: */
 		o_addqchr(dest, ch); /* \c if c is a glob char, else just c */
 		nommu_addchr(as_string, ch);
-		goto again;
+		اذهب again;
 	}
-	if (ch == '$') {
+	ܐܢ (ch == '$') {
 		//if (parse_dollar_squote(as_string, dest, input))
 		//	goto again;
-		if (!parse_dollar(as_string, dest, input, /*quote_mask:*/ 0x80)) {
+		ܐܢ (!parse_dollar(as_string, dest, input, /*quote_mask:*/ 0x80)) {
 			debug_printf_parse("encode_string return 0: "
 					"parse_dollar returned 0 (error)\n");
-			return 0;
+			ܦܢܐ 0;
 		}
-		goto again;
+		اذهب again;
 	}
-#if ENABLE_HUSH_TICK
-	if (ch == '`') {
+#ܐܢ ENABLE_HUSH_TICK
+	ܐܢ (ch == '`') {
 		//unsigned pos = dest->length;
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 		o_addchr(dest, 0x80 | '`');
-		if (!add_till_backquote(dest, input, /*in_dquote:*/ dquote_end == '"'))
-			return 0; /* error */
+		ܐܢ (!add_till_backquote(dest, input, /*in_dquote:*/ dquote_end == '"'))
+			ܦܢܐ 0; /* error */
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 		//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-		goto again;
+		اذهب again;
 	}
 #endif
 	o_addQchr(dest, ch);
-	if (ch == SPECIAL_VAR_SYMBOL) {
+	ܐܢ (ch == SPECIAL_VAR_SYMBOL) {
 		/* Convert "^C" to corresponding special variable reference */
 		o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
 		o_addchr(dest, SPECIAL_VAR_SYMBOL);
 	}
-	goto again;
+	اذهب again;
 #undef as_string
 }
 
@@ -5801,13 +5801,13 @@ static int encode_string(o_string *as_string,
  * reset parsing machinery and start parsing anew,
  * or return ERR_PTR.
  */
-static struct pipe *parse_stream(char **pstring,
-		int *heredoc_cnt_ptr,
-		struct in_str *input,
-		int end_trigger)
+ساكن بنية pipe *parse_stream(حرف **pstring,
+		صحيح *heredoc_cnt_ptr,
+		بنية in_str *input,
+		صحيح end_trigger)
 {
-	struct parse_context ctx;
-	int heredoc_cnt;
+	بنية parse_context ctx;
+	صحيح heredoc_cnt;
 
 	/* Single-quote triggers a bypass of the main loop until its mate is
 	 * found.  When recursing, quote state is passed in via ctx.word.o_expflags.
@@ -5829,64 +5829,64 @@ static struct pipe *parse_stream(char **pstring,
 	 */
 
 	heredoc_cnt = 0;
-	while (1) {
-		const char *is_blank;
-		const char *is_special;
-		int ch;
-		int next;
+	ܟܡܐ (1) {
+		ثابت حرف *is_blank;
+		ثابت حرف *is_special;
+		صحيح ch;
+		صحيح next;
 #ifndef __U_BOOT__
-		int redir_fd;
+		صحيح redir_fd;
 		redir_type redir_style;
 #endif /* !__U_BOOT__ */
 
 		ch = i_getch(input);
 		debug_printf_parse(": ch=%c (%d) escape=%d\n",
 				ch, ch, !!(ctx.word.o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (ch == EOF) {
-			struct pipe *pi;
+		ܐܢ (ch == EOF) {
+			بنية pipe *pi;
 
-			if (heredoc_cnt) {
+			ܐܢ (heredoc_cnt) {
 				syntax_error_unterm_str("here document");
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
-			if (end_trigger == ')') {
+			ܐܢ (end_trigger == ')') {
 				syntax_error_unterm_ch('(');
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
-			if (end_trigger == '}') {
+			ܐܢ (end_trigger == '}') {
 				syntax_error_unterm_ch('{');
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
 
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
 			o_free_and_set_NULL(&ctx.word);
 			done_pipe(&ctx, PIPE_SEQ);
 
 			/* Do we sit inside of any if's, loops or case's? */
-			if (HAS_KEYWORDS
+			ܐܢ (HAS_KEYWORDS
 			IF_HAS_KEYWORDS(&& (ctx.ctx_res_w != RES_NONE || ctx.old_flag != 0))
 			) {
 				syntax_error_unterm_str("compound statement");
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
 
 			pi = ctx.list_head;
 			/* If we got nothing... */
 			/* (this makes bare "&" cmd a no-op.
 			 * bash says: "syntax error near unexpected token '&'") */
-			if (pi->num_cmds == 0
+			ܐܢ (pi->num_cmds == 0
 			IF_HAS_KEYWORDS(&& pi->res_word == RES_NONE)
 			) {
 				free_pipe_list(pi);
-				pi = NULL;
+				pi = عدم;
 			}
-#if !BB_MMU
+#ܐܢ !BB_MMU
 			debug_printf_parse("as_string1 '%s'\n", ctx.as_string.data);
-			if (pstring)
+			ܐܢ (pstring)
 				*pstring = ctx.as_string.data;
-			else
+			ܐܚܪܢܐ
 				o_free(&ctx.as_string);
 #endif
 			// heredoc_cnt must be 0 here anyway
@@ -5895,7 +5895,7 @@ static struct pipe *parse_stream(char **pstring,
 			debug_leave();
 			debug_printf_heredoc("parse_stream return heredoc_cnt:%d\n", heredoc_cnt);
 			debug_printf_parse("parse_stream return %p: EOF\n", pi);
-			return pi;
+			ܦܢܐ pi;
 		}
 
 		/* Handle "'" and "\" first, as they won't play nice with
@@ -5906,23 +5906,23 @@ static struct pipe *parse_stream(char **pstring,
 		 *   '
 		 * would break.
 		 */
-		if (ch == '\\') {
+		ܐܢ (ch == '\\') {
 			ch = i_getch(input);
-			if (ch == '\n')
-				continue; /* drop \<newline>, get next char */
+			ܐܢ (ch == '\n')
+				استمر; /* drop \<newline>, get next char */
 			nommu_addchr(&ctx.as_string, '\\');
-			if (ch == SPECIAL_VAR_SYMBOL) {
+			ܐܢ (ch == SPECIAL_VAR_SYMBOL) {
 				nommu_addchr(&ctx.as_string, ch);
 				/* Convert \^C to corresponding special variable reference */
-				goto case_SPECIAL_VAR_SYMBOL;
+				اذهب case_SPECIAL_VAR_SYMBOL;
 			}
 			o_addchr(&ctx.word, '\\');
-			if (ch == EOF) {
+			ܐܢ (ch == EOF) {
 				/* Testcase: eval 'echo Ok\' */
 				/* bash-4.3.43 was removing backslash,
 				 * but 4.4.19 retains it, most other shells too
 				 */
-				continue; /* get next char */
+				استمر; /* get next char */
 			}
 			/* Example: echo Hello \2>file
 			 * we need to know that word 2 is quoted
@@ -5930,27 +5930,27 @@ static struct pipe *parse_stream(char **pstring,
 			ctx.word.has_quoted_part = 1;
 			nommu_addchr(&ctx.as_string, ch);
 			o_addchr(&ctx.word, ch);
-			continue; /* get next char */
+			استمر; /* get next char */
 		}
 		nommu_addchr(&ctx.as_string, ch);
-		if (ch == '\'') {
+		ܐܢ (ch == '\'') {
 			ctx.word.has_quoted_part = 1;
 			next = i_getch(input);
 #ifndef __U_BOOT__
-			if (next == '\'' && !ctx.pending_redirect)
-				goto insert_empty_quoted_str_marker;
+			ܐܢ (next == '\'' && !ctx.pending_redirect)
+				اذهب insert_empty_quoted_str_marker;
 #endif /* !__U_BOOT__ */
 
 			ch = next;
-			while (1) {
-				if (ch == EOF) {
+			ܟܡܐ (1) {
+				ܐܢ (ch == EOF) {
 					syntax_error_unterm_ch('\'');
-					goto parse_error_exitcode1;
+					اذهب parse_error_exitcode1;
 				}
 				nommu_addchr(&ctx.as_string, ch);
-				if (ch == '\'')
-					break;
-				if (ch == SPECIAL_VAR_SYMBOL) {
+				ܐܢ (ch == '\'')
+					اكسر;
+				ܐܢ (ch == SPECIAL_VAR_SYMBOL) {
 					/* Convert raw ^C to corresponding special variable reference */
 					o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
 					o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
@@ -5958,28 +5958,28 @@ static struct pipe *parse_stream(char **pstring,
 				o_addqchr(&ctx.word, ch);
 				ch = i_getch(input);
 			}
-			continue; /* get next char */
+			استمر; /* get next char */
 		}
 
 		next = '\0';
-		if (ch != '\n')
+		ܐܢ (ch != '\n')
 			next = i_peek_and_eat_bkslash_nl(input);
 
 		is_special = "{}<>&|();#" /* special outside of "str" */
 #ifndef __U_BOOT__
 				"$\"" IF_HUSH_TICK("`") /* always special */
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 				"$\""
 #endif /* __U_BOOT__ */
 				SPECIAL_VAR_SYMBOL_STR;
-#if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (ctx.command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB) {
+#ܐܢ defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		ܐܢ (ctx.command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB) {
 			/* In [[ ]], {}<>&|() are not special */
 			is_special += 8;
-		} else
+		} ܐܚܪܢܐ
 #endif
 		/* Are { and } special here? */
-		if (ctx.command->argv /* word [word]{... - non-special */
+		ܐܢ (ctx.command->argv /* word [word]{... - non-special */
 		 || ctx.word.length       /* word{... - non-special */
 		 || ctx.word.has_quoted_part     /* ""{... - non-special */
 		 || (next != ';'             /* }; - special */
@@ -5996,10 +5996,10 @@ static struct pipe *parse_stream(char **pstring,
 		is_special = strchr(is_special, ch);
 		is_blank = strchr(defifs, ch);
 
-		if (!is_special && !is_blank) { /* ordinary char */
+		ܐܢ (!is_special && !is_blank) { /* ordinary char */
  ordinary_char:
 			o_addQchr(&ctx.word, ch);
-			if ((ctx.is_assignment == MAYBE_ASSIGNMENT
+			ܐܢ ((ctx.is_assignment == MAYBE_ASSIGNMENT
 			    || ctx.is_assignment == WORD_IS_KEYWORD)
 			 && ch == '='
 			 && endofname(ctx.word.data)[0] == '='
@@ -6007,11 +6007,11 @@ static struct pipe *parse_stream(char **pstring,
 				ctx.is_assignment = DEFINITELY_ASSIGNMENT;
 				debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
 			}
-			continue;
+			استمر;
 		}
 
-		if (is_blank) {
-#if ENABLE_HUSH_LINENO_VAR
+		ܐܢ (is_blank) {
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 /* Case:
  * "while ...; do<whitespace><newline>
  *	cmd ..."
@@ -6019,24 +6019,24 @@ static struct pipe *parse_stream(char **pstring,
  * i.e., at the previous line.
  * We need to skip all whitespace before newlines.
  */
-			while (ch != '\n') {
+			ܟܡܐ (ch != '\n') {
 				next = i_peek(input);
-				if (next != ' ' && next != '\t' && next != '\n')
-					break; /* next char is not ws */
+				ܐܢ (next != ' ' && next != '\t' && next != '\n')
+					اكسر; /* next char is not ws */
 				ch = i_getch(input);
 			}
 			/* ch == last eaten whitespace char */
 #endif
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
-			if (ch == '\n') {
+			ܐܢ (ch == '\n') {
 				/* Is this a case when newline is simply ignored?
 				 * Some examples:
 				 * "cmd | <newline> cmd ..."
 				 * "case ... in <newline> word) ..."
 				 */
-				if (IS_NULL_CMD(ctx.command)
+				ܐܢ (IS_NULL_CMD(ctx.command)
 				 && ctx.word.length == 0
 				 && !ctx.word.has_quoted_part
 				 && heredoc_cnt == 0
@@ -6058,20 +6058,20 @@ static struct pipe *parse_stream(char **pstring,
 					 * a "cmd1 && <nl> cmd2 &" construct,
 					 * cmd1 may need to run in BG).
 					 */
-					struct pipe *pi = ctx.list_head;
-					if (pi->num_cmds != 0       /* check #1 */
+					بنية pipe *pi = ctx.list_head;
+					ܐܢ (pi->num_cmds != 0       /* check #1 */
 					 && pi->followup != PIPE_BG /* check #2 */
 					) {
-						continue;
+						استمر;
 					}
 				}
 				/* Treat newline as a command separator. */
 				done_pipe(&ctx, PIPE_SEQ);
 				debug_printf_heredoc("heredoc_cnt:%d\n", heredoc_cnt);
-				if (heredoc_cnt) {
+				ܐܢ (heredoc_cnt) {
 					heredoc_cnt = fetch_heredocs(&ctx.as_string, ctx.list_head, heredoc_cnt, input);
-					if (heredoc_cnt != 0)
-						goto parse_error_exitcode1;
+					ܐܢ (heredoc_cnt != 0)
+						اذهب parse_error_exitcode1;
 				}
 				ctx.is_assignment = MAYBE_ASSIGNMENT;
 				debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
@@ -6086,16 +6086,16 @@ static struct pipe *parse_stream(char **pstring,
 		 * Pathological example: { ""}; } should exec "}" cmd
 		 */
 #ifndef __U_BOOT__
-		if (ch == '}') {
-#else /* __U_BOOT__ */
-		if (ch == '}' || ch == ')') {
+		ܐܢ (ch == '}') {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+		ܐܢ (ch == '}' || ch == ')') {
 #endif /* __U_BOOT__ */
-			if (ctx.word.length != 0 /* word} */
+			ܐܢ (ctx.word.length != 0 /* word} */
 			 || ctx.word.has_quoted_part    /* ""} */
 			) {
-				goto ordinary_char;
+				اذهب ordinary_char;
 			}
-			if (!IS_NULL_CMD(ctx.command)) { /* cmd } */
+			ܐܢ (!IS_NULL_CMD(ctx.command)) { /* cmd } */
 				/* Generally, there should be semicolon: "cmd; }"
 				 * However, bash allows to omit it if "cmd" is
 				 * a group. Examples:
@@ -6105,114 +6105,114 @@ static struct pipe *parse_stream(char **pstring,
 				 * { while false; do :; done }
 				 * { case a in b) ;; esac }
 				 */
-				if (ctx.command->group)
-					goto term_group;
-				goto ordinary_char;
+				ܐܢ (ctx.command->group)
+					اذهب term_group;
+				اذهب ordinary_char;
 			}
-			if (!IS_NULL_PIPE(ctx.pipe)) /* cmd | } */
+			ܐܢ (!IS_NULL_PIPE(ctx.pipe)) /* cmd | } */
 				/* Can't be an end of {cmd}, skip the check */
-				goto skip_end_trigger;
+				اذهب skip_end_trigger;
 			/* else: } does terminate a group */
 		}
  term_group:
-		if (end_trigger && end_trigger == ch
+		ܐܢ (end_trigger && end_trigger == ch
 		 && (ch != ';' || heredoc_cnt == 0)
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 		 && (ch != ')'
 		    || ctx.ctx_res_w != RES_MATCH
 		    || (!ctx.word.has_quoted_part && strcmp(ctx.word.data, "esac") == 0)
 		    )
 #endif
 		) {
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
 			done_pipe(&ctx, PIPE_SEQ);
 			ctx.is_assignment = MAYBE_ASSIGNMENT;
 			debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
 			/* Do we sit outside of any if's, loops or case's? */
-			if (!HAS_KEYWORDS
+			ܐܢ (!HAS_KEYWORDS
 			IF_HAS_KEYWORDS(|| (ctx.ctx_res_w == RES_NONE && ctx.old_flag == 0))
 			) {
 				o_free_and_set_NULL(&ctx.word);
-#if !BB_MMU
+#ܐܢ !BB_MMU
 				debug_printf_parse("as_string2 '%s'\n", ctx.as_string.data);
-				if (pstring)
+				ܐܢ (pstring)
 					*pstring = ctx.as_string.data;
-				else
+				ܐܚܪܢܐ
 					o_free(&ctx.as_string);
 #endif
-				if (ch != ';' && IS_NULL_PIPE(ctx.list_head)) {
+				ܐܢ (ch != ';' && IS_NULL_PIPE(ctx.list_head)) {
 					/* Example: bare "{ }", "()" */
 					G.last_exitcode = 2; /* bash compat */
 					syntax_error_unexpected_ch(ch);
-					goto parse_error;
+					اذهب parse_error;
 				}
-				if (heredoc_cnt_ptr)
+				ܐܢ (heredoc_cnt_ptr)
 					*heredoc_cnt_ptr = heredoc_cnt;
 				debug_printf_heredoc("parse_stream return heredoc_cnt:%d\n", heredoc_cnt);
 				debug_printf_parse("parse_stream return %p: "
 						"end_trigger char found\n",
 						ctx.list_head);
 				debug_leave();
-				return ctx.list_head;
+				ܦܢܐ ctx.list_head;
 			}
 		}
 
-		if (is_blank)
-			continue;
+		ܐܢ (is_blank)
+			استمر;
 
 		/* Catch <, > before deciding whether this word is
 		 * an assignment. a=1 2>z b=2: b=2 is still assignment */
-		switch (ch) {
+		بدل (ch) {
 #ifndef __U_BOOT__
-		case '>':
+		حالة '>':
 			redir_fd = redirect_opt_num(&ctx.word);
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
 			redir_style = REDIRECT_OVERWRITE;
-			if (next == '>') {
+			ܐܢ (next == '>') {
 				redir_style = REDIRECT_APPEND;
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
 			}
-#if 0
-			else if (next == '(') {
+#ܐܢ 0
+			ܐܚܪܢܐ ܐܢ (next == '(') {
 				syntax_error(">(process) not supported");
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
 #endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
-				goto parse_error_exitcode1;
-			continue; /* get next char */
-		case '<':
+			ܐܢ (parse_redirect(&ctx, redir_fd, redir_style, input))
+				اذهب parse_error_exitcode1;
+			استمر; /* get next char */
+		حالة '<':
 			redir_fd = redirect_opt_num(&ctx.word);
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
 			redir_style = REDIRECT_INPUT;
-			if (next == '<') {
+			ܐܢ (next == '<') {
 				redir_style = REDIRECT_HEREDOC;
 				heredoc_cnt++;
 				debug_printf_heredoc("++heredoc_cnt=%d\n", heredoc_cnt);
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
-			} else if (next == '>') {
+			} ܐܚܪܢܐ ܐܢ (next == '>') {
 				redir_style = REDIRECT_IO;
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
 			}
-#if 0
-			else if (next == '(') {
+#ܐܢ 0
+			ܐܚܪܢܐ ܐܢ (next == '(') {
 				syntax_error("<(process) not supported");
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
 #endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
-				goto parse_error_exitcode1;
-			continue; /* get next char */
-#else /* __U_BOOT__ */
+			ܐܢ (parse_redirect(&ctx, redir_fd, redir_style, input))
+				اذهب parse_error_exitcode1;
+			استمر; /* get next char */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 			/*
 			 * In U-Boot, '<' and '>' can be used in test command to test if
 			 * a string is, alphabetically, before or after another.
@@ -6228,14 +6228,14 @@ static struct pipe *parse_stream(char **pstring,
 			 * escape these will make you should check your code (sh syntax
 			 * at this level is, for me, error prone).
 			 */
-			case '>':
+			حالة '>':
 				fallthrough;
-			case '<':
+			حالة '<':
 				o_addQchr(&ctx.word, ch);
-				continue;
+				استمر;
 #endif /* __U_BOOT__ */
-		case '#':
-			if (ctx.word.length == 0 && !ctx.word.has_quoted_part) {
+		حالة '#':
+			ܐܢ (ctx.word.length == 0 && !ctx.word.has_quoted_part) {
 				/* skip "#comment" */
 				/* note: we do not add it to &ctx.as_string */
 /* TODO: in bash:
@@ -6244,23 +6244,23 @@ static struct pipe *parse_stream(char **pstring,
  * cmd "`cmd2 #comment`" - ok
  * We accept both (comment ends where command subst ends, in both cases).
  */
-				while (1) {
+				ܟܡܐ (1) {
 					ch = i_peek(input);
-					if (ch == '\n') {
+					ܐܢ (ch == '\n') {
 						nommu_addchr(&ctx.as_string, '\n');
-						break;
+						اكسر;
 					}
 					ch = i_getch(input);
-					if (ch == EOF)
-						break;
+					ܐܢ (ch == EOF)
+						اكسر;
 				}
-				continue; /* get next char */
+				استمر; /* get next char */
 			}
-			break;
+			اكسر;
 		}
  skip_end_trigger:
 
-		if (ctx.is_assignment == MAYBE_ASSIGNMENT
+		ܐܢ (ctx.is_assignment == MAYBE_ASSIGNMENT
 #ifndef __U_BOOT__
 		 /* check that we are not in word in "a=1 2>word b=1": */
 		 && !ctx.pending_redirect
@@ -6274,34 +6274,34 @@ static struct pipe *parse_stream(char **pstring,
 
 		/* Note: nommu_addchr(&ctx.as_string, ch) is already done */
 
-		switch (ch) {
+		بدل (ch) {
 		case_SPECIAL_VAR_SYMBOL:
-		case SPECIAL_VAR_SYMBOL:
+		حالة SPECIAL_VAR_SYMBOL:
 			/* Convert raw ^C to corresponding special variable reference */
 			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
 			o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
 			/* fall through */
-		case '#':
+		حالة '#':
 			/* non-comment #: "echo a#b" etc */
 			o_addchr(&ctx.word, ch);
-			continue; /* get next char */
-		case '$':
+			استمر; /* get next char */
+		حالة '$':
 #ifndef __U_BOOT__
-			if (parse_dollar_squote(&ctx.as_string, &ctx.word, input))
-				continue; /* get next char */
+			ܐܢ (parse_dollar_squote(&ctx.as_string, &ctx.word, input))
+				استمر; /* get next char */
 #endif /* !__U_BOOT__ */
-			if (!parse_dollar(&ctx.as_string, &ctx.word, input, /*quote_mask:*/ 0)) {
+			ܐܢ (!parse_dollar(&ctx.as_string, &ctx.word, input, /*quote_mask:*/ 0)) {
 				debug_printf_parse("parse_stream parse error: "
 					"parse_dollar returned 0 (error)\n");
-				goto parse_error_exitcode1;
+				اذهب parse_error_exitcode1;
 			}
-			continue; /* get next char */
-		case '"':
+			استمر; /* get next char */
+		حالة '"':
 			ctx.word.has_quoted_part = 1;
 #ifndef __U_BOOT__
-			if (next == '"' && !ctx.pending_redirect) {
-#else /* __U_BOOT__ */
-			if (next == '"') {
+			ܐܢ (next == '"' && !ctx.pending_redirect) {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+			ܐܢ (next == '"') {
 #endif /* __U_BOOT__ */
 				i_getch(input); /* eat second " */
 #ifndef __U_BOOT__
@@ -6310,53 +6310,53 @@ static struct pipe *parse_stream(char **pstring,
 				nommu_addchr(&ctx.as_string, next);
 				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
 				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-				continue; /* get next char */
+				استمر; /* get next char */
 			}
-			if (ctx.is_assignment == NOT_ASSIGNMENT)
+			ܐܢ (ctx.is_assignment == NOT_ASSIGNMENT)
 				ctx.word.o_expflags |= EXP_FLAG_ESC_GLOB_CHARS;
-			if (!encode_string(&ctx.as_string, &ctx.word, input, '"'))
-				goto parse_error_exitcode1;
+			ܐܢ (!encode_string(&ctx.as_string, &ctx.word, input, '"'))
+				اذهب parse_error_exitcode1;
 			ctx.word.o_expflags &= ~EXP_FLAG_ESC_GLOB_CHARS;
-			continue; /* get next char */
-#if ENABLE_HUSH_TICK
-		case '`': {
+			استمر; /* get next char */
+#ܐܢ ENABLE_HUSH_TICK
+		حالة '`': {
 			USE_FOR_NOMMU(unsigned pos;)
 
 			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
 			o_addchr(&ctx.word, '`');
 			USE_FOR_NOMMU(pos = ctx.word.length;)
-			if (!add_till_backquote(&ctx.word, input, /*in_dquote:*/ 0))
-				goto parse_error_exitcode1;
-# if !BB_MMU
+			ܐܢ (!add_till_backquote(&ctx.word, input, /*in_dquote:*/ 0))
+				اذهب parse_error_exitcode1;
+# ܐܢ !BB_MMU
 			o_addstr(&ctx.as_string, ctx.word.data + pos);
 			o_addchr(&ctx.as_string, '`');
 # endif
 			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
 			//debug_printf_subst("SUBST RES3 '%s'\n", ctx.word.data + pos);
-			continue; /* get next char */
+			استمر; /* get next char */
 		}
 #endif
-		case ';':
-#if ENABLE_HUSH_CASE
+		حالة ';':
+#ܐܢ ENABLE_HUSH_CASE
  case_semi:
 #endif
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
 			done_pipe(&ctx, PIPE_SEQ);
-#if ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_CASE
 			/* Eat multiple semicolons, detect
 			 * whether it means something special */
-			while (1) {
+			ܟܡܐ (1) {
 				ch = i_peek_and_eat_bkslash_nl(input);
-				if (ch != ';')
-					break;
+				ܐܢ (ch != ';')
+					اكسر;
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
-				if (ctx.ctx_res_w == RES_CASE_BODY) {
+				ܐܢ (ctx.ctx_res_w == RES_CASE_BODY) {
 					ctx.ctx_dsemicolon = 1;
 					ctx.ctx_res_w = RES_MATCH;
-					break;
+					اكسر;
 				}
 			}
 #endif
@@ -6365,73 +6365,73 @@ static struct pipe *parse_stream(char **pstring,
 			 * with an assignment */
 			ctx.is_assignment = MAYBE_ASSIGNMENT;
 			debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
-			continue; /* get next char */
-		case '&':
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			استمر; /* get next char */
+		حالة '&':
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
-			if (next == '&') {
+			ܐܢ (next == '&') {
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
 				done_pipe(&ctx, PIPE_AND);
-			} else {
+			} ܐܚܪܢܐ {
 				done_pipe(&ctx, PIPE_BG);
 			}
-			goto new_cmd;
-		case '|':
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			اذهب new_cmd;
+		حالة '|':
+			ܐܢ (done_word(&ctx)) {
+				اذهب parse_error_exitcode1;
 			}
-#if ENABLE_HUSH_CASE
-			if (ctx.ctx_res_w == RES_MATCH)
-				break; /* we are in case's "word | word)" */
+#ܐܢ ENABLE_HUSH_CASE
+			ܐܢ (ctx.ctx_res_w == RES_MATCH)
+				اكسر; /* we are in case's "word | word)" */
 #endif
-			if (next == '|') { /* || */
+			ܐܢ (next == '|') { /* || */
 				ch = i_getch(input);
 				nommu_addchr(&ctx.as_string, ch);
 				done_pipe(&ctx, PIPE_OR);
-			} else {
+			} ܐܚܪܢܐ {
 				/* we could pick up a file descriptor choice here
 				 * with redirect_opt_num(), but bash doesn't do it.
 				 * "echo foo 2| cat" yields "foo 2". */
 				done_command(&ctx);
 			}
-			goto new_cmd;
-		case '(':
-#if ENABLE_HUSH_CASE
+			اذهب new_cmd;
+		حالة '(':
+#ܐܢ ENABLE_HUSH_CASE
 			/* "case... in [(]word)..." - skip '(' */
-			if (ctx.ctx_res_w == RES_MATCH
-			 && ctx.command->argv == NULL /* not (word|(... */
+			ܐܢ (ctx.ctx_res_w == RES_MATCH
+			 && ctx.command->argv == عدم /* not (word|(... */
 			 && ctx.word.length == 0 /* not word(... */
 			 && ctx.word.has_quoted_part == 0 /* not ""(... */
 			) {
-				continue; /* get next char */
+				استمر; /* get next char */
 			}
 #endif
 			/* fall through */
-		case '{': {
-			int n = parse_group(&ctx, input, ch);
-			if (n < 0) {
-				goto parse_error_exitcode1;
+		حالة '{': {
+			صحيح n = parse_group(&ctx, input, ch);
+			ܐܢ (n < 0) {
+				اذهب parse_error_exitcode1;
 			}
 			debug_printf_heredoc("parse_group done, needs heredocs:%d\n", n);
 			heredoc_cnt += n;
-			goto new_cmd;
+			اذهب new_cmd;
 		}
-		case ')':
-#if ENABLE_HUSH_CASE
-			if (ctx.ctx_res_w == RES_MATCH)
-				goto case_semi;
+		حالة ')':
+#ܐܢ ENABLE_HUSH_CASE
+			ܐܢ (ctx.ctx_res_w == RES_MATCH)
+				اذهب case_semi;
 #endif
-		case '}':
+		حالة '}':
 			/* proper use of this character is caught by end_trigger:
 			 * if we see {, we call parse_group(..., end_trigger='}')
 			 * and it will match } earlier (not here). */
 			G.last_exitcode = 2;
 			syntax_error_unexpected_ch(ch);
-			goto parse_error;
-		default:
-			if (HUSH_DEBUG)
+			اذهب parse_error;
+		افتراضي:
+			ܐܢ (HUSH_DEBUG)
 				bb_error_msg_and_die("BUG: unexpected %c", ch);
 		}
 	} /* while (1) */
@@ -6440,8 +6440,8 @@ static struct pipe *parse_stream(char **pstring,
 	G.last_exitcode = 1;
  parse_error:
 	{
-		struct parse_context *pctx;
-		IF_HAS_KEYWORDS(struct parse_context *p2;)
+		بنية parse_context *pctx;
+		IF_HAS_KEYWORDS(بنية parse_context *p2;)
 
 		/* Clean up allocated tree.
 		 * Sample for finding leaks on syntax error recovery path.
@@ -6452,7 +6452,7 @@ static struct pipe *parse_stream(char **pstring,
 		 * while if (true | { true;}); then echo ok; fi; do (if echo ok; break; then :; fi) | cat; break; done
 		 */
 		pctx = &ctx;
-		do {
+		ܥܒܕ {
 			/* Update pipe/command counts,
 			 * otherwise freeing may miss some */
 			done_pipe(pctx, PIPE_SEQ);
@@ -6461,38 +6461,38 @@ static struct pipe *parse_stream(char **pstring,
 			debug_print_tree(pctx->list_head, 0);
 			free_pipe_list(pctx->list_head);
 			debug_printf_clean("freed list %p\n", pctx->list_head);
-#if !BB_MMU
+#ܐܢ !BB_MMU
 			o_free(&pctx->as_string);
 #endif
 			IF_HAS_KEYWORDS(p2 = pctx->stack;)
-			if (pctx != &ctx) {
-				free(pctx);
+			ܐܢ (pctx != &ctx) {
+				حرر(pctx);
 			}
 			IF_HAS_KEYWORDS(pctx = p2;)
-		} while (HAS_KEYWORDS && pctx);
+		} ܟܡܐ (HAS_KEYWORDS && pctx);
 
 		o_free(&ctx.word);
-#if !BB_MMU
-		if (pstring)
-			*pstring = NULL;
+#ܐܢ !BB_MMU
+		ܐܢ (pstring)
+			*pstring = عدم;
 #endif
 		debug_leave();
-		return ERR_PTR;
+		ܦܢܐ ERR_PTR;
 	}
 }
 
 /*** Execution routines ***/
 
 /* Expansion can recurse, need forward decls: */
-#if !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
+#ܐܢ !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
 #define expand_string_to_string(str, EXP_flags, do_unbackslash) \
 	expand_string_to_string(str)
 #endif
-static char *expand_string_to_string(const char *str, int EXP_flags, int do_unbackslash);
-#if ENABLE_HUSH_TICK
-static int process_command_subs(o_string *dest, const char *s);
+ساكن حرف *expand_string_to_string(ثابت حرف *str, صحيح EXP_flags, صحيح do_unbackslash);
+#ܐܢ ENABLE_HUSH_TICK
+ساكن صحيح process_command_subs(o_string *dest, ثابت حرف *s);
 #endif
-static int expand_vars_to_list(o_string *output, int n, char *arg);
+ساكن صحيح expand_vars_to_list(o_string *output, صحيح n, حرف *arg);
 
 /* expand_strvec_to_strvec() takes a list of strings, expands
  * all variable references within and returns a pointer to
@@ -6505,13 +6505,13 @@ static int expand_vars_to_list(o_string *output, int n, char *arg);
 
 /* A horde of its helpers come first: */
 
-static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len)
+ساكن فراغ o_addblock_duplicate_backslash(o_string *o, ثابت حرف *str, صحيح len)
 {
-	while (--len >= 0) {
-		char c = *str++;
+	ܟܡܐ (--len >= 0) {
+		حرف c = *str++;
 
-#if ENABLE_HUSH_BRACE_EXPANSION
-		if (c == '{' || c == '}') {
+#ܐܢ ENABLE_HUSH_BRACE_EXPANSION
+		ܐܢ (c == '{' || c == '}') {
 			/* { -> \{, } -> \} */
 			o_addchr(o, '\\');
 			/* And now we want to add { or } and continue:
@@ -6522,10 +6522,10 @@ static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len
 		}
 #endif
 		o_addchr(o, c);
-		if (c == '\\') {
+		ܐܢ (c == '\\') {
 			/* \z -> \\\z; \<eol> -> \\<eol> */
 			o_addchr(o, '\\');
-			if (len) {
+			ܐܢ (len) {
 				len--;
 				o_addchr(o, '\\');
 				o_addchr(o, *str++);
@@ -6540,21 +6540,21 @@ static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len
  * Return in output->ended_in_ifs:
  * 1 - ended with IFS char, else 0 (this includes case of empty str).
  */
-static int expand_on_ifs(o_string *output, int n, const char *str)
+ساكن صحيح expand_on_ifs(o_string *output, صحيح n, ثابت حرف *str)
 {
-	int last_is_ifs = 0;
+	صحيح last_is_ifs = 0;
 
-	while (1) {
-		int word_len;
+	ܟܡܐ (1) {
+		صحيح word_len;
 
-		if (!*str)  /* EOL - do not finalize word */
-			break;
+		ܐܢ (!*str)  /* EOL - do not finalize word */
+			اكسر;
 		word_len = strcspn(str, G.ifs);
-		if (word_len) {
+		ܐܢ (word_len) {
 			/* We have WORD_LEN leading non-IFS chars */
-			if (!(output->o_expflags & EXP_FLAG_GLOB)) {
+			ܐܢ (!(output->o_expflags & EXP_FLAG_GLOB)) {
 				o_addblock(output, str, word_len);
-			} else {
+			} ܐܚܪܢܐ {
 				/* Protect backslashes against globbing up :)
 				 * Example: "v='\*'; echo b$v" prints "b\*"
 				 * (and does not try to glob on "*")
@@ -6566,29 +6566,29 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
 			}
 			last_is_ifs = 0;
 			str += word_len;
-			if (!*str)  /* EOL - do not finalize word */
-				break;
+			ܐܢ (!*str)  /* EOL - do not finalize word */
+				اكسر;
 		}
 
 		/* We know str here points to at least one IFS char */
 		last_is_ifs = 1;
 		str += strspn(str, G.ifs_whitespace); /* skip IFS whitespace chars */
-		if (!*str)  /* EOL - do not finalize word */
-			break;
+		ܐܢ (!*str)  /* EOL - do not finalize word */
+			اكسر;
 
-		if (G.ifs_whitespace != G.ifs /* usually false ($IFS is usually all whitespace), */
+		ܐܢ (G.ifs_whitespace != G.ifs /* usually false ($IFS is usually all whitespace), */
 		 && strchr(G.ifs, *str)       /* the second check would fail */
 		) {
 			/* This is a non-whitespace $IFS char */
 			/* Skip it and IFS whitespace chars, start new word */
 			str++;
 			str += strspn(str, G.ifs_whitespace);
-			goto new_word;
+			اذهب new_word;
 		}
 
 		/* Start new word... but not always! */
 		/* Case "v=' a'; echo ''$v": we do need to finalize empty word: */
-		if (output->has_quoted_part
+		ܐܢ (output->has_quoted_part
 		/*
 		 * Case "v=' a'; echo $v":
 		 * here nothing precedes the space in $v expansion,
@@ -6609,7 +6609,7 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
 
 	output->ended_in_ifs = last_is_ifs;
 	debug_print_list("expand_on_ifs[1]", output, n);
-	return n;
+	ܦܢܐ n;
 }
 
 #ifndef __U_BOOT__
@@ -6620,20 +6620,20 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
  * Returns malloced string.
  * As an optimization, we return NULL if expansion is not needed.
  */
-static char *encode_then_expand_string(const char *str)
+ساكن حرف *encode_then_expand_string(ثابت حرف *str)
 {
-	char *exp_str;
-	struct in_str input;
+	حرف *exp_str;
+	بنية in_str input;
 	o_string dest = NULL_O_STRING;
-	const char *cp;
+	ثابت حرف *cp;
 
 	cp = str;
-	for (;;) {
-		if (!*cp) return NULL; /* string has no special chars */
-		if (*cp == '$') break;
-		if (*cp == '\\') break;
-#if ENABLE_HUSH_TICK
-		if (*cp == '`') break;
+	لكل (;;) {
+		ܐܢ (!*cp) ܦܢܐ عدم; /* string has no special chars */
+		ܐܢ (*cp == '$') اكسر;
+		ܐܢ (*cp == '\\') اكسر;
+#ܐܢ ENABLE_HUSH_TICK
+		ܐܢ (*cp == '`') اكسر;
 #endif
 		cp++;
 	}
@@ -6642,7 +6642,7 @@ static char *encode_then_expand_string(const char *str)
 	 * echo $(($a + `echo 1`)) $((1 + $((2)) ))
 	 */
 	setup_string_in_str(&input, str);
-	encode_string(NULL, &dest, &input, EOF);
+	encode_string(عدم, &dest, &input, EOF);
 //TODO: error check (encode_string returns 0 on error)?
 	//bb_error_msg("'%s' -> '%s'", str, dest.data);
 	exp_str = expand_string_to_string(dest.data,
@@ -6651,25 +6651,25 @@ static char *encode_then_expand_string(const char *str)
 	);
 	//bb_error_msg("'%s' -> '%s'", dest.data, exp_str);
 	o_free(&dest);
-	return exp_str;
+	ܦܢܐ exp_str;
 }
 
-static const char *first_special_char_in_vararg(const char *cp)
+ساكن ثابت حرف *first_special_char_in_vararg(ثابت حرف *cp)
 {
-	for (;;) {
-		if (!*cp) return NULL; /* string has no special chars */
-		if (*cp == '$') return cp;
-		if (*cp == '\\') return cp;
-		if (*cp == '\'') return cp;
-		if (*cp == '"') return cp;
-#if ENABLE_HUSH_TICK
-		if (*cp == '`') return cp;
+	لكل (;;) {
+		ܐܢ (!*cp) ܦܢܐ عدم; /* string has no special chars */
+		ܐܢ (*cp == '$') ܦܢܐ cp;
+		ܐܢ (*cp == '\\') ܦܢܐ cp;
+		ܐܢ (*cp == '\'') ܦܢܐ cp;
+		ܐܢ (*cp == '"') ܦܢܐ cp;
+#ܐܢ ENABLE_HUSH_TICK
+		ܐܢ (*cp == '`') ܦܢܐ cp;
 #endif
 		/* dquoted "${x:+ARG}" should not glob, therefore
 		 * '*' et al require some non-literal processing: */
-		if (*cp == '*') return cp;
-		if (*cp == '?') return cp;
-		if (*cp == '[') return cp;
+		ܐܢ (*cp == '*') ܦܢܐ cp;
+		ܐܢ (*cp == '?') ܦܢܐ cp;
+		ܐܢ (*cp == '[') ܦܢܐ cp;
 		cp++;
 	}
 }
@@ -6681,85 +6681,85 @@ static const char *first_special_char_in_vararg(const char *cp)
  * a dquoted string: "${var#"zz"}"), the difference only comes later
  * (word splitting and globbing of the ${var...} result).
  */
-#if !BASH_PATTERN_SUBST
+#ܐܢ !BASH_PATTERN_SUBST
 #define encode_then_expand_vararg(str, handle_squotes, do_unbackslash) \
 	encode_then_expand_vararg(str, handle_squotes)
 #endif
-static char *encode_then_expand_vararg(const char *str, int handle_squotes, int do_unbackslash)
+ساكن حرف *encode_then_expand_vararg(ثابت حرف *str, صحيح handle_squotes, صحيح do_unbackslash)
 {
-#if !BASH_PATTERN_SUBST && ENABLE_HUSH_CASE
-	const int do_unbackslash = 0;
+#ܐܢ !BASH_PATTERN_SUBST && ENABLE_HUSH_CASE
+	ثابت صحيح do_unbackslash = 0;
 #endif
-	char *exp_str;
-	struct in_str input;
+	حرف *exp_str;
+	بنية in_str input;
 	o_string dest = NULL_O_STRING;
 
-	if (!first_special_char_in_vararg(str)) {
+	ܐܢ (!first_special_char_in_vararg(str)) {
 		/* string has no special chars */
-		return NULL;
+		ܦܢܐ عدم;
 	}
 
 	setup_string_in_str(&input, str);
 	dest.data = xzalloc(1); /* start as "", not as NULL */
-	exp_str = NULL;
+	exp_str = عدم;
 
-	for (;;) {
-		int ch;
+	لكل (;;) {
+		صحيح ch;
 
 		ch = i_getch(&input);
 		debug_printf_parse("%s: ch=%c (%d) escape=%d\n",
 				__func__, ch, ch, !!dest.o_expflags);
 
-		if (!dest.o_expflags) {
-			if (ch == EOF)
-				break;
-			if (handle_squotes && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
-					goto ret; /* error */
-				continue;
+		ܐܢ (!dest.o_expflags) {
+			ܐܢ (ch == EOF)
+				اكسر;
+			ܐܢ (handle_squotes && ch == '\'') {
+				ܐܢ (!add_till_single_quote_dquoted(&dest, &input))
+					اذهب ret; /* error */
+				استمر;
 			}
 		}
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			goto ret; /* error */
+			اذهب ret; /* error */
 		}
-		if (ch == '"') {
+		ܐܢ (ch == '"') {
 			dest.o_expflags ^= EXP_FLAG_ESC_GLOB_CHARS;
-			continue;
+			استمر;
 		}
-		if (ch == '\\') {
+		ܐܢ (ch == '\\') {
 			ch = i_getch(&input);
-			if (ch == EOF) {
+			ܐܢ (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
-				goto ret;
+				اذهب ret;
 			}
 			o_addqchr(&dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '$') {
-			if (parse_dollar_squote(NULL, &dest, &input))
-				continue;
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ 0x80)) {
+		ܐܢ (ch == '$') {
+			ܐܢ (parse_dollar_squote(عدم, &dest, &input))
+				استمر;
+			ܐܢ (!parse_dollar(عدم, &dest, &input, /*quote_mask:*/ 0x80)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
-				goto ret;
+				اذهب ret;
 			}
-			continue;
+			استمر;
 		}
-#if ENABLE_HUSH_TICK
-		if (ch == '`') {
+#ܐܢ ENABLE_HUSH_TICK
+		ܐܢ (ch == '`') {
 			//unsigned pos = dest->length;
 			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 			o_addchr(&dest, 0x80 | '`');
-			if (!add_till_backquote(&dest, &input,
+			ܐܢ (!add_till_backquote(&dest, &input,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
-				goto ret; /* error */
+				اذهب ret; /* error */
 			}
 			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-			continue;
+			استمر;
 		}
 #endif
 		o_addQchr(&dest, ch);
@@ -6773,55 +6773,55 @@ static char *encode_then_expand_vararg(const char *str, int handle_squotes, int 
  ret:
 	debug_printf_parse("expand: '%s' -> '%s'\n", dest.data, exp_str);
 	o_free(&dest);
-	return exp_str;
+	ܦܢܐ exp_str;
 }
 
 /* Expanding ARG in ${var+ARG}, ${var-ARG}
  */
-static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
-		char *str, int dquoted)
+ساكن NOINLINE صحيح encode_then_append_var_plusminus(o_string *output, صحيح n,
+		حرف *str, صحيح dquoted)
 {
-	struct in_str input;
+	بنية in_str input;
 	o_string dest = NULL_O_STRING;
 
-	if (!first_special_char_in_vararg(str)
+	ܐܢ (!first_special_char_in_vararg(str)
 	 && '\0' == str[strcspn(str, G.ifs)]
 	) {
 		/* string has no special chars
 		 * && string has no $IFS chars
 		 */
-		if (dquoted) {
+		ܐܢ (dquoted) {
 			/* Prints 1 (quoted expansion is a "" word, not nothing):
 			 * set -- "${notexist-}"; echo $#
 			 */
 			output->has_quoted_part = 1;
 		}
-		return expand_vars_to_list(output, n, str);
+		ܦܢܐ expand_vars_to_list(output, n, str);
 	}
 
 	setup_string_in_str(&input, str);
 
-	for (;;) {
-		int ch;
+	لكل (;;) {
+		صحيح ch;
 
 		ch = i_getch(&input);
 		debug_printf_parse("%s: ch=%c (%d) escape=%x\n",
 				__func__, ch, ch, dest.o_expflags);
 
-		if (!dest.o_expflags) {
-			if (ch == EOF)
-				break;
-			if (!dquoted && !(output->o_expflags & EXP_FLAG_SINGLEWORD) && strchr(G.ifs, ch)) {
+		ܐܢ (!dest.o_expflags) {
+			ܐܢ (ch == EOF)
+				اكسر;
+			ܐܢ (!dquoted && !(output->o_expflags & EXP_FLAG_SINGLEWORD) && strchr(G.ifs, ch)) {
 				/* PREFIX${x:d${e}f ...} and we met space: expand "d${e}f" and start new word.
 				 * do not assume we are at the start of the word (PREFIX above).
 				 */
-				if (dest.data) {
+				ܐܢ (dest.data) {
 					n = expand_vars_to_list(output, n, dest.data);
 					o_free_and_set_NULL(&dest);
 					o_addchr(output, '\0');
 					n = o_save_ptr(output, n); /* create next word */
-				} else
-				if (output->length != o_get_last_ptr(output, n)
+				} ܐܚܪܢܐ
+				ܐܢ (output->length != o_get_last_ptr(output, n)
 				 || output->has_quoted_part
 				) {
 					/* For these cases:
@@ -6836,68 +6836,68 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 					o_addchr(output, '\0');
 					n = o_save_ptr(output, n); /* create next word */
 				}
-				continue;
+				استمر;
 			}
-			if (!dquoted && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
-					goto ret; /* error */
+			ܐܢ (!dquoted && ch == '\'') {
+				ܐܢ (!add_till_single_quote_dquoted(&dest, &input))
+					اذهب ret; /* error */
 				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				continue;
+				استمر;
 			}
 		}
-		if (ch == EOF) {
+		ܐܢ (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			goto ret; /* error */
+			اذهب ret; /* error */
 		}
-		if (ch == '"') {
+		ܐܢ (ch == '"') {
 			dest.o_expflags ^= EXP_FLAG_ESC_GLOB_CHARS;
-			if (dest.o_expflags) {
+			ܐܢ (dest.o_expflags) {
 				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 			}
-			continue;
+			استمر;
 		}
-		if (ch == '\\') {
+		ܐܢ (ch == '\\') {
 			ch = i_getch(&input);
-			if (ch == EOF) {
+			ܐܢ (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
-				goto ret;
+				اذهب ret;
 			}
 			o_addqchr(&dest, ch);
-			continue;
+			استمر;
 		}
-		if (ch == '$') {
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
+		ܐܢ (ch == '$') {
+			ܐܢ (!parse_dollar(عدم, &dest, &input, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
-				goto ret;
+				اذهب ret;
 			}
-			continue;
+			استمر;
 		}
-#if ENABLE_HUSH_TICK
-		if (ch == '`') {
+#ܐܢ ENABLE_HUSH_TICK
+		ܐܢ (ch == '`') {
 			//unsigned pos = dest->length;
 			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 			o_addchr(&dest, (dest.o_expflags || dquoted) ? 0x80 | '`' : '`');
-			if (!add_till_backquote(&dest, &input,
+			ܐܢ (!add_till_backquote(&dest, &input,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
-				goto ret; /* error */
+				اذهب ret; /* error */
 			}
 			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-			continue;
+			استمر;
 		}
 #endif
-		if (dquoted) {
+		ܐܢ (dquoted) {
 			/* Always glob-protect if in dquotes:
 			 * x=x; echo "${x:+/bin/c*}" - prints: /bin/c*
 			 * x=x; echo "${x:+"/bin/c*"}" - prints: /bin/c*
 			 */
 			o_addqchr(&dest, ch);
-		} else {
+		} ܐܚܪܢܐ {
 			/* Glob-protect only if char is quoted:
 			 * x=x; echo ${x:+/bin/c*} - prints many filenames
 			 * x=x; echo ${x:+"/bin/c*"} - prints: /bin/c*
@@ -6906,50 +6906,50 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 		}
 	} /* for (;;) */
 
-	if (dest.data) {
+	ܐܢ (dest.data) {
 		n = expand_vars_to_list(output, n, dest.data);
 	}
  ret:
 	o_free(&dest);
-	return n;
+	ܦܢܐ n;
 }
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-#if ENABLE_FEATURE_SH_MATH
-static arith_t expand_and_evaluate_arith(const char *arg, const char **errmsg_p)
+#ܐܢ ENABLE_FEATURE_SH_MATH
+ساكن arith_t expand_and_evaluate_arith(ثابت حرف *arg, ثابت حرف **errmsg_p)
 {
 	arith_state_t math_state;
 	arith_t res;
-	char *exp_str;
+	حرف *exp_str;
 
 	math_state.lookupvar = get_local_var_value;
 	math_state.setvar = set_local_var_from_halves;
 	//math_state.endofname = endofname;
 	exp_str = encode_then_expand_string(arg);
 	res = arith(&math_state, exp_str ? exp_str : arg);
-	free(exp_str);
-	if (errmsg_p)
+	حرر(exp_str);
+	ܐܢ (errmsg_p)
 		*errmsg_p = math_state.errmsg;
-	if (math_state.errmsg)
+	ܐܢ (math_state.errmsg)
 		msg_and_die_if_script(math_state.errmsg);
-	return res;
+	ܦܢܐ res;
 }
 #endif
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-#if BASH_PATTERN_SUBST
+#ܐܢ BASH_PATTERN_SUBST
 /* ${var/[/]pattern[/repl]} helpers */
-static char *strstr_pattern(char *val, const char *pattern, int *size)
+ساكن حرف *strstr_pattern(حرف *val, ثابت حرف *pattern, صحيح *size)
 {
-	int first_escaped = (pattern[0] == '\\' && pattern[1]);
+	صحيح first_escaped = (pattern[0] == '\\' && pattern[1]);
 	/* "first_escaped" trick allows to treat e.g. "\*no_glob_chars"
 	 * as literal too (as it is semi-common, and easy to accomodate
 	 * by just using str + 1).
 	 */
-	int sz = strcspn(pattern + first_escaped * 2, "*?[\\");
-	if ((pattern + first_escaped * 2)[sz] == '\0') {
+	صحيح sz = strcspn(pattern + first_escaped * 2, "*?[\\");
+	ܐܢ ((pattern + first_escaped * 2)[sz] == '\0') {
 		/* Optimization for trivial patterns.
 		 * Testcase for very slow replace (performs about 22k replaces):
 		 * x=::::::::::::::::::::::
@@ -6957,41 +6957,41 @@ static char *strstr_pattern(char *val, const char *pattern, int *size)
 		 * echo "${x//:/|}"
 		 */
 		*size = sz + first_escaped;
-		return strstr(val, pattern + first_escaped);
+		ܦܢܐ strstr(val, pattern + first_escaped);
 	}
 
-	while (1) {
-		char *end = scan_and_match(val, pattern, SCAN_MOVE_FROM_RIGHT + SCAN_MATCH_LEFT_HALF);
+	ܟܡܐ (1) {
+		حرف *end = scan_and_match(val, pattern, SCAN_MOVE_FROM_RIGHT + SCAN_MATCH_LEFT_HALF);
 		debug_printf_varexp("val:'%s' pattern:'%s' end:'%s'\n", val, pattern, end);
-		if (end) {
+		ܐܢ (end) {
 			*size = end - val;
-			return val;
+			ܦܢܐ val;
 		}
-		if (*val == '\0')
-			return NULL;
+		ܐܢ (*val == '\0')
+			ܦܢܐ عدم;
 		/* Optimization: if "*pat" did not match the start of "string",
 		 * we know that "tring", "ring" etc will not match too:
 		 */
-		if (pattern[0] == '*')
-			return NULL;
+		ܐܢ (pattern[0] == '*')
+			ܦܢܐ عدم;
 		val++;
 	}
 }
-static char *replace_pattern(char *val, const char *pattern, const char *repl, char exp_op)
+ساكن حرف *replace_pattern(حرف *val, ثابت حرف *pattern, ثابت حرف *repl, حرف exp_op)
 {
-	char *result = NULL;
+	حرف *result = عدم;
 	unsigned res_len = 0;
 	unsigned repl_len = strlen(repl);
 
 	/* Null pattern never matches, including if "var" is empty */
-	if (!pattern[0])
-		return result; /* NULL, no replaces happened */
+	ܐܢ (!pattern[0])
+		ܦܢܐ result; /* NULL, no replaces happened */
 
-	while (1) {
-		int size;
-		char *s = strstr_pattern(val, pattern, &size);
-		if (!s)
-			break;
+	ܟܡܐ (1) {
+		صحيح size;
+		حرف *s = strstr_pattern(val, pattern, &size);
+		ܐܢ (!s)
+			اكسر;
 
 		result = xrealloc(result, res_len + (s - val) + repl_len + 1);
 		strcpy(mempcpy(result + res_len, val, s - val), repl);
@@ -6999,64 +6999,64 @@ static char *replace_pattern(char *val, const char *pattern, const char *repl, c
 		debug_printf_varexp("val:'%s' s:'%s' result:'%s'\n", val, s, result);
 
 		val = s + size;
-		if (exp_op == '/')
-			break;
+		ܐܢ (exp_op == '/')
+			اكسر;
 	}
-	if (*val && result) {
+	ܐܢ (*val && result) {
 		result = xrealloc(result, res_len + strlen(val) + 1);
 		strcpy(result + res_len, val);
 		debug_printf_varexp("val:'%s' result:'%s'\n", val, result);
 	}
 	debug_printf_varexp("result:'%s'\n", result);
-	return result;
+	ܦܢܐ result;
 }
 #endif /* BASH_PATTERN_SUBST */
 #endif /* !__U_BOOT__ */
 
-static int append_str_maybe_ifs_split(o_string *output, int n,
-		int first_ch, const char *val)
+ساكن صحيح append_str_maybe_ifs_split(o_string *output, صحيح n,
+		صحيح first_ch, ثابت حرف *val)
 {
-	if (!(first_ch & 0x80)) { /* unquoted $VAR */
+	ܐܢ (!(first_ch & 0x80)) { /* unquoted $VAR */
 		debug_printf_expand("unquoted '%s', output->o_escape:%d\n", val,
 				!!(output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (val && val[0])
+		ܐܢ (val && val[0])
 			n = expand_on_ifs(output, n, val);
-	} else { /* quoted "$VAR" */
+	} ܐܚܪܢܐ { /* quoted "$VAR" */
 		output->has_quoted_part = 1;
 		debug_printf_expand("quoted '%s', output->o_escape:%d\n", val,
 				!!(output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (val && val[0])
+		ܐܢ (val && val[0])
 			o_addQstr(output, val);
 	}
-	return n;
+	ܦܢܐ n;
 }
 
 /* Handle <SPECIAL_VAR_SYMBOL>varname...<SPECIAL_VAR_SYMBOL> construct.
  */
-static NOINLINE int expand_one_var(o_string *output, int n,
-		int first_ch, char *arg, char **pp)
+ساكن NOINLINE صحيح expand_one_var(o_string *output, صحيح n,
+		صحيح first_ch, حرف *arg, حرف **pp)
 {
-	const char *val;
-	char *to_be_freed;
-	char *p;
-	char *var;
-	char exp_op;
-	char exp_save = exp_save; /* for compiler */
-	char *exp_saveptr; /* points to expansion operator */
-	char *exp_word = exp_word; /* for compiler */
-	char arg0;
+	ثابت حرف *val;
+	حرف *to_be_freed;
+	حرف *p;
+	حرف *var;
+	حرف exp_op;
+	حرف exp_save = exp_save; /* for compiler */
+	حرف *exp_saveptr; /* points to expansion operator */
+	حرف *exp_word = exp_word; /* for compiler */
+	حرف arg0;
 
-	val = NULL;
-	to_be_freed = NULL;
+	val = عدم;
+	to_be_freed = عدم;
 	p = *pp;
 	*p = '\0'; /* replace trailing SPECIAL_VAR_SYMBOL */
 	var = arg;
-	exp_saveptr = arg[1] ? strchr(VAR_ENCODED_SUBST_OPS, arg[1]) : NULL;
+	exp_saveptr = arg[1] ? strchr(VAR_ENCODED_SUBST_OPS, arg[1]) : عدم;
 	arg0 = arg[0];
 	arg[0] = (arg0 & 0x7f);
 	exp_op = 0;
 
-	if (arg[0] == '#' && arg[1] /* ${#...} but not ${#} */
+	ܐܢ (arg[0] == '#' && arg[1] /* ${#...} but not ${#} */
 	 && (!exp_saveptr               /* and ( not(${#<op_char>...}) */
 	    || (arg[2] == '\0' && strchr(SPECIAL_VARS_STR, arg[1])) /* or ${#C} "len of $C" ) */
 	    )		/* NB: skipping ^^^specvar check mishandles ${#::2} */
@@ -7064,25 +7064,25 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 		/* It must be length operator: ${#var} */
 		var++;
 		exp_op = 'L';
-	} else {
+	} ܐܚܪܢܐ {
 		/* Maybe handle parameter expansion */
-		if (exp_saveptr /* if 2nd char is one of expansion operators */
+		ܐܢ (exp_saveptr /* if 2nd char is one of expansion operators */
 		 && strchr(NUMERIC_SPECVARS_STR, arg[0]) /* 1st char is special variable */
 		) {
 			/* ${?:0}, ${#[:]%0} etc */
 			exp_saveptr = var + 1;
-		} else {
+		} ܐܚܪܢܐ {
 			/* ${?}, ${var}, ${var:0}, ${var[:]%0} etc */
 			exp_saveptr = var+1 + strcspn(var+1, VAR_ENCODED_SUBST_OPS);
 		}
 		exp_op = exp_save = *exp_saveptr;
 #ifndef __U_BOOT__
-		if (exp_op) {
+		ܐܢ (exp_op) {
 			exp_word = exp_saveptr + 1;
-			if (exp_op == ':') {
+			ܐܢ (exp_op == ':') {
 				exp_op = *exp_word++;
 //TODO: try ${var:} and ${var:bogus} in non-bash config
-				if (BASH_SUBSTR
+				ܐܢ (BASH_SUBSTR
 				 && (!exp_op || !strchr(MINUS_PLUS_EQUAL_QUESTION, exp_op))
 				) {
 					/* oops... it's ${var:N[:M]}, not ${var:?xxx} or some such */
@@ -7096,59 +7096,59 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 	}
 
 	/* Look up the variable in question */
-	if (isdigit(var[0])) {
+	ܐܢ (isdigit(var[0])) {
 		/* parse_dollar should have vetted var for us */
 #ifndef __U_BOOT__
-		int nn = xatoi_positive(var);
-#else /* __U_BOOT__ */
-		int nn = simple_strtoul(var, NULL, 10);
+		صحيح nn = xatoi_positive(var);
+#ܐܚܪܢܐ /* __U_BOOT__ */
+		صحيح nn = simple_strtoul(var, عدم, 10);
 #endif /* __U_BOOT__ */
-		if (nn < G.global_argc)
+		ܐܢ (nn < G.global_argc)
 			val = G.global_argv[nn];
 		/* else val remains NULL: $N with too big N */
-	} else {
-		switch (var[0]) {
+	} ܐܚܪܢܐ {
+		بدل (var[0]) {
 #ifndef __U_BOOT__
-		case '$': /* pid */
+		حالة '$': /* pid */
 			val = utoa(G.root_pid);
-			break;
-		case '!': /* bg pid */
+			اكسر;
+		حالة '!': /* bg pid */
 			val = G.last_bg_pid ? utoa(G.last_bg_pid) : "";
-			break;
+			اكسر;
 #endif /* !__U_BOOT__ */
-		case '?': /* exitcode */
+		حالة '?': /* exitcode */
 			val = utoa(G.last_exitcode);
-			break;
-		case '#': /* argc */
+			اكسر;
+		حالة '#': /* argc */
 			val = utoa(G.global_argc ? G.global_argc-1 : 0);
-			break;
+			اكسر;
 #ifndef __U_BOOT__
-		case '-': { /* active options */
+		حالة '-': { /* active options */
 			/* Check set_mode() to see what option chars we support */
-			char *cp;
+			حرف *cp;
 			val = cp = G.optstring_buf;
-			if (G.o_opt[OPT_O_ERREXIT])
+			ܐܢ (G.o_opt[OPT_O_ERREXIT])
 				*cp++ = 'e';
-			if (G_interactive_fd)
+			ܐܢ (G_interactive_fd)
 				*cp++ = 'i';
-			if (G_x_mode)
+			ܐܢ (G_x_mode)
 				*cp++ = 'x';
 			/* If G.o_opt[OPT_O_NOEXEC] is true,
 			 * commands read but are not executed,
 			 * so $- can not execute too, 'n' is never seen in $-.
 			 */
-			if (G.opt_c)
+			ܐܢ (G.opt_c)
 				*cp++ = 'c';
-			if (G.opt_s)
+			ܐܢ (G.opt_s)
 				*cp++ = 's';
 			*cp = '\0';
-			break;
+			اكسر;
 		}
 #endif /* !__U_BOOT__ */
-		default:
+		افتراضي:
 #ifndef __U_BOOT__
 			val = get_local_var_value(var);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 			/*
 			 * Environment variable set with setenv* have to be
 			 * expanded.
@@ -7157,7 +7157,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * local value.
 			 */
 			val = env_get(var);
-			if (!val)
+			ܐܢ (!val)
 				val = get_local_var_value(var);
 #endif /* __U_BOOT__ */
 		}
@@ -7165,13 +7165,13 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 
 #ifndef __U_BOOT__
 	/* Handle any expansions */
-	if (exp_op == 'L') {
+	ܐܢ (exp_op == 'L') {
 		reinit_unicode_for_hush();
 		debug_printf_expand("expand: length(%s)=", val);
 		val = utoa(val ? unicode_strlen(val) : 0);
 		debug_printf_expand("%s\n", val);
-	} else if (exp_op) {
-		if (exp_op == '%' || exp_op == '#') {
+	} ܐܚܪܢܐ ܐܢ (exp_op) {
+		ܐܢ (exp_op == '%' || exp_op == '#') {
 			/* Standard-mandated substring removal ops:
 			 * ${parameter%word} - remove smallest suffix pattern
 			 * ${parameter%%word} - remove largest suffix pattern
@@ -7186,16 +7186,16 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 *  unset b; : ${a%${b=B}}; echo $b
 			 * assignment b=B only happens if $a is not "".
 			 */
-			if (val && val[0]) {
-				char *t;
-				char *exp_exp_word;
-				char *loc;
+			ܐܢ (val && val[0]) {
+				حرف *t;
+				حرف *exp_exp_word;
+				حرف *loc;
 				unsigned scan_flags = pick_scan(exp_op, *exp_word);
-				if (exp_op == *exp_word)  /* ## or %% */
+				ܐܢ (exp_op == *exp_word)  /* ## or %% */
 					exp_word++;
 				debug_printf_expand("expand: exp_word:'%s'\n", exp_word);
 				exp_exp_word = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
-				if (exp_exp_word)
+				ܐܢ (exp_exp_word)
 					exp_word = exp_exp_word;
 				debug_printf_expand("expand: exp_word:'%s'\n", exp_word);
 				/*
@@ -7204,20 +7204,20 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				 * are actually in writable memory:
 				 * scan_and_match momentarily stores NULs there.
 				 */
-				t = (char*)val;
+				t = (حرف*)val;
 				loc = scan_and_match(t, exp_word, scan_flags);
 				debug_printf_expand("op:%c str:'%s' pat:'%s' res:'%s'\n", exp_op, t, exp_word, loc);
-				free(exp_exp_word);
-				if (loc) { /* match was found */
-					if (scan_flags & SCAN_MATCH_LEFT_HALF) /* #[#] */
+				حرر(exp_exp_word);
+				ܐܢ (loc) { /* match was found */
+					ܐܢ (scan_flags & SCAN_MATCH_LEFT_HALF) /* #[#] */
 						val = loc; /* take right part */
-					else /* %[%] */
+					ܐܚܪܢܐ /* %[%] */
 						val = to_be_freed = xstrndup(val, loc - val); /* left */
 				}
 			}
 		}
-#if BASH_PATTERN_SUBST
-		else if (exp_op == '/' || exp_op == '\\') {
+#ܐܢ BASH_PATTERN_SUBST
+		ܐܚܪܢܐ ܐܢ (exp_op == '/' || exp_op == '\\') {
 			/* It's ${var/[/]pattern[/repl]} thing.
 			 * Note that in encoded form it has TWO parts:
 			 * var/pattern<SPECIAL_VAR_SYMBOL>repl<SPECIAL_VAR_SYMBOL>
@@ -7229,7 +7229,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * unset b; a=; : ${a/z/${b=3}}; echo $b      # b=3
 			 * unset b; unset a; : ${a/z/${b=3}}; echo $b # b not set
 			 */
-			if (val /*&& val[0]*/) {
+			ܐܢ (val /*&& val[0]*/) {
 				/* pattern uses non-standard expansion.
 				 * repl should be unbackslashed and globbed
 				 * by the usual expansion rules:
@@ -7240,9 +7240,9 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				 *  v='a bz'; echo ${v/a*z/\z}    #prints "z"
 				 * (note that a*z _pattern_ is never globbed!)
 				 */
-				char *pattern, *repl, *t;
+				حرف *pattern, *repl, *t;
 				pattern = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
-				if (!pattern)
+				ܐܢ (!pattern)
 					pattern = xstrdup(exp_word);
 				debug_printf_varexp("pattern:'%s'->'%s'\n", exp_word, pattern);
 				*p++ = SPECIAL_VAR_SYMBOL;
@@ -7255,16 +7255,16 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				 * G.global_argv and results of utoa and get_local_var_value
 				 * are actually in writable memory:
 				 * replace_pattern momentarily stores NULs there. */
-				t = (char*)val;
+				t = (حرف*)val;
 				to_be_freed = replace_pattern(t,
 						pattern,
 						(repl ? repl : exp_word),
 						exp_op);
-				if (to_be_freed) /* at least one replace happened */
+				ܐܢ (to_be_freed) /* at least one replace happened */
 					val = to_be_freed;
-				free(pattern);
-				free(repl);
-			} else {
+				حرر(pattern);
+				حرر(repl);
+			} ܐܚܪܢܐ {
 				/* Unset variable always gives nothing */
 				//  a=; echo ${a/*/w}      # "w"
 				//  unset a; echo ${a/*/w} # ""
@@ -7275,64 +7275,64 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			}
 		}
 #endif /* BASH_PATTERN_SUBST */
-		else if (exp_op == ':') {
-#if BASH_SUBSTR && ENABLE_FEATURE_SH_MATH
+		ܐܚܪܢܐ ܐܢ (exp_op == ':') {
+#ܐܢ BASH_SUBSTR && ENABLE_FEATURE_SH_MATH
 			/* It's ${var:N[:M]} bashism.
 			 * Note that in encoded form it has TWO parts:
 			 * var:N<SPECIAL_VAR_SYMBOL>M<SPECIAL_VAR_SYMBOL>
 			 */
 			arith_t beg, len;
 			unsigned vallen;
-			const char *errmsg;
+			ثابت حرف *errmsg;
 
 			beg = expand_and_evaluate_arith(exp_word, &errmsg);
-			if (errmsg)
-				goto empty_result;
+			ܐܢ (errmsg)
+				اذهب empty_result;
 			debug_printf_varexp("beg:'%s'=%lld\n", exp_word, (long long)beg);
 			*p++ = SPECIAL_VAR_SYMBOL;
 			exp_word = p;
 			p = strchr(p, SPECIAL_VAR_SYMBOL);
 			*p = '\0';
 			vallen = val ? strlen(val) : 0;
-			if (beg < 0) {
+			ܐܢ (beg < 0) {
 				/* negative beg counts from the end */
 				beg = (arith_t)vallen + beg;
 			}
 			/* If expansion will be empty, do not even evaluate len */
-			if (!val || beg < 0 || beg > vallen) {
+			ܐܢ (!val || beg < 0 || beg > vallen) {
 				/* Why > vallen, not >=? bash:
 				 * unset b; a=ab; : ${a:2:${b=3}}; echo $b  # "", b=3 (!!!)
 				 * unset b; a=a; : ${a:2:${b=3}}; echo $b   # "", b not set
 				 */
-				goto empty_result;
+				اذهب empty_result;
 			}
 			len = expand_and_evaluate_arith(exp_word, &errmsg);
-			if (errmsg)
-				goto empty_result;
+			ܐܢ (errmsg)
+				اذهب empty_result;
 			debug_printf_varexp("len:'%s'=%lld\n", exp_word, (long long)len);
 			debug_printf_varexp("from val:'%s'\n", val);
-			if (len < 0) {
+			ܐܢ (len < 0) {
 				/* in bash, len=-n means strlen()-n */
 				len = (arith_t)vallen - beg + len;
-				if (len < 0) /* bash compat */
+				ܐܢ (len < 0) /* bash compat */
 					msg_and_die_if_script("%s: substring expression < 0", var);
 			}
-			if (len <= 0 || !val /*|| beg >= vallen*/) {
+			ܐܢ (len <= 0 || !val /*|| beg >= vallen*/) {
  empty_result:
-				val = NULL;
-			} else {
+				val = عدم;
+			} ܐܚܪܢܐ {
 				/* Paranoia. What if user entered 9999999999999
 				 * which fits in arith_t but not int? */
-				if (len > INT_MAX)
+				ܐܢ (len > INT_MAX)
 					len = INT_MAX;
 				val = to_be_freed = xstrndup(val + beg, len);
 			}
 			debug_printf_varexp("val:'%s'\n", val);
-#else /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
+#ܐܚܪܢܐ /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
 			msg_and_die_if_script("malformed ${%s:...}", var);
-			val = NULL;
+			val = عدم;
 #endif
-		} else { /* one of "-=+?" */
+		} ܐܚܪܢܐ { /* one of "-=+?" */
 			/* Standard-mandated substitution ops:
 			 * ${var?word} - indicate error if unset
 			 *      If var is unset, word (or a message indicating it is unset
@@ -7384,29 +7384,29 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * $ x=; f "${x:-'x y' z}"
 			 * |'x y' z|
 			 */
-			int use_word = (!val || ((exp_save == ':') && !val[0]));
-			if (exp_op == '+')
+			صحيح use_word = (!val || ((exp_save == ':') && !val[0]));
+			ܐܢ (exp_op == '+')
 				use_word = !use_word;
 			debug_printf_expand("expand: op:%c (null:%s) test:%i\n", exp_op,
 					(exp_save == ':') ? "true" : "false", use_word);
-			if (use_word) {
-				if (exp_op == '+' || exp_op == '-') {
+			ܐܢ (use_word) {
+				ܐܢ (exp_op == '+' || exp_op == '-') {
 					/* ${var+word} - use alternative value */
 					/* ${var-word} - use default value */
 					n = encode_then_append_var_plusminus(output, n, exp_word,
 							/*dquoted:*/ (arg0 & 0x80)
 					);
-					val = NULL;
-				} else {
+					val = عدم;
+				} ܐܚܪܢܐ {
 					/* ${var?word} - indicate error if unset */
 					/* ${var=word} - assign and use default value */
 					to_be_freed = encode_then_expand_vararg(exp_word,
 							/*handle_squotes:*/ !(arg0 & 0x80),
 							/*unbackslash:*/ 0
 					);
-					if (to_be_freed)
+					ܐܢ (to_be_freed)
 						exp_word = to_be_freed;
-					if (exp_op == '?') {
+					ܐܢ (exp_op == '?') {
 						/* mimic bash message */
 						msg_and_die_if_script("%s: %s",
 							var,
@@ -7422,17 +7422,17 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 // bash: x: x y z
 // $
 // ("echo YO" is not executed, neither the f function call)
-					} else {
+					} ܐܚܪܢܐ {
 						val = exp_word;
 					}
-					if (exp_op == '=') {
+					ܐܢ (exp_op == '=') {
 						/* ${var=[word]} or ${var:=[word]} */
-						if (isdigit(var[0]) || var[0] == '#') {
+						ܐܢ (isdigit(var[0]) || var[0] == '#') {
 							/* mimic bash message */
 							msg_and_die_if_script("$%s: cannot assign in this way", var);
-							val = NULL;
-						} else {
-							char *new_var = xasprintf("%s=%s", var, val);
+							val = عدم;
+						} ܐܚܪܢܐ {
+							حرف *new_var = xasprintf("%s=%s", var, val);
 							set_local_var0(new_var);
 						}
 					}
@@ -7449,8 +7449,8 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 
 	n = append_str_maybe_ifs_split(output, n, first_ch, val);
 
-	free(to_be_freed);
-	return n;
+	حرر(to_be_freed);
+	ܦܢܐ n;
 }
 
 /* Expand all variable references in given string, adding words to list[]
@@ -7458,25 +7458,25 @@ static NOINLINE int expand_one_var(o_string *output, int n,
  * to be filled). This routine is extremely tricky: has to deal with
  * variables/parameters with whitespace, $* and $@, and constructs like
  * 'echo -$*-'. If you play here, you must run testsuite afterwards! */
-static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
+ساكن NOINLINE صحيح expand_vars_to_list(o_string *output, صحيح n, حرف *arg)
 {
 	/* output->o_expflags & EXP_FLAG_SINGLEWORD (0x80) if we are in
 	 * expansion of right-hand side of assignment == 1-element expand.
 	 */
-	char cant_be_null = 0; /* only bit 0x80 matters */
-	char *p;
+	حرف cant_be_null = 0; /* only bit 0x80 matters */
+	حرف *p;
 
 	debug_printf_expand("expand_vars_to_list: arg:'%s' singleword:%x\n", arg,
 			!!(output->o_expflags & EXP_FLAG_SINGLEWORD));
 	debug_print_list("expand_vars_to_list[0]", output, n);
 
-	while ((p = strchr(arg, SPECIAL_VAR_SYMBOL)) != NULL) {
-		char first_ch;
-#if ENABLE_FEATURE_SH_MATH
-		char arith_buf[sizeof(arith_t)*3 + 2];
+	ܟܡܐ ((p = strchr(arg, SPECIAL_VAR_SYMBOL)) != عدم) {
+		حرف first_ch;
+#ܐܢ ENABLE_FEATURE_SH_MATH
+		حرف arith_buf[حجم(arith_t)*3 + 2];
 #endif
 
-		if (output->ended_in_ifs) {
+		ܐܢ (output->ended_in_ifs) {
 			o_addchr(output, '\0');
 			n = o_save_ptr(output, n);
 			output->ended_in_ifs = 0;
@@ -7496,27 +7496,27 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		 * "$@" is special. Even if quoted, it can still
 		 * expand to nothing (not even an empty string),
 		 * thus it is excluded. */
-		if ((first_ch & 0x7f) != '@')
+		ܐܢ ((first_ch & 0x7f) != '@')
 			cant_be_null |= first_ch;
 
-		switch (first_ch & 0x7f) {
+		بدل (first_ch & 0x7f) {
 		/* Highest bit in first_ch indicates that var is double-quoted */
-		case '*':
-		case '@': {
-			int i;
+		حالة '*':
+		حالة '@': {
+			صحيح i;
 #ifndef __U_BOOT__
-			if (!G.global_argv[1])
-#else /* __U_BOOT__ */
-			if (!G.global_argv || !G.global_argv[1])
+			ܐܢ (!G.global_argv[1])
+#ܐܚܪܢܐ /* __U_BOOT__ */
+			ܐܢ (!G.global_argv || !G.global_argv[1])
 #endif /* __U_BOOT__ */
-				break;
+				اكسر;
 			i = 1;
 			cant_be_null |= first_ch; /* do it for "$@" _now_, when we know it's not empty */
-			if (!(first_ch & 0x80)) { /* unquoted $* or $@ */
-				while (G.global_argv[i]) {
+			ܐܢ (!(first_ch & 0x80)) { /* unquoted $* or $@ */
+				ܟܡܐ (G.global_argv[i]) {
 					n = expand_on_ifs(output, n, G.global_argv[i]);
 					debug_printf_expand("expand_vars_to_list: argv %d (last %d)\n", i, G.global_argc - 1);
-					if (G.global_argv[i++][0] && G.global_argv[i]) {
+					ܐܢ (G.global_argv[i++][0] && G.global_argv[i]) {
 						/* this argv[] is not empty and not last:
 						 * put terminating NUL, start new word */
 						o_addchr(output, '\0');
@@ -7525,48 +7525,48 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 						debug_print_list("expand_vars_to_list[3]", output, n);
 					}
 				}
-			} else
+			} ܐܚܪܢܐ
 			/* If EXP_FLAG_SINGLEWORD, we handle assignment 'a=....$@.....'
 			 * and in this case should treat it like '$*' - see 'else...' below */
-			if (first_ch == (char)('@'|0x80)  /* quoted $@ */
+			ܐܢ (first_ch == (حرف)('@'|0x80)  /* quoted $@ */
 			 && !(output->o_expflags & EXP_FLAG_SINGLEWORD) /* not v="$@" case */
 			) {
-				while (1) {
+				ܟܡܐ (1) {
 					o_addQstr(output, G.global_argv[i]);
-					if (++i >= G.global_argc)
-						break;
+					ܐܢ (++i >= G.global_argc)
+						اكسر;
 					o_addchr(output, '\0');
 					debug_print_list("expand_vars_to_list[4]", output, n);
 					n = o_save_ptr(output, n);
 				}
-			} else { /* quoted $* (or v="$@" case): add as one word */
-				while (1) {
+			} ܐܚܪܢܐ { /* quoted $* (or v="$@" case): add as one word */
+				ܟܡܐ (1) {
 					o_addQstr(output, G.global_argv[i]);
-					if (!G.global_argv[++i])
-						break;
-					if (G.ifs[0])
+					ܐܢ (!G.global_argv[++i])
+						اكسر;
+					ܐܢ (G.ifs[0])
 						o_addchr(output, G.ifs[0]);
 				}
 				output->has_quoted_part = 1;
 			}
-			break;
+			اكسر;
 		}
-		case SPECIAL_VAR_SYMBOL: {
+		حالة SPECIAL_VAR_SYMBOL: {
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_SYMBOL> */
 			/* "Empty variable", used to make "" etc to not disappear */
 			output->has_quoted_part = 1;
 			cant_be_null = 0x80;
 			arg++;
-			break;
+			اكسر;
 		}
-		case SPECIAL_VAR_QUOTED_SVS:
+		حالة SPECIAL_VAR_QUOTED_SVS:
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_QUOTED_SVS><SPECIAL_VAR_SYMBOL> */
 			/* "^C variable", represents literal ^C char (possible in scripts) */
 			o_addchr(output, SPECIAL_VAR_SYMBOL);
 			arg++;
-			break;
-#if ENABLE_HUSH_TICK
-		case '`': {
+			اكسر;
+#ܐܢ ENABLE_HUSH_TICK
+		حالة '`': {
 			/* <SPECIAL_VAR_SYMBOL>`cmd<SPECIAL_VAR_SYMBOL> */
 			o_string subst_result = NULL_O_STRING;
 
@@ -7581,22 +7581,22 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 			debug_printf_subst("SUBST RES:%d '%s'\n", G.last_exitcode, subst_result.data);
 			n = append_str_maybe_ifs_split(output, n, first_ch, subst_result.data);
 			o_free(&subst_result);
-			break;
+			اكسر;
 		}
 #endif
-#if ENABLE_FEATURE_SH_MATH
-		case '+': {
+#ܐܢ ENABLE_FEATURE_SH_MATH
+		حالة '+': {
 			/* <SPECIAL_VAR_SYMBOL>+arith<SPECIAL_VAR_SYMBOL> */
 			arith_t res;
 
 			arg++; /* skip '+' */
 			*p = '\0'; /* replace trailing <SPECIAL_VAR_SYMBOL> */
 			debug_printf_subst("ARITH '%s' first_ch %x\n", arg, first_ch);
-			res = expand_and_evaluate_arith(arg, NULL);
+			res = expand_and_evaluate_arith(arg, عدم);
 			debug_printf_subst("ARITH RES '"ARITH_FMT"'\n", res);
 			sprintf(arith_buf, ARITH_FMT, res);
-			if (res < 0
-			 && first_ch == (char)('+'|0x80)
+			ܐܢ (res < 0
+			 && first_ch == (حرف)('+'|0x80)
 			/* && (output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS) */
 			) {
 				/* Quoted negative ariths, like filename[0"$((-9))"],
@@ -7607,25 +7607,25 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 				output->data[output->length++] = '\\';
 			}
 			o_addstr(output, arith_buf);
-			break;
+			اكسر;
 		}
 #endif
-		default:
+		افتراضي:
 			/* <SPECIAL_VAR_SYMBOL>varname[ops]<SPECIAL_VAR_SYMBOL> */
 			n = expand_one_var(output, n, first_ch, arg, &p);
-			break;
+			اكسر;
 		} /* switch (char after <SPECIAL_VAR_SYMBOL>) */
 
 		/* Restore NULL'ed SPECIAL_VAR_SYMBOL.
 		 * Do the check to avoid writing to a const string. */
-		if (*p != SPECIAL_VAR_SYMBOL)
+		ܐܢ (*p != SPECIAL_VAR_SYMBOL)
 			*p = SPECIAL_VAR_SYMBOL;
 		arg = ++p;
 	} /* end of "while (SPECIAL_VAR_SYMBOL is found) ..." */
 
-	if (*arg) {
+	ܐܢ (*arg) {
 		/* handle trailing string */
-		if (output->ended_in_ifs) {
+		ܐܢ (output->ended_in_ifs) {
 			o_addchr(output, '\0');
 			n = o_save_ptr(output, n);
 		}
@@ -7635,8 +7635,8 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		 */
 		o_addstr(output, arg);
 		debug_print_list("expand_vars_to_list[b]", output, n);
-	} else
-	if (output->length == o_get_last_ptr(output, n) /* expansion is empty */
+	} ܐܚܪܢܐ
+	ܐܢ (output->length == o_get_last_ptr(output, n) /* expansion is empty */
 	 && !(cant_be_null & 0x80)   /* and all vars were not quoted */
 	 && !output->has_quoted_part
 	) {
@@ -7645,25 +7645,25 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		output->has_empty_slot = 1;
 	}
 
-	return n;
+	ܦܢܐ n;
 }
 
-static char **expand_variables(char **argv, unsigned expflags)
+ساكن حرف **expand_variables(حرف **argv, unsigned expflags)
 {
-	int n;
-	char **list;
+	صحيح n;
+	حرف **list;
 	o_string output = NULL_O_STRING;
 
 	output.o_expflags = expflags;
 
 	n = 0;
-	for (;;) {
+	لكل (;;) {
 		/* go to next list[n] */
 		output.ended_in_ifs = 0;
 		n = o_save_ptr(&output, n);
 
-		if (!*argv)
-			break;
+		ܐܢ (!*argv)
+			اكسر;
 
 		/* expand argv[i] */
 		n = expand_vars_to_list(&output, n, *argv++);
@@ -7675,18 +7675,18 @@ static char **expand_variables(char **argv, unsigned expflags)
 	/* output.data (malloced in one block) gets returned in "list" */
 	list = o_finalize_list(&output, n);
 	debug_print_strings("expand_variables[1]", list);
-	return list;
+	ܦܢܐ list;
 }
 
-static char **expand_strvec_to_strvec(char **argv)
+ساكن حرف **expand_strvec_to_strvec(حرف **argv)
 {
-	return expand_variables(argv, EXP_FLAG_GLOB | EXP_FLAG_ESC_GLOB_CHARS);
+	ܦܢܐ expand_variables(argv, EXP_FLAG_GLOB | EXP_FLAG_ESC_GLOB_CHARS);
 }
 
-#if defined(CMD_SINGLEWORD_NOGLOB) || defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-static char **expand_strvec_to_strvec_singleword_noglob(char **argv)
+#ܐܢ defined(CMD_SINGLEWORD_NOGLOB) || defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+ساكن حرف **expand_strvec_to_strvec_singleword_noglob(حرف **argv)
 {
-	return expand_variables(argv, EXP_FLAG_SINGLEWORD);
+	ܦܢܐ expand_variables(argv, EXP_FLAG_SINGLEWORD);
 }
 #endif
 
@@ -7696,79 +7696,79 @@ static char **expand_strvec_to_strvec_singleword_noglob(char **argv)
  * NB: should NOT do globbing!
  * "export v=/bin/c*; env | grep ^v=" outputs "v=/bin/c*"
  */
-static char *expand_string_to_string(const char *str, int EXP_flags, int do_unbackslash)
+ساكن حرف *expand_string_to_string(ثابت حرف *str, صحيح EXP_flags, صحيح do_unbackslash)
 {
-#if !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
-	const int do_unbackslash = 1;
-	const int EXP_flags = EXP_FLAG_ESC_GLOB_CHARS;
+#ܐܢ !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
+	ثابت صحيح do_unbackslash = 1;
+	ثابت صحيح EXP_flags = EXP_FLAG_ESC_GLOB_CHARS;
 #endif
-	char *argv[2], **list;
+	حرف *argv[2], **list;
 
 	debug_printf_expand("string_to_string<='%s'\n", str);
 	/* This is generally an optimization, but it also
 	 * handles "", which otherwise trips over !list[0] check below.
 	 * (is this ever happens that we actually get str="" here?)
 	 */
-	if (!strchr(str, SPECIAL_VAR_SYMBOL) && !strchr(str, '\\')) {
+	ܐܢ (!strchr(str, SPECIAL_VAR_SYMBOL) && !strchr(str, '\\')) {
 		//TODO: Can use on strings with \ too, just unbackslash() them?
 		debug_printf_expand("string_to_string(fast)=>'%s'\n", str);
-		return xstrdup(str);
+		ܦܢܐ xstrdup(str);
 	}
 
-	argv[0] = (char*)str;
-	argv[1] = NULL;
+	argv[0] = (حرف*)str;
+	argv[1] = عدم;
 	list = expand_variables(argv, EXP_flags | EXP_FLAG_SINGLEWORD);
-	if (!list[0]) {
+	ܐܢ (!list[0]) {
 		/* Example where it happens:
 		 * x=; echo ${x:-"$@"}
 		 */
-		((char*)list)[0] = '\0';
-	} else {
-		if (HUSH_DEBUG)
-			if (list[1])
+		((حرف*)list)[0] = '\0';
+	} ܐܚܪܢܐ {
+		ܐܢ (HUSH_DEBUG)
+			ܐܢ (list[1])
 				bb_simple_error_msg_and_die("BUG in varexp2");
 		/* actually, just move string 2*sizeof(char*) bytes back */
-		overlapping_strcpy((char*)list, list[0]);
-		if (do_unbackslash)
-			unbackslash((char*)list);
+		overlapping_strcpy((حرف*)list, list[0]);
+		ܐܢ (do_unbackslash)
+			unbackslash((حرف*)list);
 	}
-	debug_printf_expand("string_to_string=>'%s'\n", (char*)list);
-	return (char*)list;
+	debug_printf_expand("string_to_string=>'%s'\n", (حرف*)list);
+	ܦܢܐ (حرف*)list;
 }
 
-#if 0
-static char* expand_strvec_to_string(char **argv)
+#ܐܢ 0
+ساكن حرف* expand_strvec_to_string(حرف **argv)
 {
-	char **list;
+	حرف **list;
 
 	list = expand_variables(argv, EXP_FLAG_SINGLEWORD);
 	/* Convert all NULs to spaces */
-	if (list[0]) {
-		int n = 1;
-		while (list[n]) {
-			if (HUSH_DEBUG)
-				if (list[n-1] + strlen(list[n-1]) + 1 != list[n])
+	ܐܢ (list[0]) {
+		صحيح n = 1;
+		ܟܡܐ (list[n]) {
+			ܐܢ (HUSH_DEBUG)
+				ܐܢ (list[n-1] + strlen(list[n-1]) + 1 != list[n])
 					bb_error_msg_and_die("BUG in varexp3");
 			/* bash uses ' ' regardless of $IFS contents */
 			list[n][-1] = ' ';
 			n++;
 		}
 	}
-	overlapping_strcpy((char*)list, list[0] ? list[0] : "");
-	debug_printf_expand("strvec_to_string='%s'\n", (char*)list);
-	return (char*)list;
+	overlapping_strcpy((حرف*)list, list[0] ? list[0] : "");
+	debug_printf_expand("strvec_to_string='%s'\n", (حرف*)list);
+	ܦܢܐ (حرف*)list;
 }
 #endif
 
 #ifndef __U_BOOT__
-static char **expand_assignments(char **argv, int count)
+ساكن حرف **expand_assignments(حرف **argv, صحيح count)
 {
-	int i;
-	char **p;
+	صحيح i;
+	حرف **p;
 
-	G.expanded_assignments = p = NULL;
+	G.expanded_assignments = p = عدم;
 	/* Expand assignments into one string each */
-	for (i = 0; i < count; i++) {
+	لكل (i = 0; i < count; i++) {
 		p = add_string_to_strings(p,
 			expand_string_to_string(argv[i],
 				EXP_FLAG_ESC_GLOB_CHARS,
@@ -7777,24 +7777,24 @@ static char **expand_assignments(char **argv, int count)
 		);
 		G.expanded_assignments = p;
 	}
-	G.expanded_assignments = NULL;
-	return p;
+	G.expanded_assignments = عدم;
+	ܦܢܐ p;
 }
 
-static void switch_off_special_sigs(unsigned mask)
+ساكن فراغ switch_off_special_sigs(unsigned mask)
 {
 	unsigned sig = 0;
-	while ((mask >>= 1) != 0) {
+	ܟܡܐ ((mask >>= 1) != 0) {
 		sig++;
-		if (!(mask & 1))
-			continue;
-#if ENABLE_HUSH_TRAP
-		if (G_traps) {
-			if (G_traps[sig] && !G_traps[sig][0])
+		ܐܢ (!(mask & 1))
+			استمر;
+#ܐܢ ENABLE_HUSH_TRAP
+		ܐܢ (G_traps) {
+			ܐܢ (G_traps[sig] && !G_traps[sig][0])
 				/* trap is '', has to remain SIG_IGN */
-				continue;
-			free(G_traps[sig]);
-			G_traps[sig] = NULL;
+				استمر;
+			حرر(G_traps[sig]);
+			G_traps[sig] = عدم;
 		}
 #endif
 		/* We are here only if no trap or trap was not '' */
@@ -7804,13 +7804,13 @@ static void switch_off_special_sigs(unsigned mask)
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-#if BB_MMU
+#ܐܢ BB_MMU
 /* never called */
-void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv) NORETURN;
+فراغ re_execute_shell(حرف ***to_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv) NORETURN;
 
-static void reset_traps_to_defaults(void)
+ساكن فراغ reset_traps_to_defaults(فراغ)
 {
 	/* This function is always called in a child shell
 	 * after fork (not vfork, NOMMU doesn't use this function).
@@ -7824,80 +7824,80 @@ static void reset_traps_to_defaults(void)
 	 * Same goes for SIGTERM, SIGHUP, SIGINT.
 	 */
 	mask = (G.special_sig_mask & SPECIAL_INTERACTIVE_SIGS) | G_fatal_sig_mask;
-	if (!G_traps && !mask)
-		return; /* already no traps and no special sigs */
+	ܐܢ (!G_traps && !mask)
+		ܦܢܐ; /* already no traps and no special sigs */
 
 	/* Switch off special sigs */
 	switch_off_special_sigs(mask);
-# if ENABLE_HUSH_JOB
+# ܐܢ ENABLE_HUSH_JOB
 	G_fatal_sig_mask = 0;
 # endif
 	G.special_sig_mask &= ~SPECIAL_INTERACTIVE_SIGS;
 	/* SIGQUIT,SIGCHLD and maybe SPECIAL_JOBSTOP_SIGS
 	 * remain set in G.special_sig_mask */
 
-# if ENABLE_HUSH_TRAP
-	if (!G_traps)
-		return;
+# ܐܢ ENABLE_HUSH_TRAP
+	ܐܢ (!G_traps)
+		ܦܢܐ;
 
 	/* Reset all sigs to default except ones with empty traps */
-	for (sig = 0; sig < NSIG; sig++) {
-		if (!G_traps[sig])
-			continue; /* no trap: nothing to do */
-		if (!G_traps[sig][0])
-			continue; /* empty trap: has to remain SIG_IGN */
+	لكل (sig = 0; sig < NSIG; sig++) {
+		ܐܢ (!G_traps[sig])
+			استمر; /* no trap: nothing to do */
+		ܐܢ (!G_traps[sig][0])
+			استمر; /* empty trap: has to remain SIG_IGN */
 		/* sig has non-empty trap, reset it: */
-		free(G_traps[sig]);
-		G_traps[sig] = NULL;
+		حرر(G_traps[sig]);
+		G_traps[sig] = عدم;
 		/* There is no signal for trap 0 (EXIT) */
-		if (sig == 0)
-			continue;
+		ܐܢ (sig == 0)
+			استمر;
 		install_sighandler(sig, pick_sighandler(sig));
 	}
 # endif
 }
 
-#else /* !BB_MMU */
+#ܐܚܪܢܐ /* !BB_MMU */
 
-static void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv) NORETURN;
-static void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv)
+ساكن فراغ re_execute_shell(حرف ***to_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv) NORETURN;
+ساكن فراغ re_execute_shell(حرف ***to_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv)
 {
 # define NOMMU_HACK_FMT ("-$%x:%x:%x:%x:%x:%llx" IF_HUSH_LOOPS(":%x"))
 	/* delims + 2 * (number of bytes in printed hex numbers) */
-	char param_buf[sizeof(NOMMU_HACK_FMT) + 2 * (sizeof(int)*6 + sizeof(long long)*1)];
-	char *heredoc_argv[4];
-	struct variable *cur;
-# if ENABLE_HUSH_FUNCTIONS
-	struct function *funcp;
+	حرف param_buf[حجم(NOMMU_HACK_FMT) + 2 * (حجم(صحيح)*6 + حجم(long long)*1)];
+	حرف *heredoc_argv[4];
+	بنية variable *cur;
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+	بنية function *funcp;
 # endif
-	char **argv, **pp;
+	حرف **argv, **pp;
 	unsigned cnt;
 	unsigned long long empty_trap_mask;
 
-	if (!g_argv0) { /* heredoc */
+	ܐܢ (!g_argv0) { /* heredoc */
 		argv = heredoc_argv;
-		argv[0] = (char *) G.argv0_for_re_execing;
-		argv[1] = (char *) "-<";
-		argv[2] = (char *) s;
-		argv[3] = NULL;
+		argv[0] = (حرف *) G.argv0_for_re_execing;
+		argv[1] = (حرف *) "-<";
+		argv[2] = (حرف *) s;
+		argv[3] = عدم;
 		pp = &argv[3]; /* used as pointer to empty environment */
-		goto do_exec;
+		اذهب do_exec;
 	}
 
 	cnt = 0;
 	pp = builtin_argv;
-	if (pp) while (*pp++)
+	ܐܢ (pp) ܟܡܐ (*pp++)
 		cnt++;
 
 	empty_trap_mask = 0;
-	if (G_traps) {
-		int sig;
-		for (sig = 1; sig < NSIG; sig++) {
-			if (G_traps[sig] && !G_traps[sig][0])
+	ܐܢ (G_traps) {
+		صحيح sig;
+		لكل (sig = 1; sig < NSIG; sig++) {
+			ܐܢ (G_traps[sig] && !G_traps[sig][0])
 				empty_trap_mask |= 1LL << sig;
 		}
 	}
@@ -7916,41 +7916,41 @@ static void re_execute_shell(char ***to_free, const char *s,
 	 * 3:-c 4:<cmd> 5:<arg0> <argN...> 6:NULL
 	 */
 	cnt += 6;
-	for (cur = G.top_var; cur; cur = cur->next) {
-		if (!cur->flg_export || cur->flg_read_only)
+	لكل (cur = G.top_var; cur; cur = cur->next) {
+		ܐܢ (!cur->flg_export || cur->flg_read_only)
 			cnt += 2;
 	}
-# if ENABLE_HUSH_LINENO_VAR
+# ܐܢ ENABLE_HUSH_LINENO_VAR
 	cnt += 2;
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next)
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+	لكل (funcp = G.top_func; funcp; funcp = funcp->next)
 		cnt += 3;
 # endif
 	pp = g_argv;
-	while (*pp++)
+	ܟܡܐ (*pp++)
 		cnt++;
-	*to_free = argv = pp = xzalloc(sizeof(argv[0]) * cnt);
-	*pp++ = (char *) G.argv0_for_re_execing;
+	*to_free = argv = pp = xzalloc(حجم(argv[0]) * cnt);
+	*pp++ = (حرف *) G.argv0_for_re_execing;
 	*pp++ = param_buf;
-	for (cur = G.top_var; cur; cur = cur->next) {
-		if (strcmp(cur->varstr, hush_version_str) == 0)
-			continue;
-		if (cur->flg_read_only) {
-			*pp++ = (char *) "-R";
+	لكل (cur = G.top_var; cur; cur = cur->next) {
+		ܐܢ (strcmp(cur->varstr, hush_version_str) == 0)
+			استمر;
+		ܐܢ (cur->flg_read_only) {
+			*pp++ = (حرف *) "-R";
 			*pp++ = cur->varstr;
-		} else if (!cur->flg_export) {
-			*pp++ = (char *) "-V";
+		} ܐܚܪܢܐ ܐܢ (!cur->flg_export) {
+			*pp++ = (حرف *) "-V";
 			*pp++ = cur->varstr;
 		}
 	}
-# if ENABLE_HUSH_LINENO_VAR
-	*pp++ = (char *) "-L";
+# ܐܢ ENABLE_HUSH_LINENO_VAR
+	*pp++ = (حرف *) "-L";
 	*pp++ = utoa(G.execute_lineno);
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next) {
-		*pp++ = (char *) "-F";
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+	لكل (funcp = G.top_func; funcp; funcp = funcp->next) {
+		*pp++ = (حرف *) "-F";
 		*pp++ = funcp->name;
 		*pp++ = funcp->body_as_string;
 	}
@@ -7973,15 +7973,15 @@ static void re_execute_shell(char ***to_free, const char *s,
 	 *
 	 * I conclude it means we don't need to pass active traps here.
 	 */
-	*pp++ = (char *) "-c";
-	*pp++ = (char *) s;
-	if (builtin_argv) {
-		while (*++builtin_argv)
+	*pp++ = (حرف *) "-c";
+	*pp++ = (حرف *) s;
+	ܐܢ (builtin_argv) {
+		ܟܡܐ (*++builtin_argv)
 			*pp++ = *builtin_argv;
-		*pp++ = (char *) "";
+		*pp++ = (حرف *) "";
 	}
 	*pp++ = g_argv0;
-	while (*g_argv)
+	ܟܡܐ (*g_argv)
 		*pp++ = *g_argv++;
 	/* *pp = NULL; - is already there */
 	pp = environ;
@@ -7989,11 +7989,11 @@ static void re_execute_shell(char ***to_free, const char *s,
  do_exec:
 	debug_printf_exec("re_execute_shell pid:%d cmd:'%s'\n", getpid(), s);
 	/* Don't propagate SIG_IGN to the child */
-	if (SPECIAL_JOBSTOP_SIGS != 0)
+	ܐܢ (SPECIAL_JOBSTOP_SIGS != 0)
 		switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
 	execve(bb_busybox_exec_path, argv, pp);
 	/* Fallback. Useful for init=/bin/hush usage etc */
-	if (argv[0][0] == '/')
+	ܐܢ (argv[0][0] == '/')
 		execve(argv[0], argv, pp);
 	xfunc_error_retval = 127;
 	bb_simple_error_msg_and_die("can't re-execute the shell");
@@ -8002,7 +8002,7 @@ static void re_execute_shell(char ***to_free, const char *s,
 
 #endif /* !__U_BOOT__ */
 
-static int run_and_free_list(struct pipe *pi);
+ساكن صحيح run_and_free_list(بنية pipe *pi);
 
 /* Executing from string: eval, sh -c '...'
  *          or from file: /etc/profile, . file, sh <script>, sh (intereactive)
@@ -8011,9 +8011,9 @@ static int run_and_free_list(struct pipe *pi);
  * ';': parse till ';' or newline, execute, repeat till EOF
  */
 #ifndef __U_BOOT__
-static void parse_and_run_stream(struct in_str *inp, int end_trigger)
-#else /* __U_BOOT__ */
-static int parse_and_run_stream(struct in_str *inp, int end_trigger)
+ساكن فراغ parse_and_run_stream(بنية in_str *inp, صحيح end_trigger)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+ساكن صحيح parse_and_run_stream(بنية in_str *inp, صحيح end_trigger)
 #endif /* __U_BOOT__ */
 {
 	/* Why we need empty flag?
@@ -8024,100 +8024,100 @@ static int parse_and_run_stream(struct in_str *inp, int end_trigger)
 	 */
 	bool empty = 1;
 #ifndef __U_BOOT__
-	while (1) {
-#else /* __U_BOOT__ */
-	do {
+	ܟܡܐ (1) {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	ܥܒܕ {
 #endif /* __U_BOOT__ */
-		struct pipe *pipe_list;
+		بنية pipe *pipe_list;
 
-#if ENABLE_HUSH_INTERACTIVE
-		if (end_trigger == ';') {
+#ܐܢ ENABLE_HUSH_INTERACTIVE
+		ܐܢ (end_trigger == ';') {
 			G.promptmode = 0; /* PS1 */
 			debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 		}
 #endif
-		pipe_list = parse_stream(NULL, NULL, inp, end_trigger);
-		if (!pipe_list || pipe_list == ERR_PTR) { /* EOF/error */
+		pipe_list = parse_stream(عدم, عدم, inp, end_trigger);
+		ܐܢ (!pipe_list || pipe_list == ERR_PTR) { /* EOF/error */
 			/* If we are in "big" script
 			 * (not in `cmd` or something similar)...
 			 */
-			if (pipe_list == ERR_PTR && end_trigger == ';') {
+			ܐܢ (pipe_list == ERR_PTR && end_trigger == ';') {
 				/* Discard cached input (rest of line) */
-				int ch = inp->last_char;
-				while (ch != EOF && ch != '\n') {
+				صحيح ch = inp->last_char;
+				ܟܡܐ (ch != EOF && ch != '\n') {
 					//bb_error_msg("Discarded:'%c'", ch);
 					ch = i_getch(inp);
 				}
 				/* Force prompt */
-				inp->p = NULL;
+				inp->p = عدم;
 				/* This stream isn't empty */
 				empty = 0;
-				continue;
+				استمر;
 			}
-			if (!pipe_list && empty)
+			ܐܢ (!pipe_list && empty)
 				G.last_exitcode = 0;
-			break;
+			اكسر;
 		}
 		debug_print_tree(pipe_list, 0);
 		debug_printf_exec("parse_and_run_stream: run_and_free_list\n");
 #ifndef __U_BOOT__
 		run_and_free_list(pipe_list);
-#else /* __U_BOOT__ */
-		int rcode = run_and_free_list(pipe_list);
+#ܐܚܪܢܐ /* __U_BOOT__ */
+		صحيح rcode = run_and_free_list(pipe_list);
 		/*
 		 * We reset input string to not run the following command, so running
 		 * 'exit; echo foo' does not print foo.
 		 */
-		if (rcode <= EXIT_RET_CODE)
+		ܐܢ (rcode <= EXIT_RET_CODE)
 			setup_file_in_str(inp);
 #endif /* __U_BOOT__ */
 		empty = 0;
-		if (G_flag_return_in_progress == 1)
-			break;
+		ܐܢ (G_flag_return_in_progress == 1)
+			اكسر;
 #ifndef __U_BOOT__
 	}
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	/*
 	 * This do/while is needed by run_command to avoid looping on a command
 	 * with syntax error.
 	 */
-	} while (!(G.run_command_flags & FLAG_EXIT_FROM_LOOP));
+	} ܟܡܐ (!(G.run_command_flags & FLAG_EXIT_FROM_LOOP));
 
-	return G.last_exitcode;
+	ܦܢܐ G.last_exitcode;
 #endif /* __U_BOOT__ */
 }
 
 #ifndef __U_BOOT__
-static void parse_and_run_string(const char *s)
-#else /* __U_BOOT__ */
-static int parse_and_run_string(const char *s)
+ساكن فراغ parse_and_run_string(ثابت حرف *s)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+ساكن صحيح parse_and_run_string(ثابت حرف *s)
 #endif /* __U_BOOT__ */
 {
-	struct in_str input;
+	بنية in_str input;
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	//IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 #endif /* __U_BOOT__ */
 
 	setup_string_in_str(&input, s);
 #ifndef __U_BOOT__
 	parse_and_run_stream(&input, '\0');
-#else /* __U_BOOT__ */
-	return parse_and_run_stream(&input, '\0');
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	ܦܢܐ parse_and_run_stream(&input, '\0');
 #endif /* __U_BOOT__ */
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	//IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 #endif /* __U_BOOT__ */
 }
 
 #ifdef __U_BOOT__
-int parse_string_outer_modern(const char *cmd, int flags)
+صحيح parse_string_outer_modern(ثابت حرف *cmd, صحيح flags)
 {
-	int ret;
-	int old_flags;
+	صحيح ret;
+	صحيح old_flags;
 
 	/*
 	 * Keep old values of run_command to be able to restore them once
@@ -8130,22 +8130,22 @@ int parse_string_outer_modern(const char *cmd, int flags)
 
 	G.run_command_flags = old_flags;
 
-	return ret;
+	ܦܢܐ ret;
 }
 #endif /* __U_BOOT__ */
 #ifndef __U_BOOT__
-static void parse_and_run_file(HFILE *fp)
-#else /* __U_BOOT__ */
-void parse_and_run_file(void)
+ساكن فراغ parse_and_run_file(HFILE *fp)
+#ܐܚܪܢܐ /* __U_BOOT__ */
+فراغ parse_and_run_file(فراغ)
 #endif /* __U_BOOT__ */
 {
-	struct in_str input;
+	بنية in_str input;
 #ifndef __U_BOOT__
 	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
 
 	IF_HUSH_LINENO_VAR(G.parse_lineno = 1;)
 	setup_file_in_str(&input, fp);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 	setup_file_in_str(&input);
 #endif /* __U_BOOT__ */
 	parse_and_run_stream(&input, ';');
@@ -8155,18 +8155,18 @@ void parse_and_run_file(void)
 }
 
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_TICK
-static int generate_stream_from_string(const char *s, pid_t *pid_p)
+#ܐܢ ENABLE_HUSH_TICK
+ساكن صحيح generate_stream_from_string(ثابت حرف *s, pid_t *pid_p)
 {
 	pid_t pid;
-	int channel[2];
-# if !BB_MMU
-	char **to_free = NULL;
+	صحيح channel[2];
+# ܐܢ !BB_MMU
+	حرف **to_free = عدم;
 # endif
 
 	xpipe(channel);
 	pid = BB_MMU ? xfork() : xvfork();
-	if (pid == 0) { /* child */
+	ܐܢ (pid == 0) { /* child */
 		disable_restore_tty_pgrp_on_exit();
 		/* Process substitution is not considered to be usual
 		 * 'command execution'.
@@ -8179,7 +8179,7 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 			, SIG_IGN);
 		close(channel[0]); /* NB: close _first_, then move fd! */
 		xmove_fd(channel[1], 1);
-# if ENABLE_HUSH_TRAP
+# ܐܢ ENABLE_HUSH_TRAP
 		/* Awful hack for `trap` or $(trap).
 		 *
 		 * http://www.opengroup.org/onlinepubs/009695399/utilities/trap.html
@@ -8215,16 +8215,16 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 		 * Our solution: ONLY bare $(trap) or `trap` is special.
 		 */
 		s = skip_whitespace(s);
-		if (is_prefixed_with(s, "trap")
+		ܐܢ (is_prefixed_with(s, "trap")
 		 && skip_whitespace(s + 4)[0] == '\0'
 		) {
-			static const char *const argv[] ALIGN_PTR = { NULL, NULL };
-			builtin_trap((char**)argv);
+			ساكن ثابت حرف *ثابت argv[] ALIGN_PTR = { عدم, عدم };
+			builtin_trap((حرف**)argv);
 			fflush_all(); /* important */
 			_exit(0);
 		}
 # endif
-# if BB_MMU
+# ܐܢ BB_MMU
 		/* Prevent it from trying to handle ctrl-z etc */
 		IF_HUSH_JOB(G.run_list_level = 1;)
 		CLEAR_RANDOM_T(&G.random_gen); /* or else $RANDOM repeats in child */
@@ -8233,7 +8233,7 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 		//bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
 		parse_and_run_string(s);
 		_exit(G.last_exitcode);
-# else
+# ܐܚܪܢܐ
 	/* We re-execute after vfork on NOMMU. This makes this script safe:
 	 * yes "0123456789012345678901234567890" | dd bs=32 count=64k >BIG
 	 * huge=`cat BIG` # was blocking here forever
@@ -8243,45 +8243,45 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 				s,
 				G.global_argv[0],
 				G.global_argv + 1,
-				NULL);
+				عدم);
 # endif
 	}
 
 	/* parent */
 	*pid_p = pid;
-# if ENABLE_HUSH_FAST
+# ܐܢ ENABLE_HUSH_FAST
 	G.count_SIGCHLD++;
 //bb_error_msg("[%d] fork in generate_stream_from_string:"
 //		" G.count_SIGCHLD:%d G.handled_SIGCHLD:%d",
 //		getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 # endif
 	enable_restore_tty_pgrp_on_exit();
-# if !BB_MMU
-	free(to_free);
+# ܐܢ !BB_MMU
+	حرر(to_free);
 # endif
 	close(channel[1]);
-	return channel[0];
+	ܦܢܐ channel[0];
 }
 
 /* Return code is exit status of the process that is run. */
-static int process_command_subs(o_string *dest, const char *s)
+ساكن صحيح process_command_subs(o_string *dest, ثابت حرف *s)
 {
 	FILE *fp;
 	pid_t pid;
-	int status, ch, eol_cnt;
+	صحيح status, ch, eol_cnt;
 
 	fp = xfdopen_for_read(generate_stream_from_string(s, &pid));
 
 	/* Now send results of command back into original context */
 	eol_cnt = 0;
-	while ((ch = getc(fp)) != EOF) {
-		if (ch == '\0')
-			continue;
-		if (ch == '\n') {
+	ܟܡܐ ((ch = getc(fp)) != EOF) {
+		ܐܢ (ch == '\0')
+			استمر;
+		ܐܢ (ch == '\n') {
 			eol_cnt++;
-			continue;
+			استمر;
 		}
-		while (eol_cnt) {
+		ܟܡܐ (eol_cnt) {
 			o_addchr(dest, '\n');
 			eol_cnt--;
 		}
@@ -8295,26 +8295,26 @@ static int process_command_subs(o_string *dest, const char *s)
 	 * should print 1 */
 	safe_waitpid(pid, &status, 0);
 	debug_printf("child exited. returning its exitcode:%d\n", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	ܦܢܐ WEXITSTATUS(status);
 }
 #endif /* ENABLE_HUSH_TICK */
 
-static void setup_heredoc(struct redir_struct *redir)
+ساكن فراغ setup_heredoc(بنية redir_struct *redir)
 {
-	struct fd_pair pair;
+	بنية fd_pair pair;
 	pid_t pid;
-	int len, written;
+	صحيح len, written;
 	/* the _body_ of heredoc (misleading field name) */
-	const char *heredoc = redir->rd_filename;
-	char *expanded;
-#if !BB_MMU
-	char **to_free;
+	ثابت حرف *heredoc = redir->rd_filename;
+	حرف *expanded;
+#ܐܢ !BB_MMU
+	حرف **to_free;
 #endif
 
-	expanded = NULL;
-	if (!(redir->rd_dup & HEREDOC_QUOTED)) {
+	expanded = عدم;
+	ܐܢ (!(redir->rd_dup & HEREDOC_QUOTED)) {
 		expanded = encode_then_expand_string(heredoc);
-		if (expanded)
+		ܐܢ (expanded)
 			heredoc = expanded;
 	}
 	len = strlen(heredoc);
@@ -8326,15 +8326,15 @@ static void setup_heredoc(struct redir_struct *redir)
 	/* Try writing without forking. Newer kernels have
 	 * dynamically growing pipes. Must use non-blocking write! */
 	ndelay_on(pair.wr);
-	while (1) {
-		written = write(pair.wr, heredoc, len);
-		if (written <= 0)
-			break;
+	ܟܡܐ (1) {
+		written = اكتب(pair.wr, heredoc, len);
+		ܐܢ (written <= 0)
+			اكسر;
 		len -= written;
-		if (len == 0) {
+		ܐܢ (len == 0) {
 			close(pair.wr);
-			free(expanded);
-			return;
+			حرر(expanded);
+			ܦܢܐ;
 		}
 		heredoc += written;
 	}
@@ -8345,101 +8345,101 @@ static void setup_heredoc(struct redir_struct *redir)
 	 * for the unsuspecting parent process. Child creates a grandchild
 	 * and exits before parent execs the process which consumes heredoc
 	 * (that exec happens after we return from this function) */
-#if !BB_MMU
-	to_free = NULL;
+#ܐܢ !BB_MMU
+	to_free = عدم;
 #endif
 	pid = xvfork();
-	if (pid == 0) {
+	ܐܢ (pid == 0) {
 		/* child */
 		disable_restore_tty_pgrp_on_exit();
 		pid = BB_MMU ? xfork() : xvfork();
-		if (pid != 0)
+		ܐܢ (pid != 0)
 			_exit(0);
 		/* grandchild */
 		close(redir->rd_fd); /* read side of the pipe */
-#if BB_MMU
+#ܐܢ BB_MMU
 		full_write(pair.wr, heredoc, len); /* may loop or block */
 		_exit(0);
-#else
+#ܐܚܪܢܐ
 		/* Delegate blocking writes to another process */
 		xmove_fd(pair.wr, STDOUT_FILENO);
-		re_execute_shell(&to_free, heredoc, NULL, NULL, NULL);
+		re_execute_shell(&to_free, heredoc, عدم, عدم, عدم);
 #endif
 	}
 	/* parent */
-#if ENABLE_HUSH_FAST
+#ܐܢ ENABLE_HUSH_FAST
 	G.count_SIGCHLD++;
 //bb_error_msg("[%d] fork in setup_heredoc: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 #endif
 	enable_restore_tty_pgrp_on_exit();
-#if !BB_MMU
-	free(to_free);
+#ܐܢ !BB_MMU
+	حرر(to_free);
 #endif
 	close(pair.wr);
-	free(expanded);
-	wait(NULL); /* wait till child has died */
+	حرر(expanded);
+	wait(عدم); /* wait till child has died */
 }
 
-struct squirrel {
-	int orig_fd;
-	int moved_to;
+بنية squirrel {
+	صحيح orig_fd;
+	صحيح moved_to;
 	/* moved_to = n: fd was moved to n; restore back to orig_fd after redir */
 	/* moved_to = -1: fd was opened by redirect; close orig_fd after redir */
 };
 
-static struct squirrel *append_squirrel(struct squirrel *sq, int i, int orig, int moved)
+ساكن بنية squirrel *append_squirrel(بنية squirrel *sq, صحيح i, صحيح orig, صحيح moved)
 {
-	sq = xrealloc(sq, (i + 2) * sizeof(sq[0]));
+	sq = xrealloc(sq, (i + 2) * حجم(sq[0]));
 	sq[i].orig_fd = orig;
 	sq[i].moved_to = moved;
 	sq[i+1].orig_fd = -1; /* end marker */
-	return sq;
+	ܦܢܐ sq;
 }
 
-static struct squirrel *add_squirrel(struct squirrel *sq, int fd, int avoid_fd)
+ساكن بنية squirrel *add_squirrel(بنية squirrel *sq, صحيح fd, صحيح avoid_fd)
 {
-	int moved_to;
-	int i;
+	صحيح moved_to;
+	صحيح i;
 
 	i = 0;
-	if (sq) for (; sq[i].orig_fd >= 0; i++) {
+	ܐܢ (sq) لكل (; sq[i].orig_fd >= 0; i++) {
 		/* If we collide with an already moved fd... */
-		if (fd == sq[i].moved_to) {
+		ܐܢ (fd == sq[i].moved_to) {
 			moved_to = dup_CLOEXEC(sq[i].moved_to, avoid_fd);
 			debug_printf_redir("redirect_fd %d: already busy, moving to %d\n", fd, moved_to);
-			if (moved_to < 0) {
+			ܐܢ (moved_to < 0) {
 				/* "echo 2>/dev/tty 10>&9999" testcase:
 				 * We move fd 2 to 10, then discover we need to move fd 10
 				 * (and not hit 9999) and the latter fails.
 				 */
-				return NULL; /* fcntl failed */
+				ܦܢܐ عدم; /* fcntl failed */
 			}
 			sq[i].moved_to = moved_to;
-			return sq;
+			ܦܢܐ sq;
 		}
-		if (fd == sq[i].orig_fd) {
+		ܐܢ (fd == sq[i].orig_fd) {
 			/* Example: echo Hello >/dev/null 1>&2 */
 			debug_printf_redir("redirect_fd %d: already moved\n", fd);
-			return sq;
+			ܦܢܐ sq;
 		}
 	}
 
 	/* If this fd is open, we move and remember it; if it's closed, moved_to = -1 */
 	moved_to = dup_CLOEXEC(fd, avoid_fd);
 	debug_printf_redir("redirect_fd %d: previous fd is moved to %d (-1 if it was closed)\n", fd, moved_to);
-	if (moved_to < 0 && errno != EBADF)
-		return NULL; /* fcntl failed (not because fd is closed) */
-	return append_squirrel(sq, i, fd, moved_to);
+	ܐܢ (moved_to < 0 && errno != EBADF)
+		ܦܢܐ عدم; /* fcntl failed (not because fd is closed) */
+	ܦܢܐ append_squirrel(sq, i, fd, moved_to);
 }
 
-static struct squirrel *add_squirrel_closed(struct squirrel *sq, int fd)
+ساكن بنية squirrel *add_squirrel_closed(بنية squirrel *sq, صحيح fd)
 {
-	int i;
+	صحيح i;
 
 	i = 0;
-	if (sq) for (; sq[i].orig_fd >= 0; i++) {
+	ܐܢ (sq) لكل (; sq[i].orig_fd >= 0; i++) {
 		/* If we collide with an already moved fd... */
-		if (fd == sq[i].orig_fd) {
+		ܐܢ (fd == sq[i].orig_fd) {
 			/* Examples:
 			 * "echo 3>FILE 3>&- 3>FILE"
 			 * "echo 3>&- 3>FILE"
@@ -8447,39 +8447,39 @@ static struct squirrel *add_squirrel_closed(struct squirrel *sq, int fd)
 			 * another "need to close 3" indicator.
 			 */
 			debug_printf_redir("redirect_fd %d: already moved or closed\n", fd);
-			return sq;
+			ܦܢܐ sq;
 		}
 	}
 
 	debug_printf_redir("redirect_fd %d: previous fd was closed\n", fd);
-	return append_squirrel(sq, i, fd, -1);
+	ܦܢܐ append_squirrel(sq, i, fd, -1);
 }
 
 /* fd: redirect wants this fd to be used (e.g. 3>file).
  * Move all conflicting internally used fds,
  * and remember them so that we can restore them later.
  */
-static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
+ساكن صحيح save_fd_on_redirect(صحيح fd, صحيح avoid_fd, بنية squirrel **sqp)
 {
-	struct squirrel *new_squirrel;
+	بنية squirrel *new_squirrel;
 
-	if (avoid_fd < 9) /* the important case here is that it can be -1 */
+	ܐܢ (avoid_fd < 9) /* the important case here is that it can be -1 */
 		avoid_fd = 9;
 
-#if ENABLE_HUSH_INTERACTIVE
-	if (fd != 0 /* don't trigger for G_interactive_fd == 0 (that's "not interactive" flag) */
+#ܐܢ ENABLE_HUSH_INTERACTIVE
+	ܐܢ (fd != 0 /* don't trigger for G_interactive_fd == 0 (that's "not interactive" flag) */
 	 && fd == G_interactive_fd
 	) {
 		/* Testcase: "ls -l /proc/$$/fd 255>&-" should work */
 		G_interactive_fd = xdup_CLOEXEC_and_close(G_interactive_fd, avoid_fd);
 		debug_printf_redir("redirect_fd %d: matches interactive_fd, moving it to %d\n", fd, G_interactive_fd);
-		return 1; /* "we closed fd" */
+		ܦܢܐ 1; /* "we closed fd" */
 	}
 #endif
 	/* Are we called from setup_redirects(squirrel==NULL)
 	 * in redirect in a [v]forked child?
 	 */
-	if (sqp == NULL) {
+	ܐܢ (sqp == عدم) {
 		/* No need to move script fds.
 		 * For NOMMU case, it's actively wrong: we'd change ->fd
 		 * fields in memory for the parent, but parent's fds
@@ -8491,12 +8491,12 @@ static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
 		 * and change ->fd to 10 if fd#3 is a script fd. WRONG.
 		 */
 		//bb_error_msg("sqp == NULL: [v]forked child");
-		return 0;
+		ܦܢܐ 0;
 	}
 
 	/* If this one of script's fds? */
-	if (move_HFILEs_on_redirect(fd, avoid_fd))
-		return 1; /* yes. "we closed fd" (actually moved it) */
+	ܐܢ (move_HFILEs_on_redirect(fd, avoid_fd))
+		ܦܢܐ 1; /* yes. "we closed fd" (actually moved it) */
 
 	/* Are we called for "exec 3>FILE"? Came through
 	 * redirect_and_varexp_helper(squirrel=ERR_PTR) -> setup_redirects(ERR_PTR)
@@ -8519,38 +8519,38 @@ static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
 	 * With this case separate from sqp == NULL and *after* move_HFILEs,
 	 * it now works:
 	 */
-	if (sqp == ERR_PTR) {
+	ܐܢ (sqp == ERR_PTR) {
 		/* Don't preserve redirected fds: exec is _meant_ to change these */
 		//bb_error_msg("sqp == ERR_PTR: exec >FILE");
-		return 0;
+		ܦܢܐ 0;
 	}
 
 	/* Check whether it collides with any open fds (e.g. stdio), save fds as needed */
 	new_squirrel = add_squirrel(*sqp, fd, avoid_fd);
-	if (!new_squirrel)
-		return -1; /* redirect error */
+	ܐܢ (!new_squirrel)
+		ܦܢܐ -1; /* redirect error */
 	*sqp = new_squirrel;
-	return 0; /* "we did not close fd" */
+	ܦܢܐ 0; /* "we did not close fd" */
 }
 
-static void restore_redirects(struct squirrel *sq)
+ساكن فراغ restore_redirects(بنية squirrel *sq)
 {
-	if (sq) {
-		int i;
-		for (i = 0; sq[i].orig_fd >= 0; i++) {
-			if (sq[i].moved_to >= 0) {
+	ܐܢ (sq) {
+		صحيح i;
+		لكل (i = 0; sq[i].orig_fd >= 0; i++) {
+			ܐܢ (sq[i].moved_to >= 0) {
 				/* We simply die on error */
 				debug_printf_redir("restoring redirected fd from %d to %d\n", sq[i].moved_to, sq[i].orig_fd);
 				xmove_fd(sq[i].moved_to, sq[i].orig_fd);
-			} else {
+			} ܐܚܪܢܐ {
 				/* cmd1 9>FILE; cmd2_should_see_fd9_closed */
 				debug_printf_redir("restoring redirected fd %d: closing it\n", sq[i].orig_fd);
 				close(sq[i].orig_fd);
 			}
 		}
-		free(sq);
+		حرر(sq);
 	}
-	if (G.HFILE_stdin
+	ܐܢ (G.HFILE_stdin
 	 && G.HFILE_stdin->fd > STDIN_FILENO
 	/* we compare > STDIN, not == STDIN, since hfgetc()
 	 * closes fd and sets ->fd to -1 if EOF is reached.
@@ -8572,32 +8572,32 @@ static void restore_redirects(struct squirrel *sq)
 	/* If moved, G_interactive_fd stays on new fd, not restoring it */
 }
 
-#if ENABLE_FEATURE_SH_STANDALONE && BB_MMU
-static void close_saved_fds_and_FILE_fds(void)
+#ܐܢ ENABLE_FEATURE_SH_STANDALONE && BB_MMU
+ساكن فراغ close_saved_fds_and_FILE_fds(فراغ)
 {
-	if (G_interactive_fd)
+	ܐܢ (G_interactive_fd)
 		close(G_interactive_fd);
 	close_all_HFILE_list();
 }
 #endif
 
-static int internally_opened_fd(int fd, struct squirrel *sq)
+ساكن صحيح internally_opened_fd(صحيح fd, بنية squirrel *sq)
 {
-	int i;
+	صحيح i;
 
-#if ENABLE_HUSH_INTERACTIVE
-	if (fd == G_interactive_fd)
-		return 1;
+#ܐܢ ENABLE_HUSH_INTERACTIVE
+	ܐܢ (fd == G_interactive_fd)
+		ܦܢܐ 1;
 #endif
 	/* If this one of script's fds? */
-	if (fd_in_HFILEs(fd))
-		return 1;
+	ܐܢ (fd_in_HFILEs(fd))
+		ܦܢܐ 1;
 
-	if (sq) for (i = 0; sq[i].orig_fd >= 0; i++) {
-		if (fd == sq[i].moved_to)
-			return 1;
+	ܐܢ (sq) لكل (i = 0; sq[i].orig_fd >= 0; i++) {
+		ܐܢ (fd == sq[i].moved_to)
+			ܦܢܐ 1;
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
 /* sqp != NULL means we squirrel away copies of stdin, stdout,
@@ -8605,53 +8605,53 @@ static int internally_opened_fd(int fd, struct squirrel *sq)
  * If redirection fails, return 1. This will make caller
  * skip command execution and restore already created redirect fds.
  */
-static int setup_redirects(struct command *prog, struct squirrel **sqp)
+ساكن صحيح setup_redirects(بنية command *prog, بنية squirrel **sqp)
 {
-	struct redir_struct *redir;
+	بنية redir_struct *redir;
 
-	for (redir = prog->redirects; redir; redir = redir->next) {
-		int newfd;
-		int closed;
+	لكل (redir = prog->redirects; redir; redir = redir->next) {
+		صحيح newfd;
+		صحيح closed;
 
-		if (redir->rd_type == REDIRECT_HEREDOC2) {
+		ܐܢ (redir->rd_type == REDIRECT_HEREDOC2) {
 			/* "rd_fd<<HERE" case */
-			if (save_fd_on_redirect(redir->rd_fd, /*avoid:*/ 0, sqp) < 0)
-				return 1;
+			ܐܢ (save_fd_on_redirect(redir->rd_fd, /*avoid:*/ 0, sqp) < 0)
+				ܦܢܐ 1;
 			/* for REDIRECT_HEREDOC2, rd_filename holds _contents_
 			 * of the heredoc */
 			debug_printf_redir("set heredoc '%s'\n",
 					redir->rd_filename);
 			setup_heredoc(redir);
-			continue;
+			استمر;
 		}
 
-		if (redir->rd_dup == REDIRFD_TO_FILE) {
+		ܐܢ (redir->rd_dup == REDIRFD_TO_FILE) {
 			/* "rd_fd<*>file" case (<*> is <,>,>>,<>) */
-			char *p;
-			int mode;
+			حرف *p;
+			صحيح mode;
 
-			if (redir->rd_filename == NULL) {
+			ܐܢ (redir->rd_filename == عدم) {
 				/* Examples:
 				 * "cmd >" (no filename)
 				 * "cmd > <file" (2nd redirect starts too early)
 				 */
 				syntax_error("invalid redirect");
-				return 1;
+				ܦܢܐ 1;
 			}
 			mode = redir_table[redir->rd_type].mode;
 			p = expand_string_to_string(redir->rd_filename,
 				EXP_FLAG_ESC_GLOB_CHARS, /*unbackslash:*/ 1);
 			newfd = open_or_warn(p, mode);
-			free(p);
-			if (newfd < 0) {
+			حرر(p);
+			ܐܢ (newfd < 0) {
 				/* Error message from open_or_warn can be lost
 				 * if stderr has been redirected, but bash
 				 * and ash both lose it as well
 				 * (though zsh doesn't!)
 				 */
-				return 1;
+				ܦܢܐ 1;
 			}
-			if (newfd == redir->rd_fd && sqp
+			ܐܢ (newfd == redir->rd_fd && sqp
 			 && sqp != ERR_PTR /* not a redirect in "exec" */
 			) {
 				/* open() gave us precisely the fd we wanted.
@@ -8662,24 +8662,24 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 				*sqp = add_squirrel_closed(*sqp, newfd);
 				debug_printf_redir("redir to previously closed fd %d\n", newfd);
 			}
-		} else {
+		} ܐܚܪܢܐ {
 			/* "rd_fd>&rd_dup" or "rd_fd>&-" case */
 			newfd = redir->rd_dup;
 		}
 
-		if (newfd == redir->rd_fd)
-			continue;
+		ܐܢ (newfd == redir->rd_fd)
+			استمر;
 
 		/* if "N>FILE": move newfd to redir->rd_fd */
 		/* if "N>&M": dup newfd to redir->rd_fd */
 		/* if "N>&-": close redir->rd_fd (newfd is REDIRFD_CLOSE) */
 
 		closed = save_fd_on_redirect(redir->rd_fd, /*avoid:*/ newfd, sqp);
-		if (closed < 0)
-			return 1; /* error */
-		if (newfd == REDIRFD_CLOSE) {
+		ܐܢ (closed < 0)
+			ܦܢܐ 1; /* error */
+		ܐܢ (newfd == REDIRFD_CLOSE) {
 			/* "N>&-" means "close me" */
-			if (!closed) {
+			ܐܢ (!closed) {
 				/* ^^^ optimization: saving may already
 				 * have closed it. If not... */
 				close(redir->rd_fd);
@@ -8689,139 +8689,139 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 			 * first redirect remembers "need to close 3",
 			 * and second redirect closes 3! Restore code then closes 3 again.
 			 */
-		} else {
+		} ܐܚܪܢܐ {
 			/* if newfd is a script fd or saved fd, do not allow to use it */
-			if (internally_opened_fd(newfd, sqp && sqp != ERR_PTR ? *sqp : NULL)) {
+			ܐܢ (internally_opened_fd(newfd, sqp && sqp != ERR_PTR ? *sqp : عدم)) {
 				bb_error_msg("fd#%d is not open", newfd);
-				return 1;
+				ܦܢܐ 1;
 			}
-			if (dup2(newfd, redir->rd_fd) < 0) {
+			ܐܢ (dup2(newfd, redir->rd_fd) < 0) {
 				/* "echo >&99" testcase */
 				bb_perror_msg("dup2(%d,%d)", newfd, redir->rd_fd);
-				return 1;
+				ܦܢܐ 1;
 			}
-			if (redir->rd_dup == REDIRFD_TO_FILE)
+			ܐܢ (redir->rd_dup == REDIRFD_TO_FILE)
 				/* "rd_fd > FILE" */
 				close(newfd);
 			/* else: "rd_fd > rd_dup" */
 		}
 	}
-	return 0;
+	ܦܢܐ 0;
 }
 
-static char *find_in_path(const char *arg)
+ساكن حرف *find_in_path(ثابت حرف *arg)
 {
-	char *ret = NULL;
-	const char *PATH = get_local_var_value("PATH");
+	حرف *ret = عدم;
+	ثابت حرف *PATH = get_local_var_value("PATH");
 
-	if (!PATH)
-		return NULL;
+	ܐܢ (!PATH)
+		ܦܢܐ عدم;
 
-	while (1) {
-		const char *end = strchrnul(PATH, ':');
-		int sz = end - PATH; /* must be int! */
+	ܟܡܐ (1) {
+		ثابت حرف *end = strchrnul(PATH, ':');
+		صحيح sz = end - PATH; /* must be int! */
 
-		free(ret);
-		if (sz != 0) {
+		حرر(ret);
+		ܐܢ (sz != 0) {
 			ret = xasprintf("%.*s/%s", sz, PATH, arg);
-		} else {
+		} ܐܚܪܢܐ {
 			/* We have xxx::yyyy in $PATH,
 			 * it means "use current dir" */
 			ret = xstrdup(arg);
 		}
-		if (access(ret, F_OK) == 0)
-			break;
+		ܐܢ (access(ret, F_OK) == 0)
+			اكسر;
 
-		if (*end == '\0') {
-			free(ret);
-			return NULL;
+		ܐܢ (*end == '\0') {
+			حرر(ret);
+			ܦܢܐ عدم;
 		}
 		PATH = end + 1;
 	}
 
-	return ret;
+	ܦܢܐ ret;
 }
 
-static const struct built_in_command *find_builtin_helper(const char *name,
-		const struct built_in_command *x,
-		const struct built_in_command *end)
+ساكن ثابت بنية built_in_command *find_builtin_helper(ثابت حرف *name,
+		ثابت بنية built_in_command *x,
+		ثابت بنية built_in_command *end)
 {
-	while (x != end) {
-		if (strcmp(name, x->b_cmd) != 0) {
+	ܟܡܐ (x != end) {
+		ܐܢ (strcmp(name, x->b_cmd) != 0) {
 			x++;
-			continue;
+			استمر;
 		}
 		debug_printf_exec("found builtin '%s'\n", name);
-		return x;
+		ܦܢܐ x;
 	}
-	return NULL;
+	ܦܢܐ عدم;
 }
-static const struct built_in_command *find_builtin1(const char *name)
+ساكن ثابت بنية built_in_command *find_builtin1(ثابت حرف *name)
 {
-	return find_builtin_helper(name, bltins1, &bltins1[ARRAY_SIZE(bltins1)]);
+	ܦܢܐ find_builtin_helper(name, bltins1, &bltins1[ARRAY_SIZE(bltins1)]);
 }
-static const struct built_in_command *find_builtin(const char *name)
+ساكن ثابت بنية built_in_command *find_builtin(ثابت حرف *name)
 {
-	const struct built_in_command *x = find_builtin1(name);
-	if (x)
-		return x;
-	return find_builtin_helper(name, bltins2, &bltins2[ARRAY_SIZE(bltins2)]);
+	ثابت بنية built_in_command *x = find_builtin1(name);
+	ܐܢ (x)
+		ܦܢܐ x;
+	ܦܢܐ find_builtin_helper(name, bltins2, &bltins2[ARRAY_SIZE(bltins2)]);
 }
 
-#if ENABLE_HUSH_JOB && ENABLE_FEATURE_TAB_COMPLETION
-static const char * FAST_FUNC hush_command_name(int i)
+#ܐܢ ENABLE_HUSH_JOB && ENABLE_FEATURE_TAB_COMPLETION
+ساكن ثابت حرف * FAST_FUNC hush_command_name(صحيح i)
 {
-	if (/*i >= 0 && */ i < ARRAY_SIZE(bltins1)) {
-		return bltins1[i].b_cmd;
+	ܐܢ (/*i >= 0 && */ i < ARRAY_SIZE(bltins1)) {
+		ܦܢܐ bltins1[i].b_cmd;
 	}
 	i -= ARRAY_SIZE(bltins1);
-	if (i < ARRAY_SIZE(bltins2)) {
-		return bltins2[i].b_cmd;
+	ܐܢ (i < ARRAY_SIZE(bltins2)) {
+		ܦܢܐ bltins2[i].b_cmd;
 	}
-# if ENABLE_HUSH_FUNCTIONS
+# ܐܢ ENABLE_HUSH_FUNCTIONS
 	{
-		struct function *funcp;
+		بنية function *funcp;
 		i -= ARRAY_SIZE(bltins2);
-		for (funcp = G.top_func; funcp; funcp = funcp->next) {
-			if (--i < 0)
-				return funcp->name;
+		لكل (funcp = G.top_func; funcp; funcp = funcp->next) {
+			ܐܢ (--i < 0)
+				ܦܢܐ funcp->name;
 		}
 	}
 # endif
-	return NULL;
+	ܦܢܐ عدم;
 }
 #endif
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static void remove_nested_vars(void)
+ساكن فراغ remove_nested_vars(فراغ)
 {
-	struct variable *cur;
-	struct variable **cur_pp;
+	بنية variable *cur;
+	بنية variable **cur_pp;
 
 	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (cur->var_nest_level <= G.var_nest_level) {
+	ܟܡܐ ((cur = *cur_pp) != عدم) {
+		ܐܢ (cur->var_nest_level <= G.var_nest_level) {
 			cur_pp = &cur->next;
-			continue;
+			استمر;
 		}
 		/* Unexport */
-		if (cur->flg_export) {
+		ܐܢ (cur->flg_export) {
 			debug_printf_env("unexporting nested '%s'/%u\n", cur->varstr, cur->var_nest_level);
 			bb_unsetenv(cur->varstr);
 		}
 		/* Remove from global list */
 		*cur_pp = cur->next;
 		/* Free */
-		if (!cur->max_len) {
+		ܐܢ (!cur->max_len) {
 			debug_printf_env("freeing nested '%s'/%u\n", cur->varstr, cur->var_nest_level);
-			free(cur->varstr);
+			حرر(cur->varstr);
 		}
-		free(cur);
+		حرر(cur);
 	}
 }
 
-static void enter_var_nest_level(void)
+ساكن فراغ enter_var_nest_level(فراغ)
 {
 	G.var_nest_level++;
 	debug_printf_env("var_nest_level++ %u\n", G.var_nest_level);
@@ -8832,120 +8832,120 @@ static void enter_var_nest_level(void)
 	 * In any case, with 8 Mbyte stack SEGV happens
 	 * not too long after 2^16 recursions anyway.
 	 */
-	if (G.var_nest_level > 0xff00)
+	ܐܢ (G.var_nest_level > 0xff00)
 		bb_error_msg_and_die("fatal recursion (depth %u)", G.var_nest_level);
 }
 
-static void leave_var_nest_level(void)
+ساكن فراغ leave_var_nest_level(فراغ)
 {
 	G.var_nest_level--;
 	debug_printf_env("var_nest_level-- %u\n", G.var_nest_level);
-	if (HUSH_DEBUG && (int)G.var_nest_level < 0)
+	ܐܢ (HUSH_DEBUG && (صحيح)G.var_nest_level < 0)
 		bb_simple_error_msg_and_die("BUG: nesting underflow");
 
 	remove_nested_vars();
 }
 #endif /* __U_BOOT__ */
 
-#if ENABLE_HUSH_FUNCTIONS
-static struct function **find_function_slot(const char *name)
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+ساكن بنية function **find_function_slot(ثابت حرف *name)
 {
-	struct function *funcp;
-	struct function **funcpp = &G.top_func;
+	بنية function *funcp;
+	بنية function **funcpp = &G.top_func;
 
-	while ((funcp = *funcpp) != NULL) {
-		if (strcmp(name, funcp->name) == 0) {
+	ܟܡܐ ((funcp = *funcpp) != عدم) {
+		ܐܢ (strcmp(name, funcp->name) == 0) {
 			debug_printf_exec("found function '%s'\n", name);
-			break;
+			اكسر;
 		}
 		funcpp = &funcp->next;
 	}
-	return funcpp;
+	ܦܢܐ funcpp;
 }
 
-static ALWAYS_INLINE const struct function *find_function(const char *name)
+ساكن ALWAYS_INLINE ثابت بنية function *find_function(ثابت حرف *name)
 {
-	const struct function *funcp = *find_function_slot(name);
-	return funcp;
+	ثابت بنية function *funcp = *find_function_slot(name);
+	ܦܢܐ funcp;
 }
 
 /* Note: takes ownership on name ptr */
-static struct function *new_function(char *name)
+ساكن بنية function *new_function(حرف *name)
 {
-	struct function **funcpp = find_function_slot(name);
-	struct function *funcp = *funcpp;
+	بنية function **funcpp = find_function_slot(name);
+	بنية function *funcp = *funcpp;
 
-	if (funcp != NULL) {
-		struct command *cmd = funcp->parent_cmd;
+	ܐܢ (funcp != عدم) {
+		بنية command *cmd = funcp->parent_cmd;
 		debug_printf_exec("func %p parent_cmd %p\n", funcp, cmd);
-		if (!cmd) {
+		ܐܢ (!cmd) {
 			debug_printf_exec("freeing & replacing function '%s'\n", funcp->name);
-			free(funcp->name);
+			حرر(funcp->name);
 			/* Note: if !funcp->body, do not free body_as_string!
 			 * This is a special case of "-F name body" function:
 			 * body_as_string was not malloced! */
-			if (funcp->body) {
+			ܐܢ (funcp->body) {
 				free_pipe_list(funcp->body);
-# if !BB_MMU
-				free(funcp->body_as_string);
+# ܐܢ !BB_MMU
+				حرر(funcp->body_as_string);
 # endif
 			}
-		} else {
+		} ܐܚܪܢܐ {
 			debug_printf_exec("reinserting in tree & replacing function '%s'\n", funcp->name);
 			cmd->argv[0] = funcp->name;
 			cmd->group = funcp->body;
-# if !BB_MMU
+# ܐܢ !BB_MMU
 			cmd->group_as_string = funcp->body_as_string;
 # endif
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		debug_printf_exec("remembering new function '%s'\n", name);
-		funcp = *funcpp = xzalloc(sizeof(*funcp));
+		funcp = *funcpp = xzalloc(حجم(*funcp));
 		/*funcp->next = NULL;*/
 	}
 
 	funcp->name = name;
-	return funcp;
+	ܦܢܐ funcp;
 }
 
-# if ENABLE_HUSH_UNSET
-static void unset_func(const char *name)
+# ܐܢ ENABLE_HUSH_UNSET
+ساكن فراغ unset_func(ثابت حرف *name)
 {
-	struct function **funcpp = find_function_slot(name);
-	struct function *funcp = *funcpp;
+	بنية function **funcpp = find_function_slot(name);
+	بنية function *funcp = *funcpp;
 
-	if (funcp != NULL) {
+	ܐܢ (funcp != عدم) {
 		debug_printf_exec("freeing function '%s'\n", funcp->name);
 		*funcpp = funcp->next;
 		/* funcp is unlinked now, deleting it.
 		 * Note: if !funcp->body, the function was created by
 		 * "-F name body", do not free ->body_as_string
 		 * and ->name as they were not malloced. */
-		if (funcp->body) {
+		ܐܢ (funcp->body) {
 			free_pipe_list(funcp->body);
-			free(funcp->name);
-#  if !BB_MMU
-			free(funcp->body_as_string);
+			حرر(funcp->name);
+#  ܐܢ !BB_MMU
+			حرر(funcp->body_as_string);
 #  endif
 		}
-		free(funcp);
+		حرر(funcp);
 	}
 }
 # endif
 
-# if BB_MMU
+# ܐܢ BB_MMU
 #define exec_function(to_free, funcp, argv) \
 	exec_function(funcp, argv)
 # endif
-static void exec_function(char ***to_free,
-		const struct function *funcp,
-		char **argv) NORETURN;
-static void exec_function(char ***to_free,
-		const struct function *funcp,
-		char **argv)
+ساكن فراغ exec_function(حرف ***to_free,
+		ثابت بنية function *funcp,
+		حرف **argv) NORETURN;
+ساكن فراغ exec_function(حرف ***to_free,
+		ثابت بنية function *funcp,
+		حرف **argv)
 {
-# if BB_MMU
-	int n;
+# ܐܢ BB_MMU
+	صحيح n;
 
 	argv[0] = G.global_argv[0];
 	G.global_argv = argv;
@@ -8973,7 +8973,7 @@ static void exec_function(char ***to_free,
 	/* On MMU, funcp->body is always non-NULL */
 	n = run_list(funcp->body);
 	_exit(n);
-# else
+# ܐܚܪܢܐ
 //?	close_saved_fds_and_FILE_fds();
 
 //TODO: check whether "true | func_with_return" works
@@ -8982,13 +8982,13 @@ static void exec_function(char ***to_free,
 			funcp->body_as_string,
 			G.global_argv[0],
 			argv + 1,
-			NULL);
+			عدم);
 # endif
 }
 
-static int run_function(const struct function *funcp, char **argv)
+ساكن صحيح run_function(ثابت بنية function *funcp, حرف **argv)
 {
-	int rc;
+	صحيح rc;
 	save_arg_t sv;
 	smallint sv_flg;
 
@@ -9003,12 +9003,12 @@ static int run_function(const struct function *funcp, char **argv)
 	IF_HUSH_LOCAL(G.func_nest_level++;)
 
 	/* On MMU, funcp->body is always non-NULL */
-# if !BB_MMU
-	if (!funcp->body) {
+# ܐܢ !BB_MMU
+	ܐܢ (!funcp->body) {
 		/* Function defined by -F */
 		parse_and_run_string(funcp->body_as_string);
 		rc = G.last_exitcode;
-	} else
+	} ܐܚܪܢܐ
 # endif
 	{
 		rc = run_list(funcp->body);
@@ -9018,39 +9018,39 @@ static int run_function(const struct function *funcp, char **argv)
 	IF_HUSH_LOCAL(leave_var_nest_level();)
 
 	G_flag_return_in_progress = sv_flg;
-# if ENABLE_HUSH_TRAP
+# ܐܢ ENABLE_HUSH_TRAP
 	debug_printf_exec("G.return_exitcode=-1\n");
 	G.return_exitcode = -1; /* invalidate stashed return value */
 # endif
 
 	restore_G_args(&sv, argv);
 
-	return rc;
+	ܦܢܐ rc;
 }
 #endif /* ENABLE_HUSH_FUNCTIONS */
 
 #ifndef __U_BOOT__
-#if BB_MMU
+#ܐܢ BB_MMU
 #define exec_builtin(to_free, x, argv) \
 	exec_builtin(x, argv)
-#else
+#ܐܚܪܢܐ
 #define exec_builtin(to_free, x, argv) \
 	exec_builtin(to_free, argv)
 #endif
-static void exec_builtin(char ***to_free,
-		const struct built_in_command *x,
-		char **argv) NORETURN;
-static void exec_builtin(char ***to_free,
-		const struct built_in_command *x,
-		char **argv)
+ساكن فراغ exec_builtin(حرف ***to_free,
+		ثابت بنية built_in_command *x,
+		حرف **argv) NORETURN;
+ساكن فراغ exec_builtin(حرف ***to_free,
+		ثابت بنية built_in_command *x,
+		حرف **argv)
 {
-#if BB_MMU
-	int rcode;
+#ܐܢ BB_MMU
+	صحيح rcode;
 //?	close_saved_fds_and_FILE_fds();
 	rcode = x->b_function(argv);
 	fflush_all();
 	_exit(rcode);
-#else
+#ܐܚܪܢܐ
 	fflush_all();
 	/* On NOMMU, we must never block!
 	 * Example: { sleep 99 | read line; } & echo Ok
@@ -9065,33 +9065,33 @@ static void exec_builtin(char ***to_free,
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-static void execvp_or_die(char **argv) NORETURN;
-static void execvp_or_die(char **argv)
+ساكن فراغ execvp_or_die(حرف **argv) NORETURN;
+ساكن فراغ execvp_or_die(حرف **argv)
 {
-	int e;
+	صحيح e;
 	debug_printf_exec("execing '%s'\n", argv[0]);
 	/* Don't propagate SIG_IGN to the child */
-	if (SPECIAL_JOBSTOP_SIGS != 0)
+	ܐܢ (SPECIAL_JOBSTOP_SIGS != 0)
 		switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
 	execvp(argv[0], argv);
 	e = 2;
-	if (errno == EACCES) e = 126;
-	if (errno == ENOENT) e = 127;
+	ܐܢ (errno == EACCES) e = 126;
+	ܐܢ (errno == ENOENT) e = 127;
 	bb_perror_msg("can't execute '%s'", argv[0]);
 	_exit(e);
 }
 
-#if ENABLE_HUSH_MODE_X
-static void x_mode_print_optionally_squoted(const char *str)
+#ܐܢ ENABLE_HUSH_MODE_X
+ساكن فراغ x_mode_print_optionally_squoted(ثابت حرف *str)
 {
 	unsigned len;
-	const char *cp;
+	ثابت حرف *cp;
 
 	cp = str;
 
 	/* the set of chars which-cause-string-to-be-squoted mimics bash */
 	/* test a char with: bash -c 'set -x; echo "CH"' */
-	if (str[strcspn(str, "\\\"'`$(){}[]<>;#&|~*?!^"
+	ܐܢ (str[strcspn(str, "\\\"'`$(){}[]<>;#&|~*?!^"
 			" " "\001\002\003\004\005\006\007"
 			"\010\011\012\013\014\015\016\017"
 			"\020\021\022\023\024\025\026\027"
@@ -9101,41 +9101,41 @@ static void x_mode_print_optionally_squoted(const char *str)
 	) {
 		/* string has no special chars */
 		x_mode_addstr(str);
-		return;
+		ܦܢܐ;
 	}
 
 	cp = str;
-	for (;;) {
+	لكل (;;) {
 		/* print '....' up to EOL or first squote */
-		len = (int)(strchrnul(cp, '\'') - cp);
-		if (len != 0) {
+		len = (صحيح)(strchrnul(cp, '\'') - cp);
+		ܐܢ (len != 0) {
 			x_mode_addchr('\'');
 			x_mode_addblock(cp, len);
 			x_mode_addchr('\'');
 			cp += len;
 		}
-		if (*cp == '\0')
-			break;
+		ܐܢ (*cp == '\0')
+			اكسر;
 		/* string contains squote(s), print them as \' */
 		x_mode_addchr('\\');
 		x_mode_addchr('\'');
 		cp++;
 	}
 }
-static void dump_cmd_in_x_mode(char **argv)
+ساكن فراغ dump_cmd_in_x_mode(حرف **argv)
 {
-	if (G_x_mode && argv) {
+	ܐܢ (G_x_mode && argv) {
 		unsigned n;
 
 		/* "+[+++...][ cmd...]\n\0" */
 		x_mode_prefix();
 		n = 0;
-		while (argv[n]) {
+		ܟܡܐ (argv[n]) {
 			x_mode_addchr(' ');
-			if (argv[n][0] == '\0') {
+			ܐܢ (argv[n][0] == '\0') {
 				x_mode_addchr('\'');
 				x_mode_addchr('\'');
-			} else {
+			} ܐܚܪܢܐ {
 				x_mode_print_optionally_squoted(argv[n]);
 			}
 			n++;
@@ -9143,40 +9143,40 @@ static void dump_cmd_in_x_mode(char **argv)
 		x_mode_flush();
 	}
 }
-#else
-# define dump_cmd_in_x_mode(argv) ((void)0)
+#ܐܚܪܢܐ
+# define dump_cmd_in_x_mode(argv) ((فراغ)0)
 #endif
 #endif /* !__U_BOOT__ */
 
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_COMMAND
-static void if_command_vV_print_and_exit(char opt_vV, char *cmd, const char *explanation)
+#ܐܢ ENABLE_HUSH_COMMAND
+ساكن فراغ if_command_vV_print_and_exit(حرف opt_vV, حرف *cmd, ثابت حرف *explanation)
 {
-	char *to_free;
+	حرف *to_free;
 
-	if (!opt_vV)
-		return;
+	ܐܢ (!opt_vV)
+		ܦܢܐ;
 
-	to_free = NULL;
-	if (!explanation) {
-		char *path = getenv("PATH");
+	to_free = عدم;
+	ܐܢ (!explanation) {
+		حرف *path = getenv("PATH");
 		explanation = to_free = find_executable(cmd, &path); /* path == NULL is ok */
-		if (!explanation)
+		ܐܢ (!explanation)
 			_exit(1); /* PROG was not found */
-		if (opt_vV != 'V')
+		ܐܢ (opt_vV != 'V')
 			cmd = to_free; /* -v PROG prints "/path/to/PROG" */
 	}
 	printf((opt_vV == 'V') ? "%s is %s\n" : "%s\n", cmd, explanation);
-	free(to_free);
+	حرر(to_free);
 	fflush_all();
 	_exit(0);
 }
-#else
-# define if_command_vV_print_and_exit(a,b,c) ((void)0)
+#ܐܚܪܢܐ
+# define if_command_vV_print_and_exit(a,b,c) ((فراغ)0)
 #endif
 #endif /* !__U_BOOT__ */
 
-#if BB_MMU
+#ܐܢ BB_MMU
 #define pseudo_exec_argv(nommu_save, argv, assignment_cnt, argv_expanded) \
 	pseudo_exec_argv(argv, assignment_cnt, argv_expanded)
 #define pseudo_exec(nommu_save, command, argv_expanded) \
@@ -9190,23 +9190,23 @@ static void if_command_vV_print_and_exit(char opt_vV, char *cmd, const char *exp
  * The at_exit handlers apparently confuse the calling process,
  * in particular stdin handling. Not sure why? -- because of vfork! (vda)
  */
-static void pseudo_exec_argv(nommu_save_t *nommu_save,
-		char **argv, int assignment_cnt,
-		char **argv_expanded) NORETURN;
-static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
-		char **argv, int assignment_cnt,
-		char **argv_expanded)
+ساكن فراغ pseudo_exec_argv(nommu_save_t *nommu_save,
+		حرف **argv, صحيح assignment_cnt,
+		حرف **argv_expanded) NORETURN;
+ساكن NOINLINE فراغ pseudo_exec_argv(nommu_save_t *nommu_save,
+		حرف **argv, صحيح assignment_cnt,
+		حرف **argv_expanded)
 {
-	const struct built_in_command *x;
-	struct variable **sv_shadowed;
-	char **new_env;
-	IF_HUSH_COMMAND(char opt_vV = 0;)
-	IF_HUSH_FUNCTIONS(const struct function *funcp;)
+	ثابت بنية built_in_command *x;
+	بنية variable **sv_shadowed;
+	حرف **new_env;
+	IF_HUSH_COMMAND(حرف opt_vV = 0;)
+	IF_HUSH_FUNCTIONS(ثابت بنية function *funcp;)
 
 	new_env = expand_assignments(argv, assignment_cnt);
 	dump_cmd_in_x_mode(new_env);
 
-	if (!argv[assignment_cnt]) {
+	ܐܢ (!argv[assignment_cnt]) {
 		/* Case when we are here: ... | var=val | ...
 		 * (note that we do not exit early, i.e., do not optimize out
 		 * expand_assignments(): think about ... | var=`sleep 1` | ...
@@ -9216,71 +9216,71 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	}
 
 	sv_shadowed = G.shadowed_vars_pp;
-#if BB_MMU
-	G.shadowed_vars_pp = NULL; /* "don't save, free them instead" */
-#else
+#ܐܢ BB_MMU
+	G.shadowed_vars_pp = عدم; /* "don't save, free them instead" */
+#ܐܚܪܢܐ
 	G.shadowed_vars_pp = &nommu_save->old_vars;
 	G.var_nest_level++;
 #endif
 	set_vars_and_save_old(new_env);
 	G.shadowed_vars_pp = sv_shadowed;
 
-	if (argv_expanded) {
+	ܐܢ (argv_expanded) {
 		argv = argv_expanded;
-	} else {
+	} ܐܚܪܢܐ {
 		argv = expand_strvec_to_strvec(argv + assignment_cnt);
-#if !BB_MMU
+#ܐܢ !BB_MMU
 		nommu_save->argv = argv;
 #endif
 	}
 	dump_cmd_in_x_mode(argv);
 
-#if ENABLE_FEATURE_SH_STANDALONE || BB_MMU
-	if (strchr(argv[0], '/') != NULL)
-		goto skip;
+#ܐܢ ENABLE_FEATURE_SH_STANDALONE || BB_MMU
+	ܐܢ (strchr(argv[0], '/') != عدم)
+		اذهب skip;
 #endif
 
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	/* Check if the command matches any functions (this goes before bltins) */
 	funcp = find_function(argv[0]);
-	if (funcp)
+	ܐܢ (funcp)
 		exec_function(&nommu_save->argv_from_re_execing, funcp, argv);
 #endif
 
-#if ENABLE_HUSH_COMMAND
+#ܐܢ ENABLE_HUSH_COMMAND
 	/* "command BAR": run BAR without looking it up among functions
 	 * "command -v BAR": print "BAR" or "/path/to/BAR"; or exit 1
 	 * "command -V BAR": print "BAR is {a function,a shell builtin,/path/to/BAR}"
 	 */
-	while (strcmp(argv[0], "command") == 0 && argv[1]) {
-		char *p;
+	ܟܡܐ (strcmp(argv[0], "command") == 0 && argv[1]) {
+		حرف *p;
 
 		argv++;
 		p = *argv;
-		if (p[0] != '-' || !p[1])
-			continue; /* bash allows "command command command [-OPT] BAR" */
+		ܐܢ (p[0] != '-' || !p[1])
+			استمر; /* bash allows "command command command [-OPT] BAR" */
 
-		for (;;) {
+		لكل (;;) {
 			p++;
-			switch (*p) {
-			case '\0':
+			بدل (*p) {
+			حالة '\0':
 				argv++;
 				p = *argv;
-				if (p[0] != '-' || !p[1])
-					goto after_opts;
-				continue; /* next arg is also -opts, process it too */
-			case 'v':
-			case 'V':
+				ܐܢ (p[0] != '-' || !p[1])
+					اذهب after_opts;
+				استمر; /* next arg is also -opts, process it too */
+			حالة 'v':
+			حالة 'V':
 				opt_vV = *p;
-				continue;
-			default:
+				استمر;
+			افتراضي:
 				bb_error_msg_and_die("%s: %s: invalid option", "command", argv[0]);
 			}
 		}
 	}
  after_opts:
-# if ENABLE_HUSH_FUNCTIONS
-	if (opt_vV && find_function(argv[0]))
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+	ܐܢ (opt_vV && find_function(argv[0]))
 		if_command_vV_print_and_exit(opt_vV, argv[0], "a function");
 # endif
 #endif
@@ -9296,19 +9296,19 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	 * It's better to skip it here and run corresponding
 	 * non-builtin later. */
 	x = BB_MMU ? find_builtin(argv[0]) : find_builtin1(argv[0]);
-	if (x) {
+	ܐܢ (x) {
 		if_command_vV_print_and_exit(opt_vV, argv[0], "a shell builtin");
 		exec_builtin(&nommu_save->argv_from_re_execing, x, argv);
 	}
 
-#if ENABLE_FEATURE_SH_STANDALONE
+#ܐܢ ENABLE_FEATURE_SH_STANDALONE
 	/* Check if the command matches any busybox applets */
 	{
-		int a = find_applet_by_name(argv[0]);
-		if (a >= 0) {
+		صحيح a = find_applet_by_name(argv[0]);
+		ܐܢ (a >= 0) {
 			if_command_vV_print_and_exit(opt_vV, argv[0], "an applet");
-# if BB_MMU /* see above why on NOMMU it is not allowed */
-			if (APPLET_IS_NOEXEC(a)) {
+# ܐܢ BB_MMU /* see above why on NOMMU it is not allowed */
+			ܐܢ (APPLET_IS_NOEXEC(a)) {
 				/* Do not leak open fds from opened script files etc.
 				 * Testcase: interactive "ls -l /proc/self/fd"
 				 * should not show tty fd open.
@@ -9328,7 +9328,7 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 			/* Re-exec ourselves */
 			debug_printf_exec("re-execing applet '%s'\n", argv[0]);
 			/* Don't propagate SIG_IGN to the child */
-			if (SPECIAL_JOBSTOP_SIGS != 0)
+			ܐܢ (SPECIAL_JOBSTOP_SIGS != 0)
 				switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
 			execv(bb_busybox_exec_path, argv);
 			/* If they called chroot or otherwise made the binary no longer
@@ -9337,24 +9337,24 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	}
 #endif
 
-#if ENABLE_FEATURE_SH_STANDALONE || BB_MMU
+#ܐܢ ENABLE_FEATURE_SH_STANDALONE || BB_MMU
  skip:
 #endif
-	if_command_vV_print_and_exit(opt_vV, argv[0], NULL);
+	if_command_vV_print_and_exit(opt_vV, argv[0], عدم);
 	execvp_or_die(argv);
 }
 
 /* Called after [v]fork() in run_pipe
  */
-static void pseudo_exec(nommu_save_t *nommu_save,
-		struct command *command,
-		char **argv_expanded) NORETURN;
-static void pseudo_exec(nommu_save_t *nommu_save,
-		struct command *command,
-		char **argv_expanded)
+ساكن فراغ pseudo_exec(nommu_save_t *nommu_save,
+		بنية command *command,
+		حرف **argv_expanded) NORETURN;
+ساكن فراغ pseudo_exec(nommu_save_t *nommu_save,
+		بنية command *command,
+		حرف **argv_expanded)
 {
-#if ENABLE_HUSH_FUNCTIONS
-	if (command->cmd_type == CMD_FUNCDEF) {
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+	ܐܢ (command->cmd_type == CMD_FUNCDEF) {
 		/* Ignore funcdefs in pipes:
 		 * true | f() { cmd }
 		 */
@@ -9362,32 +9362,32 @@ static void pseudo_exec(nommu_save_t *nommu_save,
 	}
 #endif
 
-	if (command->argv) {
+	ܐܢ (command->argv) {
 		pseudo_exec_argv(nommu_save, command->argv,
 				command->assignment_cnt, argv_expanded);
 	}
 
-	if (command->group) {
+	ܐܢ (command->group) {
 		/* Cases when we are here:
 		 * ( list )
 		 * { list } &
 		 * ... | ( list ) | ...
 		 * ... | { list } | ...
 		 */
-#if BB_MMU
-		int rcode;
+#ܐܢ BB_MMU
+		صحيح rcode;
 		debug_printf_exec("pseudo_exec: run_list\n");
 		reset_traps_to_defaults();
 		rcode = run_list(command->group);
 		/* OK to leak memory by not calling free_pipe_list,
 		 * since this process is about to exit */
 		_exit(rcode);
-#else
+#ܐܚܪܢܐ
 		re_execute_shell(&nommu_save->argv_from_re_execing,
 				command->group_as_string,
 				G.global_argv[0],
 				G.global_argv + 1,
-				NULL);
+				عدم);
 #endif
 	}
 
@@ -9396,155 +9396,155 @@ static void pseudo_exec(nommu_save_t *nommu_save,
 	_exit_SUCCESS();
 }
 
-#if ENABLE_HUSH_JOB
-static const char *get_cmdtext(struct pipe *pi)
+#ܐܢ ENABLE_HUSH_JOB
+ساكن ثابت حرف *get_cmdtext(بنية pipe *pi)
 {
-	char **argv;
-	char *p;
-	int len;
+	حرف **argv;
+	حرف *p;
+	صحيح len;
 
 	/* This is subtle. ->cmdtext is created only on first backgrounding.
 	 * (Think "cat, <ctrl-z>, fg, <ctrl-z>, fg, <ctrl-z>...." here...)
 	 * On subsequent bg argv is trashed, but we won't use it */
-	if (pi->cmdtext)
-		return pi->cmdtext;
+	ܐܢ (pi->cmdtext)
+		ܦܢܐ pi->cmdtext;
 
 	argv = pi->cmds[0].argv;
-	if (!argv) {
+	ܐܢ (!argv) {
 		pi->cmdtext = xzalloc(1);
-		return pi->cmdtext;
+		ܦܢܐ pi->cmdtext;
 	}
 	len = 0;
-	do {
+	ܥܒܕ {
 		len += strlen(*argv) + 1;
-	} while (*++argv);
+	} ܟܡܐ (*++argv);
 	p = xmalloc(len);
 	pi->cmdtext = p;
 	argv = pi->cmds[0].argv;
-	do {
+	ܥܒܕ {
 		p = stpcpy(p, *argv);
 		*p++ = ' ';
-	} while (*++argv);
+	} ܟܡܐ (*++argv);
 	p[-1] = '\0';
-	return pi->cmdtext;
+	ܦܢܐ pi->cmdtext;
 }
 
-static void remove_job_from_table(struct pipe *pi)
+ساكن فراغ remove_job_from_table(بنية pipe *pi)
 {
-	struct pipe *prev_pipe;
+	بنية pipe *prev_pipe;
 
-	if (pi == G.job_list) {
+	ܐܢ (pi == G.job_list) {
 		G.job_list = pi->next;
-	} else {
+	} ܐܚܪܢܐ {
 		prev_pipe = G.job_list;
-		while (prev_pipe->next != pi)
+		ܟܡܐ (prev_pipe->next != pi)
 			prev_pipe = prev_pipe->next;
 		prev_pipe->next = pi->next;
 	}
 	G.last_jobid = 0;
-	if (G.job_list)
+	ܐܢ (G.job_list)
 		G.last_jobid = G.job_list->jobid;
 }
 
-static void delete_finished_job(struct pipe *pi)
+ساكن فراغ delete_finished_job(بنية pipe *pi)
 {
 	remove_job_from_table(pi);
 	free_pipe(pi);
 }
 
-static void clean_up_last_dead_job(void)
+ساكن فراغ clean_up_last_dead_job(فراغ)
 {
-	if (G.job_list && !G.job_list->alive_cmds)
+	ܐܢ (G.job_list && !G.job_list->alive_cmds)
 		delete_finished_job(G.job_list);
 }
 
-static void insert_job_into_table(struct pipe *pi)
+ساكن فراغ insert_job_into_table(بنية pipe *pi)
 {
-	struct pipe *job, **jobp;
-	int i;
+	بنية pipe *job, **jobp;
+	صحيح i;
 
 	clean_up_last_dead_job();
 
 	/* Find the end of the list, and find next job ID to use */
 	i = 0;
 	jobp = &G.job_list;
-	while ((job = *jobp) != NULL) {
-		if (job->jobid > i)
+	ܟܡܐ ((job = *jobp) != عدم) {
+		ܐܢ (job->jobid > i)
 			i = job->jobid;
 		jobp = &job->next;
 	}
 	pi->jobid = i + 1;
 
 	/* Create a new job struct at the end */
-	job = *jobp = xmemdup(pi, sizeof(*pi));
-	job->next = NULL;
-	job->cmds = xzalloc(sizeof(pi->cmds[0]) * pi->num_cmds);
+	job = *jobp = xmemdup(pi, حجم(*pi));
+	job->next = عدم;
+	job->cmds = xzalloc(حجم(pi->cmds[0]) * pi->num_cmds);
 	/* Cannot copy entire pi->cmds[] vector! This causes double frees */
-	for (i = 0; i < pi->num_cmds; i++) {
+	لكل (i = 0; i < pi->num_cmds; i++) {
 		job->cmds[i].pid = pi->cmds[i].pid;
 		/* all other fields are not used and stay zero */
 	}
 	job->cmdtext = xstrdup(get_cmdtext(pi));
 
-	if (G_interactive_fd)
+	ܐܢ (G_interactive_fd)
 		printf("[%u] %u %s\n", job->jobid, (unsigned)job->cmds[0].pid, job->cmdtext);
 	G.last_jobid = job->jobid;
 }
 #endif /* JOB */
 
-static int job_exited_or_stopped(struct pipe *pi)
+ساكن صحيح job_exited_or_stopped(بنية pipe *pi)
 {
-	int rcode, i;
+	صحيح rcode, i;
 
-	if (pi->alive_cmds != pi->stopped_cmds)
-		return -1;
+	ܐܢ (pi->alive_cmds != pi->stopped_cmds)
+		ܦܢܐ -1;
 
 	/* All processes in fg pipe have exited or stopped */
 	rcode = 0;
 	i = pi->num_cmds;
-	while (--i >= 0) {
+	ܟܡܐ (--i >= 0) {
 		rcode = pi->cmds[i].cmd_exitcode;
 		/* usually last process gives overall exitstatus,
 		 * but with "set -o pipefail", last *failed* process does */
-		if (G.o_opt[OPT_O_PIPEFAIL] == 0 || rcode != 0)
-			break;
+		ܐܢ (G.o_opt[OPT_O_PIPEFAIL] == 0 || rcode != 0)
+			اكسر;
 	}
-	IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
-	return rcode;
+	IF_HAS_KEYWORDS(ܐܢ (pi->pi_inverted) rcode = !rcode;)
+	ܦܢܐ rcode;
 }
 
-static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
+ساكن صحيح process_wait_result(بنية pipe *fg_pipe, pid_t childpid, صحيح status)
 {
-#if ENABLE_HUSH_JOB
-	struct pipe *pi;
+#ܐܢ ENABLE_HUSH_JOB
+	بنية pipe *pi;
 #endif
-	int i, dead;
+	صحيح i, dead;
 
 	dead = WIFEXITED(status) || WIFSIGNALED(status);
 
-#if DEBUG_JOBS
-	if (WIFSTOPPED(status))
+#ܐܢ DEBUG_JOBS
+	ܐܢ (WIFSTOPPED(status))
 		debug_printf_jobs("pid %d stopped by sig %d (exitcode %d)\n",
 				childpid, WSTOPSIG(status), WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
+	ܐܢ (WIFSIGNALED(status))
 		debug_printf_jobs("pid %d killed by sig %d (exitcode %d)\n",
 				childpid, WTERMSIG(status), WEXITSTATUS(status));
-	if (WIFEXITED(status))
+	ܐܢ (WIFEXITED(status))
 		debug_printf_jobs("pid %d exited, exitcode %d\n",
 				childpid, WEXITSTATUS(status));
 #endif
 	/* Were we asked to wait for a fg pipe? */
-	if (fg_pipe) {
+	ܐܢ (fg_pipe) {
 		i = fg_pipe->num_cmds;
 
-		while (--i >= 0) {
-			int rcode;
+		ܟܡܐ (--i >= 0) {
+			صحيح rcode;
 
 			debug_printf_jobs("check pid %d\n", fg_pipe->cmds[i].pid);
-			if (fg_pipe->cmds[i].pid != childpid)
-				continue;
-			if (dead) {
-				int ex;
+			ܐܢ (fg_pipe->cmds[i].pid != childpid)
+				استمر;
+			ܐܢ (dead) {
+				صحيح ex;
 				fg_pipe->cmds[i].pid = 0;
 				fg_pipe->alive_cmds--;
 				ex = WEXITSTATUS(status);
@@ -9552,10 +9552,10 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 				 * process in pipe (prints just newline for SIGINT/SIGPIPE).
 				 * Mimic this. Example: "sleep 5" + (^\ or kill -QUIT)
 				 */
-				if (WIFSIGNALED(status)) {
-					int sig = WTERMSIG(status);
-#if ENABLE_HUSH_JOB
-					if (G.run_list_level == 1
+				ܐܢ (WIFSIGNALED(status)) {
+					صحيح sig = WTERMSIG(status);
+#ܐܢ ENABLE_HUSH_JOB
+					ܐܢ (G.run_list_level == 1
 					/* ^^^^^ Do not print in nested contexts, example:
 					 * echo `sleep 1; sh -c 'kill -9 $$'` - prints "137", NOT "Killed 137"
 					 */
@@ -9572,66 +9572,66 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 					ex = 128 | sig;
 				}
 				fg_pipe->cmds[i].cmd_exitcode = ex;
-			} else {
+			} ܐܚܪܢܐ {
 				fg_pipe->stopped_cmds++;
 			}
 			debug_printf_jobs("fg_pipe: alive_cmds %d stopped_cmds %d\n",
 					fg_pipe->alive_cmds, fg_pipe->stopped_cmds);
 			rcode = job_exited_or_stopped(fg_pipe);
-			if (rcode >= 0) {
+			ܐܢ (rcode >= 0) {
 /* Note: *non-interactive* bash does not continue if all processes in fg pipe
  * are stopped. Testcase: "cat | cat" in a script (not on command line!)
  * and "killall -STOP cat" */
-				if (G_interactive_fd) {
-#if ENABLE_HUSH_JOB
-					if (fg_pipe->alive_cmds != 0)
+				ܐܢ (G_interactive_fd) {
+#ܐܢ ENABLE_HUSH_JOB
+					ܐܢ (fg_pipe->alive_cmds != 0)
 						insert_job_into_table(fg_pipe);
 #endif
-					return rcode;
+					ܦܢܐ rcode;
 				}
-				if (fg_pipe->alive_cmds == 0)
-					return rcode;
+				ܐܢ (fg_pipe->alive_cmds == 0)
+					ܦܢܐ rcode;
 			}
 			/* There are still running processes in the fg_pipe */
-			return -1;
+			ܦܢܐ -1;
 		}
 		/* It wasn't in fg_pipe, look for process in bg pipes */
 	}
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	/* We were asked to wait for bg or orphaned children */
 	/* No need to remember exitcode in this case */
-	for (pi = G.job_list; pi; pi = pi->next) {
-		for (i = 0; i < pi->num_cmds; i++) {
-			if (pi->cmds[i].pid == childpid)
-				goto found_pi_and_prognum;
+	لكل (pi = G.job_list; pi; pi = pi->next) {
+		لكل (i = 0; i < pi->num_cmds; i++) {
+			ܐܢ (pi->cmds[i].pid == childpid)
+				اذهب found_pi_and_prognum;
 		}
 	}
 	/* Happens when shell is used as init process (init=/bin/sh) */
 	debug_printf("checkjobs: pid %d was not in our list!\n", childpid);
-	return -1; /* this wasn't a process from fg_pipe */
+	ܦܢܐ -1; /* this wasn't a process from fg_pipe */
 
  found_pi_and_prognum:
-	if (dead) {
+	ܐܢ (dead) {
 		/* child exited */
-		int rcode = WEXITSTATUS(status);
-		if (WIFSIGNALED(status))
+		صحيح rcode = WEXITSTATUS(status);
+		ܐܢ (WIFSIGNALED(status))
 			/* NB: not 128 + sig, MIPS has sig 128 */
 			rcode = 128 | WTERMSIG(status);
 		pi->cmds[i].cmd_exitcode = rcode;
-		if (G.last_bg_pid == pi->cmds[i].pid)
+		ܐܢ (G.last_bg_pid == pi->cmds[i].pid)
 			G.last_bg_pid_exitcode = rcode;
 		pi->cmds[i].pid = 0;
 		pi->alive_cmds--;
-		if (!pi->alive_cmds) {
-# if ENABLE_HUSH_BASH_COMPAT
+		ܐܢ (!pi->alive_cmds) {
+# ܐܢ ENABLE_HUSH_BASH_COMPAT
 			G.dead_job_exitcode = job_exited_or_stopped(pi);
 # endif
-			if (G_interactive_fd) {
+			ܐܢ (G_interactive_fd) {
 				printf(JOB_STATUS_FORMAT, pi->jobid,
 						"Done", pi->cmdtext);
 				delete_finished_job(pi);
-			} else {
+			} ܐܚܪܢܐ {
 /*
  * bash deletes finished jobs from job table only in interactive mode,
  * after "jobs" cmd, or if pid of a new process matches one of the old ones
@@ -9640,16 +9640,16 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
  * We only retain one "dead" job, if it's the single job on the list.
  * This covers most of real-world scenarios where this is useful.
  */
-				if (pi != G.job_list)
+				ܐܢ (pi != G.job_list)
 					delete_finished_job(pi);
 			}
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		/* child stopped */
 		pi->stopped_cmds++;
 	}
 #endif
-	return -1; /* this wasn't a process from fg_pipe */
+	ܦܢܐ -1; /* this wasn't a process from fg_pipe */
 }
 
 /* Check to see if any processes have exited -- if they have,
@@ -9667,33 +9667,33 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
  * return <0 if waitpid errors out (e.g. ECHILD: nothing to wait for)
  * or 0 if no children changed status.
  */
-static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
+ساكن صحيح checkjobs(بنية pipe *fg_pipe, pid_t waitfor_pid)
 {
-	int attributes;
-	int status;
-	int rcode = 0;
+	صحيح attributes;
+	صحيح status;
+	صحيح rcode = 0;
 
 	debug_printf_jobs("checkjobs %p\n", fg_pipe);
 
 	attributes = WUNTRACED;
-	if (fg_pipe == NULL)
+	ܐܢ (fg_pipe == عدم)
 		attributes |= WNOHANG;
 
 	errno = 0;
-#if ENABLE_HUSH_FAST
-	if (G.handled_SIGCHLD == G.count_SIGCHLD) {
+#ܐܢ ENABLE_HUSH_FAST
+	ܐܢ (G.handled_SIGCHLD == G.count_SIGCHLD) {
 //bb_error_msg("[%d] checkjobs: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d children?:%d fg_pipe:%p",
 //getpid(), G.count_SIGCHLD, G.handled_SIGCHLD, G.we_have_children, fg_pipe);
 		/* There was neither fork nor SIGCHLD since last waitpid */
 		/* Avoid doing waitpid syscall if possible */
-		if (!G.we_have_children) {
+		ܐܢ (!G.we_have_children) {
 			errno = ECHILD;
-			return -1;
+			ܦܢܐ -1;
 		}
-		if (fg_pipe == NULL) { /* is WNOHANG set? */
+		ܐܢ (fg_pipe == عدم) { /* is WNOHANG set? */
 			/* We have children, but they did not exit
 			 * or stop yet (we saw no SIGCHLD) */
-			return 0;
+			ܦܢܐ 0;
 		}
 		/* else: !WNOHANG, waitpid will block, can't short-circuit */
 	}
@@ -9707,18 +9707,18 @@ static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
  * 1   <========== bg pipe is not fully done, but exitcode is already known!
  * [hush 1.14.0: yes we do it right]
  */
-	while (1) {
+	ܟܡܐ (1) {
 		pid_t childpid;
-#if ENABLE_HUSH_FAST
-		int i;
+#ܐܢ ENABLE_HUSH_FAST
+		صحيح i;
 		i = G.count_SIGCHLD;
 #endif
 		childpid = waitpid(-1, &status, attributes);
-		if (childpid <= 0) {
-			if (childpid && errno != ECHILD)
+		ܐܢ (childpid <= 0) {
+			ܐܢ (childpid && errno != ECHILD)
 				bb_simple_perror_msg("waitpid");
-#if ENABLE_HUSH_FAST
-			else { /* Until next SIGCHLD, waitpid's are useless */
+#ܐܢ ENABLE_HUSH_FAST
+			ܐܚܪܢܐ { /* Until next SIGCHLD, waitpid's are useless */
 				G.we_have_children = (childpid == 0);
 				G.handled_SIGCHLD = i;
 //bb_error_msg("[%d] checkjobs: waitpid returned <= 0, G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
@@ -9726,52 +9726,52 @@ static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
 #endif
 			/* ECHILD (no children), or 0 (no change in children status) */
 			rcode = childpid;
-			break;
+			اكسر;
 		}
 		rcode = process_wait_result(fg_pipe, childpid, status);
-		if (rcode >= 0) {
+		ܐܢ (rcode >= 0) {
 			/* fg_pipe exited or stopped */
-			break;
+			اكسر;
 		}
-		if (childpid == waitfor_pid) { /* "wait PID" */
+		ܐܢ (childpid == waitfor_pid) { /* "wait PID" */
 			debug_printf_exec("childpid==waitfor_pid:%d status:0x%08x\n", childpid, status);
 			rcode = WEXITSTATUS(status);
-			if (WIFSIGNALED(status))
+			ܐܢ (WIFSIGNALED(status))
 				rcode = 128 | WTERMSIG(status);
-			if (WIFSTOPPED(status))
+			ܐܢ (WIFSTOPPED(status))
 				/* bash: "cmd & wait $!" and cmd stops: $? = 128 | stopsig */
 				rcode = 128 | WSTOPSIG(status);
 			rcode++;
-			break; /* "wait PID" called us, give it exitcode+1 */
+			اكسر; /* "wait PID" called us, give it exitcode+1 */
 		}
-#if ENABLE_HUSH_BASH_COMPAT
-		if (-1 == waitfor_pid /* "wait -n" (wait for any one job) */
+#ܐܢ ENABLE_HUSH_BASH_COMPAT
+		ܐܢ (-1 == waitfor_pid /* "wait -n" (wait for any one job) */
 		 && G.dead_job_exitcode >= 0 /* some job did finish */
 		) {
 			debug_printf_exec("waitfor_pid:-1\n");
 			rcode = G.dead_job_exitcode + 1;
-			break;
+			اكسر;
 		}
 #endif
 		/* This wasn't one of our processes, or */
 		/* fg_pipe still has running processes, do waitpid again */
 	} /* while (waitpid succeeds)... */
 
-	return rcode;
+	ܦܢܐ rcode;
 }
 
-#if ENABLE_HUSH_JOB
-static int checkjobs_and_fg_shell(struct pipe *fg_pipe)
+#ܐܢ ENABLE_HUSH_JOB
+ساكن صحيح checkjobs_and_fg_shell(بنية pipe *fg_pipe)
 {
 	pid_t p;
-	int rcode = checkjobs(fg_pipe, 0 /*(no pid to wait for)*/);
-	if (G_saved_tty_pgrp) {
+	صحيح rcode = checkjobs(fg_pipe, 0 /*(no pid to wait for)*/);
+	ܐܢ (G_saved_tty_pgrp) {
 		/* Job finished, move the shell to the foreground */
 		p = getpgrp(); /* our process group id */
-		debug_printf_jobs("fg'ing ourself: getpgrp()=%d\n", (int)p);
+		debug_printf_jobs("fg'ing ourself: getpgrp()=%d\n", (صحيح)p);
 		tcsetpgrp(G_interactive_fd, p);
 	}
-	return rcode;
+	ܦܢܐ rcode;
 }
 #endif
 #endif /* !__U_BOOT__ */
@@ -9802,76 +9802,76 @@ static int checkjobs_and_fg_shell(struct pipe *fg_pipe)
  * backgrounded: cmd &     { list } &
  * subshell:     ( list ) [&]
  */
-static void set_G_ifs(void)
+ساكن فراغ set_G_ifs(فراغ)
 {
 	/* Testcase: set -- q w e; (IFS='' echo "$*"; IFS=''; echo "$*"); echo "$*"
 	 * Result should be 3 lines: q w e, qwe, q w e
 	 */
-	if (G.ifs_whitespace != G.ifs)
-		free(G.ifs_whitespace);
+	ܐܢ (G.ifs_whitespace != G.ifs)
+		حرر(G.ifs_whitespace);
 	G.ifs = get_local_var_value("IFS");
-	if (G.ifs) {
-		char *p;
-		G.ifs_whitespace = (char*)G.ifs;
+	ܐܢ (G.ifs) {
+		حرف *p;
+		G.ifs_whitespace = (حرف*)G.ifs;
 		p = skip_whitespace(G.ifs);
-		if (*p) {
+		ܐܢ (*p) {
 			/* Not all $IFS is whitespace */
-			char *d;
-			int len = p - G.ifs;
+			حرف *d;
+			صحيح len = p - G.ifs;
 			p = skip_non_whitespace(p);
 			G.ifs_whitespace = xmalloc(len + strlen(p) + 1); /* can overestimate */
 			d = mempcpy(G.ifs_whitespace, G.ifs, len);
-			while (*p) {
-				if (isspace(*p))
+			ܟܡܐ (*p) {
+				ܐܢ (isspace(*p))
 					*d++ = *p;
 				p++;
 			}
 			*d = '\0';
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		G.ifs = defifs;
-		G.ifs_whitespace = (char*)G.ifs;
+		G.ifs_whitespace = (حرف*)G.ifs;
 	}
 }
 #ifndef __U_BOOT__
-#if !ENABLE_HUSH_MODE_X
+#ܐܢ !ENABLE_HUSH_MODE_X
 #define redirect_and_varexp_helper(command, sqp, argv_expanded) \
 	redirect_and_varexp_helper(command, sqp)
 #endif
-static int redirect_and_varexp_helper(
-		struct command *command,
-		struct squirrel **sqp,
-		char **argv_expanded)
+ساكن صحيح redirect_and_varexp_helper(
+		بنية command *command,
+		بنية squirrel **sqp,
+		حرف **argv_expanded)
 {
 	/* Assignments occur before redirects. Try:
 	 * a=`sleep 1` sleep 2 3>/qwe/rty
 	 */
 
-	char **new_env = expand_assignments(command->argv, command->assignment_cnt);
+	حرف **new_env = expand_assignments(command->argv, command->assignment_cnt);
 	dump_cmd_in_x_mode(new_env);
 	dump_cmd_in_x_mode(argv_expanded);
 	/* this takes ownership of new_env[i] elements, and frees new_env: */
 	set_vars_and_save_old(new_env);
 
-	return setup_redirects(command, sqp);
+	ܦܢܐ setup_redirects(command, sqp);
 }
 #endif /* !__U_BOOT__ */
 
-static NOINLINE int run_pipe(struct pipe *pi)
+ساكن NOINLINE صحيح run_pipe(بنية pipe *pi)
 {
-	static const char *const null_ptr = NULL;
+	ساكن ثابت حرف *ثابت null_ptr = عدم;
 
-	int cmd_no;
+	صحيح cmd_no;
 #ifndef __U_BOOT__
-	int next_infd;
+	صحيح next_infd;
 #endif /* !__U_BOOT__ */
-	struct command *command;
-	char **argv_expanded;
-	char **argv;
+	بنية command *command;
+	حرف **argv_expanded;
+	حرف **argv;
 #ifndef __U_BOOT__
-	struct squirrel *squirrel = NULL;
+	بنية squirrel *squirrel = عدم;
 #endif /* !__U_BOOT__ */
-	int rcode;
+	صحيح rcode;
 
 #ifdef __U_BOOT__
 	/*
@@ -9893,14 +9893,14 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	pi->stopped_cmds = 0;
 #endif /* !__U_BOOT__ */
 	command = &pi->cmds[0];
-	argv_expanded = NULL;
+	argv_expanded = عدم;
 
 #ifndef __U_BOOT__
-	if (pi->num_cmds != 1
+	ܐܢ (pi->num_cmds != 1
 	 || pi->followup == PIPE_BG
 	 || command->cmd_type == CMD_SUBSHELL
 	) {
-		goto must_fork;
+		اذهب must_fork;
 	}
 
 	pi->alive_cmds = 1;
@@ -9909,35 +9909,35 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	debug_printf_exec(": group:%p argv:'%s'\n",
 		command->group, command->argv ? command->argv[0] : "NONE");
 
-	if (command->group) {
-#if ENABLE_HUSH_FUNCTIONS
-		if (command->cmd_type == CMD_FUNCDEF) {
+	ܐܢ (command->group) {
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+		ܐܢ (command->cmd_type == CMD_FUNCDEF) {
 			/* "executing" func () { list } */
-			struct function *funcp;
+			بنية function *funcp;
 
 			funcp = new_function(command->argv[0]);
 			/* funcp->name is already set to argv[0] */
 			funcp->body = command->group;
-# if !BB_MMU
+# ܐܢ !BB_MMU
 			funcp->body_as_string = command->group_as_string;
-			command->group_as_string = NULL;
+			command->group_as_string = عدم;
 # endif
-			command->group = NULL;
-			command->argv[0] = NULL;
+			command->group = عدم;
+			command->argv[0] = عدم;
 			debug_printf_exec("cmd %p has child func at %p\n", command, funcp);
 			funcp->parent_cmd = command;
 			command->child_func = funcp;
 
 			debug_printf_exec("run_pipe: return EXIT_SUCCESS\n");
 			debug_leave();
-			return EXIT_SUCCESS;
+			ܦܢܐ EXIT_SUCCESS;
 		}
 #endif
 		/* { list } */
 		debug_printf_exec("non-subshell group\n");
 		rcode = 1; /* exitcode if redir failed */
 #ifndef __U_BOOT__
-		if (setup_redirects(command, &squirrel) == 0) {
+		ܐܢ (setup_redirects(command, &squirrel) == 0) {
 #endif /* !__U_BOOT__ */
 			debug_printf_exec(": run_list\n");
 //FIXME: we need to pass squirrel down into run_list()
@@ -9951,27 +9951,27 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		}
 		restore_redirects(squirrel);
 #endif /* !__U_BOOT__ */
-		IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+		IF_HAS_KEYWORDS(ܐܢ (pi->pi_inverted) rcode = !rcode;)
 		debug_leave();
 		debug_printf_exec("run_pipe: return %d\n", rcode);
-		return rcode;
+		ܦܢܐ rcode;
 	}
 
-	argv = command->argv ? command->argv : (char **) &null_ptr;
+	argv = command->argv ? command->argv : (حرف **) &null_ptr;
 	{
 #ifndef __U_BOOT__
-		const struct built_in_command *x;
-		IF_HUSH_FUNCTIONS(const struct function *funcp;)
-		IF_NOT_HUSH_FUNCTIONS(enum { funcp = 0 };)
-		struct variable **sv_shadowed;
+		ثابت بنية built_in_command *x;
+		IF_HUSH_FUNCTIONS(ثابت بنية function *funcp;)
+		IF_NOT_HUSH_FUNCTIONS(تعداد { funcp = 0 };)
+		بنية variable **sv_shadowed;
 #endif /* !__U_BOOT__ */
-		struct variable *old_vars;
+		بنية variable *old_vars;
 
-#if ENABLE_HUSH_LINENO_VAR
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 		G.execute_lineno = command->lineno;
 #endif
 
-		if (argv[command->assignment_cnt] == NULL) {
+		ܐܢ (argv[command->assignment_cnt] == عدم) {
 			/* Assignments, but no command.
 			 * Ensure redirects take effect (that is, create files).
 			 * Try "a=t >file"
@@ -9986,19 +9986,19 @@ static NOINLINE int run_pipe(struct pipe *pi)
 
 			/* Set shell variables */
 			i = 0;
-			while (i < command->assignment_cnt) {
-				char *p = expand_string_to_string(argv[i],
+			ܟܡܐ (i < command->assignment_cnt) {
+				حرف *p = expand_string_to_string(argv[i],
 						EXP_FLAG_ESC_GLOB_CHARS,
 						/*unbackslash:*/ 1
 				);
-#if ENABLE_HUSH_MODE_X
-				if (G_x_mode) {
-					char *eq;
-					if (i == 0)
+#ܐܢ ENABLE_HUSH_MODE_X
+				ܐܢ (G_x_mode) {
+					حرف *eq;
+					ܐܢ (i == 0)
 						x_mode_prefix();
 					x_mode_addchr(' ');
 					eq = strchrnul(p, '=');
-					if (*eq) eq++;
+					ܐܢ (*eq) eq++;
 					x_mode_addblock(p, (eq - p));
 					x_mode_print_optionally_squoted(eq);
 					x_mode_flush();
@@ -10006,9 +10006,9 @@ static NOINLINE int run_pipe(struct pipe *pi)
 #endif
 				debug_printf_env("set shell var:'%s'->'%s'\n", *argv, p);
 #ifndef __U_BOOT__
-				if (set_local_var0(p)) {
-#else /* __U_BOOT__ */
-				if (set_local_var_modern(p, /*flag:*/ 0)) {
+				ܐܢ (set_local_var0(p)) {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+				ܐܢ (set_local_var_modern(p, /*flag:*/ 0)) {
 #endif
 					/* assignment to readonly var / putenv error? */
 					rcode = 1;
@@ -10022,46 +10022,46 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 *  false; x=1; echo $? - should print 0
 			 * Because of the 2nd case, we can't just use G.last_exitcode.
 			 */
-			if (rcode == 0)
+			ܐܢ (rcode == 0)
 				rcode = G.expand_exitcode;
-			IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+			IF_HAS_KEYWORDS(ܐܢ (pi->pi_inverted) rcode = !rcode;)
 			debug_leave();
 			debug_printf_exec("run_pipe: return %d\n", rcode);
-			return rcode;
+			ܦܢܐ rcode;
 		}
 
 		/* Expand the rest into (possibly) many strings each */
-#if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB)
+#ܐܢ defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		ܐܢ (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB)
 			argv_expanded = expand_strvec_to_strvec_singleword_noglob(argv + command->assignment_cnt);
-		else
+		ܐܚܪܢܐ
 #endif
-#if defined(CMD_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_SINGLEWORD_NOGLOB)
+#ܐܢ defined(CMD_SINGLEWORD_NOGLOB)
+		ܐܢ (command->cmd_type == CMD_SINGLEWORD_NOGLOB)
 			argv_expanded = expand_strvec_to_strvec_singleword_noglob(argv + command->assignment_cnt);
-		else
+		ܐܚܪܢܐ
 #endif
 			argv_expanded = expand_strvec_to_strvec(argv + command->assignment_cnt);
 
 		/* If someone gives us an empty string: `cmd with empty output` */
-		if (!argv_expanded[0]) {
-			free(argv_expanded);
+		ܐܢ (!argv_expanded[0]) {
+			حرر(argv_expanded);
 			/* `false` still has to set exitcode 1 */
 			G.expand_exitcode = G.last_exitcode;
-			goto only_assignments;
+			اذهب only_assignments;
 		}
 
-		old_vars = NULL;
+		old_vars = عدم;
 #ifndef __U_BOOT__
 		sv_shadowed = G.shadowed_vars_pp;
 
 		/* Check if argv[0] matches any functions (this goes before bltins) */
 		IF_HUSH_FUNCTIONS(funcp = find_function(argv_expanded[0]);)
-		IF_HUSH_FUNCTIONS(x = NULL;)
-		IF_HUSH_FUNCTIONS(if (!funcp))
+		IF_HUSH_FUNCTIONS(x = عدم;)
+		IF_HUSH_FUNCTIONS(ܐܢ (!funcp))
 			x = find_builtin(argv_expanded[0]);
-		if (x || funcp) {
-			if (x && x->b_function == builtin_exec && argv_expanded[1] == NULL) {
+		ܐܢ (x || funcp) {
+			ܐܢ (x && x->b_function == builtin_exec && argv_expanded[1] == عدم) {
 				debug_printf("exec with redirects only\n");
 				/*
 				 * Variable assignments are executed, but then "forgotten":
@@ -10077,7 +10077,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				G.shadowed_vars_pp = sv_shadowed;
 				/* rcode=1 can be if redir file can't be opened */
 
-				goto clean_up_and_ret1;
+				اذهب clean_up_and_ret1;
 			}
 
 			/* Bump var nesting, or this will leak exported $a:
@@ -10090,8 +10090,8 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 */
 			G.shadowed_vars_pp = &old_vars;
 			rcode = redirect_and_varexp_helper(command, &squirrel, argv_expanded);
-			if (rcode == 0) {
-				if (!funcp) {
+			ܐܢ (rcode == 0) {
+				ܐܢ (!funcp) {
 					/* Do not collect *to old_vars list* vars shadowed
 					 * by e.g. "local VAR" builtin (collect them
 					 * in the previously nested list instead):
@@ -10106,8 +10106,8 @@ static NOINLINE int run_pipe(struct pipe *pi)
 					rcode = x->b_function(argv_expanded) & 0xff;
 					fflush_all();
 				}
-#if ENABLE_HUSH_FUNCTIONS
-				else {
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+				ܐܚܪܢܐ {
 					debug_printf_exec(": function '%s' '%s'...\n",
 						funcp->name, argv_expanded[1]);
 					rcode = run_function(funcp, argv_expanded) & 0xff;
@@ -10120,11 +10120,11 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				}
 #endif
 			}
-		} else
-		if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
-			int n = find_applet_by_name(argv_expanded[0]);
-			if (n < 0 || !APPLET_IS_NOFORK(n))
-				goto must_fork;
+		} ܐܚܪܢܐ
+		ܐܢ (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
+			صحيح n = find_applet_by_name(argv_expanded[0]);
+			ܐܢ (n < 0 || !APPLET_IS_NOFORK(n))
+				اذهب must_fork;
 
 			enter_var_nest_level();
 			/* Collect all variables "shadowed" by helper into old_vars list */
@@ -10132,7 +10132,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			rcode = redirect_and_varexp_helper(command, &squirrel, argv_expanded);
 			G.shadowed_vars_pp = sv_shadowed;
 
-			if (rcode == 0) {
+			ܐܢ (rcode == 0) {
 				debug_printf_exec(": run_nofork_applet '%s' '%s'...\n",
 					argv_expanded[0], argv_expanded[1]);
 				/*
@@ -10145,8 +10145,8 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				 */
 				rcode = run_nofork_applet(n, argv_expanded);
 			}
-		} else
-			goto must_fork;
+		} ܐܚܪܢܐ
+			اذهب must_fork;
 
 		restore_redirects(squirrel);
  clean_up_and_ret1:
@@ -10157,7 +10157,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		 * Try "usleep 99999999" + ^C + "echo $?"
 		 * with FEATURE_SH_NOFORK=y.
 		 */
-		if (!funcp) {
+		ܐܢ (!funcp) {
 			/* It was builtin or nofork.
 			 * if this would be a real fork/execed program,
 			 * it should have died if a fatal sig was received.
@@ -10168,14 +10168,14 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 * we aren't ok with exitcode 0 when ^C was pressed
 			 * during builtin/nofork.
 			 */
-			if (sigismember(&G.pending_set, SIGINT))
+			ܐܢ (sigismember(&G.pending_set, SIGINT))
 				rcode = 128 | SIGINT;
 		}
-		free(argv_expanded);
-		IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+		حرر(argv_expanded);
+		IF_HAS_KEYWORDS(ܐܢ (pi->pi_inverted) rcode = !rcode;)
 		debug_leave();
 		debug_printf_exec("run_pipe return %d\n", rcode);
-		return rcode;
+		ܦܢܐ rcode;
 #endif /* !__U_BOOT__ */
 	}
 
@@ -10191,15 +10191,15 @@ static NOINLINE int run_pipe(struct pipe *pi)
 #endif /* !__U_BOOT__ */
 
 	cmd_no = 0;
-	while (cmd_no < pi->num_cmds) {
+	ܟܡܐ (cmd_no < pi->num_cmds) {
 #ifndef __U_BOOT__
-		struct fd_pair pipefds;
-#if !BB_MMU
-		int sv_var_nest_level = G.var_nest_level;
-		volatile nommu_save_t nommu_save;
-		nommu_save.old_vars = NULL;
-		nommu_save.argv = NULL;
-		nommu_save.argv_from_re_execing = NULL;
+		بنية fd_pair pipefds;
+#ܐܢ !BB_MMU
+		صحيح sv_var_nest_level = G.var_nest_level;
+		متطاير nommu_save_t nommu_save;
+		nommu_save.old_vars = عدم;
+		nommu_save.argv = عدم;
+		nommu_save.argv_from_re_execing = عدم;
 #endif
 #endif /* !__U_BOOT__ */
 		command = &pi->cmds[cmd_no];
@@ -10207,7 +10207,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 
 #ifdef __U_BOOT__
 		/* Replace argv and argc by expanded if it exists. */
-		if (argv_expanded) {
+		ܐܢ (argv_expanded) {
 			/*
 			 * We need to save a pointer to argv, we will restore it
 			 * later, so it will be freed when pipe is freed.
@@ -10227,10 +10227,10 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			command->argv = argv_expanded;
 		}
 #endif /* __U_BOOT__ */
-			if (command->argv) {
+			ܐܢ (command->argv) {
 			debug_printf_exec(": pipe member '%s' '%s'...\n",
 					command->argv[0], command->argv[1]);
-		} else {
+		} ܐܚܪܢܐ {
 			debug_printf_exec(": pipe member with no argv\n");
 		}
 
@@ -10238,27 +10238,27 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		/* pipes are inserted between pairs of commands */
 		pipefds.rd = 0;
 		pipefds.wr = 1;
-		if (cmd_no < pi->num_cmds)
+		ܐܢ (cmd_no < pi->num_cmds)
 			xpiped_pair(pipefds);
 
-#if ENABLE_HUSH_LINENO_VAR
+#ܐܢ ENABLE_HUSH_LINENO_VAR
 		G.execute_lineno = command->lineno;
 #endif
 
 		command->pid = BB_MMU ? fork() : vfork();
-		if (!command->pid) { /* child */
-#if ENABLE_HUSH_JOB
+		ܐܢ (!command->pid) { /* child */
+#ܐܢ ENABLE_HUSH_JOB
 			disable_restore_tty_pgrp_on_exit();
 			CLEAR_RANDOM_T(&G.random_gen); /* or else $RANDOM repeats in child */
 
 			/* Every child adds itself to new process group
 			 * with pgid == pid_of_first_child_in_pipe */
-			if (G.run_list_level == 1 && G_interactive_fd) {
+			ܐܢ (G.run_list_level == 1 && G_interactive_fd) {
 				pid_t pgrp;
 				pgrp = pi->pgrp;
-				if (pgrp < 0) /* true for 1st process only */
+				ܐܢ (pgrp < 0) /* true for 1st process only */
 					pgrp = getpid();
-				if (setpgid(0, pgrp) == 0
+				ܐܢ (setpgid(0, pgrp) == 0
 				 && pi->followup != PIPE_BG
 				 && G_saved_tty_pgrp /* we have ctty */
 				) {
@@ -10268,24 +10268,24 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				}
 			}
 #endif
-			if (pi->alive_cmds == 0 && pi->followup == PIPE_BG) {
+			ܐܢ (pi->alive_cmds == 0 && pi->followup == PIPE_BG) {
 				/* 1st cmd in backgrounded pipe
 				 * should have its stdin /dev/null'ed */
 				close(0);
-				if (open(bb_dev_null, O_RDONLY))
+				ܐܢ (open(bb_dev_null, O_RDONLY))
 					xopen("/", O_RDONLY);
-			} else {
+			} ܐܚܪܢܐ {
 				xmove_fd(next_infd, 0);
 			}
 			xmove_fd(pipefds.wr, 1);
-			if (pipefds.rd > 1)
+			ܐܢ (pipefds.rd > 1)
 				close(pipefds.rd);
 			/* Like bash, explicit redirects override pipes,
 			 * and the pipe fd (fd#1) is available for dup'ing:
 			 * "cmd1 2>&1 | cmd2": fd#1 is duped to fd#2, thus stderr
 			 * of cmd1 goes into pipe.
 			 */
-			if (setup_redirects(command, NULL)) {
+			ܐܢ (setup_redirects(command, عدم)) {
 				/* Happens when redir file can't be opened:
 				 * $ hush -c 'echo FOO >&2 | echo BAR 3>/qwe/rty; echo BAZ'
 				 * FOO
@@ -10304,51 +10304,51 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		}
 
 		/* parent or error */
-#if ENABLE_HUSH_FAST
+#ܐܢ ENABLE_HUSH_FAST
 		G.count_SIGCHLD++;
 //bb_error_msg("[%d] fork in run_pipe: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 #endif
 		enable_restore_tty_pgrp_on_exit();
-#if !BB_MMU
+#ܐܢ !BB_MMU
 		/* Clean up after vforked child */
-		free(nommu_save.argv);
-		free(nommu_save.argv_from_re_execing);
+		حرر(nommu_save.argv);
+		حرر(nommu_save.argv_from_re_execing);
 		G.var_nest_level = sv_var_nest_level;
 		remove_nested_vars();
 		add_vars(nommu_save.old_vars);
 #endif
-		free(argv_expanded);
-		argv_expanded = NULL;
-		if (command->pid < 0) { /* [v]fork failed */
+		حرر(argv_expanded);
+		argv_expanded = عدم;
+		ܐܢ (command->pid < 0) { /* [v]fork failed */
 			/* Clearly indicate, was it fork or vfork */
 			bb_simple_perror_msg(BB_MMU ? "vfork"+1 : "vfork");
-		} else {
+		} ܐܚܪܢܐ {
 			pi->alive_cmds++;
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 			/* Second and next children need to know pid of first one */
-			if (pi->pgrp < 0)
+			ܐܢ (pi->pgrp < 0)
 				pi->pgrp = command->pid;
 #endif
 		}
 
-		if (cmd_no > 1)
+		ܐܢ (cmd_no > 1)
 			close(next_infd);
-		if (cmd_no < pi->num_cmds)
+		ܐܢ (cmd_no < pi->num_cmds)
 			close(pipefds.wr);
 		/* Pass read (output) pipe end to next iteration */
 		next_infd = pipefds.rd;
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 		/* Process the command */
 		rcode = cmd_process(G.do_repeat ? CMD_FLAG_REPEAT : 0,
 				    command->argc, command->argv,
-				    &(G.flag_repeat), NULL);
+				    &(G.flag_repeat), عدم);
 
-		if (argv_expanded) {
+		ܐܢ (argv_expanded) {
 			/*
 			 * expand_strvec_to_strvec() allocates memory to expand
 			 * argv, we need to free it.
 			 */
-			free(argv_expanded);
+			حرر(argv_expanded);
 
 			/*
 			 * We also restore command->argv to its original value
@@ -10365,44 +10365,44 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	}
 
 #ifndef __U_BOOT__
-	if (!pi->alive_cmds) {
+	ܐܢ (!pi->alive_cmds) {
 		debug_leave();
 		debug_printf_exec("run_pipe return 1 (all forks failed, no children)\n");
-		return 1;
+		ܦܢܐ 1;
 	}
 #endif /* __U_BOOT__ */
 
 	debug_leave();
 #ifndef __U_BOOT__
 	debug_printf_exec("run_pipe return -1 (%u children started)\n", pi->alive_cmds);
-	return -1;
-#else /* __U_BOOT__ */
-	IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+	ܦܢܐ -1;
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	IF_HAS_KEYWORDS(ܐܢ (pi->pi_inverted) rcode = !rcode;)
 	debug_printf_exec("run_pipe return %d\n", rcode);
-	return rcode;
+	ܦܢܐ rcode;
 #endif /* __U_BOOT__ */
 }
 
 /* NB: called by pseudo_exec, and therefore must not modify any
  * global data until exec/_exit (we can be a child after vfork!) */
-static int run_list(struct pipe *pi)
+ساكن صحيح run_list(بنية pipe *pi)
 {
-#if ENABLE_HUSH_CASE
-	char *case_word = NULL;
+#ܐܢ ENABLE_HUSH_CASE
+	حرف *case_word = عدم;
 #endif
-#if ENABLE_HUSH_LOOPS
-	struct pipe *loop_top = NULL;
-	char **for_lcur = NULL;
-	char **for_list = NULL;
+#ܐܢ ENABLE_HUSH_LOOPS
+	بنية pipe *loop_top = عدم;
+	حرف **for_lcur = عدم;
+	حرف **for_list = عدم;
 #endif
 	smallint last_followup;
 	smalluint rcode;
-#if ENABLE_HUSH_IF || ENABLE_HUSH_CASE
+#ܐܢ ENABLE_HUSH_IF || ENABLE_HUSH_CASE
 	smalluint cond_code = 0;
-#else
-	enum { cond_code = 0 };
+#ܐܚܪܢܐ
+	تعداد { cond_code = 0 };
 #endif
-#if HAS_KEYWORDS
+#ܐܢ HAS_KEYWORDS
 	smallint rword;      /* RES_foo */
 	smallint last_rword; /* ditto */
 #endif
@@ -10414,31 +10414,31 @@ static int run_list(struct pipe *pi)
 
 	set_G_ifs();
 
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 	/* Check syntax for "for" */
 	{
-		struct pipe *cpipe;
-		for (cpipe = pi; cpipe; cpipe = cpipe->next) {
-			if (cpipe->res_word != RES_FOR && cpipe->res_word != RES_IN)
-				continue;
+		بنية pipe *cpipe;
+		لكل (cpipe = pi; cpipe; cpipe = cpipe->next) {
+			ܐܢ (cpipe->res_word != RES_FOR && cpipe->res_word != RES_IN)
+				استمر;
 			/* current word is FOR or IN (BOLD in comments below) */
-			if (cpipe->next == NULL) {
+			ܐܢ (cpipe->next == عدم) {
 				syntax_error("malformed for");
 				debug_leave();
 				debug_printf_exec("run_list lvl %d return 1\n", G.run_list_level);
-				return 1;
+				ܦܢܐ 1;
 			}
 			/* "FOR v; do ..." and "for v IN a b; do..." are ok */
-			if (cpipe->next->res_word == RES_DO)
-				continue;
+			ܐܢ (cpipe->next->res_word == RES_DO)
+				استمر;
 			/* next word is not "do". It must be "in" then ("FOR v in ...") */
-			if (cpipe->res_word == RES_IN /* "for v IN a b; not_do..."? */
+			ܐܢ (cpipe->res_word == RES_IN /* "for v IN a b; not_do..."? */
 			 || cpipe->next->res_word != RES_IN /* FOR v not_do_and_not_in..."? */
 			) {
 				syntax_error("malformed for");
 				debug_leave();
 				debug_printf_exec("run_list lvl %d return 1\n", G.run_list_level);
-				return 1;
+				ܦܢܐ 1;
 			}
 		}
 	}
@@ -10448,11 +10448,11 @@ static int run_list(struct pipe *pi)
 	 * in order to return, no direct "return" statements please.
 	 * This helps to ensure that no memory is leaked. */
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	G.run_list_level++;
 #endif
 
-#if HAS_KEYWORDS
+#ܐܢ HAS_KEYWORDS
 	rword = RES_NONE;
 	last_rword = RES_XXXX;
 #endif
@@ -10461,18 +10461,18 @@ static int run_list(struct pipe *pi)
 
 	/* Go through list of pipes, (maybe) executing them. */
 #ifndef __U_BOOT__
-	for (; pi; pi = IF_HUSH_LOOPS(rword == RES_DONE ? loop_top : ) pi->next) {
-#else /* __U_BOOT__ */
-	for (; pi; pi = rword == RES_DONE ? loop_top : pi->next) {
+	لكل (; pi; pi = IF_HUSH_LOOPS(rword == RES_DONE ? loop_top : ) pi->next) {
+#ܐܚܪܢܐ /* __U_BOOT__ */
+	لكل (; pi; pi = rword == RES_DONE ? loop_top : pi->next) {
 #endif /* __U_BOOT__ */
-		int r;
-		int sv_errexit_depth;
+		صحيح r;
+		صحيح sv_errexit_depth;
 
 #ifndef __U_BOOT__
-		if (G.flag_SIGINT)
-			break;
-		if (G_flag_return_in_progress == 1)
-			break;
+		ܐܢ (G.flag_SIGINT)
+			اكسر;
+		ܐܢ (G_flag_return_in_progress == 1)
+			اكسر;
 #endif /* !__U_BOOT__ */
 
 		IF_HAS_KEYWORDS(rword = pi->res_word;)
@@ -10480,17 +10480,17 @@ static int run_list(struct pipe *pi)
 				rword, cond_code, last_rword);
 
 		sv_errexit_depth = G.errexit_depth;
-		if (
-#if ENABLE_HUSH_IF
+		ܐܢ (
+#ܐܢ ENABLE_HUSH_IF
 		    rword == RES_IF || rword == RES_ELIF ||
 #endif
 		    pi->followup != PIPE_SEQ
 		) {
 			G.errexit_depth++;
 		}
-#if ENABLE_HUSH_LOOPS
-		if ((rword == RES_WHILE || rword == RES_UNTIL || rword == RES_FOR)
-		 && loop_top == NULL /* avoid bumping G.depth_of_loop twice */
+#ܐܢ ENABLE_HUSH_LOOPS
+		ܐܢ ((rword == RES_WHILE || rword == RES_UNTIL || rword == RES_FOR)
+		 && loop_top == عدم /* avoid bumping G.depth_of_loop twice */
 		) {
 			/* start of a loop: remember where loop starts */
 			loop_top = pi;
@@ -10498,61 +10498,61 @@ static int run_list(struct pipe *pi)
 		}
 #endif
 		/* Still in the same "if...", "then..." or "do..." branch? */
-		if (IF_HAS_KEYWORDS(rword == last_rword &&) 1) {
-			if ((rcode == 0 && last_followup == PIPE_OR)
+		ܐܢ (IF_HAS_KEYWORDS(rword == last_rword &&) 1) {
+			ܐܢ ((rcode == 0 && last_followup == PIPE_OR)
 			 || (rcode != 0 && last_followup == PIPE_AND)
 			) {
 				/* It is "<true> || CMD" or "<false> && CMD"
 				 * and we should not execute CMD */
 				debug_printf_exec("skipped cmd because of || or &&\n");
 				last_followup = pi->followup;
-				goto dont_check_jobs_but_continue;
+				اذهب dont_check_jobs_but_continue;
 			}
 		}
 		last_followup = pi->followup;
-#if ENABLE_HUSH_IF
-		if (cond_code != 0) {
-			if (rword == RES_THEN) {
+#ܐܢ ENABLE_HUSH_IF
+		ܐܢ (cond_code != 0) {
+			ܐܢ (rword == RES_THEN) {
 				/* if false; then ... fi has exitcode 0! */
 				G.last_exitcode = rcode = EXIT_SUCCESS;
 				/* "if <false> THEN cmd": skip cmd */
 				debug_printf_exec("skipped THEN cmd because IF condition was false\n");
 				last_rword = rword;
-				continue;
+				استمر;
 			}
-		} else {
-			if (rword == RES_ELSE
+		} ܐܚܪܢܐ {
+			ܐܢ (rword == RES_ELSE
 			 || (rword == RES_ELIF && last_rword != RES_ELIF)
 			) {
 				/* "if <true> then ... ELSE/ELIF cmd":
 				 * skip cmd and all following ones */
 				debug_printf_exec("skipped ELSE/ELIF branch because IF condition was true\n");
-				break;
+				اكسر;
 			}
 			//if (rword == RES_THEN): "if <true> THEN cmd", run cmd (fall through)
 		}
 #endif
 		IF_HAS_KEYWORDS(last_rword = rword;)
-#if ENABLE_HUSH_LOOPS
-		if (rword == RES_FOR) { /* && pi->num_cmds - always == 1 */
-			if (!for_lcur) {
+#ܐܢ ENABLE_HUSH_LOOPS
+		ܐܢ (rword == RES_FOR) { /* && pi->num_cmds - always == 1 */
+			ܐܢ (!for_lcur) {
 				/* first loop through for */
 
-				static const char encoded_dollar_at[] ALIGN1 = {
+				ساكن ثابت حرف encoded_dollar_at[] ALIGN1 = {
 					SPECIAL_VAR_SYMBOL, '@' | 0x80, SPECIAL_VAR_SYMBOL, '\0'
 				}; /* encoded representation of "$@" */
-				static const char *const encoded_dollar_at_argv[] ALIGN_PTR = {
-					encoded_dollar_at, NULL
+				ساكن ثابت حرف *ثابت encoded_dollar_at_argv[] ALIGN_PTR = {
+					encoded_dollar_at, عدم
 				}; /* argv list with one element: "$@" */
-				char **vals;
+				حرف **vals;
 
 				G.last_exitcode = rcode = EXIT_SUCCESS;
-				vals = (char**)encoded_dollar_at_argv;
-				if (pi->next->res_word == RES_IN) {
+				vals = (حرف**)encoded_dollar_at_argv;
+				ܐܢ (pi->next->res_word == RES_IN) {
 					/* if no variable values after "in" we skip "for" */
-					if (!pi->next->cmds[0].argv) {
+					ܐܢ (!pi->next->cmds[0].argv) {
 						debug_printf_exec(": null FOR: exitcode EXIT_SUCCESS\n");
-						break;
+						اكسر;
 					}
 					vals = pi->next->cmds[0].argv;
 				} /* else: "for var; do..." -> assume "$@" list */
@@ -10562,22 +10562,22 @@ static int run_list(struct pipe *pi)
 				for_lcur = for_list;
 				debug_print_strings("for_list", for_list);
 			}
-			if (!*for_lcur) {
+			ܐܢ (!*for_lcur) {
 				/* "for" loop is over, clean up */
-				free(for_list);
-				for_list = NULL;
-				for_lcur = NULL;
-				break;
+				حرر(for_list);
+				for_list = عدم;
+				for_lcur = عدم;
+				اكسر;
 			}
 			/* Insert next value from for_lcur */
 			/* note: *for_lcur already has quotes removed, $var expanded, etc */
 #ifndef __U_BOOT__
 			set_local_var_from_halves(pi->cmds[0].argv[0], *for_lcur++);
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 			/* We cannot use xasprintf, so we emulate it. */
-			char *full_var;
-			char *var = pi->cmds[0].argv[0];
-			char *val = *for_lcur++;
+			حرف *full_var;
+			حرف *var = pi->cmds[0].argv[0];
+			حرف *val = *for_lcur++;
 
 			/* + 1 to take into account =. */
 			full_var = xmalloc(strlen(var) + strlen(val) + 1);
@@ -10585,35 +10585,35 @@ static int run_list(struct pipe *pi)
 
 			set_local_var_modern(full_var, /*flag:*/ 0);
 #endif /* __U_BOOT__ */
-			continue;
+			استمر;
 		}
-		if (rword == RES_IN) {
-			continue; /* "for v IN list;..." - "in" has no cmds anyway */
+		ܐܢ (rword == RES_IN) {
+			استمر; /* "for v IN list;..." - "in" has no cmds anyway */
 		}
-		if (rword == RES_DONE) {
-			continue; /* "done" has no cmds too */
+		ܐܢ (rword == RES_DONE) {
+			استمر; /* "done" has no cmds too */
 		}
 #endif
-#if ENABLE_HUSH_CASE
-		if (rword == RES_CASE) {
+#ܐܢ ENABLE_HUSH_CASE
+		ܐܢ (rword == RES_CASE) {
 			debug_printf_exec("CASE cond_code:%d\n", cond_code);
 			case_word = expand_string_to_string(pi->cmds->argv[0],
 				EXP_FLAG_ESC_GLOB_CHARS, /*unbackslash:*/ 1);
 			debug_printf_exec("CASE word1:'%s'\n", case_word);
 			//unbackslash(case_word);
 			//debug_printf_exec("CASE word2:'%s'\n", case_word);
-			continue;
+			استمر;
 		}
-		if (rword == RES_MATCH) {
-			char **argv;
+		ܐܢ (rword == RES_MATCH) {
+			حرف **argv;
 
 			debug_printf_exec("MATCH cond_code:%d\n", cond_code);
-			if (!case_word) /* "case ... matched_word) ... WORD)": we executed selected branch, stop */
-				break;
+			ܐܢ (!case_word) /* "case ... matched_word) ... WORD)": we executed selected branch, stop */
+				اكسر;
 			/* all prev words didn't match, does this one match? */
 			argv = pi->cmds->argv;
-			while (*argv) {
-				char *pattern;
+			ܟܡܐ (*argv) {
+				حرف *pattern;
 				debug_printf_exec("expand_string_to_string('%s')\n", *argv);
 				pattern = expand_string_to_string(*argv,
 						EXP_FLAG_ESC_GLOB_CHARS,
@@ -10623,25 +10623,25 @@ static int run_list(struct pipe *pi)
 				cond_code = (fnmatch(pattern, case_word, /*flags:*/ 0) != 0);
 				debug_printf_exec("cond_code=fnmatch(pattern:'%s',str:'%s'):%d\n",
 						pattern, case_word, cond_code);
-				free(pattern);
-				if (cond_code == 0) {
+				حرر(pattern);
+				ܐܢ (cond_code == 0) {
 					/* match! we will execute this branch */
-					free(case_word);
-					case_word = NULL; /* make future "word)" stop */
-					break;
+					حرر(case_word);
+					case_word = عدم; /* make future "word)" stop */
+					اكسر;
 				}
 				argv++;
 			}
-			continue;
+			استمر;
 		}
-		if (rword == RES_CASE_BODY) { /* inside of a case branch */
+		ܐܢ (rword == RES_CASE_BODY) { /* inside of a case branch */
 			debug_printf_exec("CASE_BODY cond_code:%d\n", cond_code);
-			if (cond_code != 0)
-				continue; /* not matched yet, skip this pipe */
+			ܐܢ (cond_code != 0)
+				استمر; /* not matched yet, skip this pipe */
 		}
-		if (rword == RES_ESAC) {
+		ܐܢ (rword == RES_ESAC) {
 			debug_printf_exec("ESAC cond_code:%d\n", cond_code);
-			if (case_word) {
+			ܐܢ (case_word) {
 				/* "case" did not match anything: still set $? (to 0) */
 				G.last_exitcode = rcode = EXIT_SUCCESS;
 			}
@@ -10650,12 +10650,12 @@ static int run_list(struct pipe *pi)
 		/* Just pressing <enter> in shell should check for jobs.
 		 * OTOH, in non-interactive shell this is useless
 		 * and only leads to extra job checks */
-		if (pi->num_cmds == 0) {
+		ܐܢ (pi->num_cmds == 0) {
 #ifndef __U_BOOT__
-			if (G_interactive_fd)
-				goto check_jobs_and_continue;
+			ܐܢ (G_interactive_fd)
+				اذهب check_jobs_and_continue;
 #endif /* !__U_BOOT__ */
-			continue;
+			استمر;
 		}
 
 		/* After analyzing all keywords and conditions, we decided
@@ -10664,17 +10664,17 @@ static int run_list(struct pipe *pi)
 		 * even if list execution is to be stopped. */
 		debug_printf_exec(": run_pipe with %d members\n", pi->num_cmds);
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 		G.flag_break_continue = 0;
 #endif
 #endif /* !__U_BOOT__ */
 #ifndef __U_BOOT__
 		rcode = r = G.o_opt[OPT_O_NOEXEC] ? 0 : run_pipe(pi);
 		/* NB: rcode is a smalluint, r is int */
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 		rcode = r = run_pipe(pi); /* NB: rcode is a smalluint, r is int */
-		if (r <= EXIT_RET_CODE) {
-			int previous_rcode = G.last_exitcode;
+		ܐܢ (r <= EXIT_RET_CODE) {
+			صحيح previous_rcode = G.last_exitcode;
 			/*
 			 * This magic is to get the exit code given by the user.
 			 * Contrary to old shell code, we use + EXIT_RET_CODE as EXIT_RET_CODE
@@ -10693,20 +10693,20 @@ static int run_list(struct pipe *pi)
 			 * As return code are propagated, we use the previous value to check if
 			 * exit was just called or was propagated.
 			 */
-			if (previous_rcode != r) {
+			ܐܢ (previous_rcode != r) {
 				/*
 				 * If run from run_command, run_command_flags will be set, so we check
 				 * this to know if we are in main input shell.
 				 */
-				if (!G.run_command_flags)
+				ܐܢ (!G.run_command_flags)
 					printf("exit not allowed from main input shell.\n");
 
-				break;
+				اكسر;
 			}
-			continue;
+			استمر;
 		}
 #endif /* __U_BOOT__ */
-		if (r != -1) {
+		ܐܢ (r != -1) {
 			/* We ran a builtin, function, or group.
 			 * rcode is already known
 			 * and we don't need to wait for anything. */
@@ -10715,43 +10715,43 @@ static int run_list(struct pipe *pi)
 #ifndef __U_BOOT__
 			check_and_run_traps();
 #endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
 			rcode = G.last_exitcode; /* "return" in trap can change it, read back */
 #endif
 #ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 			/* Was it "break" or "continue"? */
-			if (G.flag_break_continue) {
+			ܐܢ (G.flag_break_continue) {
 				smallint fbc = G.flag_break_continue;
 				/* We might fall into outer *loop*,
 				 * don't want to break it too */
-				if (loop_top) {
+				ܐܢ (loop_top) {
 					G.depth_break_continue--;
-					if (G.depth_break_continue == 0)
+					ܐܢ (G.depth_break_continue == 0)
 						G.flag_break_continue = 0;
 					/* else: e.g. "continue 2" should *break* once, *then* continue */
 				} /* else: "while... do... { we are here (innermost list is not a loop!) };...done" */
-				if (G.depth_break_continue != 0 || fbc == BC_BREAK) {
-					checkjobs(NULL, 0 /*(no pid to wait for)*/);
-					break;
+				ܐܢ (G.depth_break_continue != 0 || fbc == BC_BREAK) {
+					checkjobs(عدم, 0 /*(no pid to wait for)*/);
+					اكسر;
 				}
 				/* "continue": simulate end of loop */
 				rword = RES_DONE;
-				continue;
+				استمر;
 			}
 #endif
-			if (G_flag_return_in_progress == 1) {
-				checkjobs(NULL, 0 /*(no pid to wait for)*/);
-				break;
+			ܐܢ (G_flag_return_in_progress == 1) {
+				checkjobs(عدم, 0 /*(no pid to wait for)*/);
+				اكسر;
 			}
 
-		} else if (pi->followup == PIPE_BG) {
+		} ܐܚܪܢܐ ܐܢ (pi->followup == PIPE_BG) {
 			/* What does bash do with attempts to background builtins? */
 			/* even bash 3.2 doesn't do that well with nested bg:
 			 * try "{ { sleep 10; echo DEEP; } & echo HERE; } &".
 			 * I'm NOT treating inner &'s as jobs */
-#if ENABLE_HUSH_JOB
-			if (G.run_list_level == 1)
+#ܐܢ ENABLE_HUSH_JOB
+			ܐܢ (G.run_list_level == 1)
 				insert_job_into_table(pi);
 #endif
 			/* Last command's pid goes to $! */
@@ -10760,14 +10760,14 @@ static int run_list(struct pipe *pi)
 			debug_printf_exec(": cmd&: exitcode EXIT_SUCCESS\n");
 /* Check pi->pi_inverted? "! sleep 1 & echo $?": bash says 1. dash and ash say 0 */
 			rcode = EXIT_SUCCESS;
-			goto check_traps;
-		} else {
-#if ENABLE_HUSH_JOB
-			if (G.run_list_level == 1 && G_interactive_fd) {
+			اذهب check_traps;
+		} ܐܚܪܢܐ {
+#ܐܢ ENABLE_HUSH_JOB
+			ܐܢ (G.run_list_level == 1 && G_interactive_fd) {
 				/* Waits for completion, then fg's main shell */
 				rcode = checkjobs_and_fg_shell(pi);
 				debug_printf_exec(": checkjobs_and_fg_shell exitcode %d\n", rcode);
-				goto check_traps;
+				اذهب check_traps;
 			}
 #endif
 			/* This one just waits for completion */
@@ -10776,7 +10776,7 @@ static int run_list(struct pipe *pi)
  check_traps:
 			G.last_exitcode = rcode;
 			check_and_run_traps();
-#if ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
 			rcode = G.last_exitcode; /* "return" in trap can change it, read back */
 #endif
 		}
@@ -10784,77 +10784,77 @@ static int run_list(struct pipe *pi)
 
 #ifndef __U_BOOT__
 		/* Handle "set -e" */
-		if (rcode != 0 && G.o_opt[OPT_O_ERREXIT]) {
+		ܐܢ (rcode != 0 && G.o_opt[OPT_O_ERREXIT]) {
 			debug_printf_exec("ERREXIT:1 errexit_depth:%d\n", G.errexit_depth);
-			if (G.errexit_depth == 0)
+			ܐܢ (G.errexit_depth == 0)
 				hush_exit(rcode);
 		}
-#else /* __U_BOOT__ */
+#ܐܚܪܢܐ /* __U_BOOT__ */
 		} /* if (r != -1) */
 #endif /* __U_BOOT__ */
 		G.errexit_depth = sv_errexit_depth;
 
 		/* Analyze how result affects subsequent commands */
-#if ENABLE_HUSH_IF
-		if (rword == RES_IF || rword == RES_ELIF) {
+#ܐܢ ENABLE_HUSH_IF
+		ܐܢ (rword == RES_IF || rword == RES_ELIF) {
 			debug_printf_exec("cond_code=rcode:%d\n", rcode);
 			cond_code = rcode;
 		}
 #endif
 #ifndef __U_BOOT__
  check_jobs_and_continue:
-		checkjobs(NULL, 0 /*(no pid to wait for)*/);
+		checkjobs(عدم, 0 /*(no pid to wait for)*/);
 #endif /* !__U_BOOT__ */
  dont_check_jobs_but_continue: ;
-#if ENABLE_HUSH_LOOPS
+#ܐܢ ENABLE_HUSH_LOOPS
 		/* Beware of "while false; true; do ..."! */
-		if (pi->next
+		ܐܢ (pi->next
 		 && (pi->next->res_word == RES_DO || pi->next->res_word == RES_DONE)
 		 /* check for RES_DONE is needed for "while ...; do \n done" case */
 		) {
-			if (rword == RES_WHILE) {
-				if (rcode) {
+			ܐܢ (rword == RES_WHILE) {
+				ܐܢ (rcode) {
 					/* "while false; do...done" - exitcode 0 */
 					G.last_exitcode = rcode = EXIT_SUCCESS;
 					debug_printf_exec(": while expr is false: breaking (exitcode:EXIT_SUCCESS)\n");
-					break;
+					اكسر;
 				}
 			}
-			if (rword == RES_UNTIL) {
-				if (!rcode) {
+			ܐܢ (rword == RES_UNTIL) {
+				ܐܢ (!rcode) {
 					debug_printf_exec(": until expr is true: breaking\n");
-					break;
+					اكسر;
 				}
 			}
 		}
 #endif
 	} /* for (pi) */
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 	G.run_list_level--;
 #endif
-#if ENABLE_HUSH_LOOPS
-	if (loop_top)
+#ܐܢ ENABLE_HUSH_LOOPS
+	ܐܢ (loop_top)
 		G.depth_of_loop--;
-	free(for_list);
+	حرر(for_list);
 #endif
-#if ENABLE_HUSH_CASE
-	free(case_word);
+#ܐܢ ENABLE_HUSH_CASE
+	حرر(case_word);
 #endif
 #ifndef __U_BOOT__
 	debug_leave();
 	debug_printf_exec("run_list lvl %d return %d\n", G.run_list_level, rcode);
 #endif /* !__U_BOOT__ */
-	return rcode;
+	ܦܢܐ rcode;
 }
 
 /* Select which version we will use */
-static int run_and_free_list(struct pipe *pi)
+ساكن صحيح run_and_free_list(بنية pipe *pi)
 {
-	int rcode = 0;
+	صحيح rcode = 0;
 	debug_printf_exec("run_and_free_list entered\n");
 #ifndef __U_BOOT__
-	if (!G.o_opt[OPT_O_NOEXEC]) {
+	ܐܢ (!G.o_opt[OPT_O_NOEXEC]) {
 #endif /* !__U_BOOT__ */
 		debug_printf_exec(": run_list: 1st pipe with %d cmds\n", pi->num_cmds);
 		rcode = run_list(pi);
@@ -10866,40 +10866,40 @@ static int run_and_free_list(struct pipe *pi)
 	 * but doing that now would hobble the debugging effort. */
 	free_pipe_list(pi);
 	debug_printf_exec("run_and_free_list return %d\n", rcode);
-	return rcode;
+	ܦܢܐ rcode;
 }
 
 #ifndef __U_BOOT__
-static void install_sighandlers(unsigned mask)
+ساكن فراغ install_sighandlers(unsigned mask)
 {
 	sighandler_t old_handler;
 	unsigned sig = 0;
-	while ((mask >>= 1) != 0) {
+	ܟܡܐ ((mask >>= 1) != 0) {
 		sig++;
-		if (!(mask & 1))
-			continue;
+		ܐܢ (!(mask & 1))
+			استمر;
 		old_handler = install_sighandler(sig, pick_sighandler(sig));
 		/* POSIX allows shell to re-enable SIGCHLD
 		 * even if it was SIG_IGN on entry.
 		 * Therefore we skip IGN check for it:
 		 */
-		if (sig == SIGCHLD)
-			continue;
+		ܐܢ (sig == SIGCHLD)
+			استمر;
 		/* Interactive bash re-enables SIGHUP which is SIG_IGNed on entry.
 		 * Try:
 		 * trap '' hup; bash; echo RET  # type "kill -hup $$", see SIGHUP having effect
 		 * trap '' hup; bash -c 'kill -hup $$; echo ALIVE'  # here SIGHUP is SIG_IGNed
 		 */
-		if (sig == SIGHUP && G_interactive_fd)
-			continue;
+		ܐܢ (sig == SIGHUP && G_interactive_fd)
+			استمر;
 		/* Unless one of the above signals, is it SIG_IGN? */
-		if (old_handler == SIG_IGN) {
+		ܐܢ (old_handler == SIG_IGN) {
 			/* oops... restore back to IGN, and record this fact */
 			install_sighandler(sig, old_handler);
-#if ENABLE_HUSH_TRAP
-			if (!G_traps)
-				G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
-			free(G_traps[sig]);
+#ܐܢ ENABLE_HUSH_TRAP
+			ܐܢ (!G_traps)
+				G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
+			حرر(G_traps[sig]);
 			G_traps[sig] = xzalloc(1); /* == xstrdup(""); */
 #endif
 		}
@@ -10907,29 +10907,29 @@ static void install_sighandlers(unsigned mask)
 }
 
 /* Called a few times only (or even once if "sh -c") */
-static void install_special_sighandlers(void)
+ساكن فراغ install_special_sighandlers(فراغ)
 {
 	unsigned mask;
 
 	/* Which signals are shell-special? */
 	mask = (1 << SIGQUIT) | (1 << SIGCHLD);
-	if (G_interactive_fd) {
+	ܐܢ (G_interactive_fd) {
 		mask |= SPECIAL_INTERACTIVE_SIGS;
-		if (G_saved_tty_pgrp) /* we have ctty, job control sigs work */
+		ܐܢ (G_saved_tty_pgrp) /* we have ctty, job control sigs work */
 			mask |= SPECIAL_JOBSTOP_SIGS;
 	}
 	/* Careful, do not re-install handlers we already installed */
-	if (G.special_sig_mask != mask) {
+	ܐܢ (G.special_sig_mask != mask) {
 		unsigned diff = mask & ~G.special_sig_mask;
 		G.special_sig_mask = mask;
 		install_sighandlers(diff);
 	}
 }
 
-#if ENABLE_HUSH_JOB
+#ܐܢ ENABLE_HUSH_JOB
 /* helper */
 /* Set handlers to restore tty pgrp and exit */
-static void install_fatal_sighandlers(void)
+ساكن فراغ install_fatal_sighandlers(فراغ)
 {
 	unsigned mask;
 
@@ -10958,25 +10958,25 @@ static void install_fatal_sighandlers(void)
 }
 #endif
 
-static int set_mode(int state, char mode, const char *o_opt)
+ساكن صحيح set_mode(صحيح state, حرف mode, ثابت حرف *o_opt)
 {
-	int idx;
-	switch (mode) {
-	case 'n':
+	صحيح idx;
+	بدل (mode) {
+	حالة 'n':
 		/* set -n has no effect in interactive shell */
 		/* Try: while set -n; do echo $-; done */
-		if (!G_interactive_fd)
+		ܐܢ (!G_interactive_fd)
 			G.o_opt[OPT_O_NOEXEC] = state;
-		break;
-	case 'x':
+		اكسر;
+	حالة 'x':
 		IF_HUSH_MODE_X(G_x_mode = state;)
-		IF_HUSH_MODE_X(if (G.x_mode_fd <= 0) G.x_mode_fd = dup_CLOEXEC(2, 10);)
-		break;
-	case 'e':
+		IF_HUSH_MODE_X(ܐܢ (G.x_mode_fd <= 0) G.x_mode_fd = dup_CLOEXEC(2, 10);)
+		اكسر;
+	حالة 'e':
 		G.o_opt[OPT_O_ERREXIT] = state;
-		break;
-	case 'o':
-		if (!o_opt) {
+		اكسر;
+	حالة 'o':
+		ܐܢ (!o_opt) {
 			/* "set -o" or "set +o" without parameter.
 			 * in bash, set -o produces this output:
 			 *  pipefail        off
@@ -10984,51 +10984,51 @@ static int set_mode(int state, char mode, const char *o_opt)
 			 *  set +o pipefail
 			 * We always use the second form.
 			 */
-			const char *p = o_opt_strings;
+			ثابت حرف *p = o_opt_strings;
 			idx = 0;
-			while (*p) {
+			ܟܡܐ (*p) {
 				printf("set %co %s\n", (G.o_opt[idx] ? '-' : '+'), p);
 				idx++;
 				p += strlen(p) + 1;
 			}
-			break;
+			اكسر;
 		}
 		idx = index_in_strings(o_opt_strings, o_opt);
-		if (idx >= 0) {
+		ܐܢ (idx >= 0) {
 			G.o_opt[idx] = state;
-			break;
+			اكسر;
 		}
 		/* fall through to error */
-	default:
-		return EXIT_FAILURE;
+	افتراضي:
+		ܦܢܐ EXIT_FAILURE;
 	}
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 
-int hush_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int hush_main(int argc, char **argv)
+صحيح hush_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح hush_main(صحيح argc, حرف **argv)
 {
 	pid_t cached_getpid;
-	enum {
+	تعداد {
 		OPT_login = (1 << 0),
 	};
 	unsigned flags;
-#if !BB_MMU
+#ܐܢ !BB_MMU
 	unsigned builtin_argc = 0;
 #endif
-	char **e;
-	struct variable *cur_var;
-	struct variable *shell_ver;
+	حرف **e;
+	بنية variable *cur_var;
+	بنية variable *shell_ver;
 
 	INIT_G();
-	if (EXIT_SUCCESS != 0) /* if EXIT_SUCCESS == 0, it is already done */
+	ܐܢ (EXIT_SUCCESS != 0) /* if EXIT_SUCCESS == 0, it is already done */
 		G.last_exitcode = EXIT_SUCCESS;
-#if !BB_MMU
+#ܐܢ !BB_MMU
 	/* "Big heredoc" support via "sh -< STRING" invocation.
 	 * Check it first (do not bother to run the usual init code,
 	 * it is not needed for this case).
 	 */
-	if (argv[1]
+	ܐܢ (argv[1]
 	 && argv[1][0] == '-' && argv[1][1] == '<' /*&& !argv[1][2]*/
 	 /*&& argv[2] && !argv[3] - we don't check some conditions */
 	) {
@@ -11037,14 +11037,14 @@ int hush_main(int argc, char **argv)
 	}
 	G.argv0_for_re_execing = argv[0];
 #endif
-#if ENABLE_HUSH_TRAP
-# if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_TRAP
+# ܐܢ ENABLE_HUSH_FUNCTIONS
 	G.return_exitcode = -1;
 # endif
 	G.pre_trap_exitcode = -1;
 #endif
 
-#if ENABLE_HUSH_FAST
+#ܐܢ ENABLE_HUSH_FAST
 	G.count_SIGCHLD++; /* ensure it is != G.handled_SIGCHLD */
 #endif
 
@@ -11055,7 +11055,7 @@ int hush_main(int argc, char **argv)
 	/* Deal with HUSH_VERSION */
 	debug_printf_env("unsetenv '%s'\n", "HUSH_VERSION");
 	unsetenv("HUSH_VERSION"); /* in case it exists in initial env */
-	shell_ver = xzalloc(sizeof(*shell_ver));
+	shell_ver = xzalloc(حجم(*shell_ver));
 	shell_ver->flg_export = 1;
 	shell_ver->flg_read_only = 1;
 	/* Code which handles ${var<op>...} needs writable values for all variables,
@@ -11067,10 +11067,10 @@ int hush_main(int argc, char **argv)
 	G.top_var = shell_ver;
 	cur_var = G.top_var;
 	e = environ;
-	if (e) while (*e) {
-		char *value = strchr(*e, '=');
-		if (value) { /* paranoia */
-			cur_var->next = xzalloc(sizeof(*cur_var));
+	ܐܢ (e) ܟܡܐ (*e) {
+		حرف *value = strchr(*e, '=');
+		ܐܢ (value) { /* paranoia */
+			cur_var->next = xzalloc(حجم(*cur_var));
 			cur_var = cur_var->next;
 			cur_var->varstr = *e;
 			cur_var->max_len = strlen(*e);
@@ -11085,10 +11085,10 @@ int hush_main(int argc, char **argv)
 	/* Export PWD */
 	set_pwd_var(SETFLAG_EXPORT);
 
-#if BASH_HOSTNAME_VAR
+#ܐܢ BASH_HOSTNAME_VAR
 	/* Set (but not export) HOSTNAME unless already set */
-	if (!get_local_var_value("HOSTNAME")) {
-		struct utsname uts;
+	ܐܢ (!get_local_var_value("HOSTNAME")) {
+		بنية utsname uts;
 		uname(&uts);
 		set_local_var_from_halves("HOSTNAME", uts.nodename);
 	}
@@ -11096,7 +11096,7 @@ int hush_main(int argc, char **argv)
 	/* IFS is not inherited from the parent environment */
 	set_local_var_from_halves("IFS", defifs);
 
-	if (!get_local_var_value("PATH"))
+	ܐܢ (!get_local_var_value("PATH"))
 		set_local_var_from_halves("PATH", bb_default_root_path);
 
 	/* PS1/PS2 are set later, if we determine that we are interactive */
@@ -11134,14 +11134,14 @@ int hush_main(int argc, char **argv)
 	 * PS4='+ '
 	 */
 
-#if NUM_SCRIPTS > 0
-	if (argc < 0) {
-		char *script = get_script_content(-argc - 1);
+#ܐܢ NUM_SCRIPTS > 0
+	ܐܢ (argc < 0) {
+		حرف *script = get_script_content(-argc - 1);
 		G.global_argv = argv;
 		G.global_argc = string_array_len(argv);
 		//install_special_sighandlers(); - needed?
 		parse_and_run_string(script);
-		goto final_return;
+		اذهب final_return;
 	}
 #endif
 
@@ -11158,29 +11158,29 @@ int hush_main(int argc, char **argv)
 	/* Parse options */
 	/* http://www.opengroup.org/onlinepubs/9699919799/utilities/sh.html */
 	flags = (argv[0] && argv[0][0] == '-') ? OPT_login : 0;
-	while (1) {
-		int opt = getopt(argc, argv, "+" /* stop at 1st non-option */
+	ܟܡܐ (1) {
+		صحيح opt = getopt(argc, argv, "+" /* stop at 1st non-option */
 				"cexinsl"
-#if !BB_MMU
+#ܐܢ !BB_MMU
 				"$:R:V:"
-# if ENABLE_HUSH_LINENO_VAR
+# ܐܢ ENABLE_HUSH_LINENO_VAR
 				"L:"
 # endif
-# if ENABLE_HUSH_FUNCTIONS
+# ܐܢ ENABLE_HUSH_FUNCTIONS
 				"F:"
 # endif
 #endif
 		);
-		if (opt <= 0)
-			break;
-		switch (opt) {
-		case 'c':
+		ܐܢ (opt <= 0)
+			اكسر;
+		بدل (opt) {
+		حالة 'c':
 			/* Note: -c is not an option with param!
 			 * "hush -c -l SCRIPT" is valid. "hush -cSCRIPT" is not.
 			 */
 			G.opt_c = 1;
-			break;
-		case 'i':
+			اكسر;
+		حالة 'i':
 			/* Well, we cannot just declare interactiveness,
 			 * we have to have some stuff (ctty, etc) */
 			/* G_interactive_fd++; */
@@ -11207,15 +11207,15 @@ int hush_main(int argc, char **argv)
 //(ash -i -c 'sleep 3' won't show this, the last command gets auto-"exec"ed)
 //
 //None of the above feel like useful features people would rely on.
-			break;
-		case 's':
+			اكسر;
+		حالة 's':
 			G.opt_s = 1;
-			break;
-		case 'l':
+			اكسر;
+		حالة 'l':
 			flags |= OPT_login;
-			break;
-#if !BB_MMU
-		case '$': {
+			اكسر;
+#ܐܢ !BB_MMU
+		حالة '$': {
 			unsigned long long empty_trap_mask;
 
 			G.root_pid = bb_strtou(optarg, &optarg, 16);
@@ -11229,20 +11229,20 @@ int hush_main(int argc, char **argv)
 			builtin_argc = bb_strtou(optarg, &optarg, 16);
 			optarg++;
 			empty_trap_mask = bb_strtoull(optarg, &optarg, 16);
-			if (empty_trap_mask != 0) {
-				IF_HUSH_TRAP(int sig;)
+			ܐܢ (empty_trap_mask != 0) {
+				IF_HUSH_TRAP(صحيح sig;)
 				install_special_sighandlers();
-# if ENABLE_HUSH_TRAP
-				G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
-				for (sig = 1; sig < NSIG; sig++) {
-					if (empty_trap_mask & (1LL << sig)) {
+# ܐܢ ENABLE_HUSH_TRAP
+				G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
+				لكل (sig = 1; sig < NSIG; sig++) {
+					ܐܢ (empty_trap_mask & (1LL << sig)) {
 						G_traps[sig] = xzalloc(1); /* == xstrdup(""); */
 						install_sighandler(sig, SIG_IGN);
 					}
 				}
 # endif
 			}
-# if ENABLE_HUSH_LOOPS
+# ܐܢ ENABLE_HUSH_LOOPS
 			optarg++;
 			G.depth_of_loop = bb_strtou(optarg, &optarg, 16);
 # endif
@@ -11251,32 +11251,32 @@ int hush_main(int argc, char **argv)
 			 * should be silent.
 			 */
 			IF_HUSH_JOB(G.run_list_level = 1;)
-# if ENABLE_HUSH_FUNCTIONS
+# ܐܢ ENABLE_HUSH_FUNCTIONS
 			/* nommu uses re-exec trick for "... | func | ...",
 			 * should allow "return".
 			 * This accidentally allows returns in subshells.
 			 */
 			G_flag_return_in_progress = -1;
 # endif
-			break;
+			اكسر;
 		}
-		case 'R':
-		case 'V':
+		حالة 'R':
+		حالة 'V':
 			set_local_var(xstrdup(optarg), opt == 'R' ? SETFLAG_MAKE_RO : 0);
-			break;
-# if ENABLE_HUSH_LINENO_VAR
-		case 'L':
+			اكسر;
+# ܐܢ ENABLE_HUSH_LINENO_VAR
+		حالة 'L':
 			G.parse_lineno = xatou(optarg);
-			break;
+			اكسر;
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-		case 'F': {
-			struct function *funcp = new_function(optarg);
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+		حالة 'F': {
+			بنية function *funcp = new_function(optarg);
 			/* funcp->name is already set to optarg */
 			/* funcp->body is set to NULL. It's a special case. */
 			funcp->body_as_string = argv[optind];
 			optind++;
-			break;
+			اكسر;
 		}
 # endif
 #endif
@@ -11284,9 +11284,9 @@ int hush_main(int argc, char **argv)
 		/*case 'n':*/
 		/*case 'x':*/
 		/*case 'e':*/
-		default:
-			if (set_mode(1, opt, NULL) == 0) /* no error */
-				break;
+		افتراضي:
+			ܐܢ (set_mode(1, opt, عدم) == 0) /* no error */
+				اكسر;
 			bb_show_usage();
 		}
 	} /* option parsing loop */
@@ -11297,14 +11297,14 @@ int hush_main(int argc, char **argv)
 	G.global_argv[0] = argv[0];
 
 	/* If we are login shell... */
-	if (flags & OPT_login) {
-		const char *hp = NULL;
+	ܐܢ (flags & OPT_login) {
+		ثابت حرف *hp = عدم;
 		HFILE *input;
 
 		debug_printf("sourcing /etc/profile\n");
 		input = hfopen("/etc/profile");
  run_profile:
-		if (input != NULL) {
+		ܐܢ (input != عدم) {
 			install_special_sighandlers();
 			parse_and_run_file(input);
 			hfclose(input);
@@ -11316,21 +11316,21 @@ int hush_main(int argc, char **argv)
 		 * bash also sources ~/.bash_logout on exit.
 		 * If called as sh, skips .bash_XXX files.
 		 */
-		if (!hp) { /* unless we looped on the "goto" already */
+		ܐܢ (!hp) { /* unless we looped on the "goto" already */
 			hp = get_local_var_value("HOME");
-			if (hp && hp[0]) {
+			ܐܢ (hp && hp[0]) {
 				debug_printf("sourcing ~/.profile\n");
 				hp = concat_path_file(hp, ".profile");
 				input = hfopen(hp);
-				free((char*)hp);
-				goto run_profile;
+				حرر((حرف*)hp);
+				اذهب run_profile;
 			}
 		}
 	}
 
 #ifndef __U_BOOT__
 	/* -c takes effect *after* -l */
-	if (G.opt_c) {
+	ܐܢ (G.opt_c) {
 		/* Possibilities:
 		 * sh ... -c 'script'
 		 * sh ... -c 'script' ARG0 [ARG1...]
@@ -11341,44 +11341,44 @@ int hush_main(int argc, char **argv)
 		 * Note: the form without ARG0 never happens:
 		 * sh ... -c 'builtin' BARGV... ""
 		 */
-		char *script;
+		حرف *script;
 
 		install_special_sighandlers();
 
 		G.global_argc--;
 		G.global_argv++;
-#if !BB_MMU
-		if (builtin_argc) {
+#ܐܢ !BB_MMU
+		ܐܢ (builtin_argc) {
 			/* -c 'builtin' [BARGV...] "" ARG0 [ARG1...] */
-			const struct built_in_command *x;
+			ثابت بنية built_in_command *x;
 			x = find_builtin(G.global_argv[0]);
-			if (x) { /* paranoia */
+			ܐܢ (x) { /* paranoia */
 				argv = G.global_argv;
 				G.global_argc -= builtin_argc + 1; /* skip [BARGV...] "" */
 				G.global_argv += builtin_argc + 1;
-				G.global_argv[-1] = NULL; /* replace "" */
+				G.global_argv[-1] = عدم; /* replace "" */
 				G.last_exitcode = x->b_function(argv);
 			}
-			goto final_return;
+			اذهب final_return;
 		}
 #endif
 
 		script = G.global_argv[0];
-		if (!script)
+		ܐܢ (!script)
 			bb_error_msg_and_die(bb_msg_requires_arg, "-c");
-		if (!G.global_argv[1]) {
+		ܐܢ (!G.global_argv[1]) {
 			/* -c 'script' (no params): prevent empty $0 */
 			G.global_argv[0] = argv[0];
-		} else { /* else -c 'script' ARG0 [ARG1...]: $0 is ARG0 */
+		} ܐܚܪܢܐ { /* else -c 'script' ARG0 [ARG1...]: $0 is ARG0 */
 			G.global_argc--;
 			G.global_argv++;
 		}
 		parse_and_run_string(script);
-		goto final_return;
+		اذهب final_return;
 	}
 
 	/* -s is: hush -s ARGV1 ARGV2 (no SCRIPT) */
-	if (!G.opt_s && G.global_argv[1]) {
+	ܐܢ (!G.opt_s && G.global_argv[1]) {
 		HFILE *input;
 		/*
 		 * "bash <script>" (which is never interactive (unless -i?))
@@ -11391,16 +11391,16 @@ int hush_main(int argc, char **argv)
 		debug_printf("running script '%s'\n", G.global_argv[0]);
 		xfunc_error_retval = 127; /* for "hush /does/not/exist" case */
 		input = hfopen(G.global_argv[0]);
-		if (!input) {
+		ܐܢ (!input) {
 			bb_simple_perror_msg_and_die(G.global_argv[0]);
 		}
 		xfunc_error_retval = 1;
 		install_special_sighandlers();
 		parse_and_run_file(input);
-#if ENABLE_FEATURE_CLEAN_UP
+#ܐܢ ENABLE_FEATURE_CLEAN_UP
 		hfclose(input);
 #endif
-		goto final_return;
+		اذهب final_return;
 	}
 	/* "implicit" -s: bare interactive hush shows 's' in $- */
 	G.opt_s = 1;
@@ -11418,19 +11418,19 @@ int hush_main(int argc, char **argv)
 	 *    standard output is a terminal
 	 * Refer to Posix.2, the description of the 'sh' utility.
 	 */
-#if ENABLE_HUSH_JOB
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
+#ܐܢ ENABLE_HUSH_JOB
+	ܐܢ (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
 		G_saved_tty_pgrp = tcgetpgrp(STDIN_FILENO);
 		debug_printf("saved_tty_pgrp:%d\n", G_saved_tty_pgrp);
-		if (G_saved_tty_pgrp < 0)
+		ܐܢ (G_saved_tty_pgrp < 0)
 			G_saved_tty_pgrp = 0;
 
 		/* try to dup stdin to high fd#, >= 255 */
 		G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, 254);
-		if (G_interactive_fd < 0) {
+		ܐܢ (G_interactive_fd < 0) {
 			/* try to dup to any fd */
 			G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, -1);
-			if (G_interactive_fd < 0) {
+			ܐܢ (G_interactive_fd < 0) {
 				/* give up */
 				G_interactive_fd = 0;
 				G_saved_tty_pgrp = 0;
@@ -11438,18 +11438,18 @@ int hush_main(int argc, char **argv)
 		}
 	}
 	debug_printf("interactive_fd:%d\n", G_interactive_fd);
-	if (G_interactive_fd) {
-		if (G_saved_tty_pgrp) {
+	ܐܢ (G_interactive_fd) {
+		ܐܢ (G_saved_tty_pgrp) {
 			/* If we were run as 'hush &', sleep until we are
 			 * in the foreground (tty pgrp == our pgrp).
 			 * If we get started under a job aware app (like bash),
 			 * make sure we are now in charge so we don't fight over
 			 * who gets the foreground */
-			while (1) {
+			ܟܡܐ (1) {
 				pid_t shell_pgrp = getpgrp();
 				G_saved_tty_pgrp = tcgetpgrp(G_interactive_fd);
-				if (G_saved_tty_pgrp == shell_pgrp)
-					break;
+				ܐܢ (G_saved_tty_pgrp == shell_pgrp)
+					اكسر;
 				/* send TTIN to ourself (should stop us) */
 				kill(- shell_pgrp, SIGTTIN);
 			}
@@ -11458,7 +11458,7 @@ int hush_main(int argc, char **argv)
 		/* Install more signal handlers */
 		install_special_sighandlers();
 
-		if (G_saved_tty_pgrp) {
+		ܐܢ (G_saved_tty_pgrp) {
 			/* Set other signals to restore saved_tty_pgrp */
 			install_fatal_sighandlers();
 			/* Put ourselves in our own process group
@@ -11469,52 +11469,52 @@ int hush_main(int argc, char **argv)
 		}
 		enable_restore_tty_pgrp_on_exit();
 
-# if ENABLE_FEATURE_EDITING
+# ܐܢ ENABLE_FEATURE_EDITING
 		G.line_input_state = new_line_input_t(FOR_SHELL);
-#  if ENABLE_FEATURE_TAB_COMPLETION
+#  ܐܢ ENABLE_FEATURE_TAB_COMPLETION
 		G.line_input_state->get_exe_name = hush_command_name;
 #  endif
-#  if EDITING_HAS_sh_get_var
+#  ܐܢ EDITING_HAS_sh_get_var
 		G.line_input_state->sh_get_var = get_local_var_value;
 #  endif
 # endif
-# if ENABLE_HUSH_SAVEHISTORY && MAX_HISTORY > 0
+# ܐܢ ENABLE_HUSH_SAVEHISTORY && MAX_HISTORY > 0
 		{
-			const char *hp = get_local_var_value("HISTFILE");
-			if (!hp) {
+			ثابت حرف *hp = get_local_var_value("HISTFILE");
+			ܐܢ (!hp) {
 				hp = get_local_var_value("HOME");
-				if (hp)
+				ܐܢ (hp)
 					hp = concat_path_file(hp, ".hush_history");
-			} else {
+			} ܐܚܪܢܐ {
 				hp = xstrdup(hp);
 			}
-			if (hp) {
+			ܐܢ (hp) {
 				G.line_input_state->hist_file = hp;
 				//set_local_var(xasprintf("HISTFILE=%s", ...));
 			}
-#  if ENABLE_FEATURE_SH_HISTFILESIZE
+#  ܐܢ ENABLE_FEATURE_SH_HISTFILESIZE
 			hp = get_local_var_value("HISTFILESIZE");
 			G.line_input_state->max_history = size_from_HISTFILESIZE(hp);
 #  endif
 		}
 # endif
-	} else {
+	} ܐܚܪܢܐ {
 		install_special_sighandlers();
 	}
-#elif ENABLE_HUSH_INTERACTIVE
+#وإلاإذا ENABLE_HUSH_INTERACTIVE
 	/* No job control compiled in, only prompt/line editing */
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
+	ܐܢ (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
 		G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, 254);
-		if (G_interactive_fd < 0) {
+		ܐܢ (G_interactive_fd < 0) {
 			/* try to dup to any fd */
 			G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, -1);
-			if (G_interactive_fd < 0)
+			ܐܢ (G_interactive_fd < 0)
 				/* give up */
 				G_interactive_fd = 0;
 		}
 	}
 	install_special_sighandlers();
-#else
+#ܐܚܪܢܐ
 	/* We have interactiveness code disabled */
 	install_special_sighandlers();
 #endif
@@ -11523,15 +11523,15 @@ int hush_main(int argc, char **argv)
 	 * (--norc turns this off, --rcfile <file> overrides)
 	 */
 
-	if (G_interactive_fd) {
-#if ENABLE_HUSH_INTERACTIVE && ENABLE_FEATURE_EDITING_FANCY_PROMPT
+	ܐܢ (G_interactive_fd) {
+#ܐܢ ENABLE_HUSH_INTERACTIVE && ENABLE_FEATURE_EDITING_FANCY_PROMPT
 		/* Set (but not export) PS1/2 unless already set */
-		if (!get_local_var_value("PS1"))
+		ܐܢ (!get_local_var_value("PS1"))
 			set_local_var_from_halves("PS1", "\\w \\$ ");
-		if (!get_local_var_value("PS2"))
+		ܐܢ (!get_local_var_value("PS2"))
 			set_local_var_from_halves("PS2", "> ");
 #endif
-		if (!ENABLE_FEATURE_SH_EXTRA_QUIET) {
+		ܐܢ (!ENABLE_FEATURE_SH_EXTRA_QUIET) {
 			/* note: ash and hush share this string */
 			printf("\n\n%s %s\n"
 				IF_HUSH_HELP("Enter 'help' for a list of built-in commands.\n")
@@ -11542,7 +11542,7 @@ int hush_main(int argc, char **argv)
 		}
 	}
 
-	parse_and_run_file(hfopen(NULL)); /* stdin */
+	parse_and_run_file(hfopen(عدم)); /* stdin */
 
  final_return:
 	hush_exit(G.last_exitcode);
@@ -11551,151 +11551,151 @@ int hush_main(int argc, char **argv)
 /*
  * Built-ins
  */
-static int FAST_FUNC builtin_true(char **argv UNUSED_PARAM)
+ساكن صحيح FAST_FUNC builtin_true(حرف **argv UNUSED_PARAM)
 {
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int FAST_FUNC builtin_false(char **argv UNUSED_PARAM)
+ساكن صحيح FAST_FUNC builtin_false(حرف **argv UNUSED_PARAM)
 {
-	return 1;
+	ܦܢܐ 1;
 }
 
-#if ENABLE_HUSH_TEST || ENABLE_HUSH_ECHO || ENABLE_HUSH_PRINTF || ENABLE_HUSH_KILL
-static NOINLINE int run_applet_main(char **argv, int (*applet_main_func)(int argc, char **argv))
+#ܐܢ ENABLE_HUSH_TEST || ENABLE_HUSH_ECHO || ENABLE_HUSH_PRINTF || ENABLE_HUSH_KILL
+ساكن NOINLINE صحيح run_applet_main(حرف **argv, صحيح (*applet_main_func)(صحيح argc, حرف **argv))
 {
-	int argc = string_array_len(argv);
-	return applet_main_func(argc, argv);
+	صحيح argc = string_array_len(argv);
+	ܦܢܐ applet_main_func(argc, argv);
 }
 #endif
-#if ENABLE_HUSH_TEST || BASH_TEST2
-static int FAST_FUNC builtin_test(char **argv)
+#ܐܢ ENABLE_HUSH_TEST || BASH_TEST2
+ساكن صحيح FAST_FUNC builtin_test(حرف **argv)
 {
-	return run_applet_main(argv, test_main);
+	ܦܢܐ run_applet_main(argv, test_main);
 }
 #endif
-#if ENABLE_HUSH_ECHO
-static int FAST_FUNC builtin_echo(char **argv)
+#ܐܢ ENABLE_HUSH_ECHO
+ساكن صحيح FAST_FUNC builtin_echo(حرف **argv)
 {
-	return run_applet_main(argv, echo_main);
+	ܦܢܐ run_applet_main(argv, echo_main);
 }
 #endif
-#if ENABLE_HUSH_PRINTF
-static int FAST_FUNC builtin_printf(char **argv)
+#ܐܢ ENABLE_HUSH_PRINTF
+ساكن صحيح FAST_FUNC builtin_printf(حرف **argv)
 {
-	return run_applet_main(argv, printf_main);
+	ܦܢܐ run_applet_main(argv, printf_main);
 }
 #endif
 
-#if ENABLE_HUSH_HELP
-static int FAST_FUNC builtin_help(char **argv UNUSED_PARAM)
+#ܐܢ ENABLE_HUSH_HELP
+ساكن صحيح FAST_FUNC builtin_help(حرف **argv UNUSED_PARAM)
 {
-	const struct built_in_command *x;
+	ثابت بنية built_in_command *x;
 
 	printf(
 		"Built-in commands:\n"
 		"------------------\n");
-	for (x = bltins1; x != &bltins1[ARRAY_SIZE(bltins1)]; x++) {
-		if (x->b_descr)
+	لكل (x = bltins1; x != &bltins1[ARRAY_SIZE(bltins1)]; x++) {
+		ܐܢ (x->b_descr)
 			printf("%-10s%s\n", x->b_cmd, x->b_descr);
 	}
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
-static int FAST_FUNC builtin_history(char **argv UNUSED_PARAM)
+#ܐܢ MAX_HISTORY && ENABLE_FEATURE_EDITING
+ساكن صحيح FAST_FUNC builtin_history(حرف **argv UNUSED_PARAM)
 {
 	show_history(G.line_input_state);
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-static int FAST_FUNC builtin_cd(char **argv)
+ساكن صحيح FAST_FUNC builtin_cd(حرف **argv)
 {
-	const char *newdir;
+	ثابت حرف *newdir;
 
 	argv = skip_dash_dash(argv);
 	newdir = argv[0];
-	if (newdir == NULL) {
+	ܐܢ (newdir == عدم) {
 		/* bash does nothing (exitcode 0) if HOME is ""; if it's unset,
 		 * bash says "bash: cd: HOME not set" and does nothing
 		 * (exitcode 1)
 		 */
-		const char *home = get_local_var_value("HOME");
+		ثابت حرف *home = get_local_var_value("HOME");
 		newdir = home ? home : "/";
 	}
-	if (chdir(newdir)) {
+	ܐܢ (chdir(newdir)) {
 		/* Mimic bash message exactly */
 		bb_perror_msg("cd: %s", newdir);
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 	/* Read current dir (get_cwd(1) is inside) and set PWD.
 	 * Note: do not enforce exporting. If PWD was unset or unexported,
 	 * set it again, but do not export. bash does the same.
 	 */
 	set_pwd_var(/*flag:*/ 0);
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_pwd(char **argv UNUSED_PARAM)
+ساكن صحيح FAST_FUNC builtin_pwd(حرف **argv UNUSED_PARAM)
 {
 	puts(get_cwd(0));
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_eval(char **argv)
+ساكن صحيح FAST_FUNC builtin_eval(حرف **argv)
 {
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0])
-		return EXIT_SUCCESS;
+	ܐܢ (!argv[0])
+		ܦܢܐ EXIT_SUCCESS;
 
 	IF_HUSH_MODE_X(G.x_mode_depth++;)
 	//bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
-	if (!argv[1]) {
+	ܐܢ (!argv[1]) {
 		/* bash:
 		 * eval "echo Hi; done" ("done" is syntax error):
 		 * "echo Hi" will not execute too.
 		 */
 		parse_and_run_string(argv[0]);
-	} else {
+	} ܐܚܪܢܐ {
 		/* "The eval utility shall construct a command by
 		 * concatenating arguments together, separating
 		 * each with a <space> character."
 		 */
-		char *str, *p;
+		حرف *str, *p;
 		unsigned len = 0;
-		char **pp = argv;
-		do
+		حرف **pp = argv;
+		ܥܒܕ
 			len += strlen(*pp) + 1;
-		while (*++pp);
+		ܟܡܐ (*++pp);
 		str = p = xmalloc(len);
 		pp = argv;
-		for (;;) {
+		لكل (;;) {
 			p = stpcpy(p, *pp);
 			pp++;
-			if (!*pp)
-				break;
+			ܐܢ (!*pp)
+				اكسر;
 			*p++ = ' ';
 		}
 		parse_and_run_string(str);
-		free(str);
+		حرر(str);
 	}
 	IF_HUSH_MODE_X(G.x_mode_depth--;)
 	//bb_error_msg("%s: --x_mode_depth=%d", __func__, G.x_mode_depth);
-	return G.last_exitcode;
+	ܦܢܐ G.last_exitcode;
 }
 
-static int FAST_FUNC builtin_exec(char **argv)
+ساكن صحيح FAST_FUNC builtin_exec(حرف **argv)
 {
 	argv = skip_dash_dash(argv);
-	if (argv[0] == NULL)
-		return EXIT_SUCCESS; /* bash does this */
+	ܐܢ (argv[0] == عدم)
+		ܦܢܐ EXIT_SUCCESS; /* bash does this */
 
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid)
+	ܐܢ (G_saved_tty_pgrp && getpid() == G.root_pid)
 		tcsetpgrp(G_interactive_fd, G_saved_tty_pgrp);
 
 	/* Saved-redirect fds, script fds and G_interactive_fd are still
@@ -11713,7 +11713,7 @@ static int FAST_FUNC builtin_exec(char **argv)
 	execvp_or_die(argv);
 }
 
-static int FAST_FUNC builtin_exit(char **argv)
+ساكن صحيح FAST_FUNC builtin_exit(حرف **argv)
 {
 	debug_printf_exec("%s()\n", __func__);
 
@@ -11732,9 +11732,9 @@ static int FAST_FUNC builtin_exit(char **argv)
 
 	/* note: EXIT trap is run by hush_exit */
 	argv = skip_dash_dash(argv);
-	if (argv[0] == NULL) {
-#if ENABLE_HUSH_TRAP
-		if (G.pre_trap_exitcode >= 0) /* "exit" in trap uses $? from before the trap */
+	ܐܢ (argv[0] == عدم) {
+#ܐܢ ENABLE_HUSH_TRAP
+		ܐܢ (G.pre_trap_exitcode >= 0) /* "exit" in trap uses $? from before the trap */
 			hush_exit(G.pre_trap_exitcode);
 #endif
 		hush_exit(G.last_exitcode);
@@ -11745,42 +11745,42 @@ static int FAST_FUNC builtin_exit(char **argv)
 	hush_exit(xatoi(argv[0]) & 0xff);
 }
 
-#if ENABLE_HUSH_TYPE
+#ܐܢ ENABLE_HUSH_TYPE
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/type.html */
-static int FAST_FUNC builtin_type(char **argv)
+ساكن صحيح FAST_FUNC builtin_type(حرف **argv)
 {
-	int ret = EXIT_SUCCESS;
+	صحيح ret = EXIT_SUCCESS;
 
-	while (*++argv) {
-		const char *type;
-		char *path = NULL;
+	ܟܡܐ (*++argv) {
+		ثابت حرف *type;
+		حرف *path = عدم;
 
-		if (0) {} /* make conditional compile easier below */
+		ܐܢ (0) {} /* make conditional compile easier below */
 		/*else if (find_alias(*argv))
 			type = "an alias";*/
-# if ENABLE_HUSH_FUNCTIONS
-		else if (find_function(*argv))
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+		ܐܚܪܢܐ ܐܢ (find_function(*argv))
 			type = "a function";
 # endif
-		else if (find_builtin(*argv))
+		ܐܚܪܢܐ ܐܢ (find_builtin(*argv))
 			type = "a shell builtin";
-		else if ((path = find_in_path(*argv)) != NULL)
+		ܐܚܪܢܐ ܐܢ ((path = find_in_path(*argv)) != عدم)
 			type = path;
-		else {
+		ܐܚܪܢܐ {
 			bb_error_msg("type: %s: not found", *argv);
 			ret = EXIT_FAILURE;
-			continue;
+			استمر;
 		}
 
 		printf("%s is %s\n", *argv, type);
-		free(path);
+		حرر(path);
 	}
 
-	return ret;
+	ܦܢܐ ret;
 }
 #endif
 
-#if ENABLE_HUSH_READ
+#ܐܢ ENABLE_HUSH_READ
 /* Interruptibility of read builtin in bash
  * (tested on bash-4.2.8 by sending signals (not by ^C)):
  *
@@ -11805,22 +11805,22 @@ static int FAST_FUNC builtin_type(char **argv)
  * - does not interrupt read regardless of interactivity:
  *   try: sleep 1 & read x; echo $x
  */
-static int FAST_FUNC builtin_read(char **argv)
+ساكن صحيح FAST_FUNC builtin_read(حرف **argv)
 {
-	const char *r;
-	struct builtin_read_params params;
+	ثابت حرف *r;
+	بنية builtin_read_params params;
 
-	memset(&params, 0, sizeof(params));
+	memset(&params, 0, حجم(params));
 
 	/* "!": do not abort on errors.
 	 * Option string must start with "sr" to match BUILTIN_READ_xxx
 	 */
 	params.read_flags = getopt32(argv,
-# if BASH_READ_D
+# ܐܢ BASH_READ_D
 		IF_NOT_HUSH_BASH_COMPAT("^")
 		"!srn:p:t:u:d:" IF_NOT_HUSH_BASH_COMPAT("\0" "-1"/*min 1 arg*/),
 		&params.opt_n, &params.opt_p, &params.opt_t, &params.opt_u, &params.opt_d
-# else
+# ܐܚܪܢܐ
 		IF_NOT_HUSH_BASH_COMPAT("^")
 		"!srn:p:t:u:" IF_NOT_HUSH_BASH_COMPAT("\0" "-1"/*min 1 arg*/),
 		&params.opt_n, &params.opt_p, &params.opt_t, &params.opt_u
@@ -11829,8 +11829,8 @@ static int FAST_FUNC builtin_read(char **argv)
 //for the case of !BASH "read" with no args (now it fails silently)
 //(or maybe extend getopt32() to emit a message if "-1" fails)
 	);
-	if ((uint32_t)params.read_flags == (uint32_t)-1)
-		return EXIT_FAILURE;
+	ܐܢ ((uint32_t)params.read_flags == (uint32_t)-1)
+		ܦܢܐ EXIT_FAILURE;
 	argv += optind;
 	params.argv = argv;
 	params.setvar = set_local_var_from_halves;
@@ -11839,41 +11839,41 @@ static int FAST_FUNC builtin_read(char **argv)
  again:
 	r = shell_builtin_read(&params);
 
-	if ((uintptr_t)r == 1 && errno == EINTR) {
+	ܐܢ ((uintptr_t)r == 1 && errno == EINTR) {
 		unsigned sig = check_and_run_traps();
-		if (sig != SIGINT)
-			goto again;
+		ܐܢ (sig != SIGINT)
+			اذهب again;
 	}
 
-	if ((uintptr_t)r > 1) {
+	ܐܢ ((uintptr_t)r > 1) {
 		bb_simple_error_msg(r);
-		r = (char*)(uintptr_t)1;
+		r = (حرف*)(uintptr_t)1;
 	}
 
-	return (uintptr_t)r;
+	ܦܢܐ (uintptr_t)r;
 }
 #endif
 
-#if ENABLE_HUSH_UMASK
-static int FAST_FUNC builtin_umask(char **argv)
+#ܐܢ ENABLE_HUSH_UMASK
+ساكن صحيح FAST_FUNC builtin_umask(حرف **argv)
 {
-	int rc;
+	صحيح rc;
 	mode_t mask;
 
 	rc = 1;
 	mask = umask(0);
 	argv = skip_dash_dash(argv);
-	if (argv[0]) {
+	ܐܢ (argv[0]) {
 		mode_t old_mask = mask;
 
 		/* numeric umasks are taken as-is */
 		/* symbolic umasks are inverted: "umask a=rx" calls umask(222) */
-		if (!isdigit(argv[0][0]))
+		ܐܢ (!isdigit(argv[0][0]))
 			mask ^= 0777;
 		mask = bb_parse_mode(argv[0], mask);
-		if (!isdigit(argv[0][0]))
+		ܐܢ (!isdigit(argv[0][0]))
 			mask ^= 0777;
-		if ((unsigned)mask > 0777) {
+		ܐܢ ((unsigned)mask > 0777) {
 			mask = old_mask;
 			/* bash messages:
 			 * bash: umask: 'q': invalid symbolic mode operator
@@ -11882,19 +11882,19 @@ static int FAST_FUNC builtin_umask(char **argv)
 			bb_error_msg("%s: invalid mode '%s'", "umask", argv[0]);
 			rc = 0;
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		/* Mimic bash */
 		printf("%04o\n", (unsigned) mask);
 		/* fall through and restore mask which we set to 0 */
 	}
 	umask(mask);
 
-	return !rc; /* rc != 0 - success */
+	ܦܢܐ !rc; /* rc != 0 - success */
 }
 #endif
 
-#if ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY || ENABLE_HUSH_SET || ENABLE_HUSH_TRAP
-static void print_escaped(const char *s)
+#ܐܢ ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY || ENABLE_HUSH_SET || ENABLE_HUSH_TRAP
+ساكن فراغ print_escaped(ثابت حرف *s)
 {
 //TODO? bash "set" does not quote variables which contain only alnums and "%+,-./:=@_~",
 // (but "export" quotes all variables, even with only these chars).
@@ -11902,69 +11902,69 @@ static void print_escaped(const char *s)
 // (example: "set" printing var== instead of var='=' looks strange)
 // IOW: do not quote "-./:@_": / is used in pathnames, : in PATH, -._ often in file names, @ in emails
 
-	if (*s == '\'')
-		goto squote;
-	do {
-		const char *p = strchrnul(s, '\'');
+	ܐܢ (*s == '\'')
+		اذهب squote;
+	ܥܒܕ {
+		ثابت حرف *p = strchrnul(s, '\'');
 		/* print 'xxxx', possibly just '' */
-		printf("'%.*s'", (int)(p - s), s);
-		if (*p == '\0')
-			break;
+		printf("'%.*s'", (صحيح)(p - s), s);
+		ܐܢ (*p == '\0')
+			اكسر;
 		s = p;
  squote:
 		/* s points to '; print "'''...'''" */
 		putchar('"');
-		do putchar('\''); while (*++s == '\'');
+		ܥܒܕ putchar('\''); ܟܡܐ (*++s == '\'');
 		putchar('"');
-	} while (*s);
+	} ܟܡܐ (*s);
 }
 #endif
 
-#if ENABLE_HUSH_EXPORT || ENABLE_HUSH_LOCAL || ENABLE_HUSH_READONLY
-static int helper_export_local(char **argv, unsigned flags)
+#ܐܢ ENABLE_HUSH_EXPORT || ENABLE_HUSH_LOCAL || ENABLE_HUSH_READONLY
+ساكن صحيح helper_export_local(حرف **argv, unsigned flags)
 {
-	do {
-		char *name = *argv;
-		const char *name_end = endofname(name);
+	ܥܒܕ {
+		حرف *name = *argv;
+		ثابت حرف *name_end = endofname(name);
 
-		if (*name_end == '\0') {
-			struct variable *var, **vpp;
+		ܐܢ (*name_end == '\0') {
+			بنية variable *var, **vpp;
 
 			vpp = get_ptr_to_local_var(name);
-			var = vpp ? *vpp : NULL;
+			var = vpp ? *vpp : عدم;
 
-			if (flags & SETFLAG_UNEXPORT) {
+			ܐܢ (flags & SETFLAG_UNEXPORT) {
 				/* export -n NAME (without =VALUE) */
-				if (var) {
+				ܐܢ (var) {
 					var->flg_export = 0;
 					debug_printf_env("%s: unsetenv '%s'\n", __func__, name);
 					unsetenv(name);
 				} /* else: export -n NOT_EXISTING_VAR: no-op */
-				continue;
+				استمر;
 			}
-			if (flags & SETFLAG_EXPORT) {
+			ܐܢ (flags & SETFLAG_EXPORT) {
 				/* export NAME (without =VALUE) */
-				if (var) {
+				ܐܢ (var) {
 					var->flg_export = 1;
 					debug_printf_env("%s: putenv '%s'\n", __func__, var->varstr);
 					putenv(var->varstr);
-					continue;
+					استمر;
 				}
 			}
-			if (flags & SETFLAG_MAKE_RO) {
+			ܐܢ (flags & SETFLAG_MAKE_RO) {
 				/* readonly NAME (without =VALUE) */
-				if (var) {
+				ܐܢ (var) {
 					var->flg_read_only = 1;
-					continue;
+					استمر;
 				}
 			}
-# if ENABLE_HUSH_LOCAL
+# ܐܢ ENABLE_HUSH_LOCAL
 			/* Is this "local" bltin? */
-			if (!(flags & (SETFLAG_EXPORT|SETFLAG_UNEXPORT|SETFLAG_MAKE_RO))) {
+			ܐܢ (!(flags & (SETFLAG_EXPORT|SETFLAG_UNEXPORT|SETFLAG_MAKE_RO))) {
 				unsigned lvl = flags >> SETFLAG_VARLVL_SHIFT;
-				if (var && var->var_nest_level == lvl) {
+				ܐܢ (var && var->var_nest_level == lvl) {
 					/* "local x=abc; ...; local x" - ignore second local decl */
-					continue;
+					استمر;
 				}
 			}
 # endif
@@ -11982,11 +11982,11 @@ static int helper_export_local(char **argv, unsigned flags)
 			 * in the future.
 			 */
 			name = xasprintf("%s=", name);
-		} else {
-			if (*name_end != '=') {
+		} ܐܚܪܢܐ {
+			ܐܢ (*name_end != '=') {
 				bb_error_msg("'%s': bad variable name", name);
 				/* do not parse following argv[]s: */
-				return 1;
+				ܦܢܐ 1;
 			}
 			/* (Un)exporting/making local NAME=VALUE */
 			name = xstrdup(name);
@@ -11994,65 +11994,65 @@ static int helper_export_local(char **argv, unsigned flags)
 			unbackslash(name);
 		}
 		debug_printf_env("%s: set_local_var('%s')\n", __func__, name);
-		if (set_local_var(name, flags))
-			return EXIT_FAILURE;
-	} while (*++argv);
-	return EXIT_SUCCESS;
+		ܐܢ (set_local_var(name, flags))
+			ܦܢܐ EXIT_FAILURE;
+	} ܟܡܐ (*++argv);
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-#if ENABLE_HUSH_EXPORT
-static int FAST_FUNC builtin_export(char **argv)
+#ܐܢ ENABLE_HUSH_EXPORT
+ساكن صحيح FAST_FUNC builtin_export(حرف **argv)
 {
 	unsigned opt_unexport;
 
-# if ENABLE_HUSH_EXPORT_N
+# ܐܢ ENABLE_HUSH_EXPORT_N
 	/* "!": do not abort on errors */
 	opt_unexport = getopt32(argv, "!n");
-	if (opt_unexport == (uint32_t)-1)
-		return EXIT_FAILURE;
+	ܐܢ (opt_unexport == (uint32_t)-1)
+		ܦܢܐ EXIT_FAILURE;
 	argv += optind;
-# else
+# ܐܚܪܢܐ
 	opt_unexport = 0;
 	argv++;
 # endif
 
-	if (argv[0] == NULL) {
-		char **e = environ;
-		if (e) {
-			while (*e) {
-# if 0
+	ܐܢ (argv[0] == عدم) {
+		حرف **e = environ;
+		ܐܢ (e) {
+			ܟܡܐ (*e) {
+# ܐܢ 0
 				puts(*e++);
-# else
+# ܐܚܪܢܐ
 				/* ash emits: export VAR='VAL'
 				 * bash: declare -x VAR="VAL"
 				 * we follow ash example */
-				const char *s = *e++;
-				const char *p = strchr(s, '=');
+				ثابت حرف *s = *e++;
+				ثابت حرف *p = strchr(s, '=');
 
-				if (!p) /* wtf? take next variable */
-					continue;
+				ܐܢ (!p) /* wtf? take next variable */
+					استمر;
 				/* "export VAR=" */
-				printf("%s %.*s", "export", (int)(p - s) + 1, s);
+				printf("%s %.*s", "export", (صحيح)(p - s) + 1, s);
 				print_escaped(p + 1);
 				putchar('\n');
 # endif
 			}
 			/*fflush_all(); - done after each builtin anyway */
 		}
-		return EXIT_SUCCESS;
+		ܦܢܐ EXIT_SUCCESS;
 	}
 
-	return helper_export_local(argv, opt_unexport ? SETFLAG_UNEXPORT : SETFLAG_EXPORT);
+	ܦܢܐ helper_export_local(argv, opt_unexport ? SETFLAG_UNEXPORT : SETFLAG_EXPORT);
 }
 #endif
 
-#if ENABLE_HUSH_LOCAL
-static int FAST_FUNC builtin_local(char **argv)
+#ܐܢ ENABLE_HUSH_LOCAL
+ساكن صحيح FAST_FUNC builtin_local(حرف **argv)
 {
-	if (G.func_nest_level == 0) {
+	ܐܢ (G.func_nest_level == 0) {
 		bb_error_msg("%s: not in a function", argv[0]);
-		return EXIT_FAILURE; /* bash compat */
+		ܦܢܐ EXIT_FAILURE; /* bash compat */
 	}
 //TODO? ash and bash support "local -" special form,
 //which saves/restores $- around function call (including async returns, such as ^C)
@@ -12062,78 +12062,78 @@ static int FAST_FUNC builtin_local(char **argv)
 	 * need to use level - 1 here. Or else the variable will be removed at once
 	 * after builtin returns.
 	 */
-	return helper_export_local(argv, (G.var_nest_level - 1) << SETFLAG_VARLVL_SHIFT);
+	ܦܢܐ helper_export_local(argv, (G.var_nest_level - 1) << SETFLAG_VARLVL_SHIFT);
 }
 #endif
 
-#if ENABLE_HUSH_READONLY
-static int FAST_FUNC builtin_readonly(char **argv)
+#ܐܢ ENABLE_HUSH_READONLY
+ساكن صحيح FAST_FUNC builtin_readonly(حرف **argv)
 {
 	argv++;
-	if (*argv == NULL) {
+	ܐܢ (*argv == عدم) {
 		/* bash: readonly [-p]: list all readonly VARs
 		 * (-p has no effect in bash)
 		 */
-		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
-			if (e->flg_read_only) {
-				const char *s = e->varstr;
-				const char *p = strchr(s, '=');
+		بنية variable *e;
+		لكل (e = G.top_var; e; e = e->next) {
+			ܐܢ (e->flg_read_only) {
+				ثابت حرف *s = e->varstr;
+				ثابت حرف *p = strchr(s, '=');
 
-				if (!p) /* wtf? take next variable */
-					continue;
+				ܐܢ (!p) /* wtf? take next variable */
+					استمر;
 				/* "readonly VAR=" */
-				printf("%s %.*s", "readonly", (int)(p - s) + 1, s);
+				printf("%s %.*s", "readonly", (صحيح)(p - s) + 1, s);
 				print_escaped(p + 1);
 				putchar('\n');
 			}
 		}
-		return EXIT_SUCCESS;
+		ܦܢܐ EXIT_SUCCESS;
 	}
-	return helper_export_local(argv, SETFLAG_MAKE_RO);
+	ܦܢܐ helper_export_local(argv, SETFLAG_MAKE_RO);
 }
 #endif
 
-#if ENABLE_HUSH_UNSET
+#ܐܢ ENABLE_HUSH_UNSET
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#unset */
-static int FAST_FUNC builtin_unset(char **argv)
+ساكن صحيح FAST_FUNC builtin_unset(حرف **argv)
 {
-	int ret;
+	صحيح ret;
 	unsigned opts;
 
 	/* "!": do not abort on errors */
 	/* "+": stop at 1st non-option */
 	opts = getopt32(argv, "!+vf");
-	if (opts == (unsigned)-1)
-		return EXIT_FAILURE;
-	if (opts == 3) {
+	ܐܢ (opts == (unsigned)-1)
+		ܦܢܐ EXIT_FAILURE;
+	ܐܢ (opts == 3) {
 		bb_simple_error_msg("unset: -v and -f are exclusive");
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 	argv += optind;
 
 	ret = EXIT_SUCCESS;
-	while (*argv) {
-		if (!(opts & 2)) { /* not -f */
-			if (unset_local_var(*argv)) {
+	ܟܡܐ (*argv) {
+		ܐܢ (!(opts & 2)) { /* not -f */
+			ܐܢ (unset_local_var(*argv)) {
 				/* unset <nonexistent_var> doesn't fail.
 				 * Error is when one tries to unset RO var.
 				 * Message was printed by unset_local_var. */
 				ret = EXIT_FAILURE;
 			}
 		}
-# if ENABLE_HUSH_FUNCTIONS
-		else {
+# ܐܢ ENABLE_HUSH_FUNCTIONS
+		ܐܚܪܢܐ {
 			unset_func(*argv);
 		}
 # endif
 		argv++;
 	}
-	return ret;
+	ܦܢܐ ret;
 }
 #endif
 
-#if ENABLE_HUSH_SET
+#ܐܢ ENABLE_HUSH_SET
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#set
  * built-in 'set' handler
  * SUSv3 says:
@@ -12155,60 +12155,60 @@ static int FAST_FUNC builtin_unset(char **argv)
  *
  * So far, we only support "set -- [argument...]" and some of the short names.
  */
-static int FAST_FUNC builtin_set(char **argv)
+ساكن صحيح FAST_FUNC builtin_set(حرف **argv)
 {
-	int n;
-	char **pp, **g_argv;
-	char *arg = *++argv;
+	صحيح n;
+	حرف **pp, **g_argv;
+	حرف *arg = *++argv;
 
-	if (arg == NULL) {
-		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
-			const char *s = e->varstr;
-			const char *p = strchr(s, '=');
+	ܐܢ (arg == عدم) {
+		بنية variable *e;
+		لكل (e = G.top_var; e; e = e->next) {
+			ثابت حرف *s = e->varstr;
+			ثابت حرف *p = strchr(s, '=');
 
-			if (!p) /* wtf? take next variable */
-				continue;
+			ܐܢ (!p) /* wtf? take next variable */
+				استمر;
 			/* var= */
-			printf("%.*s", (int)(p - s) + 1, s);
+			printf("%.*s", (صحيح)(p - s) + 1, s);
 			print_escaped(p + 1);
 			putchar('\n');
 		}
-		return EXIT_SUCCESS;
+		ܦܢܐ EXIT_SUCCESS;
 	}
 
-	do {
-		if (strcmp(arg, "--") == 0) {
+	ܥܒܕ {
+		ܐܢ (strcmp(arg, "--") == 0) {
 			++argv;
-			goto set_argv;
+			اذهب set_argv;
 		}
-		if (arg[0] != '+' && arg[0] != '-')
-			break;
-		for (n = 1; arg[n]; ++n) {
-			if (set_mode((arg[0] == '-'), arg[n], argv[1])) {
+		ܐܢ (arg[0] != '+' && arg[0] != '-')
+			اكسر;
+		لكل (n = 1; arg[n]; ++n) {
+			ܐܢ (set_mode((arg[0] == '-'), arg[n], argv[1])) {
 				bb_error_msg("%s: %s: invalid option", "set", arg);
-				return EXIT_FAILURE;
+				ܦܢܐ EXIT_FAILURE;
 			}
-			if (arg[n] == 'o' && argv[1])
+			ܐܢ (arg[n] == 'o' && argv[1])
 				argv++;
 		}
-	} while ((arg = *++argv) != NULL);
+	} ܟܡܐ ((arg = *++argv) != عدم);
 	/* Now argv[0] is 1st argument */
 
-	if (arg == NULL)
-		return EXIT_SUCCESS;
+	ܐܢ (arg == عدم)
+		ܦܢܐ EXIT_SUCCESS;
  set_argv:
 
 	/* NB: G.global_argv[0] ($0) is never freed/changed */
 	g_argv = G.global_argv;
-	if (G.global_args_malloced) {
+	ܐܢ (G.global_args_malloced) {
 		pp = g_argv;
-		while (*++pp)
-			free(*pp);
-		g_argv[1] = NULL;
-	} else {
+		ܟܡܐ (*++pp)
+			حرر(*pp);
+		g_argv[1] = عدم;
+	} ܐܚܪܢܐ {
 		G.global_args_malloced = 1;
-		pp = xzalloc(sizeof(pp[0]) * 2);
+		pp = xzalloc(حجم(pp[0]) * 2);
 		pp[0] = g_argv[0]; /* retain $0 */
 		g_argv = pp;
 	}
@@ -12217,17 +12217,17 @@ static int FAST_FUNC builtin_set(char **argv)
 
 	G.global_argc = 1 + string_array_len(pp + 1);
 
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-static int FAST_FUNC builtin_shift(char **argv)
+ساكن صحيح FAST_FUNC builtin_shift(حرف **argv)
 {
-	int n = 1;
+	صحيح n = 1;
 	argv = skip_dash_dash(argv);
-	if (argv[0]) {
-		n = bb_strtou(argv[0], NULL, 10);
-		if (errno || n < 0) {
+	ܐܢ (argv[0]) {
+		n = bb_strtou(argv[0], عدم, 10);
+		ܐܢ (errno || n < 0) {
 			/* shared string with ash.c */
 			bb_error_msg("Illegal number: %s", argv[0]);
 			/*
@@ -12239,22 +12239,22 @@ static int FAST_FUNC builtin_shift(char **argv)
 			 */
 		}
 	}
-	if (n >= 0 && n < G.global_argc) {
-		if (G_global_args_malloced) {
-			int m = 1;
-			while (m <= n)
-				free(G.global_argv[m++]);
+	ܐܢ (n >= 0 && n < G.global_argc) {
+		ܐܢ (G_global_args_malloced) {
+			صحيح m = 1;
+			ܟܡܐ (m <= n)
+				حرر(G.global_argv[m++]);
 		}
 		G.global_argc -= n;
 		memmove(&G.global_argv[1], &G.global_argv[n+1],
-				G.global_argc * sizeof(G.global_argv[0]));
-		return EXIT_SUCCESS;
+				G.global_argc * حجم(G.global_argv[0]));
+		ܦܢܐ EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	ܦܢܐ EXIT_FAILURE;
 }
 
-#if ENABLE_HUSH_GETOPTS
-static int FAST_FUNC builtin_getopts(char **argv)
+#ܐܢ ENABLE_HUSH_GETOPTS
+ساكن صحيح FAST_FUNC builtin_getopts(حرف **argv)
 {
 /* http://pubs.opengroup.org/onlinepubs/9699919799/utilities/getopts.html
 
@@ -12269,25 +12269,25 @@ Test that VAR is a valid variable name?
 
 "Whenever the shell is invoked, OPTIND shall be initialized to 1"
 */
-	char cbuf[2];
-	const char *cp, *optstring, *var;
-	int c, n, exitcode, my_opterr;
+	حرف cbuf[2];
+	ثابت حرف *cp, *optstring, *var;
+	صحيح c, n, exitcode, my_opterr;
 	unsigned count;
 
 	optstring = *++argv;
-	if (!optstring || !(var = *++argv)) {
+	ܐܢ (!optstring || !(var = *++argv)) {
 		bb_simple_error_msg("usage: getopts OPTSTRING VAR [ARGS]");
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 
-	if (argv[1])
+	ܐܢ (argv[1])
 		argv[0] = G.global_argv[0]; /* for error messages in getopt() */
-	else
+	ܐܚܪܢܐ
 		argv = G.global_argv;
 	cbuf[1] = '\0';
 
 	my_opterr = 0;
-	if (optstring[0] != ':') {
+	ܐܢ (optstring[0] != ':') {
 		cp = get_local_var_value("OPTERR");
 		/* 0 if "OPTERR=0", 1 otherwise */
 		my_opterr = (!cp || NOT_LONE_CHAR(cp, '0'));
@@ -12295,7 +12295,7 @@ Test that VAR is a valid variable name?
 
 	/* getopts stops on first non-option. Add "+" to force that */
 	/*if (optstring[0] != '+')*/ {
-		char *s = alloca(strlen(optstring) + 2);
+		حرف *s = alloca(strlen(optstring) + 2);
 		sprintf(s, "+%s", optstring);
 		optstring = s;
 	}
@@ -12329,14 +12329,14 @@ Test that VAR is a valid variable name?
 	GETOPT_RESET();
 	count = 0;
 	n = string_array_len(argv);
-	do {
-		optarg = NULL;
+	ܥܒܕ {
+		optarg = عدم;
 		opterr = (count < G.getopt_count) ? 0 : my_opterr;
 		c = getopt(n, argv, optstring);
-		if (c < 0)
-			break;
+		ܐܢ (c < 0)
+			اكسر;
 		count++;
-	} while (count <= G.getopt_count);
+	} ܟܡܐ (count <= G.getopt_count);
 
 	/* Set OPTIND. Prevent resetting of the magic counter! */
 	set_local_var_from_halves("OPTIND", utoa(optind));
@@ -12349,23 +12349,23 @@ Test that VAR is a valid variable name?
 	 * does not have an option-argument, OPTARG shall be unset."
 	 */
 	cp = optarg;
-	if (c == '?') {
+	ܐܢ (c == '?') {
 		/* If ":optstring" and unknown option is seen,
 		 * it is stored to OPTARG.
 		 */
-		if (optstring[1] == ':') {
+		ܐܢ (optstring[1] == ':') {
 			cbuf[0] = optopt;
 			cp = cbuf;
 		}
 	}
-	if (cp)
+	ܐܢ (cp)
 		set_local_var_from_halves("OPTARG", cp);
-	else
+	ܐܚܪܢܐ
 		unset_local_var("OPTARG");
 
 	/* Convert -1 to "?" */
 	exitcode = EXIT_SUCCESS;
-	if (c < 0) { /* -1: end of options */
+	ܐܢ (c < 0) { /* -1: end of options */
 		exitcode = EXIT_FAILURE;
 		c = '?';
 	}
@@ -12374,54 +12374,54 @@ Test that VAR is a valid variable name?
 	cbuf[0] = c;
 	set_local_var_from_halves(var, cbuf);
 
-	return exitcode;
+	ܦܢܐ exitcode;
 }
 #endif
 
-static int FAST_FUNC builtin_source(char **argv)
+ساكن صحيح FAST_FUNC builtin_source(حرف **argv)
 {
-	char *arg_path, *filename;
+	حرف *arg_path, *filename;
 	HFILE *input;
 	save_arg_t sv;
-	char *args_need_save;
-#if ENABLE_HUSH_FUNCTIONS
+	حرف *args_need_save;
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	smallint sv_flg;
 #endif
 
 	argv = skip_dash_dash(argv);
 	filename = argv[0];
-	if (!filename) {
+	ܐܢ (!filename) {
 		/* bash says: "bash: .: filename argument required" */
-		return 2; /* bash compat */
+		ܦܢܐ 2; /* bash compat */
 	}
-	arg_path = NULL;
-	if (!strchr(filename, '/')) {
+	arg_path = عدم;
+	ܐܢ (!strchr(filename, '/')) {
 		arg_path = find_in_path(filename);
-		if (arg_path)
+		ܐܢ (arg_path)
 			filename = arg_path;
-		else if (!ENABLE_HUSH_BASH_SOURCE_CURDIR) {
+		ܐܚܪܢܐ ܐܢ (!ENABLE_HUSH_BASH_SOURCE_CURDIR) {
 			errno = ENOENT;
 			bb_simple_perror_msg(filename);
-			return EXIT_FAILURE;
+			ܦܢܐ EXIT_FAILURE;
 		}
 	}
 	input = hfopen(filename);
-	free(arg_path);
-	if (!input) {
+	حرر(arg_path);
+	ܐܢ (!input) {
 		bb_perror_msg("%s", filename);
 		/* POSIX: non-interactive shell should abort here,
 		 * not merely fail. So far no one complained :)
 		 */
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	sv_flg = G_flag_return_in_progress;
 	/* "we are inside sourced file, ok to use return" */
 	G_flag_return_in_progress = -1;
 #endif
 	args_need_save = argv[1]; /* used as a boolean variable */
-	if (args_need_save)
+	ܐܢ (args_need_save)
 		save_and_replace_G_args(&sv, argv);
 
 	/* "false; . ./empty_line; echo Zero:$?" should print 0 */
@@ -12429,30 +12429,30 @@ static int FAST_FUNC builtin_source(char **argv)
 	parse_and_run_file(input);
 	hfclose(input);
 
-	if (args_need_save) /* can't use argv[1] instead: "shift" can mangle it */
+	ܐܢ (args_need_save) /* can't use argv[1] instead: "shift" can mangle it */
 		restore_G_args(&sv, argv);
-#if ENABLE_HUSH_FUNCTIONS
+#ܐܢ ENABLE_HUSH_FUNCTIONS
 	G_flag_return_in_progress = sv_flg;
 #endif
 
-	return G.last_exitcode;
+	ܦܢܐ G.last_exitcode;
 }
 
-#if ENABLE_HUSH_TRAP
-static int FAST_FUNC builtin_trap(char **argv)
+#ܐܢ ENABLE_HUSH_TRAP
+ساكن صحيح FAST_FUNC builtin_trap(حرف **argv)
 {
-	int sig;
-	char *new_cmd;
+	صحيح sig;
+	حرف *new_cmd;
 
-	if (!G_traps)
-		G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
+	ܐܢ (!G_traps)
+		G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
 
 	argv++;
-	if (!*argv) {
-		int i;
+	ܐܢ (!*argv) {
+		صحيح i;
 		/* No args: print all trapped */
-		for (i = 0; i < NSIG; ++i) {
-			if (G_traps[i]) {
+		لكل (i = 0; i < NSIG; ++i) {
+			ܐܢ (G_traps[i]) {
 				printf("trap -- ");
 				print_escaped(G_traps[i]);
 				/* note: bash adds "SIG", but only if invoked
@@ -12463,62 +12463,62 @@ static int FAST_FUNC builtin_trap(char **argv)
 			}
 		}
 		/*fflush_all(); - done after each builtin anyway */
-		return EXIT_SUCCESS;
+		ܦܢܐ EXIT_SUCCESS;
 	}
 
-	new_cmd = NULL;
+	new_cmd = عدم;
 	/* If first arg is a number: reset all specified signals */
-	sig = bb_strtou(*argv, NULL, 10);
-	if (errno == 0) {
-		int ret;
+	sig = bb_strtou(*argv, عدم, 10);
+	ܐܢ (errno == 0) {
+		صحيح ret;
  process_sig_list:
 		ret = EXIT_SUCCESS;
-		while (*argv) {
+		ܟܡܐ (*argv) {
 			sighandler_t handler;
 
 			sig = get_signum(*argv++);
-			if (sig < 0) {
+			ܐܢ (sig < 0) {
 				ret = EXIT_FAILURE;
 				/* Mimic bash message exactly */
 				bb_error_msg("trap: %s: invalid signal specification", argv[-1]);
-				continue;
+				استمر;
 			}
 
-			free(G_traps[sig]);
+			حرر(G_traps[sig]);
 			G_traps[sig] = xstrdup(new_cmd);
 
 			debug_printf("trap: setting SIG%s (%i) to '%s'\n",
 				get_signame(sig), sig, G_traps[sig]);
 
 			/* There is no signal for 0 (EXIT) */
-			if (sig == 0)
-				continue;
+			ܐܢ (sig == 0)
+				استمر;
 
-			if (new_cmd)
+			ܐܢ (new_cmd)
 				handler = (new_cmd[0] ? record_pending_signo : SIG_IGN);
-			else
+			ܐܚܪܢܐ
 				/* We are removing trap handler */
 				handler = pick_sighandler(sig);
 			install_sighandler(sig, handler);
 		}
-		return ret;
+		ܦܢܐ ret;
 	}
 
-	if (!argv[1]) { /* no second arg */
+	ܐܢ (!argv[1]) { /* no second arg */
 		bb_simple_error_msg("trap: invalid arguments");
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 
 	/* First arg is "-": reset all specified to default */
 	/* First arg is "--": skip it, the rest is "handler SIGs..." */
 	/* Everything else: set arg as signal handler
 	 * (includes "" case, which ignores signal) */
-	if (argv[0][0] == '-') {
-		if (argv[0][1] == '\0') { /* "-" */
+	ܐܢ (argv[0][0] == '-') {
+		ܐܢ (argv[0][1] == '\0') { /* "-" */
 			/* new_cmd remains NULL: "reset these sigs" */
-			goto reset_traps;
+			اذهب reset_traps;
 		}
-		if (argv[0][1] == '-' && argv[0][2] == '\0') { /* "--" */
+		ܐܢ (argv[0][1] == '-' && argv[0][2] == '\0') { /* "--" */
 			argv++;
 		}
 		/* else: "-something", no special meaning */
@@ -12526,49 +12526,49 @@ static int FAST_FUNC builtin_trap(char **argv)
 	new_cmd = *argv;
  reset_traps:
 	argv++;
-	goto process_sig_list;
+	اذهب process_sig_list;
 }
 #endif
 
-#if ENABLE_HUSH_JOB
-static struct pipe *parse_jobspec(const char *str)
+#ܐܢ ENABLE_HUSH_JOB
+ساكن بنية pipe *parse_jobspec(ثابت حرف *str)
 {
-	struct pipe *pi;
+	بنية pipe *pi;
 	unsigned jobnum;
 
-	if (sscanf(str, "%%%u", &jobnum) != 1) {
-		if (str[0] != '%'
+	ܐܢ (sscanf(str, "%%%u", &jobnum) != 1) {
+		ܐܢ (str[0] != '%'
 		 || (str[1] != '%' && str[1] != '+' && str[1] != '\0')
 		) {
 			bb_error_msg("bad argument '%s'", str);
-			return NULL;
+			ܦܢܐ عدم;
 		}
 		/* It is "%%", "%+" or "%" - current job */
 		jobnum = G.last_jobid;
-		if (jobnum == 0) {
+		ܐܢ (jobnum == 0) {
 			bb_simple_error_msg("no current job");
-			return NULL;
+			ܦܢܐ عدم;
 		}
 	}
-	for (pi = G.job_list; pi; pi = pi->next) {
-		if (pi->jobid == jobnum) {
-			return pi;
+	لكل (pi = G.job_list; pi; pi = pi->next) {
+		ܐܢ (pi->jobid == jobnum) {
+			ܦܢܐ pi;
 		}
 	}
 	bb_error_msg("%u: no such job", jobnum);
-	return NULL;
+	ܦܢܐ عدم;
 }
 
-static int FAST_FUNC builtin_jobs(char **argv UNUSED_PARAM)
+ساكن صحيح FAST_FUNC builtin_jobs(حرف **argv UNUSED_PARAM)
 {
-	struct pipe *job;
-	const char *status_string;
+	بنية pipe *job;
+	ثابت حرف *status_string;
 
-	checkjobs(NULL, 0 /*(no pid to wait for)*/);
-	for (job = G.job_list; job; job = job->next) {
-		if (job->alive_cmds == job->stopped_cmds)
+	checkjobs(عدم, 0 /*(no pid to wait for)*/);
+	لكل (job = G.job_list; job; job = job->next) {
+		ܐܢ (job->alive_cmds == job->stopped_cmds)
 			status_string = "Stopped";
-		else
+		ܐܚܪܢܐ
 			status_string = "Running";
 
 		printf(JOB_STATUS_FORMAT, job->jobid, status_string, job->cmdtext);
@@ -12576,95 +12576,95 @@ static int FAST_FUNC builtin_jobs(char **argv UNUSED_PARAM)
 
 	clean_up_last_dead_job();
 
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 
 /* built-in 'fg' and 'bg' handler */
-static int FAST_FUNC builtin_fg_bg(char **argv)
+ساكن صحيح FAST_FUNC builtin_fg_bg(حرف **argv)
 {
-	int i;
-	struct pipe *pi;
+	صحيح i;
+	بنية pipe *pi;
 
-	if (!G_interactive_fd)
-		return EXIT_FAILURE;
+	ܐܢ (!G_interactive_fd)
+		ܦܢܐ EXIT_FAILURE;
 
 	/* If they gave us no args, assume they want the last backgrounded task */
-	if (!argv[1]) {
-		for (pi = G.job_list; pi; pi = pi->next) {
-			if (pi->jobid == G.last_jobid) {
-				goto found;
+	ܐܢ (!argv[1]) {
+		لكل (pi = G.job_list; pi; pi = pi->next) {
+			ܐܢ (pi->jobid == G.last_jobid) {
+				اذهب found;
 			}
 		}
 		bb_error_msg("%s: no current job", argv[0]);
-		return EXIT_FAILURE;
+		ܦܢܐ EXIT_FAILURE;
 	}
 
 	pi = parse_jobspec(argv[1]);
-	if (!pi)
-		return EXIT_FAILURE;
+	ܐܢ (!pi)
+		ܦܢܐ EXIT_FAILURE;
  found:
 	/* TODO: bash prints a string representation
 	 * of job being foregrounded (like "sleep 1 | cat") */
-	if (argv[0][0] == 'f' && G_saved_tty_pgrp) {
+	ܐܢ (argv[0][0] == 'f' && G_saved_tty_pgrp) {
 		/* Put the job into the foreground. */
 		tcsetpgrp(G_interactive_fd, pi->pgrp);
 	}
 
 	/* Restart the processes in the job */
 	debug_printf_jobs("reviving %d procs, pgrp %d\n", pi->num_cmds, pi->pgrp);
-	for (i = 0; i < pi->num_cmds; i++) {
+	لكل (i = 0; i < pi->num_cmds; i++) {
 		debug_printf_jobs("reviving pid %d\n", pi->cmds[i].pid);
 	}
 	pi->stopped_cmds = 0;
 
 	i = kill(- pi->pgrp, SIGCONT);
-	if (i < 0) {
-		if (errno == ESRCH) {
+	ܐܢ (i < 0) {
+		ܐܢ (errno == ESRCH) {
 			delete_finished_job(pi);
-			return EXIT_SUCCESS;
+			ܦܢܐ EXIT_SUCCESS;
 		}
 		bb_simple_perror_msg("kill (SIGCONT)");
 	}
 
-	if (argv[0][0] == 'f') {
+	ܐܢ (argv[0][0] == 'f') {
 		remove_job_from_table(pi); /* FG job shouldn't be in job table */
-		return checkjobs_and_fg_shell(pi);
+		ܦܢܐ checkjobs_and_fg_shell(pi);
 	}
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-#if ENABLE_HUSH_KILL
-static int FAST_FUNC builtin_kill(char **argv)
+#ܐܢ ENABLE_HUSH_KILL
+ساكن صحيح FAST_FUNC builtin_kill(حرف **argv)
 {
-	int ret = 0;
+	صحيح ret = 0;
 
-# if ENABLE_HUSH_JOB
-	if (argv[1] && strcmp(argv[1], "-l") != 0) {
-		int i = 1;
+# ܐܢ ENABLE_HUSH_JOB
+	ܐܢ (argv[1] && strcmp(argv[1], "-l") != 0) {
+		صحيح i = 1;
 
-		do {
-			struct pipe *pi;
-			char *dst;
-			int j, n;
+		ܥܒܕ {
+			بنية pipe *pi;
+			حرف *dst;
+			صحيح j, n;
 
-			if (argv[i][0] != '%')
-				continue;
+			ܐܢ (argv[i][0] != '%')
+				استمر;
 			/*
 			 * "kill %N" - job kill
 			 * Converting to pgrp / pid kill
 			 */
 			pi = parse_jobspec(argv[i]);
-			if (!pi) {
+			ܐܢ (!pi) {
 				/* Eat bad jobspec */
 				j = i;
-				do {
+				ܥܒܕ {
 					j++;
 					argv[j - 1] = argv[j];
-				} while (argv[j]);
+				} ܟܡܐ (argv[j]);
 				ret = 1;
 				i--;
-				continue;
+				استمر;
 			}
 			/*
 			 * In jobs started under job control, we signal
@@ -12679,49 +12679,49 @@ static int FAST_FUNC builtin_kill(char **argv)
 			 * sh -c 'true|sleep 1 & sleep 2; kill %1'
 			 */
 			n = G_interactive_fd ? 1 : pi->num_cmds;
-			dst = alloca(n * sizeof(int)*4);
+			dst = alloca(n * حجم(صحيح)*4);
 			argv[i] = dst;
-			if (G_interactive_fd)
-				dst += sprintf(dst, " -%u", (int)pi->pgrp);
-			else for (j = 0; j < n; j++) {
-				struct command *cmd = &pi->cmds[j];
+			ܐܢ (G_interactive_fd)
+				dst += sprintf(dst, " -%u", (صحيح)pi->pgrp);
+			ܐܚܪܢܐ لكل (j = 0; j < n; j++) {
+				بنية command *cmd = &pi->cmds[j];
 				/* Skip exited members of the job */
-				if (cmd->pid == 0)
-					continue;
+				ܐܢ (cmd->pid == 0)
+					استمر;
 				/*
 				 * kill_main has matching code to expect
 				 * leading space. Needed to not confuse
 				 * negative pids with "kill -SIGNAL_NO" syntax
 				 */
-				dst += sprintf(dst, " %u", (int)cmd->pid);
+				dst += sprintf(dst, " %u", (صحيح)cmd->pid);
 			}
 			*dst = '\0';
-		} while (argv[++i]);
+		} ܟܡܐ (argv[++i]);
 	}
 # endif
 
-	if (argv[1] || ret == 0) {
+	ܐܢ (argv[1] || ret == 0) {
 		ret = run_applet_main(argv, kill_main);
 	}
 	/* else: ret = 1, "kill %bad_jobspec" case */
-	return ret;
+	ܦܢܐ ret;
 }
 #endif
 
-#if ENABLE_HUSH_WAIT
+#ܐܢ ENABLE_HUSH_WAIT
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/wait.html */
-# if !ENABLE_HUSH_JOB
+# ܐܢ !ENABLE_HUSH_JOB
 #  define wait_for_child_or_signal(pipe,pid) wait_for_child_or_signal(pid)
 # endif
-static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid)
+ساكن صحيح wait_for_child_or_signal(بنية pipe *waitfor_pipe, pid_t waitfor_pid)
 {
-	int ret = 0;
-	for (;;) {
-		int sig;
+	صحيح ret = 0;
+	لكل (;;) {
+		صحيح sig;
 		sigset_t oldset;
 
-		if (!sigisemptyset(&G.pending_set))
-			goto check_sig;
+		ܐܢ (!sigisemptyset(&G.pending_set))
+			اذهب check_sig;
 
 		/* waitpid is not interruptible by SA_RESTARTed
 		 * signals which we use. Thus, this ugly dance:
@@ -12735,41 +12735,41 @@ static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid
 		sigfillset(&oldset); /* block all signals, remember old set */
 		sigprocmask2(SIG_SETMASK, &oldset);
 
-		if (!sigisemptyset(&G.pending_set)) {
+		ܐܢ (!sigisemptyset(&G.pending_set)) {
 			/* Crap! we raced with some signal! */
-			goto restore;
+			اذهب restore;
 		}
 
 		/*errno = 0; - checkjobs does this */
 /* Can't pass waitfor_pipe into checkjobs(): it won't be interruptible */
-		ret = checkjobs(NULL, waitfor_pid); /* waitpid(WNOHANG) inside */
+		ret = checkjobs(عدم, waitfor_pid); /* waitpid(WNOHANG) inside */
 		debug_printf_exec("checkjobs:%d\n", ret);
-# if ENABLE_HUSH_JOB
-		if (waitfor_pipe) {
-			int rcode = job_exited_or_stopped(waitfor_pipe);
+# ܐܢ ENABLE_HUSH_JOB
+		ܐܢ (waitfor_pipe) {
+			صحيح rcode = job_exited_or_stopped(waitfor_pipe);
 			debug_printf_exec("job_exited_or_stopped:%d\n", rcode);
-			if (rcode >= 0) {
+			ܐܢ (rcode >= 0) {
 				ret = rcode;
-				sigprocmask(SIG_SETMASK, &oldset, NULL);
-				break;
+				sigprocmask(SIG_SETMASK, &oldset, عدم);
+				اكسر;
 			}
 		}
 # endif
 		/* if ECHILD, there are no children (ret is -1 or 0) */
 		/* if ret == 0, no children changed state */
 		/* if ret != 0, it's exitcode+1 of exited waitfor_pid child */
-		if (errno == ECHILD || ret) {
+		ܐܢ (errno == ECHILD || ret) {
 			ret--;
-			if (ret < 0) /* if ECHILD, may need to fix "ret" */
+			ܐܢ (ret < 0) /* if ECHILD, may need to fix "ret" */
 				ret = 0;
-# if ENABLE_HUSH_BASH_COMPAT
-			if (waitfor_pid == -1 && errno == ECHILD) {
+# ܐܢ ENABLE_HUSH_BASH_COMPAT
+			ܐܢ (waitfor_pid == -1 && errno == ECHILD) {
 				/* exitcode of "wait -n" with no children is 127, not 0 */
 				ret = 127;
 			}
 # endif
-			sigprocmask(SIG_SETMASK, &oldset, NULL);
-			break;
+			sigprocmask(SIG_SETMASK, &oldset, عدم);
+			اكسر;
 		}
 		/* Wait for SIGCHLD or any other signal */
 		/* It is vitally important for sigsuspend that SIGCHLD has non-DFL handler! */
@@ -12786,35 +12786,35 @@ static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid
 		 * making "wait" commands in SCRIPT block forever.
 		 */
  restore:
-		sigprocmask(SIG_SETMASK, &oldset, NULL);
+		sigprocmask(SIG_SETMASK, &oldset, عدم);
  check_sig:
 		/* So, did we get a signal? */
 		sig = check_and_run_traps();
-		if (sig /*&& sig != SIGCHLD - always true */) {
+		ܐܢ (sig /*&& sig != SIGCHLD - always true */) {
 			/* Do this for any (non-ignored) signal, not only for ^C */
 			ret = 128 | sig;
-			break;
+			اكسر;
 		}
 		/* SIGCHLD, or no signal, or ignored one, such as SIGQUIT. Repeat */
 	}
-	return ret;
+	ܦܢܐ ret;
 }
 
-static int FAST_FUNC builtin_wait(char **argv)
+ساكن صحيح FAST_FUNC builtin_wait(حرف **argv)
 {
-	int ret;
-	int status;
+	صحيح ret;
+	صحيح status;
 
 	argv = skip_dash_dash(argv);
-# if ENABLE_HUSH_BASH_COMPAT
-	if (argv[0] && strcmp(argv[0], "-n") == 0) {
+# ܐܢ ENABLE_HUSH_BASH_COMPAT
+	ܐܢ (argv[0] && strcmp(argv[0], "-n") == 0) {
 		/* wait -n */
 		/* (bash accepts "wait -n PID" too and ignores PID) */
 		G.dead_job_exitcode = -1;
-		return wait_for_child_or_signal(NULL, -1 /*no job, wait for one job*/);
+		ܦܢܐ wait_for_child_or_signal(عدم, -1 /*no job, wait for one job*/);
 	}
 # endif
-	if (argv[0] == NULL) {
+	ܐܢ (argv[0] == عدم) {
 		/* Don't care about wait results */
 		/* Note 1: must wait until there are no more children */
 		/* Note 2: must be interruptible */
@@ -12831,125 +12831,125 @@ static int FAST_FUNC builtin_wait(char **argv)
 		 * ^C <-- after ~4 sec from keyboard
 		 * $
 		 */
-		return wait_for_child_or_signal(NULL, 0 /*no job and no pid to wait for*/);
+		ܦܢܐ wait_for_child_or_signal(عدم, 0 /*no job and no pid to wait for*/);
 	}
 
-	do {
-		pid_t pid = bb_strtou(*argv, NULL, 10);
-		if (errno || pid <= 0) {
-# if ENABLE_HUSH_JOB
-			if (argv[0][0] == '%') {
-				struct pipe *wait_pipe;
+	ܥܒܕ {
+		pid_t pid = bb_strtou(*argv, عدم, 10);
+		ܐܢ (errno || pid <= 0) {
+# ܐܢ ENABLE_HUSH_JOB
+			ܐܢ (argv[0][0] == '%') {
+				بنية pipe *wait_pipe;
 				ret = 127; /* bash compat for bad jobspecs */
 				wait_pipe = parse_jobspec(*argv);
-				if (wait_pipe) {
+				ܐܢ (wait_pipe) {
 					ret = job_exited_or_stopped(wait_pipe);
-					if (ret < 0) {
+					ܐܢ (ret < 0) {
 						ret = wait_for_child_or_signal(wait_pipe, 0);
-					} else {
+					} ܐܚܪܢܐ {
 						/* waiting on "last dead job" removes it */
 						clean_up_last_dead_job();
 					}
 				}
 				/* else: parse_jobspec() already emitted error msg */
-				continue;
+				استمر;
 			}
 # endif
 			/* mimic bash message */
 			bb_error_msg("wait: '%s': not a pid or valid job spec", *argv);
 			ret = EXIT_FAILURE;
-			continue; /* bash checks all argv[] */
+			استمر; /* bash checks all argv[] */
 		}
 
 		/* Do we have such child? */
 		ret = waitpid(pid, &status, WNOHANG);
-		if (ret < 0) {
+		ܐܢ (ret < 0) {
 			/* No */
 			ret = 127;
-			if (errno == ECHILD) {
-				if (pid == G.last_bg_pid) {
+			ܐܢ (errno == ECHILD) {
+				ܐܢ (pid == G.last_bg_pid) {
 					/* "wait $!" but last bg task has already exited. Try:
 					 * (sleep 1; exit 3) & sleep 2; echo $?; wait $!; echo $?
 					 * In bash it prints exitcode 0, then 3.
 					 * In dash, it is 127.
 					 */
 					ret = G.last_bg_pid_exitcode;
-				} else {
+				} ܐܚܪܢܐ {
 					/* Example: "wait 1". mimic bash message */
 					bb_error_msg("wait: pid %u is not a child of this shell", (unsigned)pid);
 				}
-			} else {
+			} ܐܚܪܢܐ {
 				/* ??? */
 				bb_perror_msg("wait %s", *argv);
 			}
-			continue; /* bash checks all argv[] */
+			استمر; /* bash checks all argv[] */
 		}
-		if (ret == 0) {
+		ܐܢ (ret == 0) {
 			/* Yes, and it still runs */
-			ret = wait_for_child_or_signal(NULL, pid);
-		} else {
+			ret = wait_for_child_or_signal(عدم, pid);
+		} ܐܚܪܢܐ {
 			/* Yes, and it just exited */
-			process_wait_result(NULL, pid, status);
+			process_wait_result(عدم, pid, status);
 			ret = WEXITSTATUS(status);
-			if (WIFSIGNALED(status))
+			ܐܢ (WIFSIGNALED(status))
 				ret = 128 | WTERMSIG(status);
 		}
-	} while (*++argv);
+	} ܟܡܐ (*++argv);
 
-	return ret;
+	ܦܢܐ ret;
 }
 #endif
 
-#if ENABLE_HUSH_LOOPS || ENABLE_HUSH_FUNCTIONS
-static unsigned parse_numeric_argv1(char **argv, unsigned def, unsigned def_min)
+#ܐܢ ENABLE_HUSH_LOOPS || ENABLE_HUSH_FUNCTIONS
+ساكن unsigned parse_numeric_argv1(حرف **argv, unsigned def, unsigned def_min)
 {
-	if (argv[1]) {
-		def = bb_strtou(argv[1], NULL, 10);
-		if (errno || def < def_min || argv[2]) {
+	ܐܢ (argv[1]) {
+		def = bb_strtou(argv[1], عدم, 10);
+		ܐܢ (errno || def < def_min || argv[2]) {
 			bb_error_msg("%s: bad arguments", argv[0]);
 			def = UINT_MAX;
 		}
 	}
-	return def;
+	ܦܢܐ def;
 }
 #endif
 
-#if ENABLE_HUSH_LOOPS
-static int FAST_FUNC builtin_break(char **argv)
+#ܐܢ ENABLE_HUSH_LOOPS
+ساكن صحيح FAST_FUNC builtin_break(حرف **argv)
 {
 	unsigned depth;
-	if (G.depth_of_loop == 0) {
+	ܐܢ (G.depth_of_loop == 0) {
 		bb_error_msg("%s: only meaningful in a loop", argv[0]);
 		/* if we came from builtin_continue(), need to undo "= 1" */
 		G.flag_break_continue = 0;
-		return EXIT_SUCCESS; /* bash compat */
+		ܦܢܐ EXIT_SUCCESS; /* bash compat */
 	}
 	G.flag_break_continue++; /* BC_BREAK = 1, or BC_CONTINUE = 2 */
 
 	G.depth_break_continue = depth = parse_numeric_argv1(argv, 1, 1);
-	if (depth == UINT_MAX)
+	ܐܢ (depth == UINT_MAX)
 		G.flag_break_continue = BC_BREAK;
-	if (G.depth_of_loop < depth)
+	ܐܢ (G.depth_of_loop < depth)
 		G.depth_break_continue = G.depth_of_loop;
 
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_continue(char **argv)
+ساكن صحيح FAST_FUNC builtin_continue(حرف **argv)
 {
 	G.flag_break_continue = 1; /* BC_CONTINUE = 2 = 1+1 */
-	return builtin_break(argv);
+	ܦܢܐ builtin_break(argv);
 }
 #endif
 
-#if ENABLE_HUSH_FUNCTIONS
-static int FAST_FUNC builtin_return(char **argv)
+#ܐܢ ENABLE_HUSH_FUNCTIONS
+ساكن صحيح FAST_FUNC builtin_return(حرف **argv)
 {
-	int rc;
+	صحيح rc;
 
-	if (G_flag_return_in_progress != -1) {
+	ܐܢ (G_flag_return_in_progress != -1) {
 		bb_error_msg("%s: not in a function or sourced script", argv[0]);
-		return EXIT_FAILURE; /* bash compat */
+		ܦܢܐ EXIT_FAILURE; /* bash compat */
 	}
 
 	G_flag_return_in_progress = 1;
@@ -12962,38 +12962,38 @@ static int FAST_FUNC builtin_return(char **argv)
 	 * 255  <== we also do this
 	 */
 	rc = parse_numeric_argv1(argv, G.last_exitcode, 0);
-# if ENABLE_HUSH_TRAP
-	if (argv[1]) { /* "return ARG" inside a running trap sets $? */
+# ܐܢ ENABLE_HUSH_TRAP
+	ܐܢ (argv[1]) { /* "return ARG" inside a running trap sets $? */
 		debug_printf_exec("G.return_exitcode=%d\n", rc);
 		G.return_exitcode = rc;
 	}
 # endif
-	return rc;
+	ܦܢܐ rc;
 }
 #endif
 
-#if ENABLE_HUSH_TIMES
-static int FAST_FUNC builtin_times(char **argv UNUSED_PARAM)
+#ܐܢ ENABLE_HUSH_TIMES
+ساكن صحيح FAST_FUNC builtin_times(حرف **argv UNUSED_PARAM)
 {
-	static const uint8_t times_tbl[] ALIGN1 = {
-		' ',  offsetof(struct tms, tms_utime),
-		'\n', offsetof(struct tms, tms_stime),
-		' ',  offsetof(struct tms, tms_cutime),
-		'\n', offsetof(struct tms, tms_cstime),
+	ساكن ثابت uint8_t times_tbl[] ALIGN1 = {
+		' ',  offsetof(بنية tms, tms_utime),
+		'\n', offsetof(بنية tms, tms_stime),
+		' ',  offsetof(بنية tms, tms_cutime),
+		'\n', offsetof(بنية tms, tms_cstime),
 		0
 	};
-	const uint8_t *p;
+	ثابت uint8_t *p;
 	unsigned clk_tck;
-	struct tms buf;
+	بنية tms buf;
 
 	clk_tck = bb_clk_tck();
 
 	times(&buf);
 	p = times_tbl;
-	do {
+	ܥܒܕ {
 		unsigned sec, frac;
 		unsigned long t;
-		t = *(clock_t *)(((char *) &buf) + p[1]);
+		t = *(clock_t *)(((حرف *) &buf) + p[1]);
 		sec = t / clk_tck;
 		frac = t % clk_tck;
 		printf("%um%u.%03us%c",
@@ -13001,16 +13001,16 @@ static int FAST_FUNC builtin_times(char **argv UNUSED_PARAM)
 			(frac * 1000) / clk_tck,
 			p[0]);
 		p += 2;
-	} while (*p);
+	} ܟܡܐ (*p);
 
-	return EXIT_SUCCESS;
+	ܦܢܐ EXIT_SUCCESS;
 }
 #endif
 
-#if ENABLE_HUSH_MEMLEAK
-static int FAST_FUNC builtin_memleak(char **argv UNUSED_PARAM)
+#ܐܢ ENABLE_HUSH_MEMLEAK
+ساكن صحيح FAST_FUNC builtin_memleak(حرف **argv UNUSED_PARAM)
 {
-	void *p;
+	فراغ *p;
 	unsigned long l;
 
 # ifdef M_TRIM_THRESHOLD
@@ -13021,31 +13021,31 @@ static int FAST_FUNC builtin_memleak(char **argv UNUSED_PARAM)
 	 * sans fragmentation. */
 	p = malloc(240);
 	l = (unsigned long)p;
-	free(p);
+	حرر(p);
 	p = malloc(3400);
-	if (l < (unsigned long)p) l = (unsigned long)p;
-	free(p);
+	ܐܢ (l < (unsigned long)p) l = (unsigned long)p;
+	حرر(p);
 
-# if 0  /* debug */
+# ܐܢ 0  /* debug */
 	{
-		struct mallinfo mi = mallinfo();
+		بنية mallinfo mi = mallinfo();
 		printf("top alloc:0x%lx malloced:%d+%d=%d\n", l,
 			mi.arena, mi.hblkhd, mi.arena + mi.hblkhd);
 	}
 # endif
 
-	if (!G.memleak_value)
+	ܐܢ (!G.memleak_value)
 		G.memleak_value = l;
 
 	l -= G.memleak_value;
-	if ((long)l < 0)
+	ܐܢ ((long)l < 0)
 		l = 0;
 	l /= 1024;
-	if (l > 127)
+	ܐܢ (l > 127)
 		l = 127;
 
 	/* Exitcode is "how many kilobytes we leaked since 1st call" */
-	return l;
+	ܦܢܐ l;
 }
 #endif
 #endif /* !__U_BOOT__ */
