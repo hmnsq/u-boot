@@ -7,86 +7,86 @@
 
 #define LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <asm/io.h>
+#अन्तर्भाव <valgrind/valgrind.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+स्थिर शून्य *alloc_simple(माप_प्रकार bytes, पूर्णांक align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	शून्य *ptr;
 
 	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
 	new_ptr = addr + bytes - gd->malloc_base;
 	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
 		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	जर (new_ptr > gd->malloc_limit) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
 			gd->malloc_limit);
-		return NULL;
+		परत रिक्त;
 	}
 
 	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	gd->malloc_ptr = ALIGN(new_ptr, आकार(new_ptr));
 
-	return ptr;
+	परत ptr;
 }
 
-void *malloc_simple(size_t bytes)
+शून्य *malloc_simple(माप_प्रकार bytes)
 {
-	void *ptr;
+	शून्य *ptr;
 
 	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	जर (!ptr)
+		परत ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	परत ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+शून्य *memalign_simple(माप_प्रकार align, माप_प्रकार bytes)
 {
-	void *ptr;
+	शून्य *ptr;
 
 	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	जर (!ptr)
+		परत ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	परत ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#जर CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+शून्य *सुस्मृति(माप_प्रकार nmemb, माप_प्रकार elem_size)
 {
-	size_t size = nmemb * elem_size;
-	void *ptr;
+	माप_प्रकार size = nmemb * elem_size;
+	शून्य *ptr;
 
-	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
-	memset(ptr, '\0', size);
+	ptr = दो_स्मृति(size);
+	जर (!ptr)
+		परत ptr;
+	स_रखो(ptr, '\0', size);
 
-	return ptr;
+	परत ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#जर IS_ENABLED(CONFIG_VALGRIND)
+शून्य free_simple(शून्य *ptr)
 {
 	VALGRIND_FREELIKE_BLOCK(ptr, 0);
 }
 #endif
 #endif
 
-void malloc_simple_info(void)
+शून्य malloc_simple_info(शून्य)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

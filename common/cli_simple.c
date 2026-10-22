@@ -8,89 +8,89 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <log.h>
-#include <linux/ctype.h>
+#अन्तर्भाव <bootretry.h>
+#अन्तर्भाव <cli.h>
+#अन्तर्भाव <command.h>
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <linux/ctype.h>
 
 #define DEBUG_PARSER	0	/* set to 1 to debug */
 
 #define debug_parser(fmt, args...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+पूर्णांक cli_simple_process_macros(स्थिरांक अक्षर *आदान, अक्षर *output, पूर्णांक max_size)
 {
-	char c, prev;
-	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
-	int outputcnt = max_size;
-	int state = 0;		/* 0 = waiting for '$'  */
-	int ret;
+	अक्षर c, prev;
+	स्थिरांक अक्षर *varname_start = रिक्त;
+	पूर्णांक inputcnt = म_माप(आदान);
+	पूर्णांक outputcnt = max_size;
+	पूर्णांक state = 0;		/* 0 = waiting for '$'  */
+	पूर्णांक ret;
 
 	/* 1 = waiting for '(' or '{' */
 	/* 2 = waiting for ')' or '}' */
 	/* 3 = waiting for '''  */
-	char __maybe_unused *output_start = output;
+	अक्षर __maybe_unused *output_start = output;
 
-	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(input),
-		     input);
+	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", म_माप(आदान),
+		     आदान);
 
 	prev = '\0';		/* previous character   */
 
-	while (inputcnt && outputcnt) {
-		c = *input++;
+	पर्यंत (inputcnt && outputcnt) {
+		c = *आदान++;
 		inputcnt--;
 
-		if (state != 3) {
+		जर (state != 3) {
 			/* remove one level of escape characters */
-			if ((c == '\\') && (prev != '\\')) {
-				if (inputcnt-- == 0)
-					break;
+			जर ((c == '\\') && (prev != '\\')) {
+				जर (inputcnt-- == 0)
+					थांबा;
 				prev = c;
-				c = *input++;
+				c = *आदान++;
 			}
 		}
 
-		switch (state) {
-		case 0:	/* Waiting for (unescaped) $    */
-			if ((c == '\'') && (prev != '\\')) {
+		निवड (state) {
+		स्थिती 0:	/* Waiting for (unescaped) $    */
+			जर ((c == '\'') && (prev != '\\')) {
 				state = 3;
-				break;
+				थांबा;
 			}
-			if ((c == '$') && (prev != '\\')) {
+			जर ((c == '$') && (prev != '\\')) {
 				state++;
-			} else {
+			} अन्यथा {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
-		case 1:	/* Waiting for (        */
-			if (c == '(' || c == '{') {
+			थांबा;
+		स्थिती 1:	/* Waiting for (        */
+			जर (c == '(' || c == '{') {
 				state++;
-				varname_start = input;
-			} else {
+				varname_start = आदान;
+			} अन्यथा {
 				state = 0;
 				*(output++) = '$';
 				outputcnt--;
 
-				if (outputcnt) {
+				जर (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
 			}
-			break;
-		case 2:	/* Waiting for )        */
-			if (c == ')' || c == '}') {
-				int i;
-				char envname[CONFIG_SYS_CBSIZE], *envval;
+			थांबा;
+		स्थिती 2:	/* Waiting for )        */
+			जर (c == ')' || c == '}') {
+				पूर्णांक i;
+				अक्षर envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				पूर्णांक envcnt = आदान - varname_start - 1;
 
 				/* Get the varname */
-				for (i = 0; i < envcnt; i++)
+				साठी (i = 0; i < envcnt; i++)
 					envname[i] = varname_start[i];
 				envname[i] = 0;
 
@@ -98,77 +98,77 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				envval = env_get(envname);
 
 				/* Copy into the line if it exists */
-				if (envval != NULL)
-					while ((*envval) && outputcnt) {
+				जर (envval != रिक्त)
+					पर्यंत ((*envval) && outputcnt) {
 						*(output++) = *(envval++);
 						outputcnt--;
 					}
 				/* Look for another '$' */
 				state = 0;
 			}
-			break;
-		case 3:	/* Waiting for '        */
-			if ((c == '\'') && (prev != '\\')) {
+			थांबा;
+		स्थिती 3:	/* Waiting for '        */
+			जर ((c == '\'') && (prev != '\\')) {
 				state = 0;
-			} else {
+			} अन्यथा {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
+			थांबा;
 		}
 		prev = c;
 	}
 
 	ret = inputcnt ? -ENOSPC : 0;
-	if (outputcnt) {
+	जर (outputcnt) {
 		*output = 0;
-	} else {
+	} अन्यथा {
 		*(output - 1) = 0;
 		ret = -ENOSPC;
 	}
 
 	debug_parser("[PROCESS_MACROS] OUTPUT len %zd: \"%s\"\n",
-		     strlen(output_start), output_start);
+		     म_माप(output_start), output_start);
 
-	return ret;
+	परत ret;
 }
 
 #ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+पूर्णांक cli_simple_parse_ओळ(अक्षर *ओळ, अक्षर *argv[])
 {
-	int nargs = 0;
+	पूर्णांक nargs = 0;
 
-	debug_parser("%s: \"%s\"\n", __func__, line);
-	while (nargs < CONFIG_SYS_MAXARGS) {
+	debug_parser("%s: \"%s\"\n", __func__, ओळ);
+	पर्यंत (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
-			++line;
+		पर्यंत (isblank(*ओळ))
+			++ओळ;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		जर (*ओळ == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = रिक्त;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
-			return nargs;
+			परत nargs;
 		}
 
-		argv[nargs++] = line;	/* begin of argument string	*/
+		argv[nargs++] = ओळ;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
-			++line;
+		पर्यंत (*ओळ && !isblank(*ओळ))
+			++ओळ;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		जर (*ओळ == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = रिक्त;
 			debug_parser("parse_line: nargs=%d\n", nargs);
-			return nargs;
+			परत nargs;
 		}
 
-		*line++ = '\0';		/* terminate current arg	 */
+		*ओळ++ = '\0';		/* terminate current arg	 */
 	}
 
-	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
+	म_लिखो("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
 
 	debug_parser("%s: nargs=%d\n", __func__, nargs);
-	return nargs;
+	परत nargs;
 }
 
  /*
@@ -179,102 +179,102 @@ int cli_simple_parse_line(char *line, char *argv[])
  * the environment data, which may change magicly when the command we run
  * creates or modifies environment variables (like "bootp" does).
  */
-int cli_simple_run_command(const char *cmd, int flag)
+पूर्णांक cli_simple_run_command(स्थिरांक अक्षर *cmd, पूर्णांक flag)
 {
-	char cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
-	char *token;			/* start of token in cmdbuf	*/
-	char *sep;			/* end of token (separator) in cmdbuf */
-	char finaltoken[CONFIG_SYS_CBSIZE];
-	char *str = cmdbuf;
-	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
-	int argc, inquotes;
-	int repeatable = 1;
-	int rc = 0;
+	अक्षर cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
+	अक्षर *token;			/* start of token in cmdbuf	*/
+	अक्षर *sep;			/* end of token (separator) in cmdbuf */
+	अक्षर finaltoken[CONFIG_SYS_CBSIZE];
+	अक्षर *str = cmdbuf;
+	अक्षर *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
+	पूर्णांक argc, inquotes;
+	पूर्णांक repeatable = 1;
+	पूर्णांक rc = 0;
 
 	debug_parser("[RUN_COMMAND] cmd[%p]=\"", cmd);
-	if (DEBUG_PARSER) {
+	जर (DEBUG_PARSER) {
 		/* use puts - string may be loooong */
-		puts(cmd ? cmd : "NULL");
-		puts("\"\n");
+		माला_दो(cmd ? cmd : "NULL");
+		माला_दो("\"\n");
 	}
 	clear_ctrlc();		/* forget any previous Control C */
 
-	if (!cmd || !*cmd)
-		return -1;	/* empty command */
+	जर (!cmd || !*cmd)
+		परत -1;	/* empty command */
 
-	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
-		puts("## Command too long!\n");
-		return -1;
+	जर (म_माप(cmd) >= CONFIG_SYS_CBSIZE) {
+		माला_दो("## Command too long!\n");
+		परत -1;
 	}
 
-	strcpy(cmdbuf, cmd);
+	म_नकल(cmdbuf, cmd);
 
 	/* Process separators and check for invalid
 	 * repeatable commands
 	 */
 
 	debug_parser("[PROCESS_SEPARATORS] %s\n", cmd);
-	while (*str) {
+	पर्यंत (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for (inquotes = 0, sep = str; *sep; sep++) {
-			if ((*sep == '\'') &&
+		साठी (inquotes = 0, sep = str; *sep; sep++) {
+			जर ((*sep == '\'') &&
 			    (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
 
-			if (!inquotes &&
+			जर (!inquotes &&
 			    (*sep == ';') &&	/* separator		*/
 			    (sep != str) &&	/* past string start	*/
 			    (*(sep - 1) != '\\'))	/* and NOT escaped */
-				break;
+				थांबा;
 		}
 
 		/*
 		 * Limit the token to data between separators
 		 */
 		token = str;
-		if (*sep) {
+		जर (*sep) {
 			str = sep + 1;	/* start of command for next pass */
 			*sep = '\0';
-		} else {
+		} अन्यथा {
 			str = sep;	/* no more commands for next pass */
 		}
 		debug_parser("token: \"%s\"\n", token);
 
 		/* find macros in this token and replace them */
 		cli_simple_process_macros(token, finaltoken,
-					  sizeof(finaltoken));
+					  आकार(finaltoken));
 
 		/* Extract arguments */
-		argc = cli_simple_parse_line(finaltoken, argv);
-		if (argc == 0) {
+		argc = cli_simple_parse_ओळ(finaltoken, argv);
+		जर (argc == 0) {
 			rc = -1;	/* no command at all */
-			continue;
+			सुरूठेवा;
 		}
 
-		if (cmd_process(flag, argc, argv, &repeatable, NULL))
+		जर (cmd_process(flag, argc, argv, &repeatable, रिक्त))
 			rc = -1;
 
 		/* Did the user stop this? */
-		if (had_ctrlc())
-			return -1;	/* if stopped then not repeatable */
+		जर (had_ctrlc())
+			परत -1;	/* if stopped then not repeatable */
 	}
 
-	return rc ? rc : repeatable;
+	परत rc ? rc : repeatable;
 }
 
-void cli_simple_loop(void)
+शून्य cli_simple_loop(शून्य)
 {
-	static char lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
+	स्थिर अक्षर lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
 
-	int len;
-	int flag;
-	int rc = 1;
+	पूर्णांक len;
+	पूर्णांक flag;
+	पूर्णांक rc = 1;
 
-	for (;;) {
-		if (rc >= 0) {
+	साठी (;;) {
+		जर (rc >= 0) {
 			/* Saw enough of a valid command to
 			 * restart the timeout.
 			 */
@@ -283,66 +283,66 @@ void cli_simple_loop(void)
 		len = cli_readline(CONFIG_SYS_PROMPT);
 
 		flag = 0;	/* assume no special flags for now */
-		if (len > 0)
+		जर (len > 0)
 			strlcpy(lastcommand, console_buffer,
 				CONFIG_SYS_CBSIZE + 1);
-		else if (len == 0)
+		अन्यथा जर (len == 0)
 			flag |= CMD_FLAG_REPEAT;
 #ifdef CONFIG_BOOT_RETRY_TIME
-		else if (len == -2) {
+		अन्यथा जर (len == -2) {
 			/* -2 means timed out, retry autoboot
 			 */
-			puts("\nTimed out waiting for command\n");
+			माला_दो("\nTimed out waiting for command\n");
 # ifdef CONFIG_RESET_TO_RETRY
 			/* Reinit board to run initialization code again */
-			do_reset(NULL, 0, 0, NULL);
-# else
-			return;		/* retry autoboot */
+			do_reset(रिक्त, 0, 0, रिक्त);
+# अन्यथा
+			परत;		/* retry autoboot */
 # endif
 		}
 #endif
 
-		if (len == -1)
-			puts("<INTERRUPT>\n");
-		else
+		जर (len == -1)
+			माला_दो("<INTERRUPT>\n");
+		अन्यथा
 			rc = run_command_repeatable(lastcommand, flag);
 
-		if (rc <= 0) {
+		जर (rc <= 0) {
 			/* invalid command or not repeatable, forget it */
 			lastcommand[0] = 0;
 		}
 	}
 }
 
-int cli_simple_run_command_list(char *cmd, int flag)
+पूर्णांक cli_simple_run_command_list(अक्षर *cmd, पूर्णांक flag)
 {
-	char *line, *next;
-	int rcode = 0;
+	अक्षर *ओळ, *next;
+	पूर्णांक rcode = 0;
 
 	/*
 	 * Break into individual lines, and execute each line; terminate on
 	 * error.
 	 */
 	next = cmd;
-	line = cmd;
-	while (*next) {
-		if (*next == '\n') {
+	ओळ = cmd;
+	पर्यंत (*next) {
+		जर (*next == '\n') {
 			*next = '\0';
 			/* run only non-empty commands */
-			if (*line) {
-				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+			जर (*ओळ) {
+				debug("** exec: \"%s\"\n", ओळ);
+				जर (cli_simple_run_command(ओळ, 0) < 0) {
 					rcode = 1;
-					break;
+					थांबा;
 				}
 			}
-			line = next + 1;
+			ओळ = next + 1;
 		}
 		++next;
 	}
-	if (rcode == 0 && *line)
-		rcode = (cli_simple_run_command(line, 0) < 0);
+	जर (rcode == 0 && *ओळ)
+		rcode = (cli_simple_run_command(ओळ, 0) < 0);
 
-	return rcode;
+	परत rcode;
 }
 #endif

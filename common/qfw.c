@@ -4,123 +4,123 @@
  * (C) Copyright 2021 Asherah Connor <ashe@kivikakk.ee>
  */
 
-#include <dm.h>
-#include <env.h>
-#include <mapmem.h>
-#include <qfw.h>
-#include <stdlib.h>
-#include <dm/uclass.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <qfw.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <dm/uclass.h>
 
-int qfw_get_dev(struct udevice **devp)
+पूर्णांक qfw_get_dev(संरचना udevice **devp)
 {
-	return uclass_first_device_err(UCLASS_QFW, devp);
+	परत uclass_first_device_err(UCLASS_QFW, devp);
 }
 
-int qfw_online_cpus(struct udevice *dev)
+पूर्णांक qfw_online_cpus(संरचना udevice *dev)
 {
 	u16 nb_cpus;
 
 	qfw_read_entry(dev, FW_CFG_NB_CPUS, 2, &nb_cpus);
 
-	return le16_to_cpu(nb_cpus);
+	परत le16_to_cpu(nb_cpus);
 }
 
-int qfw_read_firmware_list(struct udevice *dev)
+पूर्णांक qfw_read_firmware_list(संरचना udevice *dev)
 {
-	int i;
-	u32 count;
-	struct fw_file *file;
-	struct list_head *entry;
+	पूर्णांक i;
+	u32 मोजणी;
+	संरचना fw_file *file;
+	संरचना list_head *entry;
 
-	struct qfw_dev *qdev = dev_get_uclass_priv(dev);
+	संरचना qfw_dev *qdev = dev_get_uclass_priv(dev);
 
 	/* don't read it twice */
-	if (!list_empty(&qdev->fw_list))
-		return 0;
+	जर (!list_empty(&qdev->fw_list))
+		परत 0;
 
-	qfw_read_entry(dev, FW_CFG_FILE_DIR, 4, &count);
-	if (!count)
-		return 0;
+	qfw_read_entry(dev, FW_CFG_FILE_DIR, 4, &मोजणी);
+	जर (!मोजणी)
+		परत 0;
 
-	count = be32_to_cpu(count);
-	for (i = 0; i < count; i++) {
-		file = malloc(sizeof(*file));
-		if (!file) {
-			printf("error: allocating resource\n");
-			goto err;
+	मोजणी = be32_to_cpu(मोजणी);
+	साठी (i = 0; i < मोजणी; i++) {
+		file = दो_स्मृति(आकार(*file));
+		जर (!file) {
+			म_लिखो("error: allocating resource\n");
+			जा err;
 		}
 		qfw_read_entry(dev, FW_CFG_INVALID,
-			       sizeof(struct fw_cfg_file), &file->cfg);
+			       आकार(संरचना fw_cfg_file), &file->cfg);
 		file->addr = 0;
 		list_add_tail(&file->list, &qdev->fw_list);
 	}
 
-	return 0;
+	परत 0;
 
 err:
 	list_for_each(entry, &qdev->fw_list) {
-		file = list_entry(entry, struct fw_file, list);
-		free(file);
+		file = list_entry(entry, संरचना fw_file, list);
+		मुक्त(file);
 	}
 
-	return -ENOMEM;
+	परत -ENOMEM;
 }
 
-struct fw_file *qfw_find_file(struct udevice *dev, const char *name)
+संरचना fw_file *qfw_find_file(संरचना udevice *dev, स्थिरांक अक्षर *name)
 {
-	struct list_head *entry;
-	struct fw_file *file;
+	संरचना list_head *entry;
+	संरचना fw_file *file;
 
-	struct qfw_dev *qdev = dev_get_uclass_priv(dev);
+	संरचना qfw_dev *qdev = dev_get_uclass_priv(dev);
 
 	list_for_each(entry, &qdev->fw_list) {
-		file = list_entry(entry, struct fw_file, list);
-		if (!strcmp(file->cfg.name, name))
-			return file;
+		file = list_entry(entry, संरचना fw_file, list);
+		जर (!म_भेद(file->cfg.name, name))
+			परत file;
 	}
 
-	return NULL;
+	परत रिक्त;
 }
 
-struct fw_file *qfw_file_iter_init(struct udevice *dev,
-				   struct fw_cfg_file_iter *iter)
+संरचना fw_file *qfw_file_iter_init(संरचना udevice *dev,
+				   संरचना fw_cfg_file_iter *iter)
 {
-	struct qfw_dev *qdev = dev_get_uclass_priv(dev);
+	संरचना qfw_dev *qdev = dev_get_uclass_priv(dev);
 
 	iter->entry = qdev->fw_list.next;
 	iter->end = &qdev->fw_list;
-	return list_entry((struct list_head *)iter->entry,
-			  struct fw_file, list);
+	परत list_entry((संरचना list_head *)iter->entry,
+			  संरचना fw_file, list);
 }
 
-struct fw_file *qfw_file_iter_next(struct fw_cfg_file_iter *iter)
+संरचना fw_file *qfw_file_iter_next(संरचना fw_cfg_file_iter *iter)
 {
-	iter->entry = ((struct list_head *)iter->entry)->next;
-	return list_entry((struct list_head *)iter->entry,
-			  struct fw_file, list);
+	iter->entry = ((संरचना list_head *)iter->entry)->next;
+	परत list_entry((संरचना list_head *)iter->entry,
+			  संरचना fw_file, list);
 }
 
-bool qfw_file_iter_end(struct fw_cfg_file_iter *iter)
+bool qfw_file_iter_end(संरचना fw_cfg_file_iter *iter)
 {
-	return iter->entry == iter->end;
+	परत iter->entry == iter->end;
 }
 
-int qemu_fwcfg_setup_kernel(struct udevice *qfw_dev, ulong load_addr,
+पूर्णांक qemu_fwcfg_setup_kernel(संरचना udevice *qfw_dev, ulong load_addr,
 			    ulong initrd_addr)
 {
-	char *data_addr;
+	अक्षर *data_addr;
 	u32 setup_size = 0, kernel_size = 0, cmdline_size = 0, initrd_size = 0;
 
 	qfw_read_entry(qfw_dev, FW_CFG_SETUP_SIZE, 4, &setup_size);
 	qfw_read_entry(qfw_dev, FW_CFG_KERNEL_SIZE, 4, &kernel_size);
 
-	if (!kernel_size) {
-		printf("fatal: no kernel available\n");
-		return -ENOENT;
+	जर (!kernel_size) {
+		म_लिखो("fatal: no kernel available\n");
+		परत -ENOENT;
 	}
 
 	data_addr = map_sysmem(load_addr, 0);
-	if (setup_size) {
+	जर (setup_size) {
 		qfw_read_entry(qfw_dev, FW_CFG_SETUP_DATA,
 			       le32_to_cpu(setup_size), data_addr);
 		data_addr += le32_to_cpu(setup_size);
@@ -133,9 +133,9 @@ int qemu_fwcfg_setup_kernel(struct udevice *qfw_dev, ulong load_addr,
 
 	data_addr = map_sysmem(initrd_addr, 0);
 	qfw_read_entry(qfw_dev, FW_CFG_INITRD_SIZE, 4, &initrd_size);
-	if (!initrd_size) {
-		printf("warning: no initrd available\n");
-	} else {
+	जर (!initrd_size) {
+		म_लिखो("warning: no initrd available\n");
+	} अन्यथा {
 		qfw_read_entry(qfw_dev, FW_CFG_INITRD_DATA,
 			       le32_to_cpu(initrd_size), data_addr);
 		data_addr += le32_to_cpu(initrd_size);
@@ -143,26 +143,26 @@ int qemu_fwcfg_setup_kernel(struct udevice *qfw_dev, ulong load_addr,
 	}
 
 	qfw_read_entry(qfw_dev, FW_CFG_CMDLINE_SIZE, 4, &cmdline_size);
-	if (cmdline_size) {
+	जर (cmdline_size) {
 		qfw_read_entry(qfw_dev, FW_CFG_CMDLINE_DATA,
 			       le32_to_cpu(cmdline_size), data_addr);
 		/*
 		 * if kernel cmdline only contains '\0', (e.g. no -append
 		 * when invoking qemu), do not update bootargs
 		 */
-		if (*data_addr) {
-			if (env_set("bootargs", data_addr) < 0)
-				printf("warning: unable to change bootargs\n");
+		जर (*data_addr) {
+			जर (env_set("bootargs", data_addr) < 0)
+				म_लिखो("warning: unable to change bootargs\n");
 		}
 	}
 
-	printf("loading kernel to address %lx size %x", load_addr,
+	म_लिखो("loading kernel to address %lx size %x", load_addr,
 	       le32_to_cpu(kernel_size));
-	if (initrd_size)
-		printf(" initrd %lx size %x\n", initrd_addr,
+	जर (initrd_size)
+		म_लिखो(" initrd %lx size %x\n", initrd_addr,
 		       le32_to_cpu(initrd_size));
-	else
-		printf("\n");
+	अन्यथा
+		म_लिखो("\n");
 
-	return 0;
+	परत 0;
 }
