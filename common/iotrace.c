@@ -3,16 +3,16 @@
  * Copyright (c) 2014 Google, Inc.
  */
 
-#define IOTRACE_IMPL
+#تعریف_کرو IOTRACE_IMPL
 
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/bug.h>
-#include <u-boot/crc.h>
+#ضمن <mapmem.h>
+#ضمن <time.h>
+#ضمن <asm/global_data.h>
+#ضمن <asm/io.h>
+#ضمن <linux/bug.h>
+#ضمن <u-boot/crc.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_انکڑے_PTR;
 
 /**
  * struct iotrace - current trace status and checksum
@@ -26,20 +26,20 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
-	ulong start;
-	ulong size;
-	ulong needed_size;
-	ulong offset;
-	ulong region_start;
-	ulong region_size;
-	u32 crc32;
+ساكن بنية iotrace {
+	ulong شروع;
+	ulong ناپ;
+	ulong needed_ناپ;
+	ulong وتھ;
+	ulong region_شروع;
+	ulong region_ناپ;
+	u32 چکری_جانچ_32;
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+ساكن فراغ جوڑو_ریکارڈ(صحيح flags, ثابت فراغ *ptr, ulong قدر)
 {
-	struct iotrace_record srec, *rec = &srec;
+	بنية iotrace_ریکارڈ srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,137 +47,137 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	إذا (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		أرجع;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
-		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+	إذا (iotrace.region_ناپ)
+		إذا ((ulong)ptr < iotrace.region_شروع ||
+		    (ulong)ptr > iotrace.region_شروع + iotrace.region_ناپ)
+			أرجع;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
-					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+	إذا (iotrace.وتھ + حجم(*rec) < iotrace.ناپ) {
+		rec = (بنية iotrace_ریکارڈ *)map_sysmem(
+					iotrace.شروع + iotrace.وتھ,
+					حجم(قدر));
+	} وإلا {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_ناپ += حجم(بنية iotrace_ریکارڈ);
+		أرجع;
 	}
 
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
-	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->addr = map_منزل_sysmem(ptr);
+	rec->قدر = قدر;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.چکری_جانچ_32 = چکری_جانچ_32(iotrace.چکری_جانچ_32, (بنانشانی حرف *)rec,
+			      حجم(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_ناپ += حجم(بنية iotrace_ریکارڈ);
+	iotrace.وتھ += حجم(بنية iotrace_ریکارڈ);
 }
 
-u32 iotrace_readl(const void *ptr)
+u32 iotrace_readl(ثابت فراغ *ptr)
 {
 	u32 v;
 
 	v = readl(ptr);
-	add_record(IOT_32 | IOT_READ, ptr, v);
+	جوڑو_ریکارڈ(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	أرجع v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+فراغ iotrace_writel(ulong قدر, فراغ *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	جوڑو_ریکارڈ(IOT_32 | IOT_WRITE, ptr, قدر);
+	writel(قدر, ptr);
 }
 
-u16 iotrace_readw(const void *ptr)
+u16 iotrace_readw(ثابت فراغ *ptr)
 {
 	u32 v;
 
 	v = readw(ptr);
-	add_record(IOT_16 | IOT_READ, ptr, v);
+	جوڑو_ریکارڈ(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	أرجع v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+فراغ iotrace_writew(ulong قدر, فراغ *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	جوڑو_ریکارڈ(IOT_16 | IOT_WRITE, ptr, قدر);
+	writew(قدر, ptr);
 }
 
-u8 iotrace_readb(const void *ptr)
+u8 iotrace_readb(ثابت فراغ *ptr)
 {
 	u32 v;
 
 	v = readb(ptr);
-	add_record(IOT_8 | IOT_READ, ptr, v);
+	جوڑو_ریکارڈ(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	أرجع v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+فراغ iotrace_writeb(ulong قدر, فراغ *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	جوڑو_ریکارڈ(IOT_8 | IOT_WRITE, ptr, قدر);
+	writeb(قدر, ptr);
 }
 
-void iotrace_reset_checksum(void)
+فراغ iotrace_reset_checksum(فراغ)
 {
-	iotrace.crc32 = 0;
+	iotrace.چکری_جانچ_32 = 0;
 }
 
-u32 iotrace_get_checksum(void)
+u32 iotrace_get_checksum(فراغ)
 {
-	return iotrace.crc32;
+	أرجع iotrace.چکری_جانچ_32;
 }
 
-void iotrace_set_region(ulong start, ulong size)
+فراغ iotrace_سیٹ_region(ulong شروع, ulong ناپ)
 {
-	iotrace.region_start = start;
-	iotrace.region_size = size;
+	iotrace.region_شروع = شروع;
+	iotrace.region_ناپ = ناپ;
 }
 
-void iotrace_reset_region(void)
+فراغ iotrace_reset_region(فراغ)
 {
-	iotrace.region_start = 0;
-	iotrace.region_size = 0;
+	iotrace.region_شروع = 0;
+	iotrace.region_ناپ = 0;
 }
 
-void iotrace_get_region(ulong *start, ulong *size)
+فراغ iotrace_get_region(ulong *شروع, ulong *ناپ)
 {
-	*start = iotrace.region_start;
-	*size = iotrace.region_size;
+	*شروع = iotrace.region_شروع;
+	*ناپ = iotrace.region_ناپ;
 }
 
-void iotrace_set_enabled(int enable)
+فراغ iotrace_سیٹ_enabled(صحيح enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+صحيح iotrace_get_enabled(فراغ)
 {
-	return iotrace.enabled;
+	أرجع iotrace.enabled;
 }
 
-void iotrace_set_buffer(ulong start, ulong size)
+فراغ iotrace_سیٹ_بفر(ulong شروع, ulong ناپ)
 {
-	iotrace.start = start;
-	iotrace.size = size;
-	iotrace.offset = 0;
-	iotrace.crc32 = 0;
+	iotrace.شروع = شروع;
+	iotrace.ناپ = ناپ;
+	iotrace.وتھ = 0;
+	iotrace.چکری_جانچ_32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+فراغ iotrace_get_بفر(ulong *شروع, ulong *ناپ, ulong *needed_ناپ, ulong *وتھ, ulong *گنتی)
 {
-	*start = iotrace.start;
-	*size = iotrace.size;
-	*needed_size = iotrace.needed_size;
-	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*شروع = iotrace.شروع;
+	*ناپ = iotrace.ناپ;
+	*needed_ناپ = iotrace.needed_ناپ;
+	*وتھ = iotrace.وتھ;
+	*گنتی = iotrace.وتھ / حجم(بنية iotrace_ریکارڈ);
 }

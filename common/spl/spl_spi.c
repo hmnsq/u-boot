@@ -8,85 +8,85 @@
  * Heiko Schocher, DENX Software Engineering, hs@denx.de.
  */
 
-#include <config.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <errno.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <dm/ofnode.h>
+#ضمن <config.h>
+#ضمن <image.h>
+#ضمن <imx_container.h>
+#ضمن <log.h>
+#ضمن <spi.h>
+#ضمن <spi_flash.h>
+#ضمن <errno.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
+#ضمن <asm/global_data.h>
+#ضمن <asm/io.h>
+#ضمن <dm/ofnode.h>
 
-static ulong spl_spi_fit_read(struct spl_load_info *load, ulong sector,
-			      ulong count, void *buf)
+ساكن ulong spl_spi_fit_read(بنية spl_لدو_info *لدو, ulong sector,
+			      ulong گنتی, فراغ *buf)
 {
-	struct spi_flash *flash = load->priv;
+	بنية spi_flash *flash = لدو->priv;
 	ulong ret;
 
-	ret = spi_flash_read(flash, sector, count, buf);
-	if (!ret)
-		return count;
-	else
-		return 0;
+	ret = spi_flash_read(flash, sector, گنتی, buf);
+	إذا (!ret)
+		أرجع گنتی;
+	وإلا
+		أرجع 0;
 }
 
-unsigned int __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
+بنانشانی صحيح __weak spl_spi_get_uboot_offs(بنية spi_flash *flash)
 {
-	return CONFIG_SYS_SPI_U_BOOT_OFFS;
+	أرجع CONFIG_SYS_SPI_U_BOOT_OFFS;
 }
 
-u32 __weak spl_spi_boot_bus(void)
+u32 __weak spl_spi_boot_bus(فراغ)
 {
-	return CONFIG_SF_DEFAULT_BUS;
+	أرجع CONFIG_SF_DEFAULT_BUS;
 }
 
-u32 __weak spl_spi_boot_cs(void)
+u32 __weak spl_spi_boot_cs(فراغ)
 {
-	return CONFIG_SF_DEFAULT_CS;
+	أرجع CONFIG_SF_DEFAULT_CS;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_spi_load_image_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev,
-				 struct spi_flash *flash,
-				 struct spl_load_info *load)
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ساكن صحيح spl_spi_لدو_image_os(بنية spl_image_info *spl_image,
+				 بنية spl_boot_device *bootdev,
+				 بنية spi_flash *flash,
+				 بنية spl_لدو_info *لدو)
 {
-	int err = spl_load(spl_image, bootdev, load, 0,
+	صحيح err = spl_لدو(spl_image, bootdev, لدو, 0,
 			   CONFIG_SYS_SPI_KERNEL_OFFS);
 
-	if (err)
-		return err;
+	إذا (err)
+		أرجع err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT_دلیلاں)
 	/* Read device tree. */
-	return spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
-			      CONFIG_SYS_SPI_ARGS_SIZE,
-			      (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-#else
-	return 0;
-#endif
+	أرجع spi_flash_read(flash, CONFIG_SYS_SPI_دلیلاں_OFFS,
+			      CONFIG_SYS_SPI_دلیلاں_ناپ,
+			      (فراغ *)CONFIG_SPL_PAYLOAD_دلیلاں_ADDR);
+#وإلا
+	أرجع 0;
+#جے_انت
 
 }
-#endif
+#جے_انت
 
 /*
  * The main entry for SPI booting. It's necessary that SDRAM is already
  * configured and available since this code loads the main U-Boot image
  * from SPI into SDRAM and starts it from there.
  */
-static int spl_spi_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_spi_لدو_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	int err = 0;
-	unsigned int payload_offs;
-	struct spi_flash *flash;
-	unsigned int sf_bus = spl_spi_boot_bus();
-	unsigned int sf_cs = spl_spi_boot_cs();
-	struct spl_load_info load;
+	صحيح err = 0;
+	بنانشانی صحيح payload_offs;
+	بنية spi_flash *flash;
+	بنانشانی صحيح sf_bus = spl_spi_boot_bus();
+	بنانشانی صحيح sf_cs = spl_spi_boot_cs();
+	بنية spl_لدو_info لدو;
 
 	/*
 	 * Load U-Boot image from SPI flash into RAM
@@ -94,47 +94,47 @@ static int spl_spi_load_image(struct spl_image_info *spl_image,
 	 * taken from DT when available
 	 */
 	flash = spi_flash_probe(sf_bus, sf_cs,
-				CONFIG_SF_DEFAULT_SPEED,
-				CONFIG_SF_DEFAULT_MODE);
-	if (!flash) {
+				CONFIG_SF_DEFAULT_رفتار,
+				CONFIG_SF_DEFAULT_منوال);
+	إذا (!flash) {
 		puts("SPI probe failed.\n");
-		return -ENODEV;
+		أرجع -ENODEV;
 	}
 
-	spl_load_init(&load, spl_spi_fit_read, flash, 1);
+	spl_لدو_init(&لدو, spl_spi_fit_read, flash, 1);
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		err = spl_spi_load_image_os(spl_image, bootdev, flash, &load);
+#إذا CONFIG_IS_ENABLED(OS_BOOT)
+	إذا (!spl_شروع_uboot()) {
+		err = spl_spi_لدو_image_os(spl_image, bootdev, flash, &لدو);
 
-		if (!err)
-			return 0;
+		إذا (!err)
+			أرجع 0;
 
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+		لکھو("%s: Failed in falcon boot: %d", __func__, err);
+		إذا (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			أرجع err;
+		لکھو("Fallback to U-Boot\n");
 	}
-#endif
+#جے_انت
 
 	payload_offs = spl_spi_get_uboot_offs(flash);
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
+	إذا (CONFIG_IS_ENABLED(دا_REAL)) {
 		payload_offs = ofnode_conf_read_int("u-boot,spl-payload-offset",
 						    payload_offs);
 	}
 
-	err = spl_load(spl_image, bootdev, &load, 0, payload_offs);
-	if (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
-		int ret = spi_nor_remove(flash);
+	err = spl_لدو(spl_image, bootdev, &لدو, 0, payload_offs);
+	إذا (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
+		صحيح ret = spi_nor_remove(flash);
 
-		if (ret) {
-			printf("%s: Failed to remove SPI NOR flash: %d\n",
+		إذا (ret) {
+			لکھو("%s: Failed to remove SPI NOR flash: %d\n",
 			       __func__, ret);
-			if (!err)
+			إذا (!err)
 				err = ret;
 		}
 	}
-	return err;
+	أرجع err;
 }
 /* Use priorty 1 so that boards can override this */
-SPL_LOAD_IMAGE_METHOD("SPI", 1, BOOT_DEVICE_SPI, spl_spi_load_image);
+SPL_لدو_IMAGE_طریقہ("SPI", 1, BOOT_DEVICE_SPI, spl_spi_لدو_image);

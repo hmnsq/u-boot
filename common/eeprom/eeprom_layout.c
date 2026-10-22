@@ -6,16 +6,16 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <linux/kernel.h>
-#include <linux/string.h>
-#include <eeprom_layout.h>
-#include <eeprom_field.h>
+#ضمن <linux/kernel.h>
+#ضمن <linux/string.h>
+#ضمن <eeprom_layout.h>
+#ضمن <eeprom_field.h>
 
-#define NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
+#تعریف_کرو NO_LAYOUT_FIELDS	"Unknown layout. Dumping raw data\n"
 
-struct eeprom_field layout_unknown[1] = {
-	{ NO_LAYOUT_FIELDS, 256, NULL, eeprom_field_print_bin,
-				       eeprom_field_update_bin },
+بنية eeprom_میدان layout_unknown[1] = {
+	{ NO_LAYOUT_FIELDS, 256, عدم, eeprom_میدان_print_bin,
+				       eeprom_میدان_update_bin },
 };
 
 /*
@@ -24,9 +24,9 @@ struct eeprom_field layout_unknown[1] = {
  *
  * Returns: the detected layout version.
  */
-__weak int eeprom_layout_detect(unsigned char *data)
+__weak صحيح eeprom_layout_detect(بنانشانی حرف *انکڑے)
 {
-	return LAYOUT_VERSION_UNRECOGNIZED;
+	أرجع LAYOUT_نسخہ_UNRECOGNIZED;
 }
 
 /*
@@ -34,25 +34,25 @@ __weak int eeprom_layout_detect(unsigned char *data)
  * @layout:		A pointer to an existing struct layout.
  * @layout_version:	The version number of the desired layout
  */
-__weak void __eeprom_layout_assign(struct eeprom_layout *layout,
-				   int layout_version)
+__weak فراغ __eeprom_layout_assign(بنية eeprom_layout *layout,
+				   صحيح layout_نسخہ)
 {
 	layout->fields = layout_unknown;
-	layout->num_of_fields = ARRAY_SIZE(layout_unknown);
+	layout->عدد_دا_fields = ARRAY_ناپ(layout_unknown);
 }
-void eeprom_layout_assign(struct eeprom_layout *layout, int layout_version) \
+فراغ eeprom_layout_سونپو(بنية eeprom_layout *layout, صحيح layout_نسخہ) \
 		__attribute__((weak, alias("__eeprom_layout_assign")));
 
 /*
  * eeprom_layout_print() - print the layout and the data which is assigned to it
  * @layout: A pointer to an existing struct layout.
  */
-static void eeprom_layout_print(const struct eeprom_layout *layout)
+ساكن فراغ eeprom_layout_print(ثابت بنية eeprom_layout *layout)
 {
-	int i;
-	struct eeprom_field *fields = layout->fields;
+	صحيح i;
+	بنية eeprom_میدان *fields = layout->fields;
 
-	for (i = 0; i < layout->num_of_fields; i++)
+	لكل (i = 0; i < layout->عدد_دا_fields; i++)
 		fields[i].print(&fields[i]);
 }
 
@@ -64,18 +64,18 @@ static void eeprom_layout_print(const struct eeprom_layout *layout)
  *
  * Returns: a pointer to the found field or NULL on failure.
  */
-struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
-					      char *field_name, bool warn)
+بنية eeprom_میدان *eeprom_layout_لبھو_میدان(بنية eeprom_layout *layout,
+					      حرف *میدان_name, bool warn)
 {
-	for (int i = 0; i < layout->num_of_fields; i++)
-		if (layout->fields[i].name != RESERVED_FIELDS &&
-		    !strcmp(layout->fields[i].name, field_name))
-			return &layout->fields[i];
+	لكل (صحيح i = 0; i < layout->عدد_دا_fields; i++)
+		إذا (layout->fields[i].name != RESERVED_FIELDS &&
+		    !strcmp(layout->fields[i].name, میدان_name))
+			أرجع &layout->fields[i];
 
-	if (warn)
-		printf("No such field '%s'\n", field_name);
+	إذا (warn)
+		لکھو("No such field '%s'\n", میدان_name);
 
-	return NULL;
+	أرجع عدم;
 }
 
 /*
@@ -86,27 +86,27 @@ struct eeprom_field *eeprom_layout_find_field(struct eeprom_layout *layout,
  *
  * Returns: 0 on success, negative error value on failure.
  */
-static int eeprom_layout_update_field(struct eeprom_layout *layout,
-				      char *field_name, char *new_data)
+ساكن صحيح eeprom_layout_update_میدان(بنية eeprom_layout *layout,
+				      حرف *میدان_name, حرف *new_انکڑے)
 {
-	struct eeprom_field *field;
-	int err;
+	بنية eeprom_میدان *میدان;
+	صحيح err;
 
-	if (new_data == NULL)
-		return 0;
+	إذا (new_انکڑے == عدم)
+		أرجع 0;
 
-	if (field_name == NULL)
-		return -1;
+	إذا (میدان_name == عدم)
+		أرجع -1;
 
-	field = eeprom_layout_find_field(layout, field_name, true);
-	if (field == NULL)
-		return -1;
+	میدان = eeprom_layout_لبھو_میدان(layout, میدان_name, true);
+	إذا (میدان == عدم)
+		أرجع -1;
 
-	err = field->update(field, new_data);
-	if (err)
-		printf("Invalid data for field %s\n", field_name);
+	err = میدان->update(میدان, new_انکڑے);
+	إذا (err)
+		لکھو("Invalid data for field %s\n", میدان_name);
 
-	return err;
+	أرجع err;
 }
 
 /*
@@ -117,24 +117,24 @@ static int eeprom_layout_update_field(struct eeprom_layout *layout,
  * @buf_size:	Size of buf in bytes.
  * @layout version: The version number of the layout.
  */
-void eeprom_layout_setup(struct eeprom_layout *layout, unsigned char *buf,
-			 unsigned int buf_size, int layout_version)
+فراغ eeprom_layout_تیاری(بنية eeprom_layout *layout, بنانشانی حرف *buf,
+			 بنانشانی صحيح buf_ناپ, صحيح layout_نسخہ)
 {
-	int i;
+	صحيح i;
 
-	if (layout_version == LAYOUT_VERSION_AUTODETECT)
-		layout->layout_version = eeprom_layout_detect(buf);
-	else
-		layout->layout_version = layout_version;
+	إذا (layout_نسخہ == LAYOUT_نسخہ_AUTODETECT)
+		layout->layout_نسخہ = eeprom_layout_detect(buf);
+	وإلا
+		layout->layout_نسخہ = layout_نسخہ;
 
-	layout->data_size = buf_size;
+	layout->انکڑے_ناپ = buf_ناپ;
 	layout->print = eeprom_layout_print;
-	layout->update = eeprom_layout_update_field;
+	layout->update = eeprom_layout_update_میدان;
 
-	eeprom_layout_assign(layout, layout_version);
-	layout->data = buf;
-	for (i = 0; i < layout->num_of_fields; i++) {
+	eeprom_layout_سونپو(layout, layout_نسخہ);
+	layout->انکڑے = buf;
+	لكل (i = 0; i < layout->عدد_دا_fields; i++) {
 		layout->fields[i].buf = buf;
-		buf += layout->fields[i].size;
+		buf += layout->fields[i].ناپ;
 	}
 }

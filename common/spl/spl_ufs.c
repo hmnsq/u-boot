@@ -3,47 +3,47 @@
  * (C) Copyright 2025 Alexey Charkov <alchark@gmail.com>
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <scsi.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/compiler.h>
-#include <log.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
+#ضمن <scsi.h>
+#ضمن <errno.h>
+#ضمن <image.h>
+#ضمن <linux/compiler.h>
+#ضمن <log.h>
 
-static ulong spl_ufs_load_read(struct spl_load_info *load, ulong off, ulong size, void *buf)
+ساكن ulong spl_ufs_لدو_read(بنية spl_لدو_info *لدو, ulong off, ulong ناپ, فراغ *buf)
 {
-	struct blk_desc *bd = load->priv;
+	بنية blk_desc *bd = لدو->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t گنتی = ناپ >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	أرجع blk_dread(bd, sector, گنتی, buf) << bd->log2blksz;
 }
 
-static int spl_ufs_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_ufs_لدو_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	unsigned long sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
-	int devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
-	struct spl_load_info load;
-	struct blk_desc *bd;
-	int err;
+	بنانشانی لما sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
+	صحيح devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
+	بنية spl_لدو_info لدو;
+	بنية blk_desc *bd;
+	صحيح err;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_جانچ(false);
 	bd = blk_get_devnum_by_uclass_id(UCLASS_SCSI, devnum);
-	if (!bd)
-		return -ENODEV;
+	إذا (!bd)
+		أرجع -ENODEV;
 
-	spl_load_init(&load, spl_ufs_load_read, bd, bd->blksz);
-	err = spl_load(spl_image, bootdev, &load, 0, sector << bd->log2blksz);
-	if (err) {
+	spl_لدو_init(&لدو, spl_ufs_لدو_read, bd, bd->blksz);
+	err = spl_لدو(spl_image, bootdev, &لدو, 0, sector << bd->log2blksz);
+	إذا (err) {
 		puts("spl_ufs_load_image: ufs block read error\n");
 		log_debug("(error=%d)\n", err);
-		return err;
+		أرجع err;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-SPL_LOAD_IMAGE_METHOD("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_load_image);
+SPL_لدو_IMAGE_طریقہ("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_لدو_image);

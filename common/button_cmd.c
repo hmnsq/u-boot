@@ -4,19 +4,19 @@
  *   Author: Casey Connolly <casey.connolly@linaro.org>
  */
 
-#include <button.h>
-#include <command.h>
-#include <env.h>
-#include <log.h>
-#include <stdio.h>
+#ضمن <button.h>
+#ضمن <command.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <stdio.h>
 
 /* Some sane limit "just in case" */
-#define MAX_BTN_CMDS 32
+#تعریف_کرو MAX_BTN_CMDS 32
 
-struct button_cmd {
+بنية button_cmd {
 	bool pressed;
-	const char *btn_name;
-	const char *cmd;
+	ثابت حرف *btn_name;
+	ثابت حرف *cmd;
 };
 
 /*
@@ -30,54 +30,54 @@ struct button_cmd {
  *
  * Returns 1 if a command was found, 0 otherwise.
  */
-static int get_button_cmd(int n, struct button_cmd *cmd)
+ساكن صحيح get_button_cmd(صحيح n, بنية button_cmd *cmd)
 {
-	const char *cmd_str;
-	struct udevice *btn = NULL;
-	char buf[24];
+	ثابت حرف *cmd_str;
+	بنية udevice *btn = عدم;
+	حرف buf[24];
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d_name", n);
+	snprintf(buf, حجم(buf), "button_cmd_%d_name", n);
 	cmd->btn_name = env_get(buf);
-	if (!cmd->btn_name)
-		return 0;
+	إذا (!cmd->btn_name)
+		أرجع 0;
 
 	button_get_by_label(cmd->btn_name, &btn);
-	if (!btn) {
+	إذا (!btn) {
 		log_err("No button labelled '%s'\n", cmd->btn_name);
-		return 0;
+		أرجع 0;
 	}
 
 	cmd->pressed = button_get_state(btn) == BUTTON_ON;
 	/* If the button isn't pressed then cmd->cmd will be unused so don't waste
 	 * cycles reading it
 	 */
-	if (!cmd->pressed)
-		return 1;
+	إذا (!cmd->pressed)
+		أرجع 1;
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d", n);
+	snprintf(buf, حجم(buf), "button_cmd_%d", n);
 	cmd_str = env_get(buf);
-	if (!cmd_str) {
+	إذا (!cmd_str) {
 		log_err("No command set for button '%s'\n", cmd->btn_name);
-		return 0;
+		أرجع 0;
 	}
 
 	cmd->cmd = cmd_str;
 
-	return 1;
+	أرجع 1;
 }
 
-void process_button_cmds(void)
+فراغ process_button_cmds(فراغ)
 {
-	struct button_cmd cmd = {0};
-	int i = 0;
+	بنية button_cmd cmd = {0};
+	صحيح i = 0;
 
-	while (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
-		if (!cmd.pressed)
-			continue;
+	طالما (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
+		إذا (!cmd.pressed)
+			استمر;
 
 		log_info("BTN '%s'> %s\n", cmd.btn_name, cmd.cmd);
-		run_command(cmd.cmd, CMD_FLAG_ENV);
+		لگاتار_command(cmd.cmd, CMD_FLAG_ENV);
 		/* Don't run commands for multiple buttons */
-		return;
+		أرجع;
 	}
 }

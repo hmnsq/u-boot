@@ -1,23 +1,23 @@
-#include <command.h>
-#include <exports.h>
-#include <malloc.h>
-#include <spi.h>
-#include <i2c.h>
-#include <asm/global_data.h>
+#ضمن <command.h>
+#ضمن <exports.h>
+#ضمن <malloc.h>
+#ضمن <spi.h>
+#ضمن <i2c.h>
+#ضمن <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_انکڑے_PTR;
 
-unsigned long get_version(void)
+بنانشانی لما get_نسخہ(فراغ)
 {
-	return XF_VERSION;
+	أرجع XF_نسخہ;
 }
 
-#define EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
+#تعریف_کرو EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
 
-int jumptable_init(void)
+صحيح jumptable_init(فراغ)
 {
-	gd->jt = malloc(sizeof(struct jt_funcs));
-#include <_exports.h>
+	gd->jt = حافظہ_دیو(حجم(بنية jt_funcs));
+#ضمن <_exports.h>
 
-	return 0;
+	أرجع 0;
 }

@@ -9,84 +9,84 @@
  * Michal Simek <michal.simek@amd.com>
  * Stefan Agner <stefan.agner@toradex.com>
  */
-#include <binman_sym.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <linux/libfdt.h>
+#ضمن <binman_sym.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <mapmem.h>
+#ضمن <spl.h>
+#ضمن <linux/libfdt.h>
 
-static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+ساكن ulong spl_ram_لدو_read(بنية spl_لدو_info *لدو, ulong sector,
+			       ulong گنتی, فراغ *buf)
 {
 	ulong addr = 0;
 
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
+	      __func__, sector, گنتی, (ulong)buf);
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	إذا (IS_ENABLED(CONFIG_SPL_لدو_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_لدو_FIT,
+				      CONFIG_SPL_لدو_FIT_پتہ);
 
-#ifdef	CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#جے_تعریف_شدہ	CONFIG_SPL_PCI_DFU
+		إذا (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_لدو_FIT_پتہ;
+#جے_انت
 	}
 	addr += sector;
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
-		addr += image_load_offset;
+	إذا (CONFIG_IS_ENABLED(IMAGE_PRE_لدو))
+		addr += image_لدو_وتھ;
 
-	memcpy(buf, (void *)addr, count);
+	حافظہ_نقل(buf, (فراغ *)addr, گنتی);
 
-	return count;
+	أرجع گنتی;
 }
 
-static int spl_ram_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_ram_لدو_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
+	بنية legacy_img_hdr *سرخی;
 	ulong addr = 0;
-	int ret;
+	صحيح ret;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	إذا (IS_ENABLED(CONFIG_SPL_لدو_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_لدو_FIT,
+				      CONFIG_SPL_لدو_FIT_پتہ);
 
-#ifdef CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#جے_تعریف_شدہ CONFIG_SPL_PCI_DFU
+		إذا (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_لدو_FIT_پتہ;
+#جے_انت
 	}
 
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD)) {
-		ret = image_pre_load(addr);
+	إذا (CONFIG_IS_ENABLED(IMAGE_PRE_لدو)) {
+		ret = image_pre_لدو(addr);
 
-		if (ret)
-			return ret;
+		إذا (ret)
+			أرجع ret;
 
-		addr += image_load_offset;
+		addr += image_لدو_وتھ;
 	}
-	header = map_sysmem(addr, 0);
+	سرخی = map_sysmem(addr, 0);
 
-#if CONFIG_IS_ENABLED(DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_DFU)
+#إذا CONFIG_IS_ENABLED(DFU)
+	إذا (bootdev->boot_device == BOOT_DEVICE_DFU)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#جے_انت
 
-#if CONFIG_IS_ENABLED(PCI_DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_PCIE)
+#إذا CONFIG_IS_ENABLED(PCI_DFU)
+	إذا (bootdev->boot_device == BOOT_DEVICE_PCIE)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#جے_انت
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic(header) == FDT_MAGIC) {
-		struct spl_load_info load;
+	إذا (IS_ENABLED(CONFIG_SPL_لدو_FIT) &&
+	    image_get_magic(سرخی) == FDT_MAGIC) {
+		بنية spl_لدو_info لدو;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, spl_ram_load_read, NULL, 1);
-		ret = spl_load_simple_fit(spl_image, &load, 0, header);
-	} else {
+		spl_لدو_init(&لدو, spl_ram_لدو_read, عدم, 1);
+		ret = spl_لدو_simple_fit(spl_image, &لدو, 0, سرخی);
+	} وإلا {
 		ulong u_boot_pos = spl_get_image_pos();
 
 		debug("Legacy image\n");
@@ -96,27 +96,27 @@ static int spl_ram_load_image(struct spl_image_info *spl_image,
 		 * the flash.
 		 */
 		debug("u_boot_pos = %lx\n", u_boot_pos);
-		if (u_boot_pos == BINMAN_SYM_MISSING) {
+		إذا (u_boot_pos == BINMAN_SYM_MISSING) {
 			/*
 			 * No binman support or no information. For now, fix it
 			 * to the address pointed to by U-Boot.
 			 */
-			u_boot_pos = (ulong)spl_get_load_buffer(-sizeof(*header),
-								sizeof(*header));
+			u_boot_pos = (ulong)spl_get_لدو_بفر(-حجم(*سرخی),
+								حجم(*سرخی));
 		}
-		header = map_sysmem(u_boot_pos, 0);
+		سرخی = map_sysmem(u_boot_pos, 0);
 
-		ret = spl_parse_image_header(spl_image, bootdev, header);
+		ret = spl_parse_image_سرخی(spl_image, bootdev, سرخی);
 	}
 
-	return ret;
+	أرجع ret;
 }
-#if CONFIG_IS_ENABLED(RAM_DEVICE)
-SPL_LOAD_IMAGE_METHOD("RAM", 0, BOOT_DEVICE_RAM, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(DFU)
-SPL_LOAD_IMAGE_METHOD("DFU", 0, BOOT_DEVICE_DFU, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(PCI_DFU)
-SPL_LOAD_IMAGE_METHOD("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_load_image);
-#endif
+#إذا CONFIG_IS_ENABLED(RAM_DEVICE)
+SPL_لدو_IMAGE_طریقہ("RAM", 0, BOOT_DEVICE_RAM, spl_ram_لدو_image);
+#جے_انت
+#إذا CONFIG_IS_ENABLED(DFU)
+SPL_لدو_IMAGE_طریقہ("DFU", 0, BOOT_DEVICE_DFU, spl_ram_لدو_image);
+#جے_انت
+#إذا CONFIG_IS_ENABLED(PCI_DFU)
+SPL_لدو_IMAGE_طریقہ("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_لدو_image);
+#جے_انت
