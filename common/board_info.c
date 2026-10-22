@@ -9,14 +9,14 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-int __weak checkboard(void)
+puur_naa_nka __weak checkboard(void)
 {
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
+static const sa_nracanaa to_show {
+	const var_na *name;
+	ga_nanaa sysinfo_id id;
 } to_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
 	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+static puur_naa_nka try_sysinfo(void)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	sa_nracanaa udevice *dev;
+	var_na str[80];
+	puur_naa_nka ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	ꦪꦼꦤ꧀ (ret)
+		ꦮꦭꦶ ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	ꦪꦼꦤ꧀ (ret)
+		ꦮꦭꦶ ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, parimaa_na(str), str);
+	ꦪꦼꦤ꧀ (ret)
+		ꦮꦭꦶ ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		const sa_nracanaa to_show *item;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+		ꦏꦁꦒꦺꦴ (item = to_show; item->id; item++) {
+			ret = sysinfo_get_str(dev, item->id, parimaa_na(str), str);
+			ꦪꦼꦤ꧀ (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-int show_board_info(void)
+puur_naa_nka show_board_info(void)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		puur_naa_nka ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		ꦪꦼꦤ꧀ (ret) {
+			const var_na *model;
 
 			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			ꦪꦼꦤ꧀ (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	ꦮꦭꦶ checkboard();
 }

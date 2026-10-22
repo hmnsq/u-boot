@@ -20,39 +20,39 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char erase_seq[] = "\b \b";	/* erase sequence */
-static const char   tab_seq[] = "        ";	/* used to expand TABs */
+static const var_na erase_seq[] = "\b \b";	/* erase sequence */
+static const var_na   tab_seq[] = "        ";	/* used to expand TABs */
 
-char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
+var_na console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+static var_na *delete_char (var_na *buffer, var_na *p, puur_naa_nka *colp, puur_naa_nka *np, puur_naa_nka plen)
 {
-	char *s;
+	var_na *s;
 
-	if (*np == 0)
-		return p;
+	ꦪꦼꦤ꧀ (*np == 0)
+		ꦮꦭꦶ p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	ꦪꦼꦤ꧀ (*(--p) == '\t') {		/* will retype the whole line */
+		ꦱꦼꦢꦼꦭ (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		ꦏꦁꦒꦺꦴ (s = buffer; s < p; ++s) {
+			ꦪꦼꦤ꧀ (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} ꦭꦶꦪ {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} ꦭꦶꦪ {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	ꦮꦭꦶ p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,11 +62,11 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (puur_naa_nka)n, str)
 
 #define CTL_BACKSPACE		('\b')
-#define DEL			((char)255)
-#define DEL7			((char)127)
+#define DEL			((var_na)255)
+#define DEL7			((var_na)127)
 #define CREAD_HIST_CHAR		('!')
 
 #define getcmd_putch(ch)	putc(ch)
@@ -76,46 +76,46 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#ꦭꦶꦪ
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
+static puur_naa_nka hist_max;
+static puur_naa_nka hist_add_idx;
+static puur_naa_nka hist_cur = -1;
 static unsigned hist_num;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-static char hist_data[HIST_MAX][HIST_SIZE + 1];
+static var_na hist_data[HIST_MAX][HIST_SIZE + 1];
 #endif
-static char *hist_list[HIST_MAX];
+static var_na *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+static void getcmd_putchars(puur_naa_nka count, puur_naa_nka ch)
 {
-	int i;
+	puur_naa_nka i;
 
-	for (i = 0; i < count; i++)
+	ꦏꦁꦒꦺꦴ (i = 0; i < count; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+static puur_naa_nka hist_init(void)
 {
-	int i;
+	puur_naa_nka i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	ꦏꦁꦒꦺꦴ (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
-	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+#ꦭꦶꦪ
+	unsigned var_na *hist = calloc(HIST_MAX, HIST_SIZE + 1);
+	ꦪꦼꦤ꧀ (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	ꦏꦁꦒꦺꦴ (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
@@ -124,78 +124,78 @@ static int hist_init(void)
 	hist_cur = -1;
 	hist_num = 0;
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-static void cread_add_to_hist(char *line)
+static void cread_add_to_hist(var_na *line)
 {
 	strcpy(hist_list[hist_add_idx], line);
 
-	if (++hist_add_idx >= HIST_MAX)
+	ꦪꦼꦤ꧀ (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	ꦪꦼꦤ꧀ (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
 	hist_num++;
 }
 
-static char *hist_prev(void)
+static var_na *hist_prev(void)
 {
-	char *ret;
-	int old_cur;
+	var_na *ret;
+	puur_naa_nka old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	ꦪꦼꦤ꧀ (hist_cur < 0)
+		ꦮꦭꦶ NULL;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	ꦪꦼꦤ꧀ (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	ꦪꦼꦤ꧀ (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
 		ret = NULL;
-	} else {
+	} ꦭꦶꦪ {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
-static char *hist_next(void)
+static var_na *hist_next(void)
 {
-	char *ret;
+	var_na *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	ꦪꦼꦤ꧀ (hist_cur < 0)
+		ꦮꦭꦶ NULL;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	ꦪꦼꦤ꧀ (hist_cur == hist_add_idx)
+		ꦮꦭꦶ NULL;
 
-	if (++hist_cur > hist_max)
+	ꦪꦼꦤ꧀ (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	ꦪꦼꦤ꧀ (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	ꦭꦶꦪ
 		ret = hist_list[hist_cur];
 
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
 void cread_print_hist_list(void)
 {
-	int i;
+	puur_naa_nka i;
 	uint n;
 
 	n = hist_num - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	ꦱꦼꦢꦼꦭ (1) {
+		ꦪꦼꦤ꧀ (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
-			break;
+		ꦪꦼꦤ꧀ (i == hist_add_idx)
+			bha_nga;
 		printf("%s\n", hist_list[i]);
 		n++;
 		i++;
@@ -203,54 +203,54 @@ void cread_print_hist_list(void)
 }
 
 #define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+	ꦱꦼꦢꦼꦭ (cls->num) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
 		cls->num--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
+	ꦪꦼꦤ꧀ (cls->num < cls->eol_num) {		\
+		printf("%*s", (puur_naa_nka)(cls->eol_num - cls->num), ""); \
 		do {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} ꦱꦼꦢꦼꦭ (--cls->eol_num > cls->num);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
+	ꦪꦼꦤ꧀ (cls->num < cls->eol_num) {			\
 		uint wlen = cls->eol_num - cls->num;	\
 		putnstr(buf + cls->num, wlen);		\
 		cls->num = cls->eol_num;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
-			   uint *eol_num, char *buf, uint len)
+static void cread_add_char(var_na ichar, puur_naa_nka insert, uint *num,
+			   uint *eol_num, var_na *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	ꦪꦼꦤ꧀ (insert || *num == *eol_num) {
+		ꦪꦼꦤ꧀ (*eol_num > len - 1) {
 			getcmd_cbeep();
-			return;
+			ꦮꦭꦶ;
 		}
 		(*eol_num)++;
 	}
 
-	if (insert) {
+	ꦪꦼꦤ꧀ (insert) {
 		wlen = *eol_num - *num;
-		if (wlen > 1)
+		ꦪꦼꦤ꧀ (wlen > 1)
 			memmove(&buf[*num+1], &buf[*num], wlen-1);
 
 		buf[*num] = ichar;
 		putnstr(buf + *num, wlen);
 		(*num)++;
-		while (--wlen)
+		ꦱꦼꦢꦼꦭ (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} ꦭꦶꦪ {
 		/* echo the character */
 		wlen = 1;
 		buf[*num] = ichar;
@@ -259,54 +259,54 @@ static void cread_add_char(char ichar, int insert, uint *num,
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
-			  uint *num, uint *eol_num, char *buf, uint len)
+static void cread_add_str(var_na *str, puur_naa_nka strsize, puur_naa_nka insert,
+			  uint *num, uint *eol_num, var_na *buf, uint len)
 {
-	while (strsize--) {
+	ꦱꦼꦢꦼꦭ (strsize--) {
 		cread_add_char(*str, insert, num, eol_num, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+puur_naa_nka cread_line_process_ch(sa_nracanaa cli_line_state *cls, var_na ichar)
 {
-	char *buf = cls->buf;
+	var_na *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	ꦪꦼꦤ꧀ (!ichar)
+		ꦮꦭꦶ -EAGAIN;
 
-	if (ichar == '\n') {
+	ꦪꦼꦤ꧀ (ichar == '\n') {
 		putc('\n');
 		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		ꦮꦭꦶ 0;
 	}
 
 	switch (ichar) {
-	case CTL_CH('a'):
+	pak_sa CTL_CH('a'):
 		BEGINNING_OF_LINE();
-		break;
-	case CTL_CH('c'):	/* ^C - break */
+		bha_nga;
+	pak_sa CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
-	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
+		ꦮꦭꦶ -EINTR;
+	pak_sa CTL_CH('f'):
+		ꦪꦼꦤ꧀ (cls->num < cls->eol_num) {
 			getcmd_putch(buf[cls->num]);
 			cls->num++;
 		}
-		break;
-	case CTL_CH('b'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('b'):
+		ꦪꦼꦤ꧀ (cls->num) {
 			getcmd_putch(CTL_BACKSPACE);
 			cls->num--;
 		}
-		break;
-	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		bha_nga;
+	pak_sa CTL_CH('d'):
+		ꦪꦼꦤ꧀ (cls->num < cls->eol_num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
+			ꦪꦼꦤ꧀ (wlen) {
 				memmove(&buf[cls->num], &buf[cls->num + 1],
 					wlen);
 				putnstr(buf + cls->num, wlen);
@@ -315,27 +315,27 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} ꦱꦼꦢꦼꦭ (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('k'):
+		bha_nga;
+	pak_sa CTL_CH('k'):
 		ERASE_TO_EOL();
-		break;
-	case CTL_CH('e'):
+		bha_nga;
+	pak_sa CTL_CH('e'):
 		REFRESH_TO_EOL();
-		break;
-	case CTL_CH('o'):
+		bha_nga;
+	pak_sa CTL_CH('o'):
 		cls->insert = !cls->insert;
-		break;
-	case CTL_CH('w'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('w'):
+		ꦪꦼꦤ꧀ (cls->num) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			ꦏꦁꦒꦺꦴ (base = cls->num;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			ꦏꦁꦒꦺꦴ (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
@@ -350,16 +350,16 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putchars(wlen + cls->eol_num - cls->num,
 					CTL_BACKSPACE);
 		}
-		break;
-	case CTL_CH('x'):
-	case CTL_CH('u'):
+		bha_nga;
+	pak_sa CTL_CH('x'):
+	pak_sa CTL_CH('u'):
 		BEGINNING_OF_LINE();
 		ERASE_TO_EOL();
-		break;
-	case DEL:
-	case DEL7:
-	case 8:
-		if (cls->num) {
+		bha_nga;
+	pak_sa DEL:
+	pak_sa DEL7:
+	pak_sa 8:
+		ꦪꦼꦤ꧀ (cls->num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num;
@@ -370,23 +370,23 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} ꦱꦼꦢꦼꦭ (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('p'):
-	case CTL_CH('n'):
-		if (cls->history) {
-			char *hline;
+		bha_nga;
+	pak_sa CTL_CH('p'):
+	pak_sa CTL_CH('n'):
+		ꦪꦼꦤ꧀ (cls->history) {
+			var_na *hline;
 
-			if (ichar == CTL_CH('p'))
+			ꦪꦼꦤ꧀ (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			ꦭꦶꦪ
 				hline = hist_next();
 
-			if (!hline) {
+			ꦪꦼꦤ꧀ (!hline) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			/* nuke the current line */
@@ -400,34 +400,34 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			strcpy(buf, hline);
 			cls->eol_num = strlen(buf);
 			REFRESH_TO_EOL();
-			break;
+			bha_nga;
 		}
-		break;
-	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		bha_nga;
+	pak_sa '\t':
+		ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			puur_naa_nka num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			ꦪꦼꦤ꧀ (cls->num < cls->eol_num) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			buf[cls->num] = '\0';
 			col = strlen(cls->prompt) + cls->eol_num;
 			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+			ꦪꦼꦤ꧀ (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
 				col = num2 - cls->num;
 				cls->num += col;
 				cls->eol_num += col;
 			}
-			break;
+			bha_nga;
 		}
 		fallthrough;
 	default:
 		cread_add_char(ichar, cls->insert, &cls->num, &cls->eol_num,
 			       buf, cls->len);
-		break;
+		bha_nga;
 	}
 
 	/*
@@ -436,30 +436,30 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	 */
 	buf[cls->eol_num] = '\0';
 
-	return -EAGAIN;
+	ꦮꦭꦶ -EAGAIN;
 }
 
-void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
+void cli_cread_init(sa_nracanaa cli_line_state *cls, var_na *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	puur_naa_nka init_len = strlen(buf);
 
-	memset(cls, '\0', sizeof(struct cli_line_state));
+	memset(cls, '\0', parimaa_na(sa_nracanaa cli_line_state));
 	cls->insert = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
+	ꦪꦼꦤ꧀ (init_len)
 		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static puur_naa_nka cread_line(const var_na *const prompt, var_na *buf, unsigned puur_naa_nka *len,
+		      puur_naa_nka timeout)
 {
-	struct cli_ch_state s_cch, *cch = &s_cch;
-	struct cli_line_state s_cls, *cls = &s_cls;
-	char ichar;
-	int first = 1;
+	sa_nracanaa cli_ch_state s_cch, *cch = &s_cch;
+	sa_nracanaa cli_line_state s_cls, *cls = &s_cls;
+	var_na ichar;
+	puur_naa_nka first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	ꦱꦼꦢꦼꦭ (1) {
+		puur_naa_nka ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		ꦪꦼꦤ꧀ (!ichar) {
+			ꦪꦼꦤ꧀ (bootretry_tstc_timeout())
+				ꦮꦭꦶ -2;	/* timed out */
+			ꦪꦼꦤ꧀ (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				ꦱꦼꦢꦼꦭ (!tstc()) {	/* while no incoming data */
+					ꦪꦼꦤ꧀ (get_ticks() >= etime)
+						ꦮꦭꦶ -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -492,38 +492,38 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 		}
 
 		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
-			break;
+		ꦪꦼꦤ꧀ (ret == -EINTR)
+			ꦮꦭꦶ -1;
+		ꦭꦶꦪ ꦪꦼꦤ꧀ (!ret)
+			bha_nga;
 	}
 	*len = cls->eol_num;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	ꦪꦼꦤ꧀ (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#ꦭꦶꦪ /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+static anta_hstha puur_naa_nka hist_init(void)
 {
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static puur_naa_nka cread_line(const var_na *const prompt, var_na *buf, unsigned puur_naa_nka *len,
+		      puur_naa_nka timeout)
 {
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+puur_naa_nka cli_readline(const var_na *const prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	ꦮꦭꦶ cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+static puur_naa_nka cread_line_simple(const var_na *const prompt, var_na *p)
 {
-	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	var_na *p_buf = p;
+	puur_naa_nka n = 0;		/* buffer index */
+	puur_naa_nka plen = 0;		/* prompt length */
+	puur_naa_nka col;		/* output column cnt */
+	puur_naa_nka c;
 
 	/* print prompt */
-	if (prompt) {
+	ꦪꦼꦤ꧀ (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	ꦏꦁꦒꦺꦴ (;;) {
+		ꦪꦼꦤ꧀ (bootretry_tstc_timeout())
+			ꦮꦭꦶ -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -569,21 +569,21 @@ static int cread_line_simple(const char *const prompt, char *p)
 		 * Special character handling
 		 */
 		switch (c) {
-		case '\r':			/* Enter		*/
-		case '\n':
+		pak_sa '\r':			/* Enter		*/
+		pak_sa '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			ꦮꦭꦶ p - p_buf;
 
-		case '\0':			/* nul			*/
+		pak_sa '\0':			/* nul			*/
 			continue;
 
-		case 0x03:			/* ^C - break		*/
+		pak_sa 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			ꦮꦭꦶ -1;
 
-		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+		pak_sa 0x15:			/* ^U - erase line	*/
+			ꦱꦼꦢꦼꦭ (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
@@ -591,31 +591,31 @@ static int cread_line_simple(const char *const prompt, char *p)
 			n = 0;
 			continue;
 
-		case 0x17:			/* ^W - erase word	*/
+		pak_sa 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			ꦱꦼꦢꦼꦭ ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
-		case 0x08:			/* ^H  - backspace	*/
-		case 0x7F:			/* DEL - backspace	*/
+		pak_sa 0x08:			/* ^H  - backspace	*/
+		pak_sa 0x7F:			/* DEL - backspace	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
 		default:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			ꦪꦼꦤ꧀ (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
-				break;
+				bha_nga;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			ꦪꦼꦤ꧀ (c == '\t') {	/* expand TABs */
+				ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					ꦪꦼꦤ꧀ (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
@@ -624,8 +624,8 @@ static int cread_line_simple(const char *const prompt, char *p)
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
-				char __maybe_unused buf[2];
+			} ꦭꦶꦪ {
+				var_na __maybe_unused buf[2];
 
 				/*
 				 * Echo input using puts() to force an LCD
@@ -638,18 +638,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 			}
 			*p++ = c;
 			++n;
-			break;
+			bha_nga;
 		}
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+puur_naa_nka cli_readline_into_buffer(const var_na *const prompt, var_na *buffer,
+			     puur_naa_nka timeout)
 {
-	char *p = buffer;
+	var_na *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	puur_naa_nka rc;
+	static puur_naa_nka initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	ꦪꦼꦤ꧀ (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		ꦪꦼꦤ꧀ (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			ꦪꦼꦤ꧀ (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		ꦪꦼꦤ꧀ (prompt)
 			puts(prompt);
 
 		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		ꦮꦭꦶ rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} ꦭꦶꦪ {
+		ꦮꦭꦶ cread_line_simple(prompt, p);
 	}
 }

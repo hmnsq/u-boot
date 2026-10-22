@@ -14,7 +14,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char *const log_cat_name[] = {
+static const var_na *const log_cat_name[] = {
 	"none",
 	"arch",
 	"board",
@@ -38,7 +38,7 @@ static const char *const log_cat_name[] = {
 _Static_assert(ARRAY_SIZE(log_cat_name) == LOGC_COUNT - LOGC_NONE,
 	       "log_cat_name size");
 
-static const char *const log_level_name[] = {
+static const var_na *const log_level_name[] = {
 	"EMERG",
 	"ALERT",
 	"CRIT",
@@ -54,80 +54,80 @@ static const char *const log_level_name[] = {
 _Static_assert(ARRAY_SIZE(log_level_name) == LOGL_COUNT, "log_level_name size");
 
 /* All error responses MUST begin with '<' */
-const char *log_get_cat_name(enum log_category_t cat)
+const var_na *log_get_cat_name(ga_nanaa log_category_t cat)
 {
-	const char *name;
+	const var_na *name;
 
-	if (cat < 0 || cat >= LOGC_COUNT)
-		return "<invalid>";
-	if (cat >= LOGC_NONE)
-		return log_cat_name[cat - LOGC_NONE];
+	ꦪꦼꦤ꧀ (cat < 0 || cat >= LOGC_COUNT)
+		ꦮꦭꦶ "<invalid>";
+	ꦪꦼꦤ꧀ (cat >= LOGC_NONE)
+		ꦮꦭꦶ log_cat_name[cat - LOGC_NONE];
 
-#if CONFIG_IS_ENABLED(DM)
-	name = uclass_get_name((enum uclass_id)cat);
-#else
+#ꦪꦼꦤ꧀ CONFIG_IS_ENABLED(DM)
+	name = uclass_get_name((ga_nanaa uclass_id)cat);
+#ꦭꦶꦪ
 	name = NULL;
 #endif
 
-	return name ? name : "<missing>";
+	ꦮꦭꦶ name ? name : "<missing>";
 }
 
-enum log_category_t log_get_cat_by_name(const char *name)
+ga_nanaa log_category_t log_get_cat_by_name(const var_na *name)
 {
-	enum uclass_id id;
-	int i;
+	ga_nanaa uclass_id id;
+	puur_naa_nka i;
 
-	for (i = LOGC_NONE; i < LOGC_COUNT; i++)
-		if (!strcmp(name, log_cat_name[i - LOGC_NONE]))
-			return i;
+	ꦏꦁꦒꦺꦴ (i = LOGC_NONE; i < LOGC_COUNT; i++)
+		ꦪꦼꦤ꧀ (!strcmp(name, log_cat_name[i - LOGC_NONE]))
+			ꦮꦭꦶ i;
 	id = uclass_get_by_name(name);
-	if (id != UCLASS_INVALID)
-		return (enum log_category_t)id;
+	ꦪꦼꦤ꧀ (id != UCLASS_INVALID)
+		ꦮꦭꦶ (ga_nanaa log_category_t)id;
 
-	return LOGC_NONE;
+	ꦮꦭꦶ LOGC_NONE;
 }
 
-const char *log_get_level_name(enum log_level_t level)
+const var_na *log_get_level_name(ga_nanaa log_level_t level)
 {
-	if (level >= LOGL_COUNT)
-		return "INVALID";
-	return log_level_name[level];
+	ꦪꦼꦤ꧀ (level >= LOGL_COUNT)
+		ꦮꦭꦶ "INVALID";
+	ꦮꦭꦶ log_level_name[level];
 }
 
-enum log_level_t log_get_level_by_name(const char *name)
+ga_nanaa log_level_t log_get_level_by_name(const var_na *name)
 {
-	int i;
+	puur_naa_nka i;
 
-	for (i = 0; i < LOGL_COUNT; i++) {
-		if (!strcasecmp(log_level_name[i], name))
-			return i;
+	ꦏꦁꦒꦺꦴ (i = 0; i < LOGL_COUNT; i++) {
+		ꦪꦼꦤ꧀ (!strcasecmp(log_level_name[i], name))
+			ꦮꦭꦶ i;
 	}
 
-	return LOGL_NONE;
+	ꦮꦭꦶ LOGL_NONE;
 }
 
-struct log_device *log_device_find_by_name(const char *drv_name)
+sa_nracanaa log_device *log_device_find_by_name(const var_na *drv_name)
 {
-	struct log_device *ldev;
+	sa_nracanaa log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (!strcmp(drv_name, ldev->drv->name))
-			return ldev;
+		ꦪꦼꦤ꧀ (!strcmp(drv_name, ldev->drv->name))
+			ꦮꦭꦶ ldev;
 	}
 
-	return NULL;
+	ꦮꦭꦶ NULL;
 }
 
-bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
+bool log_has_cat(ga_nanaa log_category_t cat_list[], ga_nanaa log_category_t cat)
 {
-	int i;
+	puur_naa_nka i;
 
-	for (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
-		if (cat_list[i] == cat)
-			return true;
+	ꦏꦁꦒꦺꦴ (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
+		ꦪꦼꦤ꧀ (cat_list[i] == cat)
+			ꦮꦭꦶ true;
 	}
 
-	return false;
+	ꦮꦭꦶ false;
 }
 
 /**
@@ -138,21 +138,21 @@ bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
  *
  * Return: ``true`` if @member is in @list, else ``false``
  */
-static bool log_has_member(const char *list, const char *member)
+static bool log_has_member(const var_na *list, const var_na *member)
 {
-	int member_len = strlen(member);
-	const char *s, *p;
-	int substr_len;
+	puur_naa_nka member_len = strlen(member);
+	const var_na *s, *p;
+	puur_naa_nka substr_len;
 
-	for (s = list; *s; s = p + (*p != '\0')) {
+	ꦏꦁꦒꦺꦴ (s = list; *s; s = p + (*p != '\0')) {
 		p = strchrnul(s, ',');
 		substr_len = p - s;
-		if (member_len >= substr_len &&
+		ꦪꦼꦤ꧀ (member_len >= substr_len &&
 		    !strncmp(member + member_len - substr_len, s, substr_len))
-			return true;
+			ꦮꦭꦶ true;
 	}
 
-	return false;
+	ꦮꦭꦶ false;
 }
 
 /**
@@ -162,47 +162,47 @@ static bool log_has_member(const char *list, const char *member)
  * @rec: Log record to check
  * Return: true if @rec is not blocked by the filters in @ldev, false if it is
  */
-static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
+static bool log_passes_filters(sa_nracanaa log_device *ldev, sa_nracanaa log_rec *rec)
 {
-	struct log_filter *filt;
+	sa_nracanaa log_filter *filt;
 
-	if (rec->flags & LOGRECF_FORCE_DEBUG)
-		return true;
+	ꦪꦼꦤ꧀ (rec->flags & LOGRECF_FORCE_DEBUG)
+		ꦮꦭꦶ true;
 
 	/* If there are no filters, filter on the default log level */
-	if (list_empty(&ldev->filter_head)) {
-		if (rec->level > gd->default_log_level)
-			return false;
-		return true;
+	ꦪꦼꦤ꧀ (list_empty(&ldev->filter_head)) {
+		ꦪꦼꦤ꧀ (rec->level > gd->default_log_level)
+			ꦮꦭꦶ false;
+		ꦮꦭꦶ true;
 	}
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->flags & LOGFF_LEVEL_MIN) {
-			if (rec->level < filt->level)
+		ꦪꦼꦤ꧀ (filt->flags & LOGFF_LEVEL_MIN) {
+			ꦪꦼꦤ꧀ (rec->level < filt->level)
 				continue;
-		} else if (rec->level > filt->level) {
+		} ꦭꦶꦪ ꦪꦼꦤ꧀ (rec->level > filt->level) {
 			continue;
 		}
 
-		if ((filt->flags & LOGFF_HAS_CAT) &&
+		ꦪꦼꦤ꧀ ((filt->flags & LOGFF_HAS_CAT) &&
 		    !log_has_cat(filt->cat_list, rec->cat))
 			continue;
 
-		if (filt->file_list &&
+		ꦪꦼꦤ꧀ (filt->file_list &&
 		    !log_has_member(filt->file_list, rec->file))
 			continue;
 
-		if (filt->func_list &&
+		ꦪꦼꦤ꧀ (filt->func_list &&
 		    !log_has_member(filt->func_list, rec->func))
 			continue;
 
-		if (filt->flags & LOGFF_DENY)
-			return false;
-		else
-			return true;
+		ꦪꦼꦤ꧀ (filt->flags & LOGFF_DENY)
+			ꦮꦭꦶ false;
+		ꦭꦶꦪ
+			ꦮꦭꦶ true;
 	}
 
-	return false;
+	ꦮꦭꦶ false;
 }
 
 /**
@@ -216,28 +216,28 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
  * @rec:	log record to dispatch
  * Return:	0 msg sent, 1 msg not sent while already dispatching another msg
  */
-static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
+static puur_naa_nka log_dispatch(sa_nracanaa log_rec *rec, const var_na *fmt, va_list args)
 {
-	struct log_device *ldev;
-	char buf[CONFIG_SYS_CBSIZE];
+	sa_nracanaa log_device *ldev;
+	var_na buf[CONFIG_SYS_CBSIZE];
 
 	/*
 	 * When a log driver writes messages (e.g. via the network stack) this
 	 * may result in further generated messages. We cannot process them here
 	 * as this might result in infinite recursion.
 	 */
-	if (gd->processing_msg)
-		return 1;
+	ꦪꦼꦤ꧀ (gd->processing_msg)
+		ꦮꦭꦶ 1;
 
 	/* Emit message */
 	gd->processing_msg = true;
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if ((ldev->flags & LOGDF_ENABLE) &&
+		ꦪꦼꦤ꧀ ((ldev->flags & LOGDF_ENABLE) &&
 		    log_passes_filters(ldev, rec)) {
-			if (!rec->msg) {
-				int len;
+			ꦪꦼꦤ꧀ (!rec->msg) {
+				puur_naa_nka len;
 
-				len = vsnprintf(buf, sizeof(buf), fmt, args);
+				len = vsnprintf(buf, parimaa_na(buf), fmt, args);
 				rec->msg = buf;
 				gd->log_cont = len && buf[len - 1] != '\n';
 			}
@@ -245,80 +245,80 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 		}
 	}
 	gd->processing_msg = false;
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-int _log(enum log_category_t cat, enum log_level_t level, const char *file,
-	 int line, const char *func, const char *fmt, ...)
+puur_naa_nka _log(ga_nanaa log_category_t cat, ga_nanaa log_level_t level, const var_na *file,
+	 puur_naa_nka line, const var_na *func, const var_na *fmt, ...)
 {
-	struct log_rec rec;
+	sa_nracanaa log_rec rec;
 	va_list args;
 
-	if (!gd)
-		return -ENOSYS;
+	ꦪꦼꦤ꧀ (!gd)
+		ꦮꦭꦶ -ENOSYS;
 
 	/* Check for message continuation */
-	if (cat == LOGC_CONT)
+	ꦪꦼꦤ꧀ (cat == LOGC_CONT)
 		cat = gd->logc_prev;
-	if (level == LOGL_CONT)
+	ꦪꦼꦤ꧀ (level == LOGL_CONT)
 		level = gd->logl_prev;
 
 	rec.cat = cat;
 	rec.level = level & LOGL_LEVEL_MASK;
 	rec.flags = 0;
-	if (level & LOGL_FORCE_DEBUG)
+	ꦪꦼꦤ꧀ (level & LOGL_FORCE_DEBUG)
 		rec.flags |= LOGRECF_FORCE_DEBUG;
-	if (gd->log_cont)
+	ꦪꦼꦤ꧀ (gd->log_cont)
 		rec.flags |= LOGRECF_CONT;
 	rec.file = file;
 	rec.line = line;
 	rec.func = func;
 	rec.msg = NULL;
 
-	if (!(gd->flags & GD_FLG_LOG_READY)) {
+	ꦪꦼꦤ꧀ (!(gd->flags & GD_FLG_LOG_READY)) {
 		gd->log_drop_count++;
 
 		/* display dropped traces with console puts and DEBUG_UART */
-		if (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
+		ꦪꦼꦤ꧀ (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
 		    rec.flags & LOGRECF_FORCE_DEBUG) {
-			char buf[CONFIG_SYS_CBSIZE];
+			var_na buf[CONFIG_SYS_CBSIZE];
 
 			va_start(args, fmt);
-			vsnprintf(buf, sizeof(buf), fmt, args);
+			vsnprintf(buf, parimaa_na(buf), fmt, args);
 			puts(buf);
 			va_end(args);
 		}
 
-		return -ENOSYS;
+		ꦮꦭꦶ -ENOSYS;
 	}
 	va_start(args, fmt);
-	if (!log_dispatch(&rec, fmt, args)) {
+	ꦪꦼꦤ꧀ (!log_dispatch(&rec, fmt, args)) {
 		gd->logc_prev = cat;
 		gd->logl_prev = level;
 	}
 	va_end(args);
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
 #define MAX_LINE_LENGTH_BYTES		64
 #define DEFAULT_LINE_LENGTH_BYTES	16
 
-int _log_buffer(enum log_category_t cat, enum log_level_t level,
-		const char *file, int line, const char *func, ulong addr,
+puur_naa_nka _log_buffer(ga_nanaa log_category_t cat, ga_nanaa log_level_t level,
+		const var_na *file, puur_naa_nka line, const var_na *func, ulong addr,
 		const void *data, uint width, uint count, uint linelen)
 {
-	if (linelen * width > MAX_LINE_LENGTH_BYTES)
+	ꦪꦼꦤ꧀ (linelen * width > MAX_LINE_LENGTH_BYTES)
 		linelen = MAX_LINE_LENGTH_BYTES / width;
-	if (linelen < 1)
+	ꦪꦼꦤ꧀ (linelen < 1)
 		linelen = DEFAULT_LINE_LENGTH_BYTES / width;
 
-	while (count) {
+	ꦱꦼꦢꦼꦭ (count) {
 		uint thislinelen;
-		char buf[HEXDUMP_MAX_BUF_LENGTH(width * linelen)];
+		var_na buf[HEXDUMP_MAX_BUF_LENGTH(width * linelen)];
 
 		thislinelen = hexdump_line(addr, data, width, count, linelen,
-					   buf, sizeof(buf));
+					   buf, parimaa_na(buf));
 		assert(thislinelen >= 0);
 		_log(cat, level, file, line, func, "%s\n", buf);
 
@@ -328,86 +328,86 @@ int _log_buffer(enum log_category_t cat, enum log_level_t level,
 		count -= thislinelen;
 	}
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-int log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
-			 enum log_level_t level, const char *file_list,
-			 const char *func_list, int flags)
+puur_naa_nka log_add_filter_flags(const var_na *drv_name, ga_nanaa log_category_t cat_list[],
+			 ga_nanaa log_level_t level, const var_na *file_list,
+			 const var_na *func_list, puur_naa_nka flags)
 {
-	struct log_filter *filt;
-	struct log_device *ldev;
-	int ret;
-	int i;
+	sa_nracanaa log_filter *filt;
+	sa_nracanaa log_device *ldev;
+	puur_naa_nka ret;
+	puur_naa_nka i;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
-	filt = calloc(1, sizeof(*filt));
-	if (!filt)
-		return -ENOMEM;
+	ꦪꦼꦤ꧀ (!ldev)
+		ꦮꦭꦶ -ENOENT;
+	filt = calloc(1, parimaa_na(*filt));
+	ꦪꦼꦤ꧀ (!filt)
+		ꦮꦭꦶ -ENOMEM;
 
 	filt->flags = flags;
-	if (cat_list) {
+	ꦪꦼꦤ꧀ (cat_list) {
 		filt->flags |= LOGFF_HAS_CAT;
-		for (i = 0; ; i++) {
-			if (i == ARRAY_SIZE(filt->cat_list)) {
+		ꦏꦁꦒꦺꦴ (i = 0; ; i++) {
+			ꦪꦼꦤ꧀ (i == ARRAY_SIZE(filt->cat_list)) {
 				ret = -ENOSPC;
 				goto err;
 			}
 			filt->cat_list[i] = cat_list[i];
-			if (cat_list[i] == LOGC_END)
-				break;
+			ꦪꦼꦤ꧀ (cat_list[i] == LOGC_END)
+				bha_nga;
 		}
 	}
 	filt->level = level;
-	if (file_list) {
+	ꦪꦼꦤ꧀ (file_list) {
 		filt->file_list = strdup(file_list);
-		if (!filt->file_list) {
+		ꦪꦼꦤ꧀ (!filt->file_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
-	if (func_list) {
+	ꦪꦼꦤ꧀ (func_list) {
 		filt->func_list = strdup(func_list);
-		if (!filt->func_list) {
+		ꦪꦼꦤ꧀ (!filt->func_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
 	filt->filter_num = ldev->next_filter_num++;
 	/* Add deny filters to the beginning of the list */
-	if (flags & LOGFF_DENY)
+	ꦪꦼꦤ꧀ (flags & LOGFF_DENY)
 		list_add(&filt->sibling_node, &ldev->filter_head);
-	else
+	ꦭꦶꦪ
 		list_add_tail(&filt->sibling_node, &ldev->filter_head);
 
-	return filt->filter_num;
+	ꦮꦭꦶ filt->filter_num;
 
 err:
 	free(filt);
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
-int log_remove_filter(const char *drv_name, int filter_num)
+puur_naa_nka log_remove_filter(const var_na *drv_name, puur_naa_nka filter_num)
 {
-	struct log_filter *filt;
-	struct log_device *ldev;
+	sa_nracanaa log_filter *filt;
+	sa_nracanaa log_device *ldev;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
+	ꦪꦼꦤ꧀ (!ldev)
+		ꦮꦭꦶ -ENOENT;
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->filter_num == filter_num) {
+		ꦪꦼꦤ꧀ (filt->filter_num == filter_num) {
 			list_del(&filt->sibling_node);
 			free(filt);
 
-			return 0;
+			ꦮꦭꦶ 0;
 		}
 	}
 
-	return -ENOENT;
+	ꦮꦭꦶ -ENOENT;
 }
 
 /**
@@ -416,13 +416,13 @@ int log_remove_filter(const char *drv_name, int filter_num)
  * @drv: Log driver
  * Return: Device associated with that driver, or NULL if not found
  */
-static struct log_device *log_find_device_by_drv(struct log_driver *drv)
+static sa_nracanaa log_device *log_find_device_by_drv(sa_nracanaa log_driver *drv)
 {
-	struct log_device *ldev;
+	sa_nracanaa log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (ldev->drv == drv)
-			return ldev;
+		ꦪꦼꦤ꧀ (ldev->drv == drv)
+			ꦮꦭꦶ ldev;
 	}
 	/*
 	 * It is quite hard to pass an invalid driver since passing an unknown
@@ -430,62 +430,62 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 	 * it is possible to pass NULL, for example, so this
 	 */
 
-	return NULL;
+	ꦮꦭꦶ NULL;
 }
 
-int log_device_set_enable(struct log_driver *drv, bool enable)
+puur_naa_nka log_device_set_enable(sa_nracanaa log_driver *drv, bool enable)
 {
-	struct log_device *ldev;
+	sa_nracanaa log_device *ldev;
 
 	ldev = log_find_device_by_drv(drv);
-	if (!ldev)
-		return -ENOENT;
-	if (enable)
+	ꦪꦼꦤ꧀ (!ldev)
+		ꦮꦭꦶ -ENOENT;
+	ꦪꦼꦤ꧀ (enable)
 		ldev->flags |= LOGDF_ENABLE;
-	else
+	ꦭꦶꦪ
 		ldev->flags &= ~LOGDF_ENABLE;
 
-	return 0;
+	ꦮꦭꦶ 0;
 }
 
-void log_fixup_for_gd_move(struct global_data *new_gd)
+void log_fixup_for_gd_move(sa_nracanaa global_data *new_gd)
 {
 	new_gd->log_head.prev->next = &new_gd->log_head;
 }
 
-int log_init(void)
+puur_naa_nka log_init(void)
 {
-	struct log_driver *drv = ll_entry_start(struct log_driver, log_driver);
-	const int count = ll_entry_count(struct log_driver, log_driver);
-	struct log_driver *end = drv + count;
+	sa_nracanaa log_driver *drv = ll_entry_start(sa_nracanaa log_driver, log_driver);
+	const puur_naa_nka count = ll_entry_count(sa_nracanaa log_driver, log_driver);
+	sa_nracanaa log_driver *end = drv + count;
 
 	/*
 	 * We cannot add runtime data to the driver since it is likely stored
 	 * in rodata. Instead, set up a 'device' corresponding to each driver.
 	 * We only support having a single device for each driver.
 	 */
-	INIT_LIST_HEAD((struct list_head *)&gd->log_head);
-	while (drv < end) {
-		struct log_device *ldev;
+	INIT_LIST_HEAD((sa_nracanaa list_head *)&gd->log_head);
+	ꦱꦼꦢꦼꦭ (drv < end) {
+		sa_nracanaa log_device *ldev;
 
-		ldev = calloc(1, sizeof(*ldev));
-		if (!ldev) {
+		ldev = calloc(1, parimaa_na(*ldev));
+		ꦪꦼꦤ꧀ (!ldev) {
 			debug("%s: Cannot allocate memory\n", __func__);
-			return -ENOMEM;
+			ꦮꦭꦶ -ENOMEM;
 		}
 		INIT_LIST_HEAD(&ldev->filter_head);
 		ldev->drv = drv;
 		ldev->flags = drv->flags;
 		list_add_tail(&ldev->sibling_node,
-			      (struct list_head *)&gd->log_head);
+			      (sa_nracanaa list_head *)&gd->log_head);
 		drv++;
 	}
 	gd->flags |= GD_FLG_LOG_READY;
-	if (!gd->default_log_level)
+	ꦪꦼꦤ꧀ (!gd->default_log_level)
 		gd->default_log_level = CONFIG_LOG_DEFAULT_LEVEL;
 	gd->log_fmt = log_get_default_format();
 	gd->logc_prev = LOGC_NONE;
 	gd->logl_prev = LOGL_INFO;
 
-	return 0;
+	ꦮꦭꦶ 0;
 }

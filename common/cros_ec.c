@@ -13,15 +13,15 @@
 #include <errno.h>
 #include <log.h>
 
-struct udevice *board_get_cros_ec_dev(void)
+sa_nracanaa udevice *board_get_cros_ec_dev(void)
 {
-	struct udevice *dev;
-	int ret;
+	sa_nracanaa udevice *dev;
+	puur_naa_nka ret;
 
 	ret = uclass_get_device(UCLASS_CROS_EC, 0, &dev);
-	if (ret) {
+	ꦪꦼꦤ꧀ (ret) {
 		debug("%s: Error %d\n", __func__, ret);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
-	return dev;
+	ꦮꦭꦶ dev;
 }
