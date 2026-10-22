@@ -18,74 +18,74 @@
 #include <linux/libfdt.h>
 #include <asm/cache.h>
 
-static int fat_registered;
+static ចំនួនគត់ fat_registered;
 
 void spl_fat_force_reregister(void)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+static ចំនួនគត់ spl_register_fat_device(sa_nracanaa blk_desc *block_dev, ចំនួនគត់ partition)
 {
-	int err = 0;
+	ចំនួនគត់ err = 0;
 
-	if (fat_registered)
-		return err;
+	ប្រសិនបើ (fat_registered)
+		ត្រឡប់ err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
+	ប្រសិនបើ (err) {
 		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+		ត្រឡប់ err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	ត្រឡប់ err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
-	struct legacy_img_hdr *header;
+	sa_nracanaa legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	ចំនួនគត់ ret;
+	var_na *filename = load->priv;
 
 	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ប្រសិនបើ (ret)
+		ត្រឡប់ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ប្រសិនបើ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (sa_nracanaa legacy_img_hdr *)buf;
+		ប្រសិនបើ (image_get_magic(header) != FDT_MAGIC)
+			ត្រឡប់ size;
 	}
 
-	return actread;
+	ត្រឡប់ actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+ចំនួនគត់ spl_load_image_fat(sa_nracanaa spl_image_info *spl_image,
+		       sa_nracanaa spl_boot_device *bootdev,
+		       sa_nracanaa blk_desc *block_dev, ចំនួនគត់ partition,
+		       const var_na *filename)
 {
-	int err;
+	ចំនួនគត់ err;
 	loff_t size;
-	struct spl_load_info load;
+	sa_nracanaa spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
+	ប្រសិនបើ (err)
 		goto end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	ប្រសិនបើ (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = fat_size(filename, &size);
-		if (err)
+		ប្រសិនបើ (err)
 			goto end;
-	} else {
+	} បើមិនដូច្នេះ {
 		size = 0;
 	}
 
@@ -96,55 +96,55 @@ int spl_load_image_fat(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0) {
+	ប្រសិនបើ (err < 0) {
 		spl_fat_force_reregister();
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	ត្រឡប់ err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ប្រសិនបើ CONFIG_IS_ENABLED(OS_BOOT)
+ចំនួនគត់ spl_load_image_fat_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, ចំនួនគត់ partition)
 {
-	int err;
-	__maybe_unused char *file;
+	ចំនួនគត់ err;
+	__maybe_unused var_na *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	ប្រសិនបើ (err)
+		ត្រឡប់ err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+	ប្រសិនបើ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
 		goto defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	ប្រសិនបើ (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		ប្រសិនបើ (err != 0) {
 			puts("spl: falling back to default\n");
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ប្រសិនបើ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		ប្រសិនបើ (file) {
 			err = file_fat_read(
 				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
+			ប្រសិនបើ (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
 				goto defaults;
 			}
-			return 0;
-		} else
+			ត្រឡប់ 0;
+		} បើមិនដូច្នេះ
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 #endif
 
-	} else
+	} បើមិនដូច្នេះ
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
@@ -152,26 +152,26 @@ defaults:
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	ប្រសិនបើ (err)
+		ត្រឡប់ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ប្រសិនបើ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
 			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
+	ប្រសិនបើ (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		ត្រឡប់ -1;
 	}
 #endif
 
-	return 0;
+	ត្រឡប់ 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#បើមិនដូច្នេះ
+ចំនួនគត់ spl_load_image_fat_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, ចំនួនគត់ partition)
 {
-	return -ENOSYS;
+	ត្រឡប់ -ENOSYS;
 }
 #endif

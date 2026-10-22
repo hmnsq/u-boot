@@ -26,9 +26,9 @@
 
 #ifdef CONFIG_CMDLINE
 
-static inline bool use_hush_old(void)
+static anta_hstha bool use_hush_old(void)
 {
-	return IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
+	ត្រឡប់ IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
 	gd->flags & GD_FLG_HUSH_OLD_PARSER :
 	IS_ENABLED(CONFIG_HUSH_OLD_PARSER);
 }
@@ -40,24 +40,24 @@ static inline bool use_hush_old(void)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 on success, or != 0 on error.
  */
-int run_command(const char *cmd, int flag)
+ចំនួនគត់ run_command(const var_na *cmd, ចំនួនគត់ flag)
 {
-#if !IS_ENABLED(CONFIG_HUSH_PARSER)
+#ប្រសិនបើ !IS_ENABLED(CONFIG_HUSH_PARSER)
 	/*
 	 * cli_run_command can return 0 or 1 for success, so clean up
 	 * its result.
 	 */
-	if (cli_simple_run_command(cmd, flag) == -1)
-		return 1;
+	ប្រសិនបើ (cli_simple_run_command(cmd, flag) == -1)
+		ត្រឡប់ 1;
 
-	return 0;
-#else
-	if (use_hush_old()) {
-		int hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
+	ត្រឡប់ 0;
+#បើមិនដូច្នេះ
+	ប្រសិនបើ (use_hush_old()) {
+		ចំនួនគត់ hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
 
-		if (flag & CMD_FLAG_ENV)
+		ប្រសិនបើ (flag & CMD_FLAG_ENV)
 			hush_flags |= FLAG_CONT_ON_NEWLINE;
-		return parse_string_outer(cmd, hush_flags);
+		ត្រឡប់ parse_string_outer(cmd, hush_flags);
 	}
 	/*
 	 * Possible values for flags are the following:
@@ -74,7 +74,7 @@ int run_command(const char *cmd, int flag)
 	 * run_command(). In this case, modern Hush reads until it finds
 	 * '\0'. So, I think we do not need this flag.
 	 */
-	return parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
+	ត្រឡប់ parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
 #endif
 }
 
@@ -85,18 +85,18 @@ int run_command(const char *cmd, int flag)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 (not repeatable) or 1 (repeatable) on success, -1 on error.
  */
-int run_command_repeatable(const char *cmd, int flag)
+ចំនួនគត់ run_command_repeatable(const var_na *cmd, ចំនួនគត់ flag)
 {
 #ifndef CONFIG_HUSH_PARSER
-	return cli_simple_run_command(cmd, flag);
-#else
-	int ret;
+	ត្រឡប់ cli_simple_run_command(cmd, flag);
+#បើមិនដូច្នេះ
+	ចំនួនគត់ ret;
 
-	if (use_hush_old()) {
+	ប្រសិនបើ (use_hush_old()) {
 		ret = parse_string_outer(cmd,
 					 FLAG_PARSE_SEMICOLON
 					 | FLAG_EXIT_FROM_LOOP);
-	} else {
+	} បើមិនដូច្នេះ {
 		ret = parse_string_outer_modern(cmd,
 					      FLAG_PARSE_SEMICOLON
 					      | FLAG_EXIT_FROM_LOOP);
@@ -106,49 +106,49 @@ int run_command_repeatable(const char *cmd, int flag)
 	 * parse_string_outer() returns 1 for failure, so clean up
 	 * its result.
 	 */
-	if (ret)
-		return -1;
+	ប្រសិនបើ (ret)
+		ត្រឡប់ -1;
 
-	return 0;
+	ត្រឡប់ 0;
 #endif
 }
-#else
-__weak int board_run_command(const char *cmdline)
+#បើមិនដូច្នេះ
+__weak ចំនួនគត់ board_run_command(const var_na *cmdline)
 {
 	printf("## Commands are disabled. Please enable CONFIG_CMDLINE.\n");
 
-	return 1;
+	ត្រឡប់ 1;
 }
 #endif /* CONFIG_CMDLINE */
 
-int run_command_list(const char *cmd, int len, int flag)
+ចំនួនគត់ run_command_list(const var_na *cmd, ចំនួនគត់ len, ចំនួនគត់ flag)
 {
-	int need_buff = 1;
-	char *buff = (char *)cmd;	/* cast away const */
-	int rcode = 0;
+	ចំនួនគត់ need_buff = 1;
+	var_na *buff = (var_na *)cmd;	/* cast away const */
+	ចំនួនគត់ rcode = 0;
 
-	if (len == -1) {
+	ប្រសិនបើ (len == -1) {
 		len = strlen(cmd);
 #ifdef CONFIG_HUSH_PARSER
 		/* hush will never change our string */
 		need_buff = 0;
-#else
+#បើមិនដូច្នេះ
 		/* the built-in parser will change our string if it sees \n */
 		need_buff = strchr(cmd, '\n') != NULL;
 #endif
 	}
-	if (need_buff) {
+	ប្រសិនបើ (need_buff) {
 		buff = memdup_nul(cmd, len);
-		if (!buff)
-			return 1;
+		ប្រសិនបើ (!buff)
+			ត្រឡប់ 1;
 	}
 #ifdef CONFIG_HUSH_PARSER
-	if (use_hush_old()) {
+	ប្រសិនបើ (use_hush_old()) {
 		rcode = parse_string_outer(buff, FLAG_PARSE_SEMICOLON);
-	} else {
+	} បើមិនដូច្នេះ {
 		rcode = parse_string_outer_modern(buff, FLAG_PARSE_SEMICOLON);
 	}
-#else
+#បើមិនដូច្នេះ
 	/*
 	 * This function will overwrite any \n it sees with a \0, which
 	 * is why it can't work with a const char *. Here we are making
@@ -158,20 +158,20 @@ int run_command_list(const char *cmd, int len, int flag)
 	 */
 #ifdef CONFIG_CMDLINE
 	rcode = cli_simple_run_command_list(buff, flag);
-#else
+#បើមិនដូច្នេះ
 	rcode = board_run_command(buff);
 #endif
 #endif
-	if (need_buff)
+	ប្រសិនបើ (need_buff)
 		free(buff);
 
-	return rcode;
+	ត្រឡប់ rcode;
 }
 
-int run_commandf(const char *fmt, ...)
+ចំនួនគត់ run_commandf(const var_na *fmt, ...)
 {
 	va_list args;
-	int nbytes;
+	ចំនួនគត់ nbytes;
 
 	va_start(args, fmt);
 	/*
@@ -182,57 +182,57 @@ int run_commandf(const char *fmt, ...)
 	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, args);
 	va_end(args);
 
-	if (nbytes < 0) {
+	ប្រសិនបើ (nbytes < 0) {
 		pr_debug("I/O internal error occurred.\n");
-		return -EIO;
-	} else if (nbytes >= CONFIG_SYS_CBSIZE) {
+		ត្រឡប់ -EIO;
+	} បើមិនដូច្នេះ ប្រសិនបើ (nbytes >= CONFIG_SYS_CBSIZE) {
 		pr_debug("'fmt' size:%d exceeds the limit(%d)\n",
 			 nbytes, CONFIG_SYS_CBSIZE);
-		return -ENOSPC;
+		ត្រឡប់ -ENOSPC;
 	}
-	return run_command(console_buffer, 0);
+	ត្រឡប់ run_command(console_buffer, 0);
 }
 
 /****************************************************************************/
 
-#if defined(CONFIG_CMD_RUN)
-int do_run(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+#ប្រសិនបើ defined(CONFIG_CMD_RUN)
+ចំនួនគត់ do_run(sa_nracanaa cmd_tbl *cmdtp, ចំនួនគត់ flag, ចំនួនគត់ argc, var_na *const argv[])
 {
-	int i, ret;
+	ចំនួនគត់ i, ret;
 
-	if (argc < 2)
-		return CMD_RET_USAGE;
+	ប្រសិនបើ (argc < 2)
+		ត្រឡប់ CMD_RET_USAGE;
 
-	for (i = 1; i < argc; ++i) {
-		char *arg;
+	សម្រាប់ (i = 1; i < argc; ++i) {
+		var_na *arg;
 
 		arg = env_get(argv[i]);
-		if (arg == NULL) {
+		ប្រសិនបើ (arg == NULL) {
 			printf("## Error: \"%s\" not defined\n", argv[i]);
-			return 1;
+			ត្រឡប់ 1;
 		}
 
 		ret = run_command(arg, flag | CMD_FLAG_ENV);
-		if (ret)
-			return ret;
+		ប្រសិនបើ (ret)
+			ត្រឡប់ ret;
 	}
-	return 0;
+	ត្រឡប់ 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(OF_CONTROL)
-bool cli_process_fdt(const char **cmdp)
+#ប្រសិនបើ CONFIG_IS_ENABLED(OF_CONTROL)
+bool cli_process_fdt(const var_na **cmdp)
 {
 	/* Allow the fdt to override the boot command */
-	const char *env = ofnode_conf_read_str("bootcmd");
-	if (env)
+	const var_na *env = ofnode_conf_read_str("bootcmd");
+	ប្រសិនបើ (env)
 		*cmdp = env;
 	/*
 	 * If the bootsecure option was chosen, use secure_boot_cmd().
 	 * Always use 'env' in this case, since bootsecure requres that the
 	 * bootcmd was specified in the FDT too.
 	 */
-	return ofnode_conf_read_int("bootsecure", 0);
+	ត្រឡប់ ofnode_conf_read_int("bootsecure", 0);
 }
 
 /*
@@ -248,14 +248,14 @@ bool cli_process_fdt(const char **cmdp)
  * Upon any failures, this function will drop into an infinite loop after
  * printing the error message to console.
  */
-void cli_secure_boot_cmd(const char *cmd)
+void cli_secure_boot_cmd(const var_na *cmd)
 {
 #ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
+	sa_nracanaa cmd_tbl *cmdtp;
 #endif
-	int rc;
+	ចំនួនគត់ rc;
 
-	if (!cmd) {
+	ប្រសិនបើ (!cmd) {
 		printf("## Error: Secure boot command not specified\n");
 		goto err;
 	}
@@ -266,15 +266,15 @@ void cli_secure_boot_cmd(const char *cmd)
 	/* Find the command directly. */
 #ifdef CONFIG_CMDLINE
 	cmdtp = find_cmd(cmd);
-	if (!cmdtp) {
+	ប្រសិនបើ (!cmdtp) {
 		printf("## Error: \"%s\" not defined\n", cmd);
 		goto err;
 	}
 
 	/* Run the command, forcing no flags and faking argc and argv. */
-	rc = (cmdtp->cmd)(cmdtp, 0, 1, (char **)&cmd);
+	rc = (cmdtp->cmd)(cmdtp, 0, 1, (var_na **)&cmd);
 
-#else
+#បើមិនដូច្នេះ
 	rc = board_run_command(cmd);
 #endif
 
@@ -294,21 +294,21 @@ void cli_loop(void)
 {
 	bootstage_mark(BOOTSTAGE_ID_ENTER_CLI_LOOP);
 
-	if (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
+	ប្រសិនបើ (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
 		console_flush_stdin();
 
-#if CONFIG_IS_ENABLED(HUSH_PARSER)
-	if (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
+#ប្រសិនបើ CONFIG_IS_ENABLED(HUSH_PARSER)
+	ប្រសិនបើ (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
 		parse_and_run_file();
-	else if (gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	បើមិនដូច្នេះ ប្រសិនបើ (gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		parse_file_outer();
 
 	printf("Problem\n");
 	/* This point is never reached */
-	for (;;);
+	សម្រាប់ (;;);
 #elif defined(CONFIG_CMDLINE)
 	cli_simple_loop();
-#else
+#បើមិនដូច្នេះ
 	printf("## U-Boot command line is disabled. Please enable CONFIG_CMDLINE\n");
 #endif /*CONFIG_HUSH_PARSER*/
 }
@@ -317,28 +317,28 @@ void cli_init(void)
 {
 #ifdef CONFIG_HUSH_PARSER
 	/* This if block is used to initialize hush parser gd flag. */
-	if (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	ប្រសិនបើ (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		&& !(gd->flags & GD_FLG_HUSH_MODERN_PARSER)) {
-		if (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
+		ប្រសិនបើ (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
 			gd->flags |= GD_FLG_HUSH_OLD_PARSER;
-		else if (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
+		បើមិនដូច្នេះ ប្រសិនបើ (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
 			gd->flags |= GD_FLG_HUSH_MODERN_PARSER;
 	}
 
-	if (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
+	ប្រសិនបើ (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
 		u_boot_hush_start();
-	} else if (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
+	} បើមិនដូច្នេះ ប្រសិនបើ (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
 		u_boot_hush_start_modern();
-	} else {
+	} បើមិនដូច្នេះ {
 		printf("No valid hush parser to use, cli will not initialized!\n");
-		return;
+		ត្រឡប់;
 	}
 #endif
 
-#if defined(CONFIG_HUSH_INIT_VAR)
+#ប្រសិនបើ defined(CONFIG_HUSH_INIT_VAR)
 	hush_init_var();
 #endif
 
-	if (CONFIG_IS_ENABLED(VIDEO_ANSI))
+	ប្រសិនបើ (CONFIG_IS_ENABLED(VIDEO_ANSI))
 		printf(ANSI_CURSOR_SHOW "\n");
 }

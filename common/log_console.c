@@ -11,9 +11,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+static ចំនួនគត់ log_console_emit(sa_nracanaa log_device *ldev, sa_nracanaa log_rec *rec)
 {
-	int fmt = gd->log_fmt;
+	ចំនួនគត់ fmt = gd->log_fmt;
 	bool add_space = false;
 
 	/*
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
+	ប្រសិនបើ (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
 		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
+		ប្រសិនបើ (fmt & BIT(LOGF_LEVEL))
 			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
+		ប្រសិនបើ (fmt & BIT(LOGF_CAT))
 			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
+		ប្រសិនបើ (fmt & BIT(LOGF_FILE))
 			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
+		ប្រសិនបើ (fmt & BIT(LOGF_LINE))
 			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+		ប្រសិនបើ (fmt & BIT(LOGF_FUNC)) {
+			ប្រសិនបើ (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
 				printf("%s()", rec->func ?: "?");
-			} else {
+			} បើមិនដូច្នេះ {
 				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
+	ប្រសិនបើ (fmt & BIT(LOGF_MSG))
 		printf("%s%s", add_space ? " " : "", rec->msg);
 
-	return 0;
+	ត្រឡប់ 0;
 }
 
 LOG_DRIVER(console) = {

@@ -20,39 +20,39 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char erase_seq[] = "\b \b";	/* erase sequence */
-static const char   tab_seq[] = "        ";	/* used to expand TABs */
+static const var_na erase_seq[] = "\b \b";	/* erase sequence */
+static const var_na   tab_seq[] = "        ";	/* used to expand TABs */
 
-char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
+var_na console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+static var_na *delete_char (var_na *buffer, var_na *p, ចំនួនគត់ *colp, ចំនួនគត់ *np, ចំនួនគត់ plen)
 {
-	char *s;
+	var_na *s;
 
-	if (*np == 0)
-		return p;
+	ប្រសិនបើ (*np == 0)
+		ត្រឡប់ p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	ប្រសិនបើ (*(--p) == '\t') {		/* will retype the whole line */
+		ខណៈពេល (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		សម្រាប់ (s = buffer; s < p; ++s) {
+			ប្រសិនបើ (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} បើមិនដូច្នេះ {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} បើមិនដូច្នេះ {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	ត្រឡប់ p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,11 +62,11 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (ចំនួនគត់)n, str)
 
 #define CTL_BACKSPACE		('\b')
-#define DEL			((char)255)
-#define DEL7			((char)127)
+#define DEL			((var_na)255)
+#define DEL7			((var_na)127)
 #define CREAD_HIST_CHAR		('!')
 
 #define getcmd_putch(ch)	putc(ch)
@@ -76,46 +76,46 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#បើមិនដូច្នេះ
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
+static ចំនួនគត់ hist_max;
+static ចំនួនគត់ hist_add_idx;
+static ចំនួនគត់ hist_cur = -1;
 static unsigned hist_num;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-static char hist_data[HIST_MAX][HIST_SIZE + 1];
+static var_na hist_data[HIST_MAX][HIST_SIZE + 1];
 #endif
-static char *hist_list[HIST_MAX];
+static var_na *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+static void getcmd_putchars(ចំនួនគត់ count, ចំនួនគត់ ch)
 {
-	int i;
+	ចំនួនគត់ i;
 
-	for (i = 0; i < count; i++)
+	សម្រាប់ (i = 0; i < count; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+static ចំនួនគត់ hist_init(void)
 {
-	int i;
+	ចំនួនគត់ i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	សម្រាប់ (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
-	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+#បើមិនដូច្នេះ
+	unsigned var_na *hist = calloc(HIST_MAX, HIST_SIZE + 1);
+	ប្រសិនបើ (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	សម្រាប់ (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
@@ -124,78 +124,78 @@ static int hist_init(void)
 	hist_cur = -1;
 	hist_num = 0;
 
-	return 0;
+	ត្រឡប់ 0;
 }
 
-static void cread_add_to_hist(char *line)
+static void cread_add_to_hist(var_na *line)
 {
 	strcpy(hist_list[hist_add_idx], line);
 
-	if (++hist_add_idx >= HIST_MAX)
+	ប្រសិនបើ (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	ប្រសិនបើ (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
 	hist_num++;
 }
 
-static char *hist_prev(void)
+static var_na *hist_prev(void)
 {
-	char *ret;
-	int old_cur;
+	var_na *ret;
+	ចំនួនគត់ old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	ប្រសិនបើ (hist_cur < 0)
+		ត្រឡប់ NULL;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	ប្រសិនបើ (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	ប្រសិនបើ (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
 		ret = NULL;
-	} else {
+	} បើមិនដូច្នេះ {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	ត្រឡប់ ret;
 }
 
-static char *hist_next(void)
+static var_na *hist_next(void)
 {
-	char *ret;
+	var_na *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	ប្រសិនបើ (hist_cur < 0)
+		ត្រឡប់ NULL;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	ប្រសិនបើ (hist_cur == hist_add_idx)
+		ត្រឡប់ NULL;
 
-	if (++hist_cur > hist_max)
+	ប្រសិនបើ (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	ប្រសិនបើ (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	បើមិនដូច្នេះ
 		ret = hist_list[hist_cur];
 
-	return ret;
+	ត្រឡប់ ret;
 }
 
 void cread_print_hist_list(void)
 {
-	int i;
+	ចំនួនគត់ i;
 	uint n;
 
 	n = hist_num - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	ខណៈពេល (1) {
+		ប្រសិនបើ (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
-			break;
+		ប្រសិនបើ (i == hist_add_idx)
+			bha_nga;
 		printf("%s\n", hist_list[i]);
 		n++;
 		i++;
@@ -203,54 +203,54 @@ void cread_print_hist_list(void)
 }
 
 #define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+	ខណៈពេល (cls->num) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
 		cls->num--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
+	ប្រសិនបើ (cls->num < cls->eol_num) {		\
+		printf("%*s", (ចំនួនគត់)(cls->eol_num - cls->num), ""); \
 		do {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} ខណៈពេល (--cls->eol_num > cls->num);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
+	ប្រសិនបើ (cls->num < cls->eol_num) {			\
 		uint wlen = cls->eol_num - cls->num;	\
 		putnstr(buf + cls->num, wlen);		\
 		cls->num = cls->eol_num;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
-			   uint *eol_num, char *buf, uint len)
+static void cread_add_char(var_na ichar, ចំនួនគត់ insert, uint *num,
+			   uint *eol_num, var_na *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	ប្រសិនបើ (insert || *num == *eol_num) {
+		ប្រសិនបើ (*eol_num > len - 1) {
 			getcmd_cbeep();
-			return;
+			ត្រឡប់;
 		}
 		(*eol_num)++;
 	}
 
-	if (insert) {
+	ប្រសិនបើ (insert) {
 		wlen = *eol_num - *num;
-		if (wlen > 1)
+		ប្រសិនបើ (wlen > 1)
 			memmove(&buf[*num+1], &buf[*num], wlen-1);
 
 		buf[*num] = ichar;
 		putnstr(buf + *num, wlen);
 		(*num)++;
-		while (--wlen)
+		ខណៈពេល (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} បើមិនដូច្នេះ {
 		/* echo the character */
 		wlen = 1;
 		buf[*num] = ichar;
@@ -259,54 +259,54 @@ static void cread_add_char(char ichar, int insert, uint *num,
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
-			  uint *num, uint *eol_num, char *buf, uint len)
+static void cread_add_str(var_na *str, ចំនួនគត់ strsize, ចំនួនគត់ insert,
+			  uint *num, uint *eol_num, var_na *buf, uint len)
 {
-	while (strsize--) {
+	ខណៈពេល (strsize--) {
 		cread_add_char(*str, insert, num, eol_num, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+ចំនួនគត់ cread_line_process_ch(sa_nracanaa cli_line_state *cls, var_na ichar)
 {
-	char *buf = cls->buf;
+	var_na *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	ប្រសិនបើ (!ichar)
+		ត្រឡប់ -EAGAIN;
 
-	if (ichar == '\n') {
+	ប្រសិនបើ (ichar == '\n') {
 		putc('\n');
 		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		ត្រឡប់ 0;
 	}
 
 	switch (ichar) {
-	case CTL_CH('a'):
+	pak_sa CTL_CH('a'):
 		BEGINNING_OF_LINE();
-		break;
-	case CTL_CH('c'):	/* ^C - break */
+		bha_nga;
+	pak_sa CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
-	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
+		ត្រឡប់ -EINTR;
+	pak_sa CTL_CH('f'):
+		ប្រសិនបើ (cls->num < cls->eol_num) {
 			getcmd_putch(buf[cls->num]);
 			cls->num++;
 		}
-		break;
-	case CTL_CH('b'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('b'):
+		ប្រសិនបើ (cls->num) {
 			getcmd_putch(CTL_BACKSPACE);
 			cls->num--;
 		}
-		break;
-	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		bha_nga;
+	pak_sa CTL_CH('d'):
+		ប្រសិនបើ (cls->num < cls->eol_num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
+			ប្រសិនបើ (wlen) {
 				memmove(&buf[cls->num], &buf[cls->num + 1],
 					wlen);
 				putnstr(buf + cls->num, wlen);
@@ -315,27 +315,27 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} ខណៈពេល (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('k'):
+		bha_nga;
+	pak_sa CTL_CH('k'):
 		ERASE_TO_EOL();
-		break;
-	case CTL_CH('e'):
+		bha_nga;
+	pak_sa CTL_CH('e'):
 		REFRESH_TO_EOL();
-		break;
-	case CTL_CH('o'):
+		bha_nga;
+	pak_sa CTL_CH('o'):
 		cls->insert = !cls->insert;
-		break;
-	case CTL_CH('w'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('w'):
+		ប្រសិនបើ (cls->num) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			សម្រាប់ (base = cls->num;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			សម្រាប់ (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
@@ -350,16 +350,16 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putchars(wlen + cls->eol_num - cls->num,
 					CTL_BACKSPACE);
 		}
-		break;
-	case CTL_CH('x'):
-	case CTL_CH('u'):
+		bha_nga;
+	pak_sa CTL_CH('x'):
+	pak_sa CTL_CH('u'):
 		BEGINNING_OF_LINE();
 		ERASE_TO_EOL();
-		break;
-	case DEL:
-	case DEL7:
-	case 8:
-		if (cls->num) {
+		bha_nga;
+	pak_sa DEL:
+	pak_sa DEL7:
+	pak_sa 8:
+		ប្រសិនបើ (cls->num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num;
@@ -370,23 +370,23 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} ខណៈពេល (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('p'):
-	case CTL_CH('n'):
-		if (cls->history) {
-			char *hline;
+		bha_nga;
+	pak_sa CTL_CH('p'):
+	pak_sa CTL_CH('n'):
+		ប្រសិនបើ (cls->history) {
+			var_na *hline;
 
-			if (ichar == CTL_CH('p'))
+			ប្រសិនបើ (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			បើមិនដូច្នេះ
 				hline = hist_next();
 
-			if (!hline) {
+			ប្រសិនបើ (!hline) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			/* nuke the current line */
@@ -400,34 +400,34 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			strcpy(buf, hline);
 			cls->eol_num = strlen(buf);
 			REFRESH_TO_EOL();
-			break;
+			bha_nga;
 		}
-		break;
-	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		bha_nga;
+	pak_sa '\t':
+		ប្រសិនបើ (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			ចំនួនគត់ num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			ប្រសិនបើ (cls->num < cls->eol_num) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			buf[cls->num] = '\0';
 			col = strlen(cls->prompt) + cls->eol_num;
 			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+			ប្រសិនបើ (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
 				col = num2 - cls->num;
 				cls->num += col;
 				cls->eol_num += col;
 			}
-			break;
+			bha_nga;
 		}
 		fallthrough;
 	default:
 		cread_add_char(ichar, cls->insert, &cls->num, &cls->eol_num,
 			       buf, cls->len);
-		break;
+		bha_nga;
 	}
 
 	/*
@@ -436,30 +436,30 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	 */
 	buf[cls->eol_num] = '\0';
 
-	return -EAGAIN;
+	ត្រឡប់ -EAGAIN;
 }
 
-void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
+void cli_cread_init(sa_nracanaa cli_line_state *cls, var_na *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	ចំនួនគត់ init_len = strlen(buf);
 
-	memset(cls, '\0', sizeof(struct cli_line_state));
+	memset(cls, '\0', parimaa_na(sa_nracanaa cli_line_state));
 	cls->insert = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
+	ប្រសិនបើ (init_len)
 		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static ចំនួនគត់ cread_line(const var_na *const prompt, var_na *buf, unsigned ចំនួនគត់ *len,
+		      ចំនួនគត់ timeout)
 {
-	struct cli_ch_state s_cch, *cch = &s_cch;
-	struct cli_line_state s_cls, *cls = &s_cls;
-	char ichar;
-	int first = 1;
+	sa_nracanaa cli_ch_state s_cch, *cch = &s_cch;
+	sa_nracanaa cli_line_state s_cls, *cls = &s_cls;
+	var_na ichar;
+	ចំនួនគត់ first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	ខណៈពេល (1) {
+		ចំនួនគត់ ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		ប្រសិនបើ (!ichar) {
+			ប្រសិនបើ (bootretry_tstc_timeout())
+				ត្រឡប់ -2;	/* timed out */
+			ប្រសិនបើ (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				ខណៈពេល (!tstc()) {	/* while no incoming data */
+					ប្រសិនបើ (get_ticks() >= etime)
+						ត្រឡប់ -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -492,38 +492,38 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 		}
 
 		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
-			break;
+		ប្រសិនបើ (ret == -EINTR)
+			ត្រឡប់ -1;
+		បើមិនដូច្នេះ ប្រសិនបើ (!ret)
+			bha_nga;
 	}
 	*len = cls->eol_num;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	ប្រសិនបើ (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	ត្រឡប់ 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#បើមិនដូច្នេះ /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+static anta_hstha ចំនួនគត់ hist_init(void)
 {
-	return 0;
+	ត្រឡប់ 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static ចំនួនគត់ cread_line(const var_na *const prompt, var_na *buf, unsigned ចំនួនគត់ *len,
+		      ចំនួនគត់ timeout)
 {
-	return 0;
+	ត្រឡប់ 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+ចំនួនគត់ cli_readline(const var_na *const prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	ត្រឡប់ cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+static ចំនួនគត់ cread_line_simple(const var_na *const prompt, var_na *p)
 {
-	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	var_na *p_buf = p;
+	ចំនួនគត់ n = 0;		/* buffer index */
+	ចំនួនគត់ plen = 0;		/* prompt length */
+	ចំនួនគត់ col;		/* output column cnt */
+	ចំនួនគត់ c;
 
 	/* print prompt */
-	if (prompt) {
+	ប្រសិនបើ (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	សម្រាប់ (;;) {
+		ប្រសិនបើ (bootretry_tstc_timeout())
+			ត្រឡប់ -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -569,21 +569,21 @@ static int cread_line_simple(const char *const prompt, char *p)
 		 * Special character handling
 		 */
 		switch (c) {
-		case '\r':			/* Enter		*/
-		case '\n':
+		pak_sa '\r':			/* Enter		*/
+		pak_sa '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			ត្រឡប់ p - p_buf;
 
-		case '\0':			/* nul			*/
+		pak_sa '\0':			/* nul			*/
 			continue;
 
-		case 0x03:			/* ^C - break		*/
+		pak_sa 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			ត្រឡប់ -1;
 
-		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+		pak_sa 0x15:			/* ^U - erase line	*/
+			ខណៈពេល (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
@@ -591,31 +591,31 @@ static int cread_line_simple(const char *const prompt, char *p)
 			n = 0;
 			continue;
 
-		case 0x17:			/* ^W - erase word	*/
+		pak_sa 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			ខណៈពេល ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
-		case 0x08:			/* ^H  - backspace	*/
-		case 0x7F:			/* DEL - backspace	*/
+		pak_sa 0x08:			/* ^H  - backspace	*/
+		pak_sa 0x7F:			/* DEL - backspace	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
 		default:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			ប្រសិនបើ (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
-				break;
+				bha_nga;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			ប្រសិនបើ (c == '\t') {	/* expand TABs */
+				ប្រសិនបើ (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					ប្រសិនបើ (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
@@ -624,8 +624,8 @@ static int cread_line_simple(const char *const prompt, char *p)
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
-				char __maybe_unused buf[2];
+			} បើមិនដូច្នេះ {
+				var_na __maybe_unused buf[2];
 
 				/*
 				 * Echo input using puts() to force an LCD
@@ -638,18 +638,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 			}
 			*p++ = c;
 			++n;
-			break;
+			bha_nga;
 		}
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+ចំនួនគត់ cli_readline_into_buffer(const var_na *const prompt, var_na *buffer,
+			     ចំនួនគត់ timeout)
 {
-	char *p = buffer;
+	var_na *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	ចំនួនគត់ rc;
+	static ចំនួនគត់ initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	ប្រសិនបើ (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		ប្រសិនបើ (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			ប្រសិនបើ (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		ប្រសិនបើ (prompt)
 			puts(prompt);
 
 		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		ត្រឡប់ rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} បើមិនដូច្នេះ {
+		ត្រឡប់ cread_line_simple(prompt, p);
 	}
 }

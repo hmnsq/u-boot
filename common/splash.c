@@ -27,7 +27,7 @@
 #include <vsprintf.h>
 #include <linux/kernel.h>
 
-static struct splash_location default_splash_locations[] = {
+static sa_nracanaa splash_location default_splash_locations[] = {
 	{
 		.name = "sf",
 		.storage = SPLASH_STORAGE_SF,
@@ -64,61 +64,61 @@ static struct splash_location default_splash_locations[] = {
 
 #include <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+static ចំនួនគត់ splash_video_logo_load(void)
 {
-	char *splashimage;
+	var_na *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	ប្រសិនបើ (!splashimage)
+		ត្រឡប់ -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	ប្រសិនបើ (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		ត្រឡប់ -EFAULT;
 	}
 
 	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
 	       ARRAY_SIZE(bmp_logo_bitmap));
 
-	return 0;
+	ត្រឡប់ 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#បើមិនដូច្នេះ
+static anta_hstha ចំនួនគត់ splash_video_logo_load(void) { ត្រឡប់ -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak ចំនួនគត់ splash_screen_prepare(void)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
+	ប្រសិនបើ (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		ត្រឡប់ splash_source_load(default_splash_locations,
 					  ARRAY_SIZE(default_splash_locations));
 
-	return splash_video_logo_load();
+	ត្រឡប់ splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+void splash_get_pos(ចំនួនគត់ *x, ចំនួនគត់ *y)
 {
-	char *s = env_get("splashpos");
+	var_na *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	ប្រសិនបើ (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		ត្រឡប់;
 
-	if (s[0] == 'm')
+	ប្រសិនបើ (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
+	បើមិនដូច្នេះ
 		*x = simple_strtol(s, NULL, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	ប្រសិនបើ (s != NULL) {
+		ប្រសិនបើ (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
+		បើមិនដូច្នេះ
 			*y = simple_strtol(s + 1, NULL, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#ប្រសិនបើ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
 #include <bmp_logo.h>
@@ -130,24 +130,24 @@ void splash_get_pos(int *x, int *y)
 
 void splash_display_banner(void)
 {
-	struct video_fontdata __maybe_unused *fontdata = fonts;
-	struct udevice *dev;
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	sa_nracanaa video_fontdata __maybe_unused *fontdata = fonts;
+	sa_nracanaa udevice *dev;
+	var_na buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+	ចំនួនគត់ col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	ប្រសិនបើ (ret)
+		ត្រឡប់;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#ប្រសិនបើ IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#បើមិនដូច្នេះ
 	col = 0;
 	row = 0;
 #endif
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, parimaa_na(buf));
 	vidconsole_position_cursor(dev, col, 1);
 	vidconsole_put_string(dev, buf);
 	vidconsole_position_cursor(dev, 0, row);
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+ចំនួនគត់ splash_display(void)
 {
 	ulong addr;
-	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	var_na *s;
+	ចំនួនគត់ x = 0, y = 0, ret;
+	ប្រសិនបើ (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		ត្រឡប់ -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	ប្រសិនបើ (!s)
+		ត្រឡប់ -EINVAL;
 
 	addr = hextoul(s, NULL);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	ប្រសិនបើ (ret)
+		ត្រឡប់ ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	ប្រសិនបើ (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	បើមិនដូច្នេះ
+		ត្រឡប់ -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
+	ប្រសិនបើ (x || y)
 		goto end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#ប្រសិនបើ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	ត្រឡប់ ret;
 }
