@@ -7,86 +7,86 @@
 
 #define LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#ضمن <log.h>
+#ضمن <malloc.h>
+#ضمن <mapmem.h>
+#ضمن <asm/global_data.h>
+#ضمن <asm/io.h>
+#ضمن <valgrind/valgrind.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+ساكن فراغ *alloc_simple(size_t bytes, صحيح align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	فراغ *ptr;
 
 	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
 	new_ptr = addr + bytes - gd->malloc_base;
 	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
 		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	𐤀𐤌 (new_ptr > gd->malloc_limit) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
 			gd->malloc_limit);
-		return NULL;
+		أرجع عدم;
 	}
 
 	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	gd->malloc_ptr = ALIGN(new_ptr, حجم(new_ptr));
 
-	return ptr;
+	أرجع ptr;
 }
 
-void *malloc_simple(size_t bytes)
+فراغ *malloc_simple(size_t bytes)
 {
-	void *ptr;
+	فراغ *ptr;
 
 	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	𐤀𐤌 (!ptr)
+		أرجع ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	أرجع ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+فراغ *memalign_simple(size_t align, size_t bytes)
 {
-	void *ptr;
+	فراغ *ptr;
 
 	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	𐤀𐤌 (!ptr)
+		أرجع ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
 	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
 
-	return ptr;
+	أرجع ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#𐤀𐤌 CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+فراغ *calloc(size_t nmemb, size_t elem_size)
 {
 	size_t size = nmemb * elem_size;
-	void *ptr;
+	فراغ *ptr;
 
 	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
+	𐤀𐤌 (!ptr)
+		أرجع ptr;
 	memset(ptr, '\0', size);
 
-	return ptr;
+	أرجع ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#𐤀𐤌 IS_ENABLED(CONFIG_VALGRIND)
+فراغ free_simple(فراغ *ptr)
 {
 	VALGRIND_FREELIKE_BLOCK(ptr, 0);
 }
 #endif
 #endif
 
-void malloc_simple_info(void)
+فراغ malloc_simple_info(فراغ)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);
