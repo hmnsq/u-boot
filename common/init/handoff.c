@@ -12,11 +12,11 @@ DECLARE_GLOBAL_DATA_PTR;
 
 void handoff_save_dram(struct spl_handoff *ho)
 {
-	int i;
+	ціле i;
 
 	ho->ram_size = gd->ram_size;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+	для (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 		ho->ram_bank[i].start = gd->dram[i].start;
 		ho->ram_bank[i].size = gd->dram[i].size;
 	}
@@ -29,9 +29,9 @@ void handoff_load_dram_size(struct spl_handoff *ho)
 
 void handoff_load_dram_banks(struct spl_handoff *ho)
 {
-	int i;
+	ціле i;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+	для (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 		gd->dram[i].start = ho->ram_bank[i].start;
 		gd->dram[i].size = ho->ram_bank[i].size;
 	}

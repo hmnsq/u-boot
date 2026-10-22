@@ -24,15 +24,15 @@
  * If necessary you have to map the second bank at lower addresses.
  */
 void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+flash_protect(ціле flag, ulong from, ulong to, flash_info_t *info)
 {
 	ulong b_end;
 	short s_end;
-	int i;
+	ціле i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	якщо (!info || info->sector_count == 0 || info->size == 0 || to < from) {
+		повернути;
 	}
 
 	s_end = info->sector_count - 1;	/* index of last sector */
@@ -46,12 +46,12 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
+	якщо (info->flash_id == FLASH_UNKNOWN ||
 	    to < info->start[0] || from > b_end) {
-		return;
+		повернути;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
+	для (i=0; i<info->sector_count; ++i) {
 		ulong end;		/* last address in current sect	*/
 
 		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
@@ -59,19 +59,19 @@ flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		якщо (from <= end && to >= info->start[i]) {
+			якщо (flag & FLAG_PROTECT_CLEAR) {
+#якщо defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#інакше
 				info->protect[i] = 0;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			інакше якщо (flag & FLAG_PROTECT_SET) {
+#якщо defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#інакше
 				info->protect[i] = 1;
 #endif	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
@@ -87,10 +87,10 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	ціле i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
+	для (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		якщо (info->flash_id != FLASH_UNKNOWN &&
 		    addr >= info->start[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
@@ -98,11 +98,11 @@ addr2info(ulong addr)
 		     * Please don't change this unless you understand this.
 		     */
 		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+			повернути (info);
 		}
 	}
 
-	return (NULL);
+	повернути (NULL);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,10 +118,10 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
+ціле
 flash_write(char *src, ulong addr, ulong cnt)
 {
-	int i;
+	ціле i;
 	ulong         end        = addr + cnt - 1;
 	flash_info_t *info_first = addr2info(addr);
 	flash_info_t *info_last  = addr2info(end);
@@ -130,56 +130,56 @@ flash_write(char *src, ulong addr, ulong cnt)
 	__maybe_unused char *addr_orig = (char *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	якщо (cnt == 0) {
+		повернути (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	якщо (!info_first || !info_last) {
+		повернути (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
+	для (info = info_first; info <= info_last; ++info) {
 		ulong b_end = info->start[0] + info->size;	/* bank end addr */
 		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
+		для (i=0; i<info->sector_count; ++i) {
 			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			якщо ((end >= info->start[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				повернути (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	для (info = info_first; info <= info_last && cnt>0; ++info) {
 		ulong len;
 
 		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		якщо (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		якщо ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			повернути (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
+#якщо defined(CONFIG_FLASH_VERIFY)
+	якщо (memcmp(src_orig, addr_orig, cnt_orig)) {
 		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+		повернути FL_ERR_PROG_ERROR;
 	}
 #endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	повернути (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+void flash_perror(ціле err)
 {
 	switch (err) {
 	case FL_ERR_OK:

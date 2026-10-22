@@ -8,7 +8,7 @@
  * as file malloc-2.6.6.c.
  */
 
-#if CONFIG_IS_ENABLED(UNIT_TEST)
+#якщо CONFIG_IS_ENABLED(UNIT_TEST)
 #define DEBUG
 #endif
 
@@ -22,10 +22,10 @@
 #include <valgrind/memcheck.h>
 
 #ifdef DEBUG
-#if __STD_C
+#якщо __STD_C
 static void malloc_update_mallinfo (void);
 void malloc_stats (void);
-#else
+#інакше
 static void malloc_update_mallinfo ();
 void malloc_stats();
 #endif
@@ -39,7 +39,7 @@ DECLARE_GLOBAL_DATA_PTR;
  #undef MALLOC_ZERO
 static inline void MALLOC_ZERO(void *p, size_t sz) { memset(p, 0, sz); }
 static inline void MALLOC_COPY(void *dest, const void *src, size_t sz) { memcpy(dest, src, sz); }
-#else
+#інакше
  #define STATIC_IF_MCHECK
  #define mALLOc_impl mALLOc
  #define fREe_impl fREe
@@ -76,9 +76,9 @@ struct GmListElement
 };
 
 static GmListElement* head = 0;
-static unsigned int gNextAddress = 0;
-static unsigned int gAddressBase = 0;
-static unsigned int gAllocatedSize = 0;
+static unsigned ціле gNextAddress = 0;
+static unsigned ціле gAddressBase = 0;
+static unsigned ціле gAllocatedSize = 0;
 
 static
 GmListElement* makeGmListElement (void* bas)
@@ -86,27 +86,27 @@ GmListElement* makeGmListElement (void* bas)
 	GmListElement* this;
 	this = (GmListElement*)(void*)LocalAlloc (0, sizeof (GmListElement));
 	assert (this);
-	if (this)
+	якщо (this)
 	{
 		this->base = bas;
 		this->next = head;
 		head = this;
 	}
-	return this;
+	повернути this;
 }
 
 void gcleanup (void)
 {
 	BOOL rval;
 	assert ( (head == NULL) || (head->base == (void*)gAddressBase));
-	if (gAddressBase && (gNextAddress - gAddressBase))
+	якщо (gAddressBase && (gNextAddress - gAddressBase))
 	{
 		rval = VirtualFree ((void*)gAddressBase,
 							gNextAddress - gAddressBase,
 							MEM_DECOMMIT);
 	assert (rval);
 	}
-	while (head)
+	поки (head)
 	{
 		GmListElement* next = head->next;
 		rval = VirtualFree (head->base, 0, MEM_RELEASE);
@@ -120,14 +120,14 @@ static
 void* findRegion (void* start_address, unsigned long size)
 {
 	MEMORY_BASIC_INFORMATION info;
-	if (size >= TOP_MEMORY) return NULL;
+	якщо (size >= TOP_MEMORY) повернути NULL;
 
-	while ((unsigned long)start_address + size < TOP_MEMORY)
+	поки ((unsigned long)start_address + size < TOP_MEMORY)
 	{
 		VirtualQuery (start_address, &info, sizeof (info));
-		if ((info.State == MEM_FREE) && (info.RegionSize >= size))
-			return start_address;
-		else
+		якщо ((info.State == MEM_FREE) && (info.RegionSize >= size))
+			повернути start_address;
+		інакше
 		{
 			/* Requested region is not available so see if the */
 			/* next region is available.  Set 'start_address' */
@@ -152,22 +152,22 @@ void* findRegion (void* start_address, unsigned long size)
 				(void *) AlignPage64K((unsigned long) start_address);
 		}
 	}
-	return NULL;
+	повернути NULL;
 
 }
 
 void* wsbrk (long size)
 {
 	void* tmp;
-	if (size > 0)
+	якщо (size > 0)
 	{
-		if (gAddressBase == 0)
+		якщо (gAddressBase == 0)
 		{
 			gAllocatedSize = max (RESERVED_SIZE, AlignPage (size));
 			gNextAddress = gAddressBase =
-				(unsigned int)VirtualAlloc (NULL, gAllocatedSize,
+				(unsigned ціле)VirtualAlloc (NULL, gAllocatedSize,
 											MEM_RESERVE, PAGE_NOACCESS);
-		} else if (AlignPage (gNextAddress + size) > (gAddressBase +
+		} інакше якщо (AlignPage (gNextAddress + size) > (gAddressBase +
 gAllocatedSize))
 		{
 			long new_size = max (NEXT_SIZE, AlignPage (size));
@@ -176,61 +176,61 @@ gAllocatedSize))
 			{
 				new_address = findRegion (new_address, new_size);
 
-				if (!new_address)
-					return (void*)-1;
+				якщо (!new_address)
+					повернути (void*)-1;
 
 				gAddressBase = gNextAddress =
-					(unsigned int)VirtualAlloc (new_address, new_size,
+					(unsigned ціле)VirtualAlloc (new_address, new_size,
 												MEM_RESERVE, PAGE_NOACCESS);
 				/* repeat in case of race condition */
 				/* The region that we found has been snagged */
 				/* by another thread */
 			}
-			while (gAddressBase == 0);
+			поки (gAddressBase == 0);
 
 			assert (new_address == (void*)gAddressBase);
 
 			gAllocatedSize = new_size;
 
-			if (!makeGmListElement ((void*)gAddressBase))
-				return (void*)-1;
+			якщо (!makeGmListElement ((void*)gAddressBase))
+				повернути (void*)-1;
 		}
-		if ((size + gNextAddress) > AlignPage (gNextAddress))
+		якщо ((size + gNextAddress) > AlignPage (gNextAddress))
 		{
 			void* res;
 			res = VirtualAlloc ((void*)AlignPage (gNextAddress),
 								(size + gNextAddress -
 								 AlignPage (gNextAddress)),
 								MEM_COMMIT, PAGE_READWRITE);
-			if (!res)
-				return (void*)-1;
+			якщо (!res)
+				повернути (void*)-1;
 		}
 		tmp = (void*)gNextAddress;
-		gNextAddress = (unsigned int)tmp + size;
-		return tmp;
+		gNextAddress = (unsigned ціле)tmp + size;
+		повернути tmp;
 	}
-	else if (size < 0)
+	інакше якщо (size < 0)
 	{
-		unsigned int alignedGoal = AlignPage (gNextAddress + size);
+		unsigned ціле alignedGoal = AlignPage (gNextAddress + size);
 		/* Trim by releasing the virtual memory */
-		if (alignedGoal >= gAddressBase)
+		якщо (alignedGoal >= gAddressBase)
 		{
 			VirtualFree ((void*)alignedGoal, gNextAddress - alignedGoal,
 						 MEM_DECOMMIT);
 			gNextAddress = gNextAddress + size;
-			return (void*)gNextAddress;
+			повернути (void*)gNextAddress;
 		}
-		else
+		інакше
 		{
 			VirtualFree ((void*)gAddressBase, gNextAddress - gAddressBase,
 						 MEM_DECOMMIT);
 			gNextAddress = gAddressBase;
-			return (void*)-1;
+			повернути (void*)-1;
 		}
 	}
-	else
+	інакше
 	{
-		return (void*)gNextAddress;
+		повернути (void*)gNextAddress;
 	}
 }
 
@@ -576,26 +576,26 @@ ulong mem_malloc_end = 0;
 ulong mem_malloc_brk = 0;
 
 static bool malloc_testing;	/* enable test mode */
-static int malloc_max_allocs;	/* return NULL after this many calls to malloc() */
+static ціле malloc_max_allocs;	/* return NULL after this many calls to malloc() */
 
 void *sbrk(ptrdiff_t increment)
 {
 	ulong old = mem_malloc_brk;
 	ulong new = old + increment;
 
-	if ((new < mem_malloc_start) || (new > mem_malloc_end))
-		return (void *)MORECORE_FAILURE;
+	якщо ((new < mem_malloc_start) || (new > mem_malloc_end))
+		повернути (void *)MORECORE_FAILURE;
 
 	/*
 	 * if we are giving memory back make sure we clear it out since
 	 * we set MORECORE_CLEARS to 1
 	 */
-	if (increment < 0)
+	якщо (increment < 0)
 		memset((void *)new, 0, -increment);
 
 	mem_malloc_brk = new;
 
-	return (void *)old;
+	повернути (void *)old;
 }
 
 void mem_malloc_init(ulong start, ulong size)
@@ -610,7 +610,7 @@ void mem_malloc_init(ulong start, ulong size)
 
 	debug("using memory %#lx-%#lx for malloc()\n", mem_malloc_start,
 	      mem_malloc_end);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
 	memset((void *)mem_malloc_start, 0x0, size);
 #endif
 }
@@ -676,7 +676,7 @@ void mem_malloc_init(ulong start, ulong size)
 
 static unsigned long trim_threshold   = DEFAULT_TRIM_THRESHOLD;
 static unsigned long top_pad          = DEFAULT_TOP_PAD;
-static unsigned int  n_mmaps_max      = DEFAULT_MMAP_MAX;
+static unsigned ціле  n_mmaps_max      = DEFAULT_MMAP_MAX;
 static unsigned long mmap_threshold   = DEFAULT_MMAP_THRESHOLD;
 
 /* The first value returned from sbrk */
@@ -697,30 +697,30 @@ static struct mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 /* Tracking mmaps */
 
 #ifdef DEBUG
-static unsigned int n_mmaps = 0;
+static unsigned ціле n_mmaps = 0;
 #endif	/* DEBUG */
 static unsigned long mmapped_mem = 0;
-#if HAVE_MMAP
-static unsigned int max_n_mmaps = 0;
+#якщо HAVE_MMAP
+static unsigned ціле max_n_mmaps = 0;
 static unsigned long max_mmapped_mem = 0;
 #endif
 
 #ifdef CONFIG_SYS_MALLOC_DEFAULT_TO_INIT
 static void malloc_init(void)
 {
-	int i, j;
+	ціле i, j;
 
 	debug("bins (av_ array) are at %p\n", (void *)av_);
 
 	av_[0] = NULL; av_[1] = NULL;
-	for (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
+	для (i = 2, j = 2; i < NAV * 2 + 2; i += 2, j++) {
 		av_[i] = bin_at(j - 2);
 		av_[i + 1] = bin_at(j - 2);
 
 		/* Just print the first few bins so that
 		 * we can see there are alright.
 		 */
-		if (i < 10)
+		якщо (i < 10)
 			debug("av_[%d]=%lx av_[%d]=%lx\n",
 			      i, (ulong)av_[i],
 			      i + 1, (ulong)av_[i + 1]);
@@ -750,9 +750,9 @@ static void malloc_init(void)
   in malloc. In which case, please report it!)
 */
 
-#if __STD_C
+#якщо __STD_C
 static void do_check_chunk(mchunkptr p)
-#else
+#інакше
 static void do_check_chunk(p) mchunkptr p;
 #endif
 {
@@ -763,16 +763,16 @@ static void do_check_chunk(p) mchunkptr p;
 
   /* Check for legal address ... */
   assert((char*)p >= sbrk_base);
-  if (p != top)
+  якщо (p != top)
     assert((char*)p + sz <= (char*)top);
-  else
+  інакше
     assert((char*)p + sz <= sbrk_base + sbrked_mem);
 
 }
 
-#if __STD_C
+#якщо __STD_C
 static void do_check_free_chunk(mchunkptr p)
-#else
+#інакше
 static void do_check_free_chunk(p) mchunkptr p;
 #endif
 {
@@ -785,7 +785,7 @@ static void do_check_free_chunk(p) mchunkptr p;
   assert(!inuse(p));
 
   /* Unless a special marker, must have OK fields */
-  if ((long)sz >= (long)MINSIZE)
+  якщо ((long)sz >= (long)MINSIZE)
   {
     assert((sz & MALLOC_ALIGN_MASK) == 0);
     assert(aligned_OK(chunk2mem(p)));
@@ -799,13 +799,13 @@ static void do_check_free_chunk(p) mchunkptr p;
     assert(p->fd->bk == p);
     assert(p->bk->fd == p);
   }
-  else /* markers are always of size SIZE_SZ */
+  інакше /* markers are always of size SIZE_SZ */
     assert(sz == SIZE_SZ);
 }
 
-#if __STD_C
+#якщо __STD_C
 static void do_check_inuse_chunk(mchunkptr p)
-#else
+#інакше
 static void do_check_inuse_chunk(p) mchunkptr p;
 #endif
 {
@@ -819,25 +819,25 @@ static void do_check_inuse_chunk(p) mchunkptr p;
     Since more things can be checked with free chunks than inuse ones,
     if an inuse chunk borders them and debug is on, it's worth doing them.
   */
-  if (!prev_inuse(p))
+  якщо (!prev_inuse(p))
   {
     mchunkptr prv = prev_chunk(p);
     assert(next_chunk(prv) == p);
     do_check_free_chunk(prv);
   }
-  if (next == top)
+  якщо (next == top)
   {
     assert(prev_inuse(next));
     assert(chunksize(next) >= MINSIZE);
   }
-  else if (!inuse(next))
+  інакше якщо (!inuse(next))
     do_check_free_chunk(next);
 
 }
 
-#if __STD_C
+#якщо __STD_C
 static void do_check_malloced_chunk(mchunkptr p, INTERNAL_SIZE_T s)
-#else
+#інакше
 static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #endif
 {
@@ -864,7 +864,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #define check_inuse_chunk(P) do_check_inuse_chunk(P)
 #define check_chunk(P) do_check_chunk(P)
 #define check_malloced_chunk(P,N) do_check_malloced_chunk(P,N)
-#else
+#інакше
 #define check_free_chunk(P)
 #define check_inuse_chunk(P)
 #define check_chunk(P)
@@ -887,7 +887,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 #define frontlink(P, S, IDX, BK, FD)                                          \
 {                                                                             \
-  if (S < MAX_SMALLBIN_SIZE)                                                  \
+  якщо (S < MAX_SMALLBIN_SIZE)                                                  \
   {                                                                           \
     IDX = smallbin_index(S);                                                  \
     mark_binblock(IDX);                                                       \
@@ -897,15 +897,15 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
     P->fd = FD;                                                               \
     FD->bk = BK->fd = P;                                                      \
   }                                                                           \
-  else                                                                        \
+  інакше                                                                        \
   {                                                                           \
     IDX = bin_index(S);                                                       \
     BK = bin_at(IDX);                                                         \
     FD = BK->fd;                                                              \
-    if (FD == BK) mark_binblock(IDX);                                         \
-    else                                                                      \
+    якщо (FD == BK) mark_binblock(IDX);                                         \
+    інакше                                                                      \
     {                                                                         \
-      while (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
+      поки (FD != BK && S < chunksize(FD)) FD = FD->fd;                      \
       BK = FD->bk;                                                            \
     }                                                                         \
     P->bk = BK;                                                               \
@@ -939,11 +939,11 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 /* Routines dealing with mmap(). */
 
-#if HAVE_MMAP
+#якщо HAVE_MMAP
 
-#if __STD_C
+#якщо __STD_C
 static mchunkptr mmap_chunk(size_t size)
-#else
+#інакше
 static mchunkptr mmap_chunk(size) size_t size;
 #endif
 {
@@ -951,10 +951,10 @@ static mchunkptr mmap_chunk(size) size_t size;
   mchunkptr p;
 
 #ifndef MAP_ANONYMOUS
-  static int fd = -1;
+  static ціле fd = -1;
 #endif
 
-  if(n_mmaps >= n_mmaps_max) return 0; /* too many regions */
+  якщо(n_mmaps >= n_mmaps_max) повернути 0; /* too many regions */
 
   /* For mmapped chunks, the overhead is one SIZE_SZ unit larger, because
    * there is no following chunk whose prev_size field could be used.
@@ -964,19 +964,19 @@ static mchunkptr mmap_chunk(size) size_t size;
 #ifdef MAP_ANONYMOUS
   p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE,
 		      MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-#else /* !MAP_ANONYMOUS */
-  if (fd < 0)
+#інакше /* !MAP_ANONYMOUS */
+  якщо (fd < 0)
   {
     fd = open("/dev/zero", O_RDWR);
-    if(fd < 0) return 0;
+    якщо(fd < 0) повернути 0;
   }
   p = (mchunkptr)mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 #endif
 
-  if(p == (mchunkptr)-1) return 0;
+  якщо(p == (mchunkptr)-1) повернути 0;
 
   n_mmaps++;
-  if (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
+  якщо (n_mmaps > max_n_mmaps) max_n_mmaps = n_mmaps;
 
   /* We demand that eight bytes into a page must be 8-byte aligned. */
   assert(aligned_OK(chunk2mem(p)));
@@ -989,21 +989,21 @@ static mchunkptr mmap_chunk(size) size_t size;
   set_head(p, size|IS_MMAPPED);
 
   mmapped_mem += size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  якщо ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  якщо ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  повернути p;
 }
 
-#if __STD_C
+#якщо __STD_C
 static void munmap_chunk(mchunkptr p)
-#else
+#інакше
 static void munmap_chunk(p) mchunkptr p;
 #endif
 {
   INTERNAL_SIZE_T size = chunksize(p);
-  int ret;
+  ціле ret;
 
   assert (chunk_is_mmapped(p));
   assert(! ((char*)p >= sbrk_base && (char*)p < sbrk_base + sbrked_mem));
@@ -1019,11 +1019,11 @@ static void munmap_chunk(p) mchunkptr p;
   assert(ret == 0);
 }
 
-#if HAVE_MREMAP
+#якщо HAVE_MREMAP
 
-#if __STD_C
+#якщо __STD_C
 static mchunkptr mremap_chunk(mchunkptr p, size_t new_size)
-#else
+#інакше
 static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 #endif
 {
@@ -1042,7 +1042,7 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 
   cp = (char *)mremap((char *)p - offset, size + offset, new_size, 1);
 
-  if (cp == (char *)-1) return 0;
+  якщо (cp == (char *)-1) повернути 0;
 
   p = (mchunkptr)(cp + offset);
 
@@ -1053,11 +1053,11 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 
   mmapped_mem -= size + offset;
   mmapped_mem += new_size;
-  if ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
+  якщо ((unsigned long)mmapped_mem > (unsigned long)max_mmapped_mem)
     max_mmapped_mem = mmapped_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  якщо ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
-  return p;
+  повернути p;
 }
 
 #endif /* HAVE_MREMAP */
@@ -1069,9 +1069,9 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
   Main interface to sbrk (but see also malloc_trim).
 */
 
-#if __STD_C
+#якщо __STD_C
 static void malloc_extend_top(INTERNAL_SIZE_T nb)
-#else
+#інакше
 static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 #endif
 {
@@ -1094,38 +1094,38 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
   /* Otherwise, we need to correct to a page size below anyway. */
   /* (We also correct below if an intervening foreign sbrk call.) */
 
-  if (sbrk_base != (char*)(-1))
+  якщо (sbrk_base != (char*)(-1))
     sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
 
   brk = (char*)(MORECORE (sbrk_size));
 
   /* Fail if sbrk failed or if a foreign sbrk call killed our space */
-  if (brk == (char*)(MORECORE_FAILURE) ||
+  якщо (brk == (char*)(MORECORE_FAILURE) ||
       (brk < old_end && old_top != initial_top))
-    return;
+    повернути;
 
   sbrked_mem += sbrk_size;
 
-  if (brk == old_end) /* can just add bytes to current top */
+  якщо (brk == old_end) /* can just add bytes to current top */
   {
     top_size = sbrk_size + old_top_size;
     set_head(top, top_size | PREV_INUSE);
   }
-  else
+  інакше
   {
-    if (sbrk_base == (char*)(-1))  /* First time through. Record base */
+    якщо (sbrk_base == (char*)(-1))  /* First time through. Record base */
       sbrk_base = brk;
-    else  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
+    інакше  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
       sbrked_mem += brk - (char*)old_end;
 
     /* Guarantee alignment of first new chunk made from this space */
     front_misalign = (unsigned long)chunk2mem(brk) & MALLOC_ALIGN_MASK;
-    if (front_misalign > 0)
+    якщо (front_misalign > 0)
     {
       correction = (MALLOC_ALIGNMENT) - front_misalign;
       brk += correction;
     }
-    else
+    інакше
       correction = 0;
 
     /* Guarantee the next brk will be at a page boundary */
@@ -1135,7 +1135,7 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 
     /* Allocate correction */
     new_brk = (char*)(MORECORE (correction));
-    if (new_brk == (char*)(MORECORE_FAILURE)) return;
+    якщо (new_brk == (char*)(MORECORE_FAILURE)) повернути;
 
     sbrked_mem += correction;
 
@@ -1143,17 +1143,17 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
     top_size = new_brk - brk + correction;
     set_head(top, top_size | PREV_INUSE);
 
-    if (old_top != initial_top)
+    якщо (old_top != initial_top)
     {
 
       /* There must have been an intervening foreign sbrk call. */
       /* A double fencepost is necessary to prevent consolidation */
 
       /* If not enough space to do this, then user did something very wrong */
-      if (old_top_size < MINSIZE)
+      якщо (old_top_size < MINSIZE)
       {
 	set_head(top, PREV_INUSE); /* will force null return from malloc */
-	return;
+	повернути;
       }
 
       /* Also keep size a multiple of MALLOC_ALIGNMENT */
@@ -1164,14 +1164,14 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
       chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
 	SIZE_SZ|PREV_INUSE;
       /* If possible, release the rest. */
-      if (old_top_size >= MINSIZE)
+      якщо (old_top_size >= MINSIZE)
 	fREe(chunk2mem(old_top));
     }
   }
 
-  if ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem)
+  якщо ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem)
     max_sbrked_mem = sbrked_mem;
-  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
+  якщо ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem)
     max_total_mem = mmapped_mem + sbrked_mem;
 
   /* We always land on a page boundary */
@@ -1239,51 +1239,51 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#якщо __STD_C
 Void_t* mALLOc_impl(size_t bytes)
-#else
+#інакше
 Void_t* mALLOc_impl(bytes) size_t bytes;
 #endif
 {
   mchunkptr victim;                  /* inspected/selected chunk */
   INTERNAL_SIZE_T victim_size;       /* its size */
-  int       idx;                     /* index for bin traversal */
+  ціле       idx;                     /* index for bin traversal */
   mbinptr   bin;                     /* associated bin */
   mchunkptr remainder;               /* remainder from a split */
   long      remainder_size;          /* its size */
-  int       remainder_index;         /* its bin index */
+  ціле       remainder_index;         /* its bin index */
   unsigned long block;               /* block traverser bit */
-  int       startidx;                /* first bin of a traversed block */
+  ціле       startidx;                /* first bin of a traversed block */
   mchunkptr fwd;                     /* misc temp for linking */
   mchunkptr bck;                     /* misc temp for linking */
   mbinptr q;                         /* misc temp */
 
   INTERNAL_SIZE_T nb;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT))
-		return malloc_simple(bytes);
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	якщо (!(gd->flags & GD_FLG_FULL_MALLOC_INIT))
+		повернути malloc_simple(bytes);
 #endif
 
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+  якщо (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    якщо (--malloc_max_allocs < 0)
+      повернути NULL;
   }
 
   /* check if mem_malloc_init() was run */
-  if ((mem_malloc_start == 0) && (mem_malloc_end == 0)) {
+  якщо ((mem_malloc_start == 0) && (mem_malloc_end == 0)) {
     /* not initialized yet */
-    return NULL;
+    повернути NULL;
   }
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  якщо (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     повернути NULL;
 
   nb = request2size(bytes);  /* padded request size; */
 
   /* Check for exact match in a bin */
 
-  if (is_small_request(nb))  /* Faster version for small requests */
+  якщо (is_small_request(nb))  /* Faster version for small requests */
   {
     idx = smallbin_index(nb);
 
@@ -1293,47 +1293,47 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
     victim = last(q);
 
     /* Also scan the next one, since it would have a remainder < MINSIZE */
-    if (victim == q)
+    якщо (victim == q)
     {
       q = next_bin(q);
       victim = last(q);
     }
-    if (victim != q)
+    якщо (victim != q)
     {
       victim_size = chunksize(victim);
       unlink(victim, bck, fwd);
       set_inuse_bit_at_offset(victim, victim_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      повернути chunk2mem(victim);
     }
 
     idx += 2; /* Set for bin scan below. We've already scanned 2 bins. */
 
   }
-  else
+  інакше
   {
     idx = bin_index(nb);
     bin = bin_at(idx);
 
-    for (victim = last(bin); victim != bin; victim = victim->bk)
+    для (victim = last(bin); victim != bin; victim = victim->bk)
     {
       victim_size = chunksize(victim);
       remainder_size = victim_size - nb;
 
-      if (remainder_size >= (long)MINSIZE) /* too big */
+      якщо (remainder_size >= (long)MINSIZE) /* too big */
       {
 	--idx; /* adjust to rescan below after checking last remainder */
 	break;
       }
 
-      else if (remainder_size >= 0) /* exact fit */
+      інакше якщо (remainder_size >= 0) /* exact fit */
       {
 	unlink(victim, bck, fwd);
 	set_inuse_bit_at_offset(victim, victim_size);
 	check_malloced_chunk(victim, nb);
         VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	return chunk2mem(victim);
+	повернути chunk2mem(victim);
       }
     }
 
@@ -1343,12 +1343,12 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 
   /* Try to use the last split-off remainder */
 
-  if ( (victim = last_remainder->fd) != last_remainder)
+  якщо ( (victim = last_remainder->fd) != last_remainder)
   {
     victim_size = chunksize(victim);
     remainder_size = victim_size - nb;
 
-    if (remainder_size >= (long)MINSIZE) /* re-split */
+    якщо (remainder_size >= (long)MINSIZE) /* re-split */
     {
       remainder = chunk_at_offset(victim, nb);
       set_head(victim, nb | PREV_INUSE);
@@ -1357,17 +1357,17 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
       set_foot(remainder, remainder_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      повернути chunk2mem(victim);
     }
 
     clear_last_remainder;
 
-    if (remainder_size >= 0)  /* exhaust */
+    якщо (remainder_size >= 0)  /* exhaust */
     {
       set_inuse_bit_at_offset(victim, victim_size);
       check_malloced_chunk(victim, nb);
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      повернути chunk2mem(victim);
     }
 
     /* Else place in bin */
@@ -1380,17 +1380,17 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
      search for best fitting chunk by scanning bins in blockwidth units.
   */
 
-  if ( (block = idx2binblock(idx)) <= binblocks_r)
+  якщо ( (block = idx2binblock(idx)) <= binblocks_r)
   {
 
     /* Get to the first marked block */
 
-    if ( (block & binblocks_r) == 0)
+    якщо ( (block & binblocks_r) == 0)
     {
       /* force to an even block boundary */
       idx = (idx & ~(BINBLOCKWIDTH - 1)) + BINBLOCKWIDTH;
       block <<= 1;
-      while ((block & binblocks_r) == 0)
+      поки ((block & binblocks_r) == 0)
       {
 	idx += BINBLOCKWIDTH;
 	block <<= 1;
@@ -1398,7 +1398,7 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
     }
 
     /* For each possibly nonempty block ... */
-    for (;;)
+    для (;;)
     {
       startidx = idx;          /* (track incomplete blocks) */
       q = bin = bin_at(idx);
@@ -1408,12 +1408,12 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
       {
 	/* Find and use first big enough chunk ... */
 
-	for (victim = last(bin); victim != bin; victim = victim->bk)
+	для (victim = last(bin); victim != bin; victim = victim->bk)
 	{
 	  victim_size = chunksize(victim);
 	  remainder_size = victim_size - nb;
 
-	  if (remainder_size >= (long)MINSIZE) /* split */
+	  якщо (remainder_size >= (long)MINSIZE) /* split */
 	  {
 	    remainder = chunk_at_offset(victim, nb);
 	    set_head(victim, nb | PREV_INUSE);
@@ -1423,48 +1423,48 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 	    set_foot(remainder, remainder_size);
 	    check_malloced_chunk(victim, nb);
 	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    повернути chunk2mem(victim);
 	  }
 
-	  else if (remainder_size >= 0)  /* take */
+	  інакше якщо (remainder_size >= 0)  /* take */
 	  {
 	    set_inuse_bit_at_offset(victim, victim_size);
 	    unlink(victim, bck, fwd);
 	    check_malloced_chunk(victim, nb);
 	    VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-	    return chunk2mem(victim);
+	    повернути chunk2mem(victim);
 	  }
 
 	}
 
        bin = next_bin(bin);
 
-      } while ((++idx & (BINBLOCKWIDTH - 1)) != 0);
+      } поки ((++idx & (BINBLOCKWIDTH - 1)) != 0);
 
       /* Clear out the block bit. */
 
       do   /* Possibly backtrack to try to clear a partial block */
       {
-	if ((startidx & (BINBLOCKWIDTH - 1)) == 0)
+	якщо ((startidx & (BINBLOCKWIDTH - 1)) == 0)
 	{
 	  av_[1] = (mbinptr)(binblocks_r & ~block);
 	  break;
 	}
 	--startidx;
        q = prev_bin(q);
-      } while (first(q) == q);
+      } поки (first(q) == q);
 
       /* Get to the next possibly nonempty block */
 
-      if ( (block <<= 1) <= binblocks_r && (block != 0) )
+      якщо ( (block <<= 1) <= binblocks_r && (block != 0) )
       {
-	while ((block & binblocks_r) == 0)
+	поки ((block & binblocks_r) == 0)
 	{
 	  idx += BINBLOCKWIDTH;
 	  block <<= 1;
 	}
       }
-      else
+      інакше
 	break;
     }
   }
@@ -1472,21 +1472,21 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
   /* Try to use top chunk */
 
   /* Require that there be a remainder, ensuring top always exists  */
-  if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+  якщо ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
   {
 
-#if HAVE_MMAP
+#якщо HAVE_MMAP
     /* If big and would otherwise need to extend, try to use mmap instead */
-    if ((unsigned long)nb >= (unsigned long)mmap_threshold &&
+    якщо ((unsigned long)nb >= (unsigned long)mmap_threshold &&
 	(victim = mmap_chunk(nb)))
       VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-      return chunk2mem(victim);
+      повернути chunk2mem(victim);
 #endif
 
     /* Try to extend */
     malloc_extend_top(nb);
-    if ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
-      return NULL; /* propagate failure */
+    якщо ( (remainder_size = chunksize(top) - nb) < (long)MINSIZE)
+      повернути NULL; /* propagate failure */
   }
 
   victim = top;
@@ -1495,7 +1495,7 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
   set_head(top, remainder_size | PREV_INUSE);
   check_malloced_chunk(victim, nb);
   VALGRIND_MALLOCLIKE_BLOCK(chunk2mem(victim), bytes, SIZE_SZ, false);
-  return chunk2mem(victim);
+  повернути chunk2mem(victim);
 
 }
 
@@ -1521,42 +1521,42 @@ Void_t* mALLOc_impl(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#якщо __STD_C
 void fREe_impl(Void_t* mem)
-#else
+#інакше
 void fREe_impl(mem) Void_t* mem;
 #endif
 {
   mchunkptr p;         /* chunk corresponding to mem */
   INTERNAL_SIZE_T hd;  /* its head field */
   INTERNAL_SIZE_T sz;  /* its size */
-  int       idx;       /* its bin index */
+  ціле       idx;       /* its bin index */
   mchunkptr next;      /* next contiguous chunk */
   INTERNAL_SIZE_T nextsz; /* its size */
   INTERNAL_SIZE_T prevsz; /* size of previous contiguous chunk */
   mchunkptr bck;       /* misc temp for linking */
   mchunkptr fwd;       /* misc temp for linking */
-  int       islr;      /* track whether merging with last_remainder */
+  ціле       islr;      /* track whether merging with last_remainder */
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	/* free() is a no-op - all the memory will be freed on relocation */
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+	якщо (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
-		return;
+		повернути;
 	}
 #endif
 
-  if (mem == NULL)                              /* free(0) has no effect */
-    return;
+  якщо (mem == NULL)                              /* free(0) has no effect */
+    повернути;
 
   p = mem2chunk(mem);
   hd = p->size;
 
-#if HAVE_MMAP
-  if (hd & IS_MMAPPED)                       /* release mmapped memory. */
+#якщо HAVE_MMAP
+  якщо (hd & IS_MMAPPED)                       /* release mmapped memory. */
   {
     munmap_chunk(p);
-    return;
+    повернути;
   }
 #endif
 
@@ -1567,11 +1567,11 @@ void fREe_impl(mem) Void_t* mem;
   nextsz = chunksize(next);
   VALGRIND_FREELIKE_BLOCK(mem, SIZE_SZ);
 
-  if (next == top)                            /* merge with top */
+  якщо (next == top)                            /* merge with top */
   {
     sz += nextsz;
 
-    if (!(hd & PREV_INUSE))                    /* consolidate backward */
+    якщо (!(hd & PREV_INUSE))                    /* consolidate backward */
     {
       prevsz = p->prev_size;
       p = chunk_at_offset(p, -((long) prevsz));
@@ -1581,43 +1581,43 @@ void fREe_impl(mem) Void_t* mem;
 
     set_head(p, sz | PREV_INUSE);
     top = p;
-    if ((unsigned long)(sz) >= (unsigned long)trim_threshold)
+    якщо ((unsigned long)(sz) >= (unsigned long)trim_threshold)
       malloc_trim(top_pad);
-    return;
+    повернути;
   }
 
   set_head(next, nextsz);                    /* clear inuse bit */
 
   islr = 0;
 
-  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+  якщо (!(hd & PREV_INUSE))                    /* consolidate backward */
   {
     prevsz = p->prev_size;
     p = chunk_at_offset(p, -((long) prevsz));
     sz += prevsz;
 
-    if (p->fd == last_remainder)             /* keep as last_remainder */
+    якщо (p->fd == last_remainder)             /* keep as last_remainder */
       islr = 1;
-    else
+    інакше
       unlink(p, bck, fwd);
   }
 
-  if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+  якщо (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
   {
     sz += nextsz;
 
-    if (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
+    якщо (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
     {
       islr = 1;
       link_last_remainder(p);
     }
-    else
+    інакше
       unlink(next, bck, fwd);
   }
 
   set_head(p, sz | PREV_INUSE);
   set_foot(p, sz);
-  if (!islr)
+  якщо (!islr)
     frontlink(p, sz, idx, bck, fwd);
 }
 
@@ -1656,9 +1656,9 @@ void fREe_impl(mem) Void_t* mem;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#якщо __STD_C
 Void_t* rEALLOc_impl(Void_t* oldmem, size_t bytes)
-#else
+#інакше
 Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 #endif
 {
@@ -1684,27 +1684,27 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
   mchunkptr fwd;              /* misc temp for linking */
 
 #ifdef REALLOC_ZERO_BYTES_FREES
-  if (!bytes) {
+  якщо (!bytes) {
 	fREe_impl(oldmem);
-	return NULL;
+	повернути NULL;
   }
 #endif
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  якщо (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     повернути NULL;
 
   /* realloc of null is supposed to be same as malloc */
-  if (oldmem == NULL) return mALLOc_impl(bytes);
+  якщо (oldmem == NULL) повернути mALLOc_impl(bytes);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	якщо (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		/* This is harder to support and should not be needed */
 		panic("pre-reloc realloc() is not supported");
 	}
 #endif
-  if (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
-    if (--malloc_max_allocs < 0)
-      return NULL;
+  якщо (CONFIG_IS_ENABLED(UNIT_TEST) && malloc_testing) {
+    якщо (--malloc_max_allocs < 0)
+      повернути NULL;
   }
 
   newp    = oldp    = mem2chunk(oldmem);
@@ -1712,41 +1712,41 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 
   nb = request2size(bytes);
 
-#if HAVE_MMAP
-  if (chunk_is_mmapped(oldp))
+#якщо HAVE_MMAP
+  якщо (chunk_is_mmapped(oldp))
   {
-#if HAVE_MREMAP
+#якщо HAVE_MREMAP
     newp = mremap_chunk(oldp, nb);
-    if(newp) return chunk2mem(newp);
+    якщо(newp) повернути chunk2mem(newp);
 #endif
     /* Note the extra SIZE_SZ overhead. */
-    if(oldsize - SIZE_SZ >= nb) return oldmem; /* do nothing */
+    якщо(oldsize - SIZE_SZ >= nb) повернути oldmem; /* do nothing */
     /* Must alloc, copy, free. */
     newmem = mALLOc_impl(bytes);
-    if (!newmem)
-	return NULL; /* propagate failure */
+    якщо (!newmem)
+	повернути NULL; /* propagate failure */
     MALLOC_COPY(newmem, oldmem, oldsize - 2*SIZE_SZ);
     munmap_chunk(oldp);
-    return newmem;
+    повернути newmem;
   }
 #endif
 
   check_inuse_chunk(oldp);
 
-  if ((long)(oldsize) < (long)(nb))
+  якщо ((long)(oldsize) < (long)(nb))
   {
 
     /* Try expanding forward */
 
     next = chunk_at_offset(oldp, oldsize);
-    if (next == top || !inuse(next))
+    якщо (next == top || !inuse(next))
     {
       nextsize = chunksize(next);
 
       /* Forward into top only if a remainder */
-      if (next == top)
+      якщо (next == top)
       {
-	if ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
+	якщо ((long)(nextsize + newsize) >= (long)(nb + MINSIZE))
 	{
 	  newsize += nextsize;
 	  top = chunk_at_offset(oldp, nb);
@@ -1754,12 +1754,12 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	  set_head_size(oldp, nb);
 	  VALGRIND_RESIZEINPLACE_BLOCK(chunk2mem(oldp), 0, bytes, SIZE_SZ);
 	  VALGRIND_MAKE_MEM_DEFINED(chunk2mem(oldp), bytes);
-	  return chunk2mem(oldp);
+	  повернути chunk2mem(oldp);
 	}
       }
 
       /* Forward into next chunk */
-      else if (((long)(nextsize + newsize) >= (long)(nb)))
+      інакше якщо (((long)(nextsize + newsize) >= (long)(nb)))
       {
 	unlink(next, bck, fwd);
 	newsize  += nextsize;
@@ -1768,7 +1768,7 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	goto split;
       }
     }
-    else
+    інакше
     {
       next = NULL;
       nextsize = 0;
@@ -1776,19 +1776,19 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 
     /* Try shifting backwards. */
 
-    if (!prev_inuse(oldp))
+    якщо (!prev_inuse(oldp))
     {
       prev = prev_chunk(oldp);
       prevsize = chunksize(prev);
 
       /* try forward + backward first to save a later consolidation */
 
-      if (next != NULL)
+      якщо (next != NULL)
       {
 	/* into top */
-	if (next == top)
+	якщо (next == top)
 	{
-	  if ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
+	  якщо ((long)(nextsize + prevsize + newsize) >= (long)(nb + MINSIZE))
 	  {
 	    unlink(prev, bck, fwd);
 	    newp = prev;
@@ -1800,12 +1800,12 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 	    set_head(top, (newsize - nb) | PREV_INUSE);
 	    set_head_size(newp, nb);
 	    VALGRIND_FREELIKE_BLOCK(oldmem, SIZE_SZ);
-	    return newmem;
+	    повернути newmem;
 	  }
 	}
 
 	/* into next chunk */
-	else if (((long)(nextsize + prevsize + newsize) >= (long)(nb)))
+	інакше якщо (((long)(nextsize + prevsize + newsize) >= (long)(nb)))
 	{
 	  unlink(next, bck, fwd);
 	  unlink(prev, bck, fwd);
@@ -1819,7 +1819,7 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
       }
 
       /* backward only */
-      if (prev != NULL && (long)(prevsize + newsize) >= (long)nb)
+      якщо (prev != NULL && (long)(prevsize + newsize) >= (long)nb)
       {
 	unlink(prev, bck, fwd);
 	newp = prev;
@@ -1835,13 +1835,13 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 
     newmem = mALLOc_impl (bytes);
 
-    if (newmem == NULL)  /* propagate failure */
-      return NULL;
+    якщо (newmem == NULL)  /* propagate failure */
+      повернути NULL;
 
     /* Avoid copy if newp is next chunk after oldp. */
     /* (This can only happen when new chunk is sbrk'ed.) */
 
-    if ( (newp = mem2chunk(newmem)) == next_chunk(oldp))
+    якщо ( (newp = mem2chunk(newmem)) == next_chunk(oldp))
     {
       newsize += chunksize(newp);
       newp = oldp;
@@ -1851,15 +1851,15 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
     /* Otherwise copy, free, and exit */
     MALLOC_COPY(newmem, oldmem, oldsize - SIZE_SZ);
     fREe_impl(oldmem);
-    return newmem;
-  } else {
+    повернути newmem;
+  } інакше {
     VALGRIND_RESIZEINPLACE_BLOCK(oldmem, 0, bytes, SIZE_SZ);
     VALGRIND_MAKE_MEM_DEFINED(oldmem, bytes);
   }
 
  split:  /* split off extra room in old or expanded chunk */
 
-  if (newsize - nb >= MINSIZE) /* split off remainder */
+  якщо (newsize - nb >= MINSIZE) /* split off remainder */
   {
     remainder = chunk_at_offset(newp, nb);
     remainder_size = newsize - nb;
@@ -1870,14 +1870,14 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 			      false);
     fREe_impl(chunk2mem(remainder)); /* let free() deal with it */
   }
-  else
+  інакше
   {
     set_head_size(newp, newsize);
     set_inuse_bit_at_offset(newp, newsize);
   }
 
   check_inuse_chunk(newp);
-  return chunk2mem(newp);
+  повернути chunk2mem(newp);
 }
 
 /*
@@ -1899,9 +1899,9 @@ Void_t* rEALLOc_impl(oldmem, bytes) Void_t* oldmem; size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#якщо __STD_C
 Void_t* mEMALIGn_impl(size_t alignment, size_t bytes)
-#else
+#інакше
 Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
 #endif
 {
@@ -1915,22 +1915,22 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   mchunkptr remainder;        /* spare room at end to split off */
   long      remainder_size;   /* its size */
 
-  if (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
-     return NULL;
+  якщо (bytes > CONFIG_SYS_MALLOC_LEN || (long)bytes < 0)
+     повернути NULL;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
-		return memalign_simple(alignment, bytes);
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	якщо (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+		повернути memalign_simple(alignment, bytes);
 	}
 #endif
 
   /* If need less alignment than we give anyway, just relay to malloc */
 
-  if (alignment <= MALLOC_ALIGNMENT) return mALLOc_impl(bytes);
+  якщо (alignment <= MALLOC_ALIGNMENT) повернути mALLOc_impl(bytes);
 
   /* Otherwise, ensure that it is at least a minimum chunk size */
 
-  if (alignment <  MINSIZE) alignment = MINSIZE;
+  якщо (alignment <  MINSIZE) alignment = MINSIZE;
 
   /* Call malloc with worst case padding to hit alignment. */
 
@@ -1945,7 +1945,7 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   * the allocation now succeeds and just happens to be aligned, we can still
   * fulfill the user's request.
   */
-  if (m == NULL) {
+  якщо (m == NULL) {
     size_t extra, extra2;
     /*
      * Use bytes not nb, since mALLOc internally calls request2size too, and
@@ -1953,8 +1953,8 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
      */
     m  = (char*)(mALLOc_impl(bytes));
     /* Aligned -> return it */
-    if ((((unsigned long)(m)) % alignment) == 0)
-      return m;
+    якщо ((((unsigned long)(m)) % alignment) == 0)
+      повернути m;
     /*
      * Otherwise, try again, requesting enough extra space to be able to
      * acquire alignment.
@@ -1968,9 +1968,9 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
      * extra still works for the current value of m.
      * If (!m), extra2=alignment so 
      */
-    if (m) {
+    якщо (m) {
       extra2 = alignment - (((unsigned long)(m)) % alignment);
-      if (extra2 > extra) {
+      якщо (extra2 > extra) {
         fREe_impl(m);
         m = NULL;
       }
@@ -1978,18 +1978,18 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     /* Fall through to original NULL check and chunk splitting logic */
   }
 
-  if (m == NULL) return NULL; /* propagate failure */
+  якщо (m == NULL) повернути NULL; /* propagate failure */
 
   p = mem2chunk(m);
 
-  if ((((unsigned long)(m)) % alignment) == 0) /* aligned */
+  якщо ((((unsigned long)(m)) % alignment) == 0) /* aligned */
   {
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
-      return chunk2mem(p); /* nothing more to do */
+#якщо HAVE_MMAP
+    якщо(chunk_is_mmapped(p))
+      повернути chunk2mem(p); /* nothing more to do */
 #endif
   }
-  else /* misaligned */
+  інакше /* misaligned */
   {
     /*
       Find an aligned spot inside chunk.
@@ -2001,18 +2001,18 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     */
 
     brk = (char*)mem2chunk(((unsigned long)(m + alignment - 1)) & -((signed) alignment));
-    if ((long)(brk - (char*)(p)) < MINSIZE) brk = brk + alignment;
+    якщо ((long)(brk - (char*)(p)) < MINSIZE) brk = brk + alignment;
 
     newp = (mchunkptr)brk;
     leadsize = brk - (char*)(p);
     newsize = chunksize(p) - leadsize;
 
-#if HAVE_MMAP
-    if(chunk_is_mmapped(p))
+#якщо HAVE_MMAP
+    якщо(chunk_is_mmapped(p))
     {
       newp->prev_size = p->prev_size + leadsize;
       set_head(newp, newsize|IS_MMAPPED);
-      return chunk2mem(newp);
+      повернути chunk2mem(newp);
     }
 #endif
 
@@ -2032,7 +2032,7 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
 
   remainder_size = chunksize(p) - nb;
 
-  if (remainder_size >= (long)MINSIZE)
+  якщо (remainder_size >= (long)MINSIZE)
   {
     remainder = chunk_at_offset(p, nb);
     set_head(remainder, remainder_size | PREV_INUSE);
@@ -2043,7 +2043,7 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
   }
 
   check_inuse_chunk(p);
-  return chunk2mem(p);
+  повернути chunk2mem(p);
 
 }
 
@@ -2053,13 +2053,13 @@ Void_t* mEMALIGn_impl(alignment, bytes) size_t alignment; size_t bytes;
     be figured out from all the includes/defines above.)
 */
 
-#if __STD_C
+#якщо __STD_C
 Void_t* vALLOc(size_t bytes)
-#else
+#інакше
 Void_t* vALLOc(bytes) size_t bytes;
 #endif
 {
-  return mEMALIGn (malloc_getpagesize, bytes);
+  повернути mEMALIGn (malloc_getpagesize, bytes);
 }
 
 /*
@@ -2067,14 +2067,14 @@ Void_t* vALLOc(bytes) size_t bytes;
   that will accommodate request
 */
 
-#if __STD_C
+#якщо __STD_C
 Void_t* pvALLOc(size_t bytes)
-#else
+#інакше
 Void_t* pvALLOc(bytes) size_t bytes;
 #endif
 {
   size_t pagesize = malloc_getpagesize;
-  return mEMALIGn (pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
+  повернути mEMALIGn (pagesize, (bytes + pagesize - 1) & ~(pagesize - 1));
 }
 
 /*
@@ -2084,9 +2084,9 @@ Void_t* pvALLOc(bytes) size_t bytes;
 */
 
 STATIC_IF_MCHECK
-#if __STD_C
+#якщо __STD_C
 Void_t* cALLOc_impl(size_t n, size_t elem_size)
-#else
+#інакше
 Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 #endif
 {
@@ -2096,39 +2096,39 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
   INTERNAL_SIZE_T sz = n * elem_size;
 
   /* check if expand_top called, in which case don't need to clear */
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#якщо MORECORE_CLEARS
   mchunkptr oldtop = top;
   INTERNAL_SIZE_T oldtopsize = chunksize(top);
 #endif
 #endif
   Void_t* mem = mALLOc_impl (sz);
 
-  if ((long)n < 0) return NULL;
+  якщо ((long)n < 0) повернути NULL;
 
-  if (mem == NULL)
-    return NULL;
-  else
+  якщо (mem == NULL)
+    повернути NULL;
+  інакше
   {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	якщо (!(gd->flags & GD_FLG_FULL_MALLOC_INIT)) {
 		memset(mem, 0, sz);
-		return mem;
+		повернути mem;
 	}
 #endif
     p = mem2chunk(mem);
 
     /* Two optional cases in which clearing not necessary */
 
-#if HAVE_MMAP
-    if (chunk_is_mmapped(p)) return mem;
+#якщо HAVE_MMAP
+    якщо (chunk_is_mmapped(p)) повернути mem;
 #endif
 
     csz = chunksize(p);
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
-#if MORECORE_CLEARS
-    if (p == oldtop && csz > oldtopsize)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_CLEAR_ON_INIT)
+#якщо MORECORE_CLEARS
+    якщо (p == oldtop && csz > oldtopsize)
     {
       /* clear only the bytes from non-freshly-sbrked memory */
       csz = oldtopsize;
@@ -2138,7 +2138,7 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 
     MALLOC_ZERO(mem, csz - SIZE_SZ);
     VALGRIND_MAKE_MEM_DEFINED(mem, sz);
-    return mem;
+    повернути mem;
   }
 }
 
@@ -2149,10 +2149,10 @@ Void_t* cALLOc_impl(n, elem_size) size_t n; size_t elem_size;
 
 */
 
-#if !defined(INTERNAL_LINUX_C_LIB) || !defined(__ELF__)
-#if __STD_C
+#якщо !defined(INTERNAL_LINUX_C_LIB) || !defined(__ELF__)
+#якщо __STD_C
 void cfree(Void_t *mem)
-#else
+#інакше
 void cfree(mem) Void_t *mem;
 #endif
 {
@@ -2162,7 +2162,7 @@ void cfree(mem) Void_t *mem;
 
 #ifdef MCHECK_HEAP_PROTECTION
  #include "mcheck_core.inc.h"
- #if !__STD_C
+ #якщо !__STD_C
   #error "must have __STD_C"
  #endif
 
@@ -2172,9 +2172,9 @@ Void_t *mALLOc(size_t bytes)
 	size_t fullsz = mcheck_alloc_prehook(bytes);
 	void *p = mALLOc_impl(fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_posthook(p, bytes);
+	якщо (!p)
+		повернути p;
+	повернути mcheck_alloc_posthook(p, bytes);
 }
 
 void fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
@@ -2182,22 +2182,22 @@ void fREe(Void_t *mem) { fREe_impl(mcheck_free_prehook(mem)); }
 Void_t *rEALLOc(Void_t *oldmem, size_t bytes)
 {
 	mcheck_pedantic_prehook();
-	if (bytes == 0) {
-		if (oldmem)
+	якщо (bytes == 0) {
+		якщо (oldmem)
 			fREe(oldmem);
-		return NULL;
+		повернути NULL;
 	}
 
-	if (oldmem == NULL)
-		return mALLOc(bytes);
+	якщо (oldmem == NULL)
+		повернути mALLOc(bytes);
 
 	void *p = mcheck_reallocfree_prehook(oldmem);
 	size_t newsz = mcheck_alloc_prehook(bytes);
 
 	p = rEALLOc_impl(p, newsz);
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, bytes);
+	якщо (!p)
+		повернути p;
+	повернути mcheck_alloc_noclean_posthook(p, bytes);
 }
 
 Void_t *mEMALIGn(size_t alignment, size_t bytes)
@@ -2206,9 +2206,9 @@ Void_t *mEMALIGn(size_t alignment, size_t bytes)
 	size_t fullsz = mcheck_memalign_prehook(alignment, bytes);
 	void *p = mEMALIGn_impl(alignment, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_memalign_posthook(alignment, p, bytes);
+	якщо (!p)
+		повернути p;
+	повернути mcheck_memalign_posthook(alignment, p, bytes);
 }
 
 // pvALLOc, vALLOc - redirect to mEMALIGn, defined here, so they need no wrapping.
@@ -2220,27 +2220,27 @@ Void_t *cALLOc(size_t n, size_t elem_size)
 	size_t fullsz = mcheck_alloc_prehook(n * elem_size);
 	void *p = cALLOc_impl(1, fullsz);
 
-	if (!p)
-		return p;
-	return mcheck_alloc_noclean_posthook(p, n * elem_size);
+	якщо (!p)
+		повернути p;
+	повернути mcheck_alloc_noclean_posthook(p, n * elem_size);
 }
 
 // mcheck API {
-int mcheck_pedantic(mcheck_abortfunc_t f)
+ціле mcheck_pedantic(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 1);
-	return 0;
+	повернути 0;
 }
 
-int mcheck(mcheck_abortfunc_t f)
+ціле mcheck(mcheck_abortfunc_t f)
 {
 	mcheck_initialize(f, 0);
-	return 0;
+	повернути 0;
 }
 
 void mcheck_check_all(void) { mcheck_pedantic_check(); }
 
-enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
+enum mcheck_status mprobe(void *__ptr) { повернути mcheck_mprobe(__ptr); }
 // mcheck API }
 #endif
 
@@ -2267,10 +2267,10 @@ enum mcheck_status mprobe(void *__ptr) { return mcheck_mprobe(__ptr); }
 
 */
 
-#if __STD_C
-int malloc_trim(size_t pad)
-#else
-int malloc_trim(pad) size_t pad;
+#якщо __STD_C
+ціле malloc_trim(size_t pad)
+#інакше
+ціле malloc_trim(pad) size_t pad;
 #endif
 {
   long  top_size;        /* Amount of top-most memory */
@@ -2283,41 +2283,41 @@ int malloc_trim(pad) size_t pad;
   top_size = chunksize(top);
   extra = ((top_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
 
-  if (extra < (long)pagesz)  /* Not enough memory to release */
-    return 0;
+  якщо (extra < (long)pagesz)  /* Not enough memory to release */
+    повернути 0;
 
-  else
+  інакше
   {
     /* Test to make sure no one else called sbrk */
     current_brk = (char*)(MORECORE (0));
-    if (current_brk != (char*)(top) + top_size)
-      return 0;     /* Apparently we don't own memory; must fail */
+    якщо (current_brk != (char*)(top) + top_size)
+      повернути 0;     /* Apparently we don't own memory; must fail */
 
-    else
+    інакше
     {
       new_brk = (char*)(MORECORE (-extra));
 
-      if (new_brk == (char*)(MORECORE_FAILURE)) /* sbrk failed? */
+      якщо (new_brk == (char*)(MORECORE_FAILURE)) /* sbrk failed? */
       {
 	/* Try to figure out what we have */
 	current_brk = (char*)(MORECORE (0));
 	top_size = current_brk - (char*)top;
-	if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+	якщо (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
 	{
 	  sbrked_mem = current_brk - sbrk_base;
 	  set_head(top, top_size | PREV_INUSE);
 	}
 	check_chunk(top);
-	return 0;
+	повернути 0;
       }
 
-      else
+      інакше
       {
 	/* Success. Adjust top accordingly. */
 	set_head(top, (top_size - extra) | PREV_INUSE);
 	sbrked_mem -= extra;
 	check_chunk(top);
-	return 1;
+	повернути 1;
       }
     }
   }
@@ -2334,25 +2334,25 @@ int malloc_trim(pad) size_t pad;
 
 */
 
-#if __STD_C
+#якщо __STD_C
 size_t malloc_usable_size(Void_t* mem)
-#else
+#інакше
 size_t malloc_usable_size(mem) Void_t* mem;
 #endif
 {
   mchunkptr p;
-  if (mem == NULL)
-    return 0;
-  else
+  якщо (mem == NULL)
+    повернути 0;
+  інакше
   {
     p = mem2chunk(mem);
-    if(!chunk_is_mmapped(p))
+    якщо(!chunk_is_mmapped(p))
     {
-      if (!inuse(p)) return 0;
+      якщо (!inuse(p)) повернути 0;
       check_inuse_chunk(p);
-      return chunksize(p) - SIZE_SZ;
+      повернути chunksize(p) - SIZE_SZ;
     }
-    return chunksize(p) - 2*SIZE_SZ;
+    повернути chunksize(p) - 2*SIZE_SZ;
   }
 }
 
@@ -2361,7 +2361,7 @@ size_t malloc_usable_size(mem) Void_t* mem;
 #ifdef DEBUG
 static void malloc_update_mallinfo(void)
 {
-  int i;
+  ціле i;
   mbinptr b;
   mchunkptr p;
 #ifdef DEBUG
@@ -2369,16 +2369,16 @@ static void malloc_update_mallinfo(void)
 #endif
 
   INTERNAL_SIZE_T avail = chunksize(top);
-  int   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
+  ціле   navail = ((long)(avail) >= (long)MINSIZE)? 1 : 0;
 
-  for (i = 1; i < NAV; ++i)
+  для (i = 1; i < NAV; ++i)
   {
     b = bin_at(i);
-    for (p = last(b); p != b; p = p->bk)
+    для (p = last(b); p != b; p = p->bk)
     {
 #ifdef DEBUG
       check_free_chunk(p);
-      for (q = next_chunk(p);
+      для (q = next_chunk(p);
 	   q < top && inuse(q) && (long)(chunksize(q)) >= (long)MINSIZE;
 	   q = next_chunk(q))
 	check_inuse_chunk(q);
@@ -2418,14 +2418,14 @@ void malloc_stats(void)
 {
   malloc_update_mallinfo();
   printf("max system bytes = %10u\n",
-	  (unsigned int)(max_total_mem));
+	  (unsigned ціле)(max_total_mem));
   printf("system bytes     = %10u\n",
-	  (unsigned int)(sbrked_mem + mmapped_mem));
+	  (unsigned ціле)(sbrked_mem + mmapped_mem));
   printf("in use bytes     = %10u\n",
-	  (unsigned int)(current_mallinfo.uordblks + mmapped_mem));
-#if HAVE_MMAP
+	  (unsigned ціле)(current_mallinfo.uordblks + mmapped_mem));
+#якщо HAVE_MMAP
   printf("max mmap regions = %10u\n",
-	  (unsigned int)max_n_mmaps);
+	  (unsigned ціле)max_n_mmaps);
 #endif
 }
 #endif	/* DEBUG */
@@ -2438,7 +2438,7 @@ void malloc_stats(void)
 struct mallinfo mALLINFo(void)
 {
   malloc_update_mallinfo();
-  return current_mallinfo;
+  повернути current_mallinfo;
 }
 #endif	/* DEBUG */
 
@@ -2455,44 +2455,44 @@ struct mallinfo mALLINFo(void)
 
 */
 
-#if __STD_C
-int mALLOPt(int param_number, int value)
-#else
-int mALLOPt(param_number, value) int param_number; int value;
+#якщо __STD_C
+ціле mALLOPt(ціле param_number, ціле value)
+#інакше
+ціле mALLOPt(param_number, value) ціле param_number; ціле value;
 #endif
 {
   switch(param_number)
   {
     case M_TRIM_THRESHOLD:
-      trim_threshold = value; return 1;
+      trim_threshold = value; повернути 1;
     case M_TOP_PAD:
-      top_pad = value; return 1;
+      top_pad = value; повернути 1;
     case M_MMAP_THRESHOLD:
-      mmap_threshold = value; return 1;
+      mmap_threshold = value; повернути 1;
     case M_MMAP_MAX:
-#if HAVE_MMAP
-      n_mmaps_max = value; return 1;
-#else
-      if (value != 0) return 0; else  n_mmaps_max = value; return 1;
+#якщо HAVE_MMAP
+      n_mmaps_max = value; повернути 1;
+#інакше
+      якщо (value != 0) повернути 0; інакше  n_mmaps_max = value; повернути 1;
 #endif
 
     default:
-      return 0;
+      повернути 0;
   }
 }
 
-int initf_malloc(void)
+ціле initf_malloc(void)
 {
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	assert(gd->malloc_base);	/* Set up by crt0.S */
 	gd->malloc_limit = CONFIG_VAL(SYS_MALLOC_F_LEN);
 	gd->malloc_ptr = 0;
 #endif
 
-	return 0;
+	повернути 0;
 }
 
-void malloc_enable_testing(int max_allocs)
+void malloc_enable_testing(ціле max_allocs)
 {
 	malloc_testing = true;
 	malloc_max_allocs = max_allocs;

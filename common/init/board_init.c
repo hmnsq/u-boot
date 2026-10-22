@@ -17,7 +17,7 @@ DECLARE_GLOBAL_DATA_PTR;
  * Unfortunately x86, ARM and RISC-V can't compile this code as gd is defined
  * as macro and cannot be assigned.
  */
-#if !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
+#якщо !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
 __weak void arch_setup_gd(struct global_data *gd_ptr)
 {
 	gd = gd_ptr;
@@ -30,9 +30,9 @@ __weak void arch_setup_gd(struct global_data *gd_ptr)
  */
 __weak void board_init_f_init_stack_protection_addr(ulong base)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
+#якщо CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
 	/* set up stack pointer for stack usage if not set yet */
-	if (!gd->start_addr_sp)
+	якщо (!gd->start_addr_sp)
 		gd->start_addr_sp = base;
 #endif
 }
@@ -44,7 +44,7 @@ __weak void board_init_f_init_stack_protection_addr(ulong base)
  */
 __weak void board_init_f_init_stack_protection(void)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
+#якщо CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
 	ulong stack_bottom = gd->start_addr_sp -
 		CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK);
 
@@ -82,14 +82,14 @@ ulong board_init_f_alloc_reserve(ulong top)
 {
 	/* Reserve early malloc arena */
 #ifndef CFG_MALLOC_F_ADDR
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	top -= CONFIG_VAL(SYS_MALLOC_F_LEN);
 #endif
 #endif
 	/* LAST : reserve GD (rounded up to a multiple of 16 bytes) */
 	top = rounddown(top-sizeof(struct global_data), 16);
 
-	return top;
+	повернути top;
 }
 
 /*
@@ -147,11 +147,11 @@ void board_init_f_init_reserve(ulong base)
 	/* zero the area */
 	memset(gd_ptr, '\0', sizeof(*gd));
 	/* set GD unless architecture did it already */
-#if !defined(CONFIG_ARM)
+#якщо !defined(CONFIG_ARM)
 	arch_setup_gd(gd_ptr);
 #endif
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
+	якщо (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
 		board_init_f_init_stack_protection_addr(base);
 
 	/* next alloc will be higher by one GD plus 16-byte alignment */
@@ -162,21 +162,21 @@ void board_init_f_init_reserve(ulong base)
 	 * Use gd as it is now properly set for all architectures.
 	 */
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#якщо CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	/* go down one 'early malloc arena' */
 	gd->malloc_base = base;
-#if CONFIG_IS_ENABLED(ZERO_MEM_BEFORE_USE)
+#якщо CONFIG_IS_ENABLED(ZERO_MEM_BEFORE_USE)
 	memset((void *)base, '\0', CONFIG_VAL(SYS_MALLOC_F_LEN));
 #endif
 #endif
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
+	якщо (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
 		board_init_f_init_stack_protection();
 }
 
-#if CONFIG_IS_ENABLED(SHOW_BOOT_PROGRESS)
+#якщо CONFIG_IS_ENABLED(SHOW_BOOT_PROGRESS)
 /*
  * Board-specific Platform code can reimplement show_boot_progress () if needed
  */
-__weak void show_boot_progress(int val) {}
+__weak void show_boot_progress(ціле val) {}
 #endif

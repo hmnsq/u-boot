@@ -25,34 +25,34 @@ static const char   tab_seq[] = "        ";	/* used to expand TABs */
 
 char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+static char *delete_char (char *buffer, char *p, ціле *colp, ціле *np, ціле plen)
 {
 	char *s;
 
-	if (*np == 0)
-		return p;
+	якщо (*np == 0)
+		повернути p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	якщо (*(--p) == '\t') {		/* will retype the whole line */
+		поки (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		для (s = buffer; s < p; ++s) {
+			якщо (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} інакше {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} інакше {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	повернути p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,7 +62,7 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (ціле)n, str)
 
 #define CTL_BACKSPACE		('\b')
 #define DEL			((char)255)
@@ -76,14 +76,14 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#інакше
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
+static ціле hist_max;
+static ціле hist_add_idx;
+static ціле hist_cur = -1;
 static unsigned hist_num;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
@@ -93,29 +93,29 @@ static char *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+static void getcmd_putchars(ціле count, ціле ch)
 {
-	int i;
+	ціле i;
 
-	for (i = 0; i < count; i++)
+	для (i = 0; i < count; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+static ціле hist_init(void)
 {
-	int i;
+	ціле i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	для (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
+#інакше
 	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+	якщо (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	для (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
@@ -124,17 +124,17 @@ static int hist_init(void)
 	hist_cur = -1;
 	hist_num = 0;
 
-	return 0;
+	повернути 0;
 }
 
 static void cread_add_to_hist(char *line)
 {
 	strcpy(hist_list[hist_add_idx], line);
 
-	if (++hist_add_idx >= HIST_MAX)
+	якщо (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	якщо (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
 	hist_num++;
@@ -143,58 +143,58 @@ static void cread_add_to_hist(char *line)
 static char *hist_prev(void)
 {
 	char *ret;
-	int old_cur;
+	ціле old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	якщо (hist_cur < 0)
+		повернути NULL;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	якщо (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	якщо (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
 		ret = NULL;
-	} else {
+	} інакше {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	повернути ret;
 }
 
 static char *hist_next(void)
 {
 	char *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	якщо (hist_cur < 0)
+		повернути NULL;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	якщо (hist_cur == hist_add_idx)
+		повернути NULL;
 
-	if (++hist_cur > hist_max)
+	якщо (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	якщо (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	інакше
 		ret = hist_list[hist_cur];
 
-	return ret;
+	повернути ret;
 }
 
 void cread_print_hist_list(void)
 {
-	int i;
+	ціле i;
 	uint n;
 
 	n = hist_num - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	поки (1) {
+		якщо (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
+		якщо (i == hist_add_idx)
 			break;
 		printf("%s\n", hist_list[i]);
 		n++;
@@ -203,54 +203,54 @@ void cread_print_hist_list(void)
 }
 
 #define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+	поки (cls->num) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
 		cls->num--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
+	якщо (cls->num < cls->eol_num) {		\
+		printf("%*s", (ціле)(cls->eol_num - cls->num), ""); \
 		do {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} поки (--cls->eol_num > cls->num);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
+	якщо (cls->num < cls->eol_num) {			\
 		uint wlen = cls->eol_num - cls->num;	\
 		putnstr(buf + cls->num, wlen);		\
 		cls->num = cls->eol_num;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
+static void cread_add_char(char ichar, ціле insert, uint *num,
 			   uint *eol_num, char *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	якщо (insert || *num == *eol_num) {
+		якщо (*eol_num > len - 1) {
 			getcmd_cbeep();
-			return;
+			повернути;
 		}
 		(*eol_num)++;
 	}
 
-	if (insert) {
+	якщо (insert) {
 		wlen = *eol_num - *num;
-		if (wlen > 1)
+		якщо (wlen > 1)
 			memmove(&buf[*num+1], &buf[*num], wlen-1);
 
 		buf[*num] = ichar;
 		putnstr(buf + *num, wlen);
 		(*num)++;
-		while (--wlen)
+		поки (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} інакше {
 		/* echo the character */
 		wlen = 1;
 		buf[*num] = ichar;
@@ -259,27 +259,27 @@ static void cread_add_char(char ichar, int insert, uint *num,
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
+static void cread_add_str(char *str, ціле strsize, ціле insert,
 			  uint *num, uint *eol_num, char *buf, uint len)
 {
-	while (strsize--) {
+	поки (strsize--) {
 		cread_add_char(*str, insert, num, eol_num, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+ціле cread_line_process_ch(struct cli_line_state *cls, char ichar)
 {
 	char *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	якщо (!ichar)
+		повернути -EAGAIN;
 
-	if (ichar == '\n') {
+	якщо (ichar == '\n') {
 		putc('\n');
 		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		повернути 0;
 	}
 
 	switch (ichar) {
@@ -288,25 +288,25 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		break;
 	case CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
+		повернути -EINTR;
 	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
+		якщо (cls->num < cls->eol_num) {
 			getcmd_putch(buf[cls->num]);
 			cls->num++;
 		}
 		break;
 	case CTL_CH('b'):
-		if (cls->num) {
+		якщо (cls->num) {
 			getcmd_putch(CTL_BACKSPACE);
 			cls->num--;
 		}
 		break;
 	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		якщо (cls->num < cls->eol_num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
+			якщо (wlen) {
 				memmove(&buf[cls->num], &buf[cls->num + 1],
 					wlen);
 				putnstr(buf + cls->num, wlen);
@@ -315,7 +315,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} поки (wlen--);
 			cls->eol_num--;
 		}
 		break;
@@ -329,13 +329,13 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		cls->insert = !cls->insert;
 		break;
 	case CTL_CH('w'):
-		if (cls->num) {
+		якщо (cls->num) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			для (base = cls->num;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			для (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
@@ -359,7 +359,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	case DEL:
 	case DEL7:
 	case 8:
-		if (cls->num) {
+		якщо (cls->num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num;
@@ -370,21 +370,21 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} поки (wlen--);
 			cls->eol_num--;
 		}
 		break;
 	case CTL_CH('p'):
 	case CTL_CH('n'):
-		if (cls->history) {
+		якщо (cls->history) {
 			char *hline;
 
-			if (ichar == CTL_CH('p'))
+			якщо (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			інакше
 				hline = hist_next();
 
-			if (!hline) {
+			якщо (!hline) {
 				getcmd_cbeep();
 				break;
 			}
@@ -404,11 +404,11 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 		}
 		break;
 	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		якщо (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			ціле num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			якщо (cls->num < cls->eol_num) {
 				getcmd_cbeep();
 				break;
 			}
@@ -416,7 +416,7 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			buf[cls->num] = '\0';
 			col = strlen(cls->prompt) + cls->eol_num;
 			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+			якщо (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
 				col = num2 - cls->num;
 				cls->num += col;
 				cls->eol_num += col;
@@ -436,30 +436,30 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	 */
 	buf[cls->eol_num] = '\0';
 
-	return -EAGAIN;
+	повернути -EAGAIN;
 }
 
 void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	ціле init_len = strlen(buf);
 
 	memset(cls, '\0', sizeof(struct cli_line_state));
 	cls->insert = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
+	якщо (init_len)
 		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static ціле cread_line(const char *const prompt, char *buf, unsigned ціле *len,
+		      ціле timeout)
 {
 	struct cli_ch_state s_cch, *cch = &s_cch;
 	struct cli_line_state s_cls, *cls = &s_cls;
 	char ichar;
-	int first = 1;
+	ціле first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	поки (1) {
+		ціле ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		якщо (!ichar) {
+			якщо (bootretry_tstc_timeout())
+				повернути -2;	/* timed out */
+			якщо (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				поки (!tstc()) {	/* while no incoming data */
+					якщо (get_ticks() >= etime)
+						повернути -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -492,38 +492,38 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 		}
 
 		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
+		якщо (ret == -EINTR)
+			повернути -1;
+		інакше якщо (!ret)
 			break;
 	}
 	*len = cls->eol_num;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	якщо (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	повернути 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#інакше /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+static inline ціле hist_init(void)
 {
-	return 0;
+	повернути 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static ціле cread_line(const char *const prompt, char *buf, unsigned ціле *len,
+		      ціле timeout)
 {
-	return 0;
+	повернути 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+ціле cli_readline(const char *const prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	повернути cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+static ціле cread_line_simple(const char *const prompt, char *p)
 {
 	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	ціле n = 0;		/* buffer index */
+	ціле plen = 0;		/* prompt length */
+	ціле col;		/* output column cnt */
+	ціле c;
 
 	/* print prompt */
-	if (prompt) {
+	якщо (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	для (;;) {
+		якщо (bootretry_tstc_timeout())
+			повернути -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -573,17 +573,17 @@ static int cread_line_simple(const char *const prompt, char *p)
 		case '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			повернути p - p_buf;
 
 		case '\0':			/* nul			*/
 			continue;
 
 		case 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			повернути -1;
 
 		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+			поки (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
@@ -593,7 +593,7 @@ static int cread_line_simple(const char *const prompt, char *p)
 
 		case 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			поки ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
@@ -604,18 +604,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 
 		default:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			якщо (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
 				break;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			якщо (c == '\t') {	/* expand TABs */
+				якщо (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					якщо (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
@@ -624,7 +624,7 @@ static int cread_line_simple(const char *const prompt, char *p)
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
+			} інакше {
 				char __maybe_unused buf[2];
 
 				/*
@@ -643,13 +643,13 @@ static int cread_line_simple(const char *const prompt, char *p)
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+ціле cli_readline_into_buffer(const char *const prompt, char *buffer,
+			     ціле timeout)
 {
 	char *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	ціле rc;
+	static ціле initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	якщо (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		якщо (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			якщо (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		якщо (prompt)
 			puts(prompt);
 
 		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		повернути rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} інакше {
+		повернути cread_line_simple(prompt, p);
 	}
 }

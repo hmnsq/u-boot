@@ -38,16 +38,16 @@ struct menu_item {
  */
 struct menu {
 	struct menu_item *default_item;
-	int timeout;
+	ціле timeout;
 	char *title;
-	int prompt;
+	ціле prompt;
 	void (*display_statusline)(struct menu *);
 	void (*item_data_print)(void *);
 	char *(*item_choice)(void *);
 	bool (*need_reprint)(void *);
 	void *item_choice_data;
 	struct list_head items;
-	int item_cnt;
+	ціле item_cnt;
 };
 
 /*
@@ -71,11 +71,11 @@ static inline void *menu_items_iter(struct menu *m,
 
 		ret = callback(m, item, extra);
 
-		if (ret)
-			return ret;
+		якщо (ret)
+			повернути ret;
 	}
 
-	return NULL;
+	повернути NULL;
 }
 
 /*
@@ -87,14 +87,14 @@ static inline void *menu_item_print(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (!m->item_data_print) {
+	якщо (!m->item_data_print) {
 		puts(item->key);
 		putc('\n');
-	} else {
+	} інакше {
 		m->item_data_print(item->data);
 	}
 
-	return NULL;
+	повернути NULL;
 }
 
 /*
@@ -105,12 +105,12 @@ static inline void *menu_item_destroy(struct menu *m,
 				struct menu_item *item,
 				void *extra)
 {
-	if (item->key)
+	якщо (item->key)
 		free(item->key);
 
 	free(item);
 
-	return NULL;
+	повернути NULL;
 }
 
 /*
@@ -119,16 +119,16 @@ static inline void *menu_item_destroy(struct menu *m,
  */
 static inline void menu_display(struct menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	якщо (m->need_reprint) {
+		якщо (!m->need_reprint(m->item_choice_data))
+			повернути;
 	}
 
-	if (m->title) {
+	якщо (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	якщо (m->display_statusline)
 		m->display_statusline(m);
 
 	menu_items_iter(m, menu_item_print, NULL);
@@ -147,17 +147,17 @@ static inline void *menu_item_key_match(struct menu *m,
 {
 	char *item_key = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	якщо (!item_key || !item->key) {
+		якщо (item_key == item->key)
+			повернути item;
 
-		return NULL;
+		повернути NULL;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	якщо (strcmp(item->key, item_key) == 0)
+		повернути item;
 
-	return NULL;
+	повернути NULL;
 }
 
 /*
@@ -166,21 +166,21 @@ static inline void *menu_item_key_match(struct menu *m,
 static inline struct menu_item *menu_item_by_key(struct menu *m,
 							char *item_key)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	повернути menu_items_iter(m, menu_item_key_match, item_key);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+ціле menu_default_choice(struct menu *m, void **choice)
 {
-	if (m->default_item) {
+	якщо (m->default_item) {
 		*choice = m->default_item->data;
-		return 1;
+		повернути 1;
 	}
 
-	return -ENOENT;
+	повернути -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+static inline ціле menu_interactive_choice(struct menu *m, void **choice)
 {
 	char cbuf[CONFIG_SYS_CBSIZE];
 	struct menu_item *choice_item = NULL;
-	int readret;
+	ціле readret;
 
-	while (!choice_item) {
+	поки (!choice_item) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
+		якщо (!m->item_choice) {
 			readret = cli_readline_into_buffer("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
+			якщо (readret >= 0) {
 				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
+				якщо (!choice_item)
 					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
+			} інакше якщо (readret == -1)  {
 				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+				повернути -EINTR;
+			} інакше {
+				повернути menu_default_choice(m, choice);
 			}
-		} else {
+		} інакше {
 			char *key = m->item_choice(m->item_choice_data);
 
-			if (key)
+			якщо (key)
 				choice_item = menu_item_by_key(m, key);
 		}
 
-		if (!choice_item)
+		якщо (!choice_item)
 			m->timeout = 0;
 	}
 
 	*choice = choice_item->data;
 
-	return 1;
+	повернути 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+ціле menu_default_set(struct menu *m, char *item_key)
 {
 	struct menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	якщо (!m)
+		повернути -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (!item)
-		return -ENOENT;
+	якщо (!item)
+		повернути -ENOENT;
 
 	m->default_item = item;
 
-	return 1;
+	повернути 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+ціле menu_get_choice(struct menu *m, void **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	якщо (!m || !choice)
+		повернути -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	якщо (!m->item_cnt)
+		повернути -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	якщо (!m->prompt)
+		повернути menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	повернути menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,29 +309,29 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+ціле menu_item_add(struct menu *m, char *item_key, void *item_data)
 {
 	struct menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	якщо (!m)
+		повернути -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (item) {
+	якщо (item) {
 		item->data = item_data;
-		return 1;
+		повернути 1;
 	}
 
 	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	якщо (!item)
+		повернути -ENOMEM;
 
 	item->key = strdup(item_key);
 
-	if (!item->key) {
+	якщо (!item->key) {
 		free(item);
-		return -ENOMEM;
+		повернути -ENOMEM;
 	}
 
 	item->data = item_data;
@@ -339,7 +339,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
 	list_add_tail(&item->list, &m->items);
 	m->item_cnt++;
 
-	return 1;
+	повернути 1;
 }
 
 /*
@@ -377,7 +377,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
+struct menu *menu_create(char *title, ціле timeout, ціле prompt,
 				void (*display_statusline)(struct menu *),
 				void (*item_data_print)(void *),
 				char *(*item_choice)(void *),
@@ -388,8 +388,8 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 
 	m = malloc(sizeof *m);
 
-	if (!m)
-		return NULL;
+	якщо (!m)
+		повернути NULL;
 
 	m->default_item = NULL;
 	m->prompt = prompt;
@@ -401,18 +401,18 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->item_choice_data = item_choice_data;
 	m->item_cnt = 0;
 
-	if (title) {
+	якщо (title) {
 		m->title = strdup(title);
-		if (!m->title) {
+		якщо (!m->title) {
 			free(m);
-			return NULL;
+			повернути NULL;
 		}
-	} else
+	} інакше
 		m->title = NULL;
 
 	INIT_LIST_HEAD(&m->items);
 
-	return m;
+	повернути m;
 }
 
 /*
@@ -422,24 +422,24 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+ціле menu_destroy(struct menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	якщо (!m)
+		повернути -EINVAL;
 
 	menu_items_iter(m, menu_item_destroy, NULL);
 
-	if (m->title)
+	якщо (m->title)
 		free(m->title);
 
 	free(m);
 
-	return 1;
+	повернути 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+static ціле bootmenu_conv_shortcut_key(struct bootmenu_data *menu, ціле ichar)
 {
-	int shortcut_key;
+	ціле shortcut_key;
 
 	ichar = tolower(ichar);
 	switch (ichar) {
@@ -454,26 +454,26 @@ static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
 	/* Reserve 0 for last option (aka Exit) */
 	case '0':
 	default:
-		return -1;
+		повернути -1;
 	}
 
-	return shortcut_key;
+	повернути shortcut_key;
 }
 
 enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 					 struct cli_ch_state *cch)
 {
 	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	ціле i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	поки (menu->delay > 0) {
+		ціле ichar;
 
-		if (ansi)
+		якщо (ansi)
 			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
+		для (i = 0; i < 100; ++i) {
+			якщо (!tstc()) {
 				schedule();
 				mdelay(10);
 				continue;
@@ -506,25 +506,25 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 			break;
 		}
 
-		if (key == BKEY_SHORTCUT)
+		якщо (key == BKEY_SHORTCUT)
 			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
 
-		if (menu->delay < 0)
+		якщо (menu->delay < 0)
 			break;
 
 		--menu->delay;
 	}
 
-	if (ansi)
+	якщо (ansi)
 		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
 
-	if (menu->delay == 0)
+	якщо (menu->delay == 0)
 		key = BKEY_SELECT;
 
-	return key;
+	повернути key;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+enum bootmenu_key bootmenu_conv_key(ціле ichar)
 {
 	enum bootmenu_key key;
 
@@ -561,24 +561,24 @@ enum bootmenu_key bootmenu_conv_key(int ichar)
 		break;
 	}
 
-	return key;
+	повернути key;
 }
 
 enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 				struct cli_ch_state *cch)
 {
 	enum bootmenu_key key;
-	int c, errchar = 0;
+	ціле c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
+	якщо (!c) {
+		поки (!c && !tstc()) {
 			schedule();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		якщо (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
@@ -586,10 +586,10 @@ enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 
 	key = bootmenu_conv_key(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
+	якщо (key == BKEY_NONE && isalnum(c)) {
 		key = BKEY_SHORTCUT;
 		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
 	}
 
-	return key;
+	повернути key;
 }

@@ -39,23 +39,23 @@ DECLARE_GLOBAL_DATA_PTR;
 	debug_cond(DEBUG_BOOTKEYS, fmt, ##args)
 
 /* Stored value of bootdelay, used by autoboot_command() */
-static int stored_bootdelay;
-static int menukey;
+static ціле stored_bootdelay;
+static ціле menukey;
 
-#if defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
+#якщо defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
 #define AUTOBOOT_STOP_STR_CRYPT	CONFIG_AUTOBOOT_STOP_STR_CRYPT
-#else
+#інакше
 #define AUTOBOOT_STOP_STR_CRYPT	""
 #endif
-#if defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
+#якщо defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
 #define AUTOBOOT_STOP_STR_SHA256	CONFIG_AUTOBOOT_STOP_STR_SHA256
-#else
+#інакше
 #define AUTOBOOT_STOP_STR_SHA256	""
 #endif
 
 #ifdef CONFIG_AUTOBOOT_USE_MENUKEY
 #define AUTOBOOT_MENUKEY CONFIG_AUTOBOOT_MENUKEY
-#else
+#інакше
 #define AUTOBOOT_MENUKEY 0
 #endif
 
@@ -77,33 +77,33 @@ static int menukey;
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_crypt(uint64_t etime)
+static ціле passwd_abort_crypt(uint64_t etime)
 {
 	const char *crypt_env_str = env_get("bootstopkeycrypt");
 	char presskey[DELAY_STOP_STR_MAX_LENGTH];
 	u_int presskey_len = 0;
-	int abort = 0;
-	int never_timeout = 0;
-	int err;
+	ціле abort = 0;
+	ціле never_timeout = 0;
+	ціле err;
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
 		crypt_env_str = AUTOBOOT_STOP_STR_CRYPT;
 
-	if (!crypt_env_str)
-		return 0;
+	якщо (!crypt_env_str)
+		повернути 0;
 
 	/* We expect the stop-string to be newline-terminated */
 	do {
-		if (tstc()) {
+		якщо (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= sizeof(presskey))
-				return 0;
+			якщо (presskey_len >= sizeof(presskey))
+				повернути 0;
 
 			presskey[presskey_len] = getchar();
 
-			if ((presskey[presskey_len] == '\r') ||
+			якщо ((presskey[presskey_len] == '\r') ||
 			    (presskey[presskey_len] == '\n')) {
-				if (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
+				якщо (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
 				    !presskey_len) {
 					never_timeout = 1;
 					continue;
@@ -111,20 +111,20 @@ static int passwd_abort_crypt(uint64_t etime)
 				presskey[presskey_len] = '\0';
 				err = crypt_compare(crypt_env_str, presskey,
 						    &abort);
-				if (err)
+				якщо (err)
 					debug_bootkeys(
 						"crypt_compare() failed with: %s\n",
 						errno_str(err));
 				/* you had one chance */
 				break;
-			} else {
+			} інакше {
 				presskey_len++;
 			}
 		}
 		udelay(10000);
-	} while (never_timeout || get_ticks() <= etime);
+	} поки (never_timeout || get_ticks() <= etime);
 
-	return abort;
+	повернути abort;
 }
 
 /*
@@ -133,15 +133,15 @@ static int passwd_abort_crypt(uint64_t etime)
  *
  * https://crackstation.net/hashing-security.htm
  */
-static int slow_equals(u8 *a, u8 *b, int len)
+static ціле slow_equals(u8 *a, u8 *b, ціле len)
 {
-	int diff = 0;
-	int i;
+	ціле diff = 0;
+	ціле i;
 
-	for (i = 0; i < len; i++)
+	для (i = 0; i < len; i++)
 		diff |= a[i] ^ b[i];
 
-	return diff == 0;
+	повернути diff == 0;
 }
 
 /**
@@ -152,7 +152,7 @@ static int slow_equals(u8 *a, u8 *b, int len)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_sha256(uint64_t etime)
+static ціле passwd_abort_sha256(uint64_t etime)
 {
 	const char *sha_env_str = env_get("bootstopkeysha256");
 	u8 sha_env[SHA256_SUM_LEN];
@@ -161,19 +161,19 @@ static int passwd_abort_sha256(uint64_t etime)
 	char *c;
 	const char *algo_name = "sha256";
 	u_int presskey_len = 0;
-	int abort = 0;
-	int size = sizeof(sha);
-	int ret;
+	ціле abort = 0;
+	ціле size = sizeof(sha);
+	ціле ret;
 
-	if (sha_env_str == NULL)
+	якщо (sha_env_str == NULL)
 		sha_env_str = AUTOBOOT_STOP_STR_SHA256;
 
 	presskey = malloc_cache_aligned(DELAY_STOP_STR_MAX_LENGTH);
-	if (!presskey)
-		return -ENOMEM;
+	якщо (!presskey)
+		повернути -ENOMEM;
 
 	c = strstr(sha_env_str, ":");
-	if (c && (c - sha_env_str < DELAY_STOP_STR_MAX_LENGTH)) {
+	якщо (c && (c - sha_env_str < DELAY_STOP_STR_MAX_LENGTH)) {
 		/* preload presskey with salt */
 		memcpy(presskey, sha_env_str, c - sha_env_str);
 		presskey_len = c - sha_env_str;
@@ -185,16 +185,16 @@ static int passwd_abort_sha256(uint64_t etime)
 	 * from the user input
 	 */
 	ret = hash_parse_string(algo_name, sha_env_str, sha_env);
-	if (ret) {
+	якщо (ret) {
 		printf("Hash %s not supported!\n", algo_name);
 		free(presskey);
-		return 0;
+		повернути 0;
 	}
 
 	sha = malloc_cache_aligned(SHA256_SUM_LEN);
-	if (!sha) {
+	якщо (!sha) {
 		free(presskey);
-		return -ENOMEM;
+		повернути -ENOMEM;
 	}
 	size = SHA256_SUM_LEN;
 	/*
@@ -203,12 +203,12 @@ static int passwd_abort_sha256(uint64_t etime)
 	 * compare the value with the one saved in the environment
 	 */
 	do {
-		if (tstc()) {
+		якщо (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= DELAY_STOP_STR_MAX_LENGTH) {
+			якщо (presskey_len >= DELAY_STOP_STR_MAX_LENGTH) {
 				free(presskey);
 				free(sha);
-				return 0;
+				повернути 0;
 			}
 
 			presskey[presskey_len++] = getchar();
@@ -218,15 +218,15 @@ static int passwd_abort_sha256(uint64_t etime)
 				   presskey_len, sha, &size);
 
 			/* And check if sha matches saved value in env */
-			if (slow_equals(sha, sha_env, SHA256_SUM_LEN))
+			якщо (slow_equals(sha, sha_env, SHA256_SUM_LEN))
 				abort = 1;
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} поки (!abort && get_ticks() <= etime);
 
 	free(presskey);
 	free(sha);
-	return abort;
+	повернути abort;
 }
 
 /**
@@ -237,13 +237,13 @@ static int passwd_abort_sha256(uint64_t etime)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_key(uint64_t etime)
+static ціле passwd_abort_key(uint64_t etime)
 {
-	int abort = 0;
+	ціле abort = 0;
 	struct {
 		char *str;
 		u_int len;
-		int retry;
+		ціле retry;
 	}
 	delaykey[] = {
 		{ .str = env_get("bootdelaykey"),  .retry = 1 },
@@ -251,20 +251,20 @@ static int passwd_abort_key(uint64_t etime)
 	};
 
 	char presskey[DELAY_STOP_STR_MAX_LENGTH];
-	int presskey_len = 0;
-	int presskey_max = 0;
-	int i;
+	ціле presskey_len = 0;
+	ціле presskey_max = 0;
+	ціле i;
 
 #  ifdef CONFIG_AUTOBOOT_DELAY_STR
-	if (delaykey[0].str == NULL)
+	якщо (delaykey[0].str == NULL)
 		delaykey[0].str = CONFIG_AUTOBOOT_DELAY_STR;
 #  endif
 #  ifdef CONFIG_AUTOBOOT_STOP_STR
-	if (delaykey[1].str == NULL)
+	якщо (delaykey[1].str == NULL)
 		delaykey[1].str = CONFIG_AUTOBOOT_STOP_STR;
 #  endif
 
-	for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
+	для (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
 		delaykey[i].len = delaykey[i].str == NULL ?
 				    0 : strlen(delaykey[i].str);
 		delaykey[i].len = delaykey[i].len > DELAY_STOP_STR_MAX_LENGTH ?
@@ -282,19 +282,19 @@ static int passwd_abort_key(uint64_t etime)
 	 * when catch up.
 	 */
 	do {
-		if (tstc()) {
-			if (presskey_len < presskey_max) {
+		якщо (tstc()) {
+			якщо (presskey_len < presskey_max) {
 				presskey[presskey_len++] = getchar();
-			} else {
-				for (i = 0; i < presskey_max - 1; i++)
+			} інакше {
+				для (i = 0; i < presskey_max - 1; i++)
 					presskey[i] = presskey[i + 1];
 
 				presskey[i] = getchar();
 			}
 		}
 
-		for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
-			if (delaykey[i].len > 0 &&
+		для (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
+			якщо (delaykey[i].len > 0 &&
 			    presskey_len >= delaykey[i].len &&
 				memcmp(presskey + presskey_len -
 					delaykey[i].len, delaykey[i].str,
@@ -304,15 +304,15 @@ static int passwd_abort_key(uint64_t etime)
 						"stop");
 
 				/* don't retry auto boot */
-				if (!delaykey[i].retry)
+				якщо (!delaykey[i].retry)
 					bootretry_dont_retry();
 				abort = 1;
 			}
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} поки (!abort && get_ticks() <= etime);
 
-	return abort;
+	повернути abort;
 }
 
 /**
@@ -327,24 +327,24 @@ static int passwd_abort_key(uint64_t etime)
  */
 static bool fallback_to_sha256(void)
 {
-	if (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
-		return env_get_yesno("bootstopusesha256") == 1;
-	else if (IS_ENABLED(CONFIG_CRYPT_PW))
-		return false;
-	else
-		return true;
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
+		повернути env_get_yesno("bootstopusesha256") == 1;
+	інакше якщо (IS_ENABLED(CONFIG_CRYPT_PW))
+		повернути false;
+	інакше
+		повернути true;
 }
 
 /***************************************************************************
  * Watch for 'delay' seconds for autoboot stop or autoboot delay string.
  * returns: 0 -  no key string, allow autoboot 1 - got key string, abort
  */
-static int abortboot_key_sequence(int bootdelay)
+static ціле abortboot_key_sequence(ціле bootdelay)
 {
-	int abort;
+	ціле abort;
 	uint64_t etime = endtick(bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
 		console_flush_stdin();
 #  ifdef CONFIG_AUTOBOOT_PROMPT
 	/*
@@ -354,28 +354,28 @@ static int abortboot_key_sequence(int bootdelay)
 	printf(CONFIG_AUTOBOOT_PROMPT, bootdelay);
 #  endif
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
-		if (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_to_sha256())
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
+		якщо (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_to_sha256())
 			abort = passwd_abort_crypt(etime);
-		else
+		інакше
 			abort = passwd_abort_sha256(etime);
-	} else {
+	} інакше {
 		abort = passwd_abort_key(etime);
 	}
-	if (!abort)
+	якщо (!abort)
 		debug_bootkeys("key timeout\n");
 
-	return abort;
+	повернути abort;
 }
 
-static void print_boot_delay(int bootdelay)
+static void print_boot_delay(ціле bootdelay)
 {
 	printf(ANSI_CLEAR_LINE "\rHit any key to stop autoboot: %d", bootdelay);
 }
 
-static int abortboot_single_key(int bootdelay)
+static ціле abortboot_single_key(ціле bootdelay)
 {
-	int abort = 0;
+	ціле abort = 0;
 	unsigned long ts;
 
 	print_boot_delay(bootdelay);
@@ -383,53 +383,53 @@ static int abortboot_single_key(int bootdelay)
 	/*
 	 * Check if key already pressed
 	 */
-	if (tstc()) {	/* we got a key press	*/
+	якщо (tstc()) {	/* we got a key press	*/
 		getchar();	/* consume input	*/
 		print_boot_delay(0);
 		abort = 1;	/* don't auto boot	*/
 	}
 
-	while ((bootdelay > 0) && (!abort)) {
+	поки ((bootdelay > 0) && (!abort)) {
 		--bootdelay;
 		/* delay 1000 ms */
 		ts = get_timer(0);
 		do {
-			if (tstc()) {	/* we got a key press	*/
-				int key;
+			якщо (tstc()) {	/* we got a key press	*/
+				ціле key;
 
 				abort  = 1;	/* don't auto boot	*/
 				bootdelay = 0;	/* no more delay	*/
 				key = getchar();/* consume input	*/
-				if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
+				якщо (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
 					menukey = key;
 				break;
 			}
 			udelay(10000);
-		} while (!abort && get_timer(ts) < 1000);
+		} поки (!abort && get_timer(ts) < 1000);
 
 		print_boot_delay(bootdelay);
 	}
 
 	putc('\n');
 
-	return abort;
+	повернути abort;
 }
 
-static int abortboot(int bootdelay)
+static ціле abortboot(ціле bootdelay)
 {
-	int abort = 0;
+	ціле abort = 0;
 
-	if (bootdelay >= 0) {
-		if (autoboot_keyed())
+	якщо (bootdelay >= 0) {
+		якщо (autoboot_keyed())
 			abort = abortboot_key_sequence(bootdelay);
-		else
+		інакше
 			abort = abortboot_single_key(bootdelay);
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
+	якщо (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return abort;
+	повернути abort;
 }
 
 static void process_fdt_options(void)
@@ -439,12 +439,12 @@ static void process_fdt_options(void)
 
 	/* Add an env variable to point to a kernel payload, if available */
 	addr = ofnode_conf_read_int("kernel-offset", 0);
-	if (addr)
+	якщо (addr)
 		env_set_addr("kernaddr", (void *)(CONFIG_TEXT_BASE + addr));
 
 	/* Add an env variable to point to a root disk, if available */
 	addr = ofnode_conf_read_int("rootdisk-offset", 0);
-	if (addr)
+	якщо (addr)
 		env_set_addr("rootaddr", (void *)(CONFIG_TEXT_BASE + addr));
 #endif /* CONFIG_TEXT_BASE */
 }
@@ -452,68 +452,68 @@ static void process_fdt_options(void)
 const char *bootdelay_process(void)
 {
 	char *s;
-	int bootdelay;
+	ціле bootdelay;
 
 	bootcount_inc();
 
 	s = env_get("bootdelay");
-	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
+	bootdelay = s ? (ціле)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
 
 	/*
 	 * Does it really make sense that the devicetree overrides the user
 	 * setting? It is possibly helpful for security since the device tree
 	 * may be signed whereas the environment is often loaded from storage.
 	 */
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	якщо (IS_ENABLED(CONFIG_OF_CONTROL))
 		bootdelay = ofnode_conf_read_int("bootdelay", bootdelay);
 
 	debug("### main_loop entered: bootdelay=%d\n\n", bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
 		bootdelay = menu_show(bootdelay);
 	bootretry_init_cmd_timeout();
 
 #ifdef CONFIG_POST
-	if (gd->flags & GD_FLG_POSTFAIL) {
+	якщо (gd->flags & GD_FLG_POSTFAIL) {
 		s = env_get("failbootcmd");
-	} else
+	} інакше
 #endif /* CONFIG_POST */
-	if (bootcount_error())
+	якщо (bootcount_error())
 		s = env_get("altbootcmd");
-	else
+	інакше
 		s = env_get("bootcmd");
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	якщо (IS_ENABLED(CONFIG_OF_CONTROL))
 		process_fdt_options();
 	stored_bootdelay = bootdelay;
 
-	return s;
+	повернути s;
 }
 
 void autoboot_command(const char *s)
 {
 	debug("### main_loop: bootcmd=\"%s\"\n", s ? s : "<UNDEFINED>");
 
-	if (s && (stored_bootdelay == -2 ||
+	якщо (s && (stored_bootdelay == -2 ||
 		 (stored_bootdelay != -1 && !abortboot(stored_bootdelay)))) {
 		bool lock;
-		int prev;
+		ціле prev;
 
 		lock = autoboot_keyed() &&
 			!IS_ENABLED(CONFIG_AUTOBOOT_KEYED_CTRLC);
-		if (lock)
+		якщо (lock)
 			prev = disable_ctrlc(1); /* disable Ctrl-C checking */
 
 		run_command_list(s, -1, 0);
 
-		if (lock)
+		якщо (lock)
 			disable_ctrlc(prev);	/* restore Ctrl-C checking */
 	}
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
+	якщо (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
 	    menukey == AUTOBOOT_MENUKEY) {
 		s = env_get("menucmd");
-		if (s)
+		якщо (s)
 			run_command_list(s, -1, 0);
 	}
 }

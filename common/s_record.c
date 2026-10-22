@@ -6,14 +6,14 @@
 
 #include <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+static ціле hex1_bin (char  c);
+static ціле hex2_bin (char *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+ціле srec_decode (char *input, ціле *count, ulong *addr, char *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
+	ціле	i;
+	ціле	v;				/* conversion buffer	*/
+	ціле	srec_type;			/* S-Record type	*/
 	unsigned char chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
@@ -22,20 +22,20 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
+	для (; *input; ++input) {
+		якщо (*input == 'S') {		/* skip 'S' */
 			++input;
 			break;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	якщо (*input == '\0') {			/* no more data?	*/
+		повернути (SREC_EMPTY);
 	}
 
 	v = *input++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	якщо ((*count = hex2_bin(input)) < 0) {
+		повернути (SREC_E_NOSREC);
 	}
 
 	chksum += *count;
@@ -78,7 +78,7 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		*count   -= 3;			/* - checksum and addr	*/
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		повернути (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
@@ -87,8 +87,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	switch (v) {
 	case '3':				/* 4 byte addr field	*/
 	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		якщо ((v = hex2_bin(input)) < 0) {
+			повернути (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
@@ -96,8 +96,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		/* FALL THRU */
 	case '2':				/* 3 byte addr field	*/
 	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		якщо ((v = hex2_bin(input)) < 0) {
+			повернути (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -108,16 +108,16 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	case '1':
 	case '5':
 	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		якщо ((v = hex2_bin(input)) < 0) {
+			повернути (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		якщо ((v = hex2_bin(input)) < 0) {
+			повернути (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -126,13 +126,13 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		повернути (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	для (i=0; i < *count; ++i) {
+		якщо ((v = hex2_bin(input)) < 0) {
+			повернути (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
@@ -140,38 +140,38 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	якщо ((v = hex2_bin(input)) < 0) {
+		повернути (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	якщо ((unsigned char)v != (unsigned char)~chksum) {
+		повернути (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	повернути (srec_type);
 }
 
-static int hex1_bin (char c)
+static ціле hex1_bin (char c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	якщо (c >= '0' && c <= '9')
+		повернути (c - '0');
+	якщо (c >= 'a' && c <= 'f')
+		повернути (c + 10 - 'a');
+	якщо (c >= 'A' && c <= 'F')
+		повернути (c + 10 - 'A');
+	повернути (-1);
 }
 
-static int hex2_bin (char *s)
+static ціле hex2_bin (char *s)
 {
-	int i, j;
+	ціле i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	якщо ((i = hex1_bin(*s++)) < 0) {
+		повернути (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	якщо ((j = hex1_bin(*s)) < 0) {
+		повернути (-1);
 	}
 
-	return ((i<<4) + j);
+	повернути ((i<<4) + j);
 }

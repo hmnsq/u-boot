@@ -17,16 +17,16 @@ static ulong spl_nor_load_read(struct spl_load_info *load, ulong sector,
 	      __func__, sector, count, buf);
 	memcpy(buf, map_sysmem(sector, count), count);
 
-	return count;
+	повернути count;
 }
 
 unsigned long __weak spl_nor_get_uboot_base(void)
 {
-	return CFG_SYS_UBOOT_BASE;
+	повернути CFG_SYS_UBOOT_BASE;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nor_load_image_os(struct spl_image_info *spl_image,
+#якщо IS_ENABLED(CONFIG_SPL_OS_BOOT)
+static ціле spl_nor_load_image_os(struct spl_image_info *spl_image,
 				 struct spl_boot_device *bootdev)
 {
 	/*
@@ -38,8 +38,8 @@ static int spl_nor_load_image_os(struct spl_image_info *spl_image,
 	struct spl_load_info load;
 
 #ifdef CONFIG_SPL_LOAD_FIT
-	if (image_get_magic(header) == FDT_MAGIC) {
-		int ret;
+	якщо (image_get_magic(header) == FDT_MAGIC) {
+		ціле ret;
 
 		debug("Found FIT\n");
 		spl_load_init(&load, spl_nor_load_read, NULL, 1);
@@ -47,33 +47,33 @@ static int spl_nor_load_image_os(struct spl_image_info *spl_image,
 		ret = spl_load_simple_fit(spl_image, &load, CONFIG_SYS_OS_BASE,
 					  (void *)header);
 
-#if defined CONFIG_SPL_PAYLOAD_ARGS_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
+#якщо defined CONFIG_SPL_PAYLOAD_ARGS_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
 		memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 		       (void *)CONFIG_CMD_SPL_NOR_OFS,
 		       CONFIG_CMD_SPL_WRITE_SIZE);
 #endif
-		return ret;
+		повернути ret;
 	}
 #endif
-	if (image_get_os(header) != IH_OS_LINUX)
-		return -EINVAL;
+	якщо (image_get_os(header) != IH_OS_LINUX)
+		повернути -EINVAL;
 
 	/* happy - was a Linux */
-	int ret;
+	ціле ret;
 
 	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	якщо (ret)
+		повернути ret;
 
 	memcpy((void *)spl_image->load_addr,
 	       (void *)(CONFIG_SYS_OS_BASE + sizeof(struct legacy_img_hdr)),
 	       spl_image->size);
 
-	return 0;
+	повернути 0;
 }
 #endif
 
-static int spl_nor_load_image(struct spl_image_info *spl_image,
+static ціле spl_nor_load_image(struct spl_image_info *spl_image,
 			      struct spl_boot_device *bootdev)
 {
 	struct spl_load_info load;
@@ -84,17 +84,17 @@ static int spl_nor_load_image(struct spl_image_info *spl_image,
 	 */
 	spl_image->flags |= SPL_COPY_PAYLOAD_ONLY;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-	int err;
+#якщо IS_ENABLED(CONFIG_SPL_OS_BOOT)
+	ціле err;
 
-	if (!spl_start_uboot()) {
+	якщо (!spl_start_uboot()) {
 		err = spl_nor_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+		якщо (!err)
+			повернути 0;
 
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		якщо (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			повернути err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -104,6 +104,6 @@ static int spl_nor_load_image(struct spl_image_info *spl_image,
 	 * defined location in SDRAM
 	 */
 	spl_load_init(&load, spl_nor_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, spl_nor_get_uboot_base());
+	повернути spl_load(spl_image, bootdev, &load, 0, spl_nor_get_uboot_base());
 }
 SPL_LOAD_IMAGE_METHOD("NOR", 0, BOOT_DEVICE_NOR, spl_nor_load_image);
