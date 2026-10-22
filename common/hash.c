@@ -9,226 +9,226 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#ifndef USE_HOSTCC
-#include <command.h>
-#include <dm.h>
-#include <env.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <hw_sha.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/errno.h>
-#include <u-boot/hash.h>
-#else
-#include "mkimage.h"
-#include <linux/compiler_attributes.h>
-#include <time.h>
-#include <linux/kconfig.h>
-#endif /* !USE_HOSTCC*/
+#جيڪڏهن_وصف_نه_ٿيل USE_HOSTCC
+#ضمن <command.h>
+#ضمن <dm.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <malloc.h>
+#ضمن <mapmem.h>
+#ضمن <hw_sha.h>
+#ضمن <asm/cache.h>
+#ضمن <asm/global_data.h>
+#ضمن <asm/io.h>
+#ضمن <linux/errno.h>
+#ضمن <u-boot/hash.h>
+#وإلا
+#ضمن "mkimage.h"
+#ضمن <linux/compiler_attributes.h>
+#ضمن <time.h>
+#ضمن <linux/kconfig.h>
+#جيڪڏهن_پورو /* !USE_HOSTCC*/
 
-#include <hash.h>
-#include <image.h>
-#include <u-boot/crc.h>
-#include <u-boot/sha1.h>
-#include <u-boot/sha256.h>
-#include <u-boot/sha512.h>
-#include <u-boot/md5.h>
-#include <u-boot/sm3.h>
+#ضمن <hash.h>
+#ضمن <image.h>
+#ضمن <u-boot/crc.h>
+#ضمن <u-boot/sha1.h>
+#ضمن <u-boot/sha256.h>
+#ضمن <u-boot/sha512.h>
+#ضمن <u-boot/md5.h>
+#ضمن <u-boot/sm3.h>
 
-static int __maybe_unused hash_init_sha1(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_sha1(بنية hash_algo *algo, فراغ **ctxp)
 {
-	sha1_context *ctx = malloc(sizeof(sha1_context));
+	sha1_context *ctx = يادگيري_ڏيو(حجم(sha1_context));
 	sha1_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_sha1(struct hash_algo *algo, void *ctx,
-					   const void *buf, unsigned int size,
-					   int is_last)
+ساكن صحيح __maybe_unused hash_update_sha1(بنية hash_algo *algo, فراغ *ctx,
+					   ثابت فراغ *buf, بنانشان صحيح سائيز,
+					   صحيح is_آخري)
 {
-	sha1_update((sha1_context *)ctx, buf, size);
-	return 0;
+	sha1_update((sha1_context *)ctx, buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_sha1(struct hash_algo *algo, void *ctx,
-					   void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_sha1(بنية hash_algo *algo, فراغ *ctx,
+					   فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
-	sha1_finish((sha1_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha1_پڄاڻي((sha1_context *)ctx, dest_buf);
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_sha256(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_sha256(بنية hash_algo *algo, فراغ **ctxp)
 {
-	sha256_context *ctx = malloc(sizeof(sha256_context));
+	sha256_context *ctx = يادگيري_ڏيو(حجم(sha256_context));
 	sha256_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_sha256(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ساكن صحيح __maybe_unused hash_update_sha256(بنية hash_algo *algo, فراغ *ctx,
+					     ثابت فراغ *buf, uint سائيز,
+					     صحيح is_آخري)
 {
-	sha256_update((sha256_context *)ctx, buf, size);
-	return 0;
+	sha256_update((sha256_context *)ctx, buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_sha256(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_sha256(بنية hash_algo *algo, فراغ *ctx,
+					     فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
-	sha256_finish((sha256_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha256_پڄاڻي((sha256_context *)ctx, dest_buf);
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_sha384(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_sha384(بنية hash_algo *algo, فراغ **ctxp)
 {
-	sha512_context *ctx = malloc(sizeof(sha512_context));
+	sha512_context *ctx = يادگيري_ڏيو(حجم(sha512_context));
 	sha384_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_sha384(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ساكن صحيح __maybe_unused hash_update_sha384(بنية hash_algo *algo, فراغ *ctx,
+					     ثابت فراغ *buf, uint سائيز,
+					     صحيح is_آخري)
 {
-	sha384_update((sha512_context *)ctx, buf, size);
-	return 0;
+	sha384_update((sha512_context *)ctx, buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_sha384(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_sha384(بنية hash_algo *algo, فراغ *ctx,
+					     فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
-	sha384_finish((sha512_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha384_پڄاڻي((sha512_context *)ctx, dest_buf);
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_sha512(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_sha512(بنية hash_algo *algo, فراغ **ctxp)
 {
-	sha512_context *ctx = malloc(sizeof(sha512_context));
+	sha512_context *ctx = يادگيري_ڏيو(حجم(sha512_context));
 	sha512_starts(ctx);
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_sha512(struct hash_algo *algo, void *ctx,
-					     const void *buf, uint size,
-					     int is_last)
+ساكن صحيح __maybe_unused hash_update_sha512(بنية hash_algo *algo, فراغ *ctx,
+					     ثابت فراغ *buf, uint سائيز,
+					     صحيح is_آخري)
 {
-	sha512_update((sha512_context *)ctx, buf, size);
-	return 0;
+	sha512_update((sha512_context *)ctx, buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_sha512(struct hash_algo *algo, void *ctx,
-					     void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_sha512(بنية hash_algo *algo, فراغ *ctx,
+					     فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
-	sha512_finish((sha512_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sha512_پڄاڻي((sha512_context *)ctx, dest_buf);
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_sm3(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_sm3(بنية hash_algo *algo, فراغ **ctxp)
 {
-	struct sm3_context *ctx = malloc(sizeof(struct sm3_context));
+	بنية sm3_context *ctx = يادگيري_ڏيو(حجم(بنية sm3_context));
 
 	sm3_init(ctx);
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_sm3(struct hash_algo *algo, void *ctx,
-					  const void *buf, uint size,
-					  int is_last)
+ساكن صحيح __maybe_unused hash_update_sm3(بنية hash_algo *algo, فراغ *ctx,
+					  ثابت فراغ *buf, uint سائيز,
+					  صحيح is_آخري)
 {
-	sm3_update((struct sm3_context *)ctx, buf, size);
-	return 0;
+	sm3_update((بنية sm3_context *)ctx, buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_sm3(struct hash_algo *algo, void *ctx,
-					  void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_sm3(بنية hash_algo *algo, فراغ *ctx,
+					  فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
-	sm3_final((struct sm3_context *)ctx, dest_buf);
-	free(ctx);
-	return 0;
+	sm3_final((بنية sm3_context *)ctx, dest_buf);
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_crc16_ccitt(struct hash_algo *algo,
-						void **ctxp)
+ساكن صحيح __maybe_unused hash_init_crc16_ccitt(بنية hash_algo *algo,
+						فراغ **ctxp)
 {
-	uint16_t *ctx = malloc(sizeof(uint16_t));
+	uint16_t *ctx = يادگيري_ڏيو(حجم(uint16_t));
 	*ctx = 0;
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_crc16_ccitt(struct hash_algo *algo,
-						  void *ctx, const void *buf,
-						  unsigned int size,
-						  int is_last)
+ساكن صحيح __maybe_unused hash_update_crc16_ccitt(بنية hash_algo *algo,
+						  فراغ *ctx, ثابت فراغ *buf,
+						  بنانشان صحيح سائيز,
+						  صحيح is_آخري)
 {
-	*((uint16_t *)ctx) = crc16_ccitt(*((uint16_t *)ctx), buf, size);
-	return 0;
+	*((uint16_t *)ctx) = crc16_ccitt(*((uint16_t *)ctx), buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_crc16_ccitt(struct hash_algo *algo,
-						  void *ctx, void *dest_buf,
-						  int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_crc16_ccitt(بنية hash_algo *algo,
+						  فراغ *ctx, فراغ *dest_buf,
+						  صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
 	*((uint16_t *)dest_buf) = *((uint16_t *)ctx);
-	free(ctx);
-	return 0;
+	حرر(ctx);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_init_crc32(struct hash_algo *algo, void **ctxp)
+ساكن صحيح __maybe_unused hash_init_چڪري_جاچ_32(بنية hash_algo *algo, فراغ **ctxp)
 {
-	uint32_t *ctx = malloc(sizeof(uint32_t));
+	uint32_t *ctx = يادگيري_ڏيو(حجم(uint32_t));
 	*ctx = 0;
 	*ctxp = ctx;
-	return 0;
+	أرجع 0;
 }
 
-static int __maybe_unused hash_update_crc32(struct hash_algo *algo, void *ctx,
-					    const void *buf, unsigned int size,
-					    int is_last)
+ساكن صحيح __maybe_unused hash_update_چڪري_جاچ_32(بنية hash_algo *algo, فراغ *ctx,
+					    ثابت فراغ *buf, بنانشان صحيح سائيز,
+					    صحيح is_آخري)
 {
-	*((uint32_t *)ctx) = crc32(*((uint32_t *)ctx), buf, size);
-	return 0;
+	*((uint32_t *)ctx) = چڪري_جاچ_32(*((uint32_t *)ctx), buf, سائيز);
+	أرجع 0;
 }
 
-static int __maybe_unused hash_finish_crc32(struct hash_algo *algo, void *ctx,
-					    void *dest_buf, int size)
+ساكن صحيح __maybe_unused hash_پڄاڻي_چڪري_جاچ_32(بنية hash_algo *algo, فراغ *ctx,
+					    فراغ *dest_buf, صحيح سائيز)
 {
-	if (size < algo->digest_size)
-		return -1;
+	إذا (سائيز < algo->digest_سائيز)
+		أرجع -1;
 
 	*((uint32_t *)dest_buf) = *((uint32_t *)ctx);
-	free(ctx);
-	return 0;
+	حرر(ctx);
+	أرجع 0;
 }
 
 /*
@@ -236,231 +236,231 @@ static int __maybe_unused hash_finish_crc32(struct hash_algo *algo, void *ctx,
  * is enable we will use that, otherwise a software version of the algorithm.
  * Note that algorithm names must be in lower case.
  */
-static struct hash_algo hash_algo[] = {
-#if CONFIG_IS_ENABLED(MD5)
+ساكن بنية hash_algo hash_algo[] = {
+#إذا CONFIG_IS_ENABLED(MD5)
 	{
 		.name		= "md5",
-		.digest_size	= MD5_SUM_LEN,
-		.chunk_size	= CHUNKSZ_MD5,
+		.digest_سائيز	= MD5_جوڙ_LEN,
+		.chunk_سائيز	= CHUNKSZ_MD5,
 		.hash_func_ws	= md5_wd,
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA1)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA1)
 	{
 		.name		= "sha1",
-		.digest_size	= SHA1_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA1,
-#if CONFIG_IS_ENABLED(SHA_HW_ACCEL)
+		.digest_سائيز	= SHA1_جوڙ_LEN,
+		.chunk_سائيز	= CHUNKSZ_SHA1,
+#إذا CONFIG_IS_ENABLED(SHA_HW_ACCEL)
 		.hash_func_ws	= hw_sha1,
-#else
+#وإلا
 		.hash_func_ws	= sha1_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_پڄاڻي	= hw_sha_پڄاڻي,
+#وإلا
 		.hash_init	= hash_init_sha1,
 		.hash_update	= hash_update_sha1,
-		.hash_finish	= hash_finish_sha1,
-#endif
+		.hash_پڄاڻي	= hash_پڄاڻي_sha1,
+#جيڪڏهن_پورو
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA256)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA256)
 	{
 		.name		= "sha256",
-		.digest_size	= SHA256_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA256,
-#if CONFIG_IS_ENABLED(SHA_HW_ACCEL)
+		.digest_سائيز	= SHA256_جوڙ_LEN,
+		.chunk_سائيز	= CHUNKSZ_SHA256,
+#إذا CONFIG_IS_ENABLED(SHA_HW_ACCEL)
 		.hash_func_ws	= hw_sha256,
-#else
+#وإلا
 		.hash_func_ws	= sha256_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_پڄاڻي	= hw_sha_پڄاڻي,
+#وإلا
 		.hash_init	= hash_init_sha256,
 		.hash_update	= hash_update_sha256,
-		.hash_finish	= hash_finish_sha256,
-#endif
+		.hash_پڄاڻي	= hash_پڄاڻي_sha256,
+#جيڪڏهن_پورو
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA384)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA384)
 	{
 		.name		= "sha384",
-		.digest_size	= SHA384_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA384,
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
+		.digest_سائيز	= SHA384_جوڙ_LEN,
+		.chunk_سائيز	= CHUNKSZ_SHA384,
+#إذا CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
 		.hash_func_ws	= hw_sha384,
-#else
+#وإلا
 		.hash_func_ws	= sha384_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_پڄاڻي	= hw_sha_پڄاڻي,
+#وإلا
 		.hash_init	= hash_init_sha384,
 		.hash_update	= hash_update_sha384,
-		.hash_finish	= hash_finish_sha384,
-#endif
+		.hash_پڄاڻي	= hash_پڄاڻي_sha384,
+#جيڪڏهن_پورو
 	},
-#endif
-#if CONFIG_IS_ENABLED(SHA512)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA512)
 	{
 		.name		= "sha512",
-		.digest_size	= SHA512_SUM_LEN,
-		.chunk_size	= CHUNKSZ_SHA512,
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
+		.digest_سائيز	= SHA512_جوڙ_LEN,
+		.chunk_سائيز	= CHUNKSZ_SHA512,
+#إذا CONFIG_IS_ENABLED(SHA512_HW_ACCEL)
 		.hash_func_ws	= hw_sha512,
-#else
+#وإلا
 		.hash_func_ws	= sha512_csum_wd,
-#endif
-#if CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SHA512_HW_ACCEL) && CONFIG_IS_ENABLED(SHA_PROG_HW_ACCEL)
 		.hash_init	= hw_sha_init,
 		.hash_update	= hw_sha_update,
-		.hash_finish	= hw_sha_finish,
-#else
+		.hash_پڄاڻي	= hw_sha_پڄاڻي,
+#وإلا
 		.hash_init	= hash_init_sha512,
 		.hash_update	= hash_update_sha512,
-		.hash_finish	= hash_finish_sha512,
-#endif
+		.hash_پڄاڻي	= hash_پڄاڻي_sha512,
+#جيڪڏهن_پورو
 	},
-#endif
-#if CONFIG_IS_ENABLED(SM3)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(SM3)
 	{
 		.name		= "sm3_256",
-		.digest_size	= SM3_DIGEST_SIZE,
-		.chunk_size	= SM3_BLOCK_SIZE,
+		.digest_سائيز	= SM3_DIGEST_سائيز,
+		.chunk_سائيز	= SM3_بلاڪ_سائيز,
 		.hash_func_ws	= sm3_csum_wd,
 		.hash_init	= hash_init_sm3,
 		.hash_update	= hash_update_sm3,
-		.hash_finish	= hash_finish_sm3,
+		.hash_پڄاڻي	= hash_پڄاڻي_sm3,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC16)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(CRC16)
 	{
 		.name		= "crc16-ccitt",
-		.digest_size	= 2,
-		.chunk_size	= CHUNKSZ,
+		.digest_سائيز	= 2,
+		.chunk_سائيز	= CHUNKSZ,
 		.hash_func_ws	= crc16_ccitt_wd_buf,
 		.hash_init	= hash_init_crc16_ccitt,
 		.hash_update	= hash_update_crc16_ccitt,
-		.hash_finish	= hash_finish_crc16_ccitt,
+		.hash_پڄاڻي	= hash_پڄاڻي_crc16_ccitt,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC8) && IS_ENABLED(CONFIG_HASH_CRC8)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(CRC8) && IS_ENABLED(CONFIG_HASH_CRC8)
 	{
 		.name		= "crc8",
-		.digest_size	= 1,
-		.chunk_size	= CHUNKSZ_CRC32,
+		.digest_سائيز	= 1,
+		.chunk_سائيز	= CHUNKSZ_چڪري_جاچ_32,
 		.hash_func_ws	= crc8_wd_buf,
 	},
-#endif
-#if CONFIG_IS_ENABLED(CRC32)
+#جيڪڏهن_پورو
+#إذا CONFIG_IS_ENABLED(چڪري_جاچ_32_2)
 	{
 		.name		= "crc32",
-		.digest_size	= 4,
-		.chunk_size	= CHUNKSZ_CRC32,
-		.hash_func_ws	= crc32_wd_buf,
-		.hash_init	= hash_init_crc32,
-		.hash_update	= hash_update_crc32,
-		.hash_finish	= hash_finish_crc32,
+		.digest_سائيز	= 4,
+		.chunk_سائيز	= CHUNKSZ_چڪري_جاچ_32,
+		.hash_func_ws	= چڪري_جاچ_32_wd_buf,
+		.hash_init	= hash_init_چڪري_جاچ_32,
+		.hash_update	= hash_update_چڪري_جاچ_32,
+		.hash_پڄاڻي	= hash_پڄاڻي_چڪري_جاچ_32,
 	},
-#endif
+#جيڪڏهن_پورو
 };
 
 /* Try to minimize code size for boards that don't want much hashing */
-#if CONFIG_IS_ENABLED(SHA256) || IS_ENABLED(CONFIG_CMD_SHA1SUM) || \
-	CONFIG_IS_ENABLED(CRC32_VERIFY) || IS_ENABLED(CONFIG_CMD_HASH) || \
+#إذا CONFIG_IS_ENABLED(SHA256) || IS_ENABLED(CONFIG_CMD_SHA1_جوڙ) || \
+	CONFIG_IS_ENABLED(چڪري_جاچ_32_VERIFY) || IS_ENABLED(CONFIG_CMD_HASH) || \
 	CONFIG_IS_ENABLED(SHA384) || CONFIG_IS_ENABLED(SHA512) || \
-	IS_ENABLED(CONFIG_CMD_MD5SUM) || CONFIG_IS_ENABLED(SM3)
-#define multi_hash()	1
-#else
-#define multi_hash()	0
-#endif
+	IS_ENABLED(CONFIG_CMD_MD5_جوڙ) || CONFIG_IS_ENABLED(SM3)
+#وصف_ڪريو multi_hash()	1
+#وإلا
+#وصف_ڪريو multi_hash()	0
+#جيڪڏهن_پورو
 
-int hash_lookup_algo(const char *algo_name, struct hash_algo **algop)
+صحيح hash_lookup_algo(ثابت حرف *algo_name, بنية hash_algo **algop)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < ARRAY_SIZE(hash_algo); i++) {
-		if (!strcmp(algo_name, hash_algo[i].name)) {
+	لكل (i = 0; i < ARRAY_سائيز(hash_algo); i++) {
+		إذا (!strcmp(algo_name, hash_algo[i].name)) {
 			*algop = &hash_algo[i];
-			return 0;
+			أرجع 0;
 		}
 	}
 
 	debug("Unknown hash algorithm '%s'\n", algo_name);
-	return -EPROTONOSUPPORT;
+	أرجع -EPROTONOSUPPORT;
 }
 
-int hash_progressive_lookup_algo(const char *algo_name,
-				 struct hash_algo **algop)
+صحيح hash_progressive_lookup_algo(ثابت حرف *algo_name,
+				 بنية hash_algo **algop)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < ARRAY_SIZE(hash_algo); i++) {
-		if (!strcmp(algo_name, hash_algo[i].name)) {
-			if (hash_algo[i].hash_init) {
+	لكل (i = 0; i < ARRAY_سائيز(hash_algo); i++) {
+		إذا (!strcmp(algo_name, hash_algo[i].name)) {
+			إذا (hash_algo[i].hash_init) {
 				*algop = &hash_algo[i];
-				return 0;
+				أرجع 0;
 			}
 		}
 	}
 
 	debug("Unknown hash algorithm '%s'\n", algo_name);
-	return -EPROTONOSUPPORT;
+	أرجع -EPROTONOSUPPORT;
 }
 
-#ifndef USE_HOSTCC
-int hash_parse_string(const char *algo_name, const char *str, uint8_t *result)
+#جيڪڏهن_وصف_نه_ٿيل USE_HOSTCC
+صحيح hash_parse_string(ثابت حرف *algo_name, ثابت حرف *str, uint8_t *نتيجو)
 {
-	struct hash_algo *algo;
-	int ret;
-	int i;
+	بنية hash_algo *algo;
+	صحيح ret;
+	صحيح i;
 
 	ret = hash_lookup_algo(algo_name, &algo);
-	if (ret)
-		return ret;
+	إذا (ret)
+		أرجع ret;
 
-	for (i = 0; i < algo->digest_size; i++) {
-		char chr[3];
+	لكل (i = 0; i < algo->digest_سائيز; i++) {
+		حرف chr[3];
 
 		strlcpy(chr, &str[i * 2], 3);
-		result[i] = hextoul(chr, NULL);
+		نتيجو[i] = hextoul(chr, عدم);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-int hash_block(const char *algo_name, const void *data, unsigned int len,
-	       uint8_t *output, int *output_size)
+صحيح hash_بلاڪ(ثابت حرف *algo_name, ثابت فراغ *معلومات, بنانشان صحيح len,
+	       uint8_t *output, صحيح *output_سائيز)
 {
-	struct hash_algo *algo;
-	int ret;
+	بنية hash_algo *algo;
+	صحيح ret;
 
 	ret = hash_lookup_algo(algo_name, &algo);
-	if (ret)
-		return ret;
+	إذا (ret)
+		أرجع ret;
 
-	if (output_size && *output_size < algo->digest_size) {
+	إذا (output_سائيز && *output_سائيز < algo->digest_سائيز) {
 		debug("Output buffer size %d too small (need %d bytes)",
-		      *output_size, algo->digest_size);
-		return -ENOSPC;
+		      *output_سائيز, algo->digest_سائيز);
+		أرجع -ENOSPC;
 	}
-	if (output_size)
-		*output_size = algo->digest_size;
-	algo->hash_func_ws(data, len, output, algo->chunk_size);
+	إذا (output_سائيز)
+		*output_سائيز = algo->digest_سائيز;
+	algo->hash_func_ws(معلومات, len, output, algo->chunk_سائيز);
 
-	return 0;
+	أرجع 0;
 }
 
-#if !defined(CONFIG_XPL_BUILD) && (defined(CONFIG_CMD_HASH) || \
-	defined(CONFIG_CMD_SHA1SUM) || defined(CONFIG_CMD_CRC32)) || \
-	defined(CONFIG_CMD_MD5SUM)
+#إذا !defined(CONFIG_XPL_BUILD) && (defined(CONFIG_CMD_HASH) || \
+	defined(CONFIG_CMD_SHA1_جوڙ) || defined(CONFIG_CMD_چڪري_جاچ_32)) || \
+	defined(CONFIG_CMD_MD5_جوڙ)
 /**
  * store_result: Store the resulting sum to an address or variable
  *
@@ -472,11 +472,11 @@ int hash_block(const char *algo_name, const void *data, unsigned int len,
  * @allow_env_vars:	non-zero to permit storing the result to an
  *			variable environment
  */
-static void store_result(struct hash_algo *algo, const uint8_t *sum,
-			 const char *dest, int allow_env_vars)
+ساكن فراغ store_نتيجو(بنية hash_algo *algo, ثابت uint8_t *جوڙ,
+			 ثابت حرف *dest, صحيح allow_env_vars)
 {
-	unsigned int i;
-	int env_var = 0;
+	بنانشان صحيح i;
+	صحيح env_var = 0;
 
 	/*
 	 * If environment variables are allowed, then we assume that 'dest'
@@ -484,30 +484,30 @@ static void store_result(struct hash_algo *algo, const uint8_t *sum,
 	 * case we assume it is an address. If not allowed, it is always an
 	 * address. This is to support the crc32 command.
 	 */
-	if (allow_env_vars) {
-		if (*dest == '*')
+	إذا (allow_env_vars) {
+		إذا (*dest == '*')
 			dest++;
-		else
+		وإلا
 			env_var = 1;
 	}
 
-	if (env_var) {
-		char str_output[HASH_MAX_DIGEST_SIZE * 2 + 1];
-		char *str_ptr = str_output;
+	إذا (env_var) {
+		حرف str_output[HASH_MAX_DIGEST_سائيز * 2 + 1];
+		حرف *str_ptr = str_output;
 
-		for (i = 0; i < algo->digest_size; i++) {
-			sprintf(str_ptr, "%02x", sum[i]);
+		لكل (i = 0; i < algo->digest_سائيز; i++) {
+			sprintf(str_ptr, "%02x", جوڙ[i]);
 			str_ptr += 2;
 		}
 		*str_ptr = '\0';
-		env_set(dest, str_output);
-	} else {
+		env_سيٽ(dest, str_output);
+	} وإلا {
 		ulong addr;
-		void *buf;
+		فراغ *buf;
 
-		addr = hextoul(dest, NULL);
-		buf = map_sysmem(addr, algo->digest_size);
-		memcpy(buf, sum, algo->digest_size);
+		addr = hextoul(dest, عدم);
+		buf = map_sysmem(addr, algo->digest_سائيز);
+		يادگيري_نقل(buf, جوڙ, algo->digest_سائيز);
 		unmap_sysmem(buf);
 	}
 }
@@ -528,170 +528,170 @@ static void store_result(struct hash_algo *algo, const uint8_t *sum,
  *			address, and the * prefix is not expected.
  * Return: 0 if ok, non-zero on error
  */
-static int parse_verify_sum(struct hash_algo *algo, char *verify_str,
-			    uint8_t *vsum, int allow_env_vars)
+ساكن صحيح parse_verify_جوڙ(بنية hash_algo *algo, حرف *verify_str,
+			    uint8_t *vsum, صحيح allow_env_vars)
 {
-	int env_var = 0;
+	صحيح env_var = 0;
 
 	/* See comment above in store_result() */
-	if (allow_env_vars) {
-		if (*verify_str == '*')
+	إذا (allow_env_vars) {
+		إذا (*verify_str == '*')
 			verify_str++;
-		else
+		وإلا
 			env_var = 1;
 	}
 
-	if (!env_var) {
+	إذا (!env_var) {
 		ulong addr;
-		void *buf;
+		فراغ *buf;
 
-		addr = hextoul(verify_str, NULL);
-		buf = map_sysmem(addr, algo->digest_size);
-		memcpy(vsum, buf, algo->digest_size);
-	} else {
-		char *vsum_str;
-		int digits = algo->digest_size * 2;
+		addr = hextoul(verify_str, عدم);
+		buf = map_sysmem(addr, algo->digest_سائيز);
+		يادگيري_نقل(vsum, buf, algo->digest_سائيز);
+	} وإلا {
+		حرف *vsum_str;
+		صحيح digits = algo->digest_سائيز * 2;
 
 		/*
 		 * As with the original code from sha1sum.c, we assume that a
 		 * string which matches the digest size exactly is a hex
 		 * string and not an environment variable.
 		 */
-		if (strlen(verify_str) == digits)
+		إذا (لڙي_ڊيگهه(verify_str) == digits)
 			vsum_str = verify_str;
-		else {
+		وإلا {
 			vsum_str = env_get(verify_str);
-			if (vsum_str == NULL || strlen(vsum_str) != digits) {
-				printf("Expected %d hex digits in env var\n",
+			إذا (vsum_str == عدم || لڙي_ڊيگهه(vsum_str) != digits) {
+				لکو("Expected %d hex digits in env var\n",
 				       digits);
-				return 1;
+				أرجع 1;
 			}
 		}
 
 		hash_parse_string(algo->name, vsum_str, vsum);
 	}
-	return 0;
+	أرجع 0;
 }
 
-static void hash_show(struct hash_algo *algo, ulong addr, ulong len, uint8_t *output)
+ساكن فراغ hash_show(بنية hash_algo *algo, ulong addr, ulong len, uint8_t *output)
 {
-	int i;
+	صحيح i;
 
-	printf("%s for %08lx ... %08lx ==> ", algo->name, addr, addr + len - 1);
-	for (i = 0; i < algo->digest_size; i++)
-		printf("%02x", output[i]);
+	لکو("%s for %08lx ... %08lx ==> ", algo->name, addr, addr + len - 1);
+	لكل (i = 0; i < algo->digest_سائيز; i++)
+		لکو("%02x", output[i]);
 }
 
-int hash_command(const char *algo_name, int flags, struct cmd_tbl *cmdtp,
-		 int flag, int argc, char *const argv[])
+صحيح hash_command(ثابت حرف *algo_name, صحيح flags, بنية cmd_tbl *cmdtp,
+		 صحيح flag, صحيح argc, حرف *ثابت argv[])
 {
 	ulong addr, len;
 
-	if ((argc < 2) || ((flags & HASH_FLAG_VERIFY) && (argc < 3)))
-		return CMD_RET_USAGE;
+	إذا ((argc < 2) || ((flags & HASH_FLAG_VERIFY) && (argc < 3)))
+		أرجع CMD_RET_USAGE;
 
-	addr = hextoul(*argv++, NULL);
-	len = hextoul(*argv++, NULL);
+	addr = hextoul(*argv++, عدم);
+	len = hextoul(*argv++, عدم);
 
-	if (multi_hash()) {
-		struct hash_algo *algo;
+	إذا (multi_hash()) {
+		بنية hash_algo *algo;
 		u8 *output;
-		uint8_t vsum[HASH_MAX_DIGEST_SIZE];
-		void *buf;
+		uint8_t vsum[HASH_MAX_DIGEST_سائيز];
+		فراغ *buf;
 
-		if (hash_lookup_algo(algo_name, &algo)) {
-			printf("Unknown hash algorithm '%s'\n", algo_name);
-			return CMD_RET_USAGE;
+		إذا (hash_lookup_algo(algo_name, &algo)) {
+			لکو("Unknown hash algorithm '%s'\n", algo_name);
+			أرجع CMD_RET_USAGE;
 		}
 		argc -= 2;
 
-		if (algo->digest_size > HASH_MAX_DIGEST_SIZE) {
+		إذا (algo->digest_سائيز > HASH_MAX_DIGEST_سائيز) {
 			puts("HASH_MAX_DIGEST_SIZE exceeded\n");
-			return 1;
+			أرجع 1;
 		}
 
 		output = memalign(ARCH_DMA_MINALIGN,
-				  sizeof(uint32_t) * HASH_MAX_DIGEST_SIZE);
-		if (!output)
-			return CMD_RET_FAILURE;
+				  حجم(uint32_t) * HASH_MAX_DIGEST_سائيز);
+		إذا (!output)
+			أرجع CMD_RET_FAILURE;
 
 		buf = map_sysmem(addr, len);
-		if (CONFIG_IS_ENABLED(DM_HASH)) {
-			enum HASH_ALGO hash_algo;
-			int ret;
+		إذا (CONFIG_IS_ENABLED(DM_HASH)) {
+			تعداد HASH_ALGO hash_algo;
+			صحيح ret;
 
 			hash_algo = hash_algo_lookup_by_name(algo_name);
-			if (hash_algo != HASH_ALGO_INVALID) {
+			إذا (hash_algo != HASH_ALGO_INVALID) {
 				ret = hash_digest_wd_lookup(hash_algo, buf, len,
 							    output,
-							    algo->chunk_size);
-				if (ret && ret != -ENODEV && ret != -EOPNOTSUPP) {
+							    algo->chunk_سائيز);
+				إذا (ret && ret != -ENODEV && ret != -EOPNOTSUPP) {
 					unmap_sysmem(buf);
-					free(output);
-					return CMD_RET_FAILURE;
+					حرر(output);
+					أرجع CMD_RET_FAILURE;
 				}
-				if (!ret)
-					goto done;
+				إذا (!ret)
+					اذهب پورو;
 			}
 		}
-		algo->hash_func_ws(buf, len, output, algo->chunk_size);
-done:
+		algo->hash_func_ws(buf, len, output, algo->chunk_سائيز);
+پورو:
 		unmap_sysmem(buf);
 
 		/* Try to avoid code bloat when verify is not needed */
-#if defined(CONFIG_CRC32_VERIFY) || defined(CONFIG_SHA1SUM_VERIFY) || \
-	defined(CONFIG_MD5SUM_VERIFY) || defined(CONFIG_HASH_VERIFY)
-		if (flags & HASH_FLAG_VERIFY) {
-#else
-		if (0) {
-#endif
-			if (parse_verify_sum(algo, *argv, vsum,
+#إذا defined(CONFIG_چڪري_جاچ_32_VERIFY) || defined(CONFIG_SHA1_جوڙ_VERIFY) || \
+	defined(CONFIG_MD5_جوڙ_VERIFY) || defined(CONFIG_HASH_VERIFY)
+		إذا (flags & HASH_FLAG_VERIFY) {
+#وإلا
+		إذا (0) {
+#جيڪڏهن_پورو
+			إذا (parse_verify_جوڙ(algo, *argv, vsum,
 					flags & HASH_FLAG_ENV)) {
-				printf("ERROR: %s does not contain a valid "
+				لکو("ERROR: %s does not contain a valid "
 					"%s sum\n", *argv, algo->name);
-				free(output);
-				return 1;
+				حرر(output);
+				أرجع 1;
 			}
-			if (memcmp(output, vsum, algo->digest_size) != 0) {
-				int i;
+			إذا (memcmp(output, vsum, algo->digest_سائيز) != 0) {
+				صحيح i;
 
 				hash_show(algo, addr, len, output);
-				printf(" != ");
-				for (i = 0; i < algo->digest_size; i++)
-					printf("%02x", vsum[i]);
+				لکو(" != ");
+				لكل (i = 0; i < algo->digest_سائيز; i++)
+					لکو("%02x", vsum[i]);
 				puts(" ** ERROR **\n");
-				free(output);
-				return 1;
+				حرر(output);
+				أرجع 1;
 			}
-		} else {
+		} وإلا {
 			hash_show(algo, addr, len, output);
-			printf("\n");
+			لکو("\n");
 
-			if (argc) {
-				store_result(algo, output, *argv,
+			إذا (argc) {
+				store_نتيجو(algo, output, *argv,
 					flags & HASH_FLAG_ENV);
 			}
 		}
 
-		free(output);
+		حرر(output);
 
 	/* Horrible code size hack for boards that just want crc32 */
-	} else {
-		ulong crc;
+	} وإلا {
+		ulong چڪري_جاچ;
 		ulong *ptr;
 
-		crc = crc32_wd(0, (const uchar *)addr, len, CHUNKSZ_CRC32);
+		چڪري_جاچ = چڪري_جاچ_32_wd(0, (ثابت uchar *)addr, len, CHUNKSZ_چڪري_جاچ_32);
 
-		printf("CRC32 for %08lx ... %08lx ==> %08lx\n",
-				addr, addr + len - 1, crc);
+		لکو("CRC32 for %08lx ... %08lx ==> %08lx\n",
+				addr, addr + len - 1, چڪري_جاچ);
 
-		if (argc >= 3) {
-			ptr = (ulong *)hextoul(argv[0], NULL);
-			*ptr = crc;
+		إذا (argc >= 3) {
+			ptr = (ulong *)hextoul(argv[0], عدم);
+			*ptr = چڪري_جاچ;
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
-#endif /* CONFIG_CMD_HASH || CONFIG_CMD_SHA1SUM || CONFIG_CMD_CRC32) */
-#endif /* !USE_HOSTCC */
+#جيڪڏهن_پورو /* CONFIG_CMD_HASH || CONFIG_CMD_SHA1SUM || CONFIG_CMD_CRC32) */
+#جيڪڏهن_پورو /* !USE_HOSTCC */

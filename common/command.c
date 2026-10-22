@@ -8,223 +8,223 @@
  *  Command Processor Table
  */
 
-#include <config.h>
-#include <compiler.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/ctype.h>
+#ضمن <config.h>
+#ضمن <compiler.h>
+#ضمن <command.h>
+#ضمن <console.h>
+#ضمن <env.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <mapmem.h>
+#ضمن <time.h>
+#ضمن <asm/global_data.h>
+#ضمن <linux/ctype.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_معلومات_PTR;
 
 /*
  * Use puts() instead of printf() to avoid printf buffer overflow
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+صحيح _do_help(بنية cmd_tbl *cmd_شروعات, صحيح cmd_شيون, بنية cmd_tbl *cmdtp,
+	     صحيح flag, صحيح argc, حرف *ثابت argv[])
 {
-	int i;
-	int rcode = 0;
+	صحيح i;
+	صحيح rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+	إذا (argc == 1) {	/* show list of commands */
+		بنية cmd_tbl *cmd_array[cmd_شيون];
+		صحيح i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
-		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		cmdtp = cmd_شروعات;
+		لكل (i = 0; i < cmd_شيون; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		لكل (i = cmd_شيون - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			لكل (j = 0; j < i; ++j) {
+				إذا (strcmp(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
-					struct cmd_tbl *tmp;
+					بنية cmd_tbl *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
 					cmd_array[j + 1] = tmp;
 					++swaps;
 				}
 			}
-			if (!swaps)
-				break;
+			إذا (!swaps)
+				اكسر;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
-			const char *usage = cmd_array[i]->usage;
+		لكل (i = 0; i < cmd_شيون; i++) {
+			ثابت حرف *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
-				continue;
-			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
+			إذا (ctrlc())
+				أرجع 1;
+			إذا (usage == عدم)
+				استمر;
+			لکو("%-*s- %s\n", CFG_SYS_HELP_CMD_ويڪر,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		أرجع 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+	لكل (i = 1; i < argc; ++i) {
+		cmdtp = ڳوليو_cmd_tbl(argv[i], cmd_شروعات, cmd_شيون);
+		إذا (cmdtp != عدم) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
-			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
+		} وإلا {
+			لکو("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	أرجع rcode;
 }
 
 /* find command table entry for a command */
-struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+بنية cmd_tbl *ڳوليو_cmd_tbl(ثابت حرف *cmd, بنية cmd_tbl *جدول,
+			     صحيح جدول_len)
 {
-#ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
-	const char *p;
-	int len;
-	int n_found = 0;
+#جيڪڏهن_وصف_ٿيل CONFIG_CMDLINE
+	بنية cmd_tbl *cmdtp;
+	بنية cmd_tbl *cmdtp_عارضي = جدول;	/* Init value */
+	ثابت حرف *p;
+	صحيح len;
+	صحيح n_مليو = 0;
 
-	if (!cmd)
-		return NULL;
+	إذا (!cmd)
+		أرجع عدم;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == عدم) ? لڙي_ڊيگهه (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	لكل (cmdtp = جدول; cmdtp != جدول + جدول_len; cmdtp++) {
+		إذا (لڙي_ڀيٽ(cmd, cmdtp->name, len) == 0) {
+			إذا (len == لڙي_ڊيگهه(cmdtp->name))
+				أرجع cmdtp;	/* full match */
 
-			cmdtp_temp = cmdtp;	/* abbreviated command ? */
-			n_found++;
+			cmdtp_عارضي = cmdtp;	/* abbreviated command ? */
+			n_مليو++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	إذا (n_مليو == 1) {			/* exactly one match */
+		أرجع cmdtp_عارضي;
 	}
-#endif /* CONFIG_CMDLINE */
+#جيڪڏهن_پورو /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	أرجع عدم;	/* not found or ambiguous command */
 }
 
-struct cmd_tbl *find_cmd(const char *cmd)
+بنية cmd_tbl *ڳوليو_cmd(ثابت حرف *cmd)
 {
-	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	بنية cmd_tbl *شروعات = ll_داخلا_شروعات(بنية cmd_tbl, cmd);
+	ثابت صحيح len = ll_داخلا_ڳڻپ(بنية cmd_tbl, cmd);
+	أرجع ڳوليو_cmd_tbl(cmd, شروعات, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+صحيح cmd_usage(ثابت بنية cmd_tbl *cmdtp)
 {
-	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
+	لکو("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
-#ifdef	CONFIG_SYS_LONGHELP
-	printf("Usage:\n%s ", cmdtp->name);
+#جيڪڏهن_وصف_ٿيل	CONFIG_SYS_LONGHELP
+	لکو("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
+	إذا (!cmdtp->help) {
 		puts ("- No additional help available.\n");
-		return 1;
+		أرجع 1;
 	}
 
 	puts(cmdtp->help);
 	putc('\n');
-#endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+#جيڪڏهن_پورو	/* CONFIG_SYS_LONGHELP */
+	أرجع 1;
 }
 
-#ifdef CONFIG_AUTO_COMPLETE
-static char env_complete_buf[512];
+#جيڪڏهن_وصف_ٿيل CONFIG_AUTO_COMPLETE
+ساكن حرف env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
-		 char *cmdv[])
+صحيح var_complete(صحيح argc, حرف *ثابت argv[], حرف آخري_char, صحيح maxv,
+		 حرف *cmdv[])
 {
-	int space;
+	صحيح space;
 
-	space = last_char == '\0' || isblank(last_char);
+	space = آخري_char == '\0' || isblank(آخري_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	إذا (space && argc == 1)
+		أرجع env_complete("", maxv, cmdv, حجم(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
-				    sizeof(env_complete_buf),
+	إذا (!space && argc == 2)
+		أرجع env_complete(argv[1], maxv, cmdv,
+				    حجم(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	أرجع 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+ساكن صحيح dollar_complete(صحيح argc, حرف *ثابت argv[], حرف آخري_char,
+			   صحيح maxv, حرف *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
-	    last_char == '\0' || isblank(last_char))
-		return 0;
+	إذا (argc < 1 || argv[argc - 1][0] != '$' ||
+	    آخري_char == '\0' || isblank(آخري_char))
+		أرجع 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	أرجع env_complete(argv[argc - 1], maxv, cmdv, حجم(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
-		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+صحيح complete_subcmdv(بنية cmd_tbl *cmdtp, صحيح ڳڻپ, صحيح argc,
+		     حرف *ثابت argv[], حرف آخري_char,
+		     صحيح maxv, حرف *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
-	const char *p;
-	int len, clen;
-	int n_found = 0;
-	const char *cmd;
+#جيڪڏهن_وصف_ٿيل CONFIG_CMDLINE
+	ثابت بنية cmd_tbl *cmdend = cmdtp + ڳڻپ;
+	ثابت حرف *p;
+	صحيح len, clen;
+	صحيح n_مليو = 0;
+	ثابت حرف *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	إذا (maxv < 2)
+		أرجع -2;
 
-	cmdv[0] = NULL;
+	cmdv[0] = عدم;
 
-	if (argc == 0) {
+	إذا (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
-				cmdv[n_found++] = "...";
-				break;
+		لكل (; cmdtp != cmdend; cmdtp++) {
+			إذا (n_مليو >= maxv - 2) {
+				cmdv[n_مليو++] = "...";
+				اكسر;
 			}
-			cmdv[n_found++] = cmdtp->name;
+			cmdv[n_مليو++] = cmdtp->name;
 		}
-		cmdv[n_found] = NULL;
-		return n_found;
+		cmdv[n_مليو] = عدم;
+		أرجع n_مليو;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
-			cmdv[0] = NULL;
-			return 0;
+	إذا (argc > 1 || آخري_char == '\0' || isblank(آخري_char)) {
+		cmdtp = ڳوليو_cmd_tbl(argv[0], cmdtp, ڳڻپ);
+		إذا (cmdtp == عدم || cmdtp->complete == عدم) {
+			cmdv[0] = عدم;
+			أرجع 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		أرجع (*cmdtp->complete)(argc, argv, آخري_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,337 +233,337 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
-		len = strlen(cmd);
-	else
+	إذا (p == عدم)
+		len = لڙي_ڊيگهه(cmd);
+	وإلا
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	لكل (; cmdtp != cmdend; cmdtp++) {
 
-		clen = strlen(cmdtp->name);
-		if (clen < len)
-			continue;
+		clen = لڙي_ڊيگهه(cmdtp->name);
+		إذا (clen < len)
+			استمر;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
-			continue;
+		إذا (memcmp(cmd, cmdtp->name, len) != 0)
+			استمر;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
-			cmdv[n_found++] = "...";
-			break;
+		إذا (n_مليو >= maxv - 2) {
+			cmdv[n_مليو++] = "...";
+			اكسر;
 		}
 
-		cmdv[n_found++] = cmdtp->name;
+		cmdv[n_مليو++] = cmdtp->name;
 	}
 
-	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
-#endif
+	cmdv[n_مليو] = عدم;
+	أرجع n_مليو;
+#وإلا
+	أرجع 0;
+#جيڪڏهن_پورو
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+ساكن صحيح complete_cmdv(صحيح argc, حرف *ثابت argv[], حرف آخري_char,
+			 صحيح maxv, حرف *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
-				last_char, maxv, cmdv);
-#else
-	return 0;
-#endif
+#جيڪڏهن_وصف_ٿيل CONFIG_CMDLINE
+	أرجع complete_subcmdv(ll_داخلا_شروعات(بنية cmd_tbl, cmd),
+				ll_داخلا_ڳڻپ(بنية cmd_tbl, cmd), argc, argv,
+				آخري_char, maxv, cmdv);
+#وإلا
+	أرجع 0;
+#جيڪڏهن_پورو
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+ساكن صحيح make_argv(حرف *s, صحيح argvsz, حرف *argv[])
 {
-	int argc = 0;
+	صحيح argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	طالما (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		طالما (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
-			break;
+		إذا (*s == '\0')	/* end of s, no more args	*/
+			اكسر;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		طالما (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
-			break;
+		إذا (*s == '\0')		/* end of s, no more args	*/
+			اكسر;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
-	argv[argc] = NULL;
+	argv[argc] = عدم;
 
-	return argc;
+	أرجع argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+ساكن فراغ print_argv(ثابت حرف *banner, ثابت حرف *leader, ثابت حرف *sep,
+		       صحيح linemax, حرف *ثابت argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	صحيح ll = leader != عدم ? لڙي_ڊيگهه(leader) : 0;
+	صحيح sl = sep != عدم ? لڙي_ڊيگهه(sep) : 0;
+	صحيح len, i;
 
-	if (banner) {
+	إذا (banner) {
 		puts("\n");
 		puts(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
-		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
+	طالما (*argv != عدم) {
+		len = لڙي_ڊيگهه(*argv) + sl;
+		إذا (i + len >= linemax) {
 			puts("\n");
-			if (leader)
+			إذا (leader)
 				puts(leader);
 			i = ll - sl;
-		} else if (sep)
+		} وإلا إذا (sep)
 			puts(sep);
 		puts(*argv++);
 		i += len;
 	}
-	printf("\n");
+	لکو("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+ساكن صحيح ڳوليو_common_اڳياڙي(حرف *ثابت argv[])
 {
-	int i, len;
-	char *anchor, *s, *t;
+	صحيح i, len;
+	حرف *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	إذا (*argv == عدم)
+		أرجع 0;
 
 	/* begin with max */
 	anchor = *argv++;
-	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	len = لڙي_ڊيگهه(anchor);
+	طالما ((t = *argv++) != عدم) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
-				break;
+		لكل (i = 0; i < len; i++, t++, s++) {
+			إذا (*t != *s)
+				اكسر;
 		}
 		len = s - anchor;
 	}
-	return len;
+	أرجع len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+صحيح cmd_auto_complete(ثابت حرف *ثابت prompt, حرف *buf, صحيح *np, صحيح *colp)
 {
-	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
-	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
-	char *cmdv[20];
-	char *s, *t;
-	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
-	char last_char;
-	const char *ps_prompt;
+	حرف tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
+	صحيح n = *np, کانو = *colp;
+	حرف *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
+	حرف *cmdv[20];
+	حرف *s, *t;
+	ثابت حرف *sep;
+	صحيح i, j, k, len, seplen, argc;
+	صحيح cnt;
+	حرف آخري_char;
+	ثابت حرف *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	إذا (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		إذا (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} وإلا
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	إذا (strcmp(prompt, ps_prompt) != 0)
+		أرجع 0;	/* not in normal console */
 
-	cnt = strlen(buf);
-	if (cnt >= 1)
-		last_char = buf[cnt - 1];
-	else
-		last_char = '\0';
+	cnt = لڙي_ڊيگهه(buf);
+	إذا (cnt >= 1)
+		آخري_char = buf[cnt - 1];
+	وإلا
+		آخري_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
 	strcpy(tmp_buf, buf);
 
 	/* separate into argv */
-	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);
+	argc = make_argv(tmp_buf, حجم(argv)/حجم(argv[0]), argv);
 
 	/* first try a $ completion */
-	i = dollar_complete(argc, argv, last_char,
-			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+	i = dollar_complete(argc, argv, آخري_char,
+			    حجم(cmdv) / حجم(cmdv[0]), cmdv);
+	إذا (!i) {
 		/* do the completion and return the possible completions */
-		i = complete_cmdv(argc, argv, last_char,
-				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
+		i = complete_cmdv(argc, argv, آخري_char,
+				  حجم(cmdv) / حجم(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	إذا (i == 0) {
+		إذا (argc > 1)	/* allow tab for non command */
+			أرجع 0;
 		putc('\a');
-		return 1;
+		أرجع 1;
 	}
 
-	s = NULL;
+	s = عدم;
 	len = 0;
-	sep = NULL;
+	sep = عدم;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	إذا (i == 1) { /* one match; perfect */
+		إذا (آخري_char != '\0' && !isblank(آخري_char))
+			k = لڙي_ڊيگهه(argv[argc - 1]);
+		وإلا
 			k = 0;
 
 		s = cmdv[0] + k;
-		len = strlen(s);
+		len = لڙي_ڊيگهه(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	} وإلا إذا (i > 1 && (j = ڳوليو_common_اڳياڙي(cmdv)) != 0) { /*وڌيڪ*/
+		إذا (آخري_char != '\0' && !isblank(آخري_char))
+			k = لڙي_ڊيگهه(argv[argc - 1]);
+		وإلا
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		إذا (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	إذا (s != عدم) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		إذا (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			أرجع 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		لكل (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		إذا (sep != عدم)
+			لكل (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
-		col += k;
+		کانو += k;
 		puts(t - k);
-		if (sep == NULL)
+		إذا (sep == عدم)
 			putc('\a');
 		*np = n;
-		*colp = col;
-	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+		*colp = کانو;
+	} وإلا {
+		print_argv(عدم, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);
 	}
-	return 1;
+	أرجع 1;
 }
 
-#endif
+#جيڪڏهن_پورو
 
-#ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+#جيڪڏهن_وصف_ٿيل CMD_معلومات_سائيز
+صحيح cmd_get_معلومات_سائيز(ثابت حرف *arg, صحيح default_سائيز)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
-		switch (arg[len-1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return CMD_DATA_SIZE_STR;
-		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+	صحيح len = لڙي_ڊيگهه(arg);
+	إذا (len >= 2 && arg[len-2] == '.') {
+		بدل (arg[len-1]) {
+		حالة 'b':
+			أرجع 1;
+		حالة 'w':
+			أرجع 2;
+		حالة 'l':
+			أرجع 4;
+		حالة 's':
+			أرجع CMD_معلومات_سائيز_STR;
+		حالة 'q':
+			إذا (MEM_SUPPORT_64_ٻٽو_انگ_معلومات)
+				أرجع 8;
 			fallthrough;
-		default:
-			return CMD_DATA_SIZE_ERR;
+		افتراضي:
+			أرجع CMD_معلومات_سائيز_ERR;
 		}
 	}
-	return default_size;
+	أرجع default_سائيز;
 }
-#endif
+#جيڪڏهن_پورو
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+فراغ fixup_cmdtable(بنية cmd_tbl *cmdtp, صحيح سائيز)
 {
-	int	i;
+	صحيح	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	إذا (gd->reloc_off == 0)
+		أرجع;
 
-	for (i = 0; i < size; i++) {
+	لكل (i = 0; i < سائيز; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(صحيح (*)(بنية cmd_tbl *, صحيح, صحيح,
+				 حرف * ثابت [], صحيح *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
-#ifdef DEBUG_COMMANDS
-		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
+#جيڪڏهن_وصف_ٿيل DEBUG_COMMANDS
+		لکو("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
-#endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
-				      char *const []))addr;
+#جيڪڏهن_پورو
+		cmdtp->cmd = (صحيح (*)(بنية cmd_tbl *, صحيح, صحيح,
+				      حرف *ثابت []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		cmdtp->name = (حرف *)addr;
+		إذا (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
+			cmdtp->usage = (حرف *)addr;
 		}
-#ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+#جيڪڏهن_وصف_ٿيل	CONFIG_SYS_LONGHELP
+		إذا (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
+			cmdtp->help = (حرف *)addr;
 		}
-#endif
-#ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل CONFIG_AUTO_COMPLETE
+		إذا (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(صحيح (*)(صحيح, حرف * ثابت [], حرف, صحيح, حرف * []))addr;
 		}
-#endif
+#جيڪڏهن_پورو
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+صحيح cmd_always_repeatable(بنية cmd_tbl *cmdtp, صحيح flag, صحيح argc,
+			  حرف *ثابت argv[], صحيح *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	أرجع cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+صحيح cmd_never_repeatable(بنية cmd_tbl *cmdtp, صحيح flag, صحيح argc,
+			 حرف *ثابت argv[], صحيح *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	أرجع cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			   char *const argv[])
+صحيح cmd_discard_repeatable(بنية cmd_tbl *cmdtp, صحيح flag, صحيح argc,
+			   حرف *ثابت argv[])
 {
-	int repeatable;
+	صحيح repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	أرجع cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,102 +578,102 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+ساكن صحيح cmd_call(بنية cmd_tbl *cmdtp, صحيح flag, صحيح argc,
+		    حرف *ثابت argv[], صحيح *repeatable)
 {
-	int result;
+	صحيح نتيجو;
 
-	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
-		debug("Command failed, result=%d\n", result);
-	return result;
+	نتيجو = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
+	إذا (نتيجو)
+		debug("Command failed, result=%d\n", نتيجو);
+	أرجع نتيجو;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+تعداد command_ret_t cmd_process(صحيح flag, صحيح argc, حرف *ثابت argv[],
+			       صحيح *repeatable, ulong *ticks)
 {
-	enum command_ret_t rc = CMD_RET_SUCCESS;
-	struct cmd_tbl *cmdtp;
+	تعداد command_ret_t rc = CMD_RET_SUCCESS;
+	بنية cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
-	char *xtrace;
+#إذا defined(CONFIG_SYS_XTRACE)
+	حرف *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
+	إذا (xtrace) {
 		puts("+");
-		for (int i = 0; i < argc; i++) {
+		لكل (صحيح i = 0; i < argc; i++) {
 			puts(" ");
 			puts(argv[i]);
 		}
 		puts("\n");
 	}
-#endif
+#جيڪڏهن_پورو
 
 	/* Look up command in command table */
-	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
-		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+	cmdtp = ڳوليو_cmd(argv[0]);
+	إذا (cmdtp == عدم) {
+		لکو("Unknown command '%s' - try 'help'\n", argv[0]);
+		أرجع 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	إذا (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#إذا defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
+	وإلا إذا (cmdtp->cmd == do_bootd) {
+		إذا (flag & CMD_FLAG_BOOTD) {
 			puts("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} وإلا {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
-#endif
+#جيڪڏهن_پورو
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	إذا (!rc) {
+		صحيح newrep;
 
-		if (ticks)
+		إذا (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		إذا (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	إذا (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	أرجع rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+صحيح cmd_process_error(بنية cmd_tbl *cmdtp, صحيح err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	إذا (err == CMD_RET_USAGE)
+		أرجع CMD_RET_USAGE;
 
-	if (err) {
-		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+	إذا (err) {
+		لکو("Command '%s' failed: Error %d\n", cmdtp->name, err);
+		أرجع CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	أرجع CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+صحيح cmd_ذريعو_script(ulong addr, ثابت حرف *fit_uname, ثابت حرف *confname)
 {
-	char *data;
-	void *buf;
+	حرف *معلومات;
+	فراغ *buf;
 	uint len;
-	int ret;
+	صحيح ret;
 
 	buf = map_sysmem(addr, 0);
-	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
+	ret = image_locate_script(buf, 0, fit_uname, confname, &معلومات, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	إذا (ret)
+		أرجع CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	أرجع لاڳيتو_command_list(معلومات, len, 0);
 }

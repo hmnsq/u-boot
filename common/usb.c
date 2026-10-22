@@ -25,92 +25,92 @@
  *
  * For each transfer (except "Interrupt") we wait for completion.
  */
-#include <command.h>
-#include <dm.h>
-#include <dm/device_compat.h>
-#include <env.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <asm/processor.h>
-#include <linux/compiler.h>
-#include <linux/ctype.h>
-#include <asm/byteorder.h>
-#include <asm/unaligned.h>
-#include <errno.h>
-#include <usb.h>
-#include <linux/delay.h>
+#ضمن <command.h>
+#ضمن <dm.h>
+#ضمن <dm/device_compat.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <malloc.h>
+#ضمن <memalign.h>
+#ضمن <asm/processor.h>
+#ضمن <linux/compiler.h>
+#ضمن <linux/ctype.h>
+#ضمن <asm/byteorder.h>
+#ضمن <asm/unaligned.h>
+#ضمن <errno.h>
+#ضمن <usb.h>
+#ضمن <linux/delay.h>
 
-#define USB_BUFSIZ	512
+#وصف_ڪريو USB_BUFSIZ	512
 
-static int asynch_allowed;
+ساكن صحيح asynch_allowed;
 bool usb_started; /* flag for the started/stopped USB status */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_device usb_dev[USB_MAX_DEVICE];
-static int dev_index;
+#إذا !CONFIG_IS_ENABLED(DM_USB)
+ساكن بنية usb_device usb_dev[USB_MAX_DEVICE];
+ساكن صحيح dev_اشاريو;
 
 /***************************************************************************
  * Init USB Device
  */
-int usb_init(void)
+صحيح usb_init(فراغ)
 {
-	void *ctrl;
-	struct usb_device *dev;
-	int i, start_index = 0;
-	int controllers_initialized = 0;
-	int ret;
+	فراغ *ctrl;
+	بنية usb_device *dev;
+	صحيح i, شروعات_اشاريو = 0;
+	صحيح controllers_initialized = 0;
+	صحيح ret;
 
-	dev_index = 0;
+	dev_اشاريو = 0;
 	asynch_allowed = 1;
 	usb_hub_reset();
 
 	/* first make all devices unknown */
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
-		memset(&usb_dev[i], 0, sizeof(struct usb_device));
+	لكل (i = 0; i < USB_MAX_DEVICE; i++) {
+		memset(&usb_dev[i], 0, حجم(بنية usb_device));
 		usb_dev[i].devnum = -1;
 	}
 
 	/* init low_level USB */
-	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+	لكل (i = 0; i < CONFIG_USB_MAX_CONTROLLER_ڳڻپ; i++) {
 		/* init low_level USB */
-		printf("USB%d:   ", i);
+		لکو("USB%d:   ", i);
 		ret = usb_lowlevel_init(i, USB_INIT_HOST, &ctrl);
-		if (ret == -ENODEV) {	/* No such device. */
+		إذا (ret == -ENODEV) {	/* No such device. */
 			puts("Port not available.\n");
 			controllers_initialized++;
-			continue;
+			استمر;
 		}
 
-		if (ret) {		/* Other error. */
+		إذا (ret) {		/* Other error. */
 			puts("lowlevel init failed\n");
-			continue;
+			استمر;
 		}
 		/*
 		 * lowlevel init is OK, now scan the bus for devices
 		 * i.e. search HUBs and configure them
 		 */
 		controllers_initialized++;
-		start_index = dev_index;
-		printf("scanning bus %d for devices... ", i);
+		شروعات_اشاريو = dev_اشاريو;
+		لکو("scanning bus %d for devices... ", i);
 		ret = usb_alloc_new_device(ctrl, &dev);
-		if (ret)
-			break;
+		إذا (ret)
+			اكسر;
 
 		/*
 		 * device 0 is always present
 		 * (root hub, so let it analyze)
 		 */
 		ret = usb_new_device(dev);
-		if (ret)
+		إذا (ret)
 			usb_free_device(dev->controller);
 
-		if (start_index == dev_index) {
+		إذا (شروعات_اشاريو == dev_اشاريو) {
 			puts("No USB Device found\n");
-			continue;
-		} else {
-			printf("%d USB Device(s) found\n",
-				dev_index - start_index);
+			استمر;
+		} وإلا {
+			لکو("%d USB Device(s) found\n",
+				dev_اشاريو - شروعات_اشاريو);
 		}
 
 		usb_started = 1;
@@ -118,63 +118,63 @@ int usb_init(void)
 
 	debug("scan end\n");
 	/* if we were not able to find at least one working bus, bail out */
-	if (controllers_initialized == 0)
+	إذا (controllers_initialized == 0)
 		puts("USB error: all controllers failed lowlevel init\n");
 
-	return usb_started ? 0 : -ENODEV;
+	أرجع usb_started ? 0 : -ENODEV;
 }
 
 /******************************************************************************
  * Stop USB this stops the LowLevel Part and deregisters USB devices.
  */
-int usb_stop(void)
+صحيح usb_stop(فراغ)
 {
-	int i;
+	صحيح i;
 
-	if (usb_started) {
+	إذا (usb_started) {
 		asynch_allowed = 1;
 		usb_started = 0;
 		usb_hub_reset();
 
-		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
-			if (usb_lowlevel_stop(i))
-				printf("failed to stop USB controller %d\n", i);
+		لكل (i = 0; i < CONFIG_USB_MAX_CONTROLLER_ڳڻپ; i++) {
+			إذا (usb_lowlevel_stop(i))
+				لکو("failed to stop USB controller %d\n", i);
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 /******************************************************************************
  * Detect if a USB device has been plugged or unplugged.
  */
-int usb_detect_change(void)
+صحيح usb_detect_change(فراغ)
 {
-	int i, j;
-	int change = 0;
+	صحيح i, j;
+	صحيح change = 0;
 
-	for (j = 0; j < USB_MAX_DEVICE; j++) {
-		for (i = 0; i < usb_dev[j].maxchild; i++) {
-			struct usb_port_status status;
+	لكل (j = 0; j < USB_MAX_DEVICE; j++) {
+		لكل (i = 0; i < usb_dev[j].maxchild; i++) {
+			بنية usb_پورٽ_حالت حالت;
 
-			if (usb_get_port_status(&usb_dev[j], i + 1,
-						&status) < 0)
+			إذا (usb_get_پورٽ_حالت(&usb_dev[j], i + 1,
+						&حالت) < 0)
 				/* USB request failed */
-				continue;
+				استمر;
 
-			if (le16_to_cpu(status.wPortChange) &
-			    USB_PORT_STAT_C_CONNECTION)
+			إذا (le16_منزل_cpu(حالت.w_پورٽ_Change) &
+			    USB_پورٽ_STAT_C_CONNECTION)
 				change++;
 		}
 	}
 
-	return change;
+	أرجع change;
 }
 
 /* Lock or unlock async schedule on the controller */
-__weak int usb_lock_async(struct usb_device *dev, int lock)
+__weak صحيح usb_تالو_async(بنية usb_device *dev, صحيح تالو)
 {
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -182,14 +182,14 @@ __weak int usb_lock_async(struct usb_device *dev, int lock)
  * transfers that uses the exclusiv access to the control and bulk messages.
  * Returns the old value so it can be restored later.
  */
-int usb_disable_asynch(int disable)
+صحيح usb_disable_asynch(صحيح disable)
 {
-	int old_value = asynch_allowed;
+	صحيح old_قدر = asynch_allowed;
 
 	asynch_allowed = !disable;
-	return old_value;
+	أرجع old_قدر;
 }
-#endif /* !CONFIG_IS_ENABLED(DM_USB) */
+#جيڪڏهن_پورو /* !CONFIG_IS_ENABLED(DM_USB) */
 
 /*-------------------------------------------------------------------
  * Message wrappers.
@@ -201,10 +201,10 @@ int usb_disable_asynch(int disable)
  * polling: when non-block is true and the device is not responding return
  * -EAGAIN instead of waiting for device to respond.
  */
-int usb_int_msg(struct usb_device *dev, unsigned long pipe,
-		void *buffer, int transfer_len, int interval, bool nonblock)
+صحيح usb_int_نياپو(بنية usb_device *dev, بنانشان ڊگهو pipe,
+		فراغ *بفر, صحيح transfer_len, صحيح interval, bool nonblock)
 {
-	return submit_int_msg(dev, pipe, buffer, transfer_len, interval,
+	أرجع submit_int_نياپو(dev, pipe, بفر, transfer_len, interval,
 			      nonblock);
 }
 
@@ -218,54 +218,54 @@ int usb_int_msg(struct usb_device *dev, unsigned long pipe,
  * transferred length and the current status are stored in the dev->act_len and
  * dev->status.
  */
-int usb_control_msg(struct usb_device *dev, unsigned int pipe,
-			unsigned char request, unsigned char requesttype,
-			unsigned short value, unsigned short index,
-			void *data, unsigned short size, int timeout)
+صحيح usb_control_نياپو(بنية usb_device *dev, بنانشان صحيح pipe,
+			بنانشان حرف request, بنانشان حرف requesttype,
+			بنانشان ننڍو قدر, بنانشان ننڍو اشاريو,
+			فراغ *معلومات, بنانشان ننڍو سائيز, صحيح timeout)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct devrequest, setup_packet, 1);
-	int err;
+	ALLOC_CACHE_ALIGN_بفر(بنية devrequest, تياري_packet, 1);
+	صحيح err;
 
-	if ((timeout == 0) && (!asynch_allowed)) {
+	إذا ((timeout == 0) && (!asynch_allowed)) {
 		/* request for a asynch control pipe is not allowed */
-		return -EINVAL;
+		أرجع -EINVAL;
 	}
 
 	/* set setup command */
-	setup_packet->requesttype = requesttype;
-	setup_packet->request = request;
-	setup_packet->value = cpu_to_le16(value);
-	setup_packet->index = cpu_to_le16(index);
-	setup_packet->length = cpu_to_le16(size);
+	تياري_packet->requesttype = requesttype;
+	تياري_packet->request = request;
+	تياري_packet->قدر = cpu_منزل_le16(قدر);
+	تياري_packet->اشاريو = cpu_منزل_le16(اشاريو);
+	تياري_packet->ڊيگهائي = cpu_منزل_le16(سائيز);
 	debug("usb_control_msg: request: 0x%X, requesttype: 0x%X, " \
 	      "value 0x%X index 0x%X length 0x%X\n",
-	      request, requesttype, value, index, size);
-	dev->status = USB_ST_NOT_PROC; /*not yet processed */
+	      request, requesttype, قدر, اشاريو, سائيز);
+	dev->حالت = USB_ST_NOT_PROC; /*not yet processed */
 
-	err = submit_control_msg(dev, pipe, data, size, setup_packet);
-	if (err < 0)
-		return err;
-	if (timeout == 0)
-		return (int)size;
+	err = submit_control_نياپو(dev, pipe, معلومات, سائيز, تياري_packet);
+	إذا (err < 0)
+		أرجع err;
+	إذا (timeout == 0)
+		أرجع (صحيح)سائيز;
 
 	/*
 	 * Wait for status to update until timeout expires, USB driver
 	 * interrupt handler may set the status when the USB operation has
 	 * been completed.
 	 */
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	طالما (timeout--) {
+		إذا (!((متطاير بنانشان ڊگهو)dev->حالت & USB_ST_NOT_PROC))
+			اكسر;
 		mdelay(1);
 	}
 
-	if (timeout == 0)
-		return -ETIMEDOUT;
+	إذا (timeout == 0)
+		أرجع -ETIMEDOUT;
 
-	if (dev->status)
-		return -1;
+	إذا (dev->حالت)
+		أرجع -1;
 
-	return dev->act_len;
+	أرجع dev->act_len;
 }
 
 /*-------------------------------------------------------------------
@@ -273,24 +273,24 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
  * negative if Error.
  * synchronous behavior
  */
-int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
-			void *data, int len, int *actual_length, int timeout)
+صحيح usb_bulk_نياپو(بنية usb_device *dev, بنانشان صحيح pipe,
+			فراغ *معلومات, صحيح len, صحيح *actual_ڊيگهائي, صحيح timeout)
 {
-	if (len < 0)
-		return -EINVAL;
-	dev->status = USB_ST_NOT_PROC; /*not yet processed */
-	if (submit_bulk_msg(dev, pipe, data, len) < 0)
-		return -EIO;
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	إذا (len < 0)
+		أرجع -EINVAL;
+	dev->حالت = USB_ST_NOT_PROC; /*not yet processed */
+	إذا (submit_bulk_نياپو(dev, pipe, معلومات, len) < 0)
+		أرجع -EIO;
+	طالما (timeout--) {
+		إذا (!((متطاير بنانشان ڊگهو)dev->حالت & USB_ST_NOT_PROC))
+			اكسر;
 		mdelay(1);
 	}
-	*actual_length = dev->act_len;
-	if (dev->status == 0)
-		return 0;
-	else
-		return -EIO;
+	*actual_ڊيگهائي = dev->act_len;
+	إذا (dev->حالت == 0)
+		أرجع 0;
+	وإلا
+		أرجع -EIO;
 }
 
 /*-------------------------------------------------------------------
@@ -301,13 +301,13 @@ int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
  * returns the max packet size, depending on the pipe direction and
  * the configurations values
  */
-int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
+صحيح usb_maxpacket(بنية usb_device *dev, بنانشان ڊگهو pipe)
 {
 	/* direction is out -> use emaxpacket out */
-	if ((pipe & USB_DIR_IN) == 0)
-		return dev->epmaxpacketout[((pipe>>15) & 0xf)];
-	else
-		return dev->epmaxpacketin[((pipe>>15) & 0xf)];
+	إذا ((pipe & USB_DIR_اندريون) == 0)
+		أرجع dev->epmaxpacketout[((pipe>>15) & 0xf)];
+	وإلا
+		أرجع dev->epmaxpacketin[((pipe>>15) & 0xf)];
 }
 
 /*
@@ -321,37 +321,37 @@ int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
  *
  * NOTE: Similar behaviour was observed with GCC4.6 on ARMv5.
  */
-static void noinline
-usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
+ساكن فراغ noinline
+usb_سيٽ_maxpacket_ep(بنية usb_device *dev, صحيح if_idx, صحيح ep_idx)
 {
-	int b;
-	struct usb_endpoint_descriptor *ep;
-	u16 ep_wMaxPacketSize;
+	صحيح b;
+	بنية usb_endpoint_descriptor *ep;
+	u16 ep_w_Max_Packet_سائيز;
 
 	ep = &dev->config.if_desc[if_idx].ep_desc[ep_idx];
 
-	b = ep->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
-	ep_wMaxPacketSize = get_unaligned(&ep->wMaxPacketSize);
+	b = ep->b_Endpoint_پتو & USB_ENDPOINT_عدد_نقاب;
+	ep_w_Max_Packet_سائيز = get_unaligned(&ep->w_Max_Packet_سائيز);
 
-	if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
+	إذا ((ep->bm_خاصيتون & USB_ENDPOINT_XFERTYPE_نقاب) ==
 						USB_ENDPOINT_XFER_CONTROL) {
 		/* Control => bidirectional */
-		dev->epmaxpacketout[b] = ep_wMaxPacketSize;
-		dev->epmaxpacketin[b] = ep_wMaxPacketSize;
+		dev->epmaxpacketout[b] = ep_w_Max_Packet_سائيز;
+		dev->epmaxpacketin[b] = ep_w_Max_Packet_سائيز;
 		debug("##Control EP epmaxpacketout/in[%d] = %d\n",
 		      b, dev->epmaxpacketin[b]);
-	} else {
-		if ((ep->bEndpointAddress & 0x80) == 0) {
+	} وإلا {
+		إذا ((ep->b_Endpoint_پتو & 0x80) == 0) {
 			/* OUT Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
-				dev->epmaxpacketout[b] = ep_wMaxPacketSize;
+			إذا (ep_w_Max_Packet_سائيز > dev->epmaxpacketout[b]) {
+				dev->epmaxpacketout[b] = ep_w_Max_Packet_سائيز;
 				debug("##EP epmaxpacketout[%d] = %d\n",
 				      b, dev->epmaxpacketout[b]);
 			}
-		} else {
+		} وإلا {
 			/* IN Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
-				dev->epmaxpacketin[b] = ep_wMaxPacketSize;
+			إذا (ep_w_Max_Packet_سائيز > dev->epmaxpacketin[b]) {
+				dev->epmaxpacketin[b] = ep_w_Max_Packet_سائيز;
 				debug("##EP epmaxpacketin[%d] = %d\n",
 				      b, dev->epmaxpacketin[b]);
 			}
@@ -362,15 +362,15 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 /*
  * set the max packed value of all endpoints in the given configuration
  */
-static int usb_set_maxpacket(struct usb_device *dev)
+ساكن صحيح usb_سيٽ_maxpacket(بنية usb_device *dev)
 {
-	int i, ii;
+	صحيح i, ii;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++)
-		for (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
-			usb_set_maxpacket_ep(dev, i, ii);
+	لكل (i = 0; i < dev->config.desc.b_انگ_Interfaces; i++)
+		لكل (ii = 0; ii < dev->config.if_desc[i].desc.b_انگ_Endpoints; ii++)
+			usb_سيٽ_maxpacket_ep(dev, i, ii);
 
-	return 0;
+	أرجع 0;
 }
 
 /*******************************************************************************
@@ -378,154 +378,154 @@ static int usb_set_maxpacket(struct usb_device *dev)
  * Note that all little/big endian swapping are done automatically.
  * (wTotalLength has already been swapped and sanitized when it was read.)
  */
-static int usb_parse_config(struct usb_device *dev,
-			unsigned char *buffer, int cfgno)
+ساكن صحيح usb_parse_config(بنية usb_device *dev,
+			بنانشان حرف *بفر, صحيح cfgno)
 {
-	struct usb_descriptor_header *head;
-	int index, ifno, epno, curr_if_num;
-	u16 ep_wMaxPacketSize;
-	struct usb_interface *if_desc = NULL;
+	بنية usb_descriptor_سرو *سر;
+	صحيح اشاريو, ifno, epno, curr_if_انگ;
+	u16 ep_w_Max_Packet_سائيز;
+	بنية usb_interface *if_desc = عدم;
 
 	ifno = -1;
 	epno = -1;
-	curr_if_num = -1;
+	curr_if_انگ = -1;
 
 	dev->configno = cfgno;
-	head = (struct usb_descriptor_header *) &buffer[0];
-	if (head->bDescriptorType != USB_DT_CONFIG) {
-		printf(" ERROR: NOT USB_CONFIG_DESC %x\n",
-			head->bDescriptorType);
-		return -EINVAL;
+	سر = (بنية usb_descriptor_سرو *) &بفر[0];
+	إذا (سر->bDescriptorType != USB_DT_CONFIG) {
+		لکو(" ERROR: NOT USB_CONFIG_DESC %x\n",
+			سر->bDescriptorType);
+		أرجع -EINVAL;
 	}
-	if (head->bLength != USB_DT_CONFIG_SIZE) {
-		printf("ERROR: Invalid USB CFG length (%d)\n", head->bLength);
-		return -EINVAL;
+	إذا (سر->b_ڊيگهائي != USB_DT_CONFIG_سائيز) {
+		لکو("ERROR: Invalid USB CFG length (%d)\n", سر->b_ڊيگهائي);
+		أرجع -EINVAL;
 	}
-	memcpy(&dev->config, head, USB_DT_CONFIG_SIZE);
-	dev->config.no_of_if = 0;
+	يادگيري_نقل(&dev->config, سر, USB_DT_CONFIG_سائيز);
+	dev->config.no_جو_if = 0;
 
-	index = dev->config.desc.bLength;
+	اشاريو = dev->config.desc.b_ڊيگهائي;
 	/* Ok the first entry must be a configuration entry,
 	 * now process the others */
-	head = (struct usb_descriptor_header *) &buffer[index];
-	while (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
-		switch (head->bDescriptorType) {
-		case USB_DT_INTERFACE:
-			if (head->bLength != USB_DT_INTERFACE_SIZE) {
-				printf("ERROR: Invalid USB IF length (%d)\n",
-					head->bLength);
-				break;
+	سر = (بنية usb_descriptor_سرو *) &بفر[اشاريو];
+	طالما (اشاريو + 1 < dev->config.desc.w_ڪل_ڊيگهائي && سر->b_ڊيگهائي) {
+		بدل (سر->bDescriptorType) {
+		حالة USB_DT_INTERFACE:
+			إذا (سر->b_ڊيگهائي != USB_DT_INTERFACE_سائيز) {
+				لکو("ERROR: Invalid USB IF length (%d)\n",
+					سر->b_ڊيگهائي);
+				اكسر;
 			}
-			if (index + USB_DT_INTERFACE_SIZE >
-			    dev->config.desc.wTotalLength) {
+			إذا (اشاريو + USB_DT_INTERFACE_سائيز >
+			    dev->config.desc.w_ڪل_ڊيگهائي) {
 				puts("USB IF descriptor overflowed buffer!\n");
-				break;
+				اكسر;
 			}
-			if (((struct usb_interface_descriptor *) \
-			     head)->bInterfaceNumber != curr_if_num) {
+			إذا (((بنية usb_interface_descriptor *) \
+			     سر)->b_Interface_عدد != curr_if_انگ) {
 				/* this is a new interface, copy new desc */
-				ifno = dev->config.no_of_if;
-				if (ifno >= USB_MAXINTERFACES) {
+				ifno = dev->config.no_جو_if;
+				إذا (ifno >= USB_MAXINTERFACES) {
 					puts("Too many USB interfaces!\n");
 					/* try to go on with what we have */
-					return -EINVAL;
+					أرجع -EINVAL;
 				}
 				if_desc = &dev->config.if_desc[ifno];
-				dev->config.no_of_if++;
-				memcpy(if_desc, head,
-					USB_DT_INTERFACE_SIZE);
-				if_desc->no_of_ep = 0;
-				if_desc->num_altsetting = 1;
-				curr_if_num =
-				     if_desc->desc.bInterfaceNumber;
-			} else {
+				dev->config.no_جو_if++;
+				يادگيري_نقل(if_desc, سر,
+					USB_DT_INTERFACE_سائيز);
+				if_desc->no_جو_ep = 0;
+				if_desc->انگ_altsetting = 1;
+				curr_if_انگ =
+				     if_desc->desc.b_Interface_عدد;
+			} وإلا {
 				/* found alternate setting for the interface */
-				if (ifno >= 0) {
+				إذا (ifno >= 0) {
 					if_desc = &dev->config.if_desc[ifno];
-					if_desc->num_altsetting++;
+					if_desc->انگ_altsetting++;
 				}
 			}
-			break;
-		case USB_DT_ENDPOINT:
-			if (head->bLength != USB_DT_ENDPOINT_SIZE &&
-			    head->bLength != USB_DT_ENDPOINT_AUDIO_SIZE) {
-				printf("ERROR: Invalid USB EP length (%d)\n",
-					head->bLength);
-				break;
+			اكسر;
+		حالة USB_DT_ENDPOINT:
+			إذا (سر->b_ڊيگهائي != USB_DT_ENDPOINT_سائيز &&
+			    سر->b_ڊيگهائي != USB_DT_ENDPOINT_AUDIO_سائيز) {
+				لکو("ERROR: Invalid USB EP length (%d)\n",
+					سر->b_ڊيگهائي);
+				اكسر;
 			}
-			if (index + head->bLength >
-			    dev->config.desc.wTotalLength) {
+			إذا (اشاريو + سر->b_ڊيگهائي >
+			    dev->config.desc.w_ڪل_ڊيگهائي) {
 				puts("USB EP descriptor overflowed buffer!\n");
-				break;
+				اكسر;
 			}
-			if (ifno < 0) {
+			إذا (ifno < 0) {
 				puts("Endpoint descriptor out of order!\n");
-				break;
+				اكسر;
 			}
-			epno = dev->config.if_desc[ifno].no_of_ep;
+			epno = dev->config.if_desc[ifno].no_جو_ep;
 			if_desc = &dev->config.if_desc[ifno];
-			if (epno >= USB_MAXENDPOINTS) {
-				printf("Interface %d has too many endpoints!\n",
-					if_desc->desc.bInterfaceNumber);
-				return -EINVAL;
+			إذا (epno >= USB_MAXENDPOINTS) {
+				لکو("Interface %d has too many endpoints!\n",
+					if_desc->desc.b_Interface_عدد);
+				أرجع -EINVAL;
 			}
 			/* found an endpoint */
-			if_desc->no_of_ep++;
-			memcpy(&if_desc->ep_desc[epno], head,
-				USB_DT_ENDPOINT_SIZE);
-			ep_wMaxPacketSize = get_unaligned(&dev->config.\
+			if_desc->no_جو_ep++;
+			يادگيري_نقل(&if_desc->ep_desc[epno], سر,
+				USB_DT_ENDPOINT_سائيز);
+			ep_w_Max_Packet_سائيز = get_unaligned(&dev->config.\
 							if_desc[ifno].\
 							ep_desc[epno].\
-							wMaxPacketSize);
-			put_unaligned(le16_to_cpu(ep_wMaxPacketSize),
+							w_Max_Packet_سائيز);
+			put_unaligned(le16_منزل_cpu(ep_w_Max_Packet_سائيز),
 					&dev->config.\
 					if_desc[ifno].\
 					ep_desc[epno].\
-					wMaxPacketSize);
+					w_Max_Packet_سائيز);
 			debug("if %d, ep %d\n", ifno, epno);
-			break;
-		case USB_DT_SS_ENDPOINT_COMP:
-			if (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
-				printf("ERROR: Invalid USB EPC length (%d)\n",
-					head->bLength);
-				break;
+			اكسر;
+		حالة USB_DT_SS_ENDPOINT_COMP:
+			إذا (سر->b_ڊيگهائي != USB_DT_SS_EP_COMP_سائيز) {
+				لکو("ERROR: Invalid USB EPC length (%d)\n",
+					سر->b_ڊيگهائي);
+				اكسر;
 			}
-			if (index + USB_DT_SS_EP_COMP_SIZE >
-			    dev->config.desc.wTotalLength) {
+			إذا (اشاريو + USB_DT_SS_EP_COMP_سائيز >
+			    dev->config.desc.w_ڪل_ڊيگهائي) {
 				puts("USB EPC descriptor overflowed buffer!\n");
-				break;
+				اكسر;
 			}
-			if (ifno < 0 || epno < 0) {
+			إذا (ifno < 0 || epno < 0) {
 				puts("EPC descriptor out of order!\n");
-				break;
+				اكسر;
 			}
 			if_desc = &dev->config.if_desc[ifno];
-			memcpy(&if_desc->ss_ep_comp_desc[epno], head,
-				USB_DT_SS_EP_COMP_SIZE);
-			break;
-		default:
-			if (head->bLength == 0)
-				return -EINVAL;
+			يادگيري_نقل(&if_desc->ss_ep_comp_desc[epno], سر,
+				USB_DT_SS_EP_COMP_سائيز);
+			اكسر;
+		افتراضي:
+			إذا (سر->b_ڊيگهائي == 0)
+				أرجع -EINVAL;
 
 			debug("unknown Description Type : %x\n",
-			      head->bDescriptorType);
+			      سر->bDescriptorType);
 
-#ifdef DEBUG
+#جيڪڏهن_وصف_ٿيل DEBUG
 			{
-				unsigned char *ch = (unsigned char *)head;
-				int i;
+				بنانشان حرف *ch = (بنانشان حرف *)سر;
+				صحيح i;
 
-				for (i = 0; i < head->bLength; i++)
+				لكل (i = 0; i < سر->b_ڊيگهائي; i++)
 					debug("%02X ", *ch++);
 				debug("\n\n\n");
 			}
-#endif
-			break;
+#جيڪڏهن_پورو
+			اكسر;
 		}
-		index += head->bLength;
-		head = (struct usb_descriptor_header *)&buffer[index];
+		اشاريو += سر->b_ڊيگهائي;
+		سر = (بنية usb_descriptor_سرو *)&بفر[اشاريو];
 	}
-	return 0;
+	أرجع 0;
 }
 
 /***********************************************************************
@@ -533,18 +533,18 @@ static int usb_parse_config(struct usb_device *dev,
  * endp: endpoint number in bits 0-3;
  * direction flag in bit 7 (1 = IN, 0 = OUT)
  */
-int usb_clear_halt(struct usb_device *dev, int pipe)
+صحيح usb_clear_halt(بنية usb_device *dev, صحيح pipe)
 {
-	int result;
-	int endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
+	صحيح نتيجو;
+	صحيح endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
 
-	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	نتيجو = usb_control_نياپو(dev, usb_sndctrlpipe(dev, 0),
 				 USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
-				 endp, NULL, 0, USB_CNTL_TIMEOUT * 3);
+				 endp, عدم, 0, USB_CNTL_TIMEOUT * 3);
 
 	/* don't clear if failed */
-	if (result < 0)
-		return result;
+	إذا (نتيجو < 0)
+		أرجع نتيجو;
 
 	/*
 	 * NOTE: we do not get status and verify reset was successful
@@ -555,110 +555,110 @@ int usb_clear_halt(struct usb_device *dev, int pipe)
 
 	/* toggle is reset on clear */
 	usb_settoggle(dev, usb_pipeendpoint(pipe), usb_pipeout(pipe), 0);
-	return 0;
+	أرجع 0;
 }
 
 /**********************************************************************
  * get_descriptor type
  */
-static int usb_get_descriptor(struct usb_device *dev, unsigned char type,
-			unsigned char index, void *buf, int size)
+ساكن صحيح usb_get_descriptor(بنية usb_device *dev, بنانشان حرف type,
+			بنانشان حرف اشاريو, فراغ *buf, صحيح سائيز)
 {
-	int i;
-	int result;
+	صحيح i;
+	صحيح نتيجو;
 
-	if (size <= 0)		/* No point in asking for no data */
-		return -EINVAL;
+	إذا (سائيز <= 0)		/* No point in asking for no data */
+		أرجع -EINVAL;
 
-	memset(buf, 0, size);	/* Make sure we parse really received data */
+	memset(buf, 0, سائيز);	/* Make sure we parse really received data */
 
-	for (i = 0; i < 3; ++i) {
+	لكل (i = 0; i < 3; ++i) {
 		/* retry on length 0 or error; some devices are flakey */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-					 USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
-					 (type << 8) + index, 0, buf, size,
+		نتيجو = usb_control_نياپو(dev, usb_rcvctrlpipe(dev, 0),
+					 USB_REQ_GET_DESCRIPTOR, USB_DIR_اندريون,
+					 (type << 8) + اشاريو, 0, buf, سائيز,
 					 USB_CNTL_TIMEOUT);
-		if (result <= 0 && result != -ETIMEDOUT)
-			continue;
-		if (result > 1 && ((u8 *)buf)[1] != type) {
-			result = -ENODATA;
-			continue;
+		إذا (نتيجو <= 0 && نتيجو != -ETIMEDOUT)
+			استمر;
+		إذا (نتيجو > 1 && ((u8 *)buf)[1] != type) {
+			نتيجو = -ENODATA;
+			استمر;
 		}
-		break;
+		اكسر;
 	}
-	return result;
+	أرجع نتيجو;
 }
 
 /**********************************************************************
  * gets len of configuration cfgno
  */
-int usb_get_configuration_len(struct usb_device *dev, int cfgno)
+صحيح usb_get_configuration_len(بنية usb_device *dev, صحيح cfgno)
 {
-	int result;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, 9);
-	struct usb_config_descriptor *config;
+	صحيح نتيجو;
+	ALLOC_CACHE_ALIGN_بفر(بنانشان حرف, بفر, 9);
+	بنية usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
-	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, 9);
-	if (result < 9) {
-		if (result < 0)
-			printf("unable to get descriptor, error %lX\n",
-				dev->status);
-		else
-			printf("config descriptor too short " \
-				"(expected %i, got %i)\n", 9, result);
-		return -EIO;
+	config = (بنية usb_config_descriptor *)&بفر[0];
+	نتيجو = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, بفر, 9);
+	إذا (نتيجو < 9) {
+		إذا (نتيجو < 0)
+			لکو("unable to get descriptor, error %lX\n",
+				dev->حالت);
+		وإلا
+			لکو("config descriptor too short " \
+				"(expected %i, got %i)\n", 9, نتيجو);
+		أرجع -EIO;
 	}
-	return le16_to_cpu(config->wTotalLength);
+	أرجع le16_منزل_cpu(config->w_ڪل_ڊيگهائي);
 }
 
 /**********************************************************************
  * gets configuration cfgno and store it in the buffer
  */
-int usb_get_configuration_no(struct usb_device *dev, int cfgno,
-			     unsigned char *buffer, int length)
+صحيح usb_get_configuration_no(بنية usb_device *dev, صحيح cfgno,
+			     بنانشان حرف *بفر, صحيح ڊيگهائي)
 {
-	int result;
-	struct usb_config_descriptor *config;
+	صحيح نتيجو;
+	بنية usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
-	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, length);
-	debug("get_conf_no %d Result %d, wLength %d\n", cfgno, result,
-	      le16_to_cpu(config->wTotalLength));
-	config->wTotalLength = result; /* validated, with CPU byte order */
+	config = (بنية usb_config_descriptor *)&بفر[0];
+	نتيجو = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, بفر, ڊيگهائي);
+	debug("get_conf_no %d Result %d, wLength %d\n", cfgno, نتيجو,
+	      le16_منزل_cpu(config->w_ڪل_ڊيگهائي));
+	config->w_ڪل_ڊيگهائي = نتيجو; /* validated, with CPU byte order */
 
-	return result;
+	أرجع نتيجو;
 }
 
 /********************************************************************
  * set address of a device to the value in dev->devnum.
  * This can only be done by addressing the device via the default address (0)
  */
-static int usb_set_address(struct usb_device *dev)
+ساكن صحيح usb_سيٽ_پتو(بنية usb_device *dev)
 {
 	debug("set address %d\n", dev->devnum);
 
-	return usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
-			       0, (dev->devnum), 0, NULL, 0, USB_CNTL_TIMEOUT);
+	أرجع usb_control_نياپو(dev, usb_snddefctrl(dev), USB_REQ_سيٽ_پتو,
+			       0, (dev->devnum), 0, عدم, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set interface number to interface
  */
-int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+صحيح usb_سيٽ_interface(بنية usb_device *dev, صحيح interface, صحيح alternate)
 {
-	struct usb_interface *if_face = NULL;
-	int ret, i;
+	بنية usb_interface *if_face = عدم;
+	صحيح ret, i;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
-		if (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
+	لكل (i = 0; i < dev->config.desc.b_انگ_Interfaces; i++) {
+		إذا (dev->config.if_desc[i].desc.b_Interface_عدد == interface) {
 			if_face = &dev->config.if_desc[i];
-			break;
+			اكسر;
 		}
 	}
-	if (!if_face) {
-		printf("selecting invalid interface %d", interface);
-		return -EINVAL;
+	إذا (!if_face) {
+		لکو("selecting invalid interface %d", interface);
+		أرجع -EINVAL;
 	}
 	/*
 	 * We should return now for devices with only one alternate setting.
@@ -667,151 +667,151 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	 * some USB sticks timeouting during initialization and then being
 	 * unusable in U-Boot.
 	 */
-	if (if_face->num_altsetting == 1)
-		return 0;
+	إذا (if_face->انگ_altsetting == 1)
+		أرجع 0;
 
-	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_INTERFACE, USB_RECIP_INTERFACE,
-				alternate, interface, NULL, 0,
+	ret = usb_control_نياپو(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_سيٽ_INTERFACE, USB_RECIP_INTERFACE,
+				alternate, interface, عدم, 0,
 				USB_CNTL_TIMEOUT * 5);
-	if (ret < 0)
-		return ret;
+	إذا (ret < 0)
+		أرجع ret;
 
-	return 0;
+	أرجع 0;
 }
 
 /********************************************************************
  * set configuration number to configuration
  */
-static int usb_set_configuration(struct usb_device *dev, int configuration)
+ساكن صحيح usb_سيٽ_configuration(بنية usb_device *dev, صحيح configuration)
 {
-	int res;
+	صحيح res;
 	debug("set configuration %d\n", configuration);
 	/* set setup command */
-	res = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_CONFIGURATION, 0,
+	res = usb_control_نياپو(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_سيٽ_CONFIGURATION, 0,
 				configuration, 0,
-				NULL, 0, USB_CNTL_TIMEOUT);
-	if (res == 0) {
+				عدم, 0, USB_CNTL_TIMEOUT);
+	إذا (res == 0) {
 		dev->toggle[0] = 0;
 		dev->toggle[1] = 0;
-		return 0;
-	} else
-		return -EIO;
+		أرجع 0;
+	} وإلا
+		أرجع -EIO;
 }
 
 /********************************************************************
  * set protocol to protocol
  */
-int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
+صحيح usb_سيٽ_protocol(بنية usb_device *dev, صحيح ifnum, صحيح protocol)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		protocol, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+	أرجع usb_control_نياپو(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_سيٽ_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+		protocol, ifnum, عدم, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set idle
  */
-int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
+صحيح usb_سيٽ_idle(بنية usb_device *dev, صحيح ifnum, صحيح duration, صحيح report_id)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		(duration << 8) | report_id, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+	أرجع usb_control_نياپو(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_سيٽ_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+		(duration << 8) | report_id, ifnum, عدم, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get report
  */
-int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
-		   unsigned char id, void *buf, int size)
+صحيح usb_get_report(بنية usb_device *dev, صحيح ifnum, بنانشان حرف type,
+		   بنانشان حرف id, فراغ *buf, صحيح سائيز)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	أرجع usb_control_نياپو(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_REPORT,
-			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-			(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
+			USB_DIR_اندريون | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+			(type << 8) + id, ifnum, buf, سائيز, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get class descriptor
  */
-int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
-		unsigned char type, unsigned char id, void *buf, int size)
+صحيح usb_get_class_descriptor(بنية usb_device *dev, صحيح ifnum,
+		بنانشان حرف type, بنانشان حرف id, فراغ *buf, صحيح سائيز)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_IN,
-		(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
+	أرجع usb_control_نياپو(dev, usb_rcvctrlpipe(dev, 0),
+		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_اندريون,
+		(type << 8) + id, ifnum, buf, سائيز, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get string index in buffer
  */
-static int usb_get_string(struct usb_device *dev, unsigned short langid,
-		   unsigned char index, void *buf, int size)
+ساكن صحيح usb_get_string(بنية usb_device *dev, بنانشان ننڍو langid,
+		   بنانشان حرف اشاريو, فراغ *buf, صحيح سائيز)
 {
-	int i;
-	int result;
+	صحيح i;
+	صحيح نتيجو;
 
-	for (i = 0; i < 3; ++i) {
+	لكل (i = 0; i < 3; ++i) {
 		/* some devices are flaky */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
-			(USB_DT_STRING << 8) + index, langid, buf, size,
+		نتيجو = usb_control_نياپو(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_DESCRIPTOR, USB_DIR_اندريون,
+			(USB_DT_STRING << 8) + اشاريو, langid, buf, سائيز,
 			USB_CNTL_TIMEOUT);
 
-		if (result > 0)
-			break;
+		إذا (نتيجو > 0)
+			اكسر;
 	}
 
-	return result;
+	أرجع نتيجو;
 }
 
-static void usb_try_string_workarounds(unsigned char *buf, int *length)
+ساكن فراغ usb_try_string_workarounds(بنانشان حرف *buf, صحيح *ڊيگهائي)
 {
-	int newlength, oldlength = *length;
+	صحيح newlength, oldlength = *ڊيگهائي;
 
-	for (newlength = 2; newlength + 1 < oldlength; newlength += 2)
-		if (!isprint(buf[newlength]) || buf[newlength + 1])
-			break;
+	لكل (newlength = 2; newlength + 1 < oldlength; newlength += 2)
+		إذا (!isprint(buf[newlength]) || buf[newlength + 1])
+			اكسر;
 
-	if (newlength > 2) {
+	إذا (newlength > 2) {
 		buf[0] = newlength;
-		*length = newlength;
+		*ڊيگهائي = newlength;
 	}
 }
 
-static int usb_string_sub(struct usb_device *dev, unsigned int langid,
-		unsigned int index, unsigned char *buf)
+ساكن صحيح usb_string_sub(بنية usb_device *dev, بنانشان صحيح langid,
+		بنانشان صحيح اشاريو, بنانشان حرف *buf)
 {
-	int rc;
+	صحيح rc;
 
 	/* Try to read the string descriptor by asking for the maximum
 	 * possible number of bytes */
-	rc = usb_get_string(dev, langid, index, buf, 255);
+	rc = usb_get_string(dev, langid, اشاريو, buf, 255);
 
 	/* If that failed try to read the descriptor length, then
 	 * ask for just that many bytes */
-	if (rc < 2) {
-		rc = usb_get_string(dev, langid, index, buf, 2);
-		if (rc == 2)
-			rc = usb_get_string(dev, langid, index, buf, buf[0]);
+	إذا (rc < 2) {
+		rc = usb_get_string(dev, langid, اشاريو, buf, 2);
+		إذا (rc == 2)
+			rc = usb_get_string(dev, langid, اشاريو, buf, buf[0]);
 	}
 
-	if (rc >= 2) {
-		if (!buf[0] && !buf[1])
+	إذا (rc >= 2) {
+		إذا (!buf[0] && !buf[1])
 			usb_try_string_workarounds(buf, &rc);
 
 		/* There might be extra junk at the end of the descriptor */
-		if (buf[0] < rc)
+		إذا (buf[0] < rc)
 			rc = buf[0];
 
 		rc = rc - (rc & 1); /* force a multiple of two */
 	}
 
-	if (rc < 2)
+	إذا (rc < 2)
 		rc = -EINVAL;
 
-	return rc;
+	أرجع rc;
 }
 
 /********************************************************************
@@ -819,29 +819,29 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
  * Get string index and translate it to ascii.
  * returns string length (> 0) or error (< 0)
  */
-int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
+صحيح usb_string(بنية usb_device *dev, صحيح اشاريو, حرف *buf, size_t سائيز)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, mybuf, USB_BUFSIZ);
-	unsigned char *tbuf;
-	int err;
-	unsigned int u, idx;
+	ALLOC_CACHE_ALIGN_بفر(بنانشان حرف, mybuf, USB_BUFSIZ);
+	بنانشان حرف *tbuf;
+	صحيح err;
+	بنانشان صحيح u, idx;
 
-	if (size <= 0 || !buf || !index)
-		return -EINVAL;
+	إذا (سائيز <= 0 || !buf || !اشاريو)
+		أرجع -EINVAL;
 	buf[0] = 0;
 	tbuf = &mybuf[0];
 
 	/* get langid for strings if it's not yet known */
-	if (!dev->have_langid) {
+	إذا (!dev->have_langid) {
 		err = usb_string_sub(dev, 0, 0, tbuf);
-		if (err < 0) {
+		إذا (err < 0) {
 			debug("error getting string descriptor 0 " \
-			      "(error=%lx)\n", dev->status);
-			return -EIO;
-		} else if (tbuf[0] < 4) {
+			      "(error=%lx)\n", dev->حالت);
+			أرجع -EIO;
+		} وإلا إذا (tbuf[0] < 4) {
 			debug("string descriptor 0 too short\n");
-			return -EIO;
-		} else {
+			أرجع -EIO;
+		} وإلا {
 			dev->have_langid = -1;
 			dev->string_langid = tbuf[2] | (tbuf[3] << 8);
 				/* always use the first langid listed */
@@ -851,22 +851,22 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
 		}
 	}
 
-	err = usb_string_sub(dev, dev->string_langid, index, tbuf);
-	if (err < 0)
-		return err;
+	err = usb_string_sub(dev, dev->string_langid, اشاريو, tbuf);
+	إذا (err < 0)
+		أرجع err;
 
-	size--;		/* leave room for trailing NULL char in output buffer */
-	for (idx = 0, u = 2; u < err; u += 2) {
-		if (idx >= size)
-			break;
-		if (tbuf[u+1])			/* high byte */
+	سائيز--;		/* leave room for trailing NULL char in output buffer */
+	لكل (idx = 0, u = 2; u < err; u += 2) {
+		إذا (idx >= سائيز)
+			اكسر;
+		إذا (tbuf[u+1])			/* high byte */
 			buf[idx++] = '?';  /* non-ASCII character */
-		else
+		وإلا
 			buf[idx++] = tbuf[u];
 	}
 	buf[idx] = 0;
 	err = idx;
-	return err;
+	أرجع err;
 }
 
 /********************************************************************
@@ -874,38 +874,38 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
  * the USB device are static allocated [USB_MAX_DEVICE].
  */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#إذا !CONFIG_IS_ENABLED(DM_USB)
 
 /* returns a pointer to the device with the index [index].
  * if the device is not assigned (dev->devnum==-1) returns NULL
  */
-struct usb_device *usb_get_dev_index(int index)
+بنية usb_device *usb_get_dev_اشاريو(صحيح اشاريو)
 {
-	if (usb_dev[index].devnum == -1)
-		return NULL;
-	else
-		return &usb_dev[index];
+	إذا (usb_dev[اشاريو].devnum == -1)
+		أرجع عدم;
+	وإلا
+		أرجع &usb_dev[اشاريو];
 }
 
-int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
+صحيح usb_alloc_new_device(بنية udevice *controller, بنية usb_device **devp)
 {
-	int i;
-	debug("New Device %d\n", dev_index);
-	if (dev_index == USB_MAX_DEVICE) {
-		printf("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
-		return -ENOSPC;
+	صحيح i;
+	debug("New Device %d\n", dev_اشاريو);
+	إذا (dev_اشاريو == USB_MAX_DEVICE) {
+		لکو("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
+		أرجع -ENOSPC;
 	}
 	/* default Address is 0, real addresses start with 1 */
-	usb_dev[dev_index].devnum = dev_index + 1;
-	usb_dev[dev_index].maxchild = 0;
-	for (i = 0; i < USB_MAXCHILDREN; i++)
-		usb_dev[dev_index].children[i] = NULL;
-	usb_dev[dev_index].parent = NULL;
-	usb_dev[dev_index].controller = controller;
-	dev_index++;
-	*devp = &usb_dev[dev_index - 1];
+	usb_dev[dev_اشاريو].devnum = dev_اشاريو + 1;
+	usb_dev[dev_اشاريو].maxchild = 0;
+	لكل (i = 0; i < USB_MAXCHILDREN; i++)
+		usb_dev[dev_اشاريو].children[i] = عدم;
+	usb_dev[dev_اشاريو].والد = عدم;
+	usb_dev[dev_اشاريو].controller = controller;
+	dev_اشاريو++;
+	*devp = &usb_dev[dev_اشاريو - 1];
 
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -913,12 +913,12 @@ int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
  * Called in error cases where configuring a newly attached
  * device fails for some reason.
  */
-void usb_free_device(struct udevice *controller)
+فراغ usb_free_device(بنية udevice *controller)
 {
-	dev_index--;
-	debug("Freeing device node: %d\n", dev_index);
-	memset(&usb_dev[dev_index], 0, sizeof(struct usb_device));
-	usb_dev[dev_index].devnum = -1;
+	dev_اشاريو--;
+	debug("Freeing device node: %d\n", dev_اشاريو);
+	memset(&usb_dev[dev_اشاريو], 0, حجم(بنية usb_device));
+	usb_dev[dev_اشاريو].devnum = -1;
 }
 
 /*
@@ -927,46 +927,46 @@ void usb_free_device(struct udevice *controller)
  * function for the purpose, so that XHCI overrides it
  * and EHCI/OHCI just work out of the box.
  */
-__weak int usb_alloc_device(struct usb_device *udev)
+__weak صحيح usb_alloc_device(بنية usb_device *udev)
 {
-	return 0;
+	أرجع 0;
 }
-#endif /* !CONFIG_IS_ENABLED(DM_USB) */
+#جيڪڏهن_پورو /* !CONFIG_IS_ENABLED(DM_USB) */
 
-static int usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
+ساكن صحيح usb_hub_پورٽ_reset(بنية usb_device *dev, بنية usb_device *hub)
 {
-	if (!hub)
-		usb_reset_root_port(dev);
+	إذا (!hub)
+		usb_reset_پاڙ_پورٽ(dev);
 
-	return 0;
+	أرجع 0;
 }
 
-static int get_descriptor_len(struct usb_device *dev, int len, int expect_len)
+ساكن صحيح get_descriptor_len(بنية usb_device *dev, صحيح len, صحيح expect_len)
 {
-	__maybe_unused struct usb_device_descriptor *desc;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, tmpbuf, USB_BUFSIZ);
-	int err;
+	__maybe_unused بنية usb_device_descriptor *desc;
+	ALLOC_CACHE_ALIGN_بفر(بنانشان حرف, tmpbuf, USB_BUFSIZ);
+	صحيح err;
 
-	desc = (struct usb_device_descriptor *)tmpbuf;
+	desc = (بنية usb_device_descriptor *)tmpbuf;
 
 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0, desc, len);
-	if (err < expect_len) {
-		if (err < 0) {
-			printf("unable to get device descriptor (error=%d)\n",
+	إذا (err < expect_len) {
+		إذا (err < 0) {
+			لکو("unable to get device descriptor (error=%d)\n",
 				err);
-			return err;
-		} else {
-			printf("USB device descriptor short read (expected %i, got %i)\n",
+			أرجع err;
+		} وإلا {
+			لکو("USB device descriptor short read (expected %i, got %i)\n",
 				expect_len, err);
-			return -EIO;
+			أرجع -EIO;
 		}
 	}
-	memcpy(&dev->descriptor, tmpbuf, sizeof(dev->descriptor));
+	يادگيري_نقل(&dev->descriptor, tmpbuf, حجم(dev->descriptor));
 
-	return 0;
+	أرجع 0;
 }
 
-static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
+ساكن صحيح usb_تياري_descriptor(بنية usb_device *dev, bool do_read)
 {
 	/*
 	 * This is a Windows scheme of initialization sequence, with double
@@ -984,18 +984,18 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 	 * some more, or keeps on retransmitting the 8 byte header.
 	 */
 
-	if (dev->speed == USB_SPEED_LOW) {
+	إذا (dev->رفتار == USB_رفتار_هيٺيون) {
 		dev->descriptor.bMaxPacketSize0 = 8;
-		dev->maxpacketsize = PACKET_SIZE_8;
-	} else {
+		dev->maxpacketsize = PACKET_سائيز_8;
+	} وإلا {
 		dev->descriptor.bMaxPacketSize0 = 64;
-		dev->maxpacketsize = PACKET_SIZE_64;
+		dev->maxpacketsize = PACKET_سائيز_64;
 	}
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
 
-	if (do_read && dev->speed == USB_SPEED_FULL) {
-		int err;
+	إذا (do_read && dev->رفتار == USB_رفتار_ڀريل) {
+		صحيح err;
 
 		/*
 		 * Validate we've received only at least 8 bytes, not that
@@ -1014,8 +1014,8 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 		 * as 64 (above) yields a request for 1 packet.
 		 */
 		err = get_descriptor_len(dev, 64, 8);
-		if (err)
-			return err;
+		إذا (err)
+			أرجع err;
 
 		/*
 		 * Logitech Unifying Receiver 046d:c52b bcdDevice 12.10 seems
@@ -1031,31 +1031,31 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
-	switch (dev->descriptor.bMaxPacketSize0) {
-	case 8:
-		dev->maxpacketsize  = PACKET_SIZE_8;
-		break;
-	case 16:
-		dev->maxpacketsize = PACKET_SIZE_16;
-		break;
-	case 32:
-		dev->maxpacketsize = PACKET_SIZE_32;
-		break;
-	case 64:
-		dev->maxpacketsize = PACKET_SIZE_64;
-		break;
-	default:
-		printf("%s: invalid max packet size\n", __func__);
-		return -EIO;
+	بدل (dev->descriptor.bMaxPacketSize0) {
+	حالة 8:
+		dev->maxpacketsize  = PACKET_سائيز_8;
+		اكسر;
+	حالة 16:
+		dev->maxpacketsize = PACKET_سائيز_16;
+		اكسر;
+	حالة 32:
+		dev->maxpacketsize = PACKET_سائيز_32;
+		اكسر;
+	حالة 64:
+		dev->maxpacketsize = PACKET_سائيز_64;
+		اكسر;
+	افتراضي:
+		لکو("%s: invalid max packet size\n", __func__);
+		أرجع -EIO;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
-			      struct usb_device *parent)
+ساكن صحيح usb_prepare_device(بنية usb_device *dev, صحيح addr, bool do_read,
+			      بنية usb_device *والد)
 {
-	int err;
+	صحيح err;
 
 	/*
 	 * Allocate usb 3.0 device context.
@@ -1064,25 +1064,25 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * Refer to sec 4.3.2 in xHCI spec rev1.0
 	 */
 	err = usb_alloc_device(dev);
-	if (err) {
-		printf("Cannot allocate device context to get SLOT_ID\n");
-		return err;
+	إذا (err) {
+		لکو("Cannot allocate device context to get SLOT_ID\n");
+		أرجع err;
 	}
-	err = usb_setup_descriptor(dev, do_read);
-	if (err)
-		return err;
-	err = usb_hub_port_reset(dev, parent);
-	if (err)
-		return err;
+	err = usb_تياري_descriptor(dev, do_read);
+	إذا (err)
+		أرجع err;
+	err = usb_hub_پورٽ_reset(dev, والد);
+	إذا (err)
+		أرجع err;
 
 	dev->devnum = addr;
 
-	err = usb_set_address(dev); /* set address */
+	err = usb_سيٽ_پتو(dev); /* set address */
 
-	if (err < 0) {
-		printf("\n      USB device not accepting new address " \
-			"(error=%lX)\n", dev->status);
-		return err;
+	إذا (err < 0) {
+		لکو("\n      USB device not accepting new address " \
+			"(error=%lX)\n", dev->حالت);
+		أرجع err;
 	}
 
 	mdelay(10);	/* Let the SET_ADDRESS settle */
@@ -1092,86 +1092,86 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * after device is assigned an address. This is only applicable
 	 * to xHCI so far.
 	 */
-	if (!do_read) {
-		err = usb_setup_descriptor(dev, true);
-		if (err)
-			return err;
+	إذا (!do_read) {
+		err = usb_تياري_descriptor(dev, true);
+		إذا (err)
+			أرجع err;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
+ساكن صحيح usb_device_is_ignored(u16 id_vendor, u16 id_حاصل_ضرب)
 {
 	ulong vid, pid;
-	char *end;
-	const char *cur = NULL;
+	حرف *پڇاڙي_2;
+	ثابت حرف *cur = عدم;
 
 	/* ignore list depends on env support */
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		return 0;
+	إذا (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		أرجع 0;
 
 	cur = env_get("usb_ignorelist");
 
 	/* parse "usb_ignorelist" strictly */
-	while (cur && cur[0] != '\0') {
-		vid = simple_strtoul(cur, &end, 0);
+	طالما (cur && cur[0] != '\0') {
+		vid = simple_strtoul(cur, &پڇاڙي_2, 0);
 		/*
 		 * If strtoul did not parse a single digit or the next char is
 		 * not ':' the ignore list is malformed.
 		 */
-		if (cur == end || end[0] != ':')
-			return -EINVAL;
+		إذا (cur == پڇاڙي_2 || پڇاڙي_2[0] != ':')
+			أرجع -EINVAL;
 
-		cur = end + 1;
-		pid = simple_strtoul(cur, &end, 0);
+		cur = پڇاڙي_2 + 1;
+		pid = simple_strtoul(cur, &پڇاڙي_2, 0);
 		/* Consider '*' as wildcard for the product ID */
-		if (cur == end && end[0] == '*') {
+		إذا (cur == پڇاڙي_2 && پڇاڙي_2[0] == '*') {
 			pid = U16_MAX + 1;
-			end++;
+			پڇاڙي_2++;
 		}
 		/*
 		 * The ignore list is malformed if no product ID / wildcard was
 		 * parsed or entries are not separated by ',' or terminated with
 		 * '\0'.
 		 */
-		if (cur == end || (end[0] != ',' && end[0] != '\0'))
-			return -EINVAL;
+		إذا (cur == پڇاڙي_2 || (پڇاڙي_2[0] != ',' && پڇاڙي_2[0] != '\0'))
+			أرجع -EINVAL;
 
-		if (id_vendor == vid && (pid > U16_MAX || id_product == pid))
-			return -ENODEV;
+		إذا (id_vendor == vid && (pid > U16_MAX || id_حاصل_ضرب == pid))
+			أرجع -ENODEV;
 
-		if (end[0] == '\0')
-			break;
-		cur = end + 1;
+		إذا (پڇاڙي_2[0] == '\0')
+			اكسر;
+		cur = پڇاڙي_2 + 1;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-int usb_select_config(struct usb_device *dev)
+صحيح usb_select_config(بنية usb_device *dev)
 {
-	unsigned char *tmpbuf = NULL;
-	int err;
+	بنانشان حرف *tmpbuf = عدم;
+	صحيح err;
 
-	err = get_descriptor_len(dev, USB_DT_DEVICE_SIZE, USB_DT_DEVICE_SIZE);
-	if (err)
-		return err;
+	err = get_descriptor_len(dev, USB_DT_DEVICE_سائيز, USB_DT_DEVICE_سائيز);
+	إذا (err)
+		أرجع err;
 
 	/* correct le values */
-	le16_to_cpus(&dev->descriptor.bcdUSB);
-	le16_to_cpus(&dev->descriptor.idVendor);
-	le16_to_cpus(&dev->descriptor.idProduct);
-	le16_to_cpus(&dev->descriptor.bcdDevice);
+	le16_منزل_cpus(&dev->descriptor.bcdUSB);
+	le16_منزل_cpus(&dev->descriptor.idVendor);
+	le16_منزل_cpus(&dev->descriptor.id_حاصل_ضرب_2);
+	le16_منزل_cpus(&dev->descriptor.bcdDevice);
 
 	/* ignore devices from usb_ignorelist */
 	err = usb_device_is_ignored(dev->descriptor.idVendor,
-				    dev->descriptor.idProduct);
-	if (err == -ENODEV) {
+				    dev->descriptor.id_حاصل_ضرب_2);
+	إذا (err == -ENODEV) {
 		debug("Ignoring USB device 0x%x:0x%x\n",
-			dev->descriptor.idVendor, dev->descriptor.idProduct);
-		return err;
-	} else if (err == -EINVAL) {
+			dev->descriptor.idVendor, dev->descriptor.id_حاصل_ضرب_2);
+		أرجع err;
+	} وإلا إذا (err == -EINVAL) {
 		/*
 		 * Continue on "usb_ignorelist" parsing errors. The list is
 		 * parsed for each device returning the error would result in
@@ -1179,10 +1179,10 @@ int usb_select_config(struct usb_device *dev)
 		 * Since the parsing error is independent of the probed device
 		 * report errors with printf instead of dev_err.
 		 */
-		printf("usb_ignorelist parse error in \"%s\"\n",
+		لکو("usb_ignorelist parse error in \"%s\"\n",
 		       env_get("usb_ignorelist"));
-	} else if (err < 0) {
-		return err;
+	} وإلا إذا (err < 0) {
+		أرجع err;
 	}
 
 	/*
@@ -1195,33 +1195,33 @@ int usb_select_config(struct usb_device *dev)
 
 	/* only support for one config for now */
 	err = usb_get_configuration_len(dev, 0);
-	if (err >= 0) {
-		tmpbuf = (unsigned char *)malloc_cache_aligned(err);
-		if (!tmpbuf)
+	إذا (err >= 0) {
+		tmpbuf = (بنانشان حرف *)malloc_cache_aligned(err);
+		إذا (!tmpbuf)
 			err = -ENOMEM;
-		else
+		وإلا
 			err = usb_get_configuration_no(dev, 0, tmpbuf, err);
 	}
-	if (err < 0) {
-		printf("usb_new_device: Cannot read configuration, " \
+	إذا (err < 0) {
+		لکو("usb_new_device: Cannot read configuration, " \
 		       "skipping device %04x:%04x\n",
-		       dev->descriptor.idVendor, dev->descriptor.idProduct);
-		free(tmpbuf);
-		return err;
+		       dev->descriptor.idVendor, dev->descriptor.id_حاصل_ضرب_2);
+		حرر(tmpbuf);
+		أرجع err;
 	}
 	usb_parse_config(dev, tmpbuf, 0);
-	free(tmpbuf);
-	usb_set_maxpacket(dev);
+	حرر(tmpbuf);
+	usb_سيٽ_maxpacket(dev);
 	/*
 	 * we set the default configuration here
 	 * This seems premature. If the driver wants a different configuration
 	 * it will need to select itself.
 	 */
-	err = usb_set_configuration(dev, dev->config.desc.bConfigurationValue);
-	if (err < 0) {
-		printf("failed to set default configuration " \
-			"len %d, status %lX\n", dev->act_len, dev->status);
-		return err;
+	err = usb_سيٽ_configuration(dev, dev->config.desc.b_Configuration_قدر);
+	إذا (err < 0) {
+		لکو("failed to set default configuration " \
+			"len %d, status %lX\n", dev->act_len, dev->حالت);
+		أرجع err;
 	}
 
 	/*
@@ -1232,46 +1232,46 @@ int usb_select_config(struct usb_device *dev)
 	mdelay(10);
 
 	debug("new device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
-	      dev->descriptor.iManufacturer, dev->descriptor.iProduct,
-	      dev->descriptor.iSerialNumber);
-	memset(dev->mf, 0, sizeof(dev->mf));
-	memset(dev->prod, 0, sizeof(dev->prod));
-	memset(dev->serial, 0, sizeof(dev->serial));
-	if (dev->descriptor.iManufacturer)
+	      dev->descriptor.iManufacturer, dev->descriptor.i_حاصل_ضرب,
+	      dev->descriptor.i_Serial_عدد);
+	memset(dev->mf, 0, حجم(dev->mf));
+	memset(dev->prod, 0, حجم(dev->prod));
+	memset(dev->serial, 0, حجم(dev->serial));
+	إذا (dev->descriptor.iManufacturer)
 		usb_string(dev, dev->descriptor.iManufacturer,
-			   dev->mf, sizeof(dev->mf));
-	if (dev->descriptor.iProduct)
-		usb_string(dev, dev->descriptor.iProduct,
-			   dev->prod, sizeof(dev->prod));
-	if (dev->descriptor.iSerialNumber)
-		usb_string(dev, dev->descriptor.iSerialNumber,
-			   dev->serial, sizeof(dev->serial));
+			   dev->mf, حجم(dev->mf));
+	إذا (dev->descriptor.i_حاصل_ضرب)
+		usb_string(dev, dev->descriptor.i_حاصل_ضرب,
+			   dev->prod, حجم(dev->prod));
+	إذا (dev->descriptor.i_Serial_عدد)
+		usb_string(dev, dev->descriptor.i_Serial_عدد,
+			   dev->serial, حجم(dev->serial));
 	debug("Manufacturer %s\n", dev->mf);
 	debug("Product      %s\n", dev->prod);
 	debug("SerialNumber %s\n", dev->serial);
 
-	return 0;
+	أرجع 0;
 }
 
-int usb_setup_device(struct usb_device *dev, bool do_read,
-		     struct usb_device *parent)
+صحيح usb_تياري_device(بنية usb_device *dev, bool do_read,
+		     بنية usb_device *والد)
 {
-	int addr;
-	int ret;
+	صحيح addr;
+	صحيح ret;
 
 	/* We still haven't set the Address yet */
 	addr = dev->devnum;
 	dev->devnum = 0;
 
-	ret = usb_prepare_device(dev, addr, do_read, parent);
-	if (ret)
-		return ret;
+	ret = usb_prepare_device(dev, addr, do_read, والد);
+	إذا (ret)
+		أرجع ret;
 	ret = usb_select_config(dev);
 
-	return ret;
+	أرجع ret;
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#إذا !CONFIG_IS_ENABLED(DM_USB)
 /*
  * By the time we get here, the device has gotten a new device ID
  * and is in the default state. We need to identify the thing and
@@ -1279,10 +1279,10 @@ int usb_setup_device(struct usb_device *dev, bool do_read,
  *
  * Returns 0 for success, != 0 for error.
  */
-int usb_new_device(struct usb_device *dev)
+صحيح usb_new_device(بنية usb_device *dev)
 {
 	bool do_read = true;
-	int err;
+	صحيح err;
 
 	/*
 	 * XHCI needs to issue a Address device command to setup
@@ -1290,49 +1290,49 @@ int usb_new_device(struct usb_device *dev)
 	 * with the device. So a get_descriptor will fail before any
 	 * of that is done for XHCI unlike EHCI.
 	 */
-#ifdef CONFIG_USB_XHCI_HCD
+#جيڪڏهن_وصف_ٿيل CONFIG_USB_XHCI_HCD
 	do_read = false;
-#endif
-	err = usb_setup_device(dev, do_read, dev->parent);
-	if (err)
-		return err;
+#جيڪڏهن_پورو
+	err = usb_تياري_device(dev, do_read, dev->والد);
+	إذا (err)
+		أرجع err;
 
 	/* Now probe if the device is a hub */
 	err = usb_hub_probe(dev, 0);
-	if (err < 0)
-		return err;
+	إذا (err < 0)
+		أرجع err;
 
-	return 0;
+	أرجع 0;
 }
-#endif
+#جيڪڏهن_پورو
 
 __weak
-int board_usb_init(int index, enum usb_init_type init)
+صحيح board_usb_init(صحيح اشاريو, تعداد usb_init_type init)
 {
-	return 0;
+	أرجع 0;
 }
 
 __weak
-int board_usb_cleanup(int index, enum usb_init_type init)
+صحيح board_usb_cleanup(صحيح اشاريو, تعداد usb_init_type init)
 {
-	return 0;
+	أرجع 0;
 }
 
-bool usb_device_has_child_on_port(struct usb_device *parent, int port)
+bool usb_device_has_ٻار_on_پورٽ(بنية usb_device *والد, صحيح پورٽ)
 {
-#if CONFIG_IS_ENABLED(DM_USB)
-	return false;
-#else
-	return parent->children[port] != NULL;
-#endif
+#إذا CONFIG_IS_ENABLED(DM_USB)
+	أرجع false;
+#وإلا
+	أرجع والد->children[پورٽ] != عدم;
+#جيڪڏهن_پورو
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
-			       uint8_t *hub_address, uint8_t *hub_port)
+#إذا CONFIG_IS_ENABLED(DM_USB)
+فراغ usb_ڳوليو_usb2_hub_پتو_پورٽ(بنية usb_device *udev,
+			       uint8_t *hub_پتو, uint8_t *hub_پورٽ)
 {
-	struct udevice *parent;
-	struct usb_device *uparent, *ttdev;
+	بنية udevice *والد;
+	بنية usb_device *uparent, *ttdev;
 
 	/*
 	 * When called from usb-uclass.c: usb_scan_device() udev->dev points
@@ -1342,44 +1342,44 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	 * udev->dev->parent .
 	 */
 	ttdev = udev;
-	parent = udev->dev;
-	uparent = dev_get_parent_priv(parent);
+	والد = udev->dev;
+	uparent = dev_get_والد_priv(والد);
 
-	while (uparent->speed != USB_SPEED_HIGH) {
-		struct udevice *dev = parent;
+	طالما (uparent->رفتار != USB_رفتار_مٿاهون) {
+		بنية udevice *dev = والد;
 
-		if (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
-			printf("Error: Cannot find high speed parent of usb-1 device\n");
-			*hub_address = 0;
-			*hub_port = 0;
-			return;
+		إذا (device_get_uclass_id(dev->والد) != UCLASS_USB_HUB) {
+			لکو("Error: Cannot find high speed parent of usb-1 device\n");
+			*hub_پتو = 0;
+			*hub_پورٽ = 0;
+			أرجع;
 		}
 
-		ttdev = dev_get_parent_priv(dev);
-		parent = dev->parent;
-		uparent = dev_get_parent_priv(parent);
+		ttdev = dev_get_والد_priv(dev);
+		والد = dev->والد;
+		uparent = dev_get_والد_priv(والد);
 	}
-	*hub_address = uparent->devnum;
-	*hub_port = ttdev->portnr;
+	*hub_پتو = uparent->devnum;
+	*hub_پورٽ = ttdev->portnr;
 }
-#else
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
-			       uint8_t *hub_address, uint8_t *hub_port)
+#وإلا
+فراغ usb_ڳوليو_usb2_hub_پتو_پورٽ(بنية usb_device *udev,
+			       uint8_t *hub_پتو, uint8_t *hub_پورٽ)
 {
 	/* Find out the nearest parent which is high speed */
-	while (udev->parent->parent != NULL)
-		if (udev->parent->speed != USB_SPEED_HIGH) {
-			udev = udev->parent;
-		} else {
-			*hub_address = udev->parent->devnum;
-			*hub_port = udev->portnr;
-			return;
+	طالما (udev->والد->والد != عدم)
+		إذا (udev->والد->رفتار != USB_رفتار_مٿاهون) {
+			udev = udev->والد;
+		} وإلا {
+			*hub_پتو = udev->والد->devnum;
+			*hub_پورٽ = udev->portnr;
+			أرجع;
 		}
 
-	printf("Error: Cannot find high speed parent of usb-1 device\n");
-	*hub_address = 0;
-	*hub_port = 0;
+	لکو("Error: Cannot find high speed parent of usb-1 device\n");
+	*hub_پتو = 0;
+	*hub_پورٽ = 0;
 }
-#endif
+#جيڪڏهن_پورو
 
 /* EOF */

@@ -3,52 +3,52 @@
  * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
  */
 
-#include <image.h>
-#include <log.h>
-#include <semihosting.h>
-#include <spl.h>
-#include <spl_load.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <semihosting.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
 
-static ulong smh_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ساكن ulong smh_fit_read(بنية spl_ڀريو_info *ڀريو, ulong file_وٿي,
+			  ulong سائيز, فراغ *buf)
 {
-	long fd = *(long *)load->priv;
+	ڊگهو fd = *(ڊگهو *)ڀريو->priv;
 	ulong ret;
 
-	if (smh_seek(fd, file_offset))
-		return 0;
+	إذا (smh_seek(fd, file_وٿي))
+		أرجع 0;
 
-	ret = smh_read(fd, buf, size);
-	return ret < 0 ? 0 : ret;
+	ret = smh_read(fd, buf, سائيز);
+	أرجع ret < 0 ? 0 : ret;
 }
 
-static int spl_smh_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_smh_ڀريو_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	int ret;
-	long fd, len;
-	struct spl_load_info load;
+	ثابت حرف *filename = CONFIG_SPL_FS_ڀريو_PAYLOAD_NAME;
+	صحيح ret;
+	ڊگهو fd, len;
+	بنية spl_ڀريو_info ڀريو;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
-	if (fd < 0) {
+	fd = smh_open(filename, گهڻائي_READ | گهڻائي_ٻٽو);
+	إذا (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
-		return fd;
+		أرجع fd;
 	}
 
 	ret = smh_flen(fd);
-	if (ret < 0) {
+	إذا (ret < 0) {
 		log_debug("could not get length of image: %d\n", ret);
-		goto out;
+		اذهب ٻاهريون;
 	}
 	len = ret;
 
-	spl_load_init(&load, smh_fit_read, &fd, 1);
-	ret = spl_load(spl_image, bootdev, &load, len, 0);
-	if (ret)
+	spl_ڀريو_init(&ڀريو, smh_fit_read, &fd, 1);
+	ret = spl_ڀريو(spl_image, bootdev, &ڀريو, len, 0);
+	إذا (ret)
 		log_debug("could not read %s: %d\n", filename, ret);
-out:
+ٻاهريون:
 	smh_close(fd);
-	return ret;
+	أرجع ret;
 }
-SPL_LOAD_IMAGE_METHOD("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_load_image);
+SPL_ڀريو_IMAGE_طريقو("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_ڀريو_image);

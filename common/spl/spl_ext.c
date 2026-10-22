@@ -1,164 +1,164 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <ext4fs.h>
-#include <errno.h>
-#include <image.h>
+#ضمن <env.h>
+#ضمن <part.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
+#ضمن <ext4fs.h>
+#ضمن <errno.h>
+#ضمن <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ساكن ulong spl_fit_read(بنية spl_ڀريو_info *ڀريو, ulong file_وٿي,
+			  ulong سائيز, فراغ *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	بنية legacy_img_hdr *سرو;
+	صحيح ret;
 	loff_t actlen;
 
-	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	ret = ext4fs_read(buf, file_وٿي, سائيز, &actlen);
+	إذا (ret)
+		أرجع ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	إذا (CONFIG_IS_ENABLED(OS_BOOT)) {
+		سرو = (بنية legacy_img_hdr *)buf;
+		إذا (image_get_magic(سرو) != FDT_MAGIC)
+			أرجع سائيز;
 	}
 
-	return actlen;
+	أرجع actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+صحيح spl_ڀريو_image_ext(بنية spl_image_info *spl_image,
+		       بنية spl_boot_device *bootdev,
+		       بنية blk_desc *بلاڪ_dev, صحيح حصا_ڪريو,
+		       ثابت حرف *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	بنية disk_حصا_ڪريو part_info = {};
+	بنية spl_ڀريو_info ڀريو;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
-		printf("spl: no partition table found\n");
-		return -1;
+	إذا (part_get_info(بلاڪ_dev, حصا_ڪريو, &part_info)) {
+		لکو("spl: no partition table found\n");
+		أرجع -1;
 	}
 
-	ext4fs_set_blk_dev(block_dev, &part_info);
+	ext4fs_سيٽ_blk_dev(بلاڪ_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
-		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+	إذا (!err) {
+		لکو("%s: ext4fs mount err - %d\n", __func__, err);
+		أرجع -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	إذا (err < 0) {
 		puts("spl: ext4fs_open failed\n");
-		goto end;
+		اذهب پڇاڙي_2;
 	}
 
-	spl_load_init(&load, spl_fit_read, NULL, 1);
-	err = spl_load(spl_image, bootdev, &load, filelen, 0);
+	spl_ڀريو_init(&ڀريو, spl_fit_read, عدم, 1);
+	err = spl_ڀريو(spl_image, bootdev, &ڀريو, filelen, 0);
 
-end:
-	if (err < 0)
-		printf("%s: error reading image %s, err - %d\n",
+پڇاڙي_2:
+	إذا (err < 0)
+		لکو("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	أرجع err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#إذا CONFIG_IS_ENABLED(OS_BOOT)
+صحيح spl_ڀريو_image_ext_os(بنية spl_image_info *spl_image,
+			  بنية spl_boot_device *bootdev,
+			  بنية blk_desc *بلاڪ_dev, صحيح حصا_ڪريو)
 {
-	int err;
+	صحيح err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	بنية disk_حصا_ڪريو part_info = {};
+	__maybe_unused حرف *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
-		printf("spl: no partition table found\n");
-		return -1;
+	إذا (part_get_info(بلاڪ_dev, حصا_ڪريو, &part_info)) {
+		لکو("spl: no partition table found\n");
+		أرجع -1;
 	}
 
-	ext4fs_set_blk_dev(block_dev, &part_info);
+	ext4fs_سيٽ_blk_dev(بلاڪ_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
-		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+	إذا (!err) {
+		لکو("%s: ext4fs mount err - %d\n", __func__, err);
+		أرجع -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	إذا (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		اذهب defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
-		err = spl_load_image_ext(spl_image, bootdev, block_dev,
-					 partition, file);
-		if (err != 0) {
+	إذا (file) {
+		err = spl_ڀريو_image_ext(spl_image, bootdev, بلاڪ_dev,
+					 حصا_ڪريو, file);
+		إذا (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			اذهب defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-		ext4fs_set_blk_dev(block_dev, &part_info);
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT_دليلون)
+		ext4fs_سيٽ_blk_dev(بلاڪ_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		إذا (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			إذا (err < 0) {
 				puts("spl: ext4fs_open failed\n");
-				goto defaults;
+				اذهب defaults;
 			}
-			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+			err = ext4fs_read((فراغ *)CONFIG_SPL_PAYLOAD_دليلون_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
-				printf("spl: error reading args %s, err - %d, falling back to default\n",
+			إذا (err < 0) {
+				لکو("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				اذهب defaults;
 			}
-			return 0;
-		} else {
+			أرجع 0;
+		} وإلا {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
-#endif
-	} else {
+#جيڪڏهن_پورو
+	} وإلا {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
 defaults:
 
-	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
-				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
+	err = spl_ڀريو_image_ext(spl_image, bootdev, بلاڪ_dev, حصا_ڪريو,
+				 CONFIG_SPL_FS_ڀريو_KERNEL_NAME);
 
-	if (err)
-		return err;
+	إذا (err)
+		أرجع err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	ext4fs_set_blk_dev(block_dev, &part_info);
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT_دليلون)
+	ext4fs_سيٽ_blk_dev(بلاڪ_dev, &part_info);
 	ext4fs_mount();
-	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	err = ext4fs_open(CONFIG_SPL_FS_ڀريو_دليلون_NAME, &filelen);
+	إذا (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
-	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
-		printf("%s: error reading image %s, err - %d\n",
-		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+	err = ext4fs_read((فراغ *)CONFIG_SPL_PAYLOAD_دليلون_ADDR, 0, filelen, &actlen);
+	إذا (err < 0) {
+		لکو("%s: error reading image %s, err - %d\n",
+		       __func__, CONFIG_SPL_FS_ڀريو_دليلون_NAME, err);
+		أرجع -1;
 	}
-#endif
+#جيڪڏهن_پورو
 
-	return 0;
+	أرجع 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#وإلا
+صحيح spl_ڀريو_image_ext_os(بنية spl_image_info *spl_image,
+			  بنية spl_boot_device *bootdev,
+			  بنية blk_desc *بلاڪ_dev, صحيح حصا_ڪريو)
 {
-	return -ENOSYS;
+	أرجع -ENOSYS;
 }
-#endif
+#جيڪڏهن_پورو

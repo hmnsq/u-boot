@@ -4,26 +4,26 @@
  * Author(s): Vikas Manocha, <vikas.manocha@st.com> for STMicroelectronics.
  */
 
-#include <config.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
+#ضمن <config.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <spl.h>
 
-static int spl_xip(struct spl_image_info *spl_image,
-		   struct spl_boot_device *bootdev)
+ساكن صحيح spl_xip(بنية spl_image_info *spl_image,
+		   بنية spl_boot_device *bootdev)
 {
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#إذا CONFIG_IS_ENABLED(OS_BOOT)
+	إذا (!spl_شروعات_uboot()) {
 		spl_image->name = "Linux";
 		spl_image->os = IH_OS_LINUX;
-		spl_image->load_addr = CONFIG_SYS_LOAD_ADDR;
-		spl_image->entry_point = CONFIG_SYS_LOAD_ADDR;
+		spl_image->ڀريو_addr = CONFIG_SYS_ڀريو_ADDR;
+		spl_image->داخلا_نقطو = CONFIG_SYS_ڀريو_ADDR;
 		debug("spl: payload xipImage, load addr: 0x%lx\n",
-		      spl_image->load_addr);
-		return 0;
+		      spl_image->ڀريو_addr);
+		أرجع 0;
 	}
-#endif
-	return(spl_parse_image_header(spl_image, bootdev,
-	       (const struct legacy_img_hdr *)CFG_SYS_UBOOT_BASE));
+#جيڪڏهن_پورو
+	أرجع(spl_parse_image_سرو(spl_image, bootdev,
+	       (ثابت بنية legacy_img_hdr *)CFG_SYS_UBOOT_بنياد));
 }
-SPL_LOAD_IMAGE_METHOD("XIP", 0, BOOT_DEVICE_XIP, spl_xip);
+SPL_ڀريو_IMAGE_طريقو("XIP", 0, BOOT_DEVICE_XIP, spl_xip);

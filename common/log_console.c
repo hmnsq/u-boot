@@ -6,15 +6,15 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <log.h>
-#include <asm/global_data.h>
+#ضمن <log.h>
+#ضمن <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_معلومات_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+ساكن صحيح log_console_emit(بنية log_device *ldev, بنية log_rec *rec)
 {
-	int fmt = gd->log_fmt;
-	bool add_space = false;
+	صحيح fmt = gd->log_fmt;
+	bool جوڙيو_space = false;
 
 	/*
 	 * The output format is designed to give someone a fighting chance of
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
-		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
-			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
-			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
-			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
-				printf("%s()", rec->func ?: "?");
-			} else {
-				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
+	إذا (!(rec->flags & LOGRECF_CONT) && fmt != ٻٽو_انگ(LOGF_نياپو)) {
+		جوڙيو_space = true;
+		إذا (fmt & ٻٽو_انگ(LOGF_LEVEL))
+			لکو("%s.", log_get_level_name(rec->level));
+		إذا (fmt & ٻٽو_انگ(LOGF_CAT))
+			لکو("%s,", log_get_cat_name(rec->cat));
+		إذا (fmt & ٻٽو_انگ(LOGF_FILE))
+			لکو("%s:", rec->file);
+		إذا (fmt & ٻٽو_انگ(LOGF_سٽ))
+			لکو("%d-", rec->سٽ);
+		إذا (fmt & ٻٽو_انگ(LOGF_FUNC)) {
+			إذا (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+				لکو("%s()", rec->func ?: "?");
+			} وإلا {
+				لکو("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	إذا (fmt & ٻٽو_انگ(LOGF_نياپو))
+		لکو("%s%s", جوڙيو_space ? " " : "", rec->نياپو);
 
-	return 0;
+	أرجع 0;
 }
 
 LOG_DRIVER(console) = {
