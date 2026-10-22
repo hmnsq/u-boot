@@ -15,53 +15,53 @@
 #include <errno.h>
 #include <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
-	struct legacy_img_hdr *header;
-	char *filename = load->priv;
+	sa_nracanaa legacy_img_hdr *header;
+	var_na *filename = load->priv;
 	loff_t actread;
-	int ret;
+	ကိန်းပြည့် ret;
 
 	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	အကယ်၍ (ret)
+		ပြန်ပေး ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	အကယ်၍ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (sa_nracanaa legacy_img_hdr *)buf;
+		အကယ်၍ (image_get_magic(header) != FDT_MAGIC)
+			ပြန်ပေး size;
 	}
 
-	return actread;
+	ပြန်ပေး actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
-			const char *filename)
+ကိန်းပြည့် spl_load_image_sqfs(sa_nracanaa spl_image_info *spl_image,
+			sa_nracanaa spl_boot_device *bootdev,
+			sa_nracanaa blk_desc *block_dev, ကိန်းပြည့် partition,
+			const var_na *filename)
 {
-	int err;
+	ကိန်းပြည့် err;
 	loff_t size = 0;
-	struct spl_load_info load;
-	struct disk_partition part_info = {};
+	sa_nracanaa spl_load_info load;
+	sa_nracanaa disk_partition part_info = {};
 
 	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
+	အကယ်၍ (err) {
 		printf("spl: no partition table found\n");
 		goto end;
 	}
 
 	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
+	အကယ်၍ (err) {
 		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
 		goto end;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	အကယ်၍ (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = sqfs_size(filename, &size);
-		if (err)
+		အကယ်၍ (err)
 			goto end;
 	}
 
@@ -70,9 +70,9 @@ int spl_load_image_sqfs(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0)
+	အကယ်၍ (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	ပြန်ပေး err;
 }

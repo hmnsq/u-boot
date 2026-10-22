@@ -21,8 +21,8 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#အကယ်၍ CONFIG_IS_ENABLED(EVENT_DEBUG)
+const var_na *const type_name[] = {
 	"none",
 	"test",
 
@@ -59,37 +59,37 @@ const char *const type_name[] = {
 _Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
 #endif
 
-const char *event_type_name(enum event_t type)
+const var_na *event_type_name(ga_nanaa event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#အကယ်၍ CONFIG_IS_ENABLED(EVENT_DEBUG)
+	အကယ်၍ (type < ARRAY_SIZE(type_name))
+		ပြန်ပေး type_name[type];
+	မဟုတ်ပါက
+		ပြန်ပေး "(unknown)";
+#မဟုတ်ပါက
+	ပြန်ပေး "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+static ကိန်းပြည့် notify_static(sa_nracanaa event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	sa_nracanaa evspy_info *start =
+		ll_entry_start(sa_nracanaa evspy_info, evspy_info);
+	const ကိန်းပြည့် n_ents = ll_entry_count(sa_nracanaa evspy_info, evspy_info);
+	sa_nracanaa evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	အတွက် (spy = start; spy != start + n_ents; spy++) {
+		အကယ်၍ (spy->type == ev->type) {
+			ကိန်းပြည့် ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			အကယ်၍ (spy->flags & EVSPYF_SIMPLE) {
+				const sa_nracanaa evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (sa_nracanaa evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
+			} မဟုတ်ပါက {
 				ret = spy->func(NULL, ev);
 			}
 
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			အကယ်၍ (ret)
+				ပြန်ပေး log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-static int notify_dynamic(struct event *ev)
+static ကိန်းပြည့် notify_dynamic(sa_nracanaa event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	sa_nracanaa event_state *state = gd_event_state();
+	sa_nracanaa event_spy *spy, *next;
 
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+		အကယ်၍ (spy->type == ev->type) {
+			ကိန်းပြည့် ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,72 +126,72 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			အကယ်၍ (ret)
+				ပြန်ပေး log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+ကိန်းပြည့် event_notify(ga_nanaa event_t type, void *data, ကိန်းပြည့် size)
 {
-	struct event event;
-	int ret;
+	sa_nracanaa event event;
+	ကိန်းပြည့် ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+	အကယ်၍ (size > parimaa_na(event.data))
+		ပြန်ပေး log_msg_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	အကယ်၍ (ret)
+		ပြန်ပေး log_msg_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	အကယ်၍ (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		အကယ်၍ (ret)
+			ပြန်ပေး log_msg_ret("dyn", ret);
 	}
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int event_notify_null(enum event_t type)
+ကိန်းပြည့် event_notify_null(ga_nanaa event_t type)
 {
-	return event_notify(type, NULL, 0);
+	ပြန်ပေး event_notify(type, NULL, 0);
 }
 
 void event_show_spy_list(void)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	sa_nracanaa evspy_info *start =
+		ll_entry_start(sa_nracanaa evspy_info, evspy_info);
+	const ကိန်းပြည့် n_ents = ll_entry_count(sa_nracanaa evspy_info, evspy_info);
+	sa_nracanaa evspy_info *spy;
+	const ကိန်းပြည့် size = parimaa_na(ulong) * 2;
 
 	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	အတွက် (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
 		       spy->type, event_type_name(spy->type), size, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#အကယ်၍ CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+static void spy_free(sa_nracanaa event_spy *spy)
 {
 	list_del(&spy->sibling_node);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+ကိန်းပြည့် event_register(const var_na *id, ga_nanaa event_t type, event_handler_t func, void *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	sa_nracanaa event_state *state = gd_event_state();
+	sa_nracanaa event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = malloc(parimaa_na(*spy));
+	အကယ်၍ (!spy)
+		ပြန်ပေး log_msg_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
@@ -199,26 +199,26 @@ int event_register(const char *id, enum event_t type, event_handler_t func, void
 	spy->ctx = ctx;
 	list_add_tail(&spy->sibling_node, &state->spy_head);
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int event_uninit(void)
+ကိန်းပြည့် event_uninit(void)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	sa_nracanaa event_state *state = gd_event_state();
+	sa_nracanaa event_spy *spy, *next;
 
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
 		spy_free(spy);
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int event_init(void)
+ကိန်းပြည့် event_init(void)
 {
-	struct event_state *state = gd_event_state();
+	sa_nracanaa event_state *state = gd_event_state();
 
 	INIT_LIST_HEAD(&state->spy_head);
 
-	return 0;
+	ပြန်ပေး 0;
 }
 #endif /* EVENT_DYNAMIC */
