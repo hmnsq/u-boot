@@ -6,98 +6,98 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <stdio.h>
-#include <vsprintf.h>
-#include <linux/string.h>
-#include <eeprom_field.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <vsprintf.h>
+#ಅನ್ತರ್ಭಾವ <linux/string.h>
+#ಅನ್ತರ್ಭಾವ <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+ಸ್ಥಿರ ಶೂನ್ಯ __eeprom_field_print_bin(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ,
+				     ಅಕ್ಷರ *delimiter, bool ಹಿಮ್ಮುಖ)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ from = ಹಿಮ್ಮುಖ ? ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2 - 1 : 0;
+	ಪೂರ್ಣಾಂಕ ಗಮ್ಯ = ಹಿಮ್ಮುಖ ? 0 : ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2 - 1;
 
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
-		printf("%02x%s", field->buf[i], delimiter);
+	ಬರೆ(PRINT_ಕ್ಷೇತ್ರ_SEGMENT, ಕ್ಷೇತ್ರ->name);
+	ಗಾಗಿ (i = from; i != ಗಮ್ಯ; ಹಿಮ್ಮುಖ ? i-- : i++)
+		ಬರೆ("%02x%s", ಕ್ಷೇತ್ರ->buf[i], delimiter);
 
-	printf("%02x\n", field->buf[i]);
+	ಬರೆ("%02x\n", ಕ್ಷೇತ್ರ->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __eeprom_field_update_bin(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ,
+				     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮೌಲ್ಯ, bool ಹಿಮ್ಮುಖ)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	ಪೂರ್ಣಾಂಕ len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮೌಲ್ಯ);
+	ಪೂರ್ಣಾಂಕ k, j, i = ಹಿಮ್ಮುಖ ? len - 1 : 0;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ byte;
+	ಅಕ್ಷರ *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	ಆದರೆ (len > ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2 * 2)
+		ಹಿಂತಿರುಗಿ -1;
 
-	memset(field->buf, 0, field->size);
+	memset(ಕ್ಷೇತ್ರ->buf, 0, ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	ಗಾಗಿ (j = 0; j < ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		ಅಕ್ಷರ tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		ಆದರೆ ((ಹಿಮ್ಮುಖ && i < 0) || (!ಹಿಮ್ಮುಖ && i >= len))
+			ನಿಲ್ಲಿಸು;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
-				tmp[k] = value[i];
-				break;
+		ಗಾಗಿ (k = 0; k < 2; k++) {
+			ಆದರೆ (ಹಿಮ್ಮುಖ && i == 0) {
+				tmp[k] = ಮೌಲ್ಯ[i];
+				ನಿಲ್ಲಿಸು;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = ಮೌಲ್ಯ[ಹಿಮ್ಮುಖ ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		ಆದರೆ (*endptr != '\0')
+			ಹಿಂತಿರುಗಿ -1;
 
-		field->buf[j] = byte;
-		i = reverse ? i - 2 : i + 2;
+		ಕ್ಷೇತ್ರ->buf[j] = byte;
+		i = ಹಿಮ್ಮುಖ ? i - 2 : i + 2;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __eeprom_field_update_bin_delim(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ,
+					   ಅಕ್ಷರ *ಮೌಲ್ಯ, ಅಕ್ಷರ *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = 0;
+	ಪೂರ್ಣಾಂಕ i, val;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *tmp = ಮೌಲ್ಯ;
+	ಅಕ್ಷರ *tok;
+	ಅಕ್ಷರ *endptr;
 
-	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
-		count++;
+	tmp = ಅಕ್ಷರಸರಣಿ_ಹುಡುಕು(tmp, delimiter);
+	ಆಗ (tmp != ಖಾಲಿ) {
+		ಎಣಿಕೆ_2++;
 		tmp++;
-		tmp = strstr(tmp, delimiter);
+		tmp = ಅಕ್ಷರಸರಣಿ_ಹುಡುಕು(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	ಆದರೆ (ಎಣಿಕೆ_2 > ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2)
+		ಹಿಂತಿರುಗಿ -1;
 
-	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	tok = strtok(ಮೌಲ್ಯ, delimiter);
+	ಗಾಗಿ (i = 0; tok && i < ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		ಆದರೆ (*endptr != '\0')
+			ಹಿಂತಿರುಗಿ -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
-		tok = strtok(NULL, delimiter);
+		ಕ್ಷೇತ್ರ->buf[i] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)val;
+		tok = strtok(ಖಾಲಿ, delimiter);
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /**
@@ -110,9 +110,9 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+ಶೂನ್ಯ eeprom_ಕ್ಷೇತ್ರ_print_bin(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ)
 {
-	__eeprom_field_print_bin(field, "", false);
+	__eeprom_field_print_bin(ಕ್ಷೇತ್ರ, "", false);
 }
 
 /**
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+ಪೂರ್ಣಾಂಕ eeprom_ಕ್ಷೇತ್ರ_update_bin(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ, ಅಕ್ಷರ *ಮೌಲ್ಯ)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	ಹಿಂತಿರುಗಿ __eeprom_field_update_bin(ಕ್ಷೇತ್ರ, ಮೌಲ್ಯ, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+ಪೂರ್ಣಾಂಕ eeprom_ಕ್ಷೇತ್ರ_update_reserved(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ, ಅಕ್ಷರ *ಮೌಲ್ಯ)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	ಹಿಂತಿರುಗಿ __eeprom_field_update_bin_delim(ಕ್ಷೇತ್ರ, ಮೌಲ್ಯ, " ");
 }
 
 /**
@@ -152,9 +152,9 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+ಶೂನ್ಯ eeprom_ಕ್ಷೇತ್ರ_print_bin_rev(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ)
 {
-	__eeprom_field_print_bin(field, "", true);
+	__eeprom_field_print_bin(ಕ್ಷೇತ್ರ, "", true);
 }
 
 /**
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+ಪೂರ್ಣಾಂಕ eeprom_ಕ್ಷೇತ್ರ_update_bin_rev(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ, ಅಕ್ಷರ *ಮೌಲ್ಯ)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	ಹಿಂತಿರುಗಿ __eeprom_field_update_bin(ಕ್ಷೇತ್ರ, ಮೌಲ್ಯ, true);
 }
 
 /**
@@ -183,9 +183,9 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+ಶೂನ್ಯ eeprom_ಕ್ಷೇತ್ರ_print_mac(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ)
 {
-	__eeprom_field_print_bin(field, ":", false);
+	__eeprom_field_print_bin(ಕ್ಷೇತ್ರ, ":", false);
 }
 
 /**
@@ -195,22 +195,22 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+ಪೂರ್ಣಾಂಕ eeprom_ಕ್ಷೇತ್ರ_update_mac(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ, ಅಕ್ಷರ *ಮೌಲ್ಯ)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	ಹಿಂತಿರುಗಿ __eeprom_field_update_bin_delim(ಕ್ಷೇತ್ರ, ಮೌಲ್ಯ, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+ಶೂನ್ಯ eeprom_ಕ್ಷೇತ್ರ_print_ascii(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ)
 {
-	char format[8];
+	ಅಕ್ಷರ format[8];
 
-	sprintf(format, "%%.%ds\n", field->size);
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	printf(format, field->buf);
+	sprintf(format, "%%.%ds\n", ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2);
+	ಬರೆ(PRINT_ಕ್ಷೇತ್ರ_SEGMENT, ಕ್ಷೇತ್ರ->name);
+	ಬರೆ(format, ಕ್ಷೇತ್ರ->buf);
 }
 
 /**
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+ಪೂರ್ಣಾಂಕ eeprom_ಕ್ಷೇತ್ರ_update_ascii(ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ, ಅಕ್ಷರ *ಮೌಲ್ಯ)
 {
-	if (strlen(value) >= field->size) {
-		printf("%s: new data too long\n", field->name);
-		return -1;
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮೌಲ್ಯ) >= ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2) {
+		ಬರೆ("%s: new data too long\n", ಕ್ಷೇತ್ರ->name);
+		ಹಿಂತಿರುಗಿ -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
-	field->buf[field->size - 1] = '\0';
+	strncpy((ಅಕ್ಷರ *)ಕ್ಷೇತ್ರ->buf, ಮೌಲ್ಯ, ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2 - 1);
+	ಕ್ಷೇತ್ರ->buf[ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2 - 1] = '\0';
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /**
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+ಶೂನ್ಯ eeprom_ಕ್ಷೇತ್ರ_print_reserved(ಸ್ಥಿರಾಂಕ ರಚನೆ eeprom_ಕ್ಷೇತ್ರ *ಕ್ಷೇತ್ರ)
 {
-	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
-	printf("(%d bytes)\n", field->size);
+	ಬರೆ(PRINT_ಕ್ಷೇತ್ರ_SEGMENT, "Reserved fields\t");
+	ಬರೆ("(%d bytes)\n", ಕ್ಷೇತ್ರ->ಗಾತ್ರ_2);
 }

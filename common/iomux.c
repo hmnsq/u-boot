@@ -4,42 +4,42 @@
  * Gary Jennejohn, DENX Software Engineering GmbH, garyj@denx.de.
  */
 
-#include <console.h>
-#include <serial.h>
-#include <malloc.h>
+#ಅನ್ತರ್ಭಾವ <console.h>
+#ಅನ್ತರ್ಭಾವ <serial.h>
+#ಅನ್ತರ್ಭಾವ <malloc.h>
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-void iomux_printdevs(const int console)
+#ಆದರೆ CONFIG_IS_ENABLED(CONSOLE_MUX)
+ಶೂನ್ಯ iomux_printdevs(ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ console)
 {
-	int i;
-	struct stdio_dev *dev;
+	ಪೂರ್ಣಾಂಕ i;
+	ರಚನೆ stdio_dev *dev;
 
 	for_each_console_dev(i, console, dev)
-		printf("%s ", dev->name);
-	printf("\n");
+		ಬರೆ("%s ", dev->name);
+	ಬರೆ("\n");
 }
 
-int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sdev)
+ಪೂರ್ಣಾಂಕ iomux_ಹೊಂದಿಕೆ_device(ರಚನೆ stdio_dev **ಗಣ, ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ n, ರಚನೆ stdio_dev *sdev)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0; i < n; i++)
-		if (sdev == set[i])
-			return i;
-	return -ENOENT;
+	ಗಾಗಿ (i = 0; i < n; i++)
+		ಆದರೆ (sdev == ಗಣ[i])
+			ಹಿಂತಿರುಗಿ i;
+	ಹಿಂತಿರುಗಿ -ENOENT;
 }
 
 /* This tries to preserve the old list if an error occurs. */
-int iomux_doenv(const int console, const char *arg)
+ಪೂರ್ಣಾಂಕ iomux_doenv(ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ console, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	char *console_args, *temp, **start;
-	int i, j, io_flag, cs_idx, repeat;
-	struct stdio_dev **cons_set, **old_set;
-	struct stdio_dev *dev;
+	ಅಕ್ಷರ *console_ವಾದಗಳು, *ತಾತ್ಕಾಲಿಕ, **ಆರಂಭ;
+	ಪೂರ್ಣಾಂಕ i, j, io_flag, cs_idx, repeat;
+	ರಚನೆ stdio_dev **cons_ಗಣ, **old_ಗಣ;
+	ರಚನೆ stdio_dev *dev;
 
-	console_args = strdup(arg);
-	if (console_args == NULL)
-		return 1;
+	console_ವಾದಗಳು = strdup(arg);
+	ಆದರೆ (console_ವಾದಗಳು == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 1;
 	/*
 	 * Check whether a comma separated list of devices was
 	 * entered and count how many devices were entered.
@@ -50,129 +50,129 @@ int iomux_doenv(const int console, const char *arg)
 	 * commas and then again to populate start.
 	 */
 	i = 0;
-	temp = console_args;
-	for (;;) {
+	ತಾತ್ಕಾಲಿಕ = console_ವಾದಗಳು;
+	ಗಾಗಿ (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
 
-		temp = strchr(temp, ',');
-		if (temp == NULL)
-			break;
+		ತಾತ್ಕಾಲಿಕ = strchr(ತಾತ್ಕಾಲಿಕ, ',');
+		ಆದರೆ (ತಾತ್ಕಾಲಿಕ == ಖಾಲಿ)
+			ನಿಲ್ಲಿಸು;
 
-		temp++;
+		ತಾತ್ಕಾಲಿಕ++;
 	}
-	start = (char **)malloc(i * sizeof(char *));
-	if (start == NULL) {
-		free(console_args);
-		return 1;
+	ಆರಂಭ = (ಅಕ್ಷರ **)ಸ್ಮರಣೆ_ಕೊಡು(i * ಗಾತ್ರ(ಅಕ್ಷರ *));
+	ಆದರೆ (ಆರಂಭ == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(console_ವಾದಗಳು);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 	i = 0;
-	start[0] = console_args;
-	for (;;) {
-		temp = strchr(start[i++], ',');
-		if (temp == NULL)
-			break;
-		*temp = '\0';
-		start[i] = temp + 1;
+	ಆರಂಭ[0] = console_ವಾದಗಳು;
+	ಗಾಗಿ (;;) {
+		ತಾತ್ಕಾಲಿಕ = strchr(ಆರಂಭ[i++], ',');
+		ಆದರೆ (ತಾತ್ಕಾಲಿಕ == ಖಾಲಿ)
+			ನಿಲ್ಲಿಸು;
+		*ತಾತ್ಕಾಲಿಕ = '\0';
+		ಆರಂಭ[i] = ತಾತ್ಕಾಲಿಕ + 1;
 	}
-	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
-	if (cons_set == NULL) {
-		free(start);
-		free(console_args);
-		return 1;
+	cons_ಗಣ = (ರಚನೆ stdio_dev **)ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(i, ಗಾತ್ರ(ರಚನೆ stdio_dev *));
+	ಆದರೆ (cons_ಗಣ == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(ಆರಂಭ);
+		ಬಿಡುಗಡೆ(console_ವಾದಗಳು);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	io_flag = stdio_file_to_flags(console);
-	if (io_flag < 0) {
-		free(start);
-		free(console_args);
-		free(cons_set);
-		return 1;
+	io_flag = stdio_file_ಗಮ್ಯ_flags(console);
+	ಆದರೆ (io_flag < 0) {
+		ಬಿಡುಗಡೆ(ಆರಂಭ);
+		ಬಿಡುಗಡೆ(console_ವಾದಗಳು);
+		ಬಿಡುಗಡೆ(cons_ಗಣ);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
 	cs_idx = 0;
-	for (j = 0; j < i; j++) {
+	ಗಾಗಿ (j = 0; j < i; j++) {
 		/*
 		 * Check whether the device exists and is valid.
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
-		dev = console_search_dev(io_flag, start[j]);
-		if (dev == NULL)
-			continue;
+		dev = console_ಹುಡುಕು_dev(io_flag, ಆರಂಭ[j]);
+		ಆದರೆ (dev == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
 		/*
 		 * Prevent multiple entries for a device.
 		 */
-		 repeat = iomux_match_device(cons_set, cs_idx, dev);
-		 if (repeat >= 0)
-			continue;
+		 repeat = iomux_ಹೊಂದಿಕೆ_device(cons_ಗಣ, cs_idx, dev);
+		 ಆದರೆ (repeat >= 0)
+			ಮುಂದುವರಿ;
 		/*
 		 * Try assigning the specified device.
 		 * This could screw up the console settings for apps.
 		 */
-		if (console_assign(console, start[j]) < 0)
-			continue;
-		cons_set[cs_idx++] = dev;
+		ಆದರೆ (console_ನಿಯೋಜಿಸು(console, ಆರಂಭ[j]) < 0)
+			ಮುಂದುವರಿ;
+		cons_ಗಣ[cs_idx++] = dev;
 	}
-	free(console_args);
-	free(start);
+	ಬಿಡುಗಡೆ(console_ವಾದಗಳು);
+	ಬಿಡುಗಡೆ(ಆರಂಭ);
 	/* failed to set any console */
-	if (cs_idx == 0) {
-		free(cons_set);
-		return 1;
+	ಆದರೆ (cs_idx == 0) {
+		ಬಿಡುಗಡೆ(cons_ಗಣ);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	old_set = console_devices[console];
-	repeat = cd_count[console];
+	old_ಗಣ = console_devices[console];
+	repeat = cd_ಎಣಿಕೆ[console];
 
-	console_devices[console] = cons_set;
-	cd_count[console] = cs_idx;
+	console_devices[console] = cons_ಗಣ;
+	cd_ಎಣಿಕೆ[console] = cs_idx;
 
 	/* Stop dropped consoles */
-	for (i = 0; i < repeat; i++) {
-		j = iomux_match_device(cons_set, cs_idx, old_set[i]);
-		if (j == -ENOENT)
-			console_stop(console, old_set[i]);
+	ಗಾಗಿ (i = 0; i < repeat; i++) {
+		j = iomux_ಹೊಂದಿಕೆ_device(cons_ಗಣ, cs_idx, old_ಗಣ[i]);
+		ಆದರೆ (j == -ENOENT)
+			console_stop(console, old_ಗಣ[i]);
 	}
 
-	free(old_set);
-	return 0;
+	ಬಿಡುಗಡೆ(old_ಗಣ);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int iomux_replace_device(const int console, const char *old, const char *new)
+ಪೂರ್ಣಾಂಕ iomux_replace_device(ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ console, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *old, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *new)
 {
-	struct stdio_dev *dev;
-	char *arg = NULL;	/* Initial empty list */
-	int size = 1;		/* For NUL terminator */
-	int i, ret;
+	ರಚನೆ stdio_dev *dev;
+	ಅಕ್ಷರ *arg = ಖಾಲಿ;	/* Initial empty list */
+	ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2 = 1;		/* For NUL terminator */
+	ಪೂರ್ಣಾಂಕ i, ret;
 
 	for_each_console_dev(i, console, dev) {
-		const char *name = strcmp(dev->name, old) ? dev->name : new;
-		char *tmp;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name = strcmp(dev->name, old) ? dev->name : new;
+		ಅಕ್ಷರ *tmp;
 
 		/* Append name with a ',' (comma) separator */
-		tmp = realloc(arg, size + strlen(name) + 1);
-		if (!tmp) {
-			free(arg);
-			return -ENOMEM;
+		tmp = realloc(arg, ಗಾತ್ರ_2 + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name) + 1);
+		ಆದರೆ (!tmp) {
+			ಬಿಡುಗಡೆ(arg);
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 		}
 
-		if (arg) {
+		ಆದರೆ (arg) {
 			strcat(tmp, ",");
 			strcat(tmp, name);
 		}
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			strcpy(tmp, name);
 
 		arg = tmp;
-		size = strlen(tmp) + 1;
+		ಗಾತ್ರ_2 = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tmp) + 1;
 	}
 
 	ret = iomux_doenv(console, arg);
-	if (ret)
+	ಆದರೆ (ret)
 		ret = -EINVAL;
 
-	free(arg);
-	return ret;
+	ಬಿಡುಗಡೆ(arg);
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif /* CONSOLE_MUX */
+#ಆದರೆ_ಅಂತ್ಯ /* CONSOLE_MUX */

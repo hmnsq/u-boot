@@ -6,15 +6,15 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <log.h>
-#include <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ದತ್ತಾಂಶ_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_console_emit(ರಚನೆ log_device *ldev, ರಚನೆ log_rec *rec)
 {
-	int fmt = gd->log_fmt;
-	bool add_space = false;
+	ಪೂರ್ಣಾಂಕ fmt = gd->log_fmt;
+	bool ಕೂಡಿಸು_space = false;
 
 	/*
 	 * The output format is designed to give someone a fighting chance of
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
-		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
-			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
-			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
-			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
-				printf("%s()", rec->func ?: "?");
-			} else {
-				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
+	ಆದರೆ (!(rec->flags & LOGRECF_CONT) && fmt != ಬಿಟ್(LOGF_ಸಂದೇಶ)) {
+		ಕೂಡಿಸು_space = true;
+		ಆದರೆ (fmt & ಬಿಟ್(LOGF_LEVEL))
+			ಬರೆ("%s.", log_get_level_name(rec->level));
+		ಆದರೆ (fmt & ಬಿಟ್(LOGF_CAT))
+			ಬರೆ("%s,", log_get_cat_name(rec->cat));
+		ಆದರೆ (fmt & ಬಿಟ್(LOGF_FILE))
+			ಬರೆ("%s:", rec->file);
+		ಆದರೆ (fmt & ಬಿಟ್(LOGF_ಸಾಲು))
+			ಬರೆ("%d-", rec->ಸಾಲು);
+		ಆದರೆ (fmt & ಬಿಟ್(LOGF_FUNC)) {
+			ಆದರೆ (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+				ಬರೆ("%s()", rec->func ?: "?");
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಬರೆ("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	ಆದರೆ (fmt & ಬಿಟ್(LOGF_ಸಂದೇಶ))
+		ಬರೆ("%s%s", ಕೂಡಿಸು_space ? " " : "", rec->ಸಂದೇಶ);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 LOG_DRIVER(console) = {

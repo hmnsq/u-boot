@@ -87,393 +87,393 @@
  *
  ****************************************************************************/
 
-#include <asm/ptrace.h>
+#ಅನ್ತರ್ಭಾವ <asm/ptrace.h>
 
-#include <kgdb.h>
-#include <command.h>
+#ಅನ್ತರ್ಭಾವ <kgdb.h>
+#ಅನ್ತರ್ಭಾವ <command.h>
 
-#undef KGDB_DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು KGDB_DEBUG
 
 /*
  * BUFMAX defines the maximum number of characters in inbound/outbound buffers
  */
-#define BUFMAX 1024
-static char remcomInBuffer[BUFMAX];
-static char remcomOutBuffer[BUFMAX];
-static char remcomRegBuffer[BUFMAX];
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFMAX 1024
+ಸ್ಥಿರ ಅಕ್ಷರ remcom_ಒಳ_ಬಫರ್[BUFMAX];
+ಸ್ಥಿರ ಅಕ್ಷರ remcom_ಹೊರಹೋಗು_ಬಫರ್[BUFMAX];
+ಸ್ಥಿರ ಅಕ್ಷರ remcom_Reg_ಬಫರ್[BUFMAX];
 
-static int initialized = 0;
-static int kgdb_active;
-static struct pt_regs entry_regs;
-static long error_jmp_buf[BUFMAX/2];
-static int longjmp_on_fault = 0;
-#ifdef KGDB_DEBUG
-static int kdebug = 1;
-#endif
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ initialized = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ kgdb_ಸಕ್ರಿಯ;
+ಸ್ಥಿರ ರಚನೆ pt_regs ನಮೂದು_regs;
+ಸ್ಥಿರ ದೀರ್ಘ error_jmp_buf[BUFMAX/2];
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ longjmp_on_fault = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ kdebug = 1;
+#ಆದರೆ_ಅಂತ್ಯ
 
-static const char hexchars[]="0123456789abcdef";
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ hexchars[]="0123456789abcdef";
 
 /* Convert ch from a hex digit to an int */
-static int
-hex(unsigned char ch)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+hex(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ch)
 {
-	if (ch >= 'a' && ch <= 'f')
-		return ch-'a'+10;
-	if (ch >= '0' && ch <= '9')
-		return ch-'0';
-	if (ch >= 'A' && ch <= 'F')
-		return ch-'A'+10;
-	return -1;
+	ಆದರೆ (ch >= 'a' && ch <= 'f')
+		ಹಿಂತಿರುಗಿ ch-'a'+10;
+	ಆದರೆ (ch >= '0' && ch <= '9')
+		ಹಿಂತಿರುಗಿ ch-'0';
+	ಆದರೆ (ch >= 'A' && ch <= 'F')
+		ಹಿಂತಿರುಗಿ ch-'A'+10;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
 /* Convert the memory pointed to by mem into hex, placing result in buf.
  * Return a pointer to the last char put in buf (null).
  */
-static unsigned char *
-mem2hex(char *mem, char *buf, int count)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *
+mem2hex(ಅಕ್ಷರ *mem, ಅಕ್ಷರ *buf, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	char *tmp;
-	unsigned char ch;
+	ಅಕ್ಷರ *tmp;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ch;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory copy.  Hex conversion will work against this one.
 	 */
-	tmp = buf + count;
+	tmp = buf + ಎಣಿಕೆ_2;
 	longjmp_on_fault = 1;
 
-	memcpy(tmp, mem, count);
+	ಸ್ಮರಣೆ_ನಕಲು(tmp, mem, ಎಣಿಕೆ_2);
 
-	while (count-- > 0) {
+	ಆಗ (ಎಣಿಕೆ_2-- > 0) {
 		ch = *tmp++;
 		*buf++ = hexchars[ch >> 4];
 		*buf++ = hexchars[ch & 0xf];
 	}
 	*buf = 0;
 	longjmp_on_fault = 0;
-	return (unsigned char *)buf;
+	ಹಿಂತಿರುಗಿ (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)buf;
 }
 
 /* convert the hex array pointed to by buf into binary to be placed in mem
  * return a pointer to the character AFTER the last byte fetched from buf.
 */
-static char *
-hex2mem(char *buf, char *mem, int count)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+hex2mem(ಅಕ್ಷರ *buf, ಅಕ್ಷರ *mem, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	int hexValue;
-	char *tmp_raw, *tmp_hex;
+	ಪೂರ್ಣಾಂಕ hex_ಮೌಲ್ಯ;
+	ಅಕ್ಷರ *tmp_raw, *tmp_hex;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory that is converted from hex.
 	 */
-	tmp_raw = buf + count * 2;
+	tmp_raw = buf + ಎಣಿಕೆ_2 * 2;
 	tmp_hex = tmp_raw - 1;
 
 	longjmp_on_fault = 1;
-	while (tmp_hex >= buf) {
+	ಆಗ (tmp_hex >= buf) {
 		tmp_raw--;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		hex_ಮೌಲ್ಯ = hex(*tmp_hex--);
+		ಆದರೆ (hex_ಮೌಲ್ಯ < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw = hexValue;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		*tmp_raw = hex_ಮೌಲ್ಯ;
+		hex_ಮೌಲ್ಯ = hex(*tmp_hex--);
+		ಆದರೆ (hex_ಮೌಲ್ಯ < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw |= hexValue << 4;
+		*tmp_raw |= hex_ಮೌಲ್ಯ << 4;
 
 	}
 
-	memcpy(mem, tmp_raw, count);
+	ಸ್ಮರಣೆ_ನಕಲು(mem, tmp_raw, ಎಣಿಕೆ_2);
 
-	kgdb_flush_cache_range((void *)mem, (void *)(mem+count));
+	kgdb_flush_cache_range((ಶೂನ್ಯ *)mem, (ಶೂನ್ಯ *)(mem+ಎಣಿಕೆ_2));
 	longjmp_on_fault = 0;
 
-	return buf;
+	ಹಿಂತಿರುಗಿ buf;
 }
 
 /*
  * While we find nice hex chars, build an int.
  * Return number of chars processed.
  */
-static int
-hexToInt(char **ptr, int *intValue)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+hex_ಗಮ್ಯ_Int(ಅಕ್ಷರ **ptr, ಪೂರ್ಣಾಂಕ *int_ಮೌಲ್ಯ)
 {
-	int numChars = 0;
-	int hexValue;
+	ಪೂರ್ಣಾಂಕ ಅಂಕೆ_Chars = 0;
+	ಪೂರ್ಣಾಂಕ hex_ಮೌಲ್ಯ;
 
-	*intValue = 0;
+	*int_ಮೌಲ್ಯ = 0;
 
 	longjmp_on_fault = 1;
-	while (**ptr) {
-		hexValue = hex(**ptr);
-		if (hexValue < 0)
-			break;
+	ಆಗ (**ptr) {
+		hex_ಮೌಲ್ಯ = hex(**ptr);
+		ಆದರೆ (hex_ಮೌಲ್ಯ < 0)
+			ನಿಲ್ಲಿಸು;
 
-		*intValue = (*intValue << 4) | hexValue;
-		numChars ++;
+		*int_ಮೌಲ್ಯ = (*int_ಮೌಲ್ಯ << 4) | hex_ಮೌಲ್ಯ;
+		ಅಂಕೆ_Chars ++;
 
 		(*ptr)++;
 	}
 	longjmp_on_fault = 0;
 
-	return (numChars);
+	ಹಿಂತಿರುಗಿ (ಅಂಕೆ_Chars);
 }
 
 /* scan for the sequence $<data>#<checksum>     */
-static void
-getpacket(char *buffer)
+ಸ್ಥಿರ ಶೂನ್ಯ
+getpacket(ಅಕ್ಷರ *ಬಫರ್)
 {
-	unsigned char checksum;
-	unsigned char xmitcsum;
-	int i;
-	int count;
-	unsigned char ch;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ checksum;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ xmitcsum;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ch;
 
-	do {
+	ಮಾಡು {
 		/* wait around for the start character, ignore all other
 		 * characters */
-		while ((ch = (getDebugChar() & 0x7f)) != '$') {
-#ifdef KGDB_DEBUG
-			if (kdebug)
+		ಆಗ ((ch = (getDebugChar() & 0x7f)) != '$') {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+			ಆದರೆ (kdebug)
 				putc(ch);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 			;
 		}
 
 		checksum = 0;
 		xmitcsum = -1;
 
-		count = 0;
+		ಎಣಿಕೆ_2 = 0;
 
 		/* now, read until a # or end of buffer is found */
-		while (count < BUFMAX) {
+		ಆಗ (ಎಣಿಕೆ_2 < BUFMAX) {
 			ch = getDebugChar() & 0x7f;
-			if (ch == '#')
-				break;
+			ಆದರೆ (ch == '#')
+				ನಿಲ್ಲಿಸು;
 			checksum = checksum + ch;
-			buffer[count] = ch;
-			count = count + 1;
+			ಬಫರ್[ಎಣಿಕೆ_2] = ch;
+			ಎಣಿಕೆ_2 = ಎಣಿಕೆ_2 + 1;
 		}
 
-		if (count >= BUFMAX)
-			continue;
+		ಆದರೆ (ಎಣಿಕೆ_2 >= BUFMAX)
+			ಮುಂದುವರಿ;
 
-		buffer[count] = 0;
+		ಬಫರ್[ಎಣಿಕೆ_2] = 0;
 
-		if (ch == '#') {
+		ಆದರೆ (ch == '#') {
 			xmitcsum = hex(getDebugChar() & 0x7f) << 4;
 			xmitcsum |= hex(getDebugChar() & 0x7f);
-			if (checksum != xmitcsum)
+			ಆದರೆ (checksum != xmitcsum)
 				putDebugChar('-');	/* failed checksum */
-			else {
+			ಇಲ್ಲದಿದ್ದರೆ {
 				putDebugChar('+'); /* successful transfer */
 				/* if a sequence char is present, reply the ID */
-				if (buffer[2] == ':') {
-					putDebugChar(buffer[0]);
-					putDebugChar(buffer[1]);
+				ಆದರೆ (ಬಫರ್[2] == ':') {
+					putDebugChar(ಬಫರ್[0]);
+					putDebugChar(ಬಫರ್[1]);
 					/* remove sequence chars from buffer */
-					count = strlen(buffer);
-					for (i=3; i <= count; i++)
-						buffer[i-3] = buffer[i];
+					ಎಣಿಕೆ_2 = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಬಫರ್);
+					ಗಾಗಿ (i=3; i <= ಎಣಿಕೆ_2; i++)
+						ಬಫರ್[i-3] = ಬಫರ್[i];
 				}
 			}
 		}
-	} while (checksum != xmitcsum);
+	} ಆಗ (checksum != xmitcsum);
 }
 
 /* send the packet in buffer.  */
-static void
-putpacket(unsigned char *buffer)
+ಸ್ಥಿರ ಶೂನ್ಯ
+putpacket(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಬಫರ್)
 {
-	unsigned char checksum;
-	int count;
-	unsigned char ch, recv;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ checksum;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ch, recv;
 
 	/*  $<packet info>#<checksum>. */
-	do {
+	ಮಾಡು {
 		putDebugChar('$');
 		checksum = 0;
-		count = 0;
+		ಎಣಿಕೆ_2 = 0;
 
-		while ((ch = buffer[count])) {
+		ಆಗ ((ch = ಬಫರ್[ಎಣಿಕೆ_2])) {
 			putDebugChar(ch);
 			checksum += ch;
-			count += 1;
+			ಎಣಿಕೆ_2 += 1;
 		}
 
 		putDebugChar('#');
 		putDebugChar(hexchars[checksum >> 4]);
 		putDebugChar(hexchars[checksum & 0xf]);
 		recv = getDebugChar();
-	} while ((recv & 0x7f) != '+');
+	} ಆಗ ((recv & 0x7f) != '+');
 }
 
 /*
  * This function does all command processing for interfacing to gdb.
  */
-static int
-handle_exception (struct pt_regs *regs)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+handle_exception (ರಚನೆ pt_regs *regs)
 {
-	int addr;
-	int length;
-	char *ptr;
-	kgdb_data kd;
-	int i;
+	ಪೂರ್ಣಾಂಕ addr;
+	ಪೂರ್ಣಾಂಕ ಉದ್ದಳತೆ;
+	ಅಕ್ಷರ *ptr;
+	kgdb_ದತ್ತಾಂಶ kd;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (!initialized) {
-		printf("kgdb: exception before kgdb is initialized! huh?\n");
-		return (0);
+	ಆದರೆ (!initialized) {
+		ಬರೆ("kgdb: exception before kgdb is initialized! huh?\n");
+		ಹಿಂತಿರುಗಿ (0);
 	}
 
 	/* probably should check which exception occurred as well */
-	if (longjmp_on_fault) {
+	ಆದರೆ (longjmp_on_fault) {
 		longjmp_on_fault = 0;
 		kgdb_longjmp(error_jmp_buf, KGDBERR_MEMFAULT);
 		panic("kgdb longjump failed!\n");
 	}
 
-	if (kgdb_active) {
-		printf("kgdb: unexpected exception from within kgdb\n");
-		return (0);
+	ಆದರೆ (kgdb_ಸಕ್ರಿಯ) {
+		ಬರೆ("kgdb: unexpected exception from within kgdb\n");
+		ಹಿಂತಿರುಗಿ (0);
 	}
-	kgdb_active = 1;
+	kgdb_ಸಕ್ರಿಯ = 1;
 
 	kgdb_interruptible(0);
 
-	printf("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
+	ಬರೆ("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
 
-	if (kgdb_setjmp(error_jmp_buf) != 0)
+	ಆದರೆ (kgdb_setjmp(error_jmp_buf) != 0)
 		panic("kgdb: error or fault in entry init!\n");
 
 	kgdb_enter(regs, &kd);
 
-	entry_regs = *regs;
+	ನಮೂದು_regs = *regs;
 
-	ptr = remcomOutBuffer;
+	ptr = remcom_ಹೊರಹೋಗು_ಬಫರ್;
 
 	*ptr++ = 'T';
 
 	*ptr++ = hexchars[kd.sigval >> 4];
 	*ptr++ = hexchars[kd.sigval & 0xf];
 
-	for (i = 0; i < kd.nregs; i++) {
+	ಗಾಗಿ (i = 0; i < kd.nregs; i++) {
 		kgdb_reg *rp = &kd.regs[i];
 
-		*ptr++ = hexchars[rp->num >> 4];
-		*ptr++ = hexchars[rp->num & 0xf];
+		*ptr++ = hexchars[rp->ಅಂಕೆ >> 4];
+		*ptr++ = hexchars[rp->ಅಂಕೆ & 0xf];
 		*ptr++ = ':';
-		ptr = (char *)mem2hex((char *)&rp->val, ptr, 4);
+		ptr = (ಅಕ್ಷರ *)mem2hex((ಅಕ್ಷರ *)&rp->val, ptr, 4);
 		*ptr++ = ';';
 	}
 
 	*ptr = 0;
 
-#ifdef KGDB_DEBUG
-	if (kdebug)
-		printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+	ಆದರೆ (kdebug)
+		ಬರೆ("kgdb: remcomOutBuffer: %s\n", remcom_ಹೊರಹೋಗು_ಬಫರ್);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	putpacket((unsigned char *)&remcomOutBuffer);
+	putpacket((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)&remcom_ಹೊರಹೋಗು_ಬಫರ್);
 
-	while (1) {
-		volatile int errnum;
+	ಆಗ (1) {
+		ಅಸ್ಥಿರ ಪೂರ್ಣಾಂಕ errnum;
 
-		remcomOutBuffer[0] = 0;
+		remcom_ಹೊರಹೋಗು_ಬಫರ್[0] = 0;
 
-		getpacket(remcomInBuffer);
-		ptr = &remcomInBuffer[1];
+		getpacket(remcom_ಒಳ_ಬಫರ್);
+		ptr = &remcom_ಒಳ_ಬಫರ್[1];
 
-#ifdef KGDB_DEBUG
-		if (kdebug)
-			printf("kgdb:  remcomInBuffer: %s\n", remcomInBuffer);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+		ಆದರೆ (kdebug)
+			ಬರೆ("kgdb:  remcomInBuffer: %s\n", remcom_ಒಳ_ಬಫರ್);
+#ಆದರೆ_ಅಂತ್ಯ
 
 		errnum = kgdb_setjmp(error_jmp_buf);
 
-		if (errnum == 0) switch (remcomInBuffer[0]) {
+		ಆದರೆ (errnum == 0) ಆಯ್ಕೆ (remcom_ಒಳ_ಬಫರ್[0]) {
 
-		case '?':               /* report most recent signal */
-			remcomOutBuffer[0] = 'S';
-			remcomOutBuffer[1] = hexchars[kd.sigval >> 4];
-			remcomOutBuffer[2] = hexchars[kd.sigval & 0xf];
-			remcomOutBuffer[3] = 0;
-			break;
+		ಸ್ಥಿತಿ '?':               /* report most recent signal */
+			remcom_ಹೊರಹೋಗು_ಬಫರ್[0] = 'S';
+			remcom_ಹೊರಹೋಗು_ಬಫರ್[1] = hexchars[kd.sigval >> 4];
+			remcom_ಹೊರಹೋಗು_ಬಫರ್[2] = hexchars[kd.sigval & 0xf];
+			remcom_ಹೊರಹೋಗು_ಬಫರ್[3] = 0;
+			ನಿಲ್ಲಿಸು;
 
-#ifdef KGDB_DEBUG
-		case 'd':
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+		ಸ್ಥಿತಿ 'd':
 			/* toggle debug flag */
 			kdebug ^= 1;
-			break;
-#endif
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
 
-		case 'g':	/* return the value of the CPU registers. */
-			length = kgdb_getregs(regs, remcomRegBuffer, BUFMAX);
-			mem2hex(remcomRegBuffer, remcomOutBuffer, length);
-			break;
+		ಸ್ಥಿತಿ 'g':	/* return the value of the CPU registers. */
+			ಉದ್ದಳತೆ = kgdb_getregs(regs, remcom_Reg_ಬಫರ್, BUFMAX);
+			mem2hex(remcom_Reg_ಬಫರ್, remcom_ಹೊರಹೋಗು_ಬಫರ್, ಉದ್ದಳತೆ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'G':   /* set the value of the CPU registers */
-			length = strlen(ptr);
-			if ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
-			hex2mem(ptr, remcomRegBuffer, length/2);
-			kgdb_putregs(regs, remcomRegBuffer, length/2);
-			strcpy(remcomOutBuffer,"OK");
-			break;
+		ಸ್ಥಿತಿ 'G':   /* set the value of the CPU registers */
+			ಉದ್ದಳತೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ptr);
+			ಆದರೆ ((ಉದ್ದಳತೆ & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
+			hex2mem(ptr, remcom_Reg_ಬಫರ್, ಉದ್ದಳತೆ/2);
+			kgdb_putregs(regs, remcom_Reg_ಬಫರ್, ಉದ್ದಳತೆ/2);
+			strcpy(remcom_ಹೊರಹೋಗು_ಬಫರ್,"OK");
+			ನಿಲ್ಲಿಸು;
 
-		case 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
+		ಸ್ಥಿತಿ 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
 				/* Try to read %x,%x.  */
 
-			if (hexToInt(&ptr, &addr)
+			ಆದರೆ (hex_ಗಮ್ಯ_Int(&ptr, &addr)
 			    && *ptr++ == ','
-			    && hexToInt(&ptr, &length))	{
-				mem2hex((char *)addr, remcomOutBuffer, length);
-			} else {
+			    && hex_ಗಮ್ಯ_Int(&ptr, &ಉದ್ದಳತೆ))	{
+				mem2hex((ಅಕ್ಷರ *)addr, remcom_ಹೊರಹೋಗು_ಬಫರ್, ಉದ್ದಳತೆ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
+		ಸ್ಥಿತಿ 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
 			/* Try to read '%x,%x:'.  */
 
-			if (hexToInt(&ptr, &addr)
+			ಆದರೆ (hex_ಗಮ್ಯ_Int(&ptr, &addr)
 			    && *ptr++ == ','
-			    && hexToInt(&ptr, &length)
+			    && hex_ಗಮ್ಯ_Int(&ptr, &ಉದ್ದಳತೆ)
 			    && *ptr++ == ':') {
-				hex2mem(ptr, (char *)addr, length);
-				strcpy(remcomOutBuffer, "OK");
-			} else {
+				hex2mem(ptr, (ಅಕ್ಷರ *)addr, ಉದ್ದಳತೆ);
+				strcpy(remcom_ಹೊರಹೋಗು_ಬಫರ್, "OK");
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'k':    /* kill the program, actually return to monitor */
+		ಸ್ಥಿತಿ 'k':    /* kill the program, actually return to monitor */
 			kd.extype = KGDBEXIT_KILL;
-			*regs = entry_regs;
-			goto doexit;
+			*regs = ನಮೂದು_regs;
+			ಹೋಗು doexit;
 
-		case 'C':    /* CSS  continue with signal SS */
+		ಸ್ಥಿತಿ 'C':    /* CSS  continue with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 'c':    /* cAA..AA  Continue; address AA..AA optional */
+		ಸ್ಥಿತಿ 'c':    /* cAA..AA  Continue; address AA..AA optional */
 			/* try to read optional parameter, pc unchanged if no parm */
 			kd.extype = KGDBEXIT_CONTINUE;
 
-			if (hexToInt(&ptr, &addr)) {
+			ಆದರೆ (hex_ಗಮ್ಯ_Int(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
 
-			goto doexit;
+			ಹೋಗು doexit;
 
-		case 'S':    /* SSS  single step with signal SS */
+		ಸ್ಥಿತಿ 'S':    /* SSS  single step with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 's':
+		ಸ್ಥಿತಿ 's':
 			kd.extype = KGDBEXIT_SINGLE;
 
-			if (hexToInt(&ptr, &addr)) {
+			ಆದರೆ (hex_ಗಮ್ಯ_Int(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
@@ -485,38 +485,38 @@ handle_exception (struct pt_regs *regs)
  */
 			kgdb_flush_cache_all();
 			kgdb_exit(regs, &kd);
-			kgdb_active = 0;
+			kgdb_ಸಕ್ರಿಯ = 0;
 			kgdb_interruptible(1);
-			return (1);
+			ಹಿಂತಿರುಗಿ (1);
 
-		case 'r':		/* Reset (if user process..exit ???)*/
+		ಸ್ಥಿತಿ 'r':		/* Reset (if user process..exit ???)*/
 			panic("kgdb reset.");
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
-			if (hexToInt(&ptr, &addr)
+		ಸ್ಥಿತಿ 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
+			ಆದರೆ (hex_ಗಮ್ಯ_Int(&ptr, &addr)
 			    && *ptr++ == '='
-			    && ((length = strlen(ptr)) & 1) == 0) {
-				hex2mem(ptr, remcomRegBuffer, length/2);
+			    && ((ಉದ್ದಳತೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ptr)) & 1) == 0) {
+				hex2mem(ptr, remcom_Reg_ಬಫರ್, ಉದ್ದಳತೆ/2);
 				kgdb_putreg(regs, addr,
-					remcomRegBuffer, length/2);
-				strcpy(remcomOutBuffer,"OK");
-			} else {
+					remcom_Reg_ಬಫರ್, ಉದ್ದಳತೆ/2);
+				strcpy(remcom_ಹೊರಹೋಗು_ಬಫರ್,"OK");
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 		}			/* switch */
 
-		if (errnum != 0)
-			sprintf(remcomOutBuffer, "E%02d", errnum);
+		ಆದರೆ (errnum != 0)
+			sprintf(remcom_ಹೊರಹೋಗು_ಬಫರ್, "E%02d", errnum);
 
-#ifdef KGDB_DEBUG
-		if (kdebug)
-			printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KGDB_DEBUG
+		ಆದರೆ (kdebug)
+			ಬರೆ("kgdb: remcomOutBuffer: %s\n", remcom_ಹೊರಹೋಗು_ಬಫರ್);
+#ಆದರೆ_ಅಂತ್ಯ
 
 		/* reply to the request */
-		putpacket((unsigned char *)&remcomOutBuffer);
+		putpacket((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)&remcom_ಹೊರಹೋಗು_ಬಫರ್);
 
 	} /* while(1) */
 }
@@ -525,7 +525,7 @@ handle_exception (struct pt_regs *regs)
  * kgdb_init must be called *after* the
  * monitor is relocated into ram
  */
-int kgdb_init(void)
+ಪೂರ್ಣಾಂಕ kgdb_init(ಶೂನ್ಯ)
 {
 	puts("KGDB:  ");
 
@@ -536,11 +536,11 @@ int kgdb_init(void)
 	putDebugStr("kgdb ready\n");
 	puts("ready\n");
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-kgdb_error(int errnum)
+ಶೂನ್ಯ
+kgdb_error(ಪೂರ್ಣಾಂಕ errnum)
 {
 	longjmp_on_fault = 0;
 	kgdb_longjmp(error_jmp_buf, errnum);
@@ -549,39 +549,39 @@ kgdb_error(int errnum)
 
 /* Output string in GDB O-packet format if GDB has connected. If nothing
    output, returns 0 (caller must then handle output). */
-int
-kgdb_output_string (const char* s, unsigned int count)
+ಪೂರ್ಣಾಂಕ
+kgdb_output_string (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* s, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	char buffer[512];
+	ಅಕ್ಷರ ಬಫರ್[512];
 
-	count = (count <= (sizeof(buffer) / 2 - 2))
-		? count : (sizeof(buffer) / 2 - 2);
+	ಎಣಿಕೆ_2 = (ಎಣಿಕೆ_2 <= (ಗಾತ್ರ(ಬಫರ್) / 2 - 2))
+		? ಎಣಿಕೆ_2 : (ಗಾತ್ರ(ಬಫರ್) / 2 - 2);
 
-	buffer[0] = 'O';
-	mem2hex ((char *)s, &buffer[1], count);
-	putpacket((unsigned char *)&buffer);
+	ಬಫರ್[0] = 'O';
+	mem2hex ((ಅಕ್ಷರ *)s, &ಬಫರ್[1], ಎಣಿಕೆ_2);
+	putpacket((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)&ಬಫರ್);
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-void
-breakpoint(void)
+ಶೂನ್ಯ
+breakpoint(ಶೂನ್ಯ)
 {
-	if (!initialized) {
-		printf("breakpoint() called b4 kgdb init\n");
-		return;
+	ಆದರೆ (!initialized) {
+		ಬರೆ("breakpoint() called b4 kgdb init\n");
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	kgdb_breakpoint(0, 0);
 }
 
-int
-do_kgdb(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+ಪೂರ್ಣಾಂಕ
+do_kgdb(ರಚನೆ cmd_tbl *cmdtp, ಪೂರ್ಣಾಂಕ flag, ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *ಸ್ಥಿರಾಂಕ argv[])
 {
-    printf("Entering KGDB mode via exception handler...\n\n");
+    ಬರೆ("Entering KGDB mode via exception handler...\n\n");
     kgdb_breakpoint(argc - 1, argv + 1);
-    printf("\nReturned from KGDB mode\n");
-    return 0;
+    ಬರೆ("\nReturned from KGDB mode\n");
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 U_BOOT_CMD(

@@ -8,14 +8,14 @@
  *
  * Matt Porter <mporter@ti.com>
  */
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <xyzModem.h>
-#include <linux/libfdt.h>
+#ಅನ್ತರ್ಭಾವ <gzip.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <xyzModem.h>
+#ಅನ್ತರ್ಭಾವ <linux/libfdt.h>
 
-#define BUF_SIZE 1024
+#ವ್ಯಾಖ್ಯಾನಿಸು BUF_ಗಾತ್ರ 1024
 
 /*
  * Information required to load image using ymodem.
@@ -23,166 +23,166 @@
  * @image_read: Now of bytes read from the image.
  * @buf: pointer to the previous read block.
  */
-struct ymodem_fit_info {
-	int image_read;
-	char *buf;
+ರಚನೆ ymodem_fit_info {
+	ಪೂರ್ಣಾಂಕ image_read;
+	ಅಕ್ಷರ *buf;
 };
 
-static int getcymodem(void) {
-	if (tstc())
-		return (getchar());
-	return -1;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ getcymodem(ಶೂನ್ಯ) {
+	ಆದರೆ (tstc())
+		ಹಿಂತಿರುಗಿ (getchar());
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-static ulong ymodem_read_fit(struct spl_load_info *load, ulong offset,
-			     ulong size, void *addr)
+ಸ್ಥಿರ ulong ymodem_read_fit(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong ಸ್ಥಾನಾಂತರ,
+			     ulong ಗಾತ್ರ_2, ಶೂನ್ಯ *addr)
 {
-	int res, err, buf_offset;
-	struct ymodem_fit_info *info = load->priv;
-	char *buf = info->buf;
-	ulong copy_size = size;
+	ಪೂರ್ಣಾಂಕ res, err, buf_ಸ್ಥಾನಾಂತರ;
+	ರಚನೆ ymodem_fit_info *info = ತುಂಬು->priv;
+	ಅಕ್ಷರ *buf = info->buf;
+	ulong copy_ಗಾತ್ರ = ಗಾತ್ರ_2;
 
-	while (info->image_read < offset) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	ಆಗ (info->image_read < ಸ್ಥಾನಾಂತರ) {
+		res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err);
+		ಆದರೆ (res <= 0)
+			ನಿಲ್ಲಿಸು;
 
 		info->image_read += res;
 	}
 
-	if (info->image_read > offset) {
-		res = info->image_read - offset;
-		if (info->image_read % BUF_SIZE)
-			buf_offset = (info->image_read % BUF_SIZE);
-		else
-			buf_offset = BUF_SIZE;
+	ಆದರೆ (info->image_read > ಸ್ಥಾನಾಂತರ) {
+		res = info->image_read - ಸ್ಥಾನಾಂತರ;
+		ಆದರೆ (info->image_read % BUF_ಗಾತ್ರ)
+			buf_ಸ್ಥಾನಾಂತರ = (info->image_read % BUF_ಗಾತ್ರ);
+		ಇಲ್ಲದಿದ್ದರೆ
+			buf_ಸ್ಥಾನಾಂತರ = BUF_ಗಾತ್ರ;
 
-		if (res > copy_size) {
-			memcpy(addr, &buf[buf_offset - res], copy_size);
-			goto done;
+		ಆದರೆ (res > copy_ಗಾತ್ರ) {
+			ಸ್ಮರಣೆ_ನಕಲು(addr, &buf[buf_ಸ್ಥಾನಾಂತರ - res], copy_ಗಾತ್ರ);
+			ಹೋಗು ಮುಗಿದ;
 		}
-		memcpy(addr, &buf[buf_offset - res], res);
+		ಸ್ಮರಣೆ_ನಕಲು(addr, &buf[buf_ಸ್ಥಾನಾಂತರ - res], res);
 		addr = addr + res;
-		copy_size -= res;
+		copy_ಗಾತ್ರ -= res;
 	}
 
-	while (info->image_read < offset + size) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	ಆಗ (info->image_read < ಸ್ಥಾನಾಂತರ + ಗಾತ್ರ_2) {
+		res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err);
+		ಆದರೆ (res <= 0)
+			ನಿಲ್ಲಿಸು;
 
 		info->image_read += res;
-		if (res > copy_size) {
-			memcpy(addr, buf, copy_size);
-			goto done;
+		ಆದರೆ (res > copy_ಗಾತ್ರ) {
+			ಸ್ಮರಣೆ_ನಕಲು(addr, buf, copy_ಗಾತ್ರ);
+			ಹೋಗು ಮುಗಿದ;
 		}
-		memcpy(addr, buf, res);
+		ಸ್ಮರಣೆ_ನಕಲು(addr, buf, res);
 		addr += res;
-		copy_size -= res;
+		copy_ಗಾತ್ರ -= res;
 	}
 
-done:
-	return size;
+ಮುಗಿದ:
+	ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2;
 }
 
-int spl_ymodem_load_image(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev)
+ಪೂರ್ಣಾಂಕ spl_ymodem_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			  ರಚನೆ spl_boot_device *bootdev)
 {
-	ulong size = 0;
-	int err;
-	int res;
-	int ret;
+	ulong ಗಾತ್ರ_2 = 0;
+	ಪೂರ್ಣಾಂಕ err;
+	ಪೂರ್ಣಾಂಕ res;
+	ಪೂರ್ಣಾಂಕ ret;
 	connection_info_t info;
-	char buf[BUF_SIZE];
-	struct legacy_img_hdr *ih = NULL;
+	ಅಕ್ಷರ buf[BUF_ಗಾತ್ರ];
+	ರಚನೆ legacy_img_hdr *ih = ಖಾಲಿ;
 	ulong addr = 0;
 
-	info.mode = xyzModem_ymodem;
-	ret = xyzModem_stream_open(&info, &err);
-	if (ret) {
-		printf("spl: ymodem err - %s\n", xyzModem_error(err));
-		return ret;
+	info.ಬಹುಲಕ = xyzModem_ymodem;
+	ret = xyz_Modem_ಹರಿವು_open(&info, &err);
+	ಆದರೆ (ret) {
+		ಬರೆ("spl: ymodem err - %s\n", xyzModem_error(err));
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
-	res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-	if (res <= 0)
-		goto end_stream;
+	res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err);
+	ಆದರೆ (res <= 0)
+		ಹೋಗು ಕೊನೆ_ಹರಿವು;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
-		addr = CONFIG_SYS_LOAD_ADDR;
-		ih = (struct legacy_img_hdr *)addr;
+	ಆದರೆ (IS_ENABLED(CONFIG_SPL_ತುಂಬು_FIT_ತುಂಬಿದ) &&
+	    image_get_magic((ರಚನೆ legacy_img_hdr *)buf) == FDT_MAGIC) {
+		addr = CONFIG_SYS_ತುಂಬು_ADDR;
+		ih = (ರಚನೆ legacy_img_hdr *)addr;
 
-		memcpy((void *)addr, buf, res);
-		size += res;
+		ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)addr, buf, res);
+		ಗಾತ್ರ_2 += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		ಆಗ ((res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err)) > 0) {
+			ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)addr, buf, res);
+			ಗಾತ್ರ_2 += res;
 			addr += res;
 		}
 
-		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			return ret;
-	} else if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
-		struct spl_load_info load;
-		struct ymodem_fit_info info;
+		ret = spl_parse_image_ಶೀರ್ಷಿಕೆ(spl_image, bootdev, ih);
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (IS_ENABLED(CONFIG_SPL_ತುಂಬು_FIT) &&
+	    image_get_magic((ರಚನೆ legacy_img_hdr *)buf) == FDT_MAGIC) {
+		ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
+		ರಚನೆ ymodem_fit_info info;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, ymodem_read_fit, (void *)&info, 1);
+		spl_ತುಂಬು_init(&ತುಂಬು, ymodem_read_fit, (ಶೂನ್ಯ *)&info, 1);
 		info.buf = buf;
-		info.image_read = BUF_SIZE;
-		ret = spl_load_simple_fit(spl_image, &load, 0, (void *)buf);
-		size = info.image_read;
+		info.image_read = BUF_ಗಾತ್ರ;
+		ret = spl_ತುಂಬು_simple_fit(spl_image, &ತುಂಬು, 0, (ಶೂನ್ಯ *)buf);
+		ಗಾತ್ರ_2 = info.image_read;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0)
-			size += res;
-	} else {
-		ih = (struct legacy_img_hdr *)buf;
-		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			goto end_stream;
-#ifdef CONFIG_SPL_GZIP
-		if (ih->ih_comp == IH_COMP_GZIP)
-			addr = CONFIG_SYS_LOAD_ADDR;
-		else
-#endif
-			addr = spl_image->load_addr;
-		memcpy((void *)addr, buf, res);
-		ih = (struct legacy_img_hdr *)addr;
-		size += res;
+		ಆಗ ((res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err)) > 0)
+			ಗಾತ್ರ_2 += res;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ih = (ರಚನೆ legacy_img_hdr *)buf;
+		ret = spl_parse_image_ಶೀರ್ಷಿಕೆ(spl_image, bootdev, ih);
+		ಆದರೆ (ret)
+			ಹೋಗು ಕೊನೆ_ಹರಿವು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_GZIP
+		ಆದರೆ (ih->ih_comp == IH_COMP_GZIP)
+			addr = CONFIG_SYS_ತುಂಬು_ADDR;
+		ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
+			addr = spl_image->ತುಂಬು_addr;
+		ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)addr, buf, res);
+		ih = (ರಚನೆ legacy_img_hdr *)addr;
+		ಗಾತ್ರ_2 += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		ಆಗ ((res = xyz_Modem_ಹರಿವು_read(buf, BUF_ಗಾತ್ರ, &err)) > 0) {
+			ಸ್ಮರಣೆ_ನಕಲು((ಶೂನ್ಯ *)addr, buf, res);
+			ಗಾತ್ರ_2 += res;
 			addr += res;
 		}
 	}
 
-end_stream:
-	xyzModem_stream_close(&err);
-	xyzModem_stream_terminate(false, &getcymodem);
+ಕೊನೆ_ಹರಿವು:
+	xyz_Modem_ಹರಿವು_close(&err);
+	xyz_Modem_ಹರಿವು_terminate(false, &getcymodem);
 
-	printf("Loaded %lu bytes\n", size);
+	ಬರೆ("Loaded %lu bytes\n", ಗಾತ್ರ_2);
 
-#ifdef CONFIG_SPL_GZIP
-	if (!(IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	      image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) &&
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_GZIP
+	ಆದರೆ (!(IS_ENABLED(CONFIG_SPL_ತುಂಬು_FIT) &&
+	      image_get_magic((ರಚನೆ legacy_img_hdr *)buf) == FDT_MAGIC) &&
 	    (ih->ih_comp == IH_COMP_GZIP)) {
-		if (gunzip((void *)(spl_image->load_addr + sizeof(*ih)),
+		ಆದರೆ (gunzip((ಶೂನ್ಯ *)(spl_image->ತುಂಬು_addr + ಗಾತ್ರ(*ih)),
 			   CONFIG_SYS_BOOTM_LEN,
-			   (void *)(CONFIG_SYS_LOAD_ADDR + sizeof(*ih)),
-			   &size)) {
+			   (ಶೂನ್ಯ *)(CONFIG_SYS_ತುಂಬು_ADDR + ಗಾತ್ರ(*ih)),
+			   &ಗಾತ್ರ_2)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			ಹಿಂತಿರುಗಿ -EIO;
 		}
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-SPL_LOAD_IMAGE_METHOD("UART", 0, BOOT_DEVICE_UART, spl_ymodem_load_image);
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("UART", 0, BOOT_DEVICE_UART, spl_ymodem_ತುಂಬು_image);

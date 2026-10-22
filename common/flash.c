@@ -6,12 +6,12 @@
 
 /* #define DEBUG */
 
-#include <flash.h>
-#include <log.h>
-#include <u-boot/uuid.h>
-#include <linux/string.h>
+#ಅನ್ತರ್ಭಾವ <flash.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <u-boot/uuid.h>
+#ಅನ್ತರ್ಭಾವ <linux/string.h>
 
-#include <mtd/cfi_flash.h>
+#ಅನ್ತರ್ಭಾವ <mtd/cfi_flash.h>
 
 /*-----------------------------------------------------------------------
  * Functions
@@ -23,57 +23,57 @@
  * The monitor is always located in the _first_ Flash bank.
  * If necessary you have to map the second bank at lower addresses.
  */
-void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+ಶೂನ್ಯ
+flash_protect(ಪೂರ್ಣಾಂಕ flag, ulong from, ulong ಗಮ್ಯ, flash_info_t *info)
 {
-	ulong b_end;
-	short s_end;
-	int i;
+	ulong b_ಕೊನೆ;
+	ಗಿಡ್ಡ s_ಕೊನೆ;
+	ಪೂರ್ಣಾಂಕ i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	ಆದರೆ (!info || info->sector_ಎಣಿಕೆ == 0 || info->ಗಾತ್ರ_2 == 0 || ಗಮ್ಯ < from) {
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	s_end = info->sector_count - 1;	/* index of last sector */
-	b_end = info->start[0] + info->size - 1;	/* bank end address */
+	s_ಕೊನೆ = info->sector_ಎಣಿಕೆ - 1;	/* index of last sector */
+	b_ಕೊನೆ = info->ಆರಂಭ[0] + info->ಗಾತ್ರ_2 - 1;	/* bank end address */
 
 	debug("%s %s: from 0x%08lX to 0x%08lX\n", __func__,
-	      (flag & FLAG_PROTECT_SET) ? "ON" :
+	      (flag & FLAG_PROTECT_ಗಣ) ? "ON" :
 	      (flag & FLAG_PROTECT_CLEAR) ? "OFF" : "???",
-	      from, to);
+	      from, ಗಮ್ಯ);
 
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
-	    to < info->start[0] || from > b_end) {
-		return;
+	ಆದರೆ (info->flash_id == FLASH_UNKNOWN ||
+	    ಗಮ್ಯ < info->ಆರಂಭ[0] || from > b_ಕೊನೆ) {
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
-		ulong end;		/* last address in current sect	*/
+	ಗಾಗಿ (i=0; i<info->sector_ಎಣಿಕೆ; ++i) {
+		ulong ಕೊನೆ_2;		/* last address in current sect	*/
 
-		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
+		ಕೊನೆ_2 = (i == s_ಕೊನೆ) ? b_ಕೊನೆ : info->ಆರಂಭ[i + 1] - 1;
 
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		ಆದರೆ (from <= ಕೊನೆ_2 && ಗಮ್ಯ >= info->ಆರಂಭ[i]) {
+			ಆದರೆ (flag & FLAG_PROTECT_CLEAR) {
+#ಆದರೆ defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 				info->protect[i] = 0;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#ಆದರೆ_ಅಂತ್ಯ	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (flag & FLAG_PROTECT_ಗಣ) {
+#ಆದರೆ defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 				info->protect[i] = 1;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#ಆದರೆ_ಅಂತ್ಯ	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
 			}
 		}
@@ -87,22 +87,22 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
-		    addr >= info->start[0] &&
+	ಗಾಗಿ (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		ಆದರೆ (info->flash_id != FLASH_UNKNOWN &&
+		    addr >= info->ಆರಂಭ[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
 		     * info->start[0] + info->size wraps back to 0.
 		     * Please don't change this unless you understand this.
 		     */
-		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+		    addr <= info->ಆರಂಭ[0] + info->ಗಾತ್ರ_2 - 1) {
+			ಹಿಂತಿರುಗಿ (info);
 		}
 	}
 
-	return (NULL);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,101 +118,101 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
-flash_write(char *src, ulong addr, ulong cnt)
+ಪೂರ್ಣಾಂಕ
+flash_write(ಅಕ್ಷರ *src, ulong addr, ulong cnt)
 {
-	int i;
-	ulong         end        = addr + cnt - 1;
-	flash_info_t *info_first = addr2info(addr);
-	flash_info_t *info_last  = addr2info(end);
+	ಪೂರ್ಣಾಂಕ i;
+	ulong         ಕೊನೆ_2        = addr + cnt - 1;
+	flash_info_t *info_ಮೊದಲ = addr2info(addr);
+	flash_info_t *info_ಕೊನೆಯ  = addr2info(ಕೊನೆ_2);
 	flash_info_t *info;
-	__maybe_unused char *src_orig = src;
-	__maybe_unused char *addr_orig = (char *)addr;
+	__maybe_unused ಅಕ್ಷರ *src_orig = src;
+	__maybe_unused ಅಕ್ಷರ *addr_orig = (ಅಕ್ಷರ *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	ಆದರೆ (cnt == 0) {
+		ಹಿಂತಿರುಗಿ (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	ಆದರೆ (!info_ಮೊದಲ || !info_ಕೊನೆಯ) {
+		ಹಿಂತಿರುಗಿ (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
-		ulong b_end = info->start[0] + info->size;	/* bank end addr */
-		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
-			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
+	ಗಾಗಿ (info = info_ಮೊದಲ; info <= info_ಕೊನೆಯ; ++info) {
+		ulong b_ಕೊನೆ = info->ಆರಂಭ[0] + info->ಗಾತ್ರ_2;	/* bank end addr */
+		ಗಿಡ್ಡ s_ಕೊನೆ = info->sector_ಎಣಿಕೆ - 1;
+		ಗಾಗಿ (i=0; i<info->sector_ಎಣಿಕೆ; ++i) {
+			ulong e_addr = (i == s_ಕೊನೆ) ? b_ಕೊನೆ : info->ಆರಂಭ[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			ಆದರೆ ((ಕೊನೆ_2 >= info->ಆರಂಭ[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				ಹಿಂತಿರುಗಿ (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	ಗಾಗಿ (info = info_ಮೊದಲ; info <= info_ಕೊನೆಯ && cnt>0; ++info) {
 		ulong len;
 
-		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		len = info->ಆರಂಭ[0] + info->ಗಾತ್ರ_2 - addr;
+		ಆದರೆ (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		ಆದರೆ ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			ಹಿಂತಿರುಗಿ (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
-		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+#ಆದರೆ defined(CONFIG_FLASH_VERIFY)
+	ಆದರೆ (memcmp(src_orig, addr_orig, cnt_orig)) {
+		ಬರೆ("\nVerify failed!\n");
+		ಹಿಂತಿರುಗಿ FL_ERR_PROG_ERROR;
 	}
-#endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	ಹಿಂತಿರುಗಿ (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+ಶೂನ್ಯ flash_perror(ಪೂರ್ಣಾಂಕ err)
 {
-	switch (err) {
-	case FL_ERR_OK:
-		break;
-	case FL_ERR_TIMEOUT:
+	ಆಯ್ಕೆ (err) {
+	ಸ್ಥಿತಿ FL_ERR_OK:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_TIMEOUT:
 		puts ("Timeout writing to Flash\n");
-		break;
-	case FL_ERR_NOT_ERASED:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_NOT_ERASED:
 		puts ("Flash not Erased\n");
-		break;
-	case FL_ERR_PROTECTED:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_PROTECTED:
 		puts ("Can't write to protected Flash sectors\n");
-		break;
-	case FL_ERR_INVAL:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_INVAL:
 		puts ("Outside available Flash\n");
-		break;
-	case FL_ERR_ALIGN:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_ALIGN:
 		puts ("Start and/or end address not on sector boundary\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_VENDOR:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_UNKNOWN_FLASH_VENDOR:
 		puts ("Unknown Vendor of Flash\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_TYPE:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_UNKNOWN_FLASH_TYPE:
 		puts ("Unknown Type of Flash\n");
-		break;
-	case FL_ERR_PROG_ERROR:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_PROG_ERROR:
 		puts ("General Flash Programming Error\n");
-		break;
-	case FL_ERR_ABORTED:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ FL_ERR_ABORTED:
 		puts("Flash Programming Aborted\n");
-		break;
-	default:
-		printf ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
-		break;
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ಬರೆ ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
+		ನಿಲ್ಲಿಸು;
 	}
 }

@@ -8,104 +8,104 @@
  * Author: Anton Vorontsov <avorontsov@ru.mvista.com>
  */
 
-#ifndef HWCONFIG_TEST
-#include <config.h>
-#include <env.h>
-#include <exports.h>
-#include <hwconfig.h>
-#include <log.h>
-#include <asm/global_data.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif /* HWCONFIG_TEST */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HWCONFIG_TEST
+#ಅನ್ತರ್ಭಾವ <config.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <exports.h>
+#ಅನ್ತರ್ಭಾವ <hwconfig.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <linux/types.h>
+#ಅನ್ತರ್ಭಾವ <linux/string.h>
+#ಇಲ್ಲದಿದ್ದರೆ
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ವ್ಯಾಖ್ಯಾನಿಸು min(a, b) (((a) < (b)) ? (a) : (b))
+#ಆದರೆ_ಅಂತ್ಯ /* HWCONFIG_TEST */
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ದತ್ತಾಂಶ_PTR;
 
-static const char *hwconfig_parse(const char *opts, size_t maxlen,
-				  const char *opt, char *stopchs, char eqch,
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hwconfig_parse(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opts, size_t maxlen,
+				  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಅಕ್ಷರ *stopchs, ಅಕ್ಷರ eqch,
 				  size_t *arglen)
 {
-	size_t optlen = strlen(opt);
-	char *str;
-	const char *start = opts;
-	const char *end;
+	size_t optlen = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(opt);
+	ಅಕ್ಷರ *str;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ = opts;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆ_2;
 
-next:
-	str = strstr(opts, opt);
-	end = str + optlen;
-	if (end - start > maxlen)
-		return NULL;
+ಮುಂದಿನ:
+	str = ಅಕ್ಷರಸರಣಿ_ಹುಡುಕು(opts, opt);
+	ಕೊನೆ_2 = str + optlen;
+	ಆದರೆ (ಕೊನೆ_2 - ಆರಂಭ > maxlen)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	if (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
-			(strpbrk(end, stopchs) == end || *end == eqch ||
-			 *end == '\0')) {
-		const char *arg_end;
+	ಆದರೆ (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
+			(strpbrk(ಕೊನೆ_2, stopchs) == ಕೊನೆ_2 || *ಕೊನೆ_2 == eqch ||
+			 *ಕೊನೆ_2 == '\0')) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg_ಕೊನೆ;
 
-		if (!arglen)
-			return str;
+		ಆದರೆ (!arglen)
+			ಹಿಂತಿರುಗಿ str;
 
-		if (*end != eqch)
-			return NULL;
+		ಆದರೆ (*ಕೊನೆ_2 != eqch)
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-		arg_end = strpbrk(str, stopchs);
-		if (!arg_end)
-			*arglen = min(maxlen, strlen(str)) - optlen - 1;
-		else
-			*arglen = arg_end - end - 1;
+		arg_ಕೊನೆ = strpbrk(str, stopchs);
+		ಆದರೆ (!arg_ಕೊನೆ)
+			*arglen = min(maxlen, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(str)) - optlen - 1;
+		ಇಲ್ಲದಿದ್ದರೆ
+			*arglen = arg_ಕೊನೆ - ಕೊನೆ_2 - 1;
 
-		return end + 1;
-	} else if (str) {
-		opts = end;
-		goto next;
+		ಹಿಂತಿರುಗಿ ಕೊನೆ_2 + 1;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (str) {
+		opts = ಕೊನೆ_2;
+		ಹೋಗು ಮುಂದಿನ;
 	}
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-const char cpu_hwconfig[] __attribute__((weak)) = "";
-const char board_hwconfig[] __attribute__((weak)) = "";
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ cpu_hwconfig[] __attribute__((weak)) = "";
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ board_hwconfig[] __attribute__((weak)) = "";
 
-static const char *__hwconfig(const char *opt, size_t *arglen,
-			      const char *env_hwconfig)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *__hwconfig(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, size_t *arglen,
+			      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env_hwconfig)
 {
-	const char *ret;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ret;
 
 	/* if we are passed a buffer use it, otherwise try the environment */
-	if (!env_hwconfig) {
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-		if (!(gd->flags & GD_FLG_ENV_READY) &&
+	ಆದರೆ (!env_hwconfig) {
+#ಆದರೆ CONFIG_IS_ENABLED(ENV_SUPPORT)
+		ಆದರೆ (!(gd->flags & GD_FLG_ENV_READY) &&
 		    gd->env_valid != ENV_VALID)
-#else
-		if (true)
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+		ಆದರೆ (true)
+#ಆದರೆ_ಅಂತ್ಯ
 		{
-			printf("WARNING: Calling __hwconfig without a buffer "
+			ಬರೆ("WARNING: Calling __hwconfig without a buffer "
 					"and before environment is ready\n");
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#ಆದರೆ CONFIG_IS_ENABLED(ENV_SUPPORT)
 		env_hwconfig = env_get("hwconfig");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	}
 
-	if (env_hwconfig) {
-		ret = hwconfig_parse(env_hwconfig, strlen(env_hwconfig),
+	ಆದರೆ (env_hwconfig) {
+		ret = hwconfig_parse(env_hwconfig, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(env_hwconfig),
 				      opt, ";", ':', arglen);
-		if (ret)
-			return ret;
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
 	}
 
-	ret = hwconfig_parse(board_hwconfig, strlen(board_hwconfig),
+	ret = hwconfig_parse(board_hwconfig, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(board_hwconfig),
 			opt, ";", ':', arglen);
-	if (ret)
-		return ret;
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	return hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
+	ಹಿಂತಿರುಗಿ hwconfig_parse(cpu_hwconfig, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cpu_hwconfig),
 			opt, ";", ':', arglen);
 }
 
@@ -129,9 +129,9 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
  * that the board file only calls things that are actually used, so
  * hwconfig() will always return true result.
  */
-int hwconfig_f(const char *opt, char *buf)
+ಪೂರ್ಣಾಂಕ hwconfig_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಅಕ್ಷರ *buf)
 {
-	return !!__hwconfig(opt, NULL, buf);
+	ಹಿಂತಿರುಗಿ !!__hwconfig(opt, ಖಾಲಿ, buf);
 }
 
 /*
@@ -147,9 +147,9 @@ int hwconfig_f(const char *opt, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns "", and
  * arglen is set to 0.
  */
-const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hwconfig_arg_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, size_t *arglen, ಅಕ್ಷರ *buf)
 {
-	return __hwconfig(opt, arglen, buf);
+	ಹಿಂತಿರುಗಿ __hwconfig(opt, arglen, buf);
 }
 
 /*
@@ -166,16 +166,16 @@ const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns a non-zero
  * value, i.e. the argument matches.
  */
-int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
+ಪೂರ್ಣಾಂಕ hwconfig_arg_cmp_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಅಕ್ಷರ *buf)
 {
-	const char *argstr;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_arg_f(opt, &arglen, buf);
-	if (!argstr || arglen != strlen(arg))
-		return 0;
+	ಆದರೆ (!argstr || arglen != ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(arg))
+		ಹಿಂತಿರುಗಿ 0;
 
-	return !strncmp(argstr, arg, arglen);
+	ಹಿಂತಿರುಗಿ !ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(argstr, arg, arglen);
 }
 
 /*
@@ -190,15 +190,15 @@ int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
  * "dr_usb" is an option, "mode" is a sub-option, and "peripheral" is its
  * argument.
  */
-int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
+ಪೂರ್ಣಾಂಕ hwconfig_sub_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *subopt, ಅಕ್ಷರ *buf)
 {
 	size_t arglen;
-	const char *arg;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return 0;
-	return !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
+	ಆದರೆ (!arg)
+		ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ !!hwconfig_parse(arg, arglen, subopt, ",;", '=', ಖಾಲಿ);
 }
 
 /*
@@ -211,16 +211,16 @@ int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
  * This call is similar to hwconfig_arg_f(), except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-const char *hwconfig_subarg_f(const char *opt, const char *subopt,
-			      size_t *subarglen, char *buf)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hwconfig_subarg_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *subopt,
+			      size_t *subarglen, ಅಕ್ಷರ *buf)
 {
 	size_t arglen;
-	const char *arg;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return NULL;
-	return hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
+	ಆದರೆ (!arg)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
 }
 
 /*
@@ -233,62 +233,62 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
  * This call is similar to hwconfig_arg_cmp_f, except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-int hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
-			  const char *subarg, char *buf)
+ಪೂರ್ಣಾಂಕ hwconfig_subarg_cmp_f(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *subopt,
+			  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *subarg, ಅಕ್ಷರ *buf)
 {
-	const char *argstr;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_subarg_f(opt, subopt, &arglen, buf);
-	if (!argstr || arglen != strlen(subarg))
-		return 0;
+	ಆದರೆ (!argstr || arglen != ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(subarg))
+		ಹಿಂತಿರುಗಿ 0;
 
-	return !strncmp(argstr, subarg, arglen);
+	ಹಿಂತಿರುಗಿ !ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(argstr, subarg, arglen);
 }
 
-#ifdef HWCONFIG_TEST
-int main()
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HWCONFIG_TEST
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ()
 {
-	const char *ret;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ret;
 	size_t len;
 
-	env_set("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
+	env_ಗಣ("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
 			   "key3;:,:=;key4", 1);
 
 	ret = hwconfig_arg("key1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 29);
-	assert(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
-	assert(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
+	ಬರೆ("%zd %.*s\n", len, (ಪೂರ್ಣಾಂಕ)len, ret);
+	ಪ್ರತಿಜ್ಞಾ(len == 29);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
+	ಪ್ರತಿಜ್ಞಾ(!ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ret, "subkey1=value1,subkey2=value2", len));
 
 	ret = hwconfig_subarg("key1", "subkey1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
-	assert(!strncmp(ret, "value1", len));
+	ಬರೆ("%zd %.*s\n", len, (ಪೂರ್ಣಾಂಕ)len, ret);
+	ಪ್ರತಿಜ್ಞಾ(len == 6);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
+	ಪ್ರತಿಜ್ಞಾ(!ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ret, "value1", len));
 
 	ret = hwconfig_subarg("key1", "subkey2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
-	assert(!strncmp(ret, "value2", len));
+	ಬರೆ("%zd %.*s\n", len, (ಪೂರ್ಣಾಂಕ)len, ret);
+	ಪ್ರತಿಜ್ಞಾ(len == 6);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
+	ಪ್ರತಿಜ್ಞಾ(!ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ret, "value2", len));
 
 	ret = hwconfig_arg("key2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_arg_cmp("key2", "value3"));
-	assert(!strncmp(ret, "value3", len));
+	ಬರೆ("%zd %.*s\n", len, (ಪೂರ್ಣಾಂಕ)len, ret);
+	ಪ್ರತಿಜ್ಞಾ(len == 6);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_arg_cmp("key2", "value3"));
+	ಪ್ರತಿಜ್ಞಾ(!ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ret, "value3", len));
 
-	assert(hwconfig("key3"));
-	assert(hwconfig_arg("key4", &len) == NULL);
-	assert(hwconfig_arg("bogus", &len) == NULL);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig("key3"));
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_arg("key4", &len) == ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig_arg("bogus", &len) == ಖಾಲಿ);
 
-	unenv_set("hwconfig");
+	unenv_ಗಣ("hwconfig");
 
-	assert(hwconfig(NULL) == 0);
-	assert(hwconfig("") == 0);
-	assert(hwconfig("key3") == 0);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig(ಖಾಲಿ) == 0);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig("") == 0);
+	ಪ್ರತಿಜ್ಞಾ(hwconfig("key3") == 0);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif /* HWCONFIG_TEST */
+#ಆದರೆ_ಅಂತ್ಯ /* HWCONFIG_TEST */

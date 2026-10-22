@@ -55,250 +55,250 @@
  *  Proven for both default and pedantic mode: confirms U-Boot to be clean, and catches
  *  intentional/testing corruptions. Working with malloc_trim is not tested.
  */
-#ifndef _MCHECKCORE_INC_H
-#define _MCHECKCORE_INC_H      1
-#include "mcheck.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _MCHECKCORE_INC_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _MCHECKCORE_INC_H      1
+#ಅನ್ತರ್ಭಾವ "mcheck.h"
 
-#if defined(MCHECK_HEAP_PROTECTION)
-#define mcheck_flood memset
+#ಆದರೆ defined(MCHECK_ರಾಶಿ_PROTECTION)
+#ವ್ಯಾಖ್ಯಾನಿಸು mcheck_flood memset
 
 // these are from /dev/random:
-#define MAGICWORD	0x99ccf430fa562a05ULL
-#define MAGICFREE	0x4875e63c0c6fc08eULL
-#define MAGICTAIL	0x918dbcd7df78dcd6ULL
-#define MALLOCFLOOD	((char)0xb6)
-#define FREEFLOOD	((char)0xf5)
-#define PADDINGFLOOD	((char)0x58)
+#ವ್ಯಾಖ್ಯಾನಿಸು MAGICWORD	0x99ccf430fa562a05ULL
+#ವ್ಯಾಖ್ಯಾನಿಸು MAGICFREE	0x4875e63c0c6fc08eULL
+#ವ್ಯಾಖ್ಯಾನಿಸು MAGICTAIL	0x918dbcd7df78dcd6ULL
+#ವ್ಯಾಖ್ಯಾನಿಸು MALLOCFLOOD	((ಅಕ್ಷರ)0xb6)
+#ವ್ಯಾಖ್ಯಾನಿಸು FREEFLOOD	((ಅಕ್ಷರ)0xf5)
+#ವ್ಯಾಖ್ಯಾನಿಸು PADDINGFLOOD	((ಅಕ್ಷರ)0x58)
 
 // my normal run demands 4427-6449 chunks:
-#define REGISTRY_SZ	6608
-#define CANARY_DEPTH	2
+#ವ್ಯಾಖ್ಯಾನಿಸು REGISTRY_SZ	6608
+#ವ್ಯಾಖ್ಯಾನಿಸು CANARY_ಆಳ	2
 
 // avoid problems with BSS at early stage:
-static char mcheck_pedantic_flag __section(".data") = 0;
-static void *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
-static size_t mcheck_chunk_count __section(".data") = 0;
-static size_t mcheck_chunk_count_max __section(".data") = 0;
+ಸ್ಥಿರ ಅಕ್ಷರ mcheck_pedantic_flag __section(".data") = 0;
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
+ಸ್ಥಿರ size_t mcheck_chunk_ಎಣಿಕೆ __section(".data") = 0;
+ಸ್ಥಿರ size_t mcheck_chunk_ಎಣಿಕೆ_max __section(".data") = 0;
 
-typedef unsigned long long mcheck_elem;
-typedef struct {
-	mcheck_elem elems[CANARY_DEPTH];
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ mcheck_elem;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	mcheck_elem elems[CANARY_ಆಳ];
 } mcheck_canary;
-struct mcheck_hdr {
-	size_t size; /* Exact size requested by user.  */
+ರಚನೆ mcheck_hdr {
+	size_t ಗಾತ್ರ_2; /* Exact size requested by user.  */
 	size_t aln_skip; /* Ignored bytes, before the mcheck_hdr, to fulfill alignment */
 	mcheck_canary canary; /* Magic number to check header integrity.  */
 };
 
-static void mcheck_default_abort(enum mcheck_status status, const void *p)
+ಸ್ಥಿರ ಶೂನ್ಯ mcheck_default_abort(ಎಣಿಕೆ mcheck_status ಸ್ಥಿತಿ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *p)
 {
-	const char *msg;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ;
 
-	switch (status) {
-	case MCHECK_OK:
-		msg = "memory is consistent, library is buggy\n";
-		break;
-	case MCHECK_HEAD:
-		msg = "memory clobbered before allocated block\n";
-		break;
-	case MCHECK_TAIL:
-		msg = "memory clobbered past end of allocated block\n";
-		break;
-	case MCHECK_FREE:
-		msg = "block freed twice\n";
-		break;
-	default:
-		msg = "bogus mcheck_status, library is buggy\n";
-		break;
+	ಆಯ್ಕೆ (ಸ್ಥಿತಿ_2) {
+	ಸ್ಥಿತಿ MCHECK_OK:
+		ಸಂದೇಶ = "memory is consistent, library is buggy\n";
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ MCHECK_HEAD:
+		ಸಂದೇಶ = "memory clobbered before allocated block\n";
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ MCHECK_TAIL:
+		ಸಂದೇಶ = "memory clobbered past end of allocated block\n";
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ MCHECK_FREE:
+		ಸಂದೇಶ = "block freed twice\n";
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ಸಂದೇಶ = "bogus mcheck_status, library is buggy\n";
+		ನಿಲ್ಲಿಸು;
 	}
-	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, msg, mcheck_chunk_count_max);
+	ಬರೆ("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, ಸಂದೇಶ, mcheck_chunk_ಎಣಿಕೆ_max);
 }
 
-static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
+ಸ್ಥಿರ mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
 
-static inline size_t allign_size_up(size_t sz, size_t grain)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ size_t allign_ಗಾತ್ರ_ಮೇಲೆ(size_t sz, size_t grain)
 {
-	return (sz + grain - 1) & ~(grain - 1);
+	ಹಿಂತಿರುಗಿ (sz + grain - 1) & ~(grain - 1);
 }
 
-#define mcheck_allign_customer_size(SZ) allign_size_up(SZ, sizeof(mcheck_elem))
-#define mcheck_evaluate_memalign_prefix_size(ALIGN) allign_size_up(sizeof(struct mcheck_hdr), ALIGN)
+#ವ್ಯಾಖ್ಯಾನಿಸು mcheck_allign_customer_ಗಾತ್ರ(SZ) allign_ಗಾತ್ರ_ಮೇಲೆ(SZ, ಗಾತ್ರ(mcheck_elem))
+#ವ್ಯಾಖ್ಯಾನಿಸು mcheck_evaluate_memalign_ಪೂರ್ವಪ್ರತ್ಯಯ_ಗಾತ್ರ(ALIGN) allign_ಗಾತ್ರ_ಮೇಲೆ(ಗಾತ್ರ(ರಚನೆ mcheck_hdr), ALIGN)
 
-static enum mcheck_status mcheck_OnNok(enum mcheck_status status, const void *p)
+ಸ್ಥಿರ ಎಣಿಕೆ mcheck_status mcheck_OnNok(ಎಣಿಕೆ mcheck_status ಸ್ಥಿತಿ_2, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *p)
 {
-	(*mcheck_abortfunc)(status, p);
-	return status;
+	(*mcheck_abortfunc)(ಸ್ಥಿತಿ_2, p);
+	ಹಿಂತಿರುಗಿ ಸ್ಥಿತಿ_2;
 }
 
-static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
+ಸ್ಥಿರ ಎಣಿಕೆ mcheck_status mcheck_checkhdr(ಸ್ಥಿರಾಂಕ ರಚನೆ mcheck_hdr *hdr)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] == MAGICFREE)
-			return mcheck_OnNok(MCHECK_FREE, hdr + 1);
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
+		ಆದರೆ (hdr->canary.elems[i] == MAGICFREE)
+			ಹಿಂತಿರುಗಿ mcheck_OnNok(MCHECK_FREE, hdr + 1);
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] != MAGICWORD)
-			return mcheck_OnNok(MCHECK_HEAD, hdr + 1);
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
+		ಆದರೆ (hdr->canary.elems[i] != MAGICWORD)
+			ಹಿಂತಿರುಗಿ mcheck_OnNok(MCHECK_HEAD, hdr + 1);
 
-	const size_t payload_size = hdr->size;
-	const size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
-	const size_t padd_size = payload_size_aligned - hdr->size;
+	ಸ್ಥಿರಾಂಕ size_t payload_ಗಾತ್ರ = hdr->ಗಾತ್ರ_2;
+	ಸ್ಥಿರಾಂಕ size_t payload_ಗಾತ್ರ_aligned = mcheck_allign_customer_ಗಾತ್ರ(payload_ಗಾತ್ರ);
+	ಸ್ಥಿರಾಂಕ size_t padd_ಗಾತ್ರ = payload_ಗಾತ್ರ_aligned - hdr->ಗಾತ್ರ_2;
 
-	const char *payload = (const char *)&hdr[1];
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *payload = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)&hdr[1];
 
-	for (i = 0; i < padd_size; ++i)
-		if (payload[payload_size + i] != PADDINGFLOOD)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	ಗಾಗಿ (i = 0; i < padd_ಗಾತ್ರ; ++i)
+		ಆದರೆ (payload[payload_ಗಾತ್ರ + i] != PADDINGFLOOD)
+			ಹಿಂತಿರುಗಿ mcheck_OnNok(MCHECK_TAIL, hdr + 1);
 
-	const mcheck_canary *tail = (const mcheck_canary *)&payload[payload_size_aligned];
+	ಸ್ಥಿರಾಂಕ mcheck_canary *ಬಾಲ = (ಸ್ಥಿರಾಂಕ mcheck_canary *)&payload[payload_ಗಾತ್ರ_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (tail->elems[i] != MAGICTAIL)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
-	return MCHECK_OK;
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
+		ಆದರೆ (ಬಾಲ->elems[i] != MAGICTAIL)
+			ಹಿಂತಿರುಗಿ mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	ಹಿಂತಿರುಗಿ MCHECK_OK;
 }
 
-enum { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
-static void *mcheck_free_helper(void *ptr, int clean_content)
+ಎಣಿಕೆ { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_free_helper(ಶೂನ್ಯ *ptr, ಪೂರ್ಣಾಂಕ clean_content)
 {
-	if (!ptr)
-		return ptr;
+	ಆದರೆ (!ptr)
+		ಹಿಂತಿರುಗಿ ptr;
 
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
-	int i;
+	ರಚನೆ mcheck_hdr *hdr = &((ರಚನೆ mcheck_hdr *)ptr)[-1];
+	ಪೂರ್ಣಾಂಕ i;
 
 	mcheck_checkhdr(hdr);
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
 		hdr->canary.elems[i] = MAGICFREE;
 
-	if (clean_content)
-		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_size(hdr->size));
+	ಆದರೆ (clean_content)
+		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_ಗಾತ್ರ(hdr->ಗಾತ್ರ_2));
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i] == hdr) {
+	ಗಾಗಿ (i = 0; i < REGISTRY_SZ; ++i)
+		ಆದರೆ (mcheck_registry[i] == hdr) {
 			mcheck_registry[i] = 0;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-	--mcheck_chunk_count;
-	return (char *)hdr - hdr->aln_skip;
+	--mcheck_chunk_ಎಣಿಕೆ;
+	ಹಿಂತಿರುಗಿ (ಅಕ್ಷರ *)hdr - hdr->aln_skip;
 }
 
-static void *mcheck_free_prehook(void *ptr) { return mcheck_free_helper(ptr, CLEAN_CONTENT); }
-static void *mcheck_reallocfree_prehook(void *ptr) { return mcheck_free_helper(ptr, KEEP_CONTENT); }
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_free_prehook(ಶೂನ್ಯ *ptr) { ಹಿಂತಿರುಗಿ mcheck_free_helper(ptr, CLEAN_CONTENT); }
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_reallocfree_prehook(ಶೂನ್ಯ *ptr) { ಹಿಂತಿರುಗಿ mcheck_free_helper(ptr, KEEP_CONTENT); }
 
-static size_t mcheck_alloc_prehook(size_t sz)
+ಸ್ಥಿರ size_t mcheck_alloc_prehook(size_t sz)
 {
-	sz = mcheck_allign_customer_size(sz);
-	return sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
+	sz = mcheck_allign_customer_ಗಾತ್ರ(sz);
+	ಹಿಂತಿರುಗಿ ಗಾತ್ರ(ರಚನೆ mcheck_hdr) + sz + ಗಾತ್ರ(mcheck_canary);
 }
 
-static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
-				     size_t alignment, int clean_content)
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_allocated_helper(ಶೂನ್ಯ *altoghether_ptr, size_t customer_sz,
+				     size_t alignment, ಪೂರ್ಣಾಂಕ clean_content)
 {
-	const size_t slop = alignment ?
-		mcheck_evaluate_memalign_prefix_size(alignment) - sizeof(struct mcheck_hdr) : 0;
-	struct mcheck_hdr *hdr = (struct mcheck_hdr *)((char *)altoghether_ptr + slop);
-	int i;
+	ಸ್ಥಿರಾಂಕ size_t slop = alignment ?
+		mcheck_evaluate_memalign_ಪೂರ್ವಪ್ರತ್ಯಯ_ಗಾತ್ರ(alignment) - ಗಾತ್ರ(ರಚನೆ mcheck_hdr) : 0;
+	ರಚನೆ mcheck_hdr *hdr = (ರಚನೆ mcheck_hdr *)((ಅಕ್ಷರ *)altoghether_ptr + slop);
+	ಪೂರ್ಣಾಂಕ i;
 
-	hdr->size = customer_sz;
+	hdr->ಗಾತ್ರ_2 = customer_sz;
 	hdr->aln_skip = slop;
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
 		hdr->canary.elems[i] = MAGICWORD;
 
-	char *payload = (char *)&hdr[1];
+	ಅಕ್ಷರ *payload = (ಅಕ್ಷರ *)&hdr[1];
 
-	if (clean_content)
+	ಆದರೆ (clean_content)
 		mcheck_flood(payload, MALLOCFLOOD, customer_sz);
 
-	const size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
+	ಸ್ಥಿರಾಂಕ size_t customer_ಗಾತ್ರ_aligned = mcheck_allign_customer_ಗಾತ್ರ(customer_sz);
 
-	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_size_aligned - customer_sz);
+	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_ಗಾತ್ರ_aligned - customer_sz);
 
-	mcheck_canary *tail = (mcheck_canary *)&payload[customer_size_aligned];
+	mcheck_canary *ಬಾಲ = (mcheck_canary *)&payload[customer_ಗಾತ್ರ_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		tail->elems[i] = MAGICTAIL;
+	ಗಾಗಿ (i = 0; i < CANARY_ಆಳ; ++i)
+		ಬಾಲ->elems[i] = MAGICTAIL;
 
-	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
-		mcheck_chunk_count_max = mcheck_chunk_count;
+	++mcheck_chunk_ಎಣಿಕೆ;
+	ಆದರೆ (mcheck_chunk_ಎಣಿಕೆ > mcheck_chunk_ಎಣಿಕೆ_max)
+		mcheck_chunk_ಎಣಿಕೆ_max = mcheck_chunk_ಎಣಿಕೆ;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (!mcheck_registry[i]) {
+	ಗಾಗಿ (i = 0; i < REGISTRY_SZ; ++i)
+		ಆದರೆ (!mcheck_registry[i]) {
 			mcheck_registry[i] = hdr;
-			return payload; // normal end
+			ಹಿಂತಿರುಗಿ payload; // normal end
 		}
 
-	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
+	ಸ್ಥಿರ ಅಕ್ಷರ *ಅತಿಪ್ರವಾಹ_ಸಂದೇಶ = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
-	printf("%s", overflow_msg);
-	overflow_msg = "(mcheck registry full)";
-	return payload;
+	ಬರೆ("%s", ಅತಿಪ್ರವಾಹ_ಸಂದೇಶ);
+	ಅತಿಪ್ರವಾಹ_ಸಂದೇಶ = "(mcheck registry full)";
+	ಹಿಂತಿರುಗಿ payload;
 }
 
-static void *mcheck_alloc_posthook(void *altoghether_ptr, size_t customer_sz)
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_alloc_posthook(ಶೂನ್ಯ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
+	ಹಿಂತಿರುಗಿ mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
 }
 
-static void *mcheck_alloc_noclean_posthook(void *altoghether_ptr, size_t customer_sz)
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_alloc_noclean_posthook(ಶೂನ್ಯ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
+	ಹಿಂತಿರುಗಿ mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
 }
 
-static size_t mcheck_memalign_prehook(size_t alig, size_t sz)
+ಸ್ಥಿರ size_t mcheck_memalign_prehook(size_t alig, size_t sz)
 {
-	return mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
+	ಹಿಂತಿರುಗಿ mcheck_evaluate_memalign_ಪೂರ್ವಪ್ರತ್ಯಯ_ಗಾತ್ರ(alig) + sz + ಗಾತ್ರ(mcheck_canary);
 }
 
-static void *mcheck_memalign_posthook(size_t alignment, void *altoghether_ptr, size_t customer_sz)
+ಸ್ಥಿರ ಶೂನ್ಯ *mcheck_memalign_posthook(size_t alignment, ಶೂನ್ಯ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
+	ಹಿಂತಿರುಗಿ mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
 }
 
-static enum mcheck_status mcheck_mprobe(void *ptr)
+ಸ್ಥಿರ ಎಣಿಕೆ mcheck_status mcheck_mprobe(ಶೂನ್ಯ *ptr)
 {
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
+	ರಚನೆ mcheck_hdr *hdr = &((ರಚನೆ mcheck_hdr *)ptr)[-1];
 
-	return mcheck_checkhdr(hdr);
+	ಹಿಂತಿರುಗಿ mcheck_checkhdr(hdr);
 }
 
-static void mcheck_pedantic_check(void)
+ಸ್ಥಿರ ಶೂನ್ಯ mcheck_pedantic_check(ಶೂನ್ಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i])
+	ಗಾಗಿ (i = 0; i < REGISTRY_SZ; ++i)
+		ಆದರೆ (mcheck_registry[i])
 			mcheck_checkhdr(mcheck_registry[i]);
 }
 
-static void mcheck_pedantic_prehook(void)
+ಸ್ಥಿರ ಶೂನ್ಯ mcheck_pedantic_prehook(ಶೂನ್ಯ)
 {
-	if (mcheck_pedantic_flag)
+	ಆದರೆ (mcheck_pedantic_flag)
 		mcheck_pedantic_check();
 }
 
-static void mcheck_initialize(mcheck_abortfunc_t new_func, char pedantic_flag)
+ಸ್ಥಿರ ಶೂನ್ಯ mcheck_initialize(mcheck_abortfunc_t new_func, ಅಕ್ಷರ pedantic_flag)
 {
 	mcheck_abortfunc = (new_func) ? new_func : &mcheck_default_abort;
 	mcheck_pedantic_flag = pedantic_flag;
 }
 
-void mcheck_on_ramrelocation(size_t offset)
+ಶೂನ್ಯ mcheck_on_ramrelocation(size_t ಸ್ಥಾನಾಂತರ)
 {
-	char *p;
-	int i;
+	ಅಕ್ಷರ *p;
+	ಪೂರ್ಣಾಂಕ i;
 	// Simple, but inaccurate strategy: drop the pre-reloc heap
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if ((p = mcheck_registry[i]) != NULL ) {
-			printf("mcheck, WRN: forgetting %p chunk\n", p);
+	ಗಾಗಿ (i = 0; i < REGISTRY_SZ; ++i)
+		ಆದರೆ ((p = mcheck_registry[i]) != ಖಾಲಿ ) {
+			ಬರೆ("mcheck, WRN: forgetting %p chunk\n", p);
 			mcheck_registry[i] = 0;
 		}
 
-	mcheck_chunk_count = 0;
+	mcheck_chunk_ಎಣಿಕೆ = 0;
 }
-#endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ

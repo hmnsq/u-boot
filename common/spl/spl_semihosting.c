@@ -3,52 +3,52 @@
  * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
  */
 
-#include <image.h>
-#include <log.h>
-#include <semihosting.h>
-#include <spl.h>
-#include <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <semihosting.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
 
-static ulong smh_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ಸ್ಥಿರ ulong smh_fit_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong file_ಸ್ಥಾನಾಂತರ,
+			  ulong ಗಾತ್ರ_2, ಶೂನ್ಯ *buf)
 {
-	long fd = *(long *)load->priv;
+	ದೀರ್ಘ fd = *(ದೀರ್ಘ *)ತುಂಬು->priv;
 	ulong ret;
 
-	if (smh_seek(fd, file_offset))
-		return 0;
+	ಆದರೆ (smh_seek(fd, file_ಸ್ಥಾನಾಂತರ))
+		ಹಿಂತಿರುಗಿ 0;
 
-	ret = smh_read(fd, buf, size);
-	return ret < 0 ? 0 : ret;
+	ret = smh_read(fd, buf, ಗಾತ್ರ_2);
+	ಹಿಂತಿರುಗಿ ret < 0 ? 0 : ret;
 }
 
-static int spl_smh_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_smh_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			      ರಚನೆ spl_boot_device *bootdev)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	int ret;
-	long fd, len;
-	struct spl_load_info load;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename = CONFIG_SPL_FS_ತುಂಬು_PAYLOAD_NAME;
+	ಪೂರ್ಣಾಂಕ ret;
+	ದೀರ್ಘ fd, len;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
-	if (fd < 0) {
+	fd = smh_open(filename, ಬಹುಲಕ_READ | ಬಹುಲಕ_ದ್ವಿಮಾನ);
+	ಆದರೆ (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
-		return fd;
+		ಹಿಂತಿರುಗಿ fd;
 	}
 
 	ret = smh_flen(fd);
-	if (ret < 0) {
+	ಆದರೆ (ret < 0) {
 		log_debug("could not get length of image: %d\n", ret);
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	len = ret;
 
-	spl_load_init(&load, smh_fit_read, &fd, 1);
-	ret = spl_load(spl_image, bootdev, &load, len, 0);
-	if (ret)
+	spl_ತುಂಬು_init(&ತುಂಬು, smh_fit_read, &fd, 1);
+	ret = spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, len, 0);
+	ಆದರೆ (ret)
 		log_debug("could not read %s: %d\n", filename, ret);
-out:
+ಹೊರಹೋಗು:
 	smh_close(fd);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-SPL_LOAD_IMAGE_METHOD("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_load_image);
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_ತುಂಬು_image);

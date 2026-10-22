@@ -8,170 +8,170 @@
  * FAT Image Functions copied from spl_mmc.c
  */
 
-#include <env.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <fat.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/libfdt.h>
-#include <asm/cache.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <fat.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <linux/libfdt.h>
+#ಅನ್ತರ್ಭಾವ <asm/cache.h>
 
-static int fat_registered;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ fat_registered;
 
-void spl_fat_force_reregister(void)
+ಶೂನ್ಯ spl_fat_force_reregister(ಶೂನ್ಯ)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_ರಿಜಿಸ್ಟರ್_fat_device(ರಚನೆ blk_desc *ಖಂಡ_dev, ಪೂರ್ಣಾಂಕ ವಿಭಜನೆ)
 {
-	int err = 0;
+	ಪೂರ್ಣಾಂಕ err = 0;
 
-	if (fat_registered)
-		return err;
+	ಆದರೆ (fat_registered)
+		ಹಿಂತಿರುಗಿ err;
 
-	err = fat_register_device(block_dev, partition);
-	if (err) {
-		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+	err = fat_ರಿಜಿಸ್ಟರ್_device(ಖಂಡ_dev, ವಿಭಜನೆ);
+	ಆದರೆ (err) {
+		ಬರೆ("%s: fat register err - %d\n", __func__, err);
+		ಹಿಂತಿರುಗಿ err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ಸ್ಥಿರ ulong spl_fit_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong file_ಸ್ಥಾನಾಂತರ,
+			  ulong ಗಾತ್ರ_2, ಶೂನ್ಯ *buf)
 {
-	struct legacy_img_hdr *header;
+	ರಚನೆ legacy_img_hdr *ಶೀರ್ಷಿಕೆ;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	ಪೂರ್ಣಾಂಕ ret;
+	ಅಕ್ಷರ *filename = ತುಂಬು->priv;
 
-	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ret = fat_read_file(filename, buf, file_ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, &actread);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ಆದರೆ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		ಶೀರ್ಷಿಕೆ = (ರಚನೆ legacy_img_hdr *)buf;
+		ಆದರೆ (image_get_magic(ಶೀರ್ಷಿಕೆ) != FDT_MAGIC)
+			ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2;
 	}
 
-	return actread;
+	ಹಿಂತಿರುಗಿ actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+ಪೂರ್ಣಾಂಕ spl_ತುಂಬು_image_fat(ರಚನೆ spl_image_info *spl_image,
+		       ರಚನೆ spl_boot_device *bootdev,
+		       ರಚನೆ blk_desc *ಖಂಡ_dev, ಪೂರ್ಣಾಂಕ ವಿಭಜನೆ,
+		       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename)
 {
-	int err;
-	loff_t size;
-	struct spl_load_info load;
+	ಪೂರ್ಣಾಂಕ err;
+	loff_t ಗಾತ್ರ_2;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
 
-	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		goto end;
+	err = spl_ರಿಜಿಸ್ಟರ್_fat_device(ಖಂಡ_dev, ವಿಭಜನೆ);
+	ಆದರೆ (err)
+		ಹೋಗು ಕೊನೆ_2;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
-		err = fat_size(filename, &size);
-		if (err)
-			goto end;
-	} else {
-		size = 0;
+	ಆದರೆ (IS_ENABLED(CONFIG_SPL_ತುಂಬು_FIT_ತುಂಬಿದ)) {
+		err = fat_ಗಾತ್ರ(filename, &ಗಾತ್ರ_2);
+		ಆದರೆ (err)
+			ಹೋಗು ಕೊನೆ_2;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಗಾತ್ರ_2 = 0;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename,
+	spl_ತುಂಬು_init(&ತುಂಬು, spl_fit_read, (ಶೂನ್ಯ *)filename,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
 
-	err = spl_load(spl_image, bootdev, &load, size, 0);
+	err = spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, ಗಾತ್ರ_2, 0);
 
-end:
-	if (err < 0) {
+ಕೊನೆ_2:
+	ಆದರೆ (err < 0) {
 		spl_fat_force_reregister();
-		printf("%s: error reading image %s, err - %d\n",
+		ಬರೆ("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ಆದರೆ CONFIG_IS_ENABLED(OS_BOOT)
+ಪೂರ್ಣಾಂಕ spl_ತುಂಬು_image_fat_os(ರಚನೆ spl_image_info *spl_image,
+			  ರಚನೆ spl_boot_device *bootdev,
+			  ರಚನೆ blk_desc *ಖಂಡ_dev, ಪೂರ್ಣಾಂಕ ವಿಭಜನೆ)
 {
-	int err;
-	__maybe_unused char *file;
+	ಪೂರ್ಣಾಂಕ err;
+	__maybe_unused ಅಕ್ಷರ *file;
 
-	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	err = spl_ರಿಜಿಸ್ಟರ್_fat_device(ಖಂಡ_dev, ವಿಭಜನೆ);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	ಆದರೆ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		ಹೋಗು defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
-		err = spl_load_image_fat(spl_image, bootdev, block_dev,
-					 partition, file);
-		if (err != 0) {
+	ಆದರೆ (file) {
+		err = spl_ತುಂಬು_image_fat(spl_image, bootdev, ಖಂಡ_dev,
+					 ವಿಭಜನೆ, file);
+		ಆದರೆ (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			ಹೋಗು defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ಆದರೆ IS_ENABLED(CONFIG_SPL_OS_BOOT_ವಾದಗಳು)
 		file = env_get("falcon_args_file");
-		if (file) {
+		ಆದರೆ (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
-				printf("spl: error reading args %s, err - %d, falling back to default\n",
+				file, (ಶೂನ್ಯ *)CONFIG_SPL_PAYLOAD_ವಾದಗಳು_ADDR, 0);
+			ಆದರೆ (err <= 0) {
+				ಬರೆ("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				ಹೋಗು defaults;
 			}
-			return 0;
-		} else
+			ಹಿಂತಿರುಗಿ 0;
+		} ಇಲ್ಲದಿದ್ದರೆ
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	} else
+	} ಇಲ್ಲದಿದ್ದರೆ
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
 
-	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
-				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
+	err = spl_ತುಂಬು_image_fat(spl_image, bootdev, ಖಂಡ_dev, ವಿಭಜನೆ,
+				 CONFIG_SPL_FS_ತುಂಬು_KERNEL_NAME);
 
-	if (err)
-		return err;
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
-		printf("%s: error reading image %s, err - %d\n",
-		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+#ಆದರೆ IS_ENABLED(CONFIG_SPL_OS_BOOT_ವಾದಗಳು)
+	err = file_fat_read(CONFIG_SPL_FS_ತುಂಬು_ವಾದಗಳು_NAME,
+			    (ಶೂನ್ಯ *)CONFIG_SPL_PAYLOAD_ವಾದಗಳು_ADDR, 0);
+	ಆದರೆ (err <= 0) {
+		ಬರೆ("%s: error reading image %s, err - %d\n",
+		       __func__, CONFIG_SPL_FS_ತುಂಬು_ವಾದಗಳು_NAME, err);
+		ಹಿಂತಿರುಗಿ -1;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ಇಲ್ಲದಿದ್ದರೆ
+ಪೂರ್ಣಾಂಕ spl_ತುಂಬು_image_fat_os(ರಚನೆ spl_image_info *spl_image,
+			  ರಚನೆ spl_boot_device *bootdev,
+			  ರಚನೆ blk_desc *ಖಂಡ_dev, ಪೂರ್ಣಾಂಕ ವಿಭಜನೆ)
 {
-	return -ENOSYS;
+	ಹಿಂತಿರುಗಿ -ENOSYS;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

@@ -7,72 +7,72 @@
  *
  */
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <squashfs.h>
-#include <errno.h>
-#include <image.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <part.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <squashfs.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ಸ್ಥಿರ ulong spl_fit_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong file_ಸ್ಥಾನಾಂತರ,
+			  ulong ಗಾತ್ರ_2, ಶೂನ್ಯ *buf)
 {
-	struct legacy_img_hdr *header;
-	char *filename = load->priv;
+	ರಚನೆ legacy_img_hdr *ಶೀರ್ಷಿಕೆ;
+	ಅಕ್ಷರ *filename = ತುಂಬು->priv;
 	loff_t actread;
-	int ret;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ret = sqfs_read(filename, buf, file_ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, &actread);
+	ಆದರೆ (ret)
+		ಹಿಂತಿರುಗಿ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ಆದರೆ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		ಶೀರ್ಷಿಕೆ = (ರಚನೆ legacy_img_hdr *)buf;
+		ಆದರೆ (image_get_magic(ಶೀರ್ಷಿಕೆ) != FDT_MAGIC)
+			ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2;
 	}
 
-	return actread;
+	ಹಿಂತಿರುಗಿ actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
-			const char *filename)
+ಪೂರ್ಣಾಂಕ spl_ತುಂಬು_image_sqfs(ರಚನೆ spl_image_info *spl_image,
+			ರಚನೆ spl_boot_device *bootdev,
+			ರಚನೆ blk_desc *ಖಂಡ_dev, ಪೂರ್ಣಾಂಕ ವಿಭಜನೆ,
+			ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename)
 {
-	int err;
-	loff_t size = 0;
-	struct spl_load_info load;
-	struct disk_partition part_info = {};
+	ಪೂರ್ಣಾಂಕ err;
+	loff_t ಗಾತ್ರ_2 = 0;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
+	ರಚನೆ disk_ವಿಭಜನೆ part_info = {};
 
-	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
-		printf("spl: no partition table found\n");
-		goto end;
+	err = part_get_info(ಖಂಡ_dev, ವಿಭಜನೆ, &part_info);
+	ಆದರೆ (err) {
+		ಬರೆ("spl: no partition table found\n");
+		ಹೋಗು ಕೊನೆ_2;
 	}
 
-	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
-		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
+	err = sqfs_probe(ಖಂಡ_dev, &part_info);
+	ಆದರೆ (err) {
+		ಬರೆ("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
-		goto end;
+		ಹೋಗು ಕೊನೆ_2;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
-		err = sqfs_size(filename, &size);
-		if (err)
-			goto end;
+	ಆದರೆ (IS_ENABLED(CONFIG_SPL_ತುಂಬು_FIT_ತುಂಬಿದ)) {
+		err = sqfs_ಗಾತ್ರ(filename, &ಗಾತ್ರ_2);
+		ಆದರೆ (err)
+			ಹೋಗು ಕೊನೆ_2;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename, 1);
+	spl_ತುಂಬು_init(&ತುಂಬು, spl_fit_read, (ಶೂನ್ಯ *)filename, 1);
 
-	err = spl_load(spl_image, bootdev, &load, size, 0);
+	err = spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, ಗಾತ್ರ_2, 0);
 
-end:
-	if (err < 0)
-		printf("%s: error reading image %s, err - %d\n",
+ಕೊನೆ_2:
+	ಆದರೆ (err < 0)
+		ಬರೆ("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }

@@ -6,75 +6,75 @@
  * (C) Copyright 2012
  * Ilya Yanok <ilya.yanok@gmail.com>
  */
-#include <env.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <net.h>
-#include <linux/libfdt.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <net.h>
+#ಅನ್ತರ್ಭಾವ <linux/libfdt.h>
 
-#if defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
-static ulong spl_net_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+#ಆದರೆ defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
+ಸ್ಥಿರ ulong spl_net_ತುಂಬು_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong sector,
+			       ulong ಎಣಿಕೆ_2, ಶೂನ್ಯ *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
-	memcpy(buf, map_sysmem(image_load_addr + sector, count), count);
-	return count;
+	      __func__, sector, ಎಣಿಕೆ_2, (ulong)buf);
+	ಸ್ಮರಣೆ_ನಕಲು(buf, map_sysmem(image_ತುಂಬು_addr + sector, ಎಣಿಕೆ_2), ಎಣಿಕೆ_2);
+	ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
 }
 
-static int spl_net_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_net_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			      ರಚನೆ spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
-	int rv;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
+	ಪೂರ್ಣಾಂಕ rv;
 
 	env_init();
 	env_relocate();
-	env_set("autoload", "yes");
+	env_ಗಣ("autoload", "yes");
 	rv = eth_initialize();
-	if (rv == 0) {
-		printf("No Ethernet devices found\n");
-		return -ENODEV;
+	ಆದರೆ (rv == 0) {
+		ಬರೆ("No Ethernet devices found\n");
+		ಹಿಂತಿರುಗಿ -ENODEV;
 	}
-	if (bootdev->boot_device_name)
-		env_set("ethact", bootdev->boot_device_name);
+	ಆದರೆ (bootdev->boot_device_name)
+		env_ಗಣ("ethact", bootdev->boot_device_name);
 	rv = net_loop(BOOTP);
-	if (rv < 0) {
-		printf("Problem booting with BOOTP\n");
-		return rv;
+	ಆದರೆ (rv < 0) {
+		ಬರೆ("Problem booting with BOOTP\n");
+		ಹಿಂತಿರುಗಿ rv;
 	}
 
-	spl_load_init(&load, spl_net_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, 0);
+	spl_ತುಂಬು_init(&ತುಂಬು, spl_net_ತುಂಬು_read, ಖಾಲಿ, 1);
+	ಹಿಂತಿರುಗಿ spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, 0, 0);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_SPL_ETH
-int spl_net_load_image_cpgmac(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_ETH
+ಪೂರ್ಣಾಂಕ spl_net_ತುಂಬು_image_cpgmac(ರಚನೆ spl_image_info *spl_image,
+			      ರಚನೆ spl_boot_device *bootdev)
 {
-#ifdef CONFIG_SPL_ETH_DEVICE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_ETH_DEVICE
 	bootdev->boot_device_name = CONFIG_SPL_ETH_DEVICE;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return spl_net_load_image(spl_image, bootdev);
+	ಹಿಂತಿರುಗಿ spl_net_ತುಂಬು_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("eth device", 0, BOOT_DEVICE_CPGMAC,
-		      spl_net_load_image_cpgmac);
-#endif
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("eth device", 0, BOOT_DEVICE_CPGMAC,
+		      spl_net_ತುಂಬು_image_cpgmac);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_SPL_USB_ETHER
-int spl_net_load_image_usb(struct spl_image_info *spl_image,
-			   struct spl_boot_device *bootdev)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_USB_ETHER
+ಪೂರ್ಣಾಂಕ spl_net_ತುಂಬು_image_usb(ರಚನೆ spl_image_info *spl_image,
+			   ರಚನೆ spl_boot_device *bootdev)
 {
 	bootdev->boot_device_name = "usb_ether";
-#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+#ಆದರೆ CONFIG_IS_ENABLED(DM_USB_GADGET)
 	usb_ether_init();
-#endif
-	return spl_net_load_image(spl_image, bootdev);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ spl_net_ತುಂಬು_image(spl_image, bootdev);
 }
-SPL_LOAD_IMAGE_METHOD("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_load_image_usb);
-#endif
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_ತುಂಬು_image_usb);
+#ಆದರೆ_ಅಂತ್ಯ

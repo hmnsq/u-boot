@@ -8,167 +8,167 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#include <bootretry.h>
-#include <cli.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <log.h>
-#include <linux/ctype.h>
+#ಅನ್ತರ್ಭಾವ <bootretry.h>
+#ಅನ್ತರ್ಭಾವ <cli.h>
+#ಅನ್ತರ್ಭಾವ <command.h>
+#ಅನ್ತರ್ಭಾವ <console.h>
+#ಅನ್ತರ್ಭಾವ <env.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <linux/ctype.h>
 
-#define DEBUG_PARSER	0	/* set to 1 to debug */
+#ವ್ಯಾಖ್ಯಾನಿಸು DEBUG_PARSER	0	/* set to 1 to debug */
 
-#define debug_parser(fmt, args...)		\
+#ವ್ಯಾಖ್ಯಾನಿಸು debug_parser(fmt, ವಾದಗಳು...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+ಪೂರ್ಣಾಂಕ cli_simple_process_macros(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಒಳಹರಿವು, ಅಕ್ಷರ *output, ಪೂರ್ಣಾಂಕ max_ಗಾತ್ರ)
 {
-	char c, prev;
-	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
-	int outputcnt = max_size;
-	int state = 0;		/* 0 = waiting for '$'  */
-	int ret;
+	ಅಕ್ಷರ c, prev;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *varname_ಆರಂಭ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ inputcnt = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಒಳಹರಿವು);
+	ಪೂರ್ಣಾಂಕ outputcnt = max_ಗಾತ್ರ;
+	ಪೂರ್ಣಾಂಕ state = 0;		/* 0 = waiting for '$'  */
+	ಪೂರ್ಣಾಂಕ ret;
 
 	/* 1 = waiting for '(' or '{' */
 	/* 2 = waiting for ')' or '}' */
 	/* 3 = waiting for '''  */
-	char __maybe_unused *output_start = output;
+	ಅಕ್ಷರ __maybe_unused *output_ಆರಂಭ = output;
 
-	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(input),
-		     input);
+	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಒಳಹರಿವು),
+		     ಒಳಹರಿವು);
 
 	prev = '\0';		/* previous character   */
 
-	while (inputcnt && outputcnt) {
-		c = *input++;
+	ಆಗ (inputcnt && outputcnt) {
+		c = *ಒಳಹರಿವು++;
 		inputcnt--;
 
-		if (state != 3) {
+		ಆದರೆ (state != 3) {
 			/* remove one level of escape characters */
-			if ((c == '\\') && (prev != '\\')) {
-				if (inputcnt-- == 0)
-					break;
+			ಆದರೆ ((c == '\\') && (prev != '\\')) {
+				ಆದರೆ (inputcnt-- == 0)
+					ನಿಲ್ಲಿಸು;
 				prev = c;
-				c = *input++;
+				c = *ಒಳಹರಿವು++;
 			}
 		}
 
-		switch (state) {
-		case 0:	/* Waiting for (unescaped) $    */
-			if ((c == '\'') && (prev != '\\')) {
+		ಆಯ್ಕೆ (state) {
+		ಸ್ಥಿತಿ 0:	/* Waiting for (unescaped) $    */
+			ಆದರೆ ((c == '\'') && (prev != '\\')) {
 				state = 3;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			if ((c == '$') && (prev != '\\')) {
+			ಆದರೆ ((c == '$') && (prev != '\\')) {
 				state++;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
-		case 1:	/* Waiting for (        */
-			if (c == '(' || c == '{') {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 1:	/* Waiting for (        */
+			ಆದರೆ (c == '(' || c == '{') {
 				state++;
-				varname_start = input;
-			} else {
+				varname_ಆರಂಭ = ಒಳಹರಿವು;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				state = 0;
 				*(output++) = '$';
 				outputcnt--;
 
-				if (outputcnt) {
+				ಆದರೆ (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
 			}
-			break;
-		case 2:	/* Waiting for )        */
-			if (c == ')' || c == '}') {
-				int i;
-				char envname[CONFIG_SYS_CBSIZE], *envval;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 2:	/* Waiting for )        */
+			ಆದರೆ (c == ')' || c == '}') {
+				ಪೂರ್ಣಾಂಕ i;
+				ಅಕ್ಷರ envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				ಪೂರ್ಣಾಂಕ envcnt = ಒಳಹರಿವು - varname_ಆರಂಭ - 1;
 
 				/* Get the varname */
-				for (i = 0; i < envcnt; i++)
-					envname[i] = varname_start[i];
+				ಗಾಗಿ (i = 0; i < envcnt; i++)
+					envname[i] = varname_ಆರಂಭ[i];
 				envname[i] = 0;
 
 				/* Get its value */
 				envval = env_get(envname);
 
 				/* Copy into the line if it exists */
-				if (envval != NULL)
-					while ((*envval) && outputcnt) {
+				ಆದರೆ (envval != ಖಾಲಿ)
+					ಆಗ ((*envval) && outputcnt) {
 						*(output++) = *(envval++);
 						outputcnt--;
 					}
 				/* Look for another '$' */
 				state = 0;
 			}
-			break;
-		case 3:	/* Waiting for '        */
-			if ((c == '\'') && (prev != '\\')) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 3:	/* Waiting for '        */
+			ಆದರೆ ((c == '\'') && (prev != '\\')) {
 				state = 0;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		prev = c;
 	}
 
 	ret = inputcnt ? -ENOSPC : 0;
-	if (outputcnt) {
+	ಆದರೆ (outputcnt) {
 		*output = 0;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		*(output - 1) = 0;
 		ret = -ENOSPC;
 	}
 
 	debug_parser("[PROCESS_MACROS] OUTPUT len %zd: \"%s\"\n",
-		     strlen(output_start), output_start);
+		     ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(output_ಆರಂಭ), output_ಆರಂಭ);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-#ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_CMDLINE
+ಪೂರ್ಣಾಂಕ cli_simple_parse_ಸಾಲು(ಅಕ್ಷರ *ಸಾಲು, ಅಕ್ಷರ *argv[])
 {
-	int nargs = 0;
+	ಪೂರ್ಣಾಂಕ nargs = 0;
 
-	debug_parser("%s: \"%s\"\n", __func__, line);
-	while (nargs < CONFIG_SYS_MAXARGS) {
+	debug_parser("%s: \"%s\"\n", __func__, ಸಾಲು);
+	ಆಗ (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
-			++line;
+		ಆಗ (isblank(*ಸಾಲು))
+			++ಸಾಲು;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		ಆದರೆ (*ಸಾಲು == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = ಖಾಲಿ;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
-			return nargs;
+			ಹಿಂತಿರುಗಿ nargs;
 		}
 
-		argv[nargs++] = line;	/* begin of argument string	*/
+		argv[nargs++] = ಸಾಲು;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
-			++line;
+		ಆಗ (*ಸಾಲು && !isblank(*ಸಾಲು))
+			++ಸಾಲು;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
-			argv[nargs] = NULL;
+		ಆದರೆ (*ಸಾಲು == '\0') {	/* end of line, no more args	*/
+			argv[nargs] = ಖಾಲಿ;
 			debug_parser("parse_line: nargs=%d\n", nargs);
-			return nargs;
+			ಹಿಂತಿರುಗಿ nargs;
 		}
 
-		*line++ = '\0';		/* terminate current arg	 */
+		*ಸಾಲು++ = '\0';		/* terminate current arg	 */
 	}
 
-	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
+	ಬರೆ("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
 
 	debug_parser("%s: nargs=%d\n", __func__, nargs);
-	return nargs;
+	ಹಿಂತಿರುಗಿ nargs;
 }
 
  /*
@@ -179,32 +179,32 @@ int cli_simple_parse_line(char *line, char *argv[])
  * the environment data, which may change magicly when the command we run
  * creates or modifies environment variables (like "bootp" does).
  */
-int cli_simple_run_command(const char *cmd, int flag)
+ಪೂರ್ಣಾಂಕ cli_simple_ಸತತ_command(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *cmd, ಪೂರ್ಣಾಂಕ flag)
 {
-	char cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
-	char *token;			/* start of token in cmdbuf	*/
-	char *sep;			/* end of token (separator) in cmdbuf */
-	char finaltoken[CONFIG_SYS_CBSIZE];
-	char *str = cmdbuf;
-	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
-	int argc, inquotes;
-	int repeatable = 1;
-	int rc = 0;
+	ಅಕ್ಷರ cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
+	ಅಕ್ಷರ *token;			/* start of token in cmdbuf	*/
+	ಅಕ್ಷರ *sep;			/* end of token (separator) in cmdbuf */
+	ಅಕ್ಷರ finaltoken[CONFIG_SYS_CBSIZE];
+	ಅಕ್ಷರ *str = cmdbuf;
+	ಅಕ್ಷರ *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
+	ಪೂರ್ಣಾಂಕ argc, inquotes;
+	ಪೂರ್ಣಾಂಕ repeatable = 1;
+	ಪೂರ್ಣಾಂಕ rc = 0;
 
 	debug_parser("[RUN_COMMAND] cmd[%p]=\"", cmd);
-	if (DEBUG_PARSER) {
+	ಆದರೆ (DEBUG_PARSER) {
 		/* use puts - string may be loooong */
 		puts(cmd ? cmd : "NULL");
 		puts("\"\n");
 	}
 	clear_ctrlc();		/* forget any previous Control C */
 
-	if (!cmd || !*cmd)
-		return -1;	/* empty command */
+	ಆದರೆ (!cmd || !*cmd)
+		ಹಿಂತಿರುಗಿ -1;	/* empty command */
 
-	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cmd) >= CONFIG_SYS_CBSIZE) {
 		puts("## Command too long!\n");
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 
 	strcpy(cmdbuf, cmd);
@@ -214,67 +214,67 @@ int cli_simple_run_command(const char *cmd, int flag)
 	 */
 
 	debug_parser("[PROCESS_SEPARATORS] %s\n", cmd);
-	while (*str) {
+	ಆಗ (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for (inquotes = 0, sep = str; *sep; sep++) {
-			if ((*sep == '\'') &&
+		ಗಾಗಿ (inquotes = 0, sep = str; *sep; sep++) {
+			ಆದರೆ ((*sep == '\'') &&
 			    (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
 
-			if (!inquotes &&
+			ಆದರೆ (!inquotes &&
 			    (*sep == ';') &&	/* separator		*/
 			    (sep != str) &&	/* past string start	*/
 			    (*(sep - 1) != '\\'))	/* and NOT escaped */
-				break;
+				ನಿಲ್ಲಿಸು;
 		}
 
 		/*
 		 * Limit the token to data between separators
 		 */
 		token = str;
-		if (*sep) {
+		ಆದರೆ (*sep) {
 			str = sep + 1;	/* start of command for next pass */
 			*sep = '\0';
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			str = sep;	/* no more commands for next pass */
 		}
 		debug_parser("token: \"%s\"\n", token);
 
 		/* find macros in this token and replace them */
 		cli_simple_process_macros(token, finaltoken,
-					  sizeof(finaltoken));
+					  ಗಾತ್ರ(finaltoken));
 
 		/* Extract arguments */
-		argc = cli_simple_parse_line(finaltoken, argv);
-		if (argc == 0) {
+		argc = cli_simple_parse_ಸಾಲು(finaltoken, argv);
+		ಆದರೆ (argc == 0) {
 			rc = -1;	/* no command at all */
-			continue;
+			ಮುಂದುವರಿ;
 		}
 
-		if (cmd_process(flag, argc, argv, &repeatable, NULL))
+		ಆದರೆ (cmd_process(flag, argc, argv, &repeatable, ಖಾಲಿ))
 			rc = -1;
 
 		/* Did the user stop this? */
-		if (had_ctrlc())
-			return -1;	/* if stopped then not repeatable */
+		ಆದರೆ (had_ctrlc())
+			ಹಿಂತಿರುಗಿ -1;	/* if stopped then not repeatable */
 	}
 
-	return rc ? rc : repeatable;
+	ಹಿಂತಿರುಗಿ rc ? rc : repeatable;
 }
 
-void cli_simple_loop(void)
+ಶೂನ್ಯ cli_simple_loop(ಶೂನ್ಯ)
 {
-	static char lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
+	ಸ್ಥಿರ ಅಕ್ಷರ lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
 
-	int len;
-	int flag;
-	int rc = 1;
+	ಪೂರ್ಣಾಂಕ len;
+	ಪೂರ್ಣಾಂಕ flag;
+	ಪೂರ್ಣಾಂಕ rc = 1;
 
-	for (;;) {
-		if (rc >= 0) {
+	ಗಾಗಿ (;;) {
+		ಆದರೆ (rc >= 0) {
 			/* Saw enough of a valid command to
 			 * restart the timeout.
 			 */
@@ -283,66 +283,66 @@ void cli_simple_loop(void)
 		len = cli_readline(CONFIG_SYS_PROMPT);
 
 		flag = 0;	/* assume no special flags for now */
-		if (len > 0)
-			strlcpy(lastcommand, console_buffer,
+		ಆದರೆ (len > 0)
+			strlcpy(lastcommand, console_ಬಫರ್,
 				CONFIG_SYS_CBSIZE + 1);
-		else if (len == 0)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (len == 0)
 			flag |= CMD_FLAG_REPEAT;
-#ifdef CONFIG_BOOT_RETRY_TIME
-		else if (len == -2) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_BOOT_RETRY_ಸಮಯ
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (len == -2) {
 			/* -2 means timed out, retry autoboot
 			 */
 			puts("\nTimed out waiting for command\n");
-# ifdef CONFIG_RESET_TO_RETRY
+# ifdef CONFIG_RESET_ಗಮ್ಯ_RETRY
 			/* Reinit board to run initialization code again */
-			do_reset(NULL, 0, 0, NULL);
-# else
-			return;		/* retry autoboot */
+			do_reset(ಖಾಲಿ, 0, 0, ಖಾಲಿ);
+# ಇಲ್ಲದಿದ್ದರೆ
+			ಹಿಂತಿರುಗಿ;		/* retry autoboot */
 # endif
 		}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-		if (len == -1)
+		ಆದರೆ (len == -1)
 			puts("<INTERRUPT>\n");
-		else
-			rc = run_command_repeatable(lastcommand, flag);
+		ಇಲ್ಲದಿದ್ದರೆ
+			rc = ಸತತ_command_repeatable(lastcommand, flag);
 
-		if (rc <= 0) {
+		ಆದರೆ (rc <= 0) {
 			/* invalid command or not repeatable, forget it */
 			lastcommand[0] = 0;
 		}
 	}
 }
 
-int cli_simple_run_command_list(char *cmd, int flag)
+ಪೂರ್ಣಾಂಕ cli_simple_ಸತತ_command_list(ಅಕ್ಷರ *cmd, ಪೂರ್ಣಾಂಕ flag)
 {
-	char *line, *next;
-	int rcode = 0;
+	ಅಕ್ಷರ *ಸಾಲು, *ಮುಂದಿನ;
+	ಪೂರ್ಣಾಂಕ rcode = 0;
 
 	/*
 	 * Break into individual lines, and execute each line; terminate on
 	 * error.
 	 */
-	next = cmd;
-	line = cmd;
-	while (*next) {
-		if (*next == '\n') {
-			*next = '\0';
+	ಮುಂದಿನ = cmd;
+	ಸಾಲು = cmd;
+	ಆಗ (*ಮುಂದಿನ) {
+		ಆದರೆ (*ಮುಂದಿನ == '\n') {
+			*ಮುಂದಿನ = '\0';
 			/* run only non-empty commands */
-			if (*line) {
-				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+			ಆದರೆ (*ಸಾಲು) {
+				debug("** exec: \"%s\"\n", ಸಾಲು);
+				ಆದರೆ (cli_simple_ಸತತ_command(ಸಾಲು, 0) < 0) {
 					rcode = 1;
-					break;
+					ನಿಲ್ಲಿಸು;
 				}
 			}
-			line = next + 1;
+			ಸಾಲು = ಮುಂದಿನ + 1;
 		}
-		++next;
+		++ಮುಂದಿನ;
 	}
-	if (rcode == 0 && *line)
-		rcode = (cli_simple_run_command(line, 0) < 0);
+	ಆದರೆ (rcode == 0 && *ಸಾಲು)
+		rcode = (cli_simple_ಸತತ_command(ಸಾಲು, 0) < 0);
 
-	return rcode;
+	ಹಿಂತಿರುಗಿ rcode;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

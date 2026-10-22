@@ -3,47 +3,47 @@
  * (C) Copyright 2025 Alexey Charkov <alchark@gmail.com>
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <scsi.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/compiler.h>
-#include <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <scsi.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <linux/compiler.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
 
-static ulong spl_ufs_load_read(struct spl_load_info *load, ulong off, ulong size, void *buf)
+ಸ್ಥಿರ ulong spl_ufs_ತುಂಬು_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong off, ulong ಗಾತ್ರ_2, ಶೂನ್ಯ *buf)
 {
-	struct blk_desc *bd = load->priv;
+	ರಚನೆ blk_desc *bd = ತುಂಬು->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t ಎಣಿಕೆ_2 = ಗಾತ್ರ_2 >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	ಹಿಂತಿರುಗಿ blk_dread(bd, sector, ಎಣಿಕೆ_2, buf) << bd->log2blksz;
 }
 
-static int spl_ufs_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_ufs_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			      ರಚನೆ spl_boot_device *bootdev)
 {
-	unsigned long sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
-	int devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
-	struct spl_load_info load;
-	struct blk_desc *bd;
-	int err;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
+	ಪೂರ್ಣಾಂಕ devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
+	ರಚನೆ blk_desc *bd;
+	ಪೂರ್ಣಾಂಕ err;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_ಪರಿಶೀಲನೆ(false);
 	bd = blk_get_devnum_by_uclass_id(UCLASS_SCSI, devnum);
-	if (!bd)
-		return -ENODEV;
+	ಆದರೆ (!bd)
+		ಹಿಂತಿರುಗಿ -ENODEV;
 
-	spl_load_init(&load, spl_ufs_load_read, bd, bd->blksz);
-	err = spl_load(spl_image, bootdev, &load, 0, sector << bd->log2blksz);
-	if (err) {
+	spl_ತುಂಬು_init(&ತುಂಬು, spl_ufs_ತುಂಬು_read, bd, bd->blksz);
+	err = spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, 0, sector << bd->log2blksz);
+	ಆದರೆ (err) {
 		puts("spl_ufs_load_image: ufs block read error\n");
 		log_debug("(error=%d)\n", err);
-		return err;
+		ಹಿಂತಿರುಗಿ err;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-SPL_LOAD_IMAGE_METHOD("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_load_image);
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_ತುಂಬು_image);

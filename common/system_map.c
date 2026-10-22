@@ -5,4 +5,4 @@
  * Licensed under the GPL-2 or later.
  */
 
-const char const system_map[] = SYSTEM_MAP;
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ system_map[] = SYSTEM_MAP;

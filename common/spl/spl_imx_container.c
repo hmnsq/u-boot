@@ -3,185 +3,185 @@
  * Copyright 2018-2021 NXP
  */
 
-#define LOG_CATEGORY LOGC_ARCH
-#include <stdlib.h>
-#include <errno.h>
-#include <imx_container.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <cpu_func.h>
-#ifdef CONFIG_AHAB_BOOT
-#include <asm/mach-imx/ahab.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು LOG_CATEGORY LOGC_ARCH
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <imx_container.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <mapmem.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <cpu_func.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_AHAB_BOOT
+#ಅನ್ತರ್ಭಾವ <asm/mach-imx/ahab.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-__weak bool arch_check_dst_in_secure(void *start, ulong size)
+__weak bool arch_check_dst_ಒಳ_secure(ಶೂನ್ಯ *ಆರಂಭ, ulong ಗಾತ್ರ_2)
 {
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
-__weak void *arch_get_container_trampoline(void)
+__weak ಶೂನ್ಯ *arch_get_container_trampoline(ಶೂನ್ಯ)
 {
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
-					  struct spl_load_info *info,
-					  struct container_hdr *container,
-					  int image_index,
-					  ulong container_offset)
+ಸ್ಥಿರ ರಚನೆ boot_img_t *read_auth_image(ರಚನೆ spl_image_info *spl_image,
+					  ರಚನೆ spl_ತುಂಬು_info *info,
+					  ರಚನೆ container_hdr *container,
+					  ಪೂರ್ಣಾಂಕ image_ಸೂಚ್ಯಂಕ,
+					  ulong container_ಸ್ಥಾನಾಂತರ)
 {
-	struct boot_img_t *images;
-	ulong offset, size;
-	void *buf, *trampoline;
+	ರಚನೆ boot_img_t *images;
+	ulong ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2;
+	ಶೂನ್ಯ *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	ಆದರೆ (image_ಸೂಚ್ಯಂಕ > container->ಅಂಕೆ_images) {
 		debug("Invalid image number\n");
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	images = (struct boot_img_t *)((u8 *)container +
-				       sizeof(struct container_hdr));
+	images = (ರಚನೆ boot_img_t *)((u8 *)container +
+				       ಗಾತ್ರ(ರಚನೆ container_hdr));
 
-	if (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
-		printf("%s: image%d offset not aligned to %u\n",
-		       __func__, image_index, spl_get_bl_len(info));
-		return NULL;
+	ಆದರೆ (!IS_ALIGNED(images[image_ಸೂಚ್ಯಂಕ].ಸ್ಥಾನಾಂತರ, spl_get_bl_len(info))) {
+		ಬರೆ("%s: image%d offset not aligned to %u\n",
+		       __func__, image_ಸೂಚ್ಯಂಕ, spl_get_bl_len(info));
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	size = ALIGN(images[image_index].size, spl_get_bl_len(info));
-	offset = images[image_index].offset + container_offset;
+	ಗಾತ್ರ_2 = ALIGN(images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2, spl_get_bl_len(info));
+	ಸ್ಥಾನಾಂತರ = images[image_ಸೂಚ್ಯಂಕ].ಸ್ಥಾನಾಂತರ + container_ಸ್ಥಾನಾಂತರ;
 
 	debug("%s: container: %p offset: %lu size: %lu\n", __func__,
-	      container, offset, size);
+	      container, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2);
 
-	buf = map_sysmem(images[image_index].dst, images[image_index].size);
-	if (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
-	    arch_check_dst_in_secure(buf, size)) {
+	buf = map_sysmem(images[image_ಸೂಚ್ಯಂಕ].dst, images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2);
+	ಆದರೆ (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
+	    arch_check_dst_ಒಳ_secure(buf, ಗಾತ್ರ_2)) {
 		trampoline = arch_get_container_trampoline();
-		if (!trampoline) {
-			printf("%s: trampoline size is zero\n", __func__);
-			return NULL;
+		ಆದರೆ (!trampoline) {
+			ಬರೆ("%s: trampoline size is zero\n", __func__);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 
-		if (info->read(info, offset, size, trampoline) < images[image_index].size) {
-			printf("%s: failed to load image to a trampoline buffer\n", __func__);
-			return NULL;
+		ಆದರೆ (info->ಪಠ(info, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, trampoline) < images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2) {
+			ಬರೆ("%s: failed to load image to a trampoline buffer\n", __func__);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 
-		memcpy(buf, trampoline, images[image_index].size);
-	} else {
-		if (info->read(info, offset, size, buf) < images[image_index].size) {
-				printf("%s: failed to load image to a non-secure region\n", __func__);
-			return NULL;
+		ಸ್ಮರಣೆ_ನಕಲು(buf, trampoline, images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (info->ಪಠ(info, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, buf) < images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2) {
+				ಬರೆ("%s: failed to load image to a non-secure region\n", __func__);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 	}
 
-#ifdef CONFIG_AHAB_BOOT
-	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_index].size - 1));
-	if (ahab_verify_cntr_image(&images[image_index], image_index))
-		return NULL;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_AHAB_BOOT
+	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_ಸೂಚ್ಯಂಕ].ಗಾತ್ರ_2 - 1));
+	ಆದರೆ (ahab_verify_cntr_image(&images[image_ಸೂಚ್ಯಂಕ], image_ಸೂಚ್ಯಂಕ))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return &images[image_index];
+	ಹಿಂತಿರುಗಿ &images[image_ಸೂಚ್ಯಂಕ];
 }
 
-static int read_auth_container(struct spl_image_info *spl_image,
-			       struct spl_load_info *info, ulong offset)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ read_auth_container(ರಚನೆ spl_image_info *spl_image,
+			       ರಚನೆ spl_ತುಂಬು_info *info, ulong ಸ್ಥಾನಾಂತರ)
 {
-	struct container_hdr *container = NULL;
-	struct container_hdr *authhdr;
-	u16 length;
-	int i, size, ret = 0;
+	ರಚನೆ container_hdr *container = ಖಾಲಿ;
+	ರಚನೆ container_hdr *authhdr;
+	u16 ಉದ್ದಳತೆ;
+	ಪೂರ್ಣಾಂಕ i, ಗಾತ್ರ_2, ret = 0;
 
-	size = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
+	ಗಾತ್ರ_2 = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
 
 	/*
 	 * It will not override the ATF code, so safe to use it here,
 	 * no need malloc
 	 */
-	container = malloc(size);
-	if (!container)
-		return -ENOMEM;
+	container = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2);
+	ಆದರೆ (!container)
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 
 	debug("%s: container: %p offset: %lu size: %u\n", __func__,
-	      container, offset, size);
-	if (info->read(info, offset, size, container) <
+	      container, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2);
+	ಆದರೆ (info->ಪಠ(info, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, container) <
 	    CONTAINER_HDR_ALIGNMENT) {
 		ret = -EIO;
-		goto end;
+		ಹೋಗು ಕೊನೆ_2;
 	}
 
-	if (!valid_container_hdr(container)) {
+	ಆದರೆ (!valid_container_hdr(container)) {
 		log_err("Wrong container header\n");
 		ret = -ENOENT;
-		goto end;
+		ಹೋಗು ಕೊನೆ_2;
 	}
 
-	if (!container->num_images) {
+	ಆದರೆ (!container->ಅಂಕೆ_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
-		goto end;
+		ಹೋಗು ಕೊನೆ_2;
 	}
 
-	length = container->length_lsb + (container->length_msb << 8);
-	debug("Container length %u\n", length);
+	ಉದ್ದಳತೆ = container->ಉದ್ದಳತೆ_lsb + (container->ಉದ್ದಳತೆ_msb << 8);
+	debug("Container length %u\n", ಉದ್ದಳತೆ);
 
-	if (length > CONTAINER_HDR_ALIGNMENT) {
-		size = ALIGN(length, spl_get_bl_len(info));
+	ಆದರೆ (ಉದ್ದಳತೆ > CONTAINER_HDR_ALIGNMENT) {
+		ಗಾತ್ರ_2 = ALIGN(ಉದ್ದಳತೆ, spl_get_bl_len(info));
 
-		free(container);
-		container = malloc(size);
-		if (!container)
-			return -ENOMEM;
+		ಬಿಡುಗಡೆ(container);
+		container = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2);
+		ಆದರೆ (!container)
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 
 		debug("%s: container: %p offset: %lu size: %u\n",
-		      __func__, container, offset, size);
-		if (info->read(info, offset, size, container) < length) {
+		      __func__, container, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2);
+		ಆದರೆ (info->ಪಠ(info, ಸ್ಥಾನಾಂತರ, ಗಾತ್ರ_2, container) < ಉದ್ದಳತೆ) {
 			ret = -EIO;
-			goto end;
+			ಹೋಗು ಕೊನೆ_2;
 		}
 	}
 
 	authhdr = container;
 
-#ifdef CONFIG_AHAB_BOOT
-	authhdr = ahab_auth_cntr_hdr(authhdr, length);
-	if (!authhdr) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_AHAB_BOOT
+	authhdr = ahab_auth_cntr_hdr(authhdr, ಉದ್ದಳತೆ);
+	ಆದರೆ (!authhdr) {
 		ret = -EINVAL;
-		goto end_auth;
+		ಹೋಗು ಕೊನೆ_auth;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	for (i = 0; i < authhdr->num_images; i++) {
-		struct boot_img_t *image = read_auth_image(spl_image, info,
+	ಗಾಗಿ (i = 0; i < authhdr->ಅಂಕೆ_images; i++) {
+		ರಚನೆ boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
-							   offset);
+							   ಸ್ಥಾನಾಂತರ);
 
-		if (!image) {
+		ಆದರೆ (!image) {
 			ret = -EINVAL;
-			goto end_auth;
+			ಹೋಗು ಕೊನೆ_auth;
 		}
 
-		if (i == 0) {
-			spl_image->load_addr = image->dst;
-			spl_image->entry_point = image->entry;
+		ಆದರೆ (i == 0) {
+			spl_image->ತುಂಬು_addr = image->dst;
+			spl_image->ನಮೂದು_ಬಿಂದು = image->ನಮೂದು;
 		}
 	}
 
-end_auth:
-#ifdef CONFIG_AHAB_BOOT
+ಕೊನೆ_auth:
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_AHAB_BOOT
 	ahab_auth_release();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-end:
-	free(container);
+ಕೊನೆ_2:
+	ಬಿಡುಗಡೆ(container);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int spl_load_imx_container(struct spl_image_info *spl_image,
-			   struct spl_load_info *info, ulong offset)
+ಪೂರ್ಣಾಂಕ spl_ತುಂಬು_imx_container(ರಚನೆ spl_image_info *spl_image,
+			   ರಚನೆ spl_ತುಂಬು_info *info, ulong ಸ್ಥಾನಾಂತರ)
 {
-	return read_auth_container(spl_image, info, offset);
+	ಹಿಂತಿರುಗಿ read_auth_container(spl_image, info, ಸ್ಥಾನಾಂತರ);
 }

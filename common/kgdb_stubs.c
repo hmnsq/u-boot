@@ -7,59 +7,59 @@
  * Licensed under the GPL-2 or later.
  */
 
-#include <cpu_func.h>
-#include <kgdb.h>
-#include <serial.h>
-#include <asm/ptrace.h>
+#ಅನ್ತರ್ಭಾವ <cpu_func.h>
+#ಅನ್ತರ್ಭಾವ <kgdb.h>
+#ಅನ್ತರ್ಭಾವ <serial.h>
+#ಅನ್ತರ್ಭಾವ <asm/ptrace.h>
 
-int (*debugger_exception_handler)(struct pt_regs *);
+ಪೂರ್ಣಾಂಕ (*debugger_exception_handler)(ರಚನೆ pt_regs *);
 
 __attribute__((weak))
-void kgdb_serial_init(void)
+ಶೂನ್ಯ kgdb_serial_init(ಶೂನ್ಯ)
 {
 	puts("[on serial] ");
 }
 
 __attribute__((weak))
-void putDebugChar(int c)
+ಶೂನ್ಯ putDebugChar(ಪೂರ್ಣಾಂಕ c)
 {
 	serial_putc(c);
 }
 
 __attribute__((weak))
-void putDebugStr(const char *str)
+ಶೂನ್ಯ putDebugStr(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-#ifdef DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
 	serial_puts(str);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 __attribute__((weak))
-int getDebugChar(void)
+ಪೂರ್ಣಾಂಕ getDebugChar(ಶೂನ್ಯ)
 {
-	return serial_getc();
+	ಹಿಂತಿರುಗಿ serial_getc();
 }
 
 __attribute__((weak))
-void kgdb_interruptible(int yes)
+ಶೂನ್ಯ kgdb_interruptible(ಪೂರ್ಣಾಂಕ yes)
 {
-	return;
+	ಹಿಂತಿರುಗಿ;
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_range(void *from, void *to)
+ಶೂನ್ಯ kgdb_flush_cache_range(ಶೂನ್ಯ *from, ಶೂನ್ಯ *ಗಮ್ಯ)
 {
-	flush_cache((unsigned long)from, (unsigned long)(to - from));
+	flush_cache((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)from, (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(ಗಮ್ಯ - from));
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_all(void)
+ಶೂನ್ಯ kgdb_flush_cache_all(ಶೂನ್ಯ)
 {
-	if (dcache_status()) {
+	ಆದರೆ (dcache_ಸ್ಥಿತಿ()) {
 		dcache_disable();
 		dcache_enable();
 	}
-	if (icache_status()) {
+	ಆದರೆ (icache_ಸ್ಥಿತಿ()) {
 		icache_disable();
 		icache_enable();
 	}

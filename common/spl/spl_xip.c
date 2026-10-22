@@ -4,26 +4,26 @@
  * Author(s): Vikas Manocha, <vikas.manocha@st.com> for STMicroelectronics.
  */
 
-#include <config.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
+#ಅನ್ತರ್ಭಾವ <config.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
 
-static int spl_xip(struct spl_image_info *spl_image,
-		   struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_xip(ರಚನೆ spl_image_info *spl_image,
+		   ರಚನೆ spl_boot_device *bootdev)
 {
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#ಆದರೆ CONFIG_IS_ENABLED(OS_BOOT)
+	ಆದರೆ (!spl_ಆರಂಭ_uboot()) {
 		spl_image->name = "Linux";
 		spl_image->os = IH_OS_LINUX;
-		spl_image->load_addr = CONFIG_SYS_LOAD_ADDR;
-		spl_image->entry_point = CONFIG_SYS_LOAD_ADDR;
+		spl_image->ತುಂಬು_addr = CONFIG_SYS_ತುಂಬು_ADDR;
+		spl_image->ನಮೂದು_ಬಿಂದು = CONFIG_SYS_ತುಂಬು_ADDR;
 		debug("spl: payload xipImage, load addr: 0x%lx\n",
-		      spl_image->load_addr);
-		return 0;
+		      spl_image->ತುಂಬು_addr);
+		ಹಿಂತಿರುಗಿ 0;
 	}
-#endif
-	return(spl_parse_image_header(spl_image, bootdev,
-	       (const struct legacy_img_hdr *)CFG_SYS_UBOOT_BASE));
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ(spl_parse_image_ಶೀರ್ಷಿಕೆ(spl_image, bootdev,
+	       (ಸ್ಥಿರಾಂಕ ರಚನೆ legacy_img_hdr *)CFG_SYS_UBOOT_ತಳ));
 }
-SPL_LOAD_IMAGE_METHOD("XIP", 0, BOOT_DEVICE_XIP, spl_xip);
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("XIP", 0, BOOT_DEVICE_XIP, spl_xip);

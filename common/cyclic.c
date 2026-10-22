@@ -8,60 +8,60 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#ಅನ್ತರ್ಭಾವ <cyclic.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <malloc.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <linux/errno.h>
+#ಅನ್ತರ್ಭಾವ <linux/list.h>
+#ಅನ್ತರ್ಭಾವ <asm/global_data.h>
+#ಅನ್ತರ್ಭಾವ <u-boot/schedule.h>
+#ಅನ್ತರ್ಭಾವ <uthread.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ದತ್ತಾಂಶ_PTR;
 
-void hw_watchdog_reset(void);
+ಶೂನ್ಯ hw_watchdog_reset(ಶೂನ್ಯ);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+ಸ್ಥಿರ bool cyclic_is_registered(ಸ್ಥಿರಾಂಕ ರಚನೆ cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cyclic_info *c;
 
-	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+	hlist_for_each_ನಮೂದು(c, &gd->cyclic_list, list) {
+		ಆದರೆ (c == cyclic)
+			ಹಿಂತಿರುಗಿ true;
 	}
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+ಶೂನ್ಯ cyclic_ರಿಜಿಸ್ಟರ್(ರಚನೆ cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	memset(cyclic, 0, ಗಾತ್ರ(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
 	cyclic->name = name;
 	cyclic->delay_us = delay_us;
-	cyclic->start_time_us = get_timer_us(0);
-	hlist_add_head(&cyclic->list, &gd->cyclic_list);
+	cyclic->ಆರಂಭ_ಸಮಯ_us = get_timer_us(0);
+	hlist_ಕೂಡಿಸು_ತಲೆ(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+ಶೂನ್ಯ cyclic_unregister(ರಚನೆ cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	ಆದರೆ (!cyclic_is_registered(cyclic))
+		ಹಿಂತಿರುಗಿ;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+ಸ್ಥಿರ ಶೂನ್ಯ cyclic_ಸತತ(ಶೂನ್ಯ)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
-	u64 now, after, cpu_time;
+	ರಚನೆ cyclic_info *cyclic;
+	ರಚನೆ hlist_ಗಂಟು *tmp;
+	u64 now, after, cpu_ಸಮಯ;
 
 	/*
 	 * Nothing to do if the list is empty. Also, schedule() can be
@@ -73,36 +73,36 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	ಆದರೆ (hlist_ಖಾಲಿಗಳು(&gd->cyclic_list))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	ಆದರೆ (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		ಹಿಂತಿರುಗಿ;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
-	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list) {
+	hlist_for_each_ನಮೂದು_ಸುರಕ್ಷಿತ(cyclic, tmp, &gd->cyclic_list, list) {
 		/*
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		ಆದರೆ (ಸಮಯ_after_eq64(now, cyclic->ಮುಂದಿನ_call)) {
 			/* Call cyclic function and account it's cpu-time */
-			cyclic->next_call = now + cyclic->delay_us;
+			cyclic->ಮುಂದಿನ_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
 			after = get_timer_us(0);
-			cyclic->run_cnt++;
-			cpu_time = after - now;
-			cyclic->cpu_time_us += cpu_time;
+			cyclic->ಸತತ_cnt++;
+			cpu_ಸಮಯ = after - now;
+			cyclic->cpu_ಸಮಯ_us += cpu_ಸಮಯ;
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			ಆದರೆ ((cpu_ಸಮಯ > CONFIG_CYCLIC_MAX_CPU_ಸಮಯ_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
-				       cyclic->name, cpu_time,
-				       CONFIG_CYCLIC_MAX_CPU_TIME_US);
+				       cyclic->name, cpu_ಸಮಯ,
+				       CONFIG_CYCLIC_MAX_CPU_ಸಮಯ_US);
 
 				/*
 				 * Don't disable this function, just warn once
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+ಶೂನ್ಯ ವೇಳಾಪಟ್ಟಿ(ಶೂನ್ಯ)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	ಆದರೆ (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
-		cyclic_run();
+	ಆದರೆ (gd)
+		cyclic_ಸತತ();
 
-	uthread_schedule();
+	uthread_ವೇಳಾಪಟ್ಟಿ();
 }
 
-int cyclic_unregister_all(void)
+ಪೂರ್ಣಾಂಕ cyclic_unregister_all(ಶೂನ್ಯ)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	ರಚನೆ cyclic_info *cyclic;
+	ರಚನೆ hlist_ಗಂಟು *tmp;
 
-	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
+	hlist_for_each_ನಮೂದು_ಸುರಕ್ಷಿತ(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

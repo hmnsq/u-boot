@@ -3,169 +3,169 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#ಅನ್ತರ್ಭಾವ <config.h>
+#ಅನ್ತರ್ಭಾವ <fdt_support.h>
+#ಅನ್ತರ್ಭಾವ <image.h>
+#ಅನ್ತರ್ಭಾವ <imx_container.h>
+#ಅನ್ತರ್ಭಾವ <log.h>
+#ಅನ್ತರ್ಭಾವ <spl.h>
+#ಅನ್ತರ್ಭಾವ <spl_load.h>
+#ಅನ್ತರ್ಭಾವ <asm/io.h>
+#ಅನ್ತರ್ಭಾವ <mapmem.h>
+#ಅನ್ತರ್ಭಾವ <nand.h>
+#ಅನ್ತರ್ಭಾವ <linux/libfdt_env.h>
+#ಅನ್ತರ್ಭಾವ <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_ಪುಟ(ಶೂನ್ಯ)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	ಹಿಂತಿರುಗಿ CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#ಆದರೆ defined(CONFIG_SPL_NAND_RAW_ONLY)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_nand_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			ರಚನೆ spl_boot_device *bootdev)
 {
 	nand_init();
 
-	printf("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
-	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_SIZE,
+	ಬರೆ("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
+	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_ಗಾತ್ರ,
 	       CFG_SYS_NAND_U_BOOT_DST);
 
-	nand_spl_load_image(spl_nand_get_uboot_raw_page(),
-			    CFG_SYS_NAND_U_BOOT_SIZE,
+	nand_spl_ತುಂಬು_image(spl_nand_get_uboot_raw_ಪುಟ(),
+			    CFG_SYS_NAND_U_BOOT_ಗಾತ್ರ,
 			    map_sysmem(CFG_SYS_NAND_U_BOOT_DST,
-				       CFG_SYS_NAND_U_BOOT_SIZE));
-	spl_set_header_raw_uboot(spl_image);
+				       CFG_SYS_NAND_U_BOOT_ಗಾತ್ರ));
+	spl_ಗಣ_ಶೀರ್ಷಿಕೆ_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 
-__weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
+__weak u32 nand_spl_adjust_ಸ್ಥಾನಾಂತರ(u32 sector, u32 offs)
 {
-	return offs;
+	ಹಿಂತಿರುಗಿ offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+ಸ್ಥಿರ ulong spl_nand_read(ರಚನೆ spl_ತುಂಬು_info *ತುಂಬು, ulong offs, ulong ಗಾತ್ರ_2,
+			   ಶೂನ್ಯ *dst)
 {
-	int err;
+	ಪೂರ್ಣಾಂಕ err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
-	      __func__, offs, size, dst);
+	      __func__, offs, ಗಾತ್ರ_2, dst);
 
-	sector = *(int *)load->priv;
-	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
-	err = nand_spl_load_image(offs, size, dst);
-	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	sector = *(ಪೂರ್ಣಾಂಕ *)ತುಂಬು->priv;
+	offs = sector + nand_spl_adjust_ಸ್ಥಾನಾಂತರ(sector, offs - sector);
+	err = nand_spl_ತುಂಬು_image(offs, ಗಾತ್ರ_2, dst);
+	spl_ಗಣ_bl_len(ತುಂಬು, nand_ಪುಟ_ಗಾತ್ರ());
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return size;
+	ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_nand_ತುಂಬು_element(ರಚನೆ spl_image_info *spl_image,
+				 ರಚನೆ spl_boot_device *bootdev, ಪೂರ್ಣಾಂಕ ಸ್ಥಾನಾಂತರ)
 {
-	struct spl_load_info load;
+	ರಚನೆ spl_ತುಂಬು_info ತುಂಬು;
 
-	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	spl_ತುಂಬು_init(&ತುಂಬು, spl_nand_read, &ಸ್ಥಾನಾಂತರ, 1);
+	ಹಿಂತಿರುಗಿ spl_ತುಂಬು(spl_image, bootdev, &ತುಂಬು, 0, ಸ್ಥಾನಾಂತರ);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#ಆದರೆ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_nand_ತುಂಬು_image_os(ರಚನೆ spl_image_info *spl_image,
+				  ರಚನೆ spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	ಪೂರ್ಣಾಂಕ err;
+	ರಚನೆ legacy_img_hdr *ಶೀರ್ಷಿಕೆ = spl_get_ತುಂಬು_ಬಫರ್(0, ಗಾತ್ರ(*ಶೀರ್ಷಿಕೆ));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
-	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	nand_spl_ತುಂಬು_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, ಗಾತ್ರ(*ಶೀರ್ಷಿಕೆ),
+			    (ಶೂನ್ಯ *)ಶೀರ್ಷಿಕೆ);
+	err = spl_parse_image_ಶೀರ್ಷಿಕೆ(spl_image, bootdev, ಶೀರ್ಷಿಕೆ);
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	ಆದರೆ (ಶೀರ್ಷಿಕೆ->ih_os != IH_OS_LINUX)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
 	/* happy - was a linux */
-	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
-				  spl_image->size,
-				  (void *)spl_image->load_addr);
+	err = nand_spl_ತುಂಬು_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
+				  spl_image->ಗಾತ್ರ_2,
+				  (ಶೂನ್ಯ *)spl_image->ತುಂಬು_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	ಆದರೆ (err)
+		ಹಿಂತಿರುಗಿ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ಆದರೆ IS_ENABLED(CONFIG_SPL_OS_BOOT_ವಾದಗಳು)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
-	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+	ಪೂರ್ಣಾಂಕ *src, *dst;
+	nand_spl_ತುಂಬು_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_ಗಾತ್ರ,
+			    (ಶೂನ್ಯ *)CONFIG_ಪಠ್ಯ_ತಳ);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	ಗಾಗಿ (dst = (ಪೂರ್ಣಾಂಕ *)CONFIG_SPL_PAYLOAD_ವಾದಗಳು_ADDR,
+	    src = (ಪೂರ್ಣಾಂಕ *)CONFIG_ಪಠ್ಯ_ತಳ;
+	     src < (ಪೂರ್ಣಾಂಕ *)(CONFIG_ಪಠ್ಯ_ತಳ + CONFIG_CMD_SPL_WRITE_ಗಾತ್ರ);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ spl_nand_ತುಂಬು_image(ರಚನೆ spl_image_info *spl_image,
+			       ರಚನೆ spl_boot_device *bootdev)
 {
-	int err;
+	ಪೂರ್ಣಾಂಕ err;
 
-#ifdef CONFIG_SPL_NAND_SOFTECC
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	debug("spl: nand - using hw ecc\n");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+#ಆದರೆ CONFIG_IS_ENABLED(OS_BOOT)
+	ಆದರೆ (!spl_ಆರಂಭ_uboot()) {
+		err = spl_nand_ತುಂಬು_image_os(spl_image, bootdev);
+		ಆದರೆ (!err)
+			ಹಿಂತಿರುಗಿ 0;
+		ಬರೆ("%s: Failed in falcon boot: %d", __func__, err);
+		ಆದರೆ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ಹಿಂತಿರುಗಿ err;
+		ಬರೆ("Fallback to U-Boot\n");
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_NAND_ENV_DST
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET);
-#ifdef CONFIG_ENV_OFFSET_REDUND
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET_REDUND);
-#endif
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_NAND_ENV_DST
+	spl_nand_ತುಂಬು_element(spl_image, bootdev, CONFIG_ENV_ಸ್ಥಾನಾಂತರ);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_ENV_ಸ್ಥಾನಾಂತರ_REDUND
+	spl_nand_ತುಂಬು_element(spl_image, bootdev, CONFIG_ENV_ಸ್ಥಾನಾಂತರ_REDUND);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 	/* Load u-boot */
-	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
-#ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
-		err = spl_nand_load_element(spl_image, bootdev,
+	err = spl_nand_ತುಂಬು_element(spl_image, bootdev, spl_nand_get_uboot_raw_ಪುಟ());
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+#ಆದರೆ CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	ಆದರೆ (err)
+		err = spl_nand_ತುಂಬು_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
-#endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 	nand_deselect();
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 /* Use priorty 1 so that Ubi can override this */
-SPL_LOAD_IMAGE_METHOD("NAND", 1, BOOT_DEVICE_NAND, spl_nand_load_image);
+SPL_ತುಂಬು_IMAGE_ವಿಧಾನ("NAND", 1, BOOT_DEVICE_NAND, spl_nand_ತುಂಬು_image);

@@ -4,18 +4,18 @@
  * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
  */
 
-#include <ansi.h>
-#include <cli.h>
-#include <malloc.h>
-#include <errno.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <watchdog.h>
+#ಅನ್ತರ್ಭಾವ <ansi.h>
+#ಅನ್ತರ್ಭಾವ <cli.h>
+#ಅನ್ತರ್ಭಾವ <malloc.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <linux/ctype.h>
+#ಅನ್ತರ್ಭಾವ <linux/delay.h>
+#ಅನ್ತರ್ಭಾವ <linux/list.h>
+#ಅನ್ತರ್ಭಾವ <watchdog.h>
 
-#include "menu.h"
+#ಅನ್ತರ್ಭಾವ "menu.h"
 
-#define ansi 1
+#ವ್ಯಾಖ್ಯಾನಿಸು ansi 1
 
 /*
  * Internally, each item in a menu is represented by a struct menu_item.
@@ -24,10 +24,10 @@
  * by menu_item_destroy, and the consumer of the interface never sees that
  * this struct is used at all.
  */
-struct menu_item {
-	char *key;
-	void *data;
-	struct list_head list;
+ರಚನೆ menu_ಅಂಶ {
+	ಅಕ್ಷರ *ಕೀಲಿ;
+	ಶೂನ್ಯ *ದತ್ತಾಂಶ;
+	ರಚನೆ list_ತಲೆ list;
 };
 
 /*
@@ -36,18 +36,18 @@ struct menu_item {
  * in menu.h, but the full definition is here to prevent consumers from
  * relying on its contents.
  */
-struct menu {
-	struct menu_item *default_item;
-	int timeout;
-	char *title;
-	int prompt;
-	void (*display_statusline)(struct menu *);
-	void (*item_data_print)(void *);
-	char *(*item_choice)(void *);
-	bool (*need_reprint)(void *);
-	void *item_choice_data;
-	struct list_head items;
-	int item_cnt;
+ರಚನೆ menu {
+	ರಚನೆ menu_ಅಂಶ *default_ಅಂಶ;
+	ಪೂರ್ಣಾಂಕ timeout;
+	ಅಕ್ಷರ *title;
+	ಪೂರ್ಣಾಂಕ prompt;
+	ಶೂನ್ಯ (*display_statusline)(ರಚನೆ menu *);
+	ಶೂನ್ಯ (*ಅಂಶ_ದತ್ತಾಂಶ_print)(ಶೂನ್ಯ *);
+	ಅಕ್ಷರ *(*ಅಂಶ_choice)(ಶೂನ್ಯ *);
+	bool (*need_reprint)(ಶೂನ್ಯ *);
+	ಶೂನ್ಯ *ಅಂಶ_choice_ದತ್ತಾಂಶ;
+	ರಚನೆ list_ತಲೆ ವಸ್ತುಗಳು;
+	ಪೂರ್ಣಾಂಕ ಅಂಶ_cnt;
 };
 
 /*
@@ -58,24 +58,24 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
-		void *(*callback)(struct menu *, struct menu_item *, void *),
-		void *extra)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *menu_ವಸ್ತುಗಳು_iter(ರಚನೆ menu *m,
+		ಶೂನ್ಯ *(*callback)(ರಚನೆ menu *, ರಚನೆ menu_ಅಂಶ *, ಶೂನ್ಯ *),
+		ಶೂನ್ಯ *extra)
 {
-	struct list_head *pos, *n;
-	struct menu_item *item;
-	void *ret;
+	ರಚನೆ list_ತಲೆ *pos, *n;
+	ರಚನೆ menu_ಅಂಶ *ಅಂಶ;
+	ಶೂನ್ಯ *ret;
 
-	list_for_each_safe(pos, n, &m->items) {
-		item = list_entry(pos, struct menu_item, list);
+	list_for_each_ಸುರಕ್ಷಿತ(pos, n, &m->ವಸ್ತುಗಳು) {
+		ಅಂಶ = list_ನಮೂದು(pos, ರಚನೆ menu_ಅಂಶ, list);
 
-		ret = callback(m, item, extra);
+		ret = callback(m, ಅಂಶ, extra);
 
-		if (ret)
-			return ret;
+		ಆದರೆ (ret)
+			ಹಿಂತಿರುಗಿ ret;
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
@@ -83,55 +83,55 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *menu_ಅಂಶ_print(ರಚನೆ menu *m,
+				ರಚನೆ menu_ಅಂಶ *ಅಂಶ,
+				ಶೂನ್ಯ *extra)
 {
-	if (!m->item_data_print) {
-		puts(item->key);
+	ಆದರೆ (!m->ಅಂಶ_ದತ್ತಾಂಶ_print) {
+		puts(ಅಂಶ->ಕೀಲಿ);
 		putc('\n');
-	} else {
-		m->item_data_print(item->data);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		m->ಅಂಶ_ದತ್ತಾಂಶ_print(ಅಂಶ->ದತ್ತಾಂಶ);
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
  * Free the memory used by a menu item. This includes the memory used by its
  * key.
  */
-static inline void *menu_item_destroy(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *menu_ಅಂಶ_destroy(ರಚನೆ menu *m,
+				ರಚನೆ menu_ಅಂಶ *ಅಂಶ,
+				ಶೂನ್ಯ *extra)
 {
-	if (item->key)
-		free(item->key);
+	ಆದರೆ (ಅಂಶ->ಕೀಲಿ)
+		ಬಿಡುಗಡೆ(ಅಂಶ->ಕೀಲಿ);
 
-	free(item);
+	ಬಿಡುಗಡೆ(ಅಂಶ);
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
  * Display a menu so the user can make a choice of an item. First display its
  * title, if any, and then each item in the menu.
  */
-static inline void menu_display(struct menu *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ menu_display(ರಚನೆ menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	ಆದರೆ (m->need_reprint) {
+		ಆದರೆ (!m->need_reprint(m->ಅಂಶ_choice_ದತ್ತಾಂಶ))
+			ಹಿಂತಿರುಗಿ;
 	}
 
-	if (m->title) {
+	ಆದರೆ (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	ಆದರೆ (m->display_statusline)
 		m->display_statusline(m);
 
-	menu_items_iter(m, menu_item_print, NULL);
+	menu_ವಸ್ತುಗಳು_iter(m, menu_ಅಂಶ_print, ಖಾಲಿ);
 }
 
 /*
@@ -142,45 +142,45 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
-			struct menu_item *item, void *extra)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *menu_ಅಂಶ_ಕೀಲಿ_ಹೊಂದಿಕೆ(ರಚನೆ menu *m,
+			ರಚನೆ menu_ಅಂಶ *ಅಂಶ, ಶೂನ್ಯ *extra)
 {
-	char *item_key = extra;
+	ಅಕ್ಷರ *ಅಂಶ_ಕೀಲಿ = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	ಆದರೆ (!ಅಂಶ_ಕೀಲಿ || !ಅಂಶ->ಕೀಲಿ) {
+		ಆದರೆ (ಅಂಶ_ಕೀಲಿ == ಅಂಶ->ಕೀಲಿ)
+			ಹಿಂತಿರುಗಿ ಅಂಶ;
 
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	ಆದರೆ (strcmp(ಅಂಶ->ಕೀಲಿ, ಅಂಶ_ಕೀಲಿ) == 0)
+		ಹಿಂತಿರುಗಿ ಅಂಶ;
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ menu_ಅಂಶ *menu_ಅಂಶ_by_ಕೀಲಿ(ರಚನೆ menu *m,
+							ಅಕ್ಷರ *ಅಂಶ_ಕೀಲಿ)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	ಹಿಂತಿರುಗಿ menu_ವಸ್ತುಗಳು_iter(m, menu_ಅಂಶ_ಕೀಲಿ_ಹೊಂದಿಕೆ, ಅಂಶ_ಕೀಲಿ);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+ಪೂರ್ಣಾಂಕ menu_default_choice(ರಚನೆ menu *m, ಶೂನ್ಯ **choice)
 {
-	if (m->default_item) {
-		*choice = m->default_item->data;
-		return 1;
+	ಆದರೆ (m->default_ಅಂಶ) {
+		*choice = m->default_ಅಂಶ->ದತ್ತಾಂಶ;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	return -ENOENT;
+	ಹಿಂತಿರುಗಿ -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ menu_interactive_choice(ರಚನೆ menu *m, ಶೂನ್ಯ **choice)
 {
-	char cbuf[CONFIG_SYS_CBSIZE];
-	struct menu_item *choice_item = NULL;
-	int readret;
+	ಅಕ್ಷರ cbuf[CONFIG_SYS_CBSIZE];
+	ರಚನೆ menu_ಅಂಶ *choice_ಅಂಶ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ readret;
 
-	while (!choice_item) {
+	ಆಗ (!choice_ಅಂಶ) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
-			readret = cli_readline_into_buffer("Enter choice: ",
+		ಆದರೆ (!m->ಅಂಶ_choice) {
+			readret = cli_readline_into_ಬಫರ್("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
-				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
-					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
-				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+			ಆದರೆ (readret >= 0) {
+				choice_ಅಂಶ = menu_ಅಂಶ_by_ಕೀಲಿ(m, cbuf);
+				ಆದರೆ (!choice_ಅಂಶ)
+					ಬರೆ("%s not found\n", cbuf);
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (readret == -1)  {
+				ಬರೆ("<INTERRUPT>\n");
+				ಹಿಂತಿರುಗಿ -EINTR;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಹಿಂತಿರುಗಿ menu_default_choice(m, choice);
 			}
-		} else {
-			char *key = m->item_choice(m->item_choice_data);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಅಕ್ಷರ *ಕೀಲಿ = m->ಅಂಶ_choice(m->ಅಂಶ_choice_ದತ್ತಾಂಶ);
 
-			if (key)
-				choice_item = menu_item_by_key(m, key);
+			ಆದರೆ (ಕೀಲಿ)
+				choice_ಅಂಶ = menu_ಅಂಶ_by_ಕೀಲಿ(m, ಕೀಲಿ);
 		}
 
-		if (!choice_item)
+		ಆದರೆ (!choice_ಅಂಶ)
 			m->timeout = 0;
 	}
 
-	*choice = choice_item->data;
+	*choice = choice_ಅಂಶ->ದತ್ತಾಂಶ;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+ಪೂರ್ಣಾಂಕ menu_default_ಗಣ(ರಚನೆ menu *m, ಅಕ್ಷರ *ಅಂಶ_ಕೀಲಿ)
 {
-	struct menu_item *item;
+	ರಚನೆ menu_ಅಂಶ *ಅಂಶ;
 
-	if (!m)
-		return -EINVAL;
+	ಆದರೆ (!m)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	ಅಂಶ = menu_ಅಂಶ_by_ಕೀಲಿ(m, ಅಂಶ_ಕೀಲಿ);
 
-	if (!item)
-		return -ENOENT;
+	ಆದರೆ (!ಅಂಶ)
+		ಹಿಂತಿರುಗಿ -ENOENT;
 
-	m->default_item = item;
+	m->default_ಅಂಶ = ಅಂಶ;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+ಪೂರ್ಣಾಂಕ menu_get_choice(ರಚನೆ menu *m, ಶೂನ್ಯ **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	ಆದರೆ (!m || !choice)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	ಆದರೆ (!m->ಅಂಶ_cnt)
+		ಹಿಂತಿರುಗಿ -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	ಆದರೆ (!m->prompt)
+		ಹಿಂತಿರುಗಿ menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	ಹಿಂತಿರುಗಿ menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,37 +309,37 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+ಪೂರ್ಣಾಂಕ menu_ಅಂಶ_ಕೂಡಿಸು(ರಚನೆ menu *m, ಅಕ್ಷರ *ಅಂಶ_ಕೀಲಿ, ಶೂನ್ಯ *ಅಂಶ_ದತ್ತಾಂಶ)
 {
-	struct menu_item *item;
+	ರಚನೆ menu_ಅಂಶ *ಅಂಶ;
 
-	if (!m)
-		return -EINVAL;
+	ಆದರೆ (!m)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	ಅಂಶ = menu_ಅಂಶ_by_ಕೀಲಿ(m, ಅಂಶ_ಕೀಲಿ);
 
-	if (item) {
-		item->data = item_data;
-		return 1;
+	ಆದರೆ (ಅಂಶ) {
+		ಅಂಶ->ದತ್ತಾಂಶ = ಅಂಶ_ದತ್ತಾಂಶ;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	ಅಂಶ = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ *ಅಂಶ);
+	ಆದರೆ (!ಅಂಶ)
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 
-	item->key = strdup(item_key);
+	ಅಂಶ->ಕೀಲಿ = strdup(ಅಂಶ_ಕೀಲಿ);
 
-	if (!item->key) {
-		free(item);
-		return -ENOMEM;
+	ಆದರೆ (!ಅಂಶ->ಕೀಲಿ) {
+		ಬಿಡುಗಡೆ(ಅಂಶ);
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 	}
 
-	item->data = item_data;
+	ಅಂಶ->ದತ್ತಾಂಶ = ಅಂಶ_ದತ್ತಾಂಶ;
 
-	list_add_tail(&item->list, &m->items);
-	m->item_cnt++;
+	list_ಕೂಡಿಸು_ಬಾಲ(&ಅಂಶ->list, &m->ವಸ್ತುಗಳು);
+	m->ಅಂಶ_cnt++;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /*
@@ -377,42 +377,42 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
-				void (*display_statusline)(struct menu *),
-				void (*item_data_print)(void *),
-				char *(*item_choice)(void *),
-				bool (*need_reprint)(void *),
-				void *item_choice_data)
+ರಚನೆ menu *menu_create(ಅಕ್ಷರ *title, ಪೂರ್ಣಾಂಕ timeout, ಪೂರ್ಣಾಂಕ prompt,
+				ಶೂನ್ಯ (*display_statusline)(ರಚನೆ menu *),
+				ಶೂನ್ಯ (*ಅಂಶ_ದತ್ತಾಂಶ_print)(ಶೂನ್ಯ *),
+				ಅಕ್ಷರ *(*ಅಂಶ_choice)(ಶೂನ್ಯ *),
+				bool (*need_reprint)(ಶೂನ್ಯ *),
+				ಶೂನ್ಯ *ಅಂಶ_choice_ದತ್ತಾಂಶ)
 {
-	struct menu *m;
+	ರಚನೆ menu *m;
 
-	m = malloc(sizeof *m);
+	m = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ *m);
 
-	if (!m)
-		return NULL;
+	ಆದರೆ (!m)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	m->default_item = NULL;
+	m->default_ಅಂಶ = ಖಾಲಿ;
 	m->prompt = prompt;
 	m->timeout = timeout;
 	m->display_statusline = display_statusline;
-	m->item_data_print = item_data_print;
-	m->item_choice = item_choice;
+	m->ಅಂಶ_ದತ್ತಾಂಶ_print = ಅಂಶ_ದತ್ತಾಂಶ_print;
+	m->ಅಂಶ_choice = ಅಂಶ_choice;
 	m->need_reprint = need_reprint;
-	m->item_choice_data = item_choice_data;
-	m->item_cnt = 0;
+	m->ಅಂಶ_choice_ದತ್ತಾಂಶ = ಅಂಶ_choice_ದತ್ತಾಂಶ;
+	m->ಅಂಶ_cnt = 0;
 
-	if (title) {
+	ಆದರೆ (title) {
 		m->title = strdup(title);
-		if (!m->title) {
-			free(m);
-			return NULL;
+		ಆದರೆ (!m->title) {
+			ಬಿಡುಗಡೆ(m);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
-	} else
-		m->title = NULL;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		m->title = ಖಾಲಿ;
 
-	INIT_LIST_HEAD(&m->items);
+	INIT_LIST_ತಲೆ(&m->ವಸ್ತುಗಳು);
 
-	return m;
+	ಹಿಂತಿರುಗಿ m;
 }
 
 /*
@@ -422,61 +422,61 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+ಪೂರ್ಣಾಂಕ menu_destroy(ರಚನೆ menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	ಆದರೆ (!m)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	menu_items_iter(m, menu_item_destroy, NULL);
+	menu_ವಸ್ತುಗಳು_iter(m, menu_ಅಂಶ_destroy, ಖಾಲಿ);
 
-	if (m->title)
-		free(m->title);
+	ಆದರೆ (m->title)
+		ಬಿಡುಗಡೆ(m->title);
 
-	free(m);
+	ಬಿಡುಗಡೆ(m);
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ bootmenu_conv_shortcut_ಕೀಲಿ(ರಚನೆ bootmenu_ದತ್ತಾಂಶ *menu, ಪೂರ್ಣಾಂಕ ichar)
 {
-	int shortcut_key;
+	ಪೂರ್ಣಾಂಕ shortcut_ಕೀಲಿ;
 
 	ichar = tolower(ichar);
-	switch (ichar) {
+	ಆಯ್ಕೆ (ichar) {
 	/* a-z for bootmenu entry > 9 */
-	case 'a' ... 'z':
-		shortcut_key = ichar - 'a' + 9;
-		break;
+	ಸ್ಥಿತಿ 'a' ... 'z':
+		shortcut_ಕೀಲಿ = ichar - 'a' + 9;
+		ನಿಲ್ಲಿಸು;
 	/* 1-9 for bootmenu entry <= 9 */
-	case '1' ... '9':
-		shortcut_key = ichar - '1';
-		break;
+	ಸ್ಥಿತಿ '1' ... '9':
+		shortcut_ಕೀಲಿ = ichar - '1';
+		ನಿಲ್ಲಿಸು;
 	/* Reserve 0 for last option (aka Exit) */
-	case '0':
-	default:
-		return -1;
+	ಸ್ಥಿತಿ '0':
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ಹಿಂತಿರುಗಿ -1;
 	}
 
-	return shortcut_key;
+	ಹಿಂತಿರುಗಿ shortcut_ಕೀಲಿ;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
-					 struct cli_ch_state *cch)
+ಎಣಿಕೆ bootmenu_ಕೀಲಿ bootmenu_autoboot_loop(ರಚನೆ bootmenu_ದತ್ತಾಂಶ *menu,
+					 ರಚನೆ cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	ಎಣಿಕೆ bootmenu_ಕೀಲಿ ಕೀಲಿ = BKEY_NONE;
+	ಪೂರ್ಣಾಂಕ i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	ಆಗ (menu->delay > 0) {
+		ಪೂರ್ಣಾಂಕ ichar;
 
-		if (ansi)
-			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
-		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
-				schedule();
+		ಆದರೆ (ansi)
+			ಬರೆ(ANSI_CURSOR_POSITION, menu->ಎಣಿಕೆ_2 + 5, 3);
+		ಬರೆ("Hit any key to stop autoboot: %d ", menu->delay);
+		ಗಾಗಿ (i = 0; i < 100; ++i) {
+			ಆದರೆ (!tstc()) {
+				ವೇಳಾಪಟ್ಟಿ();
 				mdelay(10);
-				continue;
+				ಮುಂದುವರಿ;
 			}
 
 			menu->delay = -1;
@@ -484,112 +484,112 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 
 			ichar = cli_ch_process(cch, c);
 
-			switch (ichar) {
-			case '\0':
-				key = BKEY_NONE;
-				break;
-			case '\n':
-				key = BKEY_SELECT;
-				break;
-			case 0x3: /* ^C */
-				key = BKEY_QUIT;
-				break;
-			case 'A' ... 'Z':
-			case 'a' ... 'z':
-			case '0' ... '9':
-				key = BKEY_SHORTCUT;
-				break;
-			default:
-				key = BKEY_NONE;
-				break;
+			ಆಯ್ಕೆ (ichar) {
+			ಸ್ಥಿತಿ '\0':
+				ಕೀಲಿ = BKEY_NONE;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ '\n':
+				ಕೀಲಿ = BKEY_SELECT;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 0x3: /* ^C */
+				ಕೀಲಿ = BKEY_QUIT;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'A' ... 'Z':
+			ಸ್ಥಿತಿ 'a' ... 'z':
+			ಸ್ಥಿತಿ '0' ... '9':
+				ಕೀಲಿ = BKEY_SHORTCUT;
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ಕೀಲಿ = BKEY_NONE;
+				ನಿಲ್ಲಿಸು;
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		if (key == BKEY_SHORTCUT)
-			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
+		ಆದರೆ (ಕೀಲಿ == BKEY_SHORTCUT)
+			cch->shortcut_ಕೀಲಿ = bootmenu_conv_shortcut_ಕೀಲಿ(menu, ichar);
 
-		if (menu->delay < 0)
-			break;
+		ಆದರೆ (menu->delay < 0)
+			ನಿಲ್ಲಿಸು;
 
 		--menu->delay;
 	}
 
-	if (ansi)
-		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
+	ಆದರೆ (ansi)
+		ಬರೆ(ANSI_CURSOR_POSITION ANSI_CLEAR_ಸಾಲು, menu->ಎಣಿಕೆ_2 + 5, 1);
 
-	if (menu->delay == 0)
-		key = BKEY_SELECT;
+	ಆದರೆ (menu->delay == 0)
+		ಕೀಲಿ = BKEY_SELECT;
 
-	return key;
+	ಹಿಂತಿರುಗಿ ಕೀಲಿ;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+ಎಣಿಕೆ bootmenu_ಕೀಲಿ bootmenu_conv_ಕೀಲಿ(ಪೂರ್ಣಾಂಕ ichar)
 {
-	enum bootmenu_key key;
+	ಎಣಿಕೆ bootmenu_ಕೀಲಿ ಕೀಲಿ;
 
-	switch (ichar) {
-	case '\n':
+	ಆಯ್ಕೆ (ichar) {
+	ಸ್ಥಿತಿ '\n':
 		/* enter key was pressed */
-		key = BKEY_SELECT;
-		break;
-	case CTL_CH('c'):
-	case '\e':
+		ಕೀಲಿ = BKEY_SELECT;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ CTL_CH('c'):
+	ಸ್ಥಿತಿ '\e':
 		/* ^C was pressed */
-		key = BKEY_QUIT;
-		break;
-	case CTL_CH('p'):
-		key = BKEY_UP;
-		break;
-	case CTL_CH('n'):
-		key = BKEY_DOWN;
-		break;
-	case CTL_CH('s'):
-		key = BKEY_SAVE;
-		break;
-	case '+':
-		key = BKEY_PLUS;
-		break;
-	case '-':
-		key = BKEY_MINUS;
-		break;
-	case ' ':
-		key = BKEY_SPACE;
-		break;
-	default:
-		key = BKEY_NONE;
-		break;
+		ಕೀಲಿ = BKEY_QUIT;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ CTL_CH('p'):
+		ಕೀಲಿ = BKEY_ಮೇಲೆ;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ CTL_CH('n'):
+		ಕೀಲಿ = BKEY_ಕೆಳಕ್ಕೆ;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ CTL_CH('s'):
+		ಕೀಲಿ = BKEY_SAVE;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ '+':
+		ಕೀಲಿ = BKEY_PLUS;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ '-':
+		ಕೀಲಿ = BKEY_MINUS;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ ' ':
+		ಕೀಲಿ = BKEY_SPACE;
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ಕೀಲಿ = BKEY_NONE;
+		ನಿಲ್ಲಿಸು;
 	}
 
-	return key;
+	ಹಿಂತಿರುಗಿ ಕೀಲಿ;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
-				struct cli_ch_state *cch)
+ಎಣಿಕೆ bootmenu_ಕೀಲಿ bootmenu_loop(ರಚನೆ bootmenu_ದತ್ತಾಂಶ *menu,
+				ರಚನೆ cli_ch_state *cch)
 {
-	enum bootmenu_key key;
-	int c, errchar = 0;
+	ಎಣಿಕೆ bootmenu_ಕೀಲಿ ಕೀಲಿ;
+	ಪೂರ್ಣಾಂಕ c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
-			schedule();
+	ಆದರೆ (!c) {
+		ಆಗ (!c && !tstc()) {
+			ವೇಳಾಪಟ್ಟಿ();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		ಆದರೆ (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
 	}
 
-	key = bootmenu_conv_key(c);
+	ಕೀಲಿ = bootmenu_conv_ಕೀಲಿ(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
-		key = BKEY_SHORTCUT;
-		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
+	ಆದರೆ (ಕೀಲಿ == BKEY_NONE && ಅಕ್ಷರವೇ_ಅಂಕಿಯೇ(c)) {
+		ಕೀಲಿ = BKEY_SHORTCUT;
+		cch->shortcut_ಕೀಲಿ = bootmenu_conv_shortcut_ಕೀಲಿ(menu, c);
 	}
 
-	return key;
+	ಹಿಂತಿರುಗಿ ಕೀಲಿ;
 }

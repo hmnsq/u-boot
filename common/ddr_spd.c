@@ -3,93 +3,93 @@
  * Copyright 2008-2014 Freescale Semiconductor, Inc.
  */
 
-#include <ddr_spd.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <ddr_spd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
 /* used for ddr1 and ddr2 spd */
-static int
-spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+spd_check(ಸ್ಥಿರಾಂಕ u8 *buf, u8 spd_rev, u8 spd_cksum)
 {
-	unsigned int cksum = 0;
-	unsigned int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cksum = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 
 	/*
 	 * Check SPD revision supported
 	 * Rev 1.X or less supported by this code
 	 */
-	if (spd_rev >= 0x20) {
-		printf("SPD revision %02X not supported by this code\n",
+	ಆದರೆ (spd_rev >= 0x20) {
+		ಬರೆ("SPD revision %02X not supported by this code\n",
 		       spd_rev);
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
-	if (spd_rev > 0x13) {
-		printf("SPD revision %02X not verified by this code\n",
+	ಆದರೆ (spd_rev > 0x13) {
+		ಬರೆ("SPD revision %02X not verified by this code\n",
 		       spd_rev);
 	}
 
 	/*
 	 * Calculate checksum
 	 */
-	for (i = 0; i < 63; i++) {
+	ಗಾಗಿ (i = 0; i < 63; i++) {
 		cksum += *buf++;
 	}
 	cksum &= 0xFF;
 
-	if (cksum != spd_cksum) {
-		printf("SPD checksum unexpected. "
+	ಆದರೆ (cksum != spd_cksum) {
+		ಬರೆ("SPD checksum unexpected. "
 			"Checksum in SPD = %02X, computed SPD = %02X\n",
 			spd_cksum, cksum);
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-unsigned int
-ddr1_spd_check(const ddr1_spd_eeprom_t *spd)
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+ddr1_spd_check(ಸ್ಥಿರಾಂಕ ddr1_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	ಸ್ಥಿರಾಂಕ u8 *p = (ಸ್ಥಿರಾಂಕ u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	ಹಿಂತಿರುಗಿ spd_check(p, spd->spd_rev, spd->cksum);
 }
 
-unsigned int
-ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+ddr2_spd_check(ಸ್ಥಿರಾಂಕ ddr2_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	ಸ್ಥಿರಾಂಕ u8 *p = (ಸ್ಥಿರಾಂಕ u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	ಹಿಂತಿರುಗಿ spd_check(p, spd->spd_rev, spd->cksum);
 }
 
 /*
  * CRC16 compute for DDR3 SPD
  * Copied from DDR3 SPD spec.
  */
-static int
-crc16(char *ptr, int count)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+crc16(ಅಕ್ಷರ *ptr, ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	int crc, i;
+	ಪೂರ್ಣಾಂಕ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, i;
 
-	crc = 0;
-	while (--count >= 0) {
-		crc = crc ^ (int)*ptr++ << 8;
-		for (i = 0; i < 8; ++i)
-			if (crc & 0x8000)
-				crc = crc << 1 ^ 0x1021;
-			else
-				crc = crc << 1;
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = 0;
+	ಆಗ (--ಎಣಿಕೆ_2 >= 0) {
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ ^ (ಪೂರ್ಣಾಂಕ)*ptr++ << 8;
+		ಗಾಗಿ (i = 0; i < 8; ++i)
+			ಆದರೆ (ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0x8000)
+				ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 1 ^ 0x1021;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ << 1;
 	}
-	return crc & 0xffff;
+	ಹಿಂತಿರುಗಿ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0xffff;
 }
 
-unsigned int
-ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+ddr3_spd_check(ಸ್ಥಿರಾಂಕ ddr3_spd_eeprom_t *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	ಅಕ್ಷರ *p = (ಅಕ್ಷರ *)spd;
+	ಪೂರ್ಣಾಂಕ csum16;
+	ಪೂರ್ಣಾಂಕ len;
+	ಅಕ್ಷರ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb;	/* byte 126 */
+	ಅಕ್ಷರ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb;	/* byte 127 */
 
 	/*
 	 * SPD byte0[7] - CRC coverage
@@ -97,62 +97,62 @@ ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 	 * 1 = CRC covers bytes 0~116
 	 */
 
-	len = !(spd->info_size_crc & 0x80) ? 126 : 117;
+	len = !(spd->info_ಗಾತ್ರ_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ & 0x80) ? 126 : 117;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb = (ಅಕ್ಷರ) (csum16 & 0xff);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb = (ಅಕ್ಷರ) (csum16 >> 8);
 
-	if (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
-		return 0;
-	} else {
-		printf("SPD checksum unexpected.\n"
+	ಆದರೆ (spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[0] == ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb && spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[1] == ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb) {
+		ಹಿಂತಿರುಗಿ 0;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಬರೆ("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[0], ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb, spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[1], ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 }
 
-unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ddr4_spd_check(ಸ್ಥಿರಾಂಕ ರಚನೆ ddr4_spd_eeprom_s *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	ಅಕ್ಷರ *p = (ಅಕ್ಷರ *)spd;
+	ಪೂರ್ಣಾಂಕ csum16;
+	ಪೂರ್ಣಾಂಕ len;
+	ಅಕ್ಷರ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb;	/* byte 126 */
+	ಅಕ್ಷರ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb;	/* byte 127 */
 
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb = (ಅಕ್ಷರ) (csum16 & 0xff);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb = (ಅಕ್ಷರ) (csum16 >> 8);
 
-	if (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	ಆದರೆ (spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[0] != ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb || spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[1] != ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb) {
+		ಬರೆ("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[0], ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb, spd->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ[1], ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	p = (char *)((ulong)spd + 128);
+	p = (ಅಕ್ಷರ *)((ulong)spd + 128);
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb = (ಅಕ್ಷರ) (csum16 & 0xff);
+	ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb = (ಅಕ್ಷರ) (csum16 >> 8);
 
-	if (spd->mod_section.uc[126] != crc_lsb ||
-	    spd->mod_section.uc[127] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	ಆದರೆ (spd->mod_section.uc[126] != ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb ||
+	    spd->mod_section.uc[127] != ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb) {
+		ಬರೆ("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->mod_section.uc[126],
-			crc_lsb, spd->mod_section.uc[127],
-			crc_msb);
-		return 1;
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_lsb, spd->mod_section.uc[127],
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_msb);
+		ಹಿಂತಿರುಗಿ 1;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
