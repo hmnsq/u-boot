@@ -25,31 +25,31 @@ static void append(char **buf, char *buf_end, const char *fmt, ...)
 	*buf += strlen(*buf);
 }
 
-static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
+static số_nguyên log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
 {
-	int ret;
-	int fmt = gd->log_fmt;
+	số_nguyên ret;
+	số_nguyên fmt = gd->log_fmt;
 	char msg[BUFFER_SIZE];
 	char *msg_end = msg + BUFFER_SIZE;
 	char *ptr = msg;
 	char *iphdr;
 	char *log_msg;
-	int eth_hdr_size;
+	số_nguyên eth_hdr_size;
 	struct in_addr bcast_ip;
-	unsigned int log_level;
+	unsigned số_nguyên log_level;
 	char *log_hostname;
 
 	/* Setup packet buffers */
 	ret = net_init();
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 	/* Disable hardware and put it into the reset state */
 	eth_halt();
 	/* Set current device according to environment variables */
 	eth_set_current();
 	/* Get hardware ready for send and receive operations */
 	ret = eth_init();
-	if (ret < 0) {
+	nếu (ret < 0) {
 		eth_halt();
 		goto out;
 	}
@@ -68,29 +68,29 @@ static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
 	 * level 7 (debug).
 	 */
 	log_level = rec->level;
-	if (log_level > 7)
+	nếu (log_level > 7)
 		log_level = 7;
 	/* Leave high bits as 0 to write a 'kernel message' */
 
 	/* Write log message to buffer */
 	append(&ptr, msg_end, "<%u>", log_level);
 	log_hostname = env_get("log_hostname");
-	if (log_hostname)
+	nếu (log_hostname)
 		append(&ptr, msg_end, "%s ", log_hostname);
 	append(&ptr, msg_end, "uboot: ");
-	if (fmt & BIT(LOGF_LEVEL))
+	nếu (fmt & BIT(LOGF_LEVEL))
 		append(&ptr, msg_end, "%s.",
 		       log_get_level_name(rec->level));
-	if (fmt & BIT(LOGF_CAT))
+	nếu (fmt & BIT(LOGF_CAT))
 		append(&ptr, msg_end, "%s,",
 		       log_get_cat_name(rec->cat));
-	if (fmt & BIT(LOGF_FILE))
+	nếu (fmt & BIT(LOGF_FILE))
 		append(&ptr, msg_end, "%s:", rec->file);
-	if (fmt & BIT(LOGF_LINE))
+	nếu (fmt & BIT(LOGF_LINE))
 		append(&ptr, msg_end, "%d-", rec->line);
-	if (fmt & BIT(LOGF_FUNC))
+	nếu (fmt & BIT(LOGF_FUNC))
 		append(&ptr, msg_end, "%s()", rec->func ?: "?");
-	if (fmt & BIT(LOGF_MSG))
+	nếu (fmt & BIT(LOGF_MSG))
 		append(&ptr, msg_end, "%s%s",
 		       fmt != BIT(LOGF_MSG) ? " " : "", rec->msg);
 	/* Consider trailing 0x00 */
@@ -104,7 +104,7 @@ static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
 	net_send_packet((uchar *)msg, ptr - msg);
 
 out:
-	return ret;
+	trả_về ret;
 }
 
 LOG_DRIVER(syslog) = {

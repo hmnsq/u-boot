@@ -27,12 +27,12 @@
 #define MAGIC_WORD_SIZE 4
 #define BOOT_PHASE_STRING_SIZE 63
 
-static int run_dfu(int usb_index, char *interface, char *devstring)
+static số_nguyên run_dfu(số_nguyên usb_index, char *interface, char *devstring)
 {
-	int ret;
+	số_nguyên ret;
 
 	ret = dfu_init_env_entities(interface, devstring);
-	if (ret) {
+	nếu (ret) {
 		dfu_free_entities();
 		goto exit;
 	}
@@ -40,11 +40,11 @@ static int run_dfu(int usb_index, char *interface, char *devstring)
 	run_usb_dnl_gadget(usb_index, "usb_dnl_dfu");
 exit:
 	dfu_free_entities();
-	return ret;
+	trả_về ret;
 }
 
 #ifdef CONFIG_SPL_PCI_DFU
-static int dfu_over_pcie(void)
+static số_nguyên dfu_over_pcie(void)
 {
 	u32 offset, magic_word;
 	volatile void *addr;
@@ -52,13 +52,13 @@ static int dfu_over_pcie(void)
 	struct pci_bar bar;
 	struct pci_ep_header hdr;
 	uint fn = 0;
-	int ret;
+	số_nguyên ret;
 	char *bootphase;
 
 	uclass_get_device_by_seq(UCLASS_PCI_EP, 0, &dev);
-	if (!dev) {
+	nếu (!dev) {
 		pr_err("Failed to get pci ep device\n");
-		return -ENODEV;
+		trả_về -ENODEV;
 	}
 
 	hdr.deviceid = CONFIG_SPL_PCI_DFU_DEVICE_ID;
@@ -67,9 +67,9 @@ static int dfu_over_pcie(void)
 	hdr.subclass_code = PCI_CLASS_MEMORY_RAM & 0xff;
 
 	ret = pci_ep_write_header(dev, fn, &hdr);
-	if (ret) {
+	nếu (ret) {
 		pr_err("Failed to write header: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	bar.barno = BAR_0;
@@ -81,23 +81,23 @@ static int dfu_over_pcie(void)
 	bar.size = CONFIG_SPL_PCI_DFU_BAR_SIZE;
 
 	ret = pci_ep_set_bar(dev, fn, &bar);
-	if (ret) {
+	nếu (ret) {
 		pr_err("Failed to set bar: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	ret = pci_ep_start(dev);
-	if (ret) {
+	nếu (ret) {
 		pr_err("Failed to start ep: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	addr = (void *)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
 	offset = CONFIG_SPL_PCI_DFU_BAR_SIZE - MAGIC_WORD_SIZE;
 
-	if (sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
+	nếu (sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
 		pr_err("Not copying boot phase. String too long\n");
-	} else {
+	} không_thì {
 		bootphase = (char *)(addr + CONFIG_SPL_PCI_DFU_BAR_SIZE -
 				  (BOOT_PHASE_STRING_SIZE + MAGIC_WORD_SIZE + 1));
 		strlcpy(bootphase, CONFIG_SPL_PCI_DFU_BOOT_PHASE,
@@ -106,42 +106,42 @@ static int dfu_over_pcie(void)
 
 	addr = addr + offset;
 	magic_word = CONFIG_SPL_PCI_DFU_MAGIC_WORD;
-	(*(int *)addr) = 0;
+	(*(số_nguyên *)addr) = 0;
 	flush_dcache_all();
-	for (;;) {
-		if (*(int *)addr == magic_word)
+	cho (;;) {
+		nếu (*(số_nguyên *)addr == magic_word)
 			break;
 		invalidate_dcache_all();
 	}
 
-	return 0;
+	trả_về 0;
 }
 #endif
 
-int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
+số_nguyên spl_dfu_cmd(số_nguyên usbctrl, char *dfu_alt_info, char *interface, char *devstr)
 {
 	char *str_env;
-	int ret;
+	số_nguyên ret;
 
 #ifdef CONFIG_SPL_PCI_DFU
-	if (spl_boot_device() == BOOT_DEVICE_PCIE)
-		return dfu_over_pcie();
+	nếu (spl_boot_device() == BOOT_DEVICE_PCIE)
+		trả_về dfu_over_pcie();
 #endif
 
 	/* set default environment */
 	env_set_default(NULL, 0);
 	str_env = env_get(dfu_alt_info);
-	if (!str_env) {
+	nếu (!str_env) {
 		pr_err("\"%s\" env variable not defined!\n", dfu_alt_info);
-		return -EINVAL;
+		trả_về -EINVAL;
 	}
 
 	ret = env_set("dfu_alt_info", str_env);
-	if (ret) {
+	nếu (ret) {
 		pr_err("unable to set env variable \"dfu_alt_info\"!\n");
-		return -EINVAL;
+		trả_về -EINVAL;
 	}
 
 	/* invoke dfu command */
-	return run_dfu(usbctrl, interface, devstr);
+	trả_về run_dfu(usbctrl, interface, devstr);
 }

@@ -39,23 +39,23 @@ DECLARE_GLOBAL_DATA_PTR;
 	debug_cond(DEBUG_BOOTKEYS, fmt, ##args)
 
 /* Stored value of bootdelay, used by autoboot_command() */
-static int stored_bootdelay;
-static int menukey;
+static số_nguyên stored_bootdelay;
+static số_nguyên menukey;
 
-#if defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
+#nếu defined(CONFIG_AUTOBOOT_STOP_STR_CRYPT)
 #define AUTOBOOT_STOP_STR_CRYPT	CONFIG_AUTOBOOT_STOP_STR_CRYPT
-#else
+#không_thì
 #define AUTOBOOT_STOP_STR_CRYPT	""
 #endif
-#if defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
+#nếu defined(CONFIG_AUTOBOOT_STOP_STR_SHA256)
 #define AUTOBOOT_STOP_STR_SHA256	CONFIG_AUTOBOOT_STOP_STR_SHA256
-#else
+#không_thì
 #define AUTOBOOT_STOP_STR_SHA256	""
 #endif
 
 #ifdef CONFIG_AUTOBOOT_USE_MENUKEY
 #define AUTOBOOT_MENUKEY CONFIG_AUTOBOOT_MENUKEY
-#else
+#không_thì
 #define AUTOBOOT_MENUKEY 0
 #endif
 
@@ -77,33 +77,33 @@ static int menukey;
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_crypt(uint64_t etime)
+static số_nguyên passwd_abort_crypt(uint64_t etime)
 {
 	const char *crypt_env_str = env_get("bootstopkeycrypt");
 	char presskey[DELAY_STOP_STR_MAX_LENGTH];
 	u_int presskey_len = 0;
-	int abort = 0;
-	int never_timeout = 0;
-	int err;
+	số_nguyên abort = 0;
+	số_nguyên never_timeout = 0;
+	số_nguyên err;
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_STOP_STR_ENABLE) && !crypt_env_str)
 		crypt_env_str = AUTOBOOT_STOP_STR_CRYPT;
 
-	if (!crypt_env_str)
-		return 0;
+	nếu (!crypt_env_str)
+		trả_về 0;
 
 	/* We expect the stop-string to be newline-terminated */
 	do {
-		if (tstc()) {
+		nếu (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= sizeof(presskey))
-				return 0;
+			nếu (presskey_len >= sizeof(presskey))
+				trả_về 0;
 
 			presskey[presskey_len] = getchar();
 
-			if ((presskey[presskey_len] == '\r') ||
+			nếu ((presskey[presskey_len] == '\r') ||
 			    (presskey[presskey_len] == '\n')) {
-				if (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
+				nếu (IS_ENABLED(CONFIG_AUTOBOOT_NEVER_TIMEOUT) &&
 				    !presskey_len) {
 					never_timeout = 1;
 					continue;
@@ -111,20 +111,20 @@ static int passwd_abort_crypt(uint64_t etime)
 				presskey[presskey_len] = '\0';
 				err = crypt_compare(crypt_env_str, presskey,
 						    &abort);
-				if (err)
+				nếu (err)
 					debug_bootkeys(
 						"crypt_compare() failed with: %s\n",
 						errno_str(err));
 				/* you had one chance */
 				break;
-			} else {
+			} không_thì {
 				presskey_len++;
 			}
 		}
 		udelay(10000);
-	} while (never_timeout || get_ticks() <= etime);
+	} trong_khi (never_timeout || get_ticks() <= etime);
 
-	return abort;
+	trả_về abort;
 }
 
 /*
@@ -133,15 +133,15 @@ static int passwd_abort_crypt(uint64_t etime)
  *
  * https://crackstation.net/hashing-security.htm
  */
-static int slow_equals(u8 *a, u8 *b, int len)
+static số_nguyên slow_equals(u8 *a, u8 *b, số_nguyên len)
 {
-	int diff = 0;
-	int i;
+	số_nguyên diff = 0;
+	số_nguyên i;
 
-	for (i = 0; i < len; i++)
+	cho (i = 0; i < len; i++)
 		diff |= a[i] ^ b[i];
 
-	return diff == 0;
+	trả_về diff == 0;
 }
 
 /**
@@ -152,7 +152,7 @@ static int slow_equals(u8 *a, u8 *b, int len)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_sha256(uint64_t etime)
+static số_nguyên passwd_abort_sha256(uint64_t etime)
 {
 	const char *sha_env_str = env_get("bootstopkeysha256");
 	u8 sha_env[SHA256_SUM_LEN];
@@ -161,19 +161,19 @@ static int passwd_abort_sha256(uint64_t etime)
 	char *c;
 	const char *algo_name = "sha256";
 	u_int presskey_len = 0;
-	int abort = 0;
-	int size = sizeof(sha);
-	int ret;
+	số_nguyên abort = 0;
+	số_nguyên size = sizeof(sha);
+	số_nguyên ret;
 
-	if (sha_env_str == NULL)
+	nếu (sha_env_str == NULL)
 		sha_env_str = AUTOBOOT_STOP_STR_SHA256;
 
 	presskey = malloc_cache_aligned(DELAY_STOP_STR_MAX_LENGTH);
-	if (!presskey)
-		return -ENOMEM;
+	nếu (!presskey)
+		trả_về -ENOMEM;
 
 	c = strstr(sha_env_str, ":");
-	if (c && (c - sha_env_str < DELAY_STOP_STR_MAX_LENGTH)) {
+	nếu (c && (c - sha_env_str < DELAY_STOP_STR_MAX_LENGTH)) {
 		/* preload presskey with salt */
 		memcpy(presskey, sha_env_str, c - sha_env_str);
 		presskey_len = c - sha_env_str;
@@ -185,16 +185,16 @@ static int passwd_abort_sha256(uint64_t etime)
 	 * from the user input
 	 */
 	ret = hash_parse_string(algo_name, sha_env_str, sha_env);
-	if (ret) {
+	nếu (ret) {
 		printf("Hash %s not supported!\n", algo_name);
 		free(presskey);
-		return 0;
+		trả_về 0;
 	}
 
 	sha = malloc_cache_aligned(SHA256_SUM_LEN);
-	if (!sha) {
+	nếu (!sha) {
 		free(presskey);
-		return -ENOMEM;
+		trả_về -ENOMEM;
 	}
 	size = SHA256_SUM_LEN;
 	/*
@@ -203,12 +203,12 @@ static int passwd_abort_sha256(uint64_t etime)
 	 * compare the value with the one saved in the environment
 	 */
 	do {
-		if (tstc()) {
+		nếu (tstc()) {
 			/* Check for input string overflow */
-			if (presskey_len >= DELAY_STOP_STR_MAX_LENGTH) {
+			nếu (presskey_len >= DELAY_STOP_STR_MAX_LENGTH) {
 				free(presskey);
 				free(sha);
-				return 0;
+				trả_về 0;
 			}
 
 			presskey[presskey_len++] = getchar();
@@ -218,15 +218,15 @@ static int passwd_abort_sha256(uint64_t etime)
 				   presskey_len, sha, &size);
 
 			/* And check if sha matches saved value in env */
-			if (slow_equals(sha, sha_env, SHA256_SUM_LEN))
+			nếu (slow_equals(sha, sha_env, SHA256_SUM_LEN))
 				abort = 1;
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} trong_khi (!abort && get_ticks() <= etime);
 
 	free(presskey);
 	free(sha);
-	return abort;
+	trả_về abort;
 }
 
 /**
@@ -237,13 +237,13 @@ static int passwd_abort_sha256(uint64_t etime)
  * @etime: Timeout value ticks (stop when get_ticks() reachs this)
  * Return: 0 if autoboot should continue, 1 if it should stop
  */
-static int passwd_abort_key(uint64_t etime)
+static số_nguyên passwd_abort_key(uint64_t etime)
 {
-	int abort = 0;
+	số_nguyên abort = 0;
 	struct {
 		char *str;
 		u_int len;
-		int retry;
+		số_nguyên retry;
 	}
 	delaykey[] = {
 		{ .str = env_get("bootdelaykey"),  .retry = 1 },
@@ -251,20 +251,20 @@ static int passwd_abort_key(uint64_t etime)
 	};
 
 	char presskey[DELAY_STOP_STR_MAX_LENGTH];
-	int presskey_len = 0;
-	int presskey_max = 0;
-	int i;
+	số_nguyên presskey_len = 0;
+	số_nguyên presskey_max = 0;
+	số_nguyên i;
 
 #  ifdef CONFIG_AUTOBOOT_DELAY_STR
-	if (delaykey[0].str == NULL)
+	nếu (delaykey[0].str == NULL)
 		delaykey[0].str = CONFIG_AUTOBOOT_DELAY_STR;
 #  endif
 #  ifdef CONFIG_AUTOBOOT_STOP_STR
-	if (delaykey[1].str == NULL)
+	nếu (delaykey[1].str == NULL)
 		delaykey[1].str = CONFIG_AUTOBOOT_STOP_STR;
 #  endif
 
-	for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
+	cho (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
 		delaykey[i].len = delaykey[i].str == NULL ?
 				    0 : strlen(delaykey[i].str);
 		delaykey[i].len = delaykey[i].len > DELAY_STOP_STR_MAX_LENGTH ?
@@ -282,19 +282,19 @@ static int passwd_abort_key(uint64_t etime)
 	 * when catch up.
 	 */
 	do {
-		if (tstc()) {
-			if (presskey_len < presskey_max) {
+		nếu (tstc()) {
+			nếu (presskey_len < presskey_max) {
 				presskey[presskey_len++] = getchar();
-			} else {
-				for (i = 0; i < presskey_max - 1; i++)
+			} không_thì {
+				cho (i = 0; i < presskey_max - 1; i++)
 					presskey[i] = presskey[i + 1];
 
 				presskey[i] = getchar();
 			}
 		}
 
-		for (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
-			if (delaykey[i].len > 0 &&
+		cho (i = 0; i < sizeof(delaykey) / sizeof(delaykey[0]); i++) {
+			nếu (delaykey[i].len > 0 &&
 			    presskey_len >= delaykey[i].len &&
 				memcmp(presskey + presskey_len -
 					delaykey[i].len, delaykey[i].str,
@@ -304,15 +304,15 @@ static int passwd_abort_key(uint64_t etime)
 						"stop");
 
 				/* don't retry auto boot */
-				if (!delaykey[i].retry)
+				nếu (!delaykey[i].retry)
 					bootretry_dont_retry();
 				abort = 1;
 			}
 		}
 		udelay(10000);
-	} while (!abort && get_ticks() <= etime);
+	} trong_khi (!abort && get_ticks() <= etime);
 
-	return abort;
+	trả_về abort;
 }
 
 /**
@@ -327,24 +327,24 @@ static int passwd_abort_key(uint64_t etime)
  */
 static bool fallback_to_sha256(void)
 {
-	if (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
-		return env_get_yesno("bootstopusesha256") == 1;
-	else if (IS_ENABLED(CONFIG_CRYPT_PW))
-		return false;
-	else
-		return true;
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_SHA256_FALLBACK))
+		trả_về env_get_yesno("bootstopusesha256") == 1;
+	không_thì nếu (IS_ENABLED(CONFIG_CRYPT_PW))
+		trả_về false;
+	không_thì
+		trả_về true;
 }
 
 /***************************************************************************
  * Watch for 'delay' seconds for autoboot stop or autoboot delay string.
  * returns: 0 -  no key string, allow autoboot 1 - got key string, abort
  */
-static int abortboot_key_sequence(int bootdelay)
+static số_nguyên abortboot_key_sequence(số_nguyên bootdelay)
 {
-	int abort;
+	số_nguyên abort;
 	uint64_t etime = endtick(bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_FLUSH_STDIN))
 		console_flush_stdin();
 #  ifdef CONFIG_AUTOBOOT_PROMPT
 	/*
@@ -354,28 +354,28 @@ static int abortboot_key_sequence(int bootdelay)
 	printf(CONFIG_AUTOBOOT_PROMPT, bootdelay);
 #  endif
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
-		if (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_to_sha256())
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_ENCRYPTION)) {
+		nếu (IS_ENABLED(CONFIG_CRYPT_PW) && !fallback_to_sha256())
 			abort = passwd_abort_crypt(etime);
-		else
+		không_thì
 			abort = passwd_abort_sha256(etime);
-	} else {
+	} không_thì {
 		abort = passwd_abort_key(etime);
 	}
-	if (!abort)
+	nếu (!abort)
 		debug_bootkeys("key timeout\n");
 
-	return abort;
+	trả_về abort;
 }
 
-static void print_boot_delay(int bootdelay)
+static void print_boot_delay(số_nguyên bootdelay)
 {
 	printf(ANSI_CLEAR_LINE "\rHit any key to stop autoboot: %d", bootdelay);
 }
 
-static int abortboot_single_key(int bootdelay)
+static số_nguyên abortboot_single_key(số_nguyên bootdelay)
 {
-	int abort = 0;
+	số_nguyên abort = 0;
 	unsigned long ts;
 
 	print_boot_delay(bootdelay);
@@ -383,53 +383,53 @@ static int abortboot_single_key(int bootdelay)
 	/*
 	 * Check if key already pressed
 	 */
-	if (tstc()) {	/* we got a key press	*/
+	nếu (tstc()) {	/* we got a key press	*/
 		getchar();	/* consume input	*/
 		print_boot_delay(0);
 		abort = 1;	/* don't auto boot	*/
 	}
 
-	while ((bootdelay > 0) && (!abort)) {
+	trong_khi ((bootdelay > 0) && (!abort)) {
 		--bootdelay;
 		/* delay 1000 ms */
 		ts = get_timer(0);
 		do {
-			if (tstc()) {	/* we got a key press	*/
-				int key;
+			nếu (tstc()) {	/* we got a key press	*/
+				số_nguyên key;
 
 				abort  = 1;	/* don't auto boot	*/
 				bootdelay = 0;	/* no more delay	*/
 				key = getchar();/* consume input	*/
-				if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
+				nếu (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY))
 					menukey = key;
 				break;
 			}
 			udelay(10000);
-		} while (!abort && get_timer(ts) < 1000);
+		} trong_khi (!abort && get_timer(ts) < 1000);
 
 		print_boot_delay(bootdelay);
 	}
 
 	putc('\n');
 
-	return abort;
+	trả_về abort;
 }
 
-static int abortboot(int bootdelay)
+static số_nguyên abortboot(số_nguyên bootdelay)
 {
-	int abort = 0;
+	số_nguyên abort = 0;
 
-	if (bootdelay >= 0) {
-		if (autoboot_keyed())
+	nếu (bootdelay >= 0) {
+		nếu (autoboot_keyed())
 			abort = abortboot_key_sequence(bootdelay);
-		else
+		không_thì
 			abort = abortboot_single_key(bootdelay);
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
+	nếu (IS_ENABLED(CONFIG_SILENT_CONSOLE) && abort)
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return abort;
+	trả_về abort;
 }
 
 static void process_fdt_options(void)
@@ -439,12 +439,12 @@ static void process_fdt_options(void)
 
 	/* Add an env variable to point to a kernel payload, if available */
 	addr = ofnode_conf_read_int("kernel-offset", 0);
-	if (addr)
+	nếu (addr)
 		env_set_addr("kernaddr", (void *)(CONFIG_TEXT_BASE + addr));
 
 	/* Add an env variable to point to a root disk, if available */
 	addr = ofnode_conf_read_int("rootdisk-offset", 0);
-	if (addr)
+	nếu (addr)
 		env_set_addr("rootaddr", (void *)(CONFIG_TEXT_BASE + addr));
 #endif /* CONFIG_TEXT_BASE */
 }
@@ -452,68 +452,68 @@ static void process_fdt_options(void)
 const char *bootdelay_process(void)
 {
 	char *s;
-	int bootdelay;
+	số_nguyên bootdelay;
 
 	bootcount_inc();
 
 	s = env_get("bootdelay");
-	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
+	bootdelay = s ? (số_nguyên)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
 
 	/*
 	 * Does it really make sense that the devicetree overrides the user
 	 * setting? It is possibly helpful for security since the device tree
 	 * may be signed whereas the environment is often loaded from storage.
 	 */
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	nếu (IS_ENABLED(CONFIG_OF_CONTROL))
 		bootdelay = ofnode_conf_read_int("bootdelay", bootdelay);
 
 	debug("### main_loop entered: bootdelay=%d\n\n", bootdelay);
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_MENU_SHOW))
 		bootdelay = menu_show(bootdelay);
 	bootretry_init_cmd_timeout();
 
 #ifdef CONFIG_POST
-	if (gd->flags & GD_FLG_POSTFAIL) {
+	nếu (gd->flags & GD_FLG_POSTFAIL) {
 		s = env_get("failbootcmd");
-	} else
+	} không_thì
 #endif /* CONFIG_POST */
-	if (bootcount_error())
+	nếu (bootcount_error())
 		s = env_get("altbootcmd");
-	else
+	không_thì
 		s = env_get("bootcmd");
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
+	nếu (IS_ENABLED(CONFIG_OF_CONTROL))
 		process_fdt_options();
 	stored_bootdelay = bootdelay;
 
-	return s;
+	trả_về s;
 }
 
 void autoboot_command(const char *s)
 {
 	debug("### main_loop: bootcmd=\"%s\"\n", s ? s : "<UNDEFINED>");
 
-	if (s && (stored_bootdelay == -2 ||
+	nếu (s && (stored_bootdelay == -2 ||
 		 (stored_bootdelay != -1 && !abortboot(stored_bootdelay)))) {
 		bool lock;
-		int prev;
+		số_nguyên prev;
 
 		lock = autoboot_keyed() &&
 			!IS_ENABLED(CONFIG_AUTOBOOT_KEYED_CTRLC);
-		if (lock)
+		nếu (lock)
 			prev = disable_ctrlc(1); /* disable Ctrl-C checking */
 
 		run_command_list(s, -1, 0);
 
-		if (lock)
+		nếu (lock)
 			disable_ctrlc(prev);	/* restore Ctrl-C checking */
 	}
 
-	if (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
+	nếu (IS_ENABLED(CONFIG_AUTOBOOT_USE_MENUKEY) &&
 	    menukey == AUTOBOOT_MENUKEY) {
 		s = env_get("menucmd");
-		if (s)
+		nếu (s)
 			run_command_list(s, -1, 0);
 	}
 }

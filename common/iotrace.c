@@ -37,7 +37,7 @@ static struct iotrace {
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+static void add_record(số_nguyên flags, const void *ptr, ulong value)
 {
 	struct iotrace_record srec, *rec = &srec;
 
@@ -47,23 +47,23 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	nếu (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		trả_về;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
+	nếu (iotrace.region_size)
+		nếu ((ulong)ptr < iotrace.region_start ||
 		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+			trả_về;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
+	nếu (iotrace.offset + sizeof(*rec) < iotrace.size) {
 		rec = (struct iotrace_record *)map_sysmem(
 					iotrace.start + iotrace.offset,
 					sizeof(value));
-	} else {
+	} không_thì {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
 		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		trả_về;
 	}
 
 	rec->timestamp = timer_get_us();
@@ -86,7 +86,7 @@ u32 iotrace_readl(const void *ptr)
 	v = readl(ptr);
 	add_record(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	trả_về v;
 }
 
 void iotrace_writel(ulong value, void *ptr)
@@ -102,7 +102,7 @@ u16 iotrace_readw(const void *ptr)
 	v = readw(ptr);
 	add_record(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	trả_về v;
 }
 
 void iotrace_writew(ulong value, void *ptr)
@@ -118,7 +118,7 @@ u8 iotrace_readb(const void *ptr)
 	v = readb(ptr);
 	add_record(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	trả_về v;
 }
 
 void iotrace_writeb(ulong value, void *ptr)
@@ -134,7 +134,7 @@ void iotrace_reset_checksum(void)
 
 u32 iotrace_get_checksum(void)
 {
-	return iotrace.crc32;
+	trả_về iotrace.crc32;
 }
 
 void iotrace_set_region(ulong start, ulong size)
@@ -155,14 +155,14 @@ void iotrace_get_region(ulong *start, ulong *size)
 	*size = iotrace.region_size;
 }
 
-void iotrace_set_enabled(int enable)
+void iotrace_set_enabled(số_nguyên enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+số_nguyên iotrace_get_enabled(void)
 {
-	return iotrace.enabled;
+	trả_về iotrace.enabled;
 }
 
 void iotrace_set_buffer(ulong start, ulong size)

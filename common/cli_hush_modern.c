@@ -42,13 +42,13 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#nếu CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
 typedef signed char smallint;
 typedef unsigned char smalluint;
-#else
+#không_thì
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
+typedef số_nguyên smallint;
 typedef unsigned smalluint;
 #endif
 
@@ -89,14 +89,14 @@ static void __noreturn xfunc_die(void)
 
 #define bb_error_msg_and_die(format, ...) do { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} trong_khi (0);
 
 #define bb_simple_error_msg_and_die(msg) do { \
 panic_str("HUSH: " msg); \
-} while (0);
+} trong_khi (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+static số_nguyên __maybe_unused fdprintf(số_nguyên fd, const char *format, ...)
 {
 	va_list args;
 	uint i;
@@ -107,7 +107,7 @@ static int __maybe_unused fdprintf(int fd, const char *format, ...)
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	trả_về i;
 }
 
 static void bb_verror_msg(const char *s, va_list p, const char* strerr)
@@ -133,29 +133,29 @@ static void bb_simple_error_msg(const char *s)
 static void *xmalloc(size_t size)
 {
 	void *p = NULL;
-	if (!(p = malloc(size)))
+	nếu (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	trả_về p;
 }
 
 static void *xzalloc(size_t size)
 {
 	void *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	trả_về p;
 }
 
 static void *xrealloc(void *ptr, size_t size)
 {
 	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	nếu (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	trả_về p;
 }
 
-static void *xmemdup(const void *s, int n)
+static void *xmemdup(const void *s, số_nguyên n)
 {
-	return memcpy(xmalloc(n), s, n);
+	trả_về memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
@@ -163,7 +163,7 @@ static void *xmemdup(const void *s, int n)
 
 static void *mempcpy(void *dest, const void *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	trả_về memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
@@ -173,8 +173,8 @@ static void overlapping_strcpy(char *dst, const char *src)
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	nếu (dst != src) {
+		trong_khi ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
@@ -190,18 +190,18 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	trong_khi (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	trả_về (char *) s;
 }
 
 static char* skip_non_whitespace(const char *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	trong_khi (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	trả_về (char *) s;
 }
 
 #define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
@@ -209,13 +209,13 @@ static char* skip_non_whitespace(const char *s)
 
 static const char* endofname(const char *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
+	nếu (!is_name(*name))
+		trả_về name;
+	trong_khi (*++name) {
+		nếu (!is_in_name(*name))
 			break;
 	}
-	return name;
+	trả_về name;
 }
 
 /**
@@ -230,34 +230,34 @@ static size_t list_size(char **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	cho (size = 0; list[size] != NULL; size++);
 
-	return size;
+	trả_về size;
 }
 
-static int varcmp(const char *p, const char *q)
+static số_nguyên varcmp(const char *p, const char *q)
 {
-	int c, d;
+	số_nguyên c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
+	trong_khi ((c = *p) == (d = *q)) {
+		nếu (c == '\0' || c == '=')
 			goto out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	nếu (c == '=')
 		c = '\0';
-	if (d == '=')
+	nếu (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	trả_về c - d;
 }
 
 struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+static số_nguyên u_boot_cli_readline(struct in_str *i);
 
 struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+static số_nguyên u_boot_cli_readline(struct in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
@@ -288,36 +288,36 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  *
  */
 
-int u_boot_hush_start_modern(void)
+số_nguyên u_boot_hush_start_modern(void)
 {
 	INIT_G();
-	return 0;
+	trả_về 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+static số_nguyên u_boot_cli_readline(struct in_str *i)
 {
 	char *prompt;
 	char __maybe_unused *ps_prompt = NULL;
 
-	if (!G.promptmode)
+	nếu (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	không_thì
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#không_thì
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	nếu (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		nếu (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		không_thì
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		nếu (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	trả_về cli_readline(prompt);
 }

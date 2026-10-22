@@ -21,7 +21,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
+#nếu CONFIG_IS_ENABLED(EVENT_DEBUG)
 const char *const type_name[] = {
 	"none",
 	"test",
@@ -61,35 +61,35 @@ _Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
 
 const char *event_type_name(enum event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#nếu CONFIG_IS_ENABLED(EVENT_DEBUG)
+	nếu (type < ARRAY_SIZE(type_name))
+		trả_về type_name[type];
+	không_thì
+		trả_về "(unknown)";
+#không_thì
+	trả_về "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+static số_nguyên notify_static(struct event *ev)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const số_nguyên n_ents = ll_entry_count(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	cho (spy = start; spy != start + n_ents; spy++) {
+		nếu (spy->type == ev->type) {
+			số_nguyên ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
+			nếu (spy->flags & EVSPYF_SIMPLE) {
 				const struct evspy_info_simple *simple;
 
 				simple = (struct evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
+			} không_thì {
 				ret = spy->func(NULL, ev);
 			}
 
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			nếu (ret)
+				trả_về log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-static int notify_dynamic(struct event *ev)
+static số_nguyên notify_dynamic(struct event *ev)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
 
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+		nếu (spy->type == ev->type) {
+			số_nguyên ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,72 +126,72 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			nếu (ret)
+				trả_về log_msg_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+số_nguyên event_notify(enum event_t type, void *data, số_nguyên size)
 {
 	struct event event;
-	int ret;
+	số_nguyên ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
+	nếu (size > sizeof(event.data))
+		trả_về log_msg_ret("size", -E2BIG);
 	memcpy(&event.data, data, size);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	nếu (ret)
+		trả_về log_msg_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	nếu (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		nếu (ret)
+			trả_về log_msg_ret("dyn", ret);
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-int event_notify_null(enum event_t type)
+số_nguyên event_notify_null(enum event_t type)
 {
-	return event_notify(type, NULL, 0);
+	trả_về event_notify(type, NULL, 0);
 }
 
 void event_show_spy_list(void)
 {
 	struct evspy_info *start =
 		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
+	const số_nguyên n_ents = ll_entry_count(struct evspy_info, evspy_info);
 	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	const số_nguyên size = sizeof(ulong) * 2;
 
 	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	cho (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
 		       spy->type, event_type_name(spy->type), size, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+#nếu CONFIG_IS_ENABLED(EVENT_DYNAMIC)
 static void spy_free(struct event_spy *spy)
 {
 	list_del(&spy->sibling_node);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+số_nguyên event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy;
 
 	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	nếu (!spy)
+		trả_về log_msg_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
@@ -199,10 +199,10 @@ int event_register(const char *id, enum event_t type, event_handler_t func, void
 	spy->ctx = ctx;
 	list_add_tail(&spy->sibling_node, &state->spy_head);
 
-	return 0;
+	trả_về 0;
 }
 
-int event_uninit(void)
+số_nguyên event_uninit(void)
 {
 	struct event_state *state = gd_event_state();
 	struct event_spy *spy, *next;
@@ -210,15 +210,15 @@ int event_uninit(void)
 	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
 		spy_free(spy);
 
-	return 0;
+	trả_về 0;
 }
 
-int event_init(void)
+số_nguyên event_init(void)
 {
 	struct event_state *state = gd_event_state();
 
 	INIT_LIST_HEAD(&state->spy_head);
 
-	return 0;
+	trả_về 0;
 }
 #endif /* EVENT_DYNAMIC */

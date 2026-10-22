@@ -64,61 +64,61 @@ static struct splash_location default_splash_locations[] = {
 
 #include <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+static số_nguyên splash_video_logo_load(void)
 {
 	char *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	nếu (!splashimage)
+		trả_về -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	nếu (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		trả_về -EFAULT;
 	}
 
 	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
 	       ARRAY_SIZE(bmp_logo_bitmap));
 
-	return 0;
+	trả_về 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#không_thì
+static inline số_nguyên splash_video_logo_load(void) { trả_về -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak số_nguyên splash_screen_prepare(void)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
+	nếu (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		trả_về splash_source_load(default_splash_locations,
 					  ARRAY_SIZE(default_splash_locations));
 
-	return splash_video_logo_load();
+	trả_về splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+void splash_get_pos(số_nguyên *x, số_nguyên *y)
 {
 	char *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	nếu (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		trả_về;
 
-	if (s[0] == 'm')
+	nếu (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
+	không_thì
 		*x = simple_strtol(s, NULL, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	nếu (s != NULL) {
+		nếu (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
+		không_thì
 			*y = simple_strtol(s + 1, NULL, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#nếu CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
 #include <bmp_logo.h>
@@ -133,16 +133,16 @@ void splash_display_banner(void)
 	struct video_fontdata __maybe_unused *fontdata = fonts;
 	struct udevice *dev;
 	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	số_nguyên col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	nếu (ret)
+		trả_về;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#nếu IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#không_thì
 	col = 0;
 	row = 0;
 #endif
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+số_nguyên splash_display(void)
 {
 	ulong addr;
 	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	số_nguyên x = 0, y = 0, ret;
+	nếu (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		trả_về -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	nếu (!s)
+		trả_về -EINVAL;
 
 	addr = hextoul(s, NULL);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	nếu (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	không_thì
+		trả_về -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
+	nếu (x || y)
 		goto end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#nếu CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	trả_về ret;
 }

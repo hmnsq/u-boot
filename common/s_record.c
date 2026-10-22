@@ -6,14 +6,14 @@
 
 #include <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+static số_nguyên hex1_bin (char  c);
+static số_nguyên hex2_bin (char *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+số_nguyên srec_decode (char *input, số_nguyên *count, ulong *addr, char *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
+	số_nguyên	i;
+	số_nguyên	v;				/* conversion buffer	*/
+	số_nguyên	srec_type;			/* S-Record type	*/
 	unsigned char chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
@@ -22,20 +22,20 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
+	cho (; *input; ++input) {
+		nếu (*input == 'S') {		/* skip 'S' */
 			++input;
 			break;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	nếu (*input == '\0') {			/* no more data?	*/
+		trả_về (SREC_EMPTY);
 	}
 
 	v = *input++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	nếu ((*count = hex2_bin(input)) < 0) {
+		trả_về (SREC_E_NOSREC);
 	}
 
 	chksum += *count;
@@ -78,7 +78,7 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		*count   -= 3;			/* - checksum and addr	*/
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		trả_về (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
@@ -87,8 +87,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	switch (v) {
 	case '3':				/* 4 byte addr field	*/
 	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		nếu ((v = hex2_bin(input)) < 0) {
+			trả_về (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
@@ -96,8 +96,8 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 		/* FALL THRU */
 	case '2':				/* 3 byte addr field	*/
 	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		nếu ((v = hex2_bin(input)) < 0) {
+			trả_về (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -108,16 +108,16 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	case '1':
 	case '5':
 	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		nếu ((v = hex2_bin(input)) < 0) {
+			trả_về (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		nếu ((v = hex2_bin(input)) < 0) {
+			trả_về (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
@@ -126,13 +126,13 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 
 		break;
 	default:
-		return (SREC_E_BADTYPE);
+		trả_về (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	cho (i=0; i < *count; ++i) {
+		nếu ((v = hex2_bin(input)) < 0) {
+			trả_về (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
@@ -140,38 +140,38 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	nếu ((v = hex2_bin(input)) < 0) {
+		trả_về (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	nếu ((unsigned char)v != (unsigned char)~chksum) {
+		trả_về (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	trả_về (srec_type);
 }
 
-static int hex1_bin (char c)
+static số_nguyên hex1_bin (char c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	nếu (c >= '0' && c <= '9')
+		trả_về (c - '0');
+	nếu (c >= 'a' && c <= 'f')
+		trả_về (c + 10 - 'a');
+	nếu (c >= 'A' && c <= 'F')
+		trả_về (c + 10 - 'A');
+	trả_về (-1);
 }
 
-static int hex2_bin (char *s)
+static số_nguyên hex2_bin (char *s)
 {
-	int i, j;
+	số_nguyên i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	nếu ((i = hex1_bin(*s++)) < 0) {
+		trả_về (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	nếu ((j = hex1_bin(*s)) < 0) {
+		trả_về (-1);
 	}
 
-	return ((i<<4) + j);
+	trả_về ((i<<4) + j);
 }

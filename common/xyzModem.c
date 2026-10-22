@@ -45,14 +45,14 @@
 /* Data & state local to the protocol */
 static struct
 {
-  int *__chan;
+  số_nguyên *__chan;
   unsigned char pkt[1024], *bufp;
-  int pad_pending;	/* trailing ^Z run withheld from the previous block */
-  int pad_deliver;	/* ^Z bytes to emit before the next data */
+  số_nguyên pad_pending;	/* trailing ^Z run withheld from the previous block */
+  số_nguyên pad_deliver;	/* ^Z bytes to emit before the next data */
   unsigned char blk, cblk, crc1, crc2;
   unsigned char next_blk;	/* Expected block */
-  int len, mode, total_retries;
-  int total_SOH, total_STX, total_CAN;
+  số_nguyên len, mode, total_retries;
+  số_nguyên total_SOH, total_STX, total_CAN;
   bool crc_mode, at_eof, tx_ack;
   bool first_xmodem_packet;
   ulong initial_time, timeout;
@@ -64,24 +64,24 @@ static struct
 #define xyzModem_MAX_RETRIES_WITH_CRC    10
 #define xyzModem_CAN_COUNT                3	/* Wait for 3 CAN before quitting */
 
-typedef int cyg_int32;
-static int
+typedef số_nguyên cyg_int32;
+static số_nguyên
 CYGACC_COMM_IF_GETC_TIMEOUT (char chan, char *c)
 {
 
   ulong now = get_timer(0);
   schedule();
-  while (!tstc ())
+  trong_khi (!tstc ())
     {
-      if (get_timer(now) > xyzModem_CHAR_TIMEOUT)
+      nếu (get_timer(now) > xyzModem_CHAR_TIMEOUT)
         break;
     }
-  if (tstc ())
+  nếu (tstc ())
     {
       *c = getchar();
-      return 1;
+      trả_về 1;
     }
-  return 0;
+  trả_về 0;
 }
 
 static void
@@ -94,40 +94,40 @@ CYGACC_COMM_IF_PUTC (char x, char y)
 __inline__ static bool
 _is_hex (char c)
 {
-  return (((c >= '0') && (c <= '9')) ||
+  trả_về (((c >= '0') && (c <= '9')) ||
 	  ((c >= 'A') && (c <= 'F')) || ((c >= 'a') && (c <= 'f')));
 }
 
 /* Convert a single hex nibble */
-__inline__ static int
+__inline__ static số_nguyên
 _from_hex (char c)
 {
-  int ret = 0;
+  số_nguyên ret = 0;
 
-  if ((c >= '0') && (c <= '9'))
+  nếu ((c >= '0') && (c <= '9'))
     {
       ret = (c - '0');
     }
-  else if ((c >= 'a') && (c <= 'f'))
+  không_thì nếu ((c >= 'a') && (c <= 'f'))
     {
       ret = (c - 'a' + 0x0a);
     }
-  else if ((c >= 'A') && (c <= 'F'))
+  không_thì nếu ((c >= 'A') && (c <= 'F'))
     {
       ret = (c - 'A' + 0x0A);
     }
-  return ret;
+  trả_về ret;
 }
 
 /* Convert a character to lower case */
 __inline__ static char
 _tolower (char c)
 {
-  if ((c >= 'A') && (c <= 'Z'))
+  nếu ((c >= 'A') && (c <= 'Z'))
     {
       c = (c - 'A') + 'a';
     }
-  return c;
+  trả_về c;
 }
 
 /* Parse (scan) a number */
@@ -135,50 +135,50 @@ static bool
 parse_num (char *s, unsigned long *val, char **es, char *delim)
 {
   bool first = true;
-  int radix = 10;
+  số_nguyên radix = 10;
   char c;
   unsigned long result = 0;
-  int digit;
+  số_nguyên digit;
 
-  while (*s == ' ')
+  trong_khi (*s == ' ')
     s++;
-  while (*s)
+  trong_khi (*s)
     {
-      if (first && (s[0] == '0') && (_tolower (s[1]) == 'x'))
+      nếu (first && (s[0] == '0') && (_tolower (s[1]) == 'x'))
 	{
 	  radix = 16;
 	  s += 2;
 	}
       first = false;
       c = *s++;
-      if (_is_hex (c) && ((digit = _from_hex (c)) < radix))
+      nếu (_is_hex (c) && ((digit = _from_hex (c)) < radix))
 	{
 	  /* Valid digit */
 	  result = (result * radix) + digit;
 	}
-      else
+      không_thì
 	{
-	  if (delim != (char *) 0)
+	  nếu (delim != (char *) 0)
 	    {
 	      /* See if this character is one of the delimiters */
 	      char *dp = delim;
-	      while (*dp && (c != *dp))
+	      trong_khi (*dp && (c != *dp))
 		dp++;
-	      if (*dp)
+	      nếu (*dp)
 		break;		/* Found a good delimiter */
 	    }
-	  return false;		/* Malformatted number */
+	  trả_về false;		/* Malformatted number */
 	}
     }
   *val = result;
-  if (es != (char **) 0)
+  nếu (es != (char **) 0)
     {
       *es = s;
     }
-  return true;
+  trả_về true;
 }
 
-#if defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
+#nếu defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
 /*
  * Note: this debug setup works by storing the strings in a fixed buffer
  */
@@ -186,17 +186,17 @@ static char zm_debug_buf[8192];
 static char *zm_out = zm_debug_buf;
 static char *zm_out_start = zm_debug_buf;
 
-static int
+static số_nguyên
 zm_dprintf(char *fmt, ...)
 {
-	int len;
+	số_nguyên len;
 	va_list args;
 
 	va_start(args, fmt);
 	len = diag_vsprintf(zm_out, fmt, args);
 	va_end(args);
 	zm_out += len;
-	return len;
+	trả_về len;
 }
 
 static void
@@ -206,7 +206,7 @@ zm_flush (void)
 }
 
 static void
-zm_dump_buf (void *buf, int len)
+zm_dump_buf (void *buf, số_nguyên len)
 {
 
 }
@@ -227,14 +227,14 @@ zm_save (unsigned char c)
 }
 
 static void
-zm_dump (int line)
+zm_dump (số_nguyên line)
 {
   zm_dprintf ("Packet at line: %d\n", line);
   zm_dump_buf (zm_buf, zm_bp - zm_buf);
 }
 
 #define ZM_DEBUG(x) x
-#else
+#không_thì
 #define ZM_DEBUG(x)
 #endif
 
@@ -242,23 +242,23 @@ zm_dump (int line)
 static void
 xyzModem_flush (void)
 {
-  int res;
+  số_nguyên res;
   char c;
-  while (true)
+  trong_khi (true)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
-      if (!res)
-	return;
+      nếu (!res)
+	trả_về;
     }
 }
 
-static int
+static số_nguyên
 xyzModem_get_hdr (void)
 {
   char c;
-  int res;
+  số_nguyên res;
   bool hdr_found = false;
-  int i, can_total, hdr_chars;
+  số_nguyên i, can_total, hdr_chars;
   unsigned short cksum;
 
   ZM_DEBUG (zm_new ());
@@ -266,16 +266,16 @@ xyzModem_get_hdr (void)
   can_total = 0;
   hdr_chars = 0;
 
-  if (xyz.tx_ack)
+  nếu (xyz.tx_ack)
     {
       CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
       xyz.tx_ack = false;
     }
-  while (!hdr_found)
+  trong_khi (!hdr_found)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      nếu (res)
 	{
 	  hdr_chars++;
 	  switch (c)
@@ -284,7 +284,7 @@ xyzModem_get_hdr (void)
 	      xyz.total_SOH++;
 	      fallthrough;
 	    case STX:
-	      if (c == STX)
+	      nếu (c == STX)
 		xyz.total_STX++;
 	      hdr_found = true;
 	      break;
@@ -292,126 +292,126 @@ xyzModem_get_hdr (void)
 	    case ETX:
 	      xyz.total_CAN++;
 	      ZM_DEBUG (zm_dump (__LINE__));
-	      if (++can_total == xyzModem_CAN_COUNT)
+	      nếu (++can_total == xyzModem_CAN_COUNT)
 		{
-		  return xyzModem_cancel;
+		  trả_về xyzModem_cancel;
 		}
-	      else
+	      không_thì
 		{
 		  /* Wait for multiple CAN to avoid early quits */
 		  break;
 		}
 	    case EOT:
 	      /* EOT only supported if no noise */
-	      if (hdr_chars == 1)
+	      nếu (hdr_chars == 1)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK on EOT #%d\n", __LINE__));
 		  ZM_DEBUG (zm_dump (__LINE__));
-		  return xyzModem_eof;
+		  trả_về xyzModem_eof;
 		}
 	    default:
 	      /* Ignore, waiting for start of header */
 	      ;
 	    }
 	}
-      else
+      không_thì
 	{
 	  /* Data stream timed out */
 	  xyzModem_flush ();	/* Toss any current input */
 	  ZM_DEBUG (zm_dump (__LINE__));
 	  CYGACC_CALL_IF_DELAY_US ((cyg_int32) 250000);
-	  return xyzModem_timeout;
+	  trả_về xyzModem_timeout;
 	}
     }
 
   /* Header found, now read the data */
   res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.blk);
   ZM_DEBUG (zm_save (xyz.blk));
-  if (!res)
+  nếu (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      trả_về xyzModem_timeout;
     }
   res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.cblk);
   ZM_DEBUG (zm_save (xyz.cblk));
-  if (!res)
+  nếu (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      trả_về xyzModem_timeout;
     }
   xyz.len = (c == SOH) ? 128 : 1024;
   xyz.bufp = xyz.pkt;
-  for (i = 0; i < xyz.len; i++)
+  cho (i = 0; i < xyz.len; i++)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      nếu (res)
 	{
 	  xyz.pkt[i] = c;
 	}
-      else
+      không_thì
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  trả_về xyzModem_timeout;
 	}
     }
   res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc1);
   ZM_DEBUG (zm_save (xyz.crc1));
-  if (!res)
+  nếu (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      trả_về xyzModem_timeout;
     }
-  if (xyz.crc_mode)
+  nếu (xyz.crc_mode)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc2);
       ZM_DEBUG (zm_save (xyz.crc2));
-      if (!res)
+      nếu (!res)
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  trả_về xyzModem_timeout;
 	}
     }
   ZM_DEBUG (zm_dump (__LINE__));
   /* Validate the message */
-  if ((xyz.blk ^ xyz.cblk) != (unsigned char) 0xFF)
+  nếu ((xyz.blk ^ xyz.cblk) != (unsigned char) 0xFF)
     {
       ZM_DEBUG (zm_dprintf
 		("Framing error - blk: %x/%x/%x\n", xyz.blk, xyz.cblk,
 		 (xyz.blk ^ xyz.cblk)));
       ZM_DEBUG (zm_dump_buf (xyz.pkt, xyz.len));
       xyzModem_flush ();
-      return xyzModem_frame;
+      trả_về xyzModem_frame;
     }
   /* Verify checksum/CRC */
-  if (xyz.crc_mode)
+  nếu (xyz.crc_mode)
     {
       cksum = crc16_ccitt(0, xyz.pkt, xyz.len);
-      if (cksum != ((xyz.crc1 << 8) | xyz.crc2))
+      nếu (cksum != ((xyz.crc1 << 8) | xyz.crc2))
 	{
 	  ZM_DEBUG (zm_dprintf ("CRC error - recvd: %02x%02x, computed: %x\n",
 				xyz.crc1, xyz.crc2, cksum & 0xFFFF));
-	  return xyzModem_cksum;
+	  trả_về xyzModem_cksum;
 	}
     }
-  else
+  không_thì
     {
       cksum = 0;
-      for (i = 0; i < xyz.len; i++)
+      cho (i = 0; i < xyz.len; i++)
 	{
 	  cksum += xyz.pkt[i];
 	}
-      if (xyz.crc1 != (cksum & 0xFF))
+      nếu (xyz.crc1 != (cksum & 0xFF))
 	{
 	  ZM_DEBUG (zm_dprintf
 		    ("Checksum error - recvd: %x, computed: %x\n", xyz.crc1,
 		     cksum & 0xFF));
-	  return xyzModem_cksum;
+	  trả_về xyzModem_cksum;
 	}
     }
   /* If we get here, the message passes [structural] muster */
-  return 0;
+  trả_về 0;
 }
 
 static
@@ -419,32 +419,32 @@ ulong
 xyzModem_get_initial_timeout (void)
 {
   /* timeout is in seconds, non-positive timeout value is infinity */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#nếu CONFIG_IS_ENABLED(ENV_SUPPORT)
   const char *timeout_str = env_get("loadxy_timeout");
-  if (timeout_str)
-    return 1000 * simple_strtol(timeout_str, NULL, 10);
+  nếu (timeout_str)
+    trả_về 1000 * simple_strtol(timeout_str, NULL, 10);
 #endif
-  return 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
+  trả_về 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
 }
 
-int
-xyzModem_stream_open (connection_info_t * info, int *err)
+số_nguyên
+xyzModem_stream_open (connection_info_t * info, số_nguyên *err)
 {
-  int stat = 0;
-  int retries = xyzModem_MAX_RETRIES;
-  int crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
+  số_nguyên stat = 0;
+  số_nguyên retries = xyzModem_MAX_RETRIES;
+  số_nguyên crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
 
 /*    ZM_DEBUG(zm_out = zm_out_start); */
 #ifdef xyzModem_zmodem
-  if (info->mode == xyzModem_zmodem)
+  nếu (info->mode == xyzModem_zmodem)
     {
       *err = xyzModem_noZmodem;
-      return -1;
+      trả_về -1;
     }
 #endif
 
 /* TODO: CHECK ! */
-  int dummy = 0;
+  số_nguyên dummy = 0;
   xyz.__chan = &dummy;
   xyz.len = 0;
   xyz.pad_pending = 0;
@@ -465,30 +465,30 @@ xyzModem_stream_open (connection_info_t * info, int *err)
 
   CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
 
-  if (xyz.mode == xyzModem_xmodem)
+  nếu (xyz.mode == xyzModem_xmodem)
     {
       /* X-modem doesn't have an information header - exit here */
       xyz.first_xmodem_packet = true;
       xyz.next_blk = 1;
-      return 0;
+      trả_về 0;
     }
 
-  while (!(xyz.timeout && get_timer(xyz.initial_time) > xyz.timeout))
+  trong_khi (!(xyz.timeout && get_timer(xyz.initial_time) > xyz.timeout))
     {
-      if (--retries <= 0)
+      nếu (--retries <= 0)
         {
           retries = xyzModem_MAX_RETRIES;
           crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
           xyz.crc_mode = true;
         }
       stat = xyzModem_get_hdr ();
-      if (stat == 0)
+      nếu (stat == 0)
 	{
 	  /* Y-modem file information header */
-	  if (xyz.blk == 0)
+	  nếu (xyz.blk == 0)
 	    {
 	      /* skip filename */
-	      while (*xyz.bufp++);
+	      trong_khi (*xyz.bufp++);
 	      /* get the length */
 	      parse_num ((char *) xyz.bufp, &xyz.file_length, NULL, " ");
 	      /* The rest of the file name data block quietly discarded */
@@ -496,64 +496,64 @@ xyzModem_stream_open (connection_info_t * info, int *err)
 	    }
 	  xyz.next_blk = 1;
 	  xyz.len = 0;
-	  return 0;
+	  trả_về 0;
 	}
-      else if (stat == xyzModem_timeout)
+      không_thì nếu (stat == xyzModem_timeout)
 	{
-	  if (--crc_retries <= 0)
+	  nếu (--crc_retries <= 0)
 	    xyz.crc_mode = false;
 	  CYGACC_CALL_IF_DELAY_US (5 * 100000);	/* Extra delay for startup */
 	  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
 	  xyz.total_retries++;
 	  ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	}
-      if (stat == xyzModem_cancel)
+      nếu (stat == xyzModem_cancel)
 	{
 	  break;
 	}
     }
   *err = stat;
   ZM_DEBUG (zm_flush ());
-  return -1;
+  trả_về -1;
 }
 
-int
-xyzModem_stream_read (char *buf, int size, int *err)
+số_nguyên
+xyzModem_stream_read (char *buf, số_nguyên size, số_nguyên *err)
 {
-  int stat, total, len;
-  int retries;
+  số_nguyên stat, total, len;
+  số_nguyên retries;
 
   total = 0;
   stat = xyzModem_cancel;
   /* Try and get 'size' bytes into the buffer */
-  while (!xyz.at_eof && xyz.len >= 0 && (size > 0))
+  trong_khi (!xyz.at_eof && xyz.len >= 0 && (size > 0))
     {
-      if (xyz.len == 0 && xyz.pad_deliver == 0)
+      nếu (xyz.len == 0 && xyz.pad_deliver == 0)
 	{
 	  retries = xyzModem_MAX_RETRIES;
-	  while (retries-- > 0)
+	  trong_khi (retries-- > 0)
 	    {
-	      if (xyz.first_xmodem_packet && xyz.timeout &&
+	      nếu (xyz.first_xmodem_packet && xyz.timeout &&
 		  get_timer(xyz.initial_time) > xyz.timeout)
 		{
 		  *err = xyzModem_timeout;
 		  xyz.len = -1;
-		  return total;
+		  trả_về total;
 		}
 
 	      stat = xyzModem_get_hdr ();
-	      if (stat == 0)
+	      nếu (stat == 0)
 		{
-		  if (xyz.mode == xyzModem_xmodem && xyz.first_xmodem_packet)
+		  nếu (xyz.mode == xyzModem_xmodem && xyz.first_xmodem_packet)
 		    xyz.first_xmodem_packet = false;
-		  if (xyz.blk == xyz.next_blk)
+		  nếu (xyz.blk == xyz.next_blk)
 		    {
 		      xyz.tx_ack = true;
 		      ZM_DEBUG (zm_dprintf
 				("ACK block %d (%d)\n", xyz.blk, __LINE__));
 		      xyz.next_blk = (xyz.next_blk + 1) & 0xFF;
 
-		      if (xyz.mode == xyzModem_xmodem || xyz.file_length == 0)
+		      nếu (xyz.mode == xyzModem_xmodem || xyz.file_length == 0)
 			{
 			  /* Without a file length, EOF padding can't be
 			   * distinguished from block data until the next
@@ -561,11 +561,11 @@ xyzModem_stream_read (char *buf, int size, int *err)
 			   */
 			  xyz.pad_deliver = xyz.pad_pending;
 			  xyz.pad_pending = 0;
-			  if ((xyz.bufp[xyz.len - 1] == EOF) &&
+			  nếu ((xyz.bufp[xyz.len - 1] == EOF) &&
 			      (xyz.bufp[xyz.len - 2] == EOF) &&
 			      (xyz.bufp[xyz.len - 3] == EOF))
 			    {
-			      while (xyz.len
+			      trong_khi (xyz.len
 				     && (xyz.bufp[xyz.len - 1] == EOF))
 				{
 				  xyz.len--;
@@ -580,36 +580,36 @@ xyzModem_stream_read (char *buf, int size, int *err)
 		       * Only do this for Y-modem (and Z-modem should it ever
 		       * be supported since it can fall back to Y-modem mode).
 		       */
-		      if (xyz.mode != xyzModem_xmodem && 0 != xyz.file_length)
+		      nếu (xyz.mode != xyzModem_xmodem && 0 != xyz.file_length)
 			{
 			  xyz.read_length += xyz.len;
-			  if (xyz.read_length > xyz.file_length)
+			  nếu (xyz.read_length > xyz.file_length)
 			    {
 			      xyz.len -= (xyz.read_length - xyz.file_length);
 			    }
 			}
 		      break;
 		    }
-		  else if (xyz.blk == ((xyz.next_blk - 1) & 0xFF))
+		  không_thì nếu (xyz.blk == ((xyz.next_blk - 1) & 0xFF))
 		    {
 		      /* Just re-ACK this so sender will get on with it */
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		      continue;	/* Need new header */
 		    }
-		  else
+		  không_thì
 		    {
 		      stat = xyzModem_sequence;
 		    }
 		}
-	      if (stat == xyzModem_cancel)
+	      nếu (stat == xyzModem_cancel)
 		{
 		  break;
 		}
-	      if (stat == xyzModem_eof)
+	      nếu (stat == xyzModem_eof)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK (%d)\n", __LINE__));
-		  if (xyz.mode == xyzModem_ymodem)
+		  nếu (xyz.mode == xyzModem_ymodem)
 		    {
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan,
 					   (xyz.crc_mode ? 'C' : NAK));
@@ -619,7 +619,7 @@ xyzModem_stream_read (char *buf, int size, int *err)
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		      ZM_DEBUG (zm_dprintf ("FINAL ACK (%d)\n", __LINE__));
 		    }
-		  else
+		  không_thì
 		    stat = 0;
 
 		  xyz.pad_pending = 0;	/* EOT: withheld ^Z run was padding */
@@ -630,18 +630,18 @@ xyzModem_stream_read (char *buf, int size, int *err)
 	      xyz.total_retries++;
 	      ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	    }
-	  if (stat < 0 && (!xyz.first_xmodem_packet || stat != xyzModem_timeout))
+	  nếu (stat < 0 && (!xyz.first_xmodem_packet || stat != xyzModem_timeout))
 	    {
 	      *err = stat;
 	      xyz.len = -1;
-	      return total;
+	      trả_về total;
 	    }
 	}
       /* A ^Z run withheld from the previous block turned out to be data */
-      if (xyz.pad_deliver > 0)
+      nếu (xyz.pad_deliver > 0)
 	{
 	  len = xyz.pad_deliver;
-	  if (size < len)
+	  nếu (size < len)
 	    len = size;
 	  memset (buf, EOF, len);
 	  size -= len;
@@ -650,10 +650,10 @@ xyzModem_stream_read (char *buf, int size, int *err)
 	  xyz.pad_deliver -= len;
 	}
       /* Don't "read" data from the EOF protocol package */
-      if (!xyz.at_eof && xyz.len > 0)
+      nếu (!xyz.at_eof && xyz.len > 0)
 	{
 	  len = xyz.len;
-	  if (size < len)
+	  nếu (size < len)
 	    len = size;
 	  memcpy (buf, xyz.bufp, len);
 	  size -= len;
@@ -663,11 +663,11 @@ xyzModem_stream_read (char *buf, int size, int *err)
 	  xyz.bufp += len;
 	}
     }
-  return total;
+  trả_về total;
 }
 
 void
-xyzModem_stream_close (int *err)
+xyzModem_stream_close (số_nguyên *err)
 {
   ZM_DEBUG (zm_dprintf
     ("xyzModem - %s mode, %d(SOH)/%d(STX)/%d(CAN) packets, %d retries\n",
@@ -679,11 +679,11 @@ xyzModem_stream_close (int *err)
 /* Need to be able to clean out the input buffer, so have to take the */
 /* getc */
 void
-xyzModem_stream_terminate (bool abort, int (*getc) (void))
+xyzModem_stream_terminate (bool abort, số_nguyên (*getc) (void))
 {
-  int c;
+  số_nguyên c;
 
-  if (abort)
+  nếu (abort)
     {
       ZM_DEBUG (zm_dprintf ("!!!! TRANSFER ABORT !!!!\n"));
       switch (xyz.mode)
@@ -712,7 +712,7 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
 	  break;
 	}
     }
-  else
+  không_thì
     {
       ZM_DEBUG (zm_dprintf ("Engaging cleanup mode...\n"));
       /*
@@ -722,7 +722,7 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
        * If we don't eat it now, RedBoot will think the user typed it.
        */
       ZM_DEBUG (zm_dprintf ("Trailing gunk:\n"));
-      while ((c = (*getc) ()) > -1)
+      trong_khi ((c = (*getc) ()) > -1)
         ;
       ZM_DEBUG (zm_dprintf ("\n"));
       /*
@@ -735,36 +735,36 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
 }
 
 char *
-xyzModem_error (int err)
+xyzModem_error (số_nguyên err)
 {
   switch (err)
     {
     case xyzModem_access:
-      return "Can't access file";
+      trả_về "Can't access file";
       break;
     case xyzModem_noZmodem:
-      return "Sorry, zModem not available yet";
+      trả_về "Sorry, zModem not available yet";
       break;
     case xyzModem_timeout:
-      return "Timed out";
+      trả_về "Timed out";
       break;
     case xyzModem_eof:
-      return "End of file";
+      trả_về "End of file";
       break;
     case xyzModem_cancel:
-      return "Cancelled";
+      trả_về "Cancelled";
       break;
     case xyzModem_frame:
-      return "Invalid framing";
+      trả_về "Invalid framing";
       break;
     case xyzModem_cksum:
-      return "CRC/checksum error";
+      trả_về "CRC/checksum error";
       break;
     case xyzModem_sequence:
-      return "Block sequence error";
+      trả_về "Block sequence error";
       break;
     default:
-      return "Unknown error";
+      trả_về "Unknown error";
       break;
     }
 }

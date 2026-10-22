@@ -9,9 +9,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-int __weak checkboard(void)
+số_nguyên __weak checkboard(void)
 {
-	return 0;
+	trả_về 0;
 }
 
 static const struct to_show {
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+static số_nguyên try_sysinfo(void)
 {
 	struct udevice *dev;
 	char str[80];
-	int ret;
+	số_nguyên ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+	nếu (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
 		const struct to_show *item;
 
-		for (item = to_show; item->id; item++) {
+		cho (item = to_show; item->id; item++) {
 			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+			nếu (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-int show_board_info(void)
+số_nguyên show_board_info(void)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	nếu (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		số_nguyên ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		nếu (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
+		nếu (ret) {
 			const char *model;
 
 			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			nếu (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	trả_về checkboard();
 }

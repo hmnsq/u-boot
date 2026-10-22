@@ -30,12 +30,12 @@ struct onboard_hub {
 struct onboard_hub_data {
 	unsigned long reset_us;
 	unsigned long power_on_delay_us;
-	unsigned int num_supplies;
+	unsigned số_nguyên num_supplies;
 	const char * const supply_names[MAX_SUPPLIES];
-	int (*init)(struct udevice *dev);
+	số_nguyên (*init)(struct udevice *dev);
 };
 
-static int usb5744_i2c_init(struct udevice *dev)
+static số_nguyên usb5744_i2c_init(struct udevice *dev)
 {
 	/*
 	 *  Prevent the MCU from the putting the HUB in suspend mode through register write.
@@ -58,140 +58,140 @@ static int usb5744_i2c_init(struct udevice *dev)
 	struct ofnode_phandle_args phandle;
 	u8 buf = USB5744_COMMAND_ATTACH;
 	struct dm_i2c_chip *i2c_chip;
-	int ret, slave_addr;
+	số_nguyên ret, slave_addr;
 
 	ret = dev_read_phandle_with_args(dev, "i2c-bus", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	nếu (ret == -ENOENT) {
 		dev_dbg(dev, "i2c-bus not specified\n");
-		return 0;
+		trả_về 0;
 	}
 
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "i2c-bus read failed\n");
-		return ret;
+		trả_về ret;
 	}
 
 	ret = device_get_global_by_ofnode(ofnode_get_parent(phandle.node), &i2c_bus);
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "Failed to get i2c node, err: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	ret = ofnode_read_u32(phandle.node, "reg", &slave_addr);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	ret = i2c_get_chip(i2c_bus, slave_addr, 1, &i2c_dev);
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "%s: can't find i2c chip device for addr 0x%x\n", __func__,
 			slave_addr);
-		return ret;
+		trả_về ret;
 	}
 
 	i2c_chip = dev_get_parent_plat(i2c_dev);
-	if (!i2c_chip) {
+	nếu (!i2c_chip) {
 		dev_err(dev, "parent platform data not found\n");
-		return -EINVAL;
+		trả_về -EINVAL;
 	}
 
 	i2c_chip->flags &= ~DM_I2C_CHIP_WR_ADDRESS;
 	/* SMBus write command */
 	ret = dm_i2c_write(i2c_dev, 0, (uint8_t *)&data_buf, 8);
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "data_buf i2c_write failed, err:%d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	/* Configuration register access command */
 	ret = dm_i2c_write(i2c_dev, USB5744_CONFIG_REG_ACCESS_LSB,
 			   &config_reg_access_buf, 2);
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "config_reg_access i2c_write failed, err: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
 	/* USB Attach with SMBus */
 	ret = dm_i2c_write(i2c_dev, USB5744_COMMAND_ATTACH_LSB, &buf, 2);
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "usb_attach i2c_write failed, err: %d\n", ret);
-		return ret;
+		trả_về ret;
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-int usb_onboard_hub_reset(struct udevice *dev)
+số_nguyên usb_onboard_hub_reset(struct udevice *dev)
 {
 	struct onboard_hub_data *data =
 		(struct onboard_hub_data *)dev_get_driver_data(dev);
 	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret;
+	số_nguyên ret;
 
 	hub->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_IS_OUT);
 
 	/* property is optional, don't return error! */
-	if (!hub->reset_gpio)
-		return 0;
+	nếu (!hub->reset_gpio)
+		trả_về 0;
 
 	ret = dm_gpio_set_value(hub->reset_gpio, 1);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	udelay(data->reset_us);
 
 	ret = dm_gpio_set_value(hub->reset_gpio, 0);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	udelay(data->power_on_delay_us);
 
-	return 0;
+	trả_về 0;
 }
 
-static int usb_onboard_hub_power_off(struct udevice *dev)
+static số_nguyên usb_onboard_hub_power_off(struct udevice *dev)
 {
 	struct onboard_hub_data *data =
 		(struct onboard_hub_data *)dev_get_driver_data(dev);
 	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0, ret2;
-	unsigned int i;
+	số_nguyên ret = 0, ret2;
+	unsigned số_nguyên i;
 
-	for (i = data->num_supplies; i > 0; i--) {
-		if (hub->vdd[i-1]) {
+	cho (i = data->num_supplies; i > 0; i--) {
+		nếu (hub->vdd[i-1]) {
 			ret2 = regulator_set_enable_if_allowed(hub->vdd[i-1], false);
-			if (ret2 && ret2 != -ENOSYS) {
+			nếu (ret2 && ret2 != -ENOSYS) {
 				dev_err(dev, "can't disable %s: %d\n", data->supply_names[i-1], ret2);
 				ret |= ret2;
 			}
 		}
 	}
 
-	return ret;
+	trả_về ret;
 }
 
-static int usb_onboard_hub_probe(struct udevice *dev)
+static số_nguyên usb_onboard_hub_probe(struct udevice *dev)
 {
 	struct onboard_hub_data *data =
 		(struct onboard_hub_data *)dev_get_driver_data(dev);
 	struct onboard_hub *hub = dev_get_priv(dev);
-	unsigned int i;
-	int ret;
+	unsigned số_nguyên i;
+	số_nguyên ret;
 
-	if (data->num_supplies > MAX_SUPPLIES) {
+	nếu (data->num_supplies > MAX_SUPPLIES) {
 		dev_err(dev, "invalid supplies number, max supported: %d\n", MAX_SUPPLIES);
-		return -EINVAL;
+		trả_về -EINVAL;
 	}
 
-	for (i = 0; i < data->num_supplies; i++) {
+	cho (i = 0; i < data->num_supplies; i++) {
 		ret = device_get_supply_regulator(dev, data->supply_names[i], &hub->vdd[i]);
-		if (ret && ret != -ENOENT && ret != -ENOSYS) {
+		nếu (ret && ret != -ENOENT && ret != -ENOSYS) {
 			dev_err(dev, "can't get %s: %d\n", data->supply_names[i], ret);
 			goto err_supply;
 		}
 
-		if (hub->vdd[i]) {
+		nếu (hub->vdd[i]) {
 			ret = regulator_set_enable_if_allowed(hub->vdd[i], true);
-			if (ret && ret != -ENOSYS) {
+			nếu (ret && ret != -ENOSYS) {
 				dev_err(dev, "can't enable %s: %d\n", data->supply_names[i], ret);
 				goto err_supply;
 			}
@@ -199,67 +199,67 @@ static int usb_onboard_hub_probe(struct udevice *dev)
 	}
 
 	ret = usb_onboard_hub_reset(dev);
-	if (ret)
+	nếu (ret)
 		goto err_supply;
 
-	if (data->init) {
+	nếu (data->init) {
 		ret = data->init(dev);
-		if (ret) {
+		nếu (ret) {
 			dev_err(dev, "onboard i2c init failed: %d\n", ret);
 			goto err;
 		}
 	}
-	return 0;
+	trả_về 0;
 err:
 	dm_gpio_set_value(hub->reset_gpio, 0);
 err_supply:
 	usb_onboard_hub_power_off(dev);
-	return ret;
+	trả_về ret;
 }
 
-static int usb_onboard_hub_bind(struct udevice *dev)
+static số_nguyên usb_onboard_hub_bind(struct udevice *dev)
 {
 	struct ofnode_phandle_args phandle;
 	struct udevice *peerdev;
-	int ret;
+	số_nguyên ret;
 
 	ret = dev_read_phandle_with_args(dev, "peer-hub", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	nếu (ret == -ENOENT) {
 		dev_dbg(dev, "peer-hub property not present\n");
-		return 0;
+		trả_về 0;
 	}
 
-	if (ret) {
+	nếu (ret) {
 		dev_err(dev, "peer-hub not specified\n");
-		return ret;
+		trả_về ret;
 	}
 
 	ret = uclass_find_device_by_ofnode(UCLASS_USB_HUB, phandle.node, &peerdev);
-	if (ret) {
+	nếu (ret) {
 		dev_dbg(dev, "binding before peer-hub %s\n",
 			ofnode_get_name(phandle.node));
-		return 0;
+		trả_về 0;
 	}
 
 	dev_dbg(dev, "peer-hub %s has been bound\n", peerdev->name);
 
-	return -ENODEV;
+	trả_về -ENODEV;
 }
 
-static int usb_onboard_hub_remove(struct udevice *dev)
+static số_nguyên usb_onboard_hub_remove(struct udevice *dev)
 {
 	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0;
+	số_nguyên ret = 0;
 
-	if (hub->reset_gpio) {
+	nếu (hub->reset_gpio) {
 		ret = dm_gpio_set_value(hub->reset_gpio, 1);
-		if (ret)
+		nếu (ret)
 			dev_err(dev, "can't set gpio %s: %d\n", hub->reset_gpio->dev->name,
 				ret);
 	}
 
 	ret |= usb_onboard_hub_power_off(dev);
-	return ret;
+	trả_về ret;
 }
 
 static const struct onboard_hub_data corechips_sl6341_data = {

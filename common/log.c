@@ -58,52 +58,52 @@ const char *log_get_cat_name(enum log_category_t cat)
 {
 	const char *name;
 
-	if (cat < 0 || cat >= LOGC_COUNT)
-		return "<invalid>";
-	if (cat >= LOGC_NONE)
-		return log_cat_name[cat - LOGC_NONE];
+	nếu (cat < 0 || cat >= LOGC_COUNT)
+		trả_về "<invalid>";
+	nếu (cat >= LOGC_NONE)
+		trả_về log_cat_name[cat - LOGC_NONE];
 
-#if CONFIG_IS_ENABLED(DM)
+#nếu CONFIG_IS_ENABLED(DM)
 	name = uclass_get_name((enum uclass_id)cat);
-#else
+#không_thì
 	name = NULL;
 #endif
 
-	return name ? name : "<missing>";
+	trả_về name ? name : "<missing>";
 }
 
 enum log_category_t log_get_cat_by_name(const char *name)
 {
 	enum uclass_id id;
-	int i;
+	số_nguyên i;
 
-	for (i = LOGC_NONE; i < LOGC_COUNT; i++)
-		if (!strcmp(name, log_cat_name[i - LOGC_NONE]))
-			return i;
+	cho (i = LOGC_NONE; i < LOGC_COUNT; i++)
+		nếu (!strcmp(name, log_cat_name[i - LOGC_NONE]))
+			trả_về i;
 	id = uclass_get_by_name(name);
-	if (id != UCLASS_INVALID)
-		return (enum log_category_t)id;
+	nếu (id != UCLASS_INVALID)
+		trả_về (enum log_category_t)id;
 
-	return LOGC_NONE;
+	trả_về LOGC_NONE;
 }
 
 const char *log_get_level_name(enum log_level_t level)
 {
-	if (level >= LOGL_COUNT)
-		return "INVALID";
-	return log_level_name[level];
+	nếu (level >= LOGL_COUNT)
+		trả_về "INVALID";
+	trả_về log_level_name[level];
 }
 
 enum log_level_t log_get_level_by_name(const char *name)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < LOGL_COUNT; i++) {
-		if (!strcasecmp(log_level_name[i], name))
-			return i;
+	cho (i = 0; i < LOGL_COUNT; i++) {
+		nếu (!strcasecmp(log_level_name[i], name))
+			trả_về i;
 	}
 
-	return LOGL_NONE;
+	trả_về LOGL_NONE;
 }
 
 struct log_device *log_device_find_by_name(const char *drv_name)
@@ -111,23 +111,23 @@ struct log_device *log_device_find_by_name(const char *drv_name)
 	struct log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (!strcmp(drv_name, ldev->drv->name))
-			return ldev;
+		nếu (!strcmp(drv_name, ldev->drv->name))
+			trả_về ldev;
 	}
 
-	return NULL;
+	trả_về NULL;
 }
 
 bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
-		if (cat_list[i] == cat)
-			return true;
+	cho (i = 0; i < LOGF_MAX_CATEGORIES && cat_list[i] != LOGC_END; i++) {
+		nếu (cat_list[i] == cat)
+			trả_về true;
 	}
 
-	return false;
+	trả_về false;
 }
 
 /**
@@ -140,19 +140,19 @@ bool log_has_cat(enum log_category_t cat_list[], enum log_category_t cat)
  */
 static bool log_has_member(const char *list, const char *member)
 {
-	int member_len = strlen(member);
+	số_nguyên member_len = strlen(member);
 	const char *s, *p;
-	int substr_len;
+	số_nguyên substr_len;
 
-	for (s = list; *s; s = p + (*p != '\0')) {
+	cho (s = list; *s; s = p + (*p != '\0')) {
 		p = strchrnul(s, ',');
 		substr_len = p - s;
-		if (member_len >= substr_len &&
+		nếu (member_len >= substr_len &&
 		    !strncmp(member + member_len - substr_len, s, substr_len))
-			return true;
+			trả_về true;
 	}
 
-	return false;
+	trả_về false;
 }
 
 /**
@@ -166,43 +166,43 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
 {
 	struct log_filter *filt;
 
-	if (rec->flags & LOGRECF_FORCE_DEBUG)
-		return true;
+	nếu (rec->flags & LOGRECF_FORCE_DEBUG)
+		trả_về true;
 
 	/* If there are no filters, filter on the default log level */
-	if (list_empty(&ldev->filter_head)) {
-		if (rec->level > gd->default_log_level)
-			return false;
-		return true;
+	nếu (list_empty(&ldev->filter_head)) {
+		nếu (rec->level > gd->default_log_level)
+			trả_về false;
+		trả_về true;
 	}
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->flags & LOGFF_LEVEL_MIN) {
-			if (rec->level < filt->level)
+		nếu (filt->flags & LOGFF_LEVEL_MIN) {
+			nếu (rec->level < filt->level)
 				continue;
-		} else if (rec->level > filt->level) {
+		} không_thì nếu (rec->level > filt->level) {
 			continue;
 		}
 
-		if ((filt->flags & LOGFF_HAS_CAT) &&
+		nếu ((filt->flags & LOGFF_HAS_CAT) &&
 		    !log_has_cat(filt->cat_list, rec->cat))
 			continue;
 
-		if (filt->file_list &&
+		nếu (filt->file_list &&
 		    !log_has_member(filt->file_list, rec->file))
 			continue;
 
-		if (filt->func_list &&
+		nếu (filt->func_list &&
 		    !log_has_member(filt->func_list, rec->func))
 			continue;
 
-		if (filt->flags & LOGFF_DENY)
-			return false;
-		else
-			return true;
+		nếu (filt->flags & LOGFF_DENY)
+			trả_về false;
+		không_thì
+			trả_về true;
 	}
 
-	return false;
+	trả_về false;
 }
 
 /**
@@ -216,7 +216,7 @@ static bool log_passes_filters(struct log_device *ldev, struct log_rec *rec)
  * @rec:	log record to dispatch
  * Return:	0 msg sent, 1 msg not sent while already dispatching another msg
  */
-static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
+static số_nguyên log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 {
 	struct log_device *ldev;
 	char buf[CONFIG_SYS_CBSIZE];
@@ -226,16 +226,16 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 	 * may result in further generated messages. We cannot process them here
 	 * as this might result in infinite recursion.
 	 */
-	if (gd->processing_msg)
-		return 1;
+	nếu (gd->processing_msg)
+		trả_về 1;
 
 	/* Emit message */
 	gd->processing_msg = true;
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if ((ldev->flags & LOGDF_ENABLE) &&
+		nếu ((ldev->flags & LOGDF_ENABLE) &&
 		    log_passes_filters(ldev, rec)) {
-			if (!rec->msg) {
-				int len;
+			nếu (!rec->msg) {
+				số_nguyên len;
 
 				len = vsnprintf(buf, sizeof(buf), fmt, args);
 				rec->msg = buf;
@@ -245,41 +245,41 @@ static int log_dispatch(struct log_rec *rec, const char *fmt, va_list args)
 		}
 	}
 	gd->processing_msg = false;
-	return 0;
+	trả_về 0;
 }
 
-int _log(enum log_category_t cat, enum log_level_t level, const char *file,
-	 int line, const char *func, const char *fmt, ...)
+số_nguyên _log(enum log_category_t cat, enum log_level_t level, const char *file,
+	 số_nguyên line, const char *func, const char *fmt, ...)
 {
 	struct log_rec rec;
 	va_list args;
 
-	if (!gd)
-		return -ENOSYS;
+	nếu (!gd)
+		trả_về -ENOSYS;
 
 	/* Check for message continuation */
-	if (cat == LOGC_CONT)
+	nếu (cat == LOGC_CONT)
 		cat = gd->logc_prev;
-	if (level == LOGL_CONT)
+	nếu (level == LOGL_CONT)
 		level = gd->logl_prev;
 
 	rec.cat = cat;
 	rec.level = level & LOGL_LEVEL_MASK;
 	rec.flags = 0;
-	if (level & LOGL_FORCE_DEBUG)
+	nếu (level & LOGL_FORCE_DEBUG)
 		rec.flags |= LOGRECF_FORCE_DEBUG;
-	if (gd->log_cont)
+	nếu (gd->log_cont)
 		rec.flags |= LOGRECF_CONT;
 	rec.file = file;
 	rec.line = line;
 	rec.func = func;
 	rec.msg = NULL;
 
-	if (!(gd->flags & GD_FLG_LOG_READY)) {
+	nếu (!(gd->flags & GD_FLG_LOG_READY)) {
 		gd->log_drop_count++;
 
 		/* display dropped traces with console puts and DEBUG_UART */
-		if (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
+		nếu (rec.level <= CONFIG_LOG_DEFAULT_LEVEL ||
 		    rec.flags & LOGRECF_FORCE_DEBUG) {
 			char buf[CONFIG_SYS_CBSIZE];
 
@@ -289,31 +289,31 @@ int _log(enum log_category_t cat, enum log_level_t level, const char *file,
 			va_end(args);
 		}
 
-		return -ENOSYS;
+		trả_về -ENOSYS;
 	}
 	va_start(args, fmt);
-	if (!log_dispatch(&rec, fmt, args)) {
+	nếu (!log_dispatch(&rec, fmt, args)) {
 		gd->logc_prev = cat;
 		gd->logl_prev = level;
 	}
 	va_end(args);
 
-	return 0;
+	trả_về 0;
 }
 
 #define MAX_LINE_LENGTH_BYTES		64
 #define DEFAULT_LINE_LENGTH_BYTES	16
 
-int _log_buffer(enum log_category_t cat, enum log_level_t level,
-		const char *file, int line, const char *func, ulong addr,
+số_nguyên _log_buffer(enum log_category_t cat, enum log_level_t level,
+		const char *file, số_nguyên line, const char *func, ulong addr,
 		const void *data, uint width, uint count, uint linelen)
 {
-	if (linelen * width > MAX_LINE_LENGTH_BYTES)
+	nếu (linelen * width > MAX_LINE_LENGTH_BYTES)
 		linelen = MAX_LINE_LENGTH_BYTES / width;
-	if (linelen < 1)
+	nếu (linelen < 1)
 		linelen = DEFAULT_LINE_LENGTH_BYTES / width;
 
-	while (count) {
+	trong_khi (count) {
 		uint thislinelen;
 		char buf[HEXDUMP_MAX_BUF_LENGTH(width * linelen)];
 
@@ -328,86 +328,86 @@ int _log_buffer(enum log_category_t cat, enum log_level_t level,
 		count -= thislinelen;
 	}
 
-	return 0;
+	trả_về 0;
 }
 
-int log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
+số_nguyên log_add_filter_flags(const char *drv_name, enum log_category_t cat_list[],
 			 enum log_level_t level, const char *file_list,
-			 const char *func_list, int flags)
+			 const char *func_list, số_nguyên flags)
 {
 	struct log_filter *filt;
 	struct log_device *ldev;
-	int ret;
-	int i;
+	số_nguyên ret;
+	số_nguyên i;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
+	nếu (!ldev)
+		trả_về -ENOENT;
 	filt = calloc(1, sizeof(*filt));
-	if (!filt)
-		return -ENOMEM;
+	nếu (!filt)
+		trả_về -ENOMEM;
 
 	filt->flags = flags;
-	if (cat_list) {
+	nếu (cat_list) {
 		filt->flags |= LOGFF_HAS_CAT;
-		for (i = 0; ; i++) {
-			if (i == ARRAY_SIZE(filt->cat_list)) {
+		cho (i = 0; ; i++) {
+			nếu (i == ARRAY_SIZE(filt->cat_list)) {
 				ret = -ENOSPC;
 				goto err;
 			}
 			filt->cat_list[i] = cat_list[i];
-			if (cat_list[i] == LOGC_END)
+			nếu (cat_list[i] == LOGC_END)
 				break;
 		}
 	}
 	filt->level = level;
-	if (file_list) {
+	nếu (file_list) {
 		filt->file_list = strdup(file_list);
-		if (!filt->file_list) {
+		nếu (!filt->file_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
-	if (func_list) {
+	nếu (func_list) {
 		filt->func_list = strdup(func_list);
-		if (!filt->func_list) {
+		nếu (!filt->func_list) {
 			ret = -ENOMEM;
 			goto err;
 		}
 	}
 	filt->filter_num = ldev->next_filter_num++;
 	/* Add deny filters to the beginning of the list */
-	if (flags & LOGFF_DENY)
+	nếu (flags & LOGFF_DENY)
 		list_add(&filt->sibling_node, &ldev->filter_head);
-	else
+	không_thì
 		list_add_tail(&filt->sibling_node, &ldev->filter_head);
 
-	return filt->filter_num;
+	trả_về filt->filter_num;
 
 err:
 	free(filt);
-	return ret;
+	trả_về ret;
 }
 
-int log_remove_filter(const char *drv_name, int filter_num)
+số_nguyên log_remove_filter(const char *drv_name, số_nguyên filter_num)
 {
 	struct log_filter *filt;
 	struct log_device *ldev;
 
 	ldev = log_device_find_by_name(drv_name);
-	if (!ldev)
-		return -ENOENT;
+	nếu (!ldev)
+		trả_về -ENOENT;
 
 	list_for_each_entry(filt, &ldev->filter_head, sibling_node) {
-		if (filt->filter_num == filter_num) {
+		nếu (filt->filter_num == filter_num) {
 			list_del(&filt->sibling_node);
 			free(filt);
 
-			return 0;
+			trả_về 0;
 		}
 	}
 
-	return -ENOENT;
+	trả_về -ENOENT;
 }
 
 /**
@@ -421,8 +421,8 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 	struct log_device *ldev;
 
 	list_for_each_entry(ldev, &gd->log_head, sibling_node) {
-		if (ldev->drv == drv)
-			return ldev;
+		nếu (ldev->drv == drv)
+			trả_về ldev;
 	}
 	/*
 	 * It is quite hard to pass an invalid driver since passing an unknown
@@ -430,22 +430,22 @@ static struct log_device *log_find_device_by_drv(struct log_driver *drv)
 	 * it is possible to pass NULL, for example, so this
 	 */
 
-	return NULL;
+	trả_về NULL;
 }
 
-int log_device_set_enable(struct log_driver *drv, bool enable)
+số_nguyên log_device_set_enable(struct log_driver *drv, bool enable)
 {
 	struct log_device *ldev;
 
 	ldev = log_find_device_by_drv(drv);
-	if (!ldev)
-		return -ENOENT;
-	if (enable)
+	nếu (!ldev)
+		trả_về -ENOENT;
+	nếu (enable)
 		ldev->flags |= LOGDF_ENABLE;
-	else
+	không_thì
 		ldev->flags &= ~LOGDF_ENABLE;
 
-	return 0;
+	trả_về 0;
 }
 
 void log_fixup_for_gd_move(struct global_data *new_gd)
@@ -453,10 +453,10 @@ void log_fixup_for_gd_move(struct global_data *new_gd)
 	new_gd->log_head.prev->next = &new_gd->log_head;
 }
 
-int log_init(void)
+số_nguyên log_init(void)
 {
 	struct log_driver *drv = ll_entry_start(struct log_driver, log_driver);
-	const int count = ll_entry_count(struct log_driver, log_driver);
+	const số_nguyên count = ll_entry_count(struct log_driver, log_driver);
 	struct log_driver *end = drv + count;
 
 	/*
@@ -465,13 +465,13 @@ int log_init(void)
 	 * We only support having a single device for each driver.
 	 */
 	INIT_LIST_HEAD((struct list_head *)&gd->log_head);
-	while (drv < end) {
+	trong_khi (drv < end) {
 		struct log_device *ldev;
 
 		ldev = calloc(1, sizeof(*ldev));
-		if (!ldev) {
+		nếu (!ldev) {
 			debug("%s: Cannot allocate memory\n", __func__);
-			return -ENOMEM;
+			trả_về -ENOMEM;
 		}
 		INIT_LIST_HEAD(&ldev->filter_head);
 		ldev->drv = drv;
@@ -481,11 +481,11 @@ int log_init(void)
 		drv++;
 	}
 	gd->flags |= GD_FLG_LOG_READY;
-	if (!gd->default_log_level)
+	nếu (!gd->default_log_level)
 		gd->default_log_level = CONFIG_LOG_DEFAULT_LEVEL;
 	gd->log_fmt = log_get_default_format();
 	gd->logc_prev = LOGC_NONE;
 	gd->logl_prev = LOGL_INFO;
 
-	return 0;
+	trả_về 0;
 }

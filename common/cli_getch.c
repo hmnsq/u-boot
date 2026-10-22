@@ -39,16 +39,16 @@ void cli_ch_init(struct cli_ch_state *cch)
  * @actp: Returns the action to take
  * Returns: Output character if *actp is ESC_CONVERTED, else 0
  */
-static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
+static số_nguyên cli_ch_esc(struct cli_ch_state *cch, số_nguyên ichar,
 		      enum cli_esc_state_t *actp)
 {
 	enum cli_esc_state_t act = ESC_REJECT;
 
 	switch (cch->esc_len) {
 	case 1:
-		if (ichar == '[' || ichar == 'O')
+		nếu (ichar == '[' || ichar == 'O')
 			act = ESC_SAVE;
-		else
+		không_thì
 			act = ESC_CONVERTED;
 		break;
 	case 2:
@@ -83,7 +83,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 		case '4':
 		case '7':
 		case '8':
-			if (cch->esc_save[1] == '[') {
+			nếu (cch->esc_save[1] == '[') {
 				/* see if next character is ~ */
 				act = ESC_SAVE;
 			}
@@ -111,7 +111,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 			}
 			break;
 		case '0':
-			if (cch->esc_save[2] == '2')
+			nếu (cch->esc_save[2] == '2')
 				act = ESC_SAVE;
 			break;
 		}
@@ -125,7 +125,7 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 		}
 		break;
 	case 5:
-		if (ichar == '~') {	/* bracketed paste */
+		nếu (ichar == '~') {	/* bracketed paste */
 			ichar = 0;
 			act = ESC_CONVERTED;
 		}
@@ -133,45 +133,45 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 
 	*actp = act;
 
-	return ichar;
+	trả_về ichar;
 }
 
-int cli_ch_process(struct cli_ch_state *cch, int ichar)
+số_nguyên cli_ch_process(struct cli_ch_state *cch, số_nguyên ichar)
 {
 	/*
 	 * ichar=0x0 when error occurs in U-Boot getchar() or when the caller
 	 * wants to check if there are more characters saved in the escape
 	 * sequence
 	 */
-	if (!ichar) {
-		if (cch->emitting) {
-			if (cch->emit_upto < cch->esc_len)
-				return cch->esc_save[cch->emit_upto++];
+	nếu (!ichar) {
+		nếu (cch->emitting) {
+			nếu (cch->emit_upto < cch->esc_len)
+				trả_về cch->esc_save[cch->emit_upto++];
 			cch->emit_upto = 0;
 			cch->emitting = false;
 			cch->esc_len = 0;
 		}
-		return 0;
-	} else if (ichar == -ETIMEDOUT) {
+		trả_về 0;
+	} không_thì nếu (ichar == -ETIMEDOUT) {
 		/*
 		 * If we are in an escape sequence but nothing has followed the
 		 * Escape character, then the user probably just pressed the
 		 * Escape key. Return it and clear the sequence.
 		 */
-		if (cch->esc_len) {
+		nếu (cch->esc_len) {
 			cch->esc_len = 0;
-			return '\e';
+			trả_về '\e';
 		}
 
 		/* Otherwise there is nothing to return */
-		return 0;
+		trả_về 0;
 	}
 
-	if (ichar == '\n' || ichar == '\r')
-		return '\n';
+	nếu (ichar == '\n' || ichar == '\r')
+		trả_về '\n';
 
 	/* handle standard linux xterm esc sequences for arrow key, etc. */
-	if (cch->esc_len != 0) {
+	nếu (cch->esc_len != 0) {
 		enum cli_esc_state_t act;
 
 		ichar = cli_ch_esc(cch, ichar, &act);
@@ -190,7 +190,7 @@ int cli_ch_process(struct cli_ch_state *cch, int ichar)
 			cch->esc_save[cch->esc_len++] = ichar;
 			ichar = cch->esc_save[cch->emit_upto++];
 			cch->emitting = true;
-			return ichar;
+			trả_về ichar;
 		case ESC_CONVERTED:
 			/* valid escape sequence, return the resulting char */
 			cch->esc_len = 0;
@@ -198,16 +198,16 @@ int cli_ch_process(struct cli_ch_state *cch, int ichar)
 		}
 	}
 
-	if (ichar == '\e') {
-		if (!cch->esc_len) {
+	nếu (ichar == '\e') {
+		nếu (!cch->esc_len) {
 			cch->esc_save[cch->esc_len] = ichar;
 			cch->esc_len = 1;
-		} else {
+		} không_thì {
 			puts("impossible condition #876\n");
 			cch->esc_len = 0;
 		}
-		return 0;
+		trả_về 0;
 	}
 
-	return ichar;
+	trả_về ichar;
 }

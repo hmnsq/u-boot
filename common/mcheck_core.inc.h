@@ -59,7 +59,7 @@
 #define _MCHECKCORE_INC_H      1
 #include "mcheck.h"
 
-#if defined(MCHECK_HEAP_PROTECTION)
+#nếu defined(MCHECK_HEAP_PROTECTION)
 #define mcheck_flood memset
 
 // these are from /dev/random:
@@ -118,7 +118,7 @@ static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
 
 static inline size_t allign_size_up(size_t sz, size_t grain)
 {
-	return (sz + grain - 1) & ~(grain - 1);
+	trả_về (sz + grain - 1) & ~(grain - 1);
 }
 
 #define mcheck_allign_customer_size(SZ) allign_size_up(SZ, sizeof(mcheck_elem))
@@ -127,20 +127,20 @@ static inline size_t allign_size_up(size_t sz, size_t grain)
 static enum mcheck_status mcheck_OnNok(enum mcheck_status status, const void *p)
 {
 	(*mcheck_abortfunc)(status, p);
-	return status;
+	trả_về status;
 }
 
 static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] == MAGICFREE)
-			return mcheck_OnNok(MCHECK_FREE, hdr + 1);
+	cho (i = 0; i < CANARY_DEPTH; ++i)
+		nếu (hdr->canary.elems[i] == MAGICFREE)
+			trả_về mcheck_OnNok(MCHECK_FREE, hdr + 1);
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] != MAGICWORD)
-			return mcheck_OnNok(MCHECK_HEAD, hdr + 1);
+	cho (i = 0; i < CANARY_DEPTH; ++i)
+		nếu (hdr->canary.elems[i] != MAGICWORD)
+			trả_về mcheck_OnNok(MCHECK_HEAD, hdr + 1);
 
 	const size_t payload_size = hdr->size;
 	const size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
@@ -148,69 +148,69 @@ static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
 
 	const char *payload = (const char *)&hdr[1];
 
-	for (i = 0; i < padd_size; ++i)
-		if (payload[payload_size + i] != PADDINGFLOOD)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	cho (i = 0; i < padd_size; ++i)
+		nếu (payload[payload_size + i] != PADDINGFLOOD)
+			trả_về mcheck_OnNok(MCHECK_TAIL, hdr + 1);
 
 	const mcheck_canary *tail = (const mcheck_canary *)&payload[payload_size_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (tail->elems[i] != MAGICTAIL)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
-	return MCHECK_OK;
+	cho (i = 0; i < CANARY_DEPTH; ++i)
+		nếu (tail->elems[i] != MAGICTAIL)
+			trả_về mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	trả_về MCHECK_OK;
 }
 
 enum { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
-static void *mcheck_free_helper(void *ptr, int clean_content)
+static void *mcheck_free_helper(void *ptr, số_nguyên clean_content)
 {
-	if (!ptr)
-		return ptr;
+	nếu (!ptr)
+		trả_về ptr;
 
 	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
-	int i;
+	số_nguyên i;
 
 	mcheck_checkhdr(hdr);
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	cho (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICFREE;
 
-	if (clean_content)
+	nếu (clean_content)
 		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_size(hdr->size));
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i] == hdr) {
+	cho (i = 0; i < REGISTRY_SZ; ++i)
+		nếu (mcheck_registry[i] == hdr) {
 			mcheck_registry[i] = 0;
 			break;
 		}
 
 	--mcheck_chunk_count;
-	return (char *)hdr - hdr->aln_skip;
+	trả_về (char *)hdr - hdr->aln_skip;
 }
 
-static void *mcheck_free_prehook(void *ptr) { return mcheck_free_helper(ptr, CLEAN_CONTENT); }
-static void *mcheck_reallocfree_prehook(void *ptr) { return mcheck_free_helper(ptr, KEEP_CONTENT); }
+static void *mcheck_free_prehook(void *ptr) { trả_về mcheck_free_helper(ptr, CLEAN_CONTENT); }
+static void *mcheck_reallocfree_prehook(void *ptr) { trả_về mcheck_free_helper(ptr, KEEP_CONTENT); }
 
 static size_t mcheck_alloc_prehook(size_t sz)
 {
 	sz = mcheck_allign_customer_size(sz);
-	return sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
+	trả_về sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
 }
 
 static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
-				     size_t alignment, int clean_content)
+				     size_t alignment, số_nguyên clean_content)
 {
 	const size_t slop = alignment ?
 		mcheck_evaluate_memalign_prefix_size(alignment) - sizeof(struct mcheck_hdr) : 0;
 	struct mcheck_hdr *hdr = (struct mcheck_hdr *)((char *)altoghether_ptr + slop);
-	int i;
+	số_nguyên i;
 
 	hdr->size = customer_sz;
 	hdr->aln_skip = slop;
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	cho (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICWORD;
 
 	char *payload = (char *)&hdr[1];
 
-	if (clean_content)
+	nếu (clean_content)
 		mcheck_flood(payload, MALLOCFLOOD, customer_sz);
 
 	const size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
@@ -219,65 +219,65 @@ static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
 
 	mcheck_canary *tail = (mcheck_canary *)&payload[customer_size_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	cho (i = 0; i < CANARY_DEPTH; ++i)
 		tail->elems[i] = MAGICTAIL;
 
 	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
+	nếu (mcheck_chunk_count > mcheck_chunk_count_max)
 		mcheck_chunk_count_max = mcheck_chunk_count;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (!mcheck_registry[i]) {
+	cho (i = 0; i < REGISTRY_SZ; ++i)
+		nếu (!mcheck_registry[i]) {
 			mcheck_registry[i] = hdr;
-			return payload; // normal end
+			trả_về payload; // normal end
 		}
 
 	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
 	printf("%s", overflow_msg);
 	overflow_msg = "(mcheck registry full)";
-	return payload;
+	trả_về payload;
 }
 
 static void *mcheck_alloc_posthook(void *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
+	trả_về mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
 }
 
 static void *mcheck_alloc_noclean_posthook(void *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
+	trả_về mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
 }
 
 static size_t mcheck_memalign_prehook(size_t alig, size_t sz)
 {
-	return mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
+	trả_về mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
 }
 
 static void *mcheck_memalign_posthook(size_t alignment, void *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
+	trả_về mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
 }
 
 static enum mcheck_status mcheck_mprobe(void *ptr)
 {
 	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
 
-	return mcheck_checkhdr(hdr);
+	trả_về mcheck_checkhdr(hdr);
 }
 
 static void mcheck_pedantic_check(void)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i])
+	cho (i = 0; i < REGISTRY_SZ; ++i)
+		nếu (mcheck_registry[i])
 			mcheck_checkhdr(mcheck_registry[i]);
 }
 
 static void mcheck_pedantic_prehook(void)
 {
-	if (mcheck_pedantic_flag)
+	nếu (mcheck_pedantic_flag)
 		mcheck_pedantic_check();
 }
 
@@ -290,10 +290,10 @@ static void mcheck_initialize(mcheck_abortfunc_t new_func, char pedantic_flag)
 void mcheck_on_ramrelocation(size_t offset)
 {
 	char *p;
-	int i;
+	số_nguyên i;
 	// Simple, but inaccurate strategy: drop the pre-reloc heap
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if ((p = mcheck_registry[i]) != NULL ) {
+	cho (i = 0; i < REGISTRY_SZ; ++i)
+		nếu ((p = mcheck_registry[i]) != NULL ) {
 			printf("mcheck, WRN: forgetting %p chunk\n", p);
 			mcheck_registry[i] = 0;
 		}

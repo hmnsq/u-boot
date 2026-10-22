@@ -28,46 +28,46 @@ static ulong spl_spi_fit_read(struct spl_load_info *load, ulong sector,
 	ulong ret;
 
 	ret = spi_flash_read(flash, sector, count, buf);
-	if (!ret)
-		return count;
-	else
-		return 0;
+	nếu (!ret)
+		trả_về count;
+	không_thì
+		trả_về 0;
 }
 
-unsigned int __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
+unsigned số_nguyên __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
 {
-	return CONFIG_SYS_SPI_U_BOOT_OFFS;
+	trả_về CONFIG_SYS_SPI_U_BOOT_OFFS;
 }
 
 u32 __weak spl_spi_boot_bus(void)
 {
-	return CONFIG_SF_DEFAULT_BUS;
+	trả_về CONFIG_SF_DEFAULT_BUS;
 }
 
 u32 __weak spl_spi_boot_cs(void)
 {
-	return CONFIG_SF_DEFAULT_CS;
+	trả_về CONFIG_SF_DEFAULT_CS;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_spi_load_image_os(struct spl_image_info *spl_image,
+#nếu IS_ENABLED(CONFIG_SPL_OS_BOOT)
+static số_nguyên spl_spi_load_image_os(struct spl_image_info *spl_image,
 				 struct spl_boot_device *bootdev,
 				 struct spi_flash *flash,
 				 struct spl_load_info *load)
 {
-	int err = spl_load(spl_image, bootdev, load, 0,
+	số_nguyên err = spl_load(spl_image, bootdev, load, 0,
 			   CONFIG_SYS_SPI_KERNEL_OFFS);
 
-	if (err)
-		return err;
+	nếu (err)
+		trả_về err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#nếu IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/* Read device tree. */
-	return spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
+	trả_về spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
 			      CONFIG_SYS_SPI_ARGS_SIZE,
 			      (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-#else
-	return 0;
+#không_thì
+	trả_về 0;
 #endif
 
 }
@@ -78,14 +78,14 @@ static int spl_spi_load_image_os(struct spl_image_info *spl_image,
  * configured and available since this code loads the main U-Boot image
  * from SPI into SDRAM and starts it from there.
  */
-static int spl_spi_load_image(struct spl_image_info *spl_image,
+static số_nguyên spl_spi_load_image(struct spl_image_info *spl_image,
 			      struct spl_boot_device *bootdev)
 {
-	int err = 0;
-	unsigned int payload_offs;
+	số_nguyên err = 0;
+	unsigned số_nguyên payload_offs;
 	struct spi_flash *flash;
-	unsigned int sf_bus = spl_spi_boot_bus();
-	unsigned int sf_cs = spl_spi_boot_cs();
+	unsigned số_nguyên sf_bus = spl_spi_boot_bus();
+	unsigned số_nguyên sf_cs = spl_spi_boot_cs();
 	struct spl_load_info load;
 
 	/*
@@ -96,45 +96,45 @@ static int spl_spi_load_image(struct spl_image_info *spl_image,
 	flash = spi_flash_probe(sf_bus, sf_cs,
 				CONFIG_SF_DEFAULT_SPEED,
 				CONFIG_SF_DEFAULT_MODE);
-	if (!flash) {
+	nếu (!flash) {
 		puts("SPI probe failed.\n");
-		return -ENODEV;
+		trả_về -ENODEV;
 	}
 
 	spl_load_init(&load, spl_spi_fit_read, flash, 1);
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#nếu CONFIG_IS_ENABLED(OS_BOOT)
+	nếu (!spl_start_uboot()) {
 		err = spl_spi_load_image_os(spl_image, bootdev, flash, &load);
 
-		if (!err)
-			return 0;
+		nếu (!err)
+			trả_về 0;
 
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		nếu (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			trả_về err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
 
 	payload_offs = spl_spi_get_uboot_offs(flash);
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
+	nếu (CONFIG_IS_ENABLED(OF_REAL)) {
 		payload_offs = ofnode_conf_read_int("u-boot,spl-payload-offset",
 						    payload_offs);
 	}
 
 	err = spl_load(spl_image, bootdev, &load, 0, payload_offs);
-	if (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
-		int ret = spi_nor_remove(flash);
+	nếu (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
+		số_nguyên ret = spi_nor_remove(flash);
 
-		if (ret) {
+		nếu (ret) {
 			printf("%s: Failed to remove SPI NOR flash: %d\n",
 			       __func__, ret);
-			if (!err)
+			nếu (!err)
 				err = ret;
 		}
 	}
-	return err;
+	trả_về err;
 }
 /* Use priorty 1 so that boards can override this */
 SPL_LOAD_IMAGE_METHOD("SPI", 1, BOOT_DEVICE_SPI, spl_spi_load_image);
