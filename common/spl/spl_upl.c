@@ -8,165 +8,165 @@
 
 #define LOG_CATEGORY UCLASS_BOOTSTD
 
-#include <alist.h>
-#include <bloblist.h>
-#include <dm.h>
-#include <image.h>
-#include <mapmem.h>
-#include <serial.h>
-#include <spl.h>
-#include <upl.h>
-#include <video.h>
-#include <asm/global_data.h>
-#include <dm/read.h>
-#include <dm/uclass-internal.h>
+#अन्तर्भाव <alist.h>
+#अन्तर्भाव <bloblist.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <image.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <serial.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <upl.h>
+#अन्तर्भाव <video.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <dm/read.h>
+#अन्तर्भाव <dm/uclass-internal.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct upl s_upl;
+संरचना upl s_upl;
 
-void upl_set_fit_addr(ulong fit)
+शून्य upl_set_fit_addr(ulong fit)
 {
-	struct upl *upl = &s_upl;
+	संरचना upl *upl = &s_upl;
 
 	upl->fit = fit;
 }
 
-void upl_set_fit_info(ulong fit, int conf_offset, ulong entry_addr)
+शून्य upl_set_fit_info(ulong fit, पूर्णाङ्क conf_offset, ulong entry_addr)
 {
-	struct upl *upl = &s_upl;
+	संरचना upl *upl = &s_upl;
 
 	upl->fit = fit;
 	upl->conf_offset = conf_offset;
 	log_debug("upl: add fit %lx conf %x\n", fit, conf_offset);
 }
 
-int _upl_add_image(int node, ulong load_addr, ulong size, const char *desc)
+पूर्णाङ्क _upl_add_image(पूर्णाङ्क ग्रन्थिः, ulong load_addr, ulong size, ध्रुव वर्ण *desc)
 {
-	struct upl *upl = &s_upl;
-	struct upl_image img;
+	संरचना upl *upl = &s_upl;
+	संरचना upl_image img;
 
 	img.load = load_addr;
 	img.size = size;
-	img.offset = node;
+	img.offset = ग्रन्थिः;
 	img.description = desc;
-	if (!alist_add(&upl->image, img))
-		return -ENOMEM;
+	जइ (!alist_add(&upl->image, img))
+		प्रत्यागम -ENOMEM;
 	log_debug("upl: add image %s at %lx size %lx\n", desc, load_addr, size);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int write_serial(struct upl_serial *ser)
+स्थिर पूर्णाङ्क write_serial(संरचना upl_serial *ser)
 {
-	struct udevice *dev = gd->cur_serial_dev;
-	struct serial_device_info info;
-	struct memregion region;
-	int ret;
+	संरचना udevice *dev = gd->cur_serial_dev;
+	संरचना serial_device_info info;
+	संरचना memregion region;
+	पूर्णाङ्क ret;
 
-	if (!dev)
-		return log_msg_ret("ser", -ENOENT);
+	जइ (!dev)
+		प्रत्यागम log_सन्देशः_ret("ser", -ENOENT);
 	ret = serial_getinfo(dev, &info);
-	if (ret)
-		return log_msg_ret("inf", ret);
+	जइ (ret)
+		प्रत्यागम log_सन्देशः_ret("inf", ret);
 
 	ser->compatible = ofnode_read_string(dev_ofnode(dev), "compatible");
 	ser->clock_frequency = info.clock;
 	ser->current_speed = gd->baudrate;
 	region.base = info.addr;
 	region.size = info.size;
-	alist_init_struct(&ser->reg, struct memregion);
-	if (!alist_add(&ser->reg, region))
-		return -ENOMEM;
+	alist_init_struct(&ser->reg, संरचना memregion);
+	जइ (!alist_add(&ser->reg, region))
+		प्रत्यागम -ENOMEM;
 	ser->reg_io_shift = info.reg_shift;
 	ser->reg_offset = info.reg_offset;
 	ser->reg_io_width = info.reg_width;
 	ser->virtual_reg = 0;
 	ser->access_type = info.addr_space;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int write_graphics(struct upl_graphics *gra)
+स्थिर पूर्णाङ्क write_graphics(संरचना upl_graphics *gra)
 {
-	struct video_uc_plat *plat;
-	struct video_priv *priv;
-	struct memregion region;
-	struct udevice *dev;
+	संरचना video_uc_plat *plat;
+	संरचना video_priv *priv;
+	संरचना memregion region;
+	संरचना udevice *dev;
 
-	alist_init_struct(&gra->reg, struct memregion);
+	alist_init_struct(&gra->reg, संरचना memregion);
 	uclass_find_first_device(UCLASS_VIDEO, &dev);
-	if (!dev || !device_active(dev))
-		return log_msg_ret("vid", -ENOENT);
+	जइ (!dev || !device_active(dev))
+		प्रत्यागम log_सन्देशः_ret("vid", -ENOENT);
 
 	plat = dev_get_uclass_plat(dev);
 	region.base = plat->base;
 	region.size = plat->size;
-	if (!alist_add(&gra->reg, region))
-		return log_msg_ret("reg", -ENOMEM);
+	जइ (!alist_add(&gra->reg, region))
+		प्रत्यागम log_सन्देशः_ret("reg", -ENOMEM);
 
 	priv = dev_get_uclass_priv(dev);
 	gra->width = priv->xsize;
 	gra->height = priv->ysize;
-	gra->stride = priv->line_length;	/* private field */
-	switch (priv->format) {
-	case VIDEO_RGBA8888:
-	case VIDEO_X8R8G8B8:
+	gra->stride = priv->पङ्क्तिः_length;	/* private field */
+	विकल्प (priv->format) {
+	पक्ष VIDEO_RGBA8888:
+	पक्ष VIDEO_X8R8G8B8:
 		gra->format = UPLGF_ARGB32;
-		break;
-	case VIDEO_X8B8G8R8:
+		भङ्ग;
+	पक्ष VIDEO_X8B8G8R8:
 		gra->format = UPLGF_ABGR32;
-		break;
-	case VIDEO_X2R10G10B10:
+		भङ्ग;
+	पक्ष VIDEO_X2R10G10B10:
 		log_debug("device '%s': VIDEO_X2R10G10B10 not supported\n",
 			  dev->name);
-		return log_msg_ret("for", -EPROTO);
-	case VIDEO_UNKNOWN:
+		प्रत्यागम log_सन्देशः_ret("for", -EPROTO);
+	पक्ष VIDEO_UNKNOWN:
 		log_debug("device '%s': Unknown video format\n", dev->name);
-		return log_msg_ret("for", -EPROTO);
+		प्रत्यागम log_सन्देशः_ret("for", -EPROTO);
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int spl_write_upl_handoff(struct spl_image_info *spl_image)
+पूर्णाङ्क spl_write_upl_handoff(संरचना spl_image_info *spl_image)
 {
-	struct upl *upl = &s_upl;
-	struct abuf buf;
-	ofnode root;
-	void *ptr;
-	int ret;
+	संरचना upl *upl = &s_upl;
+	संरचना abuf buf;
+	ofnode मूलम्;
+	शून्य *ptr;
+	पूर्णाङ्क ret;
 
-	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.count);
+	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.गणनम्);
 	upl->addr_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
 	upl->size_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
 	upl->bootmode = UPLBM_DEFAULT;
 	ret = write_serial(&upl->serial);
-	if (ret)
-		return log_msg_ret("ser", ret);
+	जइ (ret)
+		प्रत्यागम log_सन्देशः_ret("ser", ret);
 	ret = write_graphics(&upl->graphics);
-	if (ret && ret != -ENOENT)
-		return log_msg_ret("gra", ret);
+	जइ (ret && ret != -ENOENT)
+		प्रत्यागम log_सन्देशः_ret("gra", ret);
 
-	root = ofnode_root();
-	ret = upl_write_handoff(upl, root, true);
-	if (ret)
-		return log_msg_ret("wr", ret);
+	मूलम् = ofnode_मूलम्();
+	ret = upl_write_handoff(upl, मूलम्, true);
+	जइ (ret)
+		प्रत्यागम log_सन्देशः_ret("wr", ret);
 
 	ret = oftree_to_fdt(oftree_default(), &buf);
-	if (ret)
-		return log_msg_ret("fdt", ret);
+	जइ (ret)
+		प्रत्यागम log_सन्देशः_ret("fdt", ret);
 	log_debug("FDT size %zx\n", abuf_size(&buf));
 
 	ptr = bloblist_add(BLOBLISTT_CONTROL_FDT, abuf_size(&buf), 0);
-	if (!ptr)
-		return log_msg_ret("blo", -ENOENT);
+	जइ (!ptr)
+		प्रत्यागम log_सन्देशः_ret("blo", -ENOENT);
 	memcpy(ptr, abuf_data(&buf), abuf_size(&buf));
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void spl_upl_init(void)
+शून्य spl_upl_init(शून्य)
 {
 	upl_init(&s_upl);
 }

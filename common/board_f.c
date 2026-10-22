@@ -9,49 +9,49 @@
  * Marius Groeger <mgroeger@sysgo.de>
  */
 
-#include <config.h>
-#include <bloblist.h>
-#include <bootstage.h>
-#include <clock_legacy.h>
-#include <console.h>
-#include <cpu.h>
-#include <cpu_func.h>
-#include <cyclic.h>
-#include <display_options.h>
-#include <dm.h>
-#include <env.h>
-#include <env_internal.h>
-#include <event.h>
-#include <fdtdec.h>
-#include <fs.h>
-#include <hang.h>
-#include <i2c.h>
-#include <init.h>
-#include <initcall.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <memtop.h>
-#include <os.h>
-#include <post.h>
-#include <relocate.h>
-#include <serial.h>
-#include <spl.h>
-#include <sysreset.h>
-#include <time.h>
-#include <timer.h>
-#include <trace.h>
-#include <upl.h>
-#include <video.h>
-#include <watchdog.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <asm/sections.h>
-#include <dm/root.h>
-#include <linux/errno.h>
-#include <linux/log2.h>
-#include <linux/sizes.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <bloblist.h>
+#अन्तर्भाव <bootstage.h>
+#अन्तर्भाव <clock_legacy.h>
+#अन्तर्भाव <console.h>
+#अन्तर्भाव <cpu.h>
+#अन्तर्भाव <cpu_func.h>
+#अन्तर्भाव <cyclic.h>
+#अन्तर्भाव <display_options.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <env_internal.h>
+#अन्तर्भाव <event.h>
+#अन्तर्भाव <fdtdec.h>
+#अन्तर्भाव <fs.h>
+#अन्तर्भाव <hang.h>
+#अन्तर्भाव <i2c.h>
+#अन्तर्भाव <init.h>
+#अन्तर्भाव <initcall.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <mapmem.h>
+#अन्तर्भाव <memtop.h>
+#अन्तर्भाव <os.h>
+#अन्तर्भाव <post.h>
+#अन्तर्भाव <relocate.h>
+#अन्तर्भाव <serial.h>
+#अन्तर्भाव <spl.h>
+#अन्तर्भाव <sysreset.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <timer.h>
+#अन्तर्भाव <trace.h>
+#अन्तर्भाव <upl.h>
+#अन्तर्भाव <video.h>
+#अन्तर्भाव <watchdog.h>
+#अन्तर्भाव <asm/cache.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <asm/io.h>
+#अन्तर्भाव <asm/sections.h>
+#अन्तर्भाव <dm/root.h>
+#अन्तर्भाव <linux/errno.h>
+#अन्तर्भाव <linux/log2.h>
+#अन्तर्भाव <linux/sizes.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -66,10 +66,10 @@ DECLARE_GLOBAL_DATA_PTR;
  * a structure...
  */
 
-#if defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)
-static int init_func_watchdog_init(void)
+#जइ defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)
+स्थिर पूर्णाङ्क init_func_watchdog_init(शून्य)
 {
-# if defined(CONFIG_HW_WATCHDOG) && \
+# जइ defined(CONFIG_HW_WATCHDOG) && \
 	(defined(CONFIG_M68K) || defined(CONFIG_MICROBLAZE) || \
 	defined(CONFIG_SH) || \
 	defined(CONFIG_DESIGNWARE_WATCHDOG) || \
@@ -79,31 +79,31 @@ static int init_func_watchdog_init(void)
 # endif
 	schedule();
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int init_func_watchdog_reset(void)
+पूर्णाङ्क init_func_watchdog_reset(शून्य)
 {
 	schedule();
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif /* CONFIG_WATCHDOG */
 
-__weak void board_add_ram_info(int use_default)
+__weak शून्य board_add_ram_info(पूर्णाङ्क use_default)
 {
 	/* please define platform specific board_add_ram_info() */
 }
 
-static int init_baud_rate(void)
+स्थिर पूर्णाङ्क init_baud_rate(शून्य)
 {
 	gd->baudrate = env_get_ulong("baudrate", 10, CONFIG_BAUDRATE);
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int display_text_info(void)
+स्थिर पूर्णाङ्क display_text_info(शून्य)
 {
-#if !defined(CONFIG_SANDBOX) && !defined(CONFIG_EFI_APP)
+#जइ !defined(CONFIG_SANDBOX) && !defined(CONFIG_EFI_APP)
 	ulong bss_start, bss_end, text_base;
 
 	bss_start = (ulong)__bss_start;
@@ -111,7 +111,7 @@ static int display_text_info(void)
 
 #ifdef CONFIG_TEXT_BASE
 	text_base = CONFIG_TEXT_BASE;
-#else
+#अण्णहा
 	text_base = CONFIG_SYS_MONITOR_BASE;
 #endif
 
@@ -119,72 +119,72 @@ static int display_text_info(void)
 	      text_base, bss_start, bss_end);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 #ifdef CONFIG_SYSRESET_PRINT_RESETINFO
-static int print_resetinfo(void)
+स्थिर पूर्णाङ्क print_resetinfo(शून्य)
 {
-	struct udevice *dev;
-	char status[256];
+	संरचना udevice *dev;
+	वर्ण status[256];
 	bool status_printed = false;
-	int ret;
+	पूर्णाङ्क ret;
 
 	/*
 	 * Not all boards have sysreset drivers available during early
 	 * boot, so don't fail if one can't be found.
 	 */
-	for (ret = uclass_first_device_check(UCLASS_SYSRESET, &dev); dev;
+	प्रति (ret = uclass_first_device_check(UCLASS_SYSRESET, &dev); dev;
 	     ret = uclass_next_device_check(&dev)) {
-		if (ret) {
+		जइ (ret) {
 			debug("%s: %s sysreset device (error: %d)\n",
 			      __func__, dev->name, ret);
-			continue;
+			अनुवर्त;
 		}
 
-		if (!sysreset_get_status(dev, status, sizeof(status))) {
+		जइ (!sysreset_get_status(dev, status, परिमाण(status))) {
 			printf("%s%s", status_printed ? " " : "", status);
 			status_printed = true;
 		}
 	}
-	if (status_printed)
+	जइ (status_printed)
 		printf("\n");
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
-#if defined(CONFIG_DISPLAY_CPUINFO) && CONFIG_IS_ENABLED(CPU)
-static int print_cpuinfo(void)
+#जइ defined(CONFIG_DISPLAY_CPUINFO) && CONFIG_IS_ENABLED(CPU)
+स्थिर पूर्णाङ्क print_cpuinfo(शून्य)
 {
-	struct udevice *dev;
-	char desc[512];
-	int ret;
+	संरचना udevice *dev;
+	वर्ण desc[512];
+	पूर्णाङ्क ret;
 
 	dev = cpu_get_current_dev();
-	if (!dev) {
+	जइ (!dev) {
 		debug("%s: Could not get CPU device\n",
 		      __func__);
-		return -ENODEV;
+		प्रत्यागम -ENODEV;
 	}
 
-	ret = cpu_get_desc(dev, desc, sizeof(desc));
-	if (ret) {
+	ret = cpu_get_desc(dev, desc, परिमाण(desc));
+	जइ (ret) {
 		debug("%s: Could not get CPU description (err = %d)\n",
 		      dev->name, ret);
-		return ret;
+		प्रत्यागम ret;
 	}
 
 	printf("CPU:   %s\n", desc);
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
-static int announce_dram_init(void)
+स्थिर पूर्णाङ्क announce_dram_init(शून्य)
 {
 	puts("DRAM:  ");
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -197,33 +197,33 @@ static int announce_dram_init(void)
  * For example for size=87654321 we calculate scale=20 and val=836 which means
  * that input has natural human format 83.6 M (mega = 2^20).
  */
-#define compute_size_scale_val(size, scale, val) do { \
+#define compute_size_scale_val(size, scale, val) करेहि { \
 	scale = ilog2(size) / 10 * 10; \
 	val = (10 * size + ((1ULL << scale) >> 1)) >> scale; \
-	if (val == 10240) { val = 10; scale += 10; } \
-} while (0)
+	जइ (val == 10240) { val = 10; scale += 10; } \
+} जाव (0)
 
 /*
  * Check if the sizes in their natural units written in decimal format with
  * one fraction number are same.
  */
-static int sizes_near(unsigned long long size1, unsigned long long size2)
+स्थिर पूर्णाङ्क sizes_near(unsigned long long size1, unsigned long long size2)
 {
-	unsigned int size1_scale, size1_val, size2_scale, size2_val;
+	unsigned पूर्णाङ्क size1_scale, size1_val, size2_scale, size2_val;
 
 	compute_size_scale_val(size1, size1_scale, size1_val);
 	compute_size_scale_val(size2, size2_scale, size2_val);
 
-	return size1_scale == size2_scale && size1_val == size2_val;
+	प्रत्यागम size1_scale == size2_scale && size1_val == size2_val;
 }
 
-static int show_dram_config(void)
+स्थिर पूर्णाङ्क show_dram_config(शून्य)
 {
 	unsigned long long size;
-	int i;
+	पूर्णाङ्क i;
 
 	debug("\nRAM Configuration:\n");
-	for (i = size = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+	प्रति (i = size = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
 		size += gd->dram[i].size;
 		debug("Bank #%d: %llx ", i,
 		      (unsigned long long)(gd->dram[i].start));
@@ -234,133 +234,133 @@ static int show_dram_config(void)
 	debug("\nDRAM:  ");
 
 	print_size(gd->ram_size, "");
-	if (!sizes_near(gd->ram_size, size)) {
+	जइ (!sizes_near(gd->ram_size, size)) {
 		printf(" (total ");
 		print_size(size, ")");
 	}
 	board_add_ram_info(0);
 	putc('\n');
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int dram_init_banksize(void)
+__weak पूर्णाङ्क dram_init_banksize(शून्य)
 {
 	gd->dram[0].start = gd->ram_base;
 	gd->dram[0].size = get_effective_memsize();
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
-static int init_func_i2c(void)
+#जइ CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
+स्थिर पूर्णाङ्क init_func_i2c(शून्य)
 {
 	puts("I2C:   ");
 	i2c_init_all();
 	puts("ready\n");
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
-static int setup_mon_len(void)
+स्थिर पूर्णाङ्क setup_mon_len(शून्य)
 {
-#if defined(CONFIG_ARCH_NEXELL)
+#जइ defined(CONFIG_ARCH_NEXELL)
 	gd->mon_len = (ulong)__bss_end - (ulong)__image_copy_start;
-#elif defined(__ARM__) || defined(__MICROBLAZE__)
+#नोचेद्यदि defined(__ARM__) || defined(__MICROBLAZE__)
 	gd->mon_len = (ulong)__bss_end - (ulong)_start;
-#elif defined(CONFIG_SANDBOX) && !defined(__riscv)
+#नोचेद्यदि defined(CONFIG_SANDBOX) && !defined(__riscv)
 	gd->mon_len = (ulong)_end - (ulong)_init;
-#elif defined(CONFIG_SANDBOX)
+#नोचेद्यदि defined(CONFIG_SANDBOX)
 	/* gcc does not provide _init in crti.o on RISC-V */
 	gd->mon_len = 0;
-#elif defined(CONFIG_EFI_APP)
+#नोचेद्यदि defined(CONFIG_EFI_APP)
 	gd->mon_len = (ulong)_end - (ulong)_init;
-#elif defined(CONFIG_NIOS2) || defined(CONFIG_XTENSA)
+#नोचेद्यदि defined(CONFIG_NIOS2) || defined(CONFIG_XTENSA)
 	gd->mon_len = CONFIG_SYS_MONITOR_LEN;
-#elif defined(CONFIG_SH) || defined(CONFIG_RISCV)
+#नोचेद्यदि defined(CONFIG_SH) || defined(CONFIG_RISCV)
 	gd->mon_len = (ulong)(__bss_end) - (ulong)(_start);
-#elif defined(CONFIG_SYS_MONITOR_BASE)
+#नोचेद्यदि defined(CONFIG_SYS_MONITOR_BASE)
 	/* TODO: use (ulong)__bss_end - (ulong)__text_start; ? */
 	gd->mon_len = (ulong)__bss_end - CONFIG_SYS_MONITOR_BASE;
 #endif
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int setup_spl_handoff(void)
+स्थिर पूर्णाङ्क setup_spl_handoff(शून्य)
 {
-#if CONFIG_IS_ENABLED(HANDOFF)
+#जइ CONFIG_IS_ENABLED(HANDOFF)
 	gd->spl_handoff = bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF,
-					sizeof(struct spl_handoff));
+					परिमाण(संरचना spl_handoff));
 	debug("Found SPL hand-off info %p\n", gd->spl_handoff);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int arch_cpu_init(void)
+__weak पूर्णाङ्क arch_cpu_init(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int mach_cpu_init(void)
+__weak पूर्णाङ्क mach_cpu_init(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* Get the top of usable RAM */
-__weak phys_addr_t board_get_usable_ram_top(phys_size_t total_size)
+__weak phys_addr_t board_get_usable_ram_शिखरम्(phys_size_t total_size)
 {
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP))
-		return gd->ram_top;
+	जइ (CONFIG_IS_ENABLED(RELOC_ADDR_शिखरम्))
+		प्रत्यागम gd->ram_शिखरम्;
 
-#if defined(CFG_SYS_SDRAM_BASE) && CFG_SYS_SDRAM_BASE > 0
+#जइ defined(CFG_SYS_SDRAM_BASE) && CFG_SYS_SDRAM_BASE > 0
 	/*
 	 * Detect whether we have so much RAM that it goes past the end of our
 	 * 32-bit address space. If so, clip the usable RAM so it doesn't.
 	 */
-	if (gd->ram_top < CFG_SYS_SDRAM_BASE)
+	जइ (gd->ram_शिखरम् < CFG_SYS_SDRAM_BASE)
 		/*
 		 * Will wrap back to top of 32-bit space when reservations
 		 * are made.
 		 */
-		return 0;
+		प्रत्यागम 0;
 #endif
-	return gd->ram_top;
+	प्रत्यागम gd->ram_शिखरम्;
 }
 
-__weak int arch_setup_dest_addr(void)
+__weak पूर्णाङ्क arch_setup_dest_addr(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int setup_ram_base(void)
+स्थिर पूर्णाङ्क setup_ram_base(शून्य)
 {
 #ifdef CFG_SYS_SDRAM_BASE
 	gd->ram_base = CFG_SYS_SDRAM_BASE;
 #endif
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int setup_ram_config(void)
+स्थिर पूर्णाङ्क setup_ram_config(शून्य)
 {
 	debug("Monitor len: %08x\n", gd->mon_len);
 
-	if (CONFIG_IS_ENABLED(RELOC_ADDR_TOP)) {
-		int i;
-		phys_addr_t top;
+	जइ (CONFIG_IS_ENABLED(RELOC_ADDR_शिखरम्)) {
+		पूर्णाङ्क i;
+		phys_addr_t शिखरम्;
 
 		gd->ram_size = 0;
-		for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-			top = get_mem_top(gd->dram[i].start, gd->dram[i].size,
+		प्रति (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+			शिखरम् = get_mem_शिखरम्(gd->dram[i].start, gd->dram[i].size,
 					  ALIGN(gd->mon_len, SZ_1M),
-					  (void *)gd->fdt_blob);
-			gd->ram_top = max(top, gd->ram_top);
+					  (शून्य *)gd->fdt_blob);
+			gd->ram_शिखरम् = max(शिखरम्, gd->ram_शिखरम्);
 			gd->ram_size += gd->dram[i].size;
 		}
-	} else {
-		gd->ram_top = gd->ram_base + get_effective_memsize();
+	} अण्णहा {
+		gd->ram_शिखरम् = gd->ram_base + get_effective_memsize();
 	}
-	gd->ram_top = board_get_usable_ram_top(gd->mon_len);
+	gd->ram_शिखरम् = board_get_usable_ram_शिखरम्(gd->mon_len);
 	/*
 	 * Subtract specified amount of memory to hide so that it won't
 	 * get "touched" at all by U-Boot. By fixing up gd->ram_size
@@ -371,35 +371,35 @@ static int setup_ram_config(void)
 	 * memory size from the SDRAM controller setup will have to
 	 * get fixed.
 	 */
-#if CONFIG_VAL(SYS_MEM_TOP_HIDE)
-	gd->ram_top -= CONFIG_SYS_MEM_TOP_HIDE;
-	gd->ram_size -= CONFIG_SYS_MEM_TOP_HIDE;
+#जइ CONFIG_VAL(SYS_MEM_शिखरम्_HIDE)
+	gd->ram_शिखरम् -= CONFIG_SYS_MEM_शिखरम्_HIDE;
+	gd->ram_size -= CONFIG_SYS_MEM_शिखरम्_HIDE;
 #endif
 
-	debug("Ram top: %08llx\n", (unsigned long long)gd->ram_top);
+	debug("Ram top: %08llx\n", (unsigned long long)gd->ram_शिखरम्);
 	debug("Ram size: %08llx\n", (unsigned long long)gd->ram_size);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int setup_dest_addr(void)
+स्थिर पूर्णाङ्क setup_dest_addr(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-	gd->relocaddr = gd->ram_top;
+	gd->relocaddr = gd->ram_शिखरम्;
 	debug("Reloc addr: %08llX\n", (unsigned long long)gd->relocaddr);
 
 	ret = arch_setup_dest_addr();
-	if (ret)
-		return ret;
+	जइ (ret)
+		प्रत्यागम ret;
 
 	gd->initial_relocaddr = gd->relocaddr;
-	return 0;
+	प्रत्यागम 0;
 }
 
 #ifdef CFG_PRAM
 /* reserve protected RAM */
-static int reserve_pram(void)
+स्थिर पूर्णाङ्क reserve_pram(शून्य)
 {
 	ulong reg;
 
@@ -407,42 +407,42 @@ static int reserve_pram(void)
 	gd->relocaddr -= (reg << 10);		/* size is in kB */
 	debug("Reserving %ldk for protected RAM at %08lx\n", reg,
 	      gd->relocaddr);
-	return 0;
+	प्रत्यागम 0;
 }
 #endif /* CFG_PRAM */
 
 /* Round memory pointer down to next 4 kB limit */
-static int reserve_round_4k(void)
+स्थिर पूर्णाङ्क reserve_round_4k(शून्य)
 {
 	gd->relocaddr &= ~(4096 - 1);
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int arch_reserve_mmu(void)
+__weak पूर्णाङ्क arch_reserve_mmu(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_video_from_videoblob(void)
+स्थिर पूर्णाङ्क reserve_video_from_videoblob(शून्य)
 {
-	if (IS_ENABLED(CONFIG_SPL_VIDEO_HANDOFF) && xpl_phase() > PHASE_SPL) {
-		struct video_handoff *ho;
-		int ret = 0;
+	जइ (IS_ENABLED(CONFIG_SPL_VIDEO_HANDOFF) && xpl_phase() > PHASE_SPL) {
+		संरचना video_handoff *ho;
+		पूर्णाङ्क ret = 0;
 
-		ho = bloblist_find(BLOBLISTT_U_BOOT_VIDEO, sizeof(*ho));
-		if (!ho)
-			return log_msg_ret("Missing video bloblist", -ENOENT);
+		ho = bloblist_find(BLOBLISTT_U_BOOT_VIDEO, परिमाण(*ho));
+		जइ (!ho)
+			प्रत्यागम log_सन्देशः_ret("Missing video bloblist", -ENOENT);
 
 		ret = video_reserve_from_bloblist(ho);
-		if (ret)
-			return log_msg_ret("Invalid Video handoff info", ret);
+		जइ (ret)
+			प्रत्यागम log_सन्देशः_ret("Invalid Video handoff info", ret);
 
 		/* Sanity check fb from blob is before current relocaddr */
-		if (likely(gd->relocaddr > (unsigned long)ho->fb))
+		जइ (likely(gd->relocaddr > (unsigned long)ho->fb))
 			gd->relocaddr = ho->fb;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -454,32 +454,32 @@ static int reserve_video_from_videoblob(void)
  * IT is recommended that all bloblists from previous stage are reserved from ram_top
  * as next stage will simply start reserving further regions after them.
  */
-static int setup_relocaddr_from_bloblist(void)
+स्थिर पूर्णाङ्क setup_relocaddr_from_bloblist(शून्य)
 {
 	reserve_video_from_videoblob();
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_video(void)
+स्थिर पूर्णाङ्क reserve_video(शून्य)
 {
-	if (CONFIG_IS_ENABLED(VIDEO)) {
+	जइ (CONFIG_IS_ENABLED(VIDEO)) {
 		ulong addr;
-		int ret;
+		पूर्णाङ्क ret;
 
 		addr = gd->relocaddr;
 		ret = video_reserve(&addr);
-		if (ret)
-			return ret;
+		जइ (ret)
+			प्रत्यागम ret;
 		debug("Reserving %luk for video at: %08lx\n",
 		      ((unsigned long)gd->relocaddr - addr) >> 10, addr);
 		gd->relocaddr = addr;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_trace(void)
+स्थिर पूर्णाङ्क reserve_trace(शून्य)
 {
 #ifdef CONFIG_TRACE
 	gd->relocaddr -= CONFIG_TRACE_BUFFER_SIZE;
@@ -488,26 +488,26 @@ static int reserve_trace(void)
 	      (unsigned long)CONFIG_TRACE_BUFFER_SIZE >> 10, gd->relocaddr);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_uboot(void)
+स्थिर पूर्णाङ्क reserve_uboot(शून्य)
 {
 	/*
 	 * This should be the first place GD_FLG_SKIP_RELOC is read from.
 	 * Set GD_FLG_SKIP_RELOC flag if CONFIG_SKIP_RELOCATE is enabled.
 	 */
-	if (CONFIG_IS_ENABLED(SKIP_RELOCATE))
+	जइ (CONFIG_IS_ENABLED(SKIP_RELOCATE))
 		gd->flags |= GD_FLG_SKIP_RELOC;
 
-	if (!(gd->flags & GD_FLG_SKIP_RELOC) && !CONFIG_IS_ENABLED(SKIP_RELOCATE_CODE)) {
+	जइ (!(gd->flags & GD_FLG_SKIP_RELOC) && !CONFIG_IS_ENABLED(SKIP_RELOCATE_CODE)) {
 		/*
 		 * reserve memory for U-Boot code, data & bss
 		 * round down to next 4 kB limit
 		 */
 		gd->relocaddr -= gd->mon_len;
 		gd->relocaddr &= ~(4096 - 1);
-	#if defined(CONFIG_E500) || defined(CONFIG_MIPS)
+	#जइ defined(CONFIG_E500) || defined(CONFIG_MIPS)
 		/* round down to next 64 kB limit so that IVPR stays aligned */
 		gd->relocaddr &= ~(65536 - 1);
 	#endif
@@ -518,7 +518,7 @@ static int reserve_uboot(void)
 
 	gd->start_addr_sp = gd->relocaddr;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -527,13 +527,13 @@ static int reserve_uboot(void)
  * ref = x86_64 ABI: https://reviews.llvm.org/D30049: 16 bytes
  *     = ARMv8 Instruction Set Overview: quad word, 16 bytes
  */
-static unsigned long reserve_stack_aligned(size_t size)
+स्थिर unsigned long reserve_राशिः_aligned(size_t size)
 {
-	return ALIGN_DOWN(gd->start_addr_sp - size, 16);
+	प्रत्यागम ALIGN_DOWN(gd->start_addr_sp - size, 16);
 }
 
 #ifdef CONFIG_SYS_NONCACHED_MEMORY
-static int reserve_noncached(void)
+स्थिर पूर्णाङ्क reserve_noncached(शून्य)
 {
 	/*
 	 * The value of gd->start_addr_sp must match the value of
@@ -550,59 +550,59 @@ static int reserve_noncached(void)
 	debug("Reserving %dM for noncached_alloc() at: %08lx\n",
 	      CONFIG_SYS_NONCACHED_MEMORY >> 20, gd->start_addr_sp);
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
 /* reserve memory for malloc() area */
-static int reserve_malloc(void)
+स्थिर पूर्णाङ्क reserve_malloc(शून्य)
 {
-	gd->start_addr_sp = reserve_stack_aligned(TOTAL_MALLOC_LEN);
+	gd->start_addr_sp = reserve_राशिः_aligned(TOTAL_MALLOC_LEN);
 	debug("Reserving %dk for malloc() at: %08lx\n",
 	      TOTAL_MALLOC_LEN >> 10, gd->start_addr_sp);
 #ifdef CONFIG_SYS_NONCACHED_MEMORY
 	reserve_noncached();
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* (permanently) allocate a Board Info struct */
-static int reserve_board(void)
+स्थिर पूर्णाङ्क reserve_board(शून्य)
 {
-	if (!gd->bd) {
-		gd->start_addr_sp = reserve_stack_aligned(sizeof(struct bd_info));
-		gd->bd = (struct bd_info *)map_sysmem(gd->start_addr_sp,
-						      sizeof(struct bd_info));
-		memset(gd->bd, '\0', sizeof(struct bd_info));
+	जइ (!gd->bd) {
+		gd->start_addr_sp = reserve_राशिः_aligned(परिमाण(संरचना bd_info));
+		gd->bd = (संरचना bd_info *)map_sysmem(gd->start_addr_sp,
+						      परिमाण(संरचना bd_info));
+		memset(gd->bd, '\0', परिमाण(संरचना bd_info));
 		debug("Reserving %zu Bytes for Board Info at: %08lx\n",
-		      sizeof(struct bd_info), gd->start_addr_sp);
+		      परिमाण(संरचना bd_info), gd->start_addr_sp);
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_global_data(void)
+स्थिर पूर्णाङ्क reserve_global_data(शून्य)
 {
-	gd->start_addr_sp = reserve_stack_aligned(sizeof(gd_t));
-	gd->new_gd = (gd_t *)map_sysmem(gd->start_addr_sp, sizeof(gd_t));
+	gd->start_addr_sp = reserve_राशिः_aligned(परिमाण(gd_t));
+	gd->new_gd = (gd_t *)map_sysmem(gd->start_addr_sp, परिमाण(gd_t));
 	debug("Reserving %zu Bytes for Global Data at: %08lx\n",
-	      sizeof(gd_t), gd->start_addr_sp);
-	return 0;
+	      परिमाण(gd_t), gd->start_addr_sp);
+	प्रत्यागम 0;
 }
 
-static int reserve_fdt(void)
+स्थिर पूर्णाङ्क reserve_fdt(शून्य)
 {
-	if (!IS_ENABLED(CONFIG_OF_EMBED)) {
+	जइ (!IS_ENABLED(CONFIG_OF_EMBED)) {
 		/*
 		 * If the device tree is sitting immediately above our image
 		 * then we must relocate it. If it is embedded in the data
 		 * section, then it will be relocated with other data.
 		 */
-		if (gd->fdt_blob) {
+		जइ (gd->fdt_blob) {
 			gd->boardf->fdt_size =
 				ALIGN(fdt_totalsize(gd->fdt_blob), 32);
 
-			gd->start_addr_sp = reserve_stack_aligned(
+			gd->start_addr_sp = reserve_राशिः_aligned(
 				gd->boardf->fdt_size);
 			gd->boardf->new_fdt = map_sysmem(gd->start_addr_sp,
 							 gd->boardf->fdt_size);
@@ -611,46 +611,46 @@ static int reserve_fdt(void)
 		}
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_bootstage(void)
+स्थिर पूर्णाङ्क reserve_bootstage(शून्य)
 {
 #ifdef CONFIG_BOOTSTAGE
-	int size = bootstage_get_size(true);
+	पूर्णाङ्क size = bootstage_get_size(true);
 
-	gd->start_addr_sp = reserve_stack_aligned(size);
+	gd->start_addr_sp = reserve_राशिः_aligned(size);
 	gd->boardf->new_bootstage = map_sysmem(gd->start_addr_sp, size);
 	debug("Reserving %#x Bytes for bootstage at: %08lx\n", size,
 	      gd->start_addr_sp);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int arch_reserve_stacks(void)
+__weak पूर्णाङ्क arch_reserve_stacks(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reserve_stacks(void)
+स्थिर पूर्णाङ्क reserve_stacks(शून्य)
 {
 	/* make stack pointer 16-byte aligned */
-	gd->start_addr_sp = reserve_stack_aligned(16);
+	gd->start_addr_sp = reserve_राशिः_aligned(16);
 
 	/*
 	 * let the architecture-specific code tailor gd->start_addr_sp and
 	 * gd->irq_sp
 	 */
-	return arch_reserve_stacks();
+	प्रत्यागम arch_reserve_stacks();
 }
 
-static int reserve_bloblist(void)
+स्थिर पूर्णाङ्क reserve_bloblist(शून्य)
 {
 #ifdef CONFIG_BLOBLIST
 	ulong size = bloblist_get_total_size();
 
-	if (size < CONFIG_BLOBLIST_SIZE_RELOC)
+	जइ (size < CONFIG_BLOBLIST_SIZE_RELOC)
 		size = CONFIG_BLOBLIST_SIZE_RELOC;
 
 	/* Align to a 4KB boundary for easier reading of addresses */
@@ -658,113 +658,113 @@ static int reserve_bloblist(void)
 	gd->boardf->new_bloblist = map_sysmem(gd->start_addr_sp, size);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int display_new_sp(void)
+स्थिर पूर्णाङ्क display_new_sp(शून्य)
 {
 	debug("New Stack Pointer is: %08lx\n", gd->start_addr_sp);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int arch_setup_bdinfo(void)
+__weak पूर्णाङ्क arch_setup_bdinfo(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-int setup_bdinfo(void)
+पूर्णाङ्क setup_bdinfo(शून्य)
 {
-	return arch_setup_bdinfo();
+	प्रत्यागम arch_setup_bdinfo();
 }
 
 #ifdef CONFIG_POST
-static int init_post(void)
+स्थिर पूर्णाङ्क init_post(शून्य)
 {
 	post_bootmode_init();
-	post_run(NULL, POST_ROM | post_bootmode_get(0));
+	post_run(रिक्त, POST_ROM | post_bootmode_get(0));
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
-static int reloc_fdt(void)
+स्थिर पूर्णाङ्क reloc_fdt(शून्य)
 {
-	if (!IS_ENABLED(CONFIG_OF_EMBED)) {
-		if (gd->boardf->new_fdt) {
+	जइ (!IS_ENABLED(CONFIG_OF_EMBED)) {
+		जइ (gd->boardf->new_fdt) {
 			memcpy(gd->boardf->new_fdt, gd->fdt_blob,
 			       fdt_totalsize(gd->fdt_blob));
 			gd->fdt_blob = gd->boardf->new_fdt;
 		}
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reloc_bootstage(void)
+स्थिर पूर्णाङ्क reloc_bootstage(शून्य)
 {
 #ifdef CONFIG_BOOTSTAGE
-	if (gd->flags & GD_FLG_SKIP_RELOC)
-		return 0;
-	if (gd->boardf->new_bootstage)
+	जइ (gd->flags & GD_FLG_SKIP_RELOC)
+		प्रत्यागम 0;
+	जइ (gd->boardf->new_bootstage)
 		bootstage_relocate(gd->boardf->new_bootstage);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int reloc_bloblist(void)
+स्थिर पूर्णाङ्क reloc_bloblist(शून्य)
 {
 #ifdef CONFIG_BLOBLIST
 	/*
 	 * Relocate only if we are supposed to send it
 	 */
-	if ((gd->flags & GD_FLG_SKIP_RELOC) &&
+	जइ ((gd->flags & GD_FLG_SKIP_RELOC) &&
 	    CONFIG_BLOBLIST_SIZE == CONFIG_BLOBLIST_SIZE_RELOC) {
 		debug("Not relocating bloblist\n");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (gd->boardf->new_bloblist) {
+	जइ (gd->boardf->new_bloblist) {
 		ulong size = bloblist_get_total_size();
 
-		if (size < CONFIG_BLOBLIST_SIZE_RELOC)
+		जइ (size < CONFIG_BLOBLIST_SIZE_RELOC)
 			size = CONFIG_BLOBLIST_SIZE_RELOC;
 
 		debug("Copying bloblist from %p to %p, size %lx\n",
 		      gd->bloblist, gd->boardf->new_bloblist, size);
-		return bloblist_reloc(gd->boardf->new_bloblist, size);
+		प्रत्यागम bloblist_reloc(gd->boardf->new_bloblist, size);
 	}
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void mcheck_on_ramrelocation(size_t offset);
-static int setup_reloc(void)
+शून्य mcheck_on_ramrelocation(size_t offset);
+स्थिर पूर्णाङ्क setup_reloc(शून्य)
 {
-	if (!(gd->flags & GD_FLG_SKIP_RELOC)) {
+	जइ (!(gd->flags & GD_FLG_SKIP_RELOC)) {
 #ifdef CONFIG_TEXT_BASE
 #ifdef ARM
 		gd->reloc_off = gd->relocaddr - (unsigned long)__image_copy_start;
-#elif defined(CONFIG_MICROBLAZE)
+#नोचेद्यदि defined(CONFIG_MICROBLAZE)
 		gd->reloc_off = gd->relocaddr - (u32)_start;
-#elif defined(CONFIG_M68K)
+#नोचेद्यदि defined(CONFIG_M68K)
 		/*
 		 * On all ColdFire arch cpu, monitor code starts always
 		 * just after the default vector table location, so at 0x400
 		 */
 		gd->reloc_off = gd->relocaddr - (CONFIG_TEXT_BASE + 0x400);
-#elif !defined(CONFIG_SANDBOX)
+#नोचेद्यदि !defined(CONFIG_SANDBOX)
 		gd->reloc_off = gd->relocaddr - CONFIG_TEXT_BASE;
 #endif
 #endif
 	}
 
-	memcpy(gd->new_gd, (char *)gd, sizeof(gd_t));
+	memcpy(gd->new_gd, (वर्ण *)gd, परिमाण(gd_t));
 
-	if (gd->flags & GD_FLG_SKIP_RELOC) {
+	जइ (gd->flags & GD_FLG_SKIP_RELOC) {
 		debug("Skipping relocation due to flag\n");
-	} else {
+	} अण्णहा {
 #ifdef MCHECK_HEAP_PROTECTION
 		mcheck_on_ramrelocation(gd->reloc_off);
 #endif
@@ -774,23 +774,23 @@ static int setup_reloc(void)
 		      gd->start_addr_sp);
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP)
-static int fix_fdt(void)
+#जइ CONFIG_IS_ENABLED(OF_BOARD_FIXUP)
+स्थिर पूर्णाङ्क fix_fdt(शून्य)
 {
-	return board_fix_fdt((void *)gd->fdt_blob);
+	प्रत्यागम board_fix_fdt((शून्य *)gd->fdt_blob);
 }
 #endif
 
 /* ARM calls relocate_code from its crt0.S */
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
+#जइ !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
 
-static int jump_to_copy(void)
+स्थिर पूर्णाङ्क jump_to_copy(शून्य)
 {
-	if (gd->flags & GD_FLG_SKIP_RELOC)
-		return 0;
+	जइ (gd->flags & GD_FLG_SKIP_RELOC)
+		प्रत्यागम 0;
 	/*
 	 * x86 is special, but in a nice way. It uses a trampoline which
 	 * enables the dcache if possible.
@@ -799,7 +799,7 @@ static int jump_to_copy(void)
 	 * similarly for all archs. When we do generic relocation, hopefully
 	 * we can make all archs enable the dcache prior to relocation.
 	 */
-#if defined(CONFIG_X86) || defined(CONFIG_ARC)
+#जइ defined(CONFIG_X86) || defined(CONFIG_ARC)
 	/*
 	 * SDRAM and console are now initialised. The final stack can now
 	 * be setup in SDRAM. Code execution will continue in Flash, but
@@ -807,48 +807,48 @@ static int jump_to_copy(void)
 	 * (CPU cache)
 	 */
 	arch_setup_gd(gd->new_gd);
-# if CONFIG_IS_ENABLED(X86_64)
+# जइ CONFIG_IS_ENABLED(X86_64)
 		board_init_f_r_trampoline64(gd->new_gd, gd->start_addr_sp);
-# else
+# अण्णहा
 		board_init_f_r_trampoline(gd->start_addr_sp);
 # endif
-#else
+#अण्णहा
 	relocate_code(gd->start_addr_sp, gd->new_gd, gd->relocaddr);
 #endif
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif
 
 /* Record the board_init_f() bootstage (after arch_cpu_init()) */
-static int initf_bootstage(void)
+स्थिर पूर्णाङ्क initf_bootstage(शून्य)
 {
 	bool from_spl = IS_ENABLED(CONFIG_SPL_BOOTSTAGE) &&
 			IS_ENABLED(CONFIG_BOOTSTAGE_STASH);
-	int ret;
+	पूर्णाङ्क ret;
 
 	ret = bootstage_init(!from_spl);
-	if (ret)
-		return ret;
-	if (from_spl) {
+	जइ (ret)
+		प्रत्यागम ret;
+	जइ (from_spl) {
 		ret = bootstage_unstash_default();
-		if (ret && ret != -ENOENT) {
+		जइ (ret && ret != -ENOENT) {
 			debug("Failed to unstash bootstage: err=%d\n", ret);
-			return ret;
+			प्रत्यागम ret;
 		}
 	}
 
 	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_F, "board_init_f");
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initf_dm(void)
+स्थिर पूर्णाङ्क initf_dm(शून्य)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
-	if (!CONFIG_IS_ENABLED(SYS_MALLOC_F))
-		return 0;
+	जइ (!CONFIG_IS_ENABLED(SYS_MALLOC_F))
+		प्रत्यागम 0;
 
 	bootstage_start(BOOTSTAGE_ID_ACCUM_DM_F, "dm_f");
 
@@ -857,66 +857,66 @@ static int initf_dm(void)
 	 * model, the serial port will still be bound later through
 	 * serial_find_console_or_panic() via /chosen/stdout-path
 	 */
-	if (!CONFIG_IS_ENABLED(SKIP_EARLY_DM))
+	जइ (!CONFIG_IS_ENABLED(SKIP_EARLY_DM))
 		ret = dm_init_and_scan(true);
-	else
+	अण्णहा
 		ret = dm_init(false);
-	if (ret)
-		return ret;
+	जइ (ret)
+		प्रत्यागम ret;
 
 	ret = dm_autoprobe();
-	if (ret)
-		return ret;
+	जइ (ret)
+		प्रत्यागम ret;
 	bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_F);
 
-	if (IS_ENABLED(CONFIG_TIMER_EARLY)) {
+	जइ (IS_ENABLED(CONFIG_TIMER_EARLY)) {
 		ret = dm_timer_init();
-		if (ret)
-			return ret;
+		जइ (ret)
+			प्रत्यागम ret;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* Architecture-specific memory reservation */
-__weak int reserve_arch(void)
+__weak पूर्णाङ्क reserve_arch(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int checkcpu(void)
+__weak पूर्णाङ्क checkcpu(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-__weak int clear_bss(void)
+__weak पूर्णाङ्क clear_bss(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int initf_upl(void)
+स्थिर पूर्णाङ्क initf_upl(शून्य)
 {
-	struct upl *upl;
-	int ret;
+	संरचना upl *upl;
+	पूर्णाङ्क ret;
 
-	if (!IS_ENABLED(CONFIG_UPL_IN) || !(gd->flags & GD_FLG_UPL))
-		return 0;
+	जइ (!IS_ENABLED(CONFIG_UPL_IN) || !(gd->flags & GD_FLG_UPL))
+		प्रत्यागम 0;
 
-	upl = malloc(sizeof(struct upl));
-	if (!upl)
-		return -ENOMEM;
+	upl = malloc(परिमाण(संरचना upl));
+	जइ (!upl)
+		प्रत्यागम -ENOMEM;
 
 	ret = upl_read_handoff(upl, oftree_default());
-	if (ret) {
+	जइ (ret) {
 		printf("UPL handoff: read failure (err=%dE)\n", ret);
-		return ret;
+		प्रत्यागम ret;
 	}
 	gd_set_upl(upl);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void initcall_run_f(void)
+स्थिर शून्य initcall_run_f(शून्य)
 {
 	/*
 	 * Please do not add logic to this function (variables, if (), etc.).
@@ -924,38 +924,38 @@ static void initcall_run_f(void)
 	 */
 	INITCALL(setup_mon_len);
 	INITCALL(initf_malloc);
-#if CONFIG_IS_ENABLED(OF_CONTROL)
+#जइ CONFIG_IS_ENABLED(OF_CONTROL)
 	INITCALL(fdtdec_setup);
 #endif
-#if CONFIG_IS_ENABLED(TRACE_EARLY)
+#जइ CONFIG_IS_ENABLED(TRACE_EARLY)
 	INITCALL(trace_early_init);
 #endif
 	INITCALL(initf_upl);
 	INITCALL(log_init);
 	INITCALL(initf_bootstage); /* uses its own timer, so does not need DM */
 	INITCALL(event_init);
-#if CONFIG_IS_ENABLED(BLOBLIST)
+#जइ CONFIG_IS_ENABLED(BLOBLIST)
 	INITCALL(bloblist_init);
 #endif
 	INITCALL(setup_spl_handoff);
-#if CONFIG_IS_ENABLED(CONSOLE_RECORD_INIT_F)
+#जइ CONFIG_IS_ENABLED(CONSOLE_RECORD_INIT_F)
 	INITCALL(console_record_init);
 #endif
 	INITCALL_EVT(EVT_FSP_INIT_F);
 	INITCALL(arch_cpu_init);	/* basic arch cpu dependent setup */
 	INITCALL(mach_cpu_init);	/* SoC/machine dependent CPU setup */
 	INITCALL(initf_dm);
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
+#जइ CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
 	INITCALL(board_early_init_f);
 #endif
-#if defined(CONFIG_PPC) || defined(CONFIG_SYS_FSL_CLK) || defined(CONFIG_M68K)
+#जइ defined(CONFIG_PPC) || defined(CONFIG_SYS_FSL_CLK) || defined(CONFIG_M68K)
 	/* get CPU and bus clocks according to the environment variable */
 	INITCALL(get_clocks);		/* get CPU and bus clocks (etc.) */
 #endif
-#if !defined(CONFIG_M68K) || (defined(CONFIG_M68K) && !defined(CONFIG_MCFTMR))
+#जइ !defined(CONFIG_M68K) || (defined(CONFIG_M68K) && !defined(CONFIG_MCFTMR))
 	INITCALL(timer_init);		/* initialize timer */
 #endif
-#if CONFIG_IS_ENABLED(BOARD_POSTCLK_INIT)
+#जइ CONFIG_IS_ENABLED(BOARD_POSTCLK_INIT)
 	INITCALL(board_postclk_init);
 #endif
 	INITCALL(env_init);		/* initialize environment */
@@ -965,36 +965,36 @@ static void initcall_run_f(void)
 	INITCALL(display_options);	/* say that we are here */
 	INITCALL(display_text_info);	/* show debugging info if required */
 	INITCALL(checkcpu);
-#if CONFIG_IS_ENABLED(SYSRESET_PRINT_RESETINFO)
+#जइ CONFIG_IS_ENABLED(SYSRESET_PRINT_RESETINFO)
 	INITCALL(print_resetinfo);
 #endif
 	/* display cpu info (and speed) */
-#if CONFIG_IS_ENABLED(DISPLAY_CPUINFO)
+#जइ CONFIG_IS_ENABLED(DISPLAY_CPUINFO)
 	INITCALL(print_cpuinfo);
 #endif
-#if CONFIG_IS_ENABLED(DTB_RESELECT)
+#जइ CONFIG_IS_ENABLED(DTB_RESELECT)
 	INITCALL(embedded_dtb_select);
 #endif
-#if CONFIG_IS_ENABLED(DISPLAY_BOARDINFO)
+#जइ CONFIG_IS_ENABLED(DISPLAY_BOARDINFO)
 	INITCALL(show_board_info);
 #endif
 	WATCHDOG_INIT();
 	INITCALL_EVT(EVT_MISC_INIT_F);
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
+#जइ CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
 	INITCALL(init_func_i2c);
 #endif
 	INITCALL(announce_dram_init);
 	INITCALL(dram_init);		/* configure available RAM banks */
-#if CONFIG_IS_ENABLED(POST)
+#जइ CONFIG_IS_ENABLED(POST)
 	INITCALL(post_init_f);
 #endif
 	WATCHDOG_RESET();
-#if defined(CFG_SYS_DRAM_TEST)
+#जइ defined(CFG_SYS_DRAM_TEST)
 	INITCALL(testdram);
 #endif /* CFG_SYS_DRAM_TEST */
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(POST)
+#जइ CONFIG_IS_ENABLED(POST)
 	INITCALL(init_post);
 #endif
 	WATCHDOG_RESET();
@@ -1014,7 +1014,7 @@ static void initcall_run_f(void)
 	INITCALL(dram_init_banksize);
 	INITCALL(setup_ram_config);
 	INITCALL(setup_dest_addr);
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
+#जइ CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
     !CONFIG_IS_ENABLED(OF_INITIAL_DTB_READONLY)
 	INITCALL(fix_fdt);
 #endif
@@ -1031,7 +1031,7 @@ static void initcall_run_f(void)
 	INITCALL(reserve_board);
 	INITCALL(reserve_global_data);
 	INITCALL(reserve_fdt);
-#if CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
+#जइ CONFIG_IS_ENABLED(OF_BOARD_FIXUP) && \
     CONFIG_IS_ENABLED(OF_INITIAL_DTB_READONLY)
 	INITCALL(reloc_fdt);
 	INITCALL(fix_fdt);
@@ -1045,14 +1045,14 @@ static void initcall_run_f(void)
 	INITCALL(setup_bdinfo);
 	INITCALL(display_new_sp);
 	WATCHDOG_RESET();
-#if !CONFIG_IS_ENABLED(OF_BOARD_FIXUP) || \
+#जइ !CONFIG_IS_ENABLED(OF_BOARD_FIXUP) || \
     !CONFIG_IS_ENABLED(INITIAL_DTB_READONLY)
 	INITCALL(reloc_fdt);
 #endif
 	INITCALL(reloc_bootstage);
 	INITCALL(reloc_bloblist);
 	INITCALL(setup_reloc);
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(ARC)
+#जइ CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(ARC)
 	INITCALL(copy_uboot_to_ram);
 	INITCALL(do_elf_reloc_fixups);
 #endif
@@ -1067,14 +1067,14 @@ static void initcall_run_f(void)
 	 * watchdog device is not serviced is as small as possible.
 	 */
 	INITCALL(cyclic_unregister_all);
-#if !CONFIG_IS_ENABLED(ARM) && !CONFIG_IS_ENABLED(SANDBOX)
+#जइ !CONFIG_IS_ENABLED(ARM) && !CONFIG_IS_ENABLED(SANDBOX)
 	INITCALL(jump_to_copy);
 #endif
 }
 
-void board_init_f(ulong boot_flags)
+शून्य board_init_f(ulong boot_flags)
 {
-	struct board_f boardf;
+	संरचना board_f boardf;
 
 	gd->flags = boot_flags;
 	gd->flags &= ~GD_FLG_HAVE_CONSOLE;
@@ -1082,7 +1082,7 @@ void board_init_f(ulong boot_flags)
 
 	initcall_run_f();
 
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX) && \
+#जइ !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX) && \
 		!defined(CONFIG_EFI_APP) && !CONFIG_IS_ENABLED(X86_64) && \
 		!defined(CONFIG_ARC)
 	/* NOTREACHED - jump_to_copy() does not return */
@@ -1090,7 +1090,7 @@ void board_init_f(ulong boot_flags)
 #endif
 }
 
-#if defined(CONFIG_X86) || defined(CONFIG_ARC)
+#जइ defined(CONFIG_X86) || defined(CONFIG_ARC)
 /*
  * For now this code is only used on x86.
  *
@@ -1108,14 +1108,14 @@ void board_init_f(ulong boot_flags)
  * NOTE: At present only x86 uses this route, but it is intended that
  * all archs will move to this when generic relocation is implemented.
  */
-static void initcall_run_f_r(void)
+स्थिर शून्य initcall_run_f_r(शून्य)
 {
-#if !CONFIG_IS_ENABLED(X86_64)
+#जइ !CONFIG_IS_ENABLED(X86_64)
 	INITCALL(init_cache_f_r);
 #endif
 }
 
-void board_init_f_r(void)
+शून्य board_init_f_r(शून्य)
 {
 	initcall_run_f_r();
 
@@ -1128,7 +1128,7 @@ void board_init_f_r(void)
 	 */
 	gd->flags &= ~(GD_FLG_SERIAL_READY | GD_FLG_LOG_READY);
 #ifdef CONFIG_TIMER
-	gd->timer = NULL;
+	gd->timer = रिक्त;
 #endif
 
 	/*

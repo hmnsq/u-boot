@@ -20,14 +20,14 @@
  *
  */
 
-#include <display_options.h>
-#include <env.h>
-#include <splash.h>
-#include <video.h>
-#include <vsprintf.h>
-#include <linux/kernel.h>
+#अन्तर्भाव <display_options.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <splash.h>
+#अन्तर्भाव <video.h>
+#अन्तर्भाव <vsprintf.h>
+#अन्तर्भाव <linux/kernel.h>
 
-static struct splash_location default_splash_locations[] = {
+स्थिर संरचना splash_location default_splash_locations[] = {
 	{
 		.name = "sf",
 		.storage = SPLASH_STORAGE_SF,
@@ -62,92 +62,92 @@ static struct splash_location default_splash_locations[] = {
 
 #ifdef CONFIG_VIDEO_LOGO
 
-#include <bmp_logo_data.h>
+#अन्तर्भाव <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+स्थिर पूर्णाङ्क splash_video_logo_load(शून्य)
 {
-	char *splashimage;
+	वर्ण *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	जइ (!splashimage)
+		प्रत्यागम -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	जइ (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		प्रत्यागम -EFAULT;
 	}
 
-	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
+	memcpy((शून्य *)bmp_load_addr, bmp_logo_bitmap,
 	       ARRAY_SIZE(bmp_logo_bitmap));
 
-	return 0;
+	प्रत्यागम 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#अण्णहा
+स्थिर अन्तःस्थ पूर्णाङ्क splash_video_logo_load(शून्य) { प्रत्यागम -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak पूर्णाङ्क splash_screen_prepare(शून्य)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
+	जइ (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		प्रत्यागम splash_source_load(default_splash_locations,
 					  ARRAY_SIZE(default_splash_locations));
 
-	return splash_video_logo_load();
+	प्रत्यागम splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+शून्य splash_get_pos(पूर्णाङ्क *x, पूर्णाङ्क *y)
 {
-	char *s = env_get("splashpos");
+	वर्ण *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	जइ (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		प्रत्यागम;
 
-	if (s[0] == 'm')
+	जइ (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
-		*x = simple_strtol(s, NULL, 0);
+	अण्णहा
+		*x = simple_strtol(s, रिक्त, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	जइ (s != रिक्त) {
+		जइ (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
-			*y = simple_strtol(s + 1, NULL, 0);
+		अण्णहा
+			*y = simple_strtol(s + 1, रिक्त, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#जइ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
-#include <bmp_logo.h>
+#अन्तर्भाव <bmp_logo.h>
 #endif
-#include <dm.h>
-#include <video_console.h>
-#include <video_font.h>
-#include <video_font_data.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <video_console.h>
+#अन्तर्भाव <video_font.h>
+#अन्तर्भाव <video_font_data.h>
 
-void splash_display_banner(void)
+शून्य splash_display_banner(शून्य)
 {
-	struct video_fontdata __maybe_unused *fontdata = fonts;
-	struct udevice *dev;
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	संरचना video_fontdata __maybe_unused *fontdata = fonts;
+	संरचना udevice *dev;
+	वर्ण buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+	पूर्णाङ्क col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	जइ (ret)
+		प्रत्यागम;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#जइ IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#अण्णहा
 	col = 0;
 	row = 0;
 #endif
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, परिमाण(buf));
 	vidconsole_position_cursor(dev, col, 1);
 	vidconsole_put_string(dev, buf);
 	vidconsole_position_cursor(dev, 0, row);
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+पूर्णाङ्क splash_display(शून्य)
 {
 	ulong addr;
-	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	वर्ण *s;
+	पूर्णाङ्क x = 0, y = 0, ret;
+	जइ (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		प्रत्यागम -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	जइ (!s)
+		प्रत्यागम -EINVAL;
 
-	addr = hextoul(s, NULL);
+	addr = hextoul(s, रिक्त);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	जइ (ret)
+		प्रत्यागम ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	जइ (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	अण्णहा
+		प्रत्यागम -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
-		goto end;
+	जइ (x || y)
+		गच्छ end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#जइ CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	प्रत्यागम ret;
 }
