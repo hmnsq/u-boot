@@ -8,19 +8,19 @@
 #include <spl.h>
 #include <nvme.h>
 
-static int spl_nvme_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+static puur_naa_nka spl_nvme_load_image(sa_nracanaa spl_image_info *spl_image,
+			       sa_nracanaa spl_boot_device *bootdev)
 {
-	int ret;
+	puur_naa_nka ret;
 
 	ret = nvme_scan_namespace();
-	if (ret < 0)
-		return ret;
+	ᱡᱩᱫᱤ (ret < 0)
+		ᱨᱩᱣᱟᱹᱲ ret;
 
 	ret = spl_blk_load_image(spl_image, bootdev, UCLASS_NVME,
 				 CONFIG_SPL_NVME_BOOT_DEVICE,
 				 CONFIG_SYS_NVME_BOOT_PARTITION);
-	return ret;
+	ᱨᱩᱣᱟᱹᱲ ret;
 }
 
 SPL_LOAD_IMAGE_METHOD("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_load_image);

@@ -16,7 +16,7 @@
 #include <spl.h>
 #include <linux/libfdt.h>
 
-static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
+static ulong spl_ram_load_read(sa_nracanaa spl_load_info *load, ulong sector,
 			       ulong count, void *buf)
 {
 	ulong addr = 0;
@@ -24,69 +24,69 @@ static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
 	debug("%s: sector %lx, count %lx, buf %lx\n",
 	      __func__, sector, count, (ulong)buf);
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
+	ᱡᱩᱫᱤ (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
 		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
 				      CONFIG_SPL_LOAD_FIT_ADDRESS);
 
 #ifdef	CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
+		ᱡᱩᱫᱤ (spl_boot_device() == BOOT_DEVICE_PCIE)
 			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
 #endif
 	}
 	addr += sector;
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
+	ᱡᱩᱫᱤ (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
 		addr += image_load_offset;
 
 	memcpy(buf, (void *)addr, count);
 
-	return count;
+	ᱨᱩᱣᱟᱹᱲ count;
 }
 
-static int spl_ram_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+static puur_naa_nka spl_ram_load_image(sa_nracanaa spl_image_info *spl_image,
+			      sa_nracanaa spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
+	sa_nracanaa legacy_img_hdr *header;
 	ulong addr = 0;
-	int ret;
+	puur_naa_nka ret;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
+	ᱡᱩᱫᱤ (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
 		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
 				      CONFIG_SPL_LOAD_FIT_ADDRESS);
 
 #ifdef CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
+		ᱡᱩᱫᱤ (spl_boot_device() == BOOT_DEVICE_PCIE)
 			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
 #endif
 	}
 
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD)) {
+	ᱡᱩᱫᱤ (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD)) {
 		ret = image_pre_load(addr);
 
-		if (ret)
-			return ret;
+		ᱡᱩᱫᱤ (ret)
+			ᱨᱩᱣᱟᱹᱲ ret;
 
 		addr += image_load_offset;
 	}
 	header = map_sysmem(addr, 0);
 
-#if CONFIG_IS_ENABLED(DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_DFU)
+#ᱡᱩᱫᱤ CONFIG_IS_ENABLED(DFU)
+	ᱡᱩᱫᱤ (bootdev->boot_device == BOOT_DEVICE_DFU)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
 #endif
 
-#if CONFIG_IS_ENABLED(PCI_DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_PCIE)
+#ᱡᱩᱫᱤ CONFIG_IS_ENABLED(PCI_DFU)
+	ᱡᱩᱫᱤ (bootdev->boot_device == BOOT_DEVICE_PCIE)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
 #endif
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
+	ᱡᱩᱫᱤ (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
 	    image_get_magic(header) == FDT_MAGIC) {
-		struct spl_load_info load;
+		sa_nracanaa spl_load_info load;
 
 		debug("Found FIT\n");
 		spl_load_init(&load, spl_ram_load_read, NULL, 1);
 		ret = spl_load_simple_fit(spl_image, &load, 0, header);
-	} else {
+	} ᱵᱟᱝ {
 		ulong u_boot_pos = spl_get_image_pos();
 
 		debug("Legacy image\n");
@@ -96,27 +96,27 @@ static int spl_ram_load_image(struct spl_image_info *spl_image,
 		 * the flash.
 		 */
 		debug("u_boot_pos = %lx\n", u_boot_pos);
-		if (u_boot_pos == BINMAN_SYM_MISSING) {
+		ᱡᱩᱫᱤ (u_boot_pos == BINMAN_SYM_MISSING) {
 			/*
 			 * No binman support or no information. For now, fix it
 			 * to the address pointed to by U-Boot.
 			 */
-			u_boot_pos = (ulong)spl_get_load_buffer(-sizeof(*header),
-								sizeof(*header));
+			u_boot_pos = (ulong)spl_get_load_buffer(-parimaa_na(*header),
+								parimaa_na(*header));
 		}
 		header = map_sysmem(u_boot_pos, 0);
 
 		ret = spl_parse_image_header(spl_image, bootdev, header);
 	}
 
-	return ret;
+	ᱨᱩᱣᱟᱹᱲ ret;
 }
-#if CONFIG_IS_ENABLED(RAM_DEVICE)
+#ᱡᱩᱫᱤ CONFIG_IS_ENABLED(RAM_DEVICE)
 SPL_LOAD_IMAGE_METHOD("RAM", 0, BOOT_DEVICE_RAM, spl_ram_load_image);
 #endif
-#if CONFIG_IS_ENABLED(DFU)
+#ᱡᱩᱫᱤ CONFIG_IS_ENABLED(DFU)
 SPL_LOAD_IMAGE_METHOD("DFU", 0, BOOT_DEVICE_DFU, spl_ram_load_image);
 #endif
-#if CONFIG_IS_ENABLED(PCI_DFU)
+#ᱡᱩᱫᱤ CONFIG_IS_ENABLED(PCI_DFU)
 SPL_LOAD_IMAGE_METHOD("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_load_image);
 #endif
