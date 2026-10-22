@@ -8,20 +8,20 @@
  * Software Foundation.
  */
 
-#include <cros_ec.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
+#ضمن <cros_ec.h>
+#ضمن <dm.h>
+#ضمن <errno.h>
+#ضمن <log.h>
 
-struct udevice *board_get_cros_ec_dev(void)
+بنية udevice *board_get_cros_ec_dev(فراغ)
 {
-	struct udevice *dev;
-	int ret;
+	بنية udevice *dev;
+	صحيح ret;
 
 	ret = uclass_get_device(UCLASS_CROS_EC, 0, &dev);
-	if (ret) {
+	إذا (ret) {
 		debug("%s: Error %d\n", __func__, ret);
-		return NULL;
+		أرجع عدم;
 	}
-	return dev;
+	أرجع dev;
 }
