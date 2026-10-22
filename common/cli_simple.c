@@ -21,76 +21,76 @@
 #define debug_parser(fmt, args...)		\
 	debug_cond(DEBUG_PARSER, fmt, ##args)
 
-int cli_simple_process_macros(const char *input, char *output, int max_size)
+จำนวนเต็ม cli_simple_process_macros(const var_na *input, var_na *output, จำนวนเต็ม max_size)
 {
-	char c, prev;
-	const char *varname_start = NULL;
-	int inputcnt = strlen(input);
-	int outputcnt = max_size;
-	int state = 0;		/* 0 = waiting for '$'  */
-	int ret;
+	var_na c, prev;
+	const var_na *varname_start = NULL;
+	จำนวนเต็ม inputcnt = strlen(input);
+	จำนวนเต็ม outputcnt = max_size;
+	จำนวนเต็ม state = 0;		/* 0 = waiting for '$'  */
+	จำนวนเต็ม ret;
 
 	/* 1 = waiting for '(' or '{' */
 	/* 2 = waiting for ')' or '}' */
 	/* 3 = waiting for '''  */
-	char __maybe_unused *output_start = output;
+	var_na __maybe_unused *output_start = output;
 
 	debug_parser("[PROCESS_MACROS] INPUT len %zd: \"%s\"\n", strlen(input),
 		     input);
 
 	prev = '\0';		/* previous character   */
 
-	while (inputcnt && outputcnt) {
+	ขณะ (inputcnt && outputcnt) {
 		c = *input++;
 		inputcnt--;
 
-		if (state != 3) {
+		ถ้า (state != 3) {
 			/* remove one level of escape characters */
-			if ((c == '\\') && (prev != '\\')) {
-				if (inputcnt-- == 0)
-					break;
+			ถ้า ((c == '\\') && (prev != '\\')) {
+				ถ้า (inputcnt-- == 0)
+					bha_nga;
 				prev = c;
 				c = *input++;
 			}
 		}
 
 		switch (state) {
-		case 0:	/* Waiting for (unescaped) $    */
-			if ((c == '\'') && (prev != '\\')) {
+		pak_sa 0:	/* Waiting for (unescaped) $    */
+			ถ้า ((c == '\'') && (prev != '\\')) {
 				state = 3;
-				break;
+				bha_nga;
 			}
-			if ((c == '$') && (prev != '\\')) {
+			ถ้า ((c == '$') && (prev != '\\')) {
 				state++;
-			} else {
+			} มิฉะนั้น {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
-		case 1:	/* Waiting for (        */
-			if (c == '(' || c == '{') {
+			bha_nga;
+		pak_sa 1:	/* Waiting for (        */
+			ถ้า (c == '(' || c == '{') {
 				state++;
 				varname_start = input;
-			} else {
+			} มิฉะนั้น {
 				state = 0;
 				*(output++) = '$';
 				outputcnt--;
 
-				if (outputcnt) {
+				ถ้า (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
 			}
-			break;
-		case 2:	/* Waiting for )        */
-			if (c == ')' || c == '}') {
-				int i;
-				char envname[CONFIG_SYS_CBSIZE], *envval;
+			bha_nga;
+		pak_sa 2:	/* Waiting for )        */
+			ถ้า (c == ')' || c == '}') {
+				จำนวนเต็ม i;
+				var_na envname[CONFIG_SYS_CBSIZE], *envval;
 				/* Varname # of chars */
-				int envcnt = input - varname_start - 1;
+				จำนวนเต็ม envcnt = input - varname_start - 1;
 
 				/* Get the varname */
-				for (i = 0; i < envcnt; i++)
+				สำหรับ (i = 0; i < envcnt; i++)
 					envname[i] = varname_start[i];
 				envname[i] = 0;
 
@@ -98,31 +98,31 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 				envval = env_get(envname);
 
 				/* Copy into the line if it exists */
-				if (envval != NULL)
-					while ((*envval) && outputcnt) {
+				ถ้า (envval != NULL)
+					ขณะ ((*envval) && outputcnt) {
 						*(output++) = *(envval++);
 						outputcnt--;
 					}
 				/* Look for another '$' */
 				state = 0;
 			}
-			break;
-		case 3:	/* Waiting for '        */
-			if ((c == '\'') && (prev != '\\')) {
+			bha_nga;
+		pak_sa 3:	/* Waiting for '        */
+			ถ้า ((c == '\'') && (prev != '\\')) {
 				state = 0;
-			} else {
+			} มิฉะนั้น {
 				*(output++) = c;
 				outputcnt--;
 			}
-			break;
+			bha_nga;
 		}
 		prev = c;
 	}
 
 	ret = inputcnt ? -ENOSPC : 0;
-	if (outputcnt) {
+	ถ้า (outputcnt) {
 		*output = 0;
-	} else {
+	} มิฉะนั้น {
 		*(output - 1) = 0;
 		ret = -ENOSPC;
 	}
@@ -130,36 +130,36 @@ int cli_simple_process_macros(const char *input, char *output, int max_size)
 	debug_parser("[PROCESS_MACROS] OUTPUT len %zd: \"%s\"\n",
 		     strlen(output_start), output_start);
 
-	return ret;
+	คืน ret;
 }
 
 #ifdef CONFIG_CMDLINE
-int cli_simple_parse_line(char *line, char *argv[])
+จำนวนเต็ม cli_simple_parse_line(var_na *line, var_na *argv[])
 {
-	int nargs = 0;
+	จำนวนเต็ม nargs = 0;
 
 	debug_parser("%s: \"%s\"\n", __func__, line);
-	while (nargs < CONFIG_SYS_MAXARGS) {
+	ขณะ (nargs < CONFIG_SYS_MAXARGS) {
 		/* skip any white space */
-		while (isblank(*line))
+		ขณะ (isblank(*line))
 			++line;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		ถ้า (*line == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("%s: nargs=%d\n", __func__, nargs);
-			return nargs;
+			คืน nargs;
 		}
 
 		argv[nargs++] = line;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*line && !isblank(*line))
+		ขณะ (*line && !isblank(*line))
 			++line;
 
-		if (*line == '\0') {	/* end of line, no more args	*/
+		ถ้า (*line == '\0') {	/* end of line, no more args	*/
 			argv[nargs] = NULL;
 			debug_parser("parse_line: nargs=%d\n", nargs);
-			return nargs;
+			คืน nargs;
 		}
 
 		*line++ = '\0';		/* terminate current arg	 */
@@ -168,7 +168,7 @@ int cli_simple_parse_line(char *line, char *argv[])
 	printf("** Too many args (max. %d) **\n", CONFIG_SYS_MAXARGS);
 
 	debug_parser("%s: nargs=%d\n", __func__, nargs);
-	return nargs;
+	คืน nargs;
 }
 
  /*
@@ -179,32 +179,32 @@ int cli_simple_parse_line(char *line, char *argv[])
  * the environment data, which may change magicly when the command we run
  * creates or modifies environment variables (like "bootp" does).
  */
-int cli_simple_run_command(const char *cmd, int flag)
+จำนวนเต็ม cli_simple_run_command(const var_na *cmd, จำนวนเต็ม flag)
 {
-	char cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
-	char *token;			/* start of token in cmdbuf	*/
-	char *sep;			/* end of token (separator) in cmdbuf */
-	char finaltoken[CONFIG_SYS_CBSIZE];
-	char *str = cmdbuf;
-	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
-	int argc, inquotes;
-	int repeatable = 1;
-	int rc = 0;
+	var_na cmdbuf[CONFIG_SYS_CBSIZE];	/* working copy of cmd		*/
+	var_na *token;			/* start of token in cmdbuf	*/
+	var_na *sep;			/* end of token (separator) in cmdbuf */
+	var_na finaltoken[CONFIG_SYS_CBSIZE];
+	var_na *str = cmdbuf;
+	var_na *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated	*/
+	จำนวนเต็ม argc, inquotes;
+	จำนวนเต็ม repeatable = 1;
+	จำนวนเต็ม rc = 0;
 
 	debug_parser("[RUN_COMMAND] cmd[%p]=\"", cmd);
-	if (DEBUG_PARSER) {
+	ถ้า (DEBUG_PARSER) {
 		/* use puts - string may be loooong */
 		puts(cmd ? cmd : "NULL");
 		puts("\"\n");
 	}
 	clear_ctrlc();		/* forget any previous Control C */
 
-	if (!cmd || !*cmd)
-		return -1;	/* empty command */
+	ถ้า (!cmd || !*cmd)
+		คืน -1;	/* empty command */
 
-	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
+	ถ้า (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
 		puts("## Command too long!\n");
-		return -1;
+		คืน -1;
 	}
 
 	strcpy(cmdbuf, cmd);
@@ -214,67 +214,67 @@ int cli_simple_run_command(const char *cmd, int flag)
 	 */
 
 	debug_parser("[PROCESS_SEPARATORS] %s\n", cmd);
-	while (*str) {
+	ขณะ (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for (inquotes = 0, sep = str; *sep; sep++) {
-			if ((*sep == '\'') &&
+		สำหรับ (inquotes = 0, sep = str; *sep; sep++) {
+			ถ้า ((*sep == '\'') &&
 			    (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
 
-			if (!inquotes &&
+			ถ้า (!inquotes &&
 			    (*sep == ';') &&	/* separator		*/
 			    (sep != str) &&	/* past string start	*/
 			    (*(sep - 1) != '\\'))	/* and NOT escaped */
-				break;
+				bha_nga;
 		}
 
 		/*
 		 * Limit the token to data between separators
 		 */
 		token = str;
-		if (*sep) {
+		ถ้า (*sep) {
 			str = sep + 1;	/* start of command for next pass */
 			*sep = '\0';
-		} else {
+		} มิฉะนั้น {
 			str = sep;	/* no more commands for next pass */
 		}
 		debug_parser("token: \"%s\"\n", token);
 
 		/* find macros in this token and replace them */
 		cli_simple_process_macros(token, finaltoken,
-					  sizeof(finaltoken));
+					  parimaa_na(finaltoken));
 
 		/* Extract arguments */
 		argc = cli_simple_parse_line(finaltoken, argv);
-		if (argc == 0) {
+		ถ้า (argc == 0) {
 			rc = -1;	/* no command at all */
 			continue;
 		}
 
-		if (cmd_process(flag, argc, argv, &repeatable, NULL))
+		ถ้า (cmd_process(flag, argc, argv, &repeatable, NULL))
 			rc = -1;
 
 		/* Did the user stop this? */
-		if (had_ctrlc())
-			return -1;	/* if stopped then not repeatable */
+		ถ้า (had_ctrlc())
+			คืน -1;	/* if stopped then not repeatable */
 	}
 
-	return rc ? rc : repeatable;
+	คืน rc ? rc : repeatable;
 }
 
 void cli_simple_loop(void)
 {
-	static char lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
+	static var_na lastcommand[CONFIG_SYS_CBSIZE + 1] = { 0, };
 
-	int len;
-	int flag;
-	int rc = 1;
+	จำนวนเต็ม len;
+	จำนวนเต็ม flag;
+	จำนวนเต็ม rc = 1;
 
-	for (;;) {
-		if (rc >= 0) {
+	สำหรับ (;;) {
+		ถ้า (rc >= 0) {
 			/* Saw enough of a valid command to
 			 * restart the timeout.
 			 */
@@ -283,41 +283,41 @@ void cli_simple_loop(void)
 		len = cli_readline(CONFIG_SYS_PROMPT);
 
 		flag = 0;	/* assume no special flags for now */
-		if (len > 0)
+		ถ้า (len > 0)
 			strlcpy(lastcommand, console_buffer,
 				CONFIG_SYS_CBSIZE + 1);
-		else if (len == 0)
+		มิฉะนั้น ถ้า (len == 0)
 			flag |= CMD_FLAG_REPEAT;
 #ifdef CONFIG_BOOT_RETRY_TIME
-		else if (len == -2) {
+		มิฉะนั้น ถ้า (len == -2) {
 			/* -2 means timed out, retry autoboot
 			 */
 			puts("\nTimed out waiting for command\n");
 # ifdef CONFIG_RESET_TO_RETRY
 			/* Reinit board to run initialization code again */
 			do_reset(NULL, 0, 0, NULL);
-# else
-			return;		/* retry autoboot */
+# มิฉะนั้น
+			คืน;		/* retry autoboot */
 # endif
 		}
 #endif
 
-		if (len == -1)
+		ถ้า (len == -1)
 			puts("<INTERRUPT>\n");
-		else
+		มิฉะนั้น
 			rc = run_command_repeatable(lastcommand, flag);
 
-		if (rc <= 0) {
+		ถ้า (rc <= 0) {
 			/* invalid command or not repeatable, forget it */
 			lastcommand[0] = 0;
 		}
 	}
 }
 
-int cli_simple_run_command_list(char *cmd, int flag)
+จำนวนเต็ม cli_simple_run_command_list(var_na *cmd, จำนวนเต็ม flag)
 {
-	char *line, *next;
-	int rcode = 0;
+	var_na *line, *next;
+	จำนวนเต็ม rcode = 0;
 
 	/*
 	 * Break into individual lines, and execute each line; terminate on
@@ -325,24 +325,24 @@ int cli_simple_run_command_list(char *cmd, int flag)
 	 */
 	next = cmd;
 	line = cmd;
-	while (*next) {
-		if (*next == '\n') {
+	ขณะ (*next) {
+		ถ้า (*next == '\n') {
 			*next = '\0';
 			/* run only non-empty commands */
-			if (*line) {
+			ถ้า (*line) {
 				debug("** exec: \"%s\"\n", line);
-				if (cli_simple_run_command(line, 0) < 0) {
+				ถ้า (cli_simple_run_command(line, 0) < 0) {
 					rcode = 1;
-					break;
+					bha_nga;
 				}
 			}
 			line = next + 1;
 		}
 		++next;
 	}
-	if (rcode == 0 && *line)
+	ถ้า (rcode == 0 && *line)
 		rcode = (cli_simple_run_command(line, 0) < 0);
 
-	return rcode;
+	คืน rcode;
 }
 #endif

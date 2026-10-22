@@ -7,22 +7,22 @@
 #include <stdio.h>
 
 /* used for ddr1 and ddr2 spd */
-static int
+static จำนวนเต็ม
 spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
 {
-	unsigned int cksum = 0;
-	unsigned int i;
+	unsigned จำนวนเต็ม cksum = 0;
+	unsigned จำนวนเต็ม i;
 
 	/*
 	 * Check SPD revision supported
 	 * Rev 1.X or less supported by this code
 	 */
-	if (spd_rev >= 0x20) {
+	ถ้า (spd_rev >= 0x20) {
 		printf("SPD revision %02X not supported by this code\n",
 		       spd_rev);
-		return 1;
+		คืน 1;
 	}
-	if (spd_rev > 0x13) {
+	ถ้า (spd_rev > 0x13) {
 		printf("SPD revision %02X not verified by this code\n",
 		       spd_rev);
 	}
@@ -30,66 +30,66 @@ spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
 	/*
 	 * Calculate checksum
 	 */
-	for (i = 0; i < 63; i++) {
+	สำหรับ (i = 0; i < 63; i++) {
 		cksum += *buf++;
 	}
 	cksum &= 0xFF;
 
-	if (cksum != spd_cksum) {
+	ถ้า (cksum != spd_cksum) {
 		printf("SPD checksum unexpected. "
 			"Checksum in SPD = %02X, computed SPD = %02X\n",
 			spd_cksum, cksum);
-		return 1;
+		คืน 1;
 	}
 
-	return 0;
+	คืน 0;
 }
 
-unsigned int
+unsigned จำนวนเต็ม
 ddr1_spd_check(const ddr1_spd_eeprom_t *spd)
 {
 	const u8 *p = (const u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	คืน spd_check(p, spd->spd_rev, spd->cksum);
 }
 
-unsigned int
+unsigned จำนวนเต็ม
 ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
 {
 	const u8 *p = (const u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	คืน spd_check(p, spd->spd_rev, spd->cksum);
 }
 
 /*
  * CRC16 compute for DDR3 SPD
  * Copied from DDR3 SPD spec.
  */
-static int
-crc16(char *ptr, int count)
+static จำนวนเต็ม
+crc16(var_na *ptr, จำนวนเต็ม count)
 {
-	int crc, i;
+	จำนวนเต็ม crc, i;
 
 	crc = 0;
-	while (--count >= 0) {
-		crc = crc ^ (int)*ptr++ << 8;
-		for (i = 0; i < 8; ++i)
-			if (crc & 0x8000)
+	ขณะ (--count >= 0) {
+		crc = crc ^ (จำนวนเต็ม)*ptr++ << 8;
+		สำหรับ (i = 0; i < 8; ++i)
+			ถ้า (crc & 0x8000)
 				crc = crc << 1 ^ 0x1021;
-			else
+			มิฉะนั้น
 				crc = crc << 1;
 	}
-	return crc & 0xffff;
+	คืน crc & 0xffff;
 }
 
-unsigned int
+unsigned จำนวนเต็ม
 ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	var_na *p = (var_na *)spd;
+	จำนวนเต็ม csum16;
+	จำนวนเต็ม len;
+	var_na crc_lsb;	/* byte 126 */
+	var_na crc_msb;	/* byte 127 */
 
 	/*
 	 * SPD byte0[7] - CRC coverage
@@ -100,50 +100,50 @@ ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 	len = !(spd->info_size_crc & 0x80) ? 126 : 117;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	crc_lsb = (var_na) (csum16 & 0xff);
+	crc_msb = (var_na) (csum16 >> 8);
 
-	if (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
-		return 0;
-	} else {
+	ถ้า (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
+		คืน 0;
+	} มิฉะนั้น {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+		คืน 1;
 	}
 }
 
-unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
+unsigned จำนวนเต็ม ddr4_spd_check(const sa_nracanaa ddr4_spd_eeprom_s *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	var_na *p = (var_na *)spd;
+	จำนวนเต็ม csum16;
+	จำนวนเต็ม len;
+	var_na crc_lsb;	/* byte 126 */
+	var_na crc_msb;	/* byte 127 */
 
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	crc_lsb = (var_na) (csum16 & 0xff);
+	crc_msb = (var_na) (csum16 >> 8);
 
-	if (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
+	ถ้า (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+		คืน 1;
 	}
 
-	p = (char *)((ulong)spd + 128);
+	p = (var_na *)((ulong)spd + 128);
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	crc_lsb = (var_na) (csum16 & 0xff);
+	crc_msb = (var_na) (csum16 >> 8);
 
-	if (spd->mod_section.uc[126] != crc_lsb ||
+	ถ้า (spd->mod_section.uc[126] != crc_lsb ||
 	    spd->mod_section.uc[127] != crc_msb) {
 		printf("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
@@ -151,8 +151,8 @@ unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
 			spd->mod_section.uc[126],
 			crc_lsb, spd->mod_section.uc[127],
 			crc_msb);
-		return 1;
+		คืน 1;
 	}
 
-	return 0;
+	คืน 0;
 }

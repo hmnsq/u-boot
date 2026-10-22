@@ -24,10 +24,10 @@
  * by menu_item_destroy, and the consumer of the interface never sees that
  * this struct is used at all.
  */
-struct menu_item {
-	char *key;
+sa_nracanaa menu_item {
+	var_na *key;
 	void *data;
-	struct list_head list;
+	sa_nracanaa list_head list;
 };
 
 /*
@@ -36,18 +36,18 @@ struct menu_item {
  * in menu.h, but the full definition is here to prevent consumers from
  * relying on its contents.
  */
-struct menu {
-	struct menu_item *default_item;
-	int timeout;
-	char *title;
-	int prompt;
-	void (*display_statusline)(struct menu *);
+sa_nracanaa menu {
+	sa_nracanaa menu_item *default_item;
+	จำนวนเต็ม timeout;
+	var_na *title;
+	จำนวนเต็ม prompt;
+	void (*display_statusline)(sa_nracanaa menu *);
 	void (*item_data_print)(void *);
-	char *(*item_choice)(void *);
+	var_na *(*item_choice)(void *);
 	bool (*need_reprint)(void *);
 	void *item_choice_data;
-	struct list_head items;
-	int item_cnt;
+	sa_nracanaa list_head items;
+	จำนวนเต็ม item_cnt;
 };
 
 /*
@@ -58,24 +58,24 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
-		void *(*callback)(struct menu *, struct menu_item *, void *),
+static anta_hstha void *menu_items_iter(sa_nracanaa menu *m,
+		void *(*callback)(sa_nracanaa menu *, sa_nracanaa menu_item *, void *),
 		void *extra)
 {
-	struct list_head *pos, *n;
-	struct menu_item *item;
+	sa_nracanaa list_head *pos, *n;
+	sa_nracanaa menu_item *item;
 	void *ret;
 
 	list_for_each_safe(pos, n, &m->items) {
-		item = list_entry(pos, struct menu_item, list);
+		item = list_entry(pos, sa_nracanaa menu_item, list);
 
 		ret = callback(m, item, extra);
 
-		if (ret)
-			return ret;
+		ถ้า (ret)
+			คืน ret;
 	}
 
-	return NULL;
+	คืน NULL;
 }
 
 /*
@@ -83,52 +83,52 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
-				struct menu_item *item,
+static anta_hstha void *menu_item_print(sa_nracanaa menu *m,
+				sa_nracanaa menu_item *item,
 				void *extra)
 {
-	if (!m->item_data_print) {
+	ถ้า (!m->item_data_print) {
 		puts(item->key);
 		putc('\n');
-	} else {
+	} มิฉะนั้น {
 		m->item_data_print(item->data);
 	}
 
-	return NULL;
+	คืน NULL;
 }
 
 /*
  * Free the memory used by a menu item. This includes the memory used by its
  * key.
  */
-static inline void *menu_item_destroy(struct menu *m,
-				struct menu_item *item,
+static anta_hstha void *menu_item_destroy(sa_nracanaa menu *m,
+				sa_nracanaa menu_item *item,
 				void *extra)
 {
-	if (item->key)
+	ถ้า (item->key)
 		free(item->key);
 
 	free(item);
 
-	return NULL;
+	คืน NULL;
 }
 
 /*
  * Display a menu so the user can make a choice of an item. First display its
  * title, if any, and then each item in the menu.
  */
-static inline void menu_display(struct menu *m)
+static anta_hstha void menu_display(sa_nracanaa menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	ถ้า (m->need_reprint) {
+		ถ้า (!m->need_reprint(m->item_choice_data))
+			คืน;
 	}
 
-	if (m->title) {
+	ถ้า (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	ถ้า (m->display_statusline)
 		m->display_statusline(m);
 
 	menu_items_iter(m, menu_item_print, NULL);
@@ -142,45 +142,45 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
-			struct menu_item *item, void *extra)
+static anta_hstha void *menu_item_key_match(sa_nracanaa menu *m,
+			sa_nracanaa menu_item *item, void *extra)
 {
-	char *item_key = extra;
+	var_na *item_key = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	ถ้า (!item_key || !item->key) {
+		ถ้า (item_key == item->key)
+			คืน item;
 
-		return NULL;
+		คืน NULL;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	ถ้า (strcmp(item->key, item_key) == 0)
+		คืน item;
 
-	return NULL;
+	คืน NULL;
 }
 
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+static anta_hstha sa_nracanaa menu_item *menu_item_by_key(sa_nracanaa menu *m,
+							var_na *item_key)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	คืน menu_items_iter(m, menu_item_key_match, item_key);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+จำนวนเต็ม menu_default_choice(sa_nracanaa menu *m, void **choice)
 {
-	if (m->default_item) {
+	ถ้า (m->default_item) {
 		*choice = m->default_item->data;
-		return 1;
+		คืน 1;
 	}
 
-	return -ENOENT;
+	คืน -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+static anta_hstha จำนวนเต็ม menu_interactive_choice(sa_nracanaa menu *m, void **choice)
 {
-	char cbuf[CONFIG_SYS_CBSIZE];
-	struct menu_item *choice_item = NULL;
-	int readret;
+	var_na cbuf[CONFIG_SYS_CBSIZE];
+	sa_nracanaa menu_item *choice_item = NULL;
+	จำนวนเต็ม readret;
 
-	while (!choice_item) {
+	ขณะ (!choice_item) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
+		ถ้า (!m->item_choice) {
 			readret = cli_readline_into_buffer("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
+			ถ้า (readret >= 0) {
 				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
+				ถ้า (!choice_item)
 					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
+			} มิฉะนั้น ถ้า (readret == -1)  {
 				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+				คืน -EINTR;
+			} มิฉะนั้น {
+				คืน menu_default_choice(m, choice);
 			}
-		} else {
-			char *key = m->item_choice(m->item_choice_data);
+		} มิฉะนั้น {
+			var_na *key = m->item_choice(m->item_choice_data);
 
-			if (key)
+			ถ้า (key)
 				choice_item = menu_item_by_key(m, key);
 		}
 
-		if (!choice_item)
+		ถ้า (!choice_item)
 			m->timeout = 0;
 	}
 
 	*choice = choice_item->data;
 
-	return 1;
+	คืน 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+จำนวนเต็ม menu_default_set(sa_nracanaa menu *m, var_na *item_key)
 {
-	struct menu_item *item;
+	sa_nracanaa menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	ถ้า (!m)
+		คืน -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (!item)
-		return -ENOENT;
+	ถ้า (!item)
+		คืน -ENOENT;
 
 	m->default_item = item;
 
-	return 1;
+	คืน 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+จำนวนเต็ม menu_get_choice(sa_nracanaa menu *m, void **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	ถ้า (!m || !choice)
+		คืน -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	ถ้า (!m->item_cnt)
+		คืน -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	ถ้า (!m->prompt)
+		คืน menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	คืน menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,29 +309,29 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+จำนวนเต็ม menu_item_add(sa_nracanaa menu *m, var_na *item_key, void *item_data)
 {
-	struct menu_item *item;
+	sa_nracanaa menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	ถ้า (!m)
+		คืน -EINVAL;
 
 	item = menu_item_by_key(m, item_key);
 
-	if (item) {
+	ถ้า (item) {
 		item->data = item_data;
-		return 1;
+		คืน 1;
 	}
 
-	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	item = malloc(parimaa_na *item);
+	ถ้า (!item)
+		คืน -ENOMEM;
 
 	item->key = strdup(item_key);
 
-	if (!item->key) {
+	ถ้า (!item->key) {
 		free(item);
-		return -ENOMEM;
+		คืน -ENOMEM;
 	}
 
 	item->data = item_data;
@@ -339,7 +339,7 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
 	list_add_tail(&item->list, &m->items);
 	m->item_cnt++;
 
-	return 1;
+	คืน 1;
 }
 
 /*
@@ -377,19 +377,19 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
-				void (*display_statusline)(struct menu *),
+sa_nracanaa menu *menu_create(var_na *title, จำนวนเต็ม timeout, จำนวนเต็ม prompt,
+				void (*display_statusline)(sa_nracanaa menu *),
 				void (*item_data_print)(void *),
-				char *(*item_choice)(void *),
+				var_na *(*item_choice)(void *),
 				bool (*need_reprint)(void *),
 				void *item_choice_data)
 {
-	struct menu *m;
+	sa_nracanaa menu *m;
 
-	m = malloc(sizeof *m);
+	m = malloc(parimaa_na *m);
 
-	if (!m)
-		return NULL;
+	ถ้า (!m)
+		คืน NULL;
 
 	m->default_item = NULL;
 	m->prompt = prompt;
@@ -401,18 +401,18 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->item_choice_data = item_choice_data;
 	m->item_cnt = 0;
 
-	if (title) {
+	ถ้า (title) {
 		m->title = strdup(title);
-		if (!m->title) {
+		ถ้า (!m->title) {
 			free(m);
-			return NULL;
+			คืน NULL;
 		}
-	} else
+	} มิฉะนั้น
 		m->title = NULL;
 
 	INIT_LIST_HEAD(&m->items);
 
-	return m;
+	คืน m;
 }
 
 /*
@@ -422,58 +422,58 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+จำนวนเต็ม menu_destroy(sa_nracanaa menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	ถ้า (!m)
+		คืน -EINVAL;
 
 	menu_items_iter(m, menu_item_destroy, NULL);
 
-	if (m->title)
+	ถ้า (m->title)
 		free(m->title);
 
 	free(m);
 
-	return 1;
+	คืน 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+static จำนวนเต็ม bootmenu_conv_shortcut_key(sa_nracanaa bootmenu_data *menu, จำนวนเต็ม ichar)
 {
-	int shortcut_key;
+	จำนวนเต็ม shortcut_key;
 
 	ichar = tolower(ichar);
 	switch (ichar) {
 	/* a-z for bootmenu entry > 9 */
-	case 'a' ... 'z':
+	pak_sa 'a' ... 'z':
 		shortcut_key = ichar - 'a' + 9;
-		break;
+		bha_nga;
 	/* 1-9 for bootmenu entry <= 9 */
-	case '1' ... '9':
+	pak_sa '1' ... '9':
 		shortcut_key = ichar - '1';
-		break;
+		bha_nga;
 	/* Reserve 0 for last option (aka Exit) */
-	case '0':
+	pak_sa '0':
 	default:
-		return -1;
+		คืน -1;
 	}
 
-	return shortcut_key;
+	คืน shortcut_key;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
-					 struct cli_ch_state *cch)
+ga_nanaa bootmenu_key bootmenu_autoboot_loop(sa_nracanaa bootmenu_data *menu,
+					 sa_nracanaa cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	ga_nanaa bootmenu_key key = BKEY_NONE;
+	จำนวนเต็ม i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	ขณะ (menu->delay > 0) {
+		จำนวนเต็ม ichar;
 
-		if (ansi)
+		ถ้า (ansi)
 			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
+		สำหรับ (i = 0; i < 100; ++i) {
+			ถ้า (!tstc()) {
 				schedule();
 				mdelay(10);
 				continue;
@@ -485,100 +485,100 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 			ichar = cli_ch_process(cch, c);
 
 			switch (ichar) {
-			case '\0':
+			pak_sa '\0':
 				key = BKEY_NONE;
-				break;
-			case '\n':
+				bha_nga;
+			pak_sa '\n':
 				key = BKEY_SELECT;
-				break;
-			case 0x3: /* ^C */
+				bha_nga;
+			pak_sa 0x3: /* ^C */
 				key = BKEY_QUIT;
-				break;
-			case 'A' ... 'Z':
-			case 'a' ... 'z':
-			case '0' ... '9':
+				bha_nga;
+			pak_sa 'A' ... 'Z':
+			pak_sa 'a' ... 'z':
+			pak_sa '0' ... '9':
 				key = BKEY_SHORTCUT;
-				break;
+				bha_nga;
 			default:
 				key = BKEY_NONE;
-				break;
+				bha_nga;
 			}
-			break;
+			bha_nga;
 		}
 
-		if (key == BKEY_SHORTCUT)
+		ถ้า (key == BKEY_SHORTCUT)
 			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
 
-		if (menu->delay < 0)
-			break;
+		ถ้า (menu->delay < 0)
+			bha_nga;
 
 		--menu->delay;
 	}
 
-	if (ansi)
+	ถ้า (ansi)
 		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
 
-	if (menu->delay == 0)
+	ถ้า (menu->delay == 0)
 		key = BKEY_SELECT;
 
-	return key;
+	คืน key;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+ga_nanaa bootmenu_key bootmenu_conv_key(จำนวนเต็ม ichar)
 {
-	enum bootmenu_key key;
+	ga_nanaa bootmenu_key key;
 
 	switch (ichar) {
-	case '\n':
+	pak_sa '\n':
 		/* enter key was pressed */
 		key = BKEY_SELECT;
-		break;
-	case CTL_CH('c'):
-	case '\e':
+		bha_nga;
+	pak_sa CTL_CH('c'):
+	pak_sa '\e':
 		/* ^C was pressed */
 		key = BKEY_QUIT;
-		break;
-	case CTL_CH('p'):
+		bha_nga;
+	pak_sa CTL_CH('p'):
 		key = BKEY_UP;
-		break;
-	case CTL_CH('n'):
+		bha_nga;
+	pak_sa CTL_CH('n'):
 		key = BKEY_DOWN;
-		break;
-	case CTL_CH('s'):
+		bha_nga;
+	pak_sa CTL_CH('s'):
 		key = BKEY_SAVE;
-		break;
-	case '+':
+		bha_nga;
+	pak_sa '+':
 		key = BKEY_PLUS;
-		break;
-	case '-':
+		bha_nga;
+	pak_sa '-':
 		key = BKEY_MINUS;
-		break;
-	case ' ':
+		bha_nga;
+	pak_sa ' ':
 		key = BKEY_SPACE;
-		break;
+		bha_nga;
 	default:
 		key = BKEY_NONE;
-		break;
+		bha_nga;
 	}
 
-	return key;
+	คืน key;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
-				struct cli_ch_state *cch)
+ga_nanaa bootmenu_key bootmenu_loop(sa_nracanaa bootmenu_data *menu,
+				sa_nracanaa cli_ch_state *cch)
 {
-	enum bootmenu_key key;
-	int c, errchar = 0;
+	ga_nanaa bootmenu_key key;
+	จำนวนเต็ม c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
+	ถ้า (!c) {
+		ขณะ (!c && !tstc()) {
 			schedule();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		ถ้า (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
@@ -586,10 +586,10 @@ enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
 
 	key = bootmenu_conv_key(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
+	ถ้า (key == BKEY_NONE && isalnum(c)) {
 		key = BKEY_SHORTCUT;
 		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
 	}
 
-	return key;
+	คืน key;
 }
