@@ -5,304 +5,304 @@
  * Authors: Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <bmp_layout.h>
-#include <command.h>
-#include <env.h>
-#include <errno.h>
-#include <fs.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <log.h>
-#include <nand.h>
-#include <sata.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <splash.h>
-#include <usb.h>
-#include <virtio.h>
-#include <asm/global_data.h>
+#অন্তর্ভাব <bmp_layout.h>
+#অন্তর্ভাব <command.h>
+#অন্তর্ভাব <env.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fs.h>
+#অন্তর্ভাব <fdt_support.h>
+#অন্তর্ভাব <image.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <nand.h>
+#অন্তর্ভাব <sata.h>
+#অন্তর্ভাব <spi.h>
+#অন্তর্ভাব <spi_flash.h>
+#অন্তর্ভাব <splash.h>
+#অন্তর্ভাব <usb.h>
+#অন্তর্ভাব <virtio.h>
+#অন্তর্ভাব <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_তথ্য_PTR;
 
 #ifdef CONFIG_SPI_FLASH
-static struct spi_flash *sf;
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+স্থির কাঠামো spi_flash *sf;
+স্থির পূর্ণসংখ্যা splash_sf_read_raw(ulong bmp_load_addr, পূর্ণসংখ্যা offset, size_t read_আকার)
 {
-	if (!sf) {
+	যদি (!sf) {
 		sf = spi_flash_probe(CONFIG_SF_DEFAULT_BUS,
 				     CONFIG_SF_DEFAULT_CS,
 				     CONFIG_SF_DEFAULT_SPEED,
 				     CONFIG_SF_DEFAULT_MODE);
-		if (!sf)
-			return -ENODEV;
+		যদি (!sf)
+			ফেরত -ENODEV;
 	}
 
-	return spi_flash_read(sf, offset, read_size, (void *)(uintptr_t)bmp_load_addr);
+	ফেরত spi_flash_read(sf, offset, read_আকার, (শূন্য *)(uintptr_t)bmp_load_addr);
 }
-#else
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#অন্যথা
+স্থির পূর্ণসংখ্যা splash_sf_read_raw(ulong bmp_load_addr, পূর্ণসংখ্যা offset, size_t read_আকার)
 {
 	debug("%s: sf support not available\n", __func__);
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_CMD_NAND
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+স্থির পূর্ণসংখ্যা splash_nand_read_raw(ulong bmp_load_addr, পূর্ণসংখ্যা offset, size_t read_আকার)
 {
-	struct mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
-	return nand_read_skip_bad(mtd, offset,
-				  &read_size, NULL,
-				  mtd->size,
+	কাঠামো mtd_info *mtd = get_nand_dev_by_সূচক(nand_curr_device);
+	ফেরত nand_read_skip_bad(mtd, offset,
+				  &read_আকার, ফাঁকা,
+				  mtd->আকার_2,
 				  (u_char *)bmp_load_addr);
 }
-#else
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#অন্যথা
+স্থির পূর্ণসংখ্যা splash_nand_read_raw(ulong bmp_load_addr, পূর্ণসংখ্যা offset, size_t read_আকার)
 {
 	debug("%s: nand support not available\n", __func__);
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
-static int splash_mmc_read_raw(ulong bmp_load_addr, struct splash_location *location,
-			       size_t read_size)
+স্থির পূর্ণসংখ্যা splash_mmc_read_raw(ulong bmp_load_addr, কাঠামো splash_location *location,
+			       size_t read_আকার)
 {
-	struct disk_partition partition;
-	struct blk_desc *desc;
+	কাঠামো disk_partition partition;
+	কাঠামো blk_desc *desc;
 	lbaint_t blkcnt;
-	int ret, n;
+	পূর্ণসংখ্যা ret, n;
 
-	if (!IS_ENABLED(CONFIG_CMD_MMC)) {
+	যদি (!IS_ENABLED(CONFIG_CMD_MMC)) {
 		debug("%s: mmc support not available\n", __func__);
-		return -ENOSYS;
+		ফেরত -ENOSYS;
 	}
 
-	ret = part_get_info_by_dev_and_name_or_num("mmc", location->devpart, &desc,
+	ret = part_get_info_by_dev_and_name_or_অঙ্ক("mmc", location->devpart, &desc,
 						   &partition, 1);
-	if (ret < 0)
-		return ret;
+	যদি (ret < 0)
+		ফেরত ret;
 
-	blkcnt = DIV_ROUND_UP(read_size, partition.blksz);
-	n = blk_dread(desc, partition.start, blkcnt, (void *)(uintptr_t)bmp_load_addr);
+	blkcnt = DIV_ROUND_UP(read_আকার, partition.blksz);
+	n = blk_dread(desc, partition.start, blkcnt, (শূন্য *)(uintptr_t)bmp_load_addr);
 
-	return (n == blkcnt) ? 0 : -EIO;
+	ফেরত (n == blkcnt) ? 0 : -EIO;
 }
 
-static int splash_storage_read_raw(struct splash_location *location,
-			       ulong bmp_load_addr, size_t read_size)
+স্থির পূর্ণসংখ্যা splash_storage_read_raw(কাঠামো splash_location *location,
+			       ulong bmp_load_addr, size_t read_আকার)
 {
 	u32 offset;
 
-	if (!location)
-		return -EINVAL;
+	যদি (!location)
+		ফেরত -EINVAL;
 
 	offset = location->offset;
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
-		return splash_mmc_read_raw(bmp_load_addr, location, read_size);
-	case SPLASH_STORAGE_NAND:
-		return splash_nand_read_raw(bmp_load_addr, offset, read_size);
-	case SPLASH_STORAGE_SF:
-		return splash_sf_read_raw(bmp_load_addr, offset, read_size);
-	default:
+	নির্বাচন (location->storage) {
+	ক্ষেত্র SPLASH_STORAGE_MMC:
+		ফেরত splash_mmc_read_raw(bmp_load_addr, location, read_আকার);
+	ক্ষেত্র SPLASH_STORAGE_NAND:
+		ফেরত splash_nand_read_raw(bmp_load_addr, offset, read_আকার);
+	ক্ষেত্র SPLASH_STORAGE_SF:
+		ফেরত splash_sf_read_raw(bmp_load_addr, offset, read_আকার);
+	পূর্বনির্ধারিত:
 		printf("Unknown splash location\n");
 	}
 
-	return -EINVAL;
+	ফেরত -EINVAL;
 }
 
-static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr)
+স্থির পূর্ণসংখ্যা splash_load_raw(কাঠামো splash_location *location, ulong bmp_load_addr)
 {
-	struct bmp_header *bmp_hdr;
-	int res;
-	size_t bmp_size, bmp_header_size = sizeof(struct bmp_header);
+	কাঠামো bmp_header *bmp_hdr;
+	পূর্ণসংখ্যা res;
+	size_t bmp_আকার, bmp_header_আকার = আকার(কাঠামো bmp_header);
 
-	if (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	যদি (bmp_load_addr + bmp_header_আকার >= gd->start_addr_sp)
+		যাও splash_address_too_উপরের;
 
-	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_size);
-	if (res < 0)
-		return res;
+	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_আকার);
+	যদি (res < 0)
+		ফেরত res;
 
-	bmp_hdr = (struct bmp_header *)(uintptr_t)bmp_load_addr;
-	bmp_size = le32_to_cpu(bmp_hdr->file_size);
+	bmp_hdr = (কাঠামো bmp_header *)(uintptr_t)bmp_load_addr;
+	bmp_আকার = le32_to_cpu(bmp_hdr->file_আকার);
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	যদি (bmp_load_addr + bmp_আকার >= gd->start_addr_sp)
+		যাও splash_address_too_উপরের;
 
-	return splash_storage_read_raw(location, bmp_load_addr, bmp_size);
+	ফেরত splash_storage_read_raw(location, bmp_load_addr, bmp_আকার);
 
-splash_address_too_high:
+splash_address_too_উপরের:
 	printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 
-	return -EFAULT;
+	ফেরত -EFAULT;
 }
 
-static int splash_select_fs_dev(struct splash_location *location)
+স্থির পূর্ণসংখ্যা splash_select_fs_dev(কাঠামো splash_location *location)
 {
-	int res;
+	পূর্ণসংখ্যা res;
 
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
+	নির্বাচন (location->storage) {
+	ক্ষেত্র SPLASH_STORAGE_MMC:
 		res = fs_set_blk_dev("mmc", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_USB:
+		বিরতি;
+	ক্ষেত্র SPLASH_STORAGE_USB:
 		res = fs_set_blk_dev("usb", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_SATA:
+		বিরতি;
+	ক্ষেত্র SPLASH_STORAGE_SATA:
 		res = fs_set_blk_dev("sata", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_NAND:
-		if (location->ubivol != NULL)
-			res = fs_set_blk_dev("ubi", NULL, FS_TYPE_UBIFS);
-		else
+		বিরতি;
+	ক্ষেত্র SPLASH_STORAGE_NAND:
+		যদি (location->ubivol != ফাঁকা)
+			res = fs_set_blk_dev("ubi", ফাঁকা, FS_TYPE_UBIFS);
+		অন্যথা
 			res = -ENODEV;
-		break;
-	default:
+		বিরতি;
+	পূর্বনির্ধারিত:
 		printf("Error: %s: unsupported location storage.\n", __func__);
-		return -ENODEV;
+		ফেরত -ENODEV;
 	}
 
-	if (res)
+	যদি (res)
 		printf("Error: %s: could not access storage.\n", __func__);
 
-	return res;
+	ফেরত res;
 }
 
 #ifdef CONFIG_USB_STORAGE
-static int splash_init_usb(void)
+স্থির পূর্ণসংখ্যা splash_init_usb(শূন্য)
 {
-	int err;
+	পূর্ণসংখ্যা err;
 
 	err = usb_init();
-	if (err)
-		return err;
+	যদি (err)
+		ফেরত err;
 
 #ifndef CONFIG_DM_USB
 	err = usb_stor_scan(1) < 0 ? -ENODEV : 0;
 #endif
 
-	return err;
+	ফেরত err;
 }
-#else
-static inline int splash_init_usb(void)
+#অন্যথা
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_init_usb(শূন্য)
 {
 	printf("Cannot load splash image: no USB support\n");
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
 #ifdef CONFIG_SATA
-static int splash_init_sata(void)
+স্থির পূর্ণসংখ্যা splash_init_sata(শূন্য)
 {
-	return sata_probe(0);
+	ফেরত sata_probe(0);
 }
-#else
-static inline int splash_init_sata(void)
+#অন্যথা
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_init_sata(শূন্য)
 {
 	printf("Cannot load splash image: no SATA support\n");
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
-static int splash_init_virtio(void)
+স্থির পূর্ণসংখ্যা splash_init_virtio(শূন্য)
 {
-	if (!IS_ENABLED(CONFIG_VIRTIO)) {
+	যদি (!IS_ENABLED(CONFIG_VIRTIO)) {
 		printf("Cannot load splash image: no virtio support\n");
-		return -ENOSYS;
-	} else {
-		return virtio_init();
+		ফেরত -ENOSYS;
+	} অন্যথা {
+		ফেরত virtio_init();
 	}
 }
 
-#if defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
-static int splash_mount_ubifs(struct splash_location *location)
+#যদি defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
+স্থির পূর্ণসংখ্যা splash_mount_ubifs(কাঠামো splash_location *location)
 {
-	int res;
-	char cmd[32];
+	পূর্ণসংখ্যা res;
+	অক্ষর cmd[32];
 
 	sprintf(cmd, "ubi part %s", location->mtdpart);
 	res = run_command(cmd, 0);
-	if (res)
-		return res;
+	যদি (res)
+		ফেরত res;
 
 	sprintf(cmd, "ubifsmount %s", location->ubivol);
 	res = run_command(cmd, 0);
 
-	return res;
+	ফেরত res;
 }
 
-static inline int splash_umount_ubifs(void)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_umount_ubifs(শূন্য)
 {
-	return run_command("ubifsumount", 0);
+	ফেরত run_command("ubifsumount", 0);
 }
-#else
-static inline int splash_mount_ubifs(struct splash_location *location)
+#অন্যথা
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_mount_ubifs(কাঠামো splash_location *location)
 {
 	printf("Cannot load splash image: no UBIFS support\n");
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 
-static inline int splash_umount_ubifs(void)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_umount_ubifs(শূন্য)
 {
 	printf("Cannot unmount UBIFS: no UBIFS support\n");
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
 #define SPLASH_SOURCE_DEFAULT_FILE_NAME		"splash.bmp"
 
-static int splash_load_fs(struct splash_location *location, ulong bmp_load_addr)
+স্থির পূর্ণসংখ্যা splash_load_fs(কাঠামো splash_location *location, ulong bmp_load_addr)
 {
-	int res = 0;
-	loff_t bmp_size;
+	পূর্ণসংখ্যা res = 0;
+	loff_t bmp_আকার;
 	loff_t actread;
-	char *splash_file;
+	অক্ষর *splash_file;
 
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	যদি (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	if (location->storage == SPLASH_STORAGE_USB)
+	যদি (location->storage == SPLASH_STORAGE_USB)
 		res = splash_init_usb();
 
-	if (location->storage == SPLASH_STORAGE_SATA)
+	যদি (location->storage == SPLASH_STORAGE_SATA)
 		res = splash_init_sata();
 
-	if (location->storage == SPLASH_STORAGE_VIRTIO)
+	যদি (location->storage == SPLASH_STORAGE_VIRTIO)
 		res = splash_init_virtio();
 
-	if (location->ubivol != NULL)
+	যদি (location->ubivol != ফাঁকা)
 		res = splash_mount_ubifs(location);
 
-	if (res)
-		return res;
+	যদি (res)
+		ফেরত res;
 
 	res = splash_select_fs_dev(location);
-	if (res)
-		goto out;
+	যদি (res)
+		যাও out;
 
-	res = fs_size(splash_file, &bmp_size);
-	if (res) {
+	res = fs_আকার(splash_file, &bmp_আকার);
+	যদি (res) {
 		printf("Error: %s: cannot determine file size (%d)\n",
 		       __func__, res);
-		goto out;
+		যাও out;
 	}
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
+	যদি (bmp_load_addr + bmp_আকার >= gd->start_addr_sp) {
 		printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 		res = -EFAULT;
-		goto out;
+		যাও out;
 	}
 
 	splash_select_fs_dev(location);
 	res = fs_read(splash_file, bmp_load_addr, 0, 0, &actread);
 
 out:
-	if (location->ubivol != NULL)
+	যদি (location->ubivol != ফাঁকা)
 		splash_umount_ubifs();
 
-	return res;
+	ফেরত res;
 }
 
 /**
@@ -320,106 +320,106 @@ out:
  *	    If splashsource env variable contains a supported value
  *			return the location selected by splashsource.
  */
-static struct splash_location *select_splash_location(
-			    struct splash_location *locations, uint size)
+স্থির কাঠামো splash_location *select_splash_location(
+			    কাঠামো splash_location *locations, uint আকার_2)
 {
-	int i;
-	char *env_splashsource;
+	পূর্ণসংখ্যা i;
+	অক্ষর *env_splashsource;
 
-	if (!locations || size == 0)
-		return NULL;
+	যদি (!locations || আকার_2 == 0)
+		ফেরত ফাঁকা;
 
 	env_splashsource = env_get("splashsource");
-	if (env_splashsource == NULL)
-		return &locations[0];
+	যদি (env_splashsource == ফাঁকা)
+		ফেরত &locations[0];
 
-	for (i = 0; i < size; i++) {
-		if (!strcmp(locations[i].name, env_splashsource))
-			return &locations[i];
+	জন্য (i = 0; i < আকার_2; i++) {
+		যদি (!strcmp(locations[i].name, env_splashsource))
+			ফেরত &locations[i];
 	}
 
 	printf("splashsource env variable set to unsupported value\n");
-	return NULL;
+	ফেরত ফাঁকা;
 }
 
 #ifdef CONFIG_FIT
-static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr)
+স্থির পূর্ণসংখ্যা splash_load_fit(কাঠামো splash_location *location, ulong bmp_load_addr)
 {
-	int res;
-	int node_offset;
-	const char *splash_file;
-	const void *internal_splash_data;
-	size_t internal_splash_size;
-	int external_splash_addr;
-	u32 external_splash_size;
+	পূর্ণসংখ্যা res;
+	পূর্ণসংখ্যা গ্রন্থি_offset;
+	ধ্রুবক অক্ষর *splash_file;
+	ধ্রুবক শূন্য *internal_splash_তথ্য;
+	size_t internal_splash_আকার;
+	পূর্ণসংখ্যা external_splash_addr;
+	u32 external_splash_আকার;
 	bool is_splash_external = false;
-	struct legacy_img_hdr *img_header;
-	const u32 *fit_header;
-	u32 fit_size;
-	const size_t header_size = sizeof(struct legacy_img_hdr);
+	কাঠামো legacy_img_hdr *img_header;
+	ধ্রুবক u32 *fit_header;
+	u32 fit_আকার;
+	ধ্রুবক size_t header_আকার = আকার(কাঠামো legacy_img_hdr);
 
 	/* Read in image header */
-	res = splash_storage_read_raw(location, bmp_load_addr, header_size);
-	if (res < 0)
-		return res;
+	res = splash_storage_read_raw(location, bmp_load_addr, header_আকার);
+	যদি (res < 0)
+		ফেরত res;
 
-	img_header = (struct legacy_img_hdr *)(uintptr_t)bmp_load_addr;
-	if (image_get_magic(img_header) != FDT_MAGIC) {
+	img_header = (কাঠামো legacy_img_hdr *)(uintptr_t)bmp_load_addr;
+	যদি (image_get_magic(img_header) != FDT_MAGIC) {
 		printf("Could not find FDT magic\n");
-		return -EINVAL;
+		ফেরত -EINVAL;
 	}
 
-	fit_size = fdt_totalsize(img_header);
+	fit_আকার = fdt_totalsize(img_header);
 
 	/* Read in entire FIT */
-	fit_header = (const u32 *)(bmp_load_addr + header_size);
-	res = splash_storage_read_raw(location, (uintptr_t)fit_header, fit_size);
-	if (res < 0)
-		return res;
+	fit_header = (ধ্রুবক u32 *)(bmp_load_addr + header_আকার);
+	res = splash_storage_read_raw(location, (uintptr_t)fit_header, fit_আকার);
+	যদি (res < 0)
+		ফেরত res;
 
-	res = fit_check_format(fit_header, IMAGE_SIZE_INVAL);
-	if (res) {
+	res = fit_check_format(fit_header, IMAGE_আকার_INVAL);
+	যদি (res) {
 		debug("Could not find valid FIT image\n");
-		return res;
+		ফেরত res;
 	}
 
 	/* Get the splash image node */
 	splash_file = env_get("splashfile");
-	if (!splash_file)
+	যদি (!splash_file)
 		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
 
-	node_offset = fit_image_get_node(fit_header, splash_file);
-	if (node_offset < 0) {
+	গ্রন্থি_offset = fit_image_get_গ্রন্থি(fit_header, splash_file);
+	যদি (গ্রন্থি_offset < 0) {
 		debug("Could not find splash image '%s' in FIT\n",
 		      splash_file);
-		return -ENOENT;
+		ফেরত -ENOENT;
 	}
 
 	/* Extract the splash data from FIT */
-	if (!fit_image_get_data(fit_header, node_offset, &internal_splash_data,
-				&internal_splash_size)) {
-		memmove((void *)(uintptr_t)bmp_load_addr, internal_splash_data,
-			internal_splash_size);
-	} else {
+	যদি (!fit_image_get_তথ্য(fit_header, গ্রন্থি_offset, &internal_splash_তথ্য,
+				&internal_splash_আকার)) {
+		memmove((শূন্য *)(uintptr_t)bmp_load_addr, internal_splash_তথ্য,
+			internal_splash_আকার);
+	} অন্যথা {
 		printf("Failed to get splash image from FIT\n");
-		return -ENODATA;
+		ফেরত -ENODATA;
 	}
 
-	if (is_splash_external) {
-		res = fit_image_get_data_size(fit_header, node_offset, &external_splash_size);
-		if (res < 0) {
+	যদি (is_splash_external) {
+		res = fit_image_get_তথ্য_আকার(fit_header, গ্রন্থি_offset, &external_splash_আকার);
+		যদি (res < 0) {
 			printf("Failed to get size of splash image (err=%d)\n", res);
-			return res;
+			ফেরত res;
 		}
 
 		/* Read in the splash data */
 		location->offset = external_splash_addr;
-		res = splash_storage_read_raw(location, bmp_load_addr, external_splash_size);
-		if (res < 0)
-			return res;
+		res = splash_storage_read_raw(location, bmp_load_addr, external_splash_আকার);
+		যদি (res < 0)
+			ফেরত res;
 	}
 
-	return 0;
+	ফেরত 0;
 }
 #endif /* CONFIG_FIT */
 
@@ -435,38 +435,38 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
  *
  * @return: 0 on success, negative value on failure.
  */
-int splash_source_load(struct splash_location *locations, uint size)
+পূর্ণসংখ্যা splash_source_load(কাঠামো splash_location *locations, uint আকার_2)
 {
-	struct splash_location *splash_location;
-	char *env_splashimage_value;
-	char *devpart;
+	কাঠামো splash_location *splash_location;
+	অক্ষর *env_splashimage_মান;
+	অক্ষর *devpart;
 	ulong bmp_load_addr;
 
-	env_splashimage_value = env_get("splashimage");
-	if (env_splashimage_value == NULL)
-		return -ENOENT;
+	env_splashimage_মান = env_get("splashimage");
+	যদি (env_splashimage_মান == ফাঁকা)
+		ফেরত -ENOENT;
 
-	bmp_load_addr = hextoul(env_splashimage_value, 0);
-	if (bmp_load_addr == 0) {
+	bmp_load_addr = hextoul(env_splashimage_মান, 0);
+	যদি (bmp_load_addr == 0) {
 		printf("Error: bad splashimage address specified\n");
-		return -EFAULT;
+		ফেরত -EFAULT;
 	}
 
-	splash_location = select_splash_location(locations, size);
-	if (!splash_location)
-		return -EINVAL;
+	splash_location = select_splash_location(locations, আকার_2);
+	যদি (!splash_location)
+		ফেরত -EINVAL;
 
 	devpart = env_get("splashdevpart");
-	if (devpart)
+	যদি (devpart)
 		splash_location->devpart = devpart;
 
-	if (splash_location->flags == SPLASH_STORAGE_RAW)
-		return splash_load_raw(splash_location, bmp_load_addr);
-	else if (splash_location->flags == SPLASH_STORAGE_FS)
-		return splash_load_fs(splash_location, bmp_load_addr);
+	যদি (splash_location->flags == SPLASH_STORAGE_RAW)
+		ফেরত splash_load_raw(splash_location, bmp_load_addr);
+	অন্যথা যদি (splash_location->flags == SPLASH_STORAGE_FS)
+		ফেরত splash_load_fs(splash_location, bmp_load_addr);
 #ifdef CONFIG_FIT
-	else if (splash_location->flags == SPLASH_STORAGE_FIT)
-		return splash_load_fit(splash_location, bmp_load_addr);
+	অন্যথা যদি (splash_location->flags == SPLASH_STORAGE_FIT)
+		ফেরত splash_load_fit(splash_location, bmp_load_addr);
 #endif
-	return -EINVAL;
+	ফেরত -EINVAL;
 }

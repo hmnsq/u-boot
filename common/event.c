@@ -9,20 +9,20 @@
 
 #define LOG_CATEGORY	LOGC_EVENT
 
-#include <event.h>
-#include <event_internal.h>
-#include <log.h>
-#include <linker_lists.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <relocate.h>
+#অন্তর্ভাব <event.h>
+#অন্তর্ভাব <event_internal.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <linker_lists.h>
+#অন্তর্ভাব <malloc.h>
+#অন্তর্ভাব <asm/global_data.h>
+#অন্তর্ভাব <linux/errno.h>
+#অন্তর্ভাব <linux/list.h>
+#অন্তর্ভাব <relocate.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_তথ্য_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#যদি CONFIG_IS_ENABLED(EVENT_DEBUG)
+ধ্রুবক অক্ষর *ধ্রুবক type_name[] = {
 	"none",
 	"test",
 
@@ -56,41 +56,41 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
+_Static_assert(ARRAY_আকার(type_name) == EVT_গুনতি, "event type_name size");
 #endif
 
-const char *event_type_name(enum event_t type)
+ধ্রুবক অক্ষর *event_type_name(গণনা event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
+#যদি CONFIG_IS_ENABLED(EVENT_DEBUG)
+	যদি (type < ARRAY_আকার(type_name))
+		ফেরত type_name[type];
+	অন্যথা
+		ফেরত "(unknown)";
+#অন্যথা
+	ফেরত "(unknown)";
 #endif
 }
 
-static int notify_static(struct event *ev)
+স্থির পূর্ণসংখ্যা notify_static(কাঠামো event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	কাঠামো evspy_info *start =
+		ll_entry_start(কাঠামো evspy_info, evspy_info);
+	ধ্রুবক পূর্ণসংখ্যা n_ents = ll_entry_গুনতি(কাঠামো evspy_info, evspy_info);
+	কাঠামো evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	জন্য (spy = start; spy != start + n_ents; spy++) {
+		যদি (spy->type == ev->type) {
+			পূর্ণসংখ্যা ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			যদি (spy->flags & EVSPYF_SIMPLE) {
+				ধ্রুবক কাঠামো evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (কাঠামো evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
-				ret = spy->func(NULL, ev);
+			} অন্যথা {
+				ret = spy->func(ফাঁকা, ev);
 			}
 
 			/*
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			যদি (ret)
+				ফেরত log_বার্তা_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-static int notify_dynamic(struct event *ev)
+স্থির পূর্ণসংখ্যা notify_dynamic(কাঠামো event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	কাঠামো event_state *state = gd_event_state();
+	কাঠামো event_spy *spy, *পরবর্তী;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+	list_for_each_entry_safe(spy, পরবর্তী, &state->spy_শীর্ষ, sibling_গ্রন্থি) {
+		যদি (spy->type == ev->type) {
+			পূর্ণসংখ্যা ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,99 +126,99 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			যদি (ret)
+				ফেরত log_বার্তা_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+পূর্ণসংখ্যা event_notify(গণনা event_t type, শূন্য *তথ্য, পূর্ণসংখ্যা আকার_2)
 {
-	struct event event;
-	int ret;
+	কাঠামো event event;
+	পূর্ণসংখ্যা ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
-	memcpy(&event.data, data, size);
+	যদি (আকার_2 > আকার(event.তথ্য))
+		ফেরত log_বার্তা_ret("size", -E2BIG);
+	memcpy(&event.তথ্য, তথ্য, আকার_2);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	যদি (ret)
+		ফেরত log_বার্তা_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	যদি (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		যদি (ret)
+			ফেরত log_বার্তা_ret("dyn", ret);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-int event_notify_null(enum event_t type)
+পূর্ণসংখ্যা event_notify_null(গণনা event_t type)
 {
-	return event_notify(type, NULL, 0);
+	ফেরত event_notify(type, ফাঁকা, 0);
 }
 
-void event_show_spy_list(void)
+শূন্য event_show_spy_list(শূন্য)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	কাঠামো evspy_info *start =
+		ll_entry_start(কাঠামো evspy_info, evspy_info);
+	ধ্রুবক পূর্ণসংখ্যা n_ents = ll_entry_গুনতি(কাঠামো evspy_info, evspy_info);
+	কাঠামো evspy_info *spy;
+	ধ্রুবক পূর্ণসংখ্যা আকার_2 = আকার(ulong) * 2;
 
-	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
+	printf("Seq  %-24s  %*s  %s\n", "Type", আকার_2, "Function", "ID");
+	জন্য (spy = start; spy != start + n_ents; spy++) {
 		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
-		       spy->type, event_type_name(spy->type), size, spy->func,
+		       spy->type, event_type_name(spy->type), আকার_2, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#যদি CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+স্থির শূন্য spy_free(কাঠামো event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_গ্রন্থি);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+পূর্ণসংখ্যা event_register(ধ্রুবক অক্ষর *id, গণনা event_t type, event_handler_t func, শূন্য *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	কাঠামো event_state *state = gd_event_state();
+	কাঠামো event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = malloc(আকার(*spy));
+	যদি (!spy)
+		ফেরত log_বার্তা_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_add_লেজ(&spy->sibling_গ্রন্থি, &state->spy_শীর্ষ);
 
-	return 0;
+	ফেরত 0;
 }
 
-int event_uninit(void)
+পূর্ণসংখ্যা event_uninit(শূন্য)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	কাঠামো event_state *state = gd_event_state();
+	কাঠামো event_spy *spy, *পরবর্তী;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_entry_safe(spy, পরবর্তী, &state->spy_শীর্ষ, sibling_গ্রন্থি)
 		spy_free(spy);
 
-	return 0;
+	ফেরত 0;
 }
 
-int event_init(void)
+পূর্ণসংখ্যা event_init(শূন্য)
 {
-	struct event_state *state = gd_event_state();
+	কাঠামো event_state *state = gd_event_state();
 
-	INIT_LIST_HEAD(&state->spy_head);
+	INIT_LIST_শীর্ষ(&state->spy_শীর্ষ);
 
-	return 0;
+	ফেরত 0;
 }
 #endif /* EVENT_DYNAMIC */

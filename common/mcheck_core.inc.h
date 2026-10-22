@@ -57,248 +57,248 @@
  */
 #ifndef _MCHECKCORE_INC_H
 #define _MCHECKCORE_INC_H      1
-#include "mcheck.h"
+#অন্তর্ভাব "mcheck.h"
 
-#if defined(MCHECK_HEAP_PROTECTION)
+#যদি defined(MCHECK_HEAP_PROTECTION)
 #define mcheck_flood memset
 
 // these are from /dev/random:
 #define MAGICWORD	0x99ccf430fa562a05ULL
 #define MAGICFREE	0x4875e63c0c6fc08eULL
 #define MAGICTAIL	0x918dbcd7df78dcd6ULL
-#define MALLOCFLOOD	((char)0xb6)
-#define FREEFLOOD	((char)0xf5)
-#define PADDINGFLOOD	((char)0x58)
+#define MALLOCFLOOD	((অক্ষর)0xb6)
+#define FREEFLOOD	((অক্ষর)0xf5)
+#define PADDINGFLOOD	((অক্ষর)0x58)
 
 // my normal run demands 4427-6449 chunks:
 #define REGISTRY_SZ	6608
 #define CANARY_DEPTH	2
 
 // avoid problems with BSS at early stage:
-static char mcheck_pedantic_flag __section(".data") = 0;
-static void *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
-static size_t mcheck_chunk_count __section(".data") = 0;
-static size_t mcheck_chunk_count_max __section(".data") = 0;
+স্থির অক্ষর mcheck_pedantic_flag __section(".data") = 0;
+স্থির শূন্য *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
+স্থির size_t mcheck_chunk_গুনতি __section(".data") = 0;
+স্থির size_t mcheck_chunk_গুনতি_max __section(".data") = 0;
 
-typedef unsigned long long mcheck_elem;
-typedef struct {
+প্রকারলেখ unsigned long long mcheck_elem;
+প্রকারলেখ কাঠামো {
 	mcheck_elem elems[CANARY_DEPTH];
 } mcheck_canary;
-struct mcheck_hdr {
-	size_t size; /* Exact size requested by user.  */
+কাঠামো mcheck_hdr {
+	size_t আকার_2; /* Exact size requested by user.  */
 	size_t aln_skip; /* Ignored bytes, before the mcheck_hdr, to fulfill alignment */
 	mcheck_canary canary; /* Magic number to check header integrity.  */
 };
 
-static void mcheck_default_abort(enum mcheck_status status, const void *p)
+স্থির শূন্য mcheck_default_abort(গণনা mcheck_status status, ধ্রুবক শূন্য *p)
 {
-	const char *msg;
+	ধ্রুবক অক্ষর *বার্তা;
 
-	switch (status) {
-	case MCHECK_OK:
-		msg = "memory is consistent, library is buggy\n";
-		break;
-	case MCHECK_HEAD:
-		msg = "memory clobbered before allocated block\n";
-		break;
-	case MCHECK_TAIL:
-		msg = "memory clobbered past end of allocated block\n";
-		break;
-	case MCHECK_FREE:
-		msg = "block freed twice\n";
-		break;
-	default:
-		msg = "bogus mcheck_status, library is buggy\n";
-		break;
+	নির্বাচন (status) {
+	ক্ষেত্র MCHECK_OK:
+		বার্তা = "memory is consistent, library is buggy\n";
+		বিরতি;
+	ক্ষেত্র MCHECK_HEAD:
+		বার্তা = "memory clobbered before allocated block\n";
+		বিরতি;
+	ক্ষেত্র MCHECK_TAIL:
+		বার্তা = "memory clobbered past end of allocated block\n";
+		বিরতি;
+	ক্ষেত্র MCHECK_FREE:
+		বার্তা = "block freed twice\n";
+		বিরতি;
+	পূর্বনির্ধারিত:
+		বার্তা = "bogus mcheck_status, library is buggy\n";
+		বিরতি;
 	}
-	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, msg, mcheck_chunk_count_max);
+	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, বার্তা, mcheck_chunk_গুনতি_max);
 }
 
-static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
+স্থির mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
 
-static inline size_t allign_size_up(size_t sz, size_t grain)
+স্থির অন্তঃরেখ size_t allign_আকার_up(size_t sz, size_t grain)
 {
-	return (sz + grain - 1) & ~(grain - 1);
+	ফেরত (sz + grain - 1) & ~(grain - 1);
 }
 
-#define mcheck_allign_customer_size(SZ) allign_size_up(SZ, sizeof(mcheck_elem))
-#define mcheck_evaluate_memalign_prefix_size(ALIGN) allign_size_up(sizeof(struct mcheck_hdr), ALIGN)
+#define mcheck_allign_customer_আকার(SZ) allign_আকার_up(SZ, আকার(mcheck_elem))
+#define mcheck_evaluate_memalign_prefix_আকার(ALIGN) allign_আকার_up(আকার(কাঠামো mcheck_hdr), ALIGN)
 
-static enum mcheck_status mcheck_OnNok(enum mcheck_status status, const void *p)
+স্থির গণনা mcheck_status mcheck_OnNok(গণনা mcheck_status status, ধ্রুবক শূন্য *p)
 {
 	(*mcheck_abortfunc)(status, p);
-	return status;
+	ফেরত status;
 }
 
-static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
+স্থির গণনা mcheck_status mcheck_checkhdr(ধ্রুবক কাঠামো mcheck_hdr *hdr)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] == MAGICFREE)
-			return mcheck_OnNok(MCHECK_FREE, hdr + 1);
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
+		যদি (hdr->canary.elems[i] == MAGICFREE)
+			ফেরত mcheck_OnNok(MCHECK_FREE, hdr + 1);
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] != MAGICWORD)
-			return mcheck_OnNok(MCHECK_HEAD, hdr + 1);
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
+		যদি (hdr->canary.elems[i] != MAGICWORD)
+			ফেরত mcheck_OnNok(MCHECK_HEAD, hdr + 1);
 
-	const size_t payload_size = hdr->size;
-	const size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
-	const size_t padd_size = payload_size_aligned - hdr->size;
+	ধ্রুবক size_t payload_আকার = hdr->আকার_2;
+	ধ্রুবক size_t payload_আকার_aligned = mcheck_allign_customer_আকার(payload_আকার);
+	ধ্রুবক size_t padd_আকার = payload_আকার_aligned - hdr->আকার_2;
 
-	const char *payload = (const char *)&hdr[1];
+	ধ্রুবক অক্ষর *payload = (ধ্রুবক অক্ষর *)&hdr[1];
 
-	for (i = 0; i < padd_size; ++i)
-		if (payload[payload_size + i] != PADDINGFLOOD)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	জন্য (i = 0; i < padd_আকার; ++i)
+		যদি (payload[payload_আকার + i] != PADDINGFLOOD)
+			ফেরত mcheck_OnNok(MCHECK_TAIL, hdr + 1);
 
-	const mcheck_canary *tail = (const mcheck_canary *)&payload[payload_size_aligned];
+	ধ্রুবক mcheck_canary *লেজ = (ধ্রুবক mcheck_canary *)&payload[payload_আকার_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (tail->elems[i] != MAGICTAIL)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
-	return MCHECK_OK;
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
+		যদি (লেজ->elems[i] != MAGICTAIL)
+			ফেরত mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	ফেরত MCHECK_OK;
 }
 
-enum { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
-static void *mcheck_free_helper(void *ptr, int clean_content)
+গণনা { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
+স্থির শূন্য *mcheck_free_helper(শূন্য *ptr, পূর্ণসংখ্যা clean_content)
 {
-	if (!ptr)
-		return ptr;
+	যদি (!ptr)
+		ফেরত ptr;
 
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
-	int i;
+	কাঠামো mcheck_hdr *hdr = &((কাঠামো mcheck_hdr *)ptr)[-1];
+	পূর্ণসংখ্যা i;
 
 	mcheck_checkhdr(hdr);
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICFREE;
 
-	if (clean_content)
-		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_size(hdr->size));
+	যদি (clean_content)
+		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_আকার(hdr->আকার_2));
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i] == hdr) {
+	জন্য (i = 0; i < REGISTRY_SZ; ++i)
+		যদি (mcheck_registry[i] == hdr) {
 			mcheck_registry[i] = 0;
-			break;
+			বিরতি;
 		}
 
-	--mcheck_chunk_count;
-	return (char *)hdr - hdr->aln_skip;
+	--mcheck_chunk_গুনতি;
+	ফেরত (অক্ষর *)hdr - hdr->aln_skip;
 }
 
-static void *mcheck_free_prehook(void *ptr) { return mcheck_free_helper(ptr, CLEAN_CONTENT); }
-static void *mcheck_reallocfree_prehook(void *ptr) { return mcheck_free_helper(ptr, KEEP_CONTENT); }
+স্থির শূন্য *mcheck_free_prehook(শূন্য *ptr) { ফেরত mcheck_free_helper(ptr, CLEAN_CONTENT); }
+স্থির শূন্য *mcheck_reallocfree_prehook(শূন্য *ptr) { ফেরত mcheck_free_helper(ptr, KEEP_CONTENT); }
 
-static size_t mcheck_alloc_prehook(size_t sz)
+স্থির size_t mcheck_alloc_prehook(size_t sz)
 {
-	sz = mcheck_allign_customer_size(sz);
-	return sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
+	sz = mcheck_allign_customer_আকার(sz);
+	ফেরত আকার(কাঠামো mcheck_hdr) + sz + আকার(mcheck_canary);
 }
 
-static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
-				     size_t alignment, int clean_content)
+স্থির শূন্য *mcheck_allocated_helper(শূন্য *altoghether_ptr, size_t customer_sz,
+				     size_t alignment, পূর্ণসংখ্যা clean_content)
 {
-	const size_t slop = alignment ?
-		mcheck_evaluate_memalign_prefix_size(alignment) - sizeof(struct mcheck_hdr) : 0;
-	struct mcheck_hdr *hdr = (struct mcheck_hdr *)((char *)altoghether_ptr + slop);
-	int i;
+	ধ্রুবক size_t slop = alignment ?
+		mcheck_evaluate_memalign_prefix_আকার(alignment) - আকার(কাঠামো mcheck_hdr) : 0;
+	কাঠামো mcheck_hdr *hdr = (কাঠামো mcheck_hdr *)((অক্ষর *)altoghether_ptr + slop);
+	পূর্ণসংখ্যা i;
 
-	hdr->size = customer_sz;
+	hdr->আকার_2 = customer_sz;
 	hdr->aln_skip = slop;
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICWORD;
 
-	char *payload = (char *)&hdr[1];
+	অক্ষর *payload = (অক্ষর *)&hdr[1];
 
-	if (clean_content)
+	যদি (clean_content)
 		mcheck_flood(payload, MALLOCFLOOD, customer_sz);
 
-	const size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
+	ধ্রুবক size_t customer_আকার_aligned = mcheck_allign_customer_আকার(customer_sz);
 
-	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_size_aligned - customer_sz);
+	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_আকার_aligned - customer_sz);
 
-	mcheck_canary *tail = (mcheck_canary *)&payload[customer_size_aligned];
+	mcheck_canary *লেজ = (mcheck_canary *)&payload[customer_আকার_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		tail->elems[i] = MAGICTAIL;
+	জন্য (i = 0; i < CANARY_DEPTH; ++i)
+		লেজ->elems[i] = MAGICTAIL;
 
-	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
-		mcheck_chunk_count_max = mcheck_chunk_count;
+	++mcheck_chunk_গুনতি;
+	যদি (mcheck_chunk_গুনতি > mcheck_chunk_গুনতি_max)
+		mcheck_chunk_গুনতি_max = mcheck_chunk_গুনতি;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (!mcheck_registry[i]) {
+	জন্য (i = 0; i < REGISTRY_SZ; ++i)
+		যদি (!mcheck_registry[i]) {
 			mcheck_registry[i] = hdr;
-			return payload; // normal end
+			ফেরত payload; // normal end
 		}
 
-	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
+	স্থির অক্ষর *overflow_বার্তা = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
-	printf("%s", overflow_msg);
-	overflow_msg = "(mcheck registry full)";
-	return payload;
+	printf("%s", overflow_বার্তা);
+	overflow_বার্তা = "(mcheck registry full)";
+	ফেরত payload;
 }
 
-static void *mcheck_alloc_posthook(void *altoghether_ptr, size_t customer_sz)
+স্থির শূন্য *mcheck_alloc_posthook(শূন্য *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
+	ফেরত mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
 }
 
-static void *mcheck_alloc_noclean_posthook(void *altoghether_ptr, size_t customer_sz)
+স্থির শূন্য *mcheck_alloc_noclean_posthook(শূন্য *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
+	ফেরত mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
 }
 
-static size_t mcheck_memalign_prehook(size_t alig, size_t sz)
+স্থির size_t mcheck_memalign_prehook(size_t alig, size_t sz)
 {
-	return mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
+	ফেরত mcheck_evaluate_memalign_prefix_আকার(alig) + sz + আকার(mcheck_canary);
 }
 
-static void *mcheck_memalign_posthook(size_t alignment, void *altoghether_ptr, size_t customer_sz)
+স্থির শূন্য *mcheck_memalign_posthook(size_t alignment, শূন্য *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
+	ফেরত mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
 }
 
-static enum mcheck_status mcheck_mprobe(void *ptr)
+স্থির গণনা mcheck_status mcheck_mprobe(শূন্য *ptr)
 {
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
+	কাঠামো mcheck_hdr *hdr = &((কাঠামো mcheck_hdr *)ptr)[-1];
 
-	return mcheck_checkhdr(hdr);
+	ফেরত mcheck_checkhdr(hdr);
 }
 
-static void mcheck_pedantic_check(void)
+স্থির শূন্য mcheck_pedantic_check(শূন্য)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i])
+	জন্য (i = 0; i < REGISTRY_SZ; ++i)
+		যদি (mcheck_registry[i])
 			mcheck_checkhdr(mcheck_registry[i]);
 }
 
-static void mcheck_pedantic_prehook(void)
+স্থির শূন্য mcheck_pedantic_prehook(শূন্য)
 {
-	if (mcheck_pedantic_flag)
+	যদি (mcheck_pedantic_flag)
 		mcheck_pedantic_check();
 }
 
-static void mcheck_initialize(mcheck_abortfunc_t new_func, char pedantic_flag)
+স্থির শূন্য mcheck_initialize(mcheck_abortfunc_t new_func, অক্ষর pedantic_flag)
 {
 	mcheck_abortfunc = (new_func) ? new_func : &mcheck_default_abort;
 	mcheck_pedantic_flag = pedantic_flag;
 }
 
-void mcheck_on_ramrelocation(size_t offset)
+শূন্য mcheck_on_ramrelocation(size_t offset)
 {
-	char *p;
-	int i;
+	অক্ষর *p;
+	পূর্ণসংখ্যা i;
 	// Simple, but inaccurate strategy: drop the pre-reloc heap
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if ((p = mcheck_registry[i]) != NULL ) {
+	জন্য (i = 0; i < REGISTRY_SZ; ++i)
+		যদি ((p = mcheck_registry[i]) != ফাঁকা ) {
 			printf("mcheck, WRN: forgetting %p chunk\n", p);
 			mcheck_registry[i] = 0;
 		}
 
-	mcheck_chunk_count = 0;
+	mcheck_chunk_গুনতি = 0;
 }
 #endif
 #endif

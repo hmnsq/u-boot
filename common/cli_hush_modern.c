@@ -12,15 +12,15 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#অন্তর্ভাব <env.h>
+#অন্তর্ভাব <malloc.h>         /* malloc, free, realloc*/
+#অন্তর্ভাব <linux/ctype.h>    /* isalpha, isdigit */
+#অন্তর্ভাব <console.h>
+#অন্তর্ভাব <bootretry.h>
+#অন্তর্ভাব <cli.h>
+#অন্তর্ভাব <cli_hush.h>
+#অন্তর্ভাব <command.h>        /* find_cmd */
+#অন্তর্ভাব <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
@@ -42,14 +42,14 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#যদি CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+প্রকারলেখ signed অক্ষর smallint;
+প্রকারলেখ unsigned অক্ষর smalluint;
+#অন্যথা
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
+প্রকারলেখ পূর্ণসংখ্যা smallint;
+প্রকারলেখ unsigned smalluint;
 #endif
 
 /*
@@ -59,7 +59,7 @@ typedef unsigned smalluint;
 #define ALIGN2			__attribute__((aligned(2)))
 #define ALIGN4			__attribute__((aligned(4)))
 #define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#define ALIGN_PTR		__attribute__((aligned(আকার(শূন্য*))))
 
 /*
  * Miscellaneous compiler/platform defines.
@@ -82,106 +82,106 @@ typedef unsigned smalluint;
  */
 #define utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+স্থির শূন্য __noreturn xfunc_die(শূন্য)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#define bb_error_বার্তা_and_die(format, ...) করো { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} যখন (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#define bb_simple_error_বার্তা_and_die(বার্তা) করো { \
+panic_str("HUSH: " বার্তা); \
+} যখন (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+স্থির পূর্ণসংখ্যা __maybe_unused fdprintf(পূর্ণসংখ্যা fd, ধ্রুবক অক্ষর *format, ...)
 {
 	va_list args;
 	uint i;
 
-	assert(fd == 2);
+	প্রতিজ্ঞা(fd == 2);
 
 	va_start(args, format);
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	ফেরত i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+স্থির শূন্য bb_verror_বার্তা(ধ্রুবক অক্ষর *s, va_list p, ধ্রুবক অক্ষর* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+স্থির শূন্য bb_error_বার্তা(ধ্রুবক অক্ষর *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
+	bb_verror_বার্তা(s, p, ফাঁকা);
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+স্থির শূন্য bb_simple_error_বার্তা(ধ্রুবক অক্ষর *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_বার্তা("%s", s);
 }
 
-static void *xmalloc(size_t size)
+স্থির শূন্য *xmalloc(size_t আকার_2)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	শূন্য *p = ফাঁকা;
+	যদি (!(p = malloc(আকার_2)))
 		panic("out of memory");
-	return p;
+	ফেরত p;
 }
 
-static void *xzalloc(size_t size)
+স্থির শূন্য *xzalloc(size_t আকার_2)
 {
-	void *p = xmalloc(size);
-	memset(p, 0, size);
-	return p;
+	শূন্য *p = xmalloc(আকার_2);
+	memset(p, 0, আকার_2);
+	ফেরত p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+স্থির শূন্য *xrealloc(শূন্য *ptr, size_t আকার_2)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	শূন্য *p = ফাঁকা;
+	যদি (!(p = realloc(ptr, আকার_2)))
 		panic("out of memory");
-	return p;
+	ফেরত p;
 }
 
-static void *xmemdup(const void *s, int n)
+স্থির শূন্য *xmemdup(ধ্রুবক শূন্য *s, পূর্ণসংখ্যা n)
 {
-	return memcpy(xmalloc(n), s, n);
+	ফেরত memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
 #define xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+স্থির শূন্য *mempcpy(শূন্য *dest, ধ্রুবক শূন্য *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	ফেরত memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+স্থির শূন্য overlapping_strcpy(অক্ষর *dst, ধ্রুবক অক্ষর *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	যদি (dst != src) {
+		যখন ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+স্থির অক্ষর* skip_whitespace(ধ্রুবক অক্ষর *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	যখন (*s == ' ' || (unsigned অক্ষর)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	ফেরত (অক্ষর *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+স্থির অক্ষর* skip_non_whitespace(ধ্রুবক অক্ষর *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	যখন (*s != '\0' && *s != ' ' && (unsigned অক্ষর)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	ফেরত (অক্ষর *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#define is_name(c)	((c) == '_' || isalpha((unsigned অক্ষর)(c)))
+#define is_in_name(c)	((c) == '_' || isalnum((unsigned অক্ষর)(c)))
 
-static const char* endofname(const char *name)
+স্থির ধ্রুবক অক্ষর* endofname(ধ্রুবক অক্ষর *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	যদি (!is_name(*name))
+		ফেরত name;
+	যখন (*++name) {
+		যদি (!is_in_name(*name))
+			বিরতি;
 	}
-	return name;
+	ফেরত name;
 }
 
 /**
@@ -226,45 +226,45 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+স্থির size_t list_আকার(অক্ষর **list)
 {
-	size_t size;
+	size_t আকার_2;
 
-	for (size = 0; list[size] != NULL; size++);
+	জন্য (আকার_2 = 0; list[আকার_2] != ফাঁকা; আকার_2++);
 
-	return size;
+	ফেরত আকার_2;
 }
 
-static int varcmp(const char *p, const char *q)
+স্থির পূর্ণসংখ্যা varcmp(ধ্রুবক অক্ষর *p, ধ্রুবক অক্ষর *q)
 {
-	int c, d;
+	পূর্ণসংখ্যা c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	যখন ((c = *p) == (d = *q)) {
+		যদি (c == '\0' || c == '=')
+			যাও out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	যদি (c == '=')
 		c = '\0';
-	if (d == '=')
+	যদি (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	ফেরত c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+কাঠামো in_str;
+স্থির পূর্ণসংখ্যা u_boot_cli_readline(কাঠামো in_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+কাঠামো in_str;
+স্থির পূর্ণসংখ্যা u_boot_cli_readline(কাঠামো in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+স্থির uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
+স্থির ধ্রুবক অক্ষর defifsvar[] __aligned(1) = "IFS= \t\n";
 #define defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
@@ -281,43 +281,43 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#অন্তর্ভাব "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+পূর্ণসংখ্যা u_boot_hush_start_modern(শূন্য)
 {
 	INIT_G();
-	return 0;
+	ফেরত 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+স্থির পূর্ণসংখ্যা u_boot_cli_readline(কাঠামো in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	অক্ষর *prompt;
+	অক্ষর __maybe_unused *ps_prompt = ফাঁকা;
 
-	if (!G.promptmode)
+	যদি (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	অন্যথা
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#অন্যথা
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	যদি (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		যদি (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		অন্যথা
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		যদি (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	ফেরত cli_readline(prompt);
 }

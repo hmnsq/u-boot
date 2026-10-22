@@ -6,98 +6,98 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <stdio.h>
-#include <vsprintf.h>
-#include <linux/string.h>
-#include <eeprom_field.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <vsprintf.h>
+#অন্তর্ভাব <linux/string.h>
+#অন্তর্ভাব <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+স্থির শূন্য __eeprom_field_print_bin(ধ্রুবক কাঠামো eeprom_field *field,
+				     অক্ষর *delimiter, bool reverse)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	পূর্ণসংখ্যা i;
+	পূর্ণসংখ্যা from = reverse ? field->আকার_2 - 1 : 0;
+	পূর্ণসংখ্যা to = reverse ? 0 : field->আকার_2 - 1;
 
 	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
+	জন্য (i = from; i != to; reverse ? i-- : i++)
 		printf("%02x%s", field->buf[i], delimiter);
 
 	printf("%02x\n", field->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+স্থির পূর্ণসংখ্যা __eeprom_field_update_bin(কাঠামো eeprom_field *field,
+				     ধ্রুবক অক্ষর *মান, bool reverse)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	পূর্ণসংখ্যা len = strlen(মান);
+	পূর্ণসংখ্যা k, j, i = reverse ? len - 1 : 0;
+	unsigned অক্ষর byte;
+	অক্ষর *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	যদি (len > field->আকার_2 * 2)
+		ফেরত -1;
 
-	memset(field->buf, 0, field->size);
+	memset(field->buf, 0, field->আকার_2);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	জন্য (j = 0; j < field->আকার_2; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		অক্ষর tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		যদি ((reverse && i < 0) || (!reverse && i >= len))
+			বিরতি;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
-				tmp[k] = value[i];
-				break;
+		জন্য (k = 0; k < 2; k++) {
+			যদি (reverse && i == 0) {
+				tmp[k] = মান[i];
+				বিরতি;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = মান[reverse ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		যদি (*endptr != '\0')
+			ফেরত -1;
 
 		field->buf[j] = byte;
 		i = reverse ? i - 2 : i + 2;
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+স্থির পূর্ণসংখ্যা __eeprom_field_update_bin_delim(কাঠামো eeprom_field *field,
+					   অক্ষর *মান, অক্ষর *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	পূর্ণসংখ্যা গুনতি = 0;
+	পূর্ণসংখ্যা i, val;
+	ধ্রুবক অক্ষর *tmp = মান;
+	অক্ষর *tok;
+	অক্ষর *endptr;
 
 	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
-		count++;
+	যখন (tmp != ফাঁকা) {
+		গুনতি++;
 		tmp++;
 		tmp = strstr(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	যদি (গুনতি > field->আকার_2)
+		ফেরত -1;
 
-	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	tok = strtok(মান, delimiter);
+	জন্য (i = 0; tok && i < field->আকার_2; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		যদি (*endptr != '\0')
+			ফেরত -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
-		tok = strtok(NULL, delimiter);
+		field->buf[i] = (unsigned অক্ষর)val;
+		tok = strtok(ফাঁকা, delimiter);
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
 /**
@@ -110,7 +110,7 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+শূন্য eeprom_field_print_bin(ধ্রুবক কাঠামো eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", false);
 }
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+পূর্ণসংখ্যা eeprom_field_update_bin(কাঠামো eeprom_field *field, অক্ষর *মান)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	ফেরত __eeprom_field_update_bin(field, মান, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+পূর্ণসংখ্যা eeprom_field_update_reserved(কাঠামো eeprom_field *field, অক্ষর *মান)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	ফেরত __eeprom_field_update_bin_delim(field, মান, " ");
 }
 
 /**
@@ -152,7 +152,7 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+শূন্য eeprom_field_print_bin_rev(ধ্রুবক কাঠামো eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, "", true);
 }
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+পূর্ণসংখ্যা eeprom_field_update_bin_rev(কাঠামো eeprom_field *field, অক্ষর *মান)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	ফেরত __eeprom_field_update_bin(field, মান, true);
 }
 
 /**
@@ -183,7 +183,7 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+শূন্য eeprom_field_print_mac(ধ্রুবক কাঠামো eeprom_field *field)
 {
 	__eeprom_field_print_bin(field, ":", false);
 }
@@ -195,20 +195,20 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+পূর্ণসংখ্যা eeprom_field_update_mac(কাঠামো eeprom_field *field, অক্ষর *মান)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	ফেরত __eeprom_field_update_bin_delim(field, মান, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+শূন্য eeprom_field_print_ascii(ধ্রুবক কাঠামো eeprom_field *field)
 {
-	char format[8];
+	অক্ষর format[8];
 
-	sprintf(format, "%%.%ds\n", field->size);
+	sprintf(format, "%%.%ds\n", field->আকার_2);
 	printf(PRINT_FIELD_SEGMENT, field->name);
 	printf(format, field->buf);
 }
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+পূর্ণসংখ্যা eeprom_field_update_ascii(কাঠামো eeprom_field *field, অক্ষর *মান)
 {
-	if (strlen(value) >= field->size) {
+	যদি (strlen(মান) >= field->আকার_2) {
 		printf("%s: new data too long\n", field->name);
-		return -1;
+		ফেরত -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
-	field->buf[field->size - 1] = '\0';
+	strncpy((অক্ষর *)field->buf, মান, field->আকার_2 - 1);
+	field->buf[field->আকার_2 - 1] = '\0';
 
-	return 0;
+	ফেরত 0;
 }
 
 /**
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+শূন্য eeprom_field_print_reserved(ধ্রুবক কাঠামো eeprom_field *field)
 {
 	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
-	printf("(%d bytes)\n", field->size);
+	printf("(%d bytes)\n", field->আকার_2);
 }

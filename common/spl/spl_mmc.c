@@ -5,450 +5,450 @@
  *
  * Aneesh V <aneesh@ti.com>
  */
-#include <dm.h>
-#include <log.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <linux/compiler.h>
-#include <errno.h>
-#include <mmc.h>
-#include <image.h>
-#include <imx_container.h>
+#অন্তর্ভাব <dm.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <part.h>
+#অন্তর্ভাব <spl.h>
+#অন্তর্ভাব <spl_load.h>
+#অন্তর্ভাব <linux/compiler.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <mmc.h>
+#অন্তর্ভাব <image.h>
+#অন্তর্ভাব <imx_container.h>
 
-static ulong h_spl_load_read(struct spl_load_info *load, ulong off,
-			     ulong size, void *buf)
+স্থির ulong h_spl_load_read(কাঠামো spl_load_info *load, ulong off,
+			     ulong আকার_2, শূন্য *buf)
 {
-	struct blk_desc *bd = load->priv;
+	কাঠামো blk_desc *bd = load->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t গুনতি = আকার_2 >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	ফেরত blk_dread(bd, sector, গুনতি, buf) << bd->log2blksz;
 }
 
-static __maybe_unused unsigned long spl_mmc_raw_uboot_offset(int part)
+স্থির __maybe_unused unsigned long spl_mmc_raw_uboot_offset(পূর্ণসংখ্যা part)
 {
-#if IS_ENABLED(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR)
-	if (part == 0)
-		return CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET;
+#যদি IS_ENABLED(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR)
+	যদি (part == 0)
+		ফেরত CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_তথ্য_PART_OFFSET;
 #endif
 
-	return 0;
+	ফেরত 0;
 }
 
-static __maybe_unused
-int mmc_load_image_raw_sector(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev,
-			      struct mmc *mmc, unsigned long sector)
+স্থির __maybe_unused
+পূর্ণসংখ্যা mmc_load_image_raw_sector(কাঠামো spl_image_info *spl_image,
+			      কাঠামো spl_boot_device *bootdev,
+			      কাঠামো mmc *mmc, unsigned long sector)
 {
-	int ret;
-	struct blk_desc *bd = mmc_get_blk_desc(mmc);
-	struct spl_load_info load;
+	পূর্ণসংখ্যা ret;
+	কাঠামো blk_desc *bd = mmc_get_blk_desc(mmc);
+	কাঠামো spl_load_info load;
 
 	spl_load_init(&load, h_spl_load_read, bd, bd->blksz);
 	ret = spl_load(spl_image, bootdev, &load, 0, sector << bd->log2blksz);
-	if (ret) {
+	যদি (ret) {
 		puts("mmc_load_image_raw_sector: mmc block read error\n");
 		log_debug("(error=%d)\n", ret);
-		return ret;
+		ফেরত ret;
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-static int spl_mmc_get_device_index(uint boot_device)
+স্থির পূর্ণসংখ্যা spl_mmc_get_device_সূচক(uint boot_device)
 {
-	switch (boot_device) {
-	case BOOT_DEVICE_MMC1:
-		return 0;
-	case BOOT_DEVICE_MMC2:
-	case BOOT_DEVICE_MMC2_2:
-		return 1;
+	নির্বাচন (boot_device) {
+	ক্ষেত্র BOOT_DEVICE_MMC1:
+		ফেরত 0;
+	ক্ষেত্র BOOT_DEVICE_MMC2:
+	ক্ষেত্র BOOT_DEVICE_MMC2_2:
+		ফেরত 1;
 	}
 
 	printf("spl: unsupported mmc boot device.\n");
 
-	return -ENODEV;
+	ফেরত -ENODEV;
 }
 
-static int spl_mmc_find_device(struct mmc **mmcp, int mmc_dev)
+স্থির পূর্ণসংখ্যা spl_mmc_find_device(কাঠামো mmc **mmcp, পূর্ণসংখ্যা mmc_dev)
 {
-	int ret;
+	পূর্ণসংখ্যা ret;
 
-#if CONFIG_IS_ENABLED(DM_MMC)
-	struct udevice *dev;
-	struct uclass *uc;
+#যদি CONFIG_IS_ENABLED(DM_MMC)
+	কাঠামো udevice *dev;
+	কাঠামো uclass *uc;
 
 	log_debug("Selecting MMC dev %d; seqs:\n", mmc_dev);
-	if (_LOG_DEBUG) {
+	যদি (_LOG_DEBUG) {
 		uclass_id_foreach_dev(UCLASS_MMC, dev, uc)
 			log_debug("%d: %s\n", dev_seq(dev), dev->name);
 	}
 	ret = mmc_init_device(mmc_dev);
-#else
-	ret = mmc_initialize(NULL);
+#অন্যথা
+	ret = mmc_initialize(ফাঁকা);
 #endif /* DM_MMC */
-	if (ret) {
+	যদি (ret) {
 		printf("spl: could not initialize mmc. error: %d\n", ret);
-		return ret;
+		ফেরত ret;
 	}
 	*mmcp = find_mmc_device(mmc_dev);
 	ret = *mmcp ? 0 : -ENODEV;
-	if (ret) {
+	যদি (ret) {
 		printf("spl: could not find mmc device %d. error: %d\n",
 		       mmc_dev, ret);
-		return ret;
+		ফেরত ret;
 	}
-#if CONFIG_IS_ENABLED(DM_MMC)
+#যদি CONFIG_IS_ENABLED(DM_MMC)
 	log_debug("mmc %d: %s\n", mmc_dev, (*mmcp)->dev->name);
 #endif
 
-	return 0;
+	ফেরত 0;
 }
 
 #ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_ANY_PARTITION
-static int spl_mmc_select_partition(struct mmc *mmc, const u32 boot_device,
-				    int *partition)
+স্থির পূর্ণসংখ্যা spl_mmc_select_partition(কাঠামো mmc *mmc, ধ্রুবক u32 boot_device,
+				    পূর্ণসংখ্যা *partition)
 {
 #ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE
-	struct disk_partition info;
-	int type_part, ret;
+	কাঠামো disk_partition info;
+	পূর্ণসংখ্যা type_part, ret;
 
 	/* Only support MBR so DOS_ENTRY_NUMBERS */
-	for (type_part = 1; type_part <= DOS_ENTRY_NUMBERS; type_part++) {
+	জন্য (type_part = 1; type_part <= DOS_ENTRY_NUMBERS; type_part++) {
 		ret = part_get_info(mmc_get_blk_desc(mmc), type_part, &info);
-		if (ret)
-			continue;
-		if (info.sys_ind ==
+		যদি (ret)
+			চালু;
+		যদি (info.sys_ind ==
 			CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION_TYPE) {
 			*partition = type_part;
-			break;
+			বিরতি;
 		}
 	}
 
-	return 0;
-#elif defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_DYNAMIC)
-	int ret;
+	ফেরত 0;
+#নতুবা_যদি defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_DYNAMIC)
+	পূর্ণসংখ্যা ret;
 
-	if (*partition != -1)
-		return 0;
+	যদি (*partition != -1)
+		ফেরত 0;
 
 	*partition = spl_mmc_boot_partition(mmc, boot_device);
-	if (*partition > 0)
-		return 0;
+	যদি (*partition > 0)
+		ফেরত 0;
 
 	ret = *partition < 0 ? *partition : -EINVAL;
 	printf("spl: partition selection failed: %d\n", ret);
-	return ret;
-#else
-	if (*partition == -1)
+	ফেরত ret;
+#অন্যথা
+	যদি (*partition == -1)
 		*partition = spl_mmc_boot_partition(mmc, boot_device);
 
-	return 0;
+	ফেরত 0;
 #endif
 }
 
-static int mmc_load_image_raw_partition(struct spl_image_info *spl_image,
-					struct spl_boot_device *bootdev,
-					struct mmc *mmc, int partition,
+স্থির পূর্ণসংখ্যা mmc_load_image_raw_partition(কাঠামো spl_image_info *spl_image,
+					কাঠামো spl_boot_device *bootdev,
+					কাঠামো mmc *mmc, পূর্ণসংখ্যা partition,
 					unsigned long sector)
 {
-	struct disk_partition info;
-	int ret;
+	কাঠামো disk_partition info;
+	পূর্ণসংখ্যা ret;
 
 	ret = part_get_info(mmc_get_blk_desc(mmc), partition, &info);
-	if (ret) {
+	যদি (ret) {
 		puts("spl: partition error\n");
-		return ret;
+		ফেরত ret;
 	}
 
-	return mmc_load_image_raw_sector(spl_image, bootdev, mmc, info.start + sector);
+	ফেরত mmc_load_image_raw_sector(spl_image, bootdev, mmc, info.start + sector);
 }
 #endif
 
-#if CONFIG_IS_ENABLED(FALCON_BOOT_MMCSD)
-static int mmc_load_image_raw_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev,
-				 struct mmc *mmc)
+#যদি CONFIG_IS_ENABLED(FALCON_BOOT_MMCSD)
+স্থির পূর্ণসংখ্যা mmc_load_image_raw_os(কাঠামো spl_image_info *spl_image,
+				 কাঠামো spl_boot_device *bootdev,
+				 কাঠামো mmc *mmc)
 {
-	int ret;
+	পূর্ণসংখ্যা ret;
 
 	ret = mmc_load_image_raw_sector(spl_image, bootdev, mmc,
 		CONFIG_SYS_MMCSD_RAW_MODE_KERNEL_SECTOR);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
-	if (spl_image->os != IH_OS_LINUX && spl_image->os != IH_OS_TEE) {
+	যদি (spl_image->os != IH_OS_LINUX && spl_image->os != IH_OS_TEE) {
 		puts("Expected image is not found. Trying to start U-Boot\n");
-		return -ENOENT;
+		ফেরত -ENOENT;
 	}
 
-#if defined(CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR)
-	unsigned long count;
+#যদি defined(CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR)
+	unsigned long গুনতি;
 
-	count = blk_dread(mmc_get_blk_desc(mmc),
+	গুনতি = blk_dread(mmc_get_blk_desc(mmc),
 		CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR,
 		CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS,
-		(void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-	if (count != CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS) {
+		(শূন্য *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
+	যদি (গুনতি != CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS) {
 		puts("mmc_load_image_raw_os: mmc block read error\n");
-		return -EIO;
+		ফেরত -EIO;
 	}
 #endif	/* CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR */
 
-	return 0;
+	ফেরত 0;
 }
-#else
-static int mmc_load_image_raw_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev,
-				 struct mmc *mmc)
+#অন্যথা
+স্থির পূর্ণসংখ্যা mmc_load_image_raw_os(কাঠামো spl_image_info *spl_image,
+				 কাঠামো spl_boot_device *bootdev,
+				 কাঠামো mmc *mmc)
 {
-	return -ENOSYS;
+	ফেরত -ENOSYS;
 }
 #endif
 
 #ifndef CONFIG_SPL_OS_BOOT
-int spl_start_uboot(void)
+পূর্ণসংখ্যা spl_start_uboot(শূন্য)
 {
-	return 1;
+	ফেরত 1;
 }
 #endif
 
 #ifdef CONFIG_SYS_MMCSD_FS_BOOT
-static int spl_mmc_fs_load_os(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev,
-			      struct blk_desc *blk_dev, int part)
+স্থির পূর্ণসংখ্যা spl_mmc_fs_load_os(কাঠামো spl_image_info *spl_image,
+			      কাঠামো spl_boot_device *bootdev,
+			      কাঠামো blk_desc *blk_dev, পূর্ণসংখ্যা part)
 {
-	int err = -ENOSYS;
+	পূর্ণসংখ্যা err = -ENOSYS;
 
-	if (CONFIG_IS_ENABLED(FS_FAT)) {
+	যদি (CONFIG_IS_ENABLED(FS_FAT)) {
 		err = spl_load_image_fat_os(spl_image, bootdev, blk_dev, part);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ফেরত 0;
 	}
-	if (CONFIG_IS_ENABLED(FS_EXT4)) {
+	যদি (CONFIG_IS_ENABLED(FS_EXT4)) {
 		err = spl_load_image_ext_os(spl_image, bootdev, blk_dev, part);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ফেরত 0;
 	}
 
-	return err;
+	ফেরত err;
 }
 
-static int __maybe_unused spl_mmc_fs_load(struct spl_image_info *spl_image,
-			   struct spl_boot_device *bootdev,
-			   struct blk_desc *blk_dev, int part, const char *file)
+স্থির পূর্ণসংখ্যা __maybe_unused spl_mmc_fs_load(কাঠামো spl_image_info *spl_image,
+			   কাঠামো spl_boot_device *bootdev,
+			   কাঠামো blk_desc *blk_dev, পূর্ণসংখ্যা part, ধ্রুবক অক্ষর *file)
 {
-	int err = -ENOENT;
+	পূর্ণসংখ্যা err = -ENOENT;
 
-	if (CONFIG_IS_ENABLED(FS_FAT)) {
+	যদি (CONFIG_IS_ENABLED(FS_FAT)) {
 		err = spl_load_image_fat(spl_image, bootdev, blk_dev, part, file);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ফেরত 0;
 	}
-	if (CONFIG_IS_ENABLED(FS_EXT4)) {
+	যদি (CONFIG_IS_ENABLED(FS_EXT4)) {
 		err = spl_load_image_ext(spl_image, bootdev, blk_dev, part, file);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ফেরত 0;
 	}
-	if (CONFIG_IS_ENABLED(FS_SQUASHFS)) {
+	যদি (CONFIG_IS_ENABLED(FS_SQUASHFS)) {
 		err = spl_load_image_sqfs(spl_image, bootdev, blk_dev, part, file);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ফেরত 0;
 	}
 
-	return err;
+	ফেরত err;
 }
 
-static int spl_mmc_do_fs_boot(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev,
-			      struct mmc *mmc,
-			      const char *filename)
+স্থির পূর্ণসংখ্যা spl_mmc_do_fs_boot(কাঠামো spl_image_info *spl_image,
+			      কাঠামো spl_boot_device *bootdev,
+			      কাঠামো mmc *mmc,
+			      ধ্রুবক অক্ষর *filename)
 {
-	int ret = -ENOSYS;
+	পূর্ণসংখ্যা ret = -ENOSYS;
 
-	__maybe_unused int partition = CONFIG_SYS_MMCSD_FS_BOOT_PARTITION;
+	__maybe_unused পূর্ণসংখ্যা partition = CONFIG_SYS_MMCSD_FS_BOOT_PARTITION;
 
-#if CONFIG_SYS_MMCSD_FS_BOOT_PARTITION == -1
+#যদি CONFIG_SYS_MMCSD_FS_BOOT_PARTITION == -1
 	{
-		struct disk_partition info;
+		কাঠামো disk_partition info;
 		debug("Checking for the first MBR bootable partition\n");
-		for (int type_part = 1; type_part <= DOS_ENTRY_NUMBERS; type_part++) {
+		জন্য (পূর্ণসংখ্যা type_part = 1; type_part <= DOS_ENTRY_NUMBERS; type_part++) {
 			ret = part_get_info(mmc_get_blk_desc(mmc), type_part, &info);
-			if (ret)
-				continue;
+			যদি (ret)
+				চালু;
 			debug("Partition %d is of type %d and bootable=%d\n", type_part, info.sys_ind, info.bootable);
-			if (info.bootable != 0) {
+			যদি (info.bootable != 0) {
 				debug("Partition %d is bootable, using it\n", type_part);
 				partition = type_part;
-				break;
+				বিরতি;
 			}
 		}
 		printf("Using first bootable partition: %d\n", partition);
-		if (partition == CONFIG_SYS_MMCSD_FS_BOOT_PARTITION) {
-			return -ENOSYS;
+		যদি (partition == CONFIG_SYS_MMCSD_FS_BOOT_PARTITION) {
+			ফেরত -ENOSYS;
 		}
 	}
 #endif
 
-	if (!spl_start_uboot()) {
+	যদি (!spl_start_uboot()) {
 		ret = spl_mmc_fs_load_os(spl_image, bootdev,
 					 mmc_get_blk_desc(mmc), partition);
-		if (!ret)
-			return 0;
+		যদি (!ret)
+			ফেরত 0;
 		printf("%s, Failed to load falcon payload: %d\n", __func__,
 		       ret);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return ret;
+		যদি (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ফেরত ret;
 		printf("Fallback to U-Boot\n");
 	}
 
 #ifdef CONFIG_SPL_FS_LOAD_PAYLOAD_NAME
-	return spl_mmc_fs_load(spl_image, bootdev, mmc_get_blk_desc(mmc),
+	ফেরত spl_mmc_fs_load(spl_image, bootdev, mmc_get_blk_desc(mmc),
 			       partition, filename);
-#else
-	return ret;
+#অন্যথা
+	ফেরত ret;
 #endif
 }
 #endif
 
-u32 __weak spl_mmc_boot_mode(struct mmc *mmc, const u32 boot_device)
+u32 __weak spl_mmc_boot_mode(কাঠামো mmc *mmc, ধ্রুবক u32 boot_device)
 {
-	if (CONFIG_IS_ENABLED(FS_FAT) ||
+	যদি (CONFIG_IS_ENABLED(FS_FAT) ||
 	    CONFIG_IS_ENABLED(FS_EXT4) ||
 	    CONFIG_IS_ENABLED(FS_SQUASHFS))
-		return MMCSD_MODE_FS;
+		ফেরত MMCSD_MODE_FS;
 
-	if (IS_ENABLED(CONFIG_SUPPORT_EMMC_BOOT))
-		return MMCSD_MODE_EMMCBOOT;
+	যদি (IS_ENABLED(CONFIG_SUPPORT_EMMC_BOOT))
+		ফেরত MMCSD_MODE_EMMCBOOT;
 
-	return MMCSD_MODE_RAW;
+	ফেরত MMCSD_MODE_RAW;
 }
 
-#if defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) || \
+#যদি defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) || \
 	defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_DYNAMIC)
-int __weak spl_mmc_boot_partition(struct mmc *mmc, const u32 boot_device)
+পূর্ণসংখ্যা __weak spl_mmc_boot_partition(কাঠামো mmc *mmc, ধ্রুবক u32 boot_device)
 {
 #ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION
-	return CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION;
-#else
-	return -ENOSYS;
+	ফেরত CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION;
+#অন্যথা
+	ফেরত -ENOSYS;
 #endif
 }
 #endif
 
-unsigned long __weak arch_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+unsigned long __weak arch_spl_mmc_get_uboot_raw_sector(কাঠামো mmc *mmc,
 						       unsigned long raw_sect)
 {
-	return raw_sect;
+	ফেরত raw_sect;
 }
 
-unsigned long __weak board_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+unsigned long __weak board_spl_mmc_get_uboot_raw_sector(কাঠামো mmc *mmc,
 						  unsigned long raw_sect)
 {
-	return arch_spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
+	ফেরত arch_spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
 }
 
-unsigned long __weak spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+unsigned long __weak spl_mmc_get_uboot_raw_sector(কাঠামো mmc *mmc,
 						  unsigned long raw_sect)
 {
-	return board_spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
+	ফেরত board_spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
 }
 
-int default_spl_mmc_emmc_boot_partition(struct mmc *mmc)
+পূর্ণসংখ্যা default_spl_mmc_emmc_boot_partition(কাঠামো mmc *mmc)
 {
-	int part;
+	পূর্ণসংখ্যা part;
 #ifdef CONFIG_SYS_MMCSD_RAW_MODE_EMMC_BOOT_PARTITION
 	part = CONFIG_SYS_MMCSD_RAW_MODE_EMMC_BOOT_PARTITION;
-#else
+#অন্যথা
 	/*
 	 * We need to check what the partition is configured to.
 	 * 1 and 2 match up to boot0 / boot1 and 7 is user data
 	 * which is the first physical partition (0).
 	 */
 	part = EXT_CSD_EXTRACT_BOOT_PART(mmc->part_config);
-	if (part == EMMC_BOOT_PART_USER)
+	যদি (part == EMMC_BOOT_PART_USER)
 		part = EMMC_HWPART_DEFAULT;
 #endif
-	return part;
+	ফেরত part;
 }
 
-int __weak spl_mmc_emmc_boot_partition(struct mmc *mmc)
+পূর্ণসংখ্যা __weak spl_mmc_emmc_boot_partition(কাঠামো mmc *mmc)
 {
-	return default_spl_mmc_emmc_boot_partition(mmc);
+	ফেরত default_spl_mmc_emmc_boot_partition(mmc);
 }
 
-static int spl_mmc_get_mmc_devnum(struct mmc *mmc)
+স্থির পূর্ণসংখ্যা spl_mmc_get_mmc_devnum(কাঠামো mmc *mmc)
 {
-	struct blk_desc *block_dev;
-#if !CONFIG_IS_ENABLED(BLK)
+	কাঠামো blk_desc *block_dev;
+#যদি !CONFIG_IS_ENABLED(BLK)
 	block_dev = &mmc->block_dev;
-#else
+#অন্যথা
 	block_dev = mmc_get_blk_desc(mmc);
 #endif
-	return block_dev->devnum;
+	ফেরত block_dev->devnum;
 }
 
-static struct mmc *mmc;
+স্থির কাঠামো mmc *mmc;
 
-void spl_mmc_clear_cache(void)
+শূন্য spl_mmc_clear_cache(শূন্য)
 {
-	mmc = NULL;
+	mmc = ফাঁকা;
 }
 
-int spl_mmc_load(struct spl_image_info *spl_image,
-		 struct spl_boot_device *bootdev,
-		 const char *filename,
-		 int raw_part,
+পূর্ণসংখ্যা spl_mmc_load(কাঠামো spl_image_info *spl_image,
+		 কাঠামো spl_boot_device *bootdev,
+		 ধ্রুবক অক্ষর *filename,
+		 পূর্ণসংখ্যা raw_part,
 		 unsigned long raw_sect)
 {
 	u32 boot_mode;
-	int ret = 0;
-	__maybe_unused int part = 0;
-	int mmc_dev;
+	পূর্ণসংখ্যা ret = 0;
+	__maybe_unused পূর্ণসংখ্যা part = 0;
+	পূর্ণসংখ্যা mmc_dev;
 
 	/* Perform peripheral init only once for an mmc device */
-	mmc_dev = spl_mmc_get_device_index(bootdev->boot_device);
+	mmc_dev = spl_mmc_get_device_সূচক(bootdev->boot_device);
 	log_debug("boot_device=%d, mmc_dev=%d\n", bootdev->boot_device,
 		  mmc_dev);
-	if (!mmc || spl_mmc_get_mmc_devnum(mmc) != mmc_dev) {
+	যদি (!mmc || spl_mmc_get_mmc_devnum(mmc) != mmc_dev) {
 		ret = spl_mmc_find_device(&mmc, mmc_dev);
-		if (ret)
-			return ret;
+		যদি (ret)
+			ফেরত ret;
 
 		ret = mmc_init(mmc);
-		if (ret) {
-			mmc = NULL;
+		যদি (ret) {
+			mmc = ফাঁকা;
 			printf("spl: mmc init failed with error: %d\n", ret);
-			return ret;
+			ফেরত ret;
 		}
 	}
 
 	boot_mode = spl_mmc_boot_mode(mmc, bootdev->boot_device);
 	ret = -EINVAL;
-	switch (boot_mode) {
-	case MMCSD_MODE_EMMCBOOT:
+	নির্বাচন (boot_mode) {
+	ক্ষেত্র MMCSD_MODE_EMMCBOOT:
 		part = spl_mmc_emmc_boot_partition(mmc);
 
-		if (CONFIG_IS_ENABLED(MMC_TINY))
+		যদি (CONFIG_IS_ENABLED(MMC_TINY))
 			ret = mmc_switch_part(mmc, part);
-		else
+		অন্যথা
 			ret = blk_dselect_hwpart(mmc_get_blk_desc(mmc), part);
 
-		if (ret) {
+		যদি (ret) {
 			puts("spl: mmc partition switch failed\n");
-			return ret;
+			ফেরত ret;
 		}
 		/* Fall through */
-	case MMCSD_MODE_RAW:
+	ক্ষেত্র MMCSD_MODE_RAW:
 		debug("spl: mmc boot mode: raw\n");
 
-		if (!spl_start_uboot()) {
+		যদি (!spl_start_uboot()) {
 			ret = mmc_load_image_raw_os(spl_image, bootdev, mmc);
-			if (!ret)
-				return 0;
-			if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-				return ret;
+			যদি (!ret)
+				ফেরত 0;
+			যদি (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+				ফেরত ret;
 		}
 
 		raw_sect = spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
@@ -457,56 +457,56 @@ int spl_mmc_load(struct spl_image_info *spl_image,
 		ret = mmc_load_image_raw_sector(spl_image, bootdev, mmc,
 						raw_sect +
 						spl_mmc_raw_uboot_offset(part));
-		if (!ret)
-			return 0;
-#elif defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_ANY_PARTITION)
+		যদি (!ret)
+			ফেরত 0;
+#নতুবা_যদি defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_ANY_PARTITION)
 		ret = spl_mmc_select_partition(mmc, bootdev->boot_device, &raw_part);
-		if (ret)
-			return ret;
+		যদি (ret)
+			ফেরত ret;
 		ret = mmc_load_image_raw_partition(spl_image, bootdev,
 						   mmc, raw_part,
 						   raw_sect);
-		if (!ret)
-			return 0;
+		যদি (!ret)
+			ফেরত 0;
 #endif
 		/* If RAW mode fails, try FS mode. */
 		fallthrough;
 #ifdef CONFIG_SYS_MMCSD_FS_BOOT
-	case MMCSD_MODE_FS:
+	ক্ষেত্র MMCSD_MODE_FS:
 		debug("spl: mmc boot mode: fs\n");
 
 		ret = spl_mmc_do_fs_boot(spl_image, bootdev, mmc, filename);
-		if (!ret)
-			return 0;
+		যদি (!ret)
+			ফেরত 0;
 
-		break;
+		বিরতি;
 #endif
-	default:
+	পূর্বনির্ধারিত:
 		puts("spl: mmc: wrong boot mode\n");
 	}
 
-	return ret;
+	ফেরত ret;
 }
 
-int spl_mmc_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev)
+পূর্ণসংখ্যা spl_mmc_load_image(কাঠামো spl_image_info *spl_image,
+		       কাঠামো spl_boot_device *bootdev)
 {
-	int raw_part = 0;
+	পূর্ণসংখ্যা raw_part = 0;
 
-	if (IS_ENABLED(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) ||
+	যদি (IS_ENABLED(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) ||
 	    IS_ENABLED(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_DYNAMIC))
 		raw_part = -1;
 
-	return spl_mmc_load(spl_image, bootdev,
+	ফেরত spl_mmc_load(spl_image, bootdev,
 #ifdef CONFIG_SPL_FS_LOAD_PAYLOAD_NAME
 			    CONFIG_SPL_FS_LOAD_PAYLOAD_NAME,
-#else
-			    NULL,
+#অন্যথা
+			    ফাঁকা,
 #endif
 			    raw_part,
 #ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR
 			    CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR);
-#else
+#অন্যথা
 			    0);
 #endif
 }

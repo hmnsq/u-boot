@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <dm.h>
-#include <init.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <linux/libfdt.h>
-#include <linux/compiler.h>
+#অন্তর্ভাব <dm.h>
+#অন্তর্ভাব <init.h>
+#অন্তর্ভাব <sysinfo.h>
+#অন্তর্ভাব <asm/global_data.h>
+#অন্তর্ভাব <linux/libfdt.h>
+#অন্তর্ভাব <linux/compiler.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_তথ্য_PTR;
 
-int __weak checkboard(void)
+পূর্ণসংখ্যা __weak checkboard(শূন্য)
 {
-	return 0;
+	ফেরত 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
+স্থির ধ্রুবক কাঠামো to_show {
+	ধ্রুবক অক্ষর *name;
+	গণনা sysinfo_id id;
 } to_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
 	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
@@ -24,56 +24,56 @@ static const struct to_show {
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+স্থির পূর্ণসংখ্যা try_sysinfo(শূন্য)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	কাঠামো udevice *dev;
+	অক্ষর str[80];
+	পূর্ণসংখ্যা ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, আকার(str), str);
+	যদি (ret)
+		ফেরত ret;
 	printf("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	যদি (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		ধ্রুবক কাঠামো to_show *item;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
+		জন্য (item = to_show; item->id; item++) {
+			ret = sysinfo_get_str(dev, item->id, আকার(str), str);
+			যদি (!ret)
 				printf("%s: %s\n", item->name, str);
 		}
 	}
 
-	return 0;
+	ফেরত 0;
 }
 
-int show_board_info(void)
+পূর্ণসংখ্যা show_board_info(শূন্য)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	যদি (IS_ENABLED(CONFIG_OF_CONTROL)) {
+		পূর্ণসংখ্যা ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		যদি (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		যদি (ret) {
+			ধ্রুবক অক্ষর *model;
 
-			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
+			model = fdt_getprop(gd->fdt_blob, 0, "model", ফাঁকা);
+			যদি (model)
 				printf("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	ফেরত checkboard();
 }

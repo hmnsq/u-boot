@@ -20,14 +20,14 @@
  *
  */
 
-#include <display_options.h>
-#include <env.h>
-#include <splash.h>
-#include <video.h>
-#include <vsprintf.h>
-#include <linux/kernel.h>
+#অন্তর্ভাব <display_options.h>
+#অন্তর্ভাব <env.h>
+#অন্তর্ভাব <splash.h>
+#অন্তর্ভাব <video.h>
+#অন্তর্ভাব <vsprintf.h>
+#অন্তর্ভাব <linux/kernel.h>
 
-static struct splash_location default_splash_locations[] = {
+স্থির কাঠামো splash_location default_splash_locations[] = {
 	{
 		.name = "sf",
 		.storage = SPLASH_STORAGE_SF,
@@ -62,92 +62,92 @@ static struct splash_location default_splash_locations[] = {
 
 #ifdef CONFIG_VIDEO_LOGO
 
-#include <bmp_logo_data.h>
+#অন্তর্ভাব <bmp_logo_data.h>
 
-static int splash_video_logo_load(void)
+স্থির পূর্ণসংখ্যা splash_video_logo_load(শূন্য)
 {
-	char *splashimage;
+	অক্ষর *splashimage;
 	ulong bmp_load_addr;
 
 	splashimage = env_get("splashimage");
-	if (!splashimage)
-		return -ENOENT;
+	যদি (!splashimage)
+		ফেরত -ENOENT;
 
 	bmp_load_addr = hextoul(splashimage, 0);
-	if (!bmp_load_addr) {
+	যদি (!bmp_load_addr) {
 		printf("Error: bad 'splashimage' address\n");
-		return -EFAULT;
+		ফেরত -EFAULT;
 	}
 
-	memcpy((void *)bmp_load_addr, bmp_logo_bitmap,
-	       ARRAY_SIZE(bmp_logo_bitmap));
+	memcpy((শূন্য *)bmp_load_addr, bmp_logo_bitmap,
+	       ARRAY_আকার(bmp_logo_bitmap));
 
-	return 0;
+	ফেরত 0;
 }
-#else
-static inline int splash_video_logo_load(void) { return -ENOSYS; }
+#অন্যথা
+স্থির অন্তঃরেখ পূর্ণসংখ্যা splash_video_logo_load(শূন্য) { ফেরত -ENOSYS; }
 #endif
 
-__weak int splash_screen_prepare(void)
+__weak পূর্ণসংখ্যা splash_screen_prepare(শূন্য)
 {
-	if (CONFIG_IS_ENABLED(SPLASH_SOURCE))
-		return splash_source_load(default_splash_locations,
-					  ARRAY_SIZE(default_splash_locations));
+	যদি (CONFIG_IS_ENABLED(SPLASH_SOURCE))
+		ফেরত splash_source_load(default_splash_locations,
+					  ARRAY_আকার(default_splash_locations));
 
-	return splash_video_logo_load();
+	ফেরত splash_video_logo_load();
 }
 
-void splash_get_pos(int *x, int *y)
+শূন্য splash_get_pos(পূর্ণসংখ্যা *x, পূর্ণসংখ্যা *y)
 {
-	char *s = env_get("splashpos");
+	অক্ষর *s = env_get("splashpos");
 
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
-		return;
+	যদি (!CONFIG_IS_ENABLED(SPLASH_SCREEN_ALIGN) || !s)
+		ফেরত;
 
-	if (s[0] == 'm')
+	যদি (s[0] == 'm')
 		*x = BMP_ALIGN_CENTER;
-	else
-		*x = simple_strtol(s, NULL, 0);
+	অন্যথা
+		*x = simple_strtol(s, ফাঁকা, 0);
 
 	s = strchr(s + 1, ',');
-	if (s != NULL) {
-		if (s[1] == 'm')
+	যদি (s != ফাঁকা) {
+		যদি (s[1] == 'm')
 			*y = BMP_ALIGN_CENTER;
-		else
-			*y = simple_strtol(s + 1, NULL, 0);
+		অন্যথা
+			*y = simple_strtol(s + 1, ফাঁকা, 0);
 	}
 }
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#যদি CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 
 #ifdef CONFIG_VIDEO_LOGO
-#include <bmp_logo.h>
+#অন্তর্ভাব <bmp_logo.h>
 #endif
-#include <dm.h>
-#include <video_console.h>
-#include <video_font.h>
-#include <video_font_data.h>
+#অন্তর্ভাব <dm.h>
+#অন্তর্ভাব <video_console.h>
+#অন্তর্ভাব <video_font.h>
+#অন্তর্ভাব <video_font_data.h>
 
-void splash_display_banner(void)
+শূন্য splash_display_banner(শূন্য)
 {
-	struct video_fontdata __maybe_unused *fontdata = fonts;
-	struct udevice *dev;
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
-	int col, row, ret;
+	কাঠামো video_fontdata __maybe_unused *fontdata = fonts;
+	কাঠামো udevice *dev;
+	অক্ষর buf[DISPLAY_OPTIONS_BANNER_দৈর্ঘ্য];
+	পূর্ণসংখ্যা col, row, ret;
 
 	ret = uclass_get_device(UCLASS_VIDEO_CONSOLE, 0, &dev);
-	if (ret)
-		return;
+	যদি (ret)
+		ফেরত;
 
-#if IS_ENABLED(CONFIG_VIDEO_LOGO)
+#যদি IS_ENABLED(CONFIG_VIDEO_LOGO)
 	col = BMP_LOGO_WIDTH / fontdata->width + 1;
 	row = BMP_LOGO_HEIGHT / fontdata->height + 1;
-#else
+#অন্যথা
 	col = 0;
 	row = 0;
 #endif
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, আকার(buf));
 	vidconsole_position_cursor(dev, col, 1);
 	vidconsole_put_string(dev, buf);
 	vidconsole_position_cursor(dev, 0, row);
@@ -158,36 +158,36 @@ void splash_display_banner(void)
  * Common function to show a splash image if env("splashimage") is set.
  * For additional details please refer to doc/README.splashprepare.
  */
-int splash_display(void)
+পূর্ণসংখ্যা splash_display(শূন্য)
 {
 	ulong addr;
-	char *s;
-	int x = 0, y = 0, ret;
-	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
-		return -ENOSYS;
+	অক্ষর *s;
+	পূর্ণসংখ্যা x = 0, y = 0, ret;
+	যদি (!CONFIG_IS_ENABLED(SPLASH_SCREEN))
+		ফেরত -ENOSYS;
 	s = env_get("splashimage");
-	if (!s)
-		return -EINVAL;
+	যদি (!s)
+		ফেরত -EINVAL;
 
-	addr = hextoul(s, NULL);
+	addr = hextoul(s, ফাঁকা);
 	ret = splash_screen_prepare();
-	if (ret)
-		return ret;
+	যদি (ret)
+		ফেরত ret;
 
 	splash_get_pos(&x, &y);
 
-	if (CONFIG_IS_ENABLED(BMP))
+	যদি (CONFIG_IS_ENABLED(BMP))
 		ret = bmp_display(addr, x, y);
-	else
-		return -ENOSYS;
+	অন্যথা
+		ফেরত -ENOSYS;
 
 	/* Skip banner output on video console if the logo is not at 0,0 */
-	if (x || y)
-		goto end;
+	যদি (x || y)
+		যাও end;
 
-#if CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
+#যদি CONFIG_IS_ENABLED(VIDEO) && !CONFIG_IS_ENABLED(HIDE_LOGO_VERSION)
 	splash_display_banner();
 #endif
 end:
-	return ret;
+	ফেরত ret;
 }

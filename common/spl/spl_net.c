@@ -6,75 +6,75 @@
  * (C) Copyright 2012
  * Ilya Yanok <ilya.yanok@gmail.com>
  */
-#include <env.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <net.h>
-#include <linux/libfdt.h>
+#অন্তর্ভাব <env.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <image.h>
+#অন্তর্ভাব <log.h>
+#অন্তর্ভাব <spl.h>
+#অন্তর্ভাব <spl_load.h>
+#অন্তর্ভাব <net.h>
+#অন্তর্ভাব <linux/libfdt.h>
 
-#if defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
-static ulong spl_net_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+#যদি defined(CONFIG_SPL_ETH) || defined(CONFIG_SPL_USB_ETHER)
+স্থির ulong spl_net_load_read(কাঠামো spl_load_info *load, ulong sector,
+			       ulong গুনতি, শূন্য *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
-	memcpy(buf, map_sysmem(image_load_addr + sector, count), count);
-	return count;
+	      __func__, sector, গুনতি, (ulong)buf);
+	memcpy(buf, map_sysmem(image_load_addr + sector, গুনতি), গুনতি);
+	ফেরত গুনতি;
 }
 
-static int spl_net_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+স্থির পূর্ণসংখ্যা spl_net_load_image(কাঠামো spl_image_info *spl_image,
+			      কাঠামো spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
-	int rv;
+	কাঠামো spl_load_info load;
+	পূর্ণসংখ্যা rv;
 
 	env_init();
 	env_relocate();
 	env_set("autoload", "yes");
 	rv = eth_initialize();
-	if (rv == 0) {
+	যদি (rv == 0) {
 		printf("No Ethernet devices found\n");
-		return -ENODEV;
+		ফেরত -ENODEV;
 	}
-	if (bootdev->boot_device_name)
+	যদি (bootdev->boot_device_name)
 		env_set("ethact", bootdev->boot_device_name);
 	rv = net_loop(BOOTP);
-	if (rv < 0) {
+	যদি (rv < 0) {
 		printf("Problem booting with BOOTP\n");
-		return rv;
+		ফেরত rv;
 	}
 
-	spl_load_init(&load, spl_net_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, 0);
+	spl_load_init(&load, spl_net_load_read, ফাঁকা, 1);
+	ফেরত spl_load(spl_image, bootdev, &load, 0, 0);
 }
 #endif
 
 #ifdef CONFIG_SPL_ETH
-int spl_net_load_image_cpgmac(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+পূর্ণসংখ্যা spl_net_load_image_cpgmac(কাঠামো spl_image_info *spl_image,
+			      কাঠামো spl_boot_device *bootdev)
 {
 #ifdef CONFIG_SPL_ETH_DEVICE
 	bootdev->boot_device_name = CONFIG_SPL_ETH_DEVICE;
 #endif
 
-	return spl_net_load_image(spl_image, bootdev);
+	ফেরত spl_net_load_image(spl_image, bootdev);
 }
 SPL_LOAD_IMAGE_METHOD("eth device", 0, BOOT_DEVICE_CPGMAC,
 		      spl_net_load_image_cpgmac);
 #endif
 
 #ifdef CONFIG_SPL_USB_ETHER
-int spl_net_load_image_usb(struct spl_image_info *spl_image,
-			   struct spl_boot_device *bootdev)
+পূর্ণসংখ্যা spl_net_load_image_usb(কাঠামো spl_image_info *spl_image,
+			   কাঠামো spl_boot_device *bootdev)
 {
 	bootdev->boot_device_name = "usb_ether";
-#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+#যদি CONFIG_IS_ENABLED(DM_USB_GADGET)
 	usb_ether_init();
 #endif
-	return spl_net_load_image(spl_image, bootdev);
+	ফেরত spl_net_load_image(spl_image, bootdev);
 }
 SPL_LOAD_IMAGE_METHOD("USB eth", 0, BOOT_DEVICE_USBETH, spl_net_load_image_usb);
 #endif
