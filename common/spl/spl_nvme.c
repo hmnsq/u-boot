@@ -5,22 +5,22 @@
  *
  */
 
-#include <spl.h>
-#include <nvme.h>
+#ضمن <spl.h>
+#ضمن <nvme.h>
 
-static int spl_nvme_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ساكن صحيح spl_nvme_بارگیری_image(بنية spl_image_info *spl_image,
+			       بنية spl_boot_device *bootdev)
 {
-	int ret;
+	صحيح ret;
 
-	ret = nvme_scan_namespace();
-	if (ret < 0)
-		return ret;
+	ret = nvme_پیمایش_namespace();
+	إذا (ret < 0)
+		أرجع ret;
 
-	ret = spl_blk_load_image(spl_image, bootdev, UCLASS_NVME,
+	ret = spl_blk_بارگیری_image(spl_image, bootdev, UCLASS_NVME,
 				 CONFIG_SPL_NVME_BOOT_DEVICE,
-				 CONFIG_SYS_NVME_BOOT_PARTITION);
-	return ret;
+				 CONFIG_SYS_NVME_BOOT_افراز);
+	أرجع ret;
 }
 
-SPL_LOAD_IMAGE_METHOD("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_load_image);
+SPL_بارگیری_IMAGE_روش("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_بارگیری_image);

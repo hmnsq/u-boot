@@ -31,104 +31,104 @@
  * only been tested with USB memory sticks.
  */
 
-#include <blk.h>
-#include <bootdev.h>
-#include <command.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
-#include <mapmem.h>
-#include <memalign.h>
-#include <asm/byteorder.h>
-#include <asm/cache.h>
-#include <asm/processor.h>
-#include <dm/device-internal.h>
-#include <dm/lists.h>
-#include <linux/delay.h>
+#ضمن <blk.h>
+#ضمن <bootdev.h>
+#ضمن <command.h>
+#ضمن <dm.h>
+#ضمن <errno.h>
+#ضمن <log.h>
+#ضمن <mapmem.h>
+#ضمن <memalign.h>
+#ضمن <asm/byteorder.h>
+#ضمن <asm/cache.h>
+#ضمن <asm/processor.h>
+#ضمن <dm/device-internal.h>
+#ضمن <dm/lists.h>
+#ضمن <linux/delay.h>
 
-#include <part.h>
-#include <usb.h>
+#ضمن <part.h>
+#ضمن <usb.h>
 
-#undef BBB_COMDAT_TRACE
-#undef BBB_XPORT_TRACE
+#لغو_تعریف BBB_COMDAT_TRACE
+#لغو_تعریف BBB_XPORT_TRACE
 
-#include <scsi.h>
+#ضمن <scsi.h>
 /* direction table -- this indicates the direction of the data
  * transfer for each command code -- a 1 indicates input
  */
-static const unsigned char us_direction[256/8] = {
+ساكن ثابت بیعلامت حرف us_direction[256/8] = {
 	0x28, 0x81, 0x14, 0x14, 0x20, 0x01, 0x90, 0x77,
 	0x0C, 0x20, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-#define US_DIRECTION(x) ((us_direction[x>>3] >> (x & 7)) & 1)
+#تعریف_کن US_DIRECTION(x) ((us_direction[x>>3] >> (x & 7)) & 1)
 
-static struct scsi_cmd usb_ccb __aligned(ARCH_DMA_MINALIGN);
-static __u32 CBWTag;
+ساكن بنية scsi_cmd usb_ccb __aligned(ARCH_DMA_MINALIGN);
+ساكن __u32 CBWTag;
 
-static int usb_max_devs; /* number of highest available usb device */
+ساكن صحيح usb_max_devs; /* number of highest available usb device */
 
-#if !CONFIG_IS_ENABLED(BLK)
-static struct blk_desc usb_dev_desc[USB_MAX_STOR_DEV];
-#endif
+#إذا !CONFIG_IS_ENABLED(BLK)
+ساكن بنية blk_desc usb_dev_desc[USB_MAX_STOR_DEV];
+#پایان_اگر
 
-struct us_data;
-typedef int (*trans_cmnd)(struct scsi_cmd *cb, struct us_data *data);
-typedef int (*trans_reset)(struct us_data *data);
+بنية us_داده;
+تعريفنوع صحيح (*trans_cmnd)(بنية scsi_cmd *cb, بنية us_داده *داده);
+تعريفنوع صحيح (*trans_reset)(بنية us_داده *داده);
 
-struct us_data {
-	struct usb_device *pusb_dev;	 /* this usb_device */
+بنية us_داده {
+	بنية usb_device *pusb_dev;	 /* this usb_device */
 
-	unsigned int	flags;			/* from filter initially */
+	بیعلامت صحيح	flags;			/* from filter initially */
 #	define USB_READY	(1 << 0)
-	unsigned char	ifnum;			/* interface number */
-	unsigned char	ep_in;			/* in endpoint */
-	unsigned char	ep_out;			/* out ....... */
-	unsigned char	ep_int;			/* interrupt . */
-	unsigned char	subclass;		/* as in overview */
-	unsigned char	protocol;		/* .............. */
-	unsigned char	attention_done;		/* force attn on first cmd */
-	unsigned short	ip_data;		/* interrupt data */
-	int		action;			/* what to do */
-	int		ip_wanted;		/* needed */
-	int		*irq_handle;		/* for USB int requests */
-	unsigned int	irqpipe;		/* pipe for release_irq */
-	unsigned char	irqmaxp;		/* max packed for irq Pipe */
-	unsigned char	irqinterval;		/* Intervall for IRQ Pipe */
-	struct scsi_cmd	*srb;			/* current srb */
+	بیعلامت حرف	ifnum;			/* interface number */
+	بیعلامت حرف	ep_درون;			/* in endpoint */
+	بیعلامت حرف	ep_بیرون;			/* out ....... */
+	بیعلامت حرف	ep_int;			/* interrupt . */
+	بیعلامت حرف	subclass;		/* as in overview */
+	بیعلامت حرف	protocol;		/* .............. */
+	بیعلامت حرف	attention_انجامشده;		/* force attn on first cmd */
+	بیعلامت کوتاه	ip_داده;		/* interrupt data */
+	صحيح		action;			/* what to do */
+	صحيح		ip_wanted;		/* needed */
+	صحيح		*irq_handle;		/* for USB int requests */
+	بیعلامت صحيح	irqpipe;		/* pipe for release_irq */
+	بیعلامت حرف	irqmaxp;		/* max packed for irq Pipe */
+	بیعلامت حرف	irqinterval;		/* Intervall for IRQ Pipe */
+	بنية scsi_cmd	*srb;			/* current srb */
 	trans_reset	transport_reset;	/* reset routine */
 	trans_cmnd	transport;		/* transport routine */
-	unsigned short	max_xfer_blk;		/* maximum transfer blocks */
+	بیعلامت کوتاه	max_xfer_blk;		/* maximum transfer blocks */
 	bool		cmd12;			/* use 12-byte commands (RBC/UFI) */
 };
 
-#if !CONFIG_IS_ENABLED(BLK)
-static struct us_data usb_stor[USB_MAX_STOR_DEV];
-#endif
+#إذا !CONFIG_IS_ENABLED(BLK)
+ساكن بنية us_داده usb_stor[USB_MAX_STOR_DEV];
+#پایان_اگر
 
-#define USB_STOR_TRANSPORT_GOOD	   0
-#define USB_STOR_TRANSPORT_FAILED -1
-#define USB_STOR_TRANSPORT_ERROR  -2
+#تعریف_کن USB_STOR_TRANSPORT_GOOD	   0
+#تعریف_کن USB_STOR_TRANSPORT_FAILED -1
+#تعریف_کن USB_STOR_TRANSPORT_ERROR  -2
 
-int usb_stor_get_info(struct usb_device *dev, struct us_data *us,
-		      struct blk_desc *dev_desc);
-int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
-		      struct us_data *ss);
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_read(struct udevice *dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer);
-static unsigned long usb_stor_write(struct udevice *dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer);
-#else
-static unsigned long usb_stor_read(struct blk_desc *block_dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer);
-static unsigned long usb_stor_write(struct blk_desc *block_dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer);
-#endif
-void uhci_show_temp_int_td(void);
+صحيح usb_stor_get_info(بنية usb_device *dev, بنية us_داده *us,
+		      بنية blk_desc *dev_desc);
+صحيح usb_storage_probe(بنية usb_device *dev, بیعلامت صحيح ifnum,
+		      بنية us_داده *ss);
+#إذا CONFIG_IS_ENABLED(BLK)
+ساكن بیعلامت دراز usb_stor_read(بنية udevice *dev, lbaint_t blknr,
+				   lbaint_t blkcnt, فراغ *میانگیر);
+ساكن بیعلامت دراز usb_stor_write(بنية udevice *dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ثابت فراغ *میانگیر);
+#وإلا
+ساكن بیعلامت دراز usb_stor_read(بنية blk_desc *بلوک_dev, lbaint_t blknr,
+				   lbaint_t blkcnt, فراغ *میانگیر);
+ساكن بیعلامت دراز usb_stor_write(بنية blk_desc *بلوک_dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ثابت فراغ *میانگیر);
+#پایان_اگر
+فراغ uhci_show_موقت_int_td(فراغ);
 
-static void usb_show_progress(void)
+ساكن فراغ usb_show_پیشرفت(فراغ)
 {
 	debug(".");
 }
@@ -137,159 +137,159 @@ static void usb_show_progress(void)
  * show info on storage devices; 'usb start/init' must be invoked earlier
  * as we only retrieve structures populated during devices initialization
  */
-int usb_stor_info(void)
+صحيح usb_stor_info(فراغ)
 {
-	int count = 0;
-#if CONFIG_IS_ENABLED(BLK)
-	struct udevice *dev;
+	صحيح شمار = 0;
+#إذا CONFIG_IS_ENABLED(BLK)
+	بنية udevice *dev;
 
-	for (blk_first_device(UCLASS_USB, &dev);
+	لكل (blk_اولی_device(UCLASS_USB, &dev);
 	     dev;
-	     blk_next_device(&dev)) {
-		struct blk_desc *desc = dev_get_uclass_plat(dev);
+	     blk_بعدی_device(&dev)) {
+		بنية blk_desc *desc = dev_get_uclass_plat(dev);
 
-		printf("  Device %d: ", desc->devnum);
+		چاپ_کن("  Device %d: ", desc->devnum);
 		dev_print(desc);
-		count++;
+		شمار++;
 	}
-#else
-	int i;
+#وإلا
+	صحيح i;
 
-	if (usb_max_devs > 0) {
-		for (i = 0; i < usb_max_devs; i++) {
-			printf("  Device %d: ", i);
+	إذا (usb_max_devs > 0) {
+		لكل (i = 0; i < usb_max_devs; i++) {
+			چاپ_کن("  Device %d: ", i);
 			dev_print(&usb_dev_desc[i]);
 		}
-		return 0;
+		أرجع 0;
 	}
-#endif
-	if (!count) {
-		printf("No storage devices, perhaps not 'usb start'ed..?\n");
-		return 1;
+#پایان_اگر
+	إذا (!شمار) {
+		چاپ_کن("No storage devices, perhaps not 'usb start'ed..?\n");
+		أرجع 1;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static unsigned int usb_get_max_lun(struct us_data *us)
+ساكن بیعلامت صحيح usb_get_max_lun(بنية us_داده *us)
 {
-	int len;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, result, 1);
-	len = usb_control_msg(us->pusb_dev,
+	صحيح len;
+	ALLOC_CACHE_ALIGN_میانگیر(بیعلامت حرف, نتیجه, 1);
+	len = usb_control_پیام(us->pusb_dev,
 			      usb_rcvctrlpipe(us->pusb_dev, 0),
 			      US_BBB_GET_MAX_LUN,
-			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
+			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_درون,
 			      0, us->ifnum,
-			      result, sizeof(char),
+			      نتیجه, حجم(حرف),
 			      USB_CNTL_TIMEOUT * 5);
-	debug("Get Max LUN -> len = %i, result = %i\n", len, (int) *result);
-	return (len > 0) ? *result : 0;
+	debug("Get Max LUN -> len = %i, result = %i\n", len, (صحيح) *نتیجه);
+	أرجع (len > 0) ? *نتیجه : 0;
 }
 
-static int usb_stor_probe_device(struct usb_device *udev)
+ساكن صحيح usb_stor_probe_device(بنية usb_device *udev)
 {
-	int lun, max_lun;
+	صحيح lun, max_lun;
 
-#if CONFIG_IS_ENABLED(BLK)
-	struct us_data *data;
-	int ret;
-#else
-	int start;
+#إذا CONFIG_IS_ENABLED(BLK)
+	بنية us_داده *داده;
+	صحيح ret;
+#وإلا
+	صحيح شروع;
 
-	if (udev == NULL)
-		return -ENOENT; /* no more devices available */
-#endif
+	إذا (udev == عدم)
+		أرجع -ENOENT; /* no more devices available */
+#پایان_اگر
 
 	debug("\n\nProbing for storage\n");
-#if CONFIG_IS_ENABLED(BLK)
+#إذا CONFIG_IS_ENABLED(BLK)
 	/*
 	 * We store the us_data in the mass storage device's plat. It
 	 * is shared by all LUNs (block devices) attached to this mass storage
 	 * device.
 	 */
-	data = dev_get_plat(udev->dev);
-	if (!usb_storage_probe(udev, 0, data))
-		return 0;
-	max_lun = usb_get_max_lun(data);
-	for (lun = 0; lun <= max_lun; lun++) {
-		struct blk_desc *blkdev;
-		struct udevice *dev;
-		char str[10];
+	داده = dev_get_plat(udev->dev);
+	إذا (!usb_storage_probe(udev, 0, داده))
+		أرجع 0;
+	max_lun = usb_get_max_lun(داده);
+	لكل (lun = 0; lun <= max_lun; lun++) {
+		بنية blk_desc *blkdev;
+		بنية udevice *dev;
+		حرف str[10];
 
-		snprintf(str, sizeof(str), "lun%d", lun);
+		snprintf(str, حجم(str), "lun%d", lun);
 		ret = blk_create_devicef(udev->dev, "usb_storage_blk", str,
 					 UCLASS_USB, usb_max_devs,
 					 DEFAULT_BLKSZ, 0, &dev);
-		if (ret) {
+		إذا (ret) {
 			debug("Cannot bind driver\n");
-			return ret;
+			أرجع ret;
 		}
 
 		blkdev = dev_get_uclass_plat(dev);
-		blkdev->target = 0xff;
+		blkdev->هدف = 0xff;
 		blkdev->lun = lun;
 
-		ret = usb_stor_get_info(udev, data, blkdev);
-		if (ret == 1) {
+		ret = usb_stor_get_info(udev, داده, blkdev);
+		إذا (ret == 1) {
 			usb_max_devs++;
 			debug("%s: Found device %p\n", __func__, udev);
-		} else {
+		} وإلا {
 			debug("usb_stor_get_info: Invalid device\n");
 			ret = device_unbind(dev);
-			if (ret)
-				return ret;
-			continue;
+			إذا (ret)
+				أرجع ret;
+			استمر;
 		}
 
 		ret = blk_probe_or_unbind(dev);
-		if (ret)
-			return ret;
+		إذا (ret)
+			أرجع ret;
 
-		ret = bootdev_setup_for_sibling_blk(dev, "usb_bootdev");
-		if (ret) {
-			int ret2;
+		ret = bootdev_راهاندازی_for_sibling_blk(dev, "usb_bootdev");
+		إذا (ret) {
+			صحيح ret2;
 
 			ret2 = device_unbind(dev);
-			if (ret2)
-				return log_msg_ret("bootdev", ret2);
-			return log_msg_ret("bootdev", ret);
+			إذا (ret2)
+				أرجع log_پیام_ret("bootdev", ret2);
+			أرجع log_پیام_ret("bootdev", ret);
 		}
 	}
-#else
+#وإلا
 	/* We don't have space to even probe if we hit the maximum */
-	if (usb_max_devs == USB_MAX_STOR_DEV) {
-		printf("max USB Storage Device reached: %d stopping\n",
+	إذا (usb_max_devs == USB_MAX_STOR_DEV) {
+		چاپ_کن("max USB Storage Device reached: %d stopping\n",
 		       usb_max_devs);
-		return -ENOSPC;
+		أرجع -ENOSPC;
 	}
 
-	if (!usb_storage_probe(udev, 0, &usb_stor[usb_max_devs]))
-		return 0;
+	إذا (!usb_storage_probe(udev, 0, &usb_stor[usb_max_devs]))
+		أرجع 0;
 
 	/*
 	 * OK, it's a storage device.  Iterate over its LUNs and populate
 	 * usb_dev_desc'
 	 */
-	start = usb_max_devs;
+	شروع = usb_max_devs;
 
 	max_lun = usb_get_max_lun(&usb_stor[usb_max_devs]);
-	for (lun = 0; lun <= max_lun && usb_max_devs < USB_MAX_STOR_DEV;
+	لكل (lun = 0; lun <= max_lun && usb_max_devs < USB_MAX_STOR_DEV;
 	     lun++) {
-		struct blk_desc *blkdev;
+		بنية blk_desc *blkdev;
 
 		blkdev = &usb_dev_desc[usb_max_devs];
-		memset(blkdev, '\0', sizeof(struct blk_desc));
+		memset(blkdev, '\0', حجم(بنية blk_desc));
 		blkdev->uclass_id = UCLASS_USB;
 		blkdev->devnum = usb_max_devs;
 		blkdev->part_type = PART_TYPE_UNKNOWN;
-		blkdev->target = 0xff;
+		blkdev->هدف = 0xff;
 		blkdev->type = DEV_TYPE_UNKNOWN;
-		blkdev->block_read = usb_stor_read;
-		blkdev->block_write = usb_stor_write;
+		blkdev->بلوک_read = usb_stor_read;
+		blkdev->بلوک_write = usb_stor_write;
 		blkdev->lun = lun;
 		blkdev->priv = udev;
 
-		if (usb_stor_get_info(udev, &usb_stor[start],
+		إذا (usb_stor_get_info(udev, &usb_stor[شروع],
 				      &usb_dev_desc[usb_max_devs]) == 1) {
 			debug("partype: %d\n", blkdev->part_type);
 			part_init(blkdev);
@@ -298,12 +298,12 @@ static int usb_stor_probe_device(struct usb_device *udev)
 			debug("%s: Found device %p\n", __func__, udev);
 		}
 	}
-#endif
+#پایان_اگر
 
-	return 0;
+	أرجع 0;
 }
 
-void usb_stor_reset(void)
+فراغ usb_stor_reset(فراغ)
 {
 	usb_max_devs = 0;
 }
@@ -313,158 +313,158 @@ void usb_stor_reset(void)
  * to the user if mode = 1
  * returns current device or -1 if no
  */
-int usb_stor_scan(int mode)
+صحيح usb_stor_پیمایش(صحيح نما)
 {
-	if (mode == 1)
-		printf("       scanning usb for storage devices... ");
+	إذا (نما == 1)
+		چاپ_کن("       scanning usb for storage devices... ");
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-	unsigned char i;
+#إذا !CONFIG_IS_ENABLED(DM_USB)
+	بیعلامت حرف i;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
 
 	usb_stor_reset();
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
-		struct usb_device *dev;
+	لكل (i = 0; i < USB_MAX_DEVICE; i++) {
+		بنية usb_device *dev;
 
-		dev = usb_get_dev_index(i); /* get device */
+		dev = usb_get_dev_شاخص(i); /* get device */
 		debug("i=%d\n", i);
-		if (usb_stor_probe_device(dev))
-			break;
+		إذا (usb_stor_probe_device(dev))
+			اكسر;
 	} /* for */
 
 	usb_disable_asynch(0); /* asynch transfer allowed */
-#endif
-	printf("%d Storage Device(s) found\n", usb_max_devs);
-	if (usb_max_devs > 0)
-		return 0;
-	return -1;
+#پایان_اگر
+	چاپ_کن("%d Storage Device(s) found\n", usb_max_devs);
+	إذا (usb_max_devs > 0)
+		أرجع 0;
+	أرجع -1;
 }
 
-static int usb_stor_irq(struct usb_device *dev)
+ساكن صحيح usb_stor_irq(بنية usb_device *dev)
 {
-	struct us_data *us;
-	us = (struct us_data *)dev->privptr;
+	بنية us_داده *us;
+	us = (بنية us_داده *)dev->privptr;
 
-	if (us->ip_wanted)
+	إذا (us->ip_wanted)
 		us->ip_wanted = 0;
-	return 0;
+	أرجع 0;
 }
 
-#ifdef	DEBUG
+#اگر_تعریف_شده	DEBUG
 
-static void usb_show_srb(struct scsi_cmd *pccb)
+ساكن فراغ usb_show_srb(بنية scsi_cmd *pccb)
 {
-	int i;
-	printf("SRB: len %d datalen 0x%lX\n ", pccb->cmdlen, pccb->datalen);
-	for (i = 0; i < pccb->cmdlen; i++)
-		printf("%02X ", pccb->cmd[i]);
-	printf("\n");
+	صحيح i;
+	چاپ_کن("SRB: len %d datalen 0x%lX\n ", pccb->cmdlen, pccb->datalen);
+	لكل (i = 0; i < pccb->cmdlen; i++)
+		چاپ_کن("%02X ", pccb->cmd[i]);
+	چاپ_کن("\n");
 }
 
-static void display_int_status(unsigned long tmp)
+ساكن فراغ display_int_وضعیت(بیعلامت دراز tmp)
 {
-	printf("Status: %s %s %s %s %s %s %s\n",
-		(tmp & USB_ST_ACTIVE) ? "Active" : "",
+	چاپ_کن("Status: %s %s %s %s %s %s %s\n",
+		(tmp & USB_ST_فعال) ? "Active" : "",
 		(tmp & USB_ST_STALLED) ? "Stalled" : "",
 		(tmp & USB_ST_BUF_ERR) ? "Buffer Error" : "",
 		(tmp & USB_ST_BABBLE_DET) ? "Babble Det" : "",
 		(tmp & USB_ST_NAK_REC) ? "NAKed" : "",
-		(tmp & USB_ST_CRC_ERR) ? "CRC Error" : "",
-		(tmp & USB_ST_BIT_ERR) ? "Bitstuff Error" : "");
+		(tmp & USB_ST_بررسی_چرخهای_ERR) ? "CRC Error" : "",
+		(tmp & USB_ST_بیت_ERR) ? "Bitstuff Error" : "");
 }
-#endif
+#پایان_اگر
 /***********************************************************************
  * Data transfer routines
  ***********************************************************************/
 
-static int us_one_transfer(struct us_data *us, int pipe, char *buf, int length)
+ساكن صحيح us_one_transfer(بنية us_داده *us, صحيح pipe, حرف *buf, صحيح درازی)
 {
-	int max_size;
-	int this_xfer;
-	int result;
-	int partial;
-	int maxtry;
-	int stat;
+	صحيح max_اندازه;
+	صحيح this_xfer;
+	صحيح نتیجه;
+	صحيح partial;
+	صحيح maxtry;
+	صحيح stat;
 
 	/* determine the maximum packet size for these transfers */
-	max_size = usb_maxpacket(us->pusb_dev, pipe) * 16;
+	max_اندازه = usb_maxpacket(us->pusb_dev, pipe) * 16;
 
 	/* while we have data left to transfer */
-	while (length) {
+	طالما (درازی) {
 
 		/* calculate how long this will be -- maximum or a remainder */
-		this_xfer = length > max_size ? max_size : length;
-		length -= this_xfer;
+		this_xfer = درازی > max_اندازه ? max_اندازه : درازی;
+		درازی -= this_xfer;
 
 		/* setup the retry counter */
 		maxtry = 10;
 
 		/* set up the transfer loop */
-		do {
+		افعل {
 			/* transfer the data */
 			debug("Bulk xfer 0x%lx(%d) try #%d\n",
-			      (ulong)map_to_sysmem(buf), this_xfer,
+			      (ulong)map_مقصد_sysmem(buf), this_xfer,
 			      11 - maxtry);
-			result = usb_bulk_msg(us->pusb_dev, pipe, buf,
+			نتیجه = usb_bulk_پیام(us->pusb_dev, pipe, buf,
 					      this_xfer, &partial,
 					      USB_CNTL_TIMEOUT * 5);
 			debug("bulk_msg returned %d xferred %d/%d\n",
-			      result, partial, this_xfer);
-			if (us->pusb_dev->status != 0) {
+			      نتیجه, partial, this_xfer);
+			إذا (us->pusb_dev->وضعیت != 0) {
 				/* if we stall, we need to clear it before
 				 * we go on
 				 */
-#ifdef DEBUG
-				display_int_status(us->pusb_dev->status);
-#endif
-				if (us->pusb_dev->status & USB_ST_STALLED) {
+#اگر_تعریف_شده DEBUG
+				display_int_وضعیت(us->pusb_dev->وضعیت);
+#پایان_اگر
+				إذا (us->pusb_dev->وضعیت & USB_ST_STALLED) {
 					debug("stalled ->clearing endpoint" \
 					      "halt for pipe 0x%x\n", pipe);
-					stat = us->pusb_dev->status;
+					stat = us->pusb_dev->وضعیت;
 					usb_clear_halt(us->pusb_dev, pipe);
-					us->pusb_dev->status = stat;
-					if (this_xfer == partial) {
+					us->pusb_dev->وضعیت = stat;
+					إذا (this_xfer == partial) {
 						debug("bulk transferred" \
 						      "with error %lX," \
 						      " but data ok\n",
-						      us->pusb_dev->status);
-						return 0;
+						      us->pusb_dev->وضعیت);
+						أرجع 0;
 					}
-					else
-						return result;
+					وإلا
+						أرجع نتیجه;
 				}
-				if (us->pusb_dev->status & USB_ST_NAK_REC) {
+				إذا (us->pusb_dev->وضعیت & USB_ST_NAK_REC) {
 					debug("Device NAKed bulk_msg\n");
-					return result;
+					أرجع نتیجه;
 				}
 				debug("bulk transferred with error");
-				if (this_xfer == partial) {
+				إذا (this_xfer == partial) {
 					debug(" %ld, but data ok\n",
-					      us->pusb_dev->status);
-					return 0;
+					      us->pusb_dev->وضعیت);
+					أرجع 0;
 				}
 				/* if our try counter reaches 0, bail out */
 				debug(" %ld, data %d\n",
-				      us->pusb_dev->status, partial);
-				if (!maxtry--)
-						return result;
+				      us->pusb_dev->وضعیت, partial);
+				إذا (!maxtry--)
+						أرجع نتیجه;
 			}
 			/* update to show what data was transferred */
 			this_xfer -= partial;
 			buf += partial;
 			/* continue until this transfer is done */
-		} while (this_xfer);
+		} طالما (this_xfer);
 	}
 
 	/* if we get here, we're done and successful */
-	return 0;
+	أرجع 0;
 }
 
-static int usb_stor_BBB_reset(struct us_data *us)
+ساكن صحيح usb_stor_BBB_reset(بنية us_داده *us)
 {
-	int result;
-	unsigned int pipe;
+	صحيح نتیجه;
+	بیعلامت صحيح pipe;
 
 	/*
 	 * Reset recovery (5.3.4 in Universal Serial Bus Mass Storage Class)
@@ -481,141 +481,141 @@ static int usb_stor_BBB_reset(struct us_data *us)
 	 * This comment stolen from FreeBSD's /sys/dev/usb/umass.c.
 	 */
 	debug("BBB_reset\n");
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	نتیجه = usb_control_پیام(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_BBB_RESET,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-				 0, us->ifnum, NULL, 0, USB_CNTL_TIMEOUT * 5);
+				 0, us->ifnum, عدم, 0, USB_CNTL_TIMEOUT * 5);
 
-	if ((result < 0) && (us->pusb_dev->status & USB_ST_STALLED)) {
+	إذا ((نتیجه < 0) && (us->pusb_dev->وضعیت & USB_ST_STALLED)) {
 		debug("RESET:stall\n");
-		return -1;
+		أرجع -1;
 	}
 
 	/* long wait for reset */
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX reset\n",
-	      result, us->pusb_dev->status);
-	pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	result = usb_clear_halt(us->pusb_dev, pipe);
+	      نتیجه, us->pusb_dev->وضعیت);
+	pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_درون);
+	نتیجه = usb_clear_halt(us->pusb_dev, pipe);
 	/* long wait for reset */
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX clearing IN endpoint\n",
-	      result, us->pusb_dev->status);
+	      نتیجه, us->pusb_dev->وضعیت);
 	/* long wait for reset */
-	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
-	result = usb_clear_halt(us->pusb_dev, pipe);
+	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_بیرون);
+	نتیجه = usb_clear_halt(us->pusb_dev, pipe);
 	mdelay(150);
 	debug("BBB_reset result %d: status %lX clearing OUT endpoint\n",
-	      result, us->pusb_dev->status);
+	      نتیجه, us->pusb_dev->وضعیت);
 	debug("BBB_reset done\n");
-	return 0;
+	أرجع 0;
 }
 
 /* FIXME: this reset function doesn't really reset the port, and it
  * should. Actually it should probably do what it's doing here, and
  * reset the port physically
  */
-static int usb_stor_CB_reset(struct us_data *us)
+ساكن صحيح usb_stor_CB_reset(بنية us_داده *us)
 {
-	unsigned char cmd[12];
-	int result;
+	بیعلامت حرف cmd[12];
+	صحيح نتیجه;
 
 	debug("CB_reset\n");
-	memset(cmd, 0xff, sizeof(cmd));
+	memset(cmd, 0xff, حجم(cmd));
 	cmd[0] = SCSI_SEND_DIAG;
 	cmd[1] = 4;
-	result = usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	نتیجه = usb_control_پیام(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 				 US_CBI_ADSC,
 				 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-				 0, us->ifnum, cmd, sizeof(cmd),
+				 0, us->ifnum, cmd, حجم(cmd),
 				 USB_CNTL_TIMEOUT * 5);
 
 	/* long wait for reset */
 	mdelay(1500);
 	debug("CB_reset result %d: status %lX clearing endpoint halt\n",
-	      result, us->pusb_dev->status);
-	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_in));
-	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_out));
+	      نتیجه, us->pusb_dev->وضعیت);
+	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_درون));
+	usb_clear_halt(us->pusb_dev, usb_rcvbulkpipe(us->pusb_dev, us->ep_بیرون));
 
 	debug("CB_reset done\n");
-	return 0;
+	أرجع 0;
 }
 
 /*
  * Set up the command for a BBB device. Note that the actual SCSI
  * command is copied into cbw.CBWCDB.
  */
-static int usb_stor_BBB_comdat(struct scsi_cmd *srb, struct us_data *us)
+ساكن صحيح usb_stor_BBB_comdat(بنية scsi_cmd *srb, بنية us_داده *us)
 {
-	int result;
-	int actlen;
-	int dir_in;
-	unsigned int pipe;
-	ALLOC_CACHE_ALIGN_BUFFER(struct umass_bbb_cbw, cbw, 1);
+	صحيح نتیجه;
+	صحيح actlen;
+	صحيح dir_درون;
+	بیعلامت صحيح pipe;
+	ALLOC_CACHE_ALIGN_میانگیر(بنية umass_bbb_cbw, cbw, 1);
 
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_درون = US_DIRECTION(srb->cmd[0]);
 
-#ifdef BBB_COMDAT_TRACE
-	printf("dir %d lun %d cmdlen %d cmd %p datalen %lu pdata %p\n",
-		dir_in, srb->lun, srb->cmdlen, srb->cmd, srb->datalen,
+#اگر_تعریف_شده BBB_COMDAT_TRACE
+	چاپ_کن("dir %d lun %d cmdlen %d cmd %p datalen %lu pdata %p\n",
+		dir_درون, srb->lun, srb->cmdlen, srb->cmd, srb->datalen,
 		srb->pdata);
-	if (srb->cmdlen) {
-		for (result = 0; result < srb->cmdlen; result++)
-			printf("cmd[%d] %#x ", result, srb->cmd[result]);
-		printf("\n");
+	إذا (srb->cmdlen) {
+		لكل (نتیجه = 0; نتیجه < srb->cmdlen; نتیجه++)
+			چاپ_کن("cmd[%d] %#x ", نتیجه, srb->cmd[نتیجه]);
+		چاپ_کن("\n");
 	}
-#endif
+#پایان_اگر
 	/* sanity checks */
-	if (!(srb->cmdlen <= CBWCDBLENGTH)) {
+	إذا (!(srb->cmdlen <= CBWCDBLENGTH)) {
 		debug("usb_stor_BBB_comdat:cmdlen too large\n");
-		return -1;
+		أرجع -1;
 	}
 
 	/* always OUT to the ep */
-	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_بیرون);
 
-	cbw->dCBWSignature = cpu_to_le32(CBWSIGNATURE);
-	cbw->dCBWTag = cpu_to_le32(CBWTag++);
-	cbw->dCBWDataTransferLength = cpu_to_le32(srb->datalen);
-	cbw->bCBWFlags = (dir_in ? CBWFLAGS_IN : CBWFLAGS_OUT);
+	cbw->dCBWSignature = cpu_مقصد_le32(CBWSIGNATURE);
+	cbw->dCBWTag = cpu_مقصد_le32(CBWTag++);
+	cbw->d_CBWData_Transfer_درازی = cpu_مقصد_le32(srb->datalen);
+	cbw->bCBWFlags = (dir_درون ? CBWFLAGS_درون : CBWFLAGS_بیرون);
 	cbw->bCBWLUN = srb->lun;
 	cbw->bCDBLength = srb->cmdlen;
 	/* copy the command data into the CBW command data buffer */
 	/* DST SRC LEN!!! */
 
-	memcpy(cbw->CBWCDB, srb->cmd, srb->cmdlen);
-	result = usb_bulk_msg(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_SIZE,
+	کپی_حافظه(cbw->CBWCDB, srb->cmd, srb->cmdlen);
+	نتیجه = usb_bulk_پیام(us->pusb_dev, pipe, cbw, UMASS_BBB_CBW_اندازه,
 			      &actlen, USB_CNTL_TIMEOUT * 5);
-	if (result < 0)
+	إذا (نتیجه < 0)
 		debug("usb_stor_BBB_comdat:usb_bulk_msg error\n");
-	return result;
+	أرجع نتیجه;
 }
 
 /* FIXME: we also need a CBI_command which sets up the completion
  * interrupt, and waits for it
  */
-static int usb_stor_CB_comdat(struct scsi_cmd *srb, struct us_data *us)
+ساكن صحيح usb_stor_CB_comdat(بنية scsi_cmd *srb, بنية us_داده *us)
 {
-	int result = 0;
-	int dir_in, retry;
-	unsigned int pipe;
-	unsigned long status;
+	صحيح نتیجه = 0;
+	صحيح dir_درون, retry;
+	بیعلامت صحيح pipe;
+	بیعلامت دراز وضعیت;
 
 	retry = 5;
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_درون = US_DIRECTION(srb->cmd[0]);
 
-	if (dir_in)
-		pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	else
-		pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	إذا (dir_درون)
+		pipe = usb_rcvbulkpipe(us->pusb_dev, us->ep_درون);
+	وإلا
+		pipe = usb_sndbulkpipe(us->pusb_dev, us->ep_بیرون);
 
-	while (retry--) {
+	طالما (retry--) {
 		debug("CBI gets a command: Try %d\n", 5 - retry);
-#ifdef DEBUG
+#اگر_تعریف_شده DEBUG
 		usb_show_srb(srb);
-#endif
+#پایان_اگر
 		/* let's send the command via the control pipe */
-		result = usb_control_msg(us->pusb_dev,
+		نتیجه = usb_control_پیام(us->pusb_dev,
 					 usb_sndctrlpipe(us->pusb_dev , 0),
 					 US_CBI_ADSC,
 					 USB_TYPE_CLASS | USB_RECIP_INTERFACE,
@@ -623,270 +623,270 @@ static int usb_stor_CB_comdat(struct scsi_cmd *srb, struct us_data *us)
 					 srb->cmd, srb->cmdlen,
 					 USB_CNTL_TIMEOUT * 5);
 		debug("CB_transport: control msg returned %d, status %lX\n",
-		      result, us->pusb_dev->status);
+		      نتیجه, us->pusb_dev->وضعیت);
 		/* check the return code for the command */
-		if (result < 0) {
-			if (us->pusb_dev->status & USB_ST_STALLED) {
-				status = us->pusb_dev->status;
+		إذا (نتیجه < 0) {
+			إذا (us->pusb_dev->وضعیت & USB_ST_STALLED) {
+				وضعیت = us->pusb_dev->وضعیت;
 				debug(" stall during command found," \
 				      " clear pipe\n");
 				usb_clear_halt(us->pusb_dev,
 					      usb_sndctrlpipe(us->pusb_dev, 0));
-				us->pusb_dev->status = status;
+				us->pusb_dev->وضعیت = وضعیت;
 			}
 			debug(" error during command %02X" \
 			      " Stat = %lX\n", srb->cmd[0],
-			      us->pusb_dev->status);
-			return result;
+			      us->pusb_dev->وضعیت);
+			أرجع نتیجه;
 		}
 		/* transfer the data payload for this command, if one exists*/
 
 		debug("CB_transport: control msg returned %d," \
-		      " direction is %s to go 0x%lx\n", result,
-		      dir_in ? "IN" : "OUT", srb->datalen);
-		if (srb->datalen) {
-			result = us_one_transfer(us, pipe, (char *)srb->pdata,
+		      " direction is %s to go 0x%lx\n", نتیجه,
+		      dir_درون ? "IN" : "OUT", srb->datalen);
+		إذا (srb->datalen) {
+			نتیجه = us_one_transfer(us, pipe, (حرف *)srb->pdata,
 						 srb->datalen);
 			debug("CBI attempted to transfer data," \
 			      " result is %d status %lX, len %d\n",
-			      result, us->pusb_dev->status,
+			      نتیجه, us->pusb_dev->وضعیت,
 				us->pusb_dev->act_len);
-			if (!(us->pusb_dev->status & USB_ST_NAK_REC))
-				break;
+			إذا (!(us->pusb_dev->وضعیت & USB_ST_NAK_REC))
+				اكسر;
 		} /* if (srb->datalen) */
-		else
-			break;
+		وإلا
+			اكسر;
 	}
 	/* return result */
 
-	return result;
+	أرجع نتیجه;
 }
 
-static int usb_stor_CBI_get_status(struct scsi_cmd *srb, struct us_data *us)
+ساكن صحيح usb_stor_CBI_get_وضعیت(بنية scsi_cmd *srb, بنية us_داده *us)
 {
-	int timeout;
+	صحيح timeout;
 
 	us->ip_wanted = 1;
-	usb_int_msg(us->pusb_dev, us->irqpipe,
-		    (void *)&us->ip_data, us->irqmaxp, us->irqinterval, false);
+	usb_int_پیام(us->pusb_dev, us->irqpipe,
+		    (فراغ *)&us->ip_داده, us->irqmaxp, us->irqinterval, false);
 	timeout = 1000;
-	while (timeout--) {
-		if (us->ip_wanted == 0)
-			break;
+	طالما (timeout--) {
+		إذا (us->ip_wanted == 0)
+			اكسر;
 		mdelay(10);
 	}
-	if (us->ip_wanted) {
-		printf("	Did not get interrupt on CBI\n");
+	إذا (us->ip_wanted) {
+		چاپ_کن("	Did not get interrupt on CBI\n");
 		us->ip_wanted = 0;
-		return USB_STOR_TRANSPORT_ERROR;
+		أرجع USB_STOR_TRANSPORT_ERROR;
 	}
 	debug("Got interrupt data 0x%x, transferred %d status 0x%lX\n",
-	      us->ip_data, us->pusb_dev->irq_act_len,
-	      us->pusb_dev->irq_status);
+	      us->ip_داده, us->pusb_dev->irq_act_len,
+	      us->pusb_dev->irq_وضعیت);
 	/* UFI gives us ASC and ASCQ, like a request sense */
-	if (us->subclass == US_SC_UFI) {
-		if (srb->cmd[0] == SCSI_REQ_SENSE ||
+	إذا (us->subclass == US_SC_UFI) {
+		إذا (srb->cmd[0] == SCSI_REQ_SENSE ||
 		    srb->cmd[0] == SCSI_INQUIRY)
-			return USB_STOR_TRANSPORT_GOOD; /* Good */
-		else if (us->ip_data)
-			return USB_STOR_TRANSPORT_FAILED;
-		else
-			return USB_STOR_TRANSPORT_GOOD;
+			أرجع USB_STOR_TRANSPORT_GOOD; /* Good */
+		وإلا إذا (us->ip_داده)
+			أرجع USB_STOR_TRANSPORT_FAILED;
+		وإلا
+			أرجع USB_STOR_TRANSPORT_GOOD;
 	}
 	/* otherwise, we interpret the data normally */
-	switch (us->ip_data) {
-	case 0x0001:
-		return USB_STOR_TRANSPORT_GOOD;
-	case 0x0002:
-		return USB_STOR_TRANSPORT_FAILED;
-	default:
-		return USB_STOR_TRANSPORT_ERROR;
+	بدل (us->ip_داده) {
+	حالة 0x0001:
+		أرجع USB_STOR_TRANSPORT_GOOD;
+	حالة 0x0002:
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	افتراضي:
+		أرجع USB_STOR_TRANSPORT_ERROR;
 	}			/* switch */
-	return USB_STOR_TRANSPORT_ERROR;
+	أرجع USB_STOR_TRANSPORT_ERROR;
 }
 
-#define USB_TRANSPORT_UNKNOWN_RETRY 5
-#define USB_TRANSPORT_NOT_READY_RETRY 10
+#تعریف_کن USB_TRANSPORT_UNKNOWN_RETRY 5
+#تعریف_کن USB_TRANSPORT_NOT_READY_RETRY 10
 
 /* clear a stall on an endpoint - special for BBB devices */
-static int usb_stor_BBB_clear_endpt_stall(struct us_data *us, __u8 endpt)
+ساكن صحيح usb_stor_BBB_clear_endpt_stall(بنية us_داده *us, __u8 endpt)
 {
 	/* ENDPOINT_HALT = 0, so set value to 0 */
-	return usb_control_msg(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
+	أرجع usb_control_پیام(us->pusb_dev, usb_sndctrlpipe(us->pusb_dev, 0),
 			       USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
-			       endpt, NULL, 0, USB_CNTL_TIMEOUT * 5);
+			       endpt, عدم, 0, USB_CNTL_TIMEOUT * 5);
 }
 
-static int usb_stor_BBB_transport(struct scsi_cmd *srb, struct us_data *us)
+ساكن صحيح usb_stor_BBB_transport(بنية scsi_cmd *srb, بنية us_داده *us)
 {
-	int result, retry;
-	int dir_in;
-	int actlen, data_actlen;
-	unsigned int pipe, pipein, pipeout;
-	ALLOC_CACHE_ALIGN_BUFFER(struct umass_bbb_csw, csw, 1);
-#ifdef BBB_XPORT_TRACE
-	unsigned char *ptr;
-	int index;
-#endif
+	صحيح نتیجه, retry;
+	صحيح dir_درون;
+	صحيح actlen, داده_actlen;
+	بیعلامت صحيح pipe, pipein, pipeout;
+	ALLOC_CACHE_ALIGN_میانگیر(بنية umass_bbb_csw, csw, 1);
+#اگر_تعریف_شده BBB_XPORT_TRACE
+	بیعلامت حرف *ptr;
+	صحيح شاخص;
+#پایان_اگر
 
-	dir_in = US_DIRECTION(srb->cmd[0]);
+	dir_درون = US_DIRECTION(srb->cmd[0]);
 
 	/* COMMAND phase */
 	debug("COMMAND phase\n");
-	result = usb_stor_BBB_comdat(srb, us);
-	if (result < 0) {
+	نتیجه = usb_stor_BBB_comdat(srb, us);
+	إذا (نتیجه < 0) {
 		debug("failed to send CBW status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->وضعیت);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		أرجع USB_STOR_TRANSPORT_FAILED;
 	}
-	if (!(us->flags & USB_READY))
+	إذا (!(us->flags & USB_READY))
 		mdelay(5);
-	pipein = usb_rcvbulkpipe(us->pusb_dev, us->ep_in);
-	pipeout = usb_sndbulkpipe(us->pusb_dev, us->ep_out);
+	pipein = usb_rcvbulkpipe(us->pusb_dev, us->ep_درون);
+	pipeout = usb_sndbulkpipe(us->pusb_dev, us->ep_بیرون);
 	/* DATA phase + error handling */
-	data_actlen = 0;
+	داده_actlen = 0;
 	/* no data, go immediately to the STATUS phase */
-	if (srb->datalen == 0)
-		goto st;
+	إذا (srb->datalen == 0)
+		اذهب st;
 	debug("DATA phase\n");
-	if (dir_in)
+	إذا (dir_درون)
 		pipe = pipein;
-	else
+	وإلا
 		pipe = pipeout;
 
-	result = usb_bulk_msg(us->pusb_dev, pipe, srb->pdata, srb->datalen,
-			      &data_actlen, USB_CNTL_TIMEOUT * 5);
+	نتیجه = usb_bulk_پیام(us->pusb_dev, pipe, srb->pdata, srb->datalen,
+			      &داده_actlen, USB_CNTL_TIMEOUT * 5);
 	/* special handling of STALL in DATA phase */
-	if ((result < 0) && (us->pusb_dev->status & USB_ST_STALLED)) {
+	إذا ((نتیجه < 0) && (us->pusb_dev->وضعیت & USB_ST_STALLED)) {
 		debug("DATA:stall\n");
 		/* clear the STALL on the endpoint */
-		result = usb_stor_BBB_clear_endpt_stall(us,
-					dir_in ? us->ep_in : us->ep_out);
-		if (result >= 0)
+		نتیجه = usb_stor_BBB_clear_endpt_stall(us,
+					dir_درون ? us->ep_درون : us->ep_بیرون);
+		إذا (نتیجه >= 0)
 			/* continue on to STATUS phase */
-			goto st;
+			اذهب st;
 	}
-	if (result < 0) {
+	إذا (نتیجه < 0) {
 		debug("usb_bulk_msg error status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->وضعیت);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		أرجع USB_STOR_TRANSPORT_FAILED;
 	}
-#ifdef BBB_XPORT_TRACE
-	for (index = 0; index < data_actlen; index++)
-		printf("pdata[%d] %#x ", index, srb->pdata[index]);
-	printf("\n");
-#endif
+#اگر_تعریف_شده BBB_XPORT_TRACE
+	لكل (شاخص = 0; شاخص < داده_actlen; شاخص++)
+		چاپ_کن("pdata[%d] %#x ", شاخص, srb->pdata[شاخص]);
+	چاپ_کن("\n");
+#پایان_اگر
 	/* STATUS phase + error handling */
 st:
 	retry = 0;
 again:
 	debug("STATUS phase\n");
-	result = usb_bulk_msg(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_SIZE,
+	نتیجه = usb_bulk_پیام(us->pusb_dev, pipein, csw, UMASS_BBB_CSW_اندازه,
 				&actlen, USB_CNTL_TIMEOUT*5);
 
 	/* special handling of STALL in STATUS phase */
-	if ((result < 0) && (retry < 1) &&
-	    (us->pusb_dev->status & USB_ST_STALLED)) {
+	إذا ((نتیجه < 0) && (retry < 1) &&
+	    (us->pusb_dev->وضعیت & USB_ST_STALLED)) {
 		debug("STATUS:stall\n");
 		/* clear the STALL on the endpoint */
-		result = usb_stor_BBB_clear_endpt_stall(us, us->ep_in);
-		if (result >= 0 && (retry++ < 1))
+		نتیجه = usb_stor_BBB_clear_endpt_stall(us, us->ep_درون);
+		إذا (نتیجه >= 0 && (retry++ < 1))
 			/* do a retry */
-			goto again;
+			اذهب again;
 	}
-	if (result < 0) {
+	إذا (نتیجه < 0) {
 		debug("usb_bulk_msg error status %ld\n",
-		      us->pusb_dev->status);
+		      us->pusb_dev->وضعیت);
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
+		أرجع USB_STOR_TRANSPORT_FAILED;
 	}
-#ifdef BBB_XPORT_TRACE
-	ptr = (unsigned char *)csw;
-	for (index = 0; index < UMASS_BBB_CSW_SIZE; index++)
-		printf("ptr[%d] %#x ", index, ptr[index]);
-	printf("\n");
-#endif
+#اگر_تعریف_شده BBB_XPORT_TRACE
+	ptr = (بیعلامت حرف *)csw;
+	لكل (شاخص = 0; شاخص < UMASS_BBB_CSW_اندازه; شاخص++)
+		چاپ_کن("ptr[%d] %#x ", شاخص, ptr[شاخص]);
+	چاپ_کن("\n");
+#پایان_اگر
 	/* misuse pipe to get the residue */
-	pipe = le32_to_cpu(csw->dCSWDataResidue);
-	if (pipe == 0 && srb->datalen != 0 && srb->datalen - data_actlen != 0)
-		pipe = srb->datalen - data_actlen;
-	if (CSWSIGNATURE != le32_to_cpu(csw->dCSWSignature)) {
+	pipe = le32_مقصد_cpu(csw->dCSWDataResidue);
+	إذا (pipe == 0 && srb->datalen != 0 && srb->datalen - داده_actlen != 0)
+		pipe = srb->datalen - داده_actlen;
+	إذا (CSWSIGNATURE != le32_مقصد_cpu(csw->dCSWSignature)) {
 		debug("!CSWSIGNATURE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if ((CBWTag - 1) != le32_to_cpu(csw->dCSWTag)) {
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	} وإلا إذا ((CBWTag - 1) != le32_مقصد_cpu(csw->dCSWTag)) {
 		debug("!Tag\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus > CSWSTATUS_PHASE) {
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	} وإلا إذا (csw->bCSWStatus > CSWSTATUS_PHASE) {
 		debug(">PHASE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus == CSWSTATUS_PHASE) {
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	} وإلا إذا (csw->bCSWStatus == CSWSTATUS_PHASE) {
 		debug("=PHASE\n");
 		usb_stor_BBB_reset(us);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (data_actlen > srb->datalen) {
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	} وإلا إذا (داده_actlen > srb->datalen) {
 		debug("transferred %dB instead of %ldB\n",
-		      data_actlen, srb->datalen);
-		return USB_STOR_TRANSPORT_FAILED;
-	} else if (csw->bCSWStatus == CSWSTATUS_FAILED) {
+		      داده_actlen, srb->datalen);
+		أرجع USB_STOR_TRANSPORT_FAILED;
+	} وإلا إذا (csw->bCSWStatus == CSWSTATUS_FAILED) {
 		debug("FAILED\n");
-		return USB_STOR_TRANSPORT_FAILED;
+		أرجع USB_STOR_TRANSPORT_FAILED;
 	}
 
-	return result;
+	أرجع نتیجه;
 }
 
-static int usb_stor_CB_transport(struct scsi_cmd *srb, struct us_data *us)
+ساكن صحيح usb_stor_CB_transport(بنية scsi_cmd *srb, بنية us_داده *us)
 {
-	int result, status;
-	struct scsi_cmd *psrb;
-	struct scsi_cmd reqsrb;
-	int retry, notready;
+	صحيح نتیجه, وضعیت;
+	بنية scsi_cmd *psrb;
+	بنية scsi_cmd reqsrb;
+	صحيح retry, notready;
 
 	psrb = &reqsrb;
-	status = USB_STOR_TRANSPORT_GOOD;
+	وضعیت = USB_STOR_TRANSPORT_GOOD;
 	retry = 0;
 	notready = 0;
 	/* issue the command */
 do_retry:
-	result = usb_stor_CB_comdat(srb, us);
+	نتیجه = usb_stor_CB_comdat(srb, us);
 	debug("command / Data returned %d, status %lX\n",
-	      result, us->pusb_dev->status);
+	      نتیجه, us->pusb_dev->وضعیت);
 	/* if this is an CBI Protocol, get IRQ */
-	if (us->protocol == US_PR_CBI) {
-		status = usb_stor_CBI_get_status(srb, us);
+	إذا (us->protocol == US_PR_CBI) {
+		وضعیت = usb_stor_CBI_get_وضعیت(srb, us);
 		/* if the status is error, report it */
-		if (status == USB_STOR_TRANSPORT_ERROR) {
+		إذا (وضعیت == USB_STOR_TRANSPORT_ERROR) {
 			debug(" USB CBI Command Error\n");
-			return status;
+			أرجع وضعیت;
 		}
-		srb->sense_buf[12] = (unsigned char)(us->ip_data >> 8);
-		srb->sense_buf[13] = (unsigned char)(us->ip_data & 0xff);
-		if (!us->ip_data) {
+		srb->sense_buf[12] = (بیعلامت حرف)(us->ip_داده >> 8);
+		srb->sense_buf[13] = (بیعلامت حرف)(us->ip_داده & 0xff);
+		إذا (!us->ip_داده) {
 			/* if the status is good, report it */
-			if (status == USB_STOR_TRANSPORT_GOOD) {
+			إذا (وضعیت == USB_STOR_TRANSPORT_GOOD) {
 				debug(" USB CBI Command Good\n");
-				return status;
+				أرجع وضعیت;
 			}
 		}
 	}
 	/* do we have to issue an auto request? */
 	/* HERE we have to check the result */
-	if ((result < 0) && !(us->pusb_dev->status & USB_ST_STALLED)) {
-		debug("ERROR %lX\n", us->pusb_dev->status);
+	إذا ((نتیجه < 0) && !(us->pusb_dev->وضعیت & USB_ST_STALLED)) {
+		debug("ERROR %lX\n", us->pusb_dev->وضعیت);
 		us->transport_reset(us);
-		return USB_STOR_TRANSPORT_ERROR;
+		أرجع USB_STOR_TRANSPORT_ERROR;
 	}
-	if ((us->protocol == US_PR_CBI) &&
+	إذا ((us->protocol == US_PR_CBI) &&
 	    ((srb->cmd[0] == SCSI_REQ_SENSE) ||
 	    (srb->cmd[0] == SCSI_INQUIRY))) {
 		/* do not issue an autorequest after request sense */
 		debug("No auto request and good\n");
-		return USB_STOR_TRANSPORT_GOOD;
+		أرجع USB_STOR_TRANSPORT_GOOD;
 	}
 	/* issue an request_sense */
 	memset(&psrb->cmd[0], 0, 12);
@@ -897,63 +897,63 @@ do_retry:
 	psrb->pdata = &srb->sense_buf[0];
 	psrb->cmdlen = us->cmd12 ? 12 : 6;
 	/* issue the command */
-	result = usb_stor_CB_comdat(psrb, us);
-	debug("auto request returned %d\n", result);
+	نتیجه = usb_stor_CB_comdat(psrb, us);
+	debug("auto request returned %d\n", نتیجه);
 	/* if this is an CBI Protocol, get IRQ */
-	if (us->protocol == US_PR_CBI)
-		status = usb_stor_CBI_get_status(psrb, us);
+	إذا (us->protocol == US_PR_CBI)
+		وضعیت = usb_stor_CBI_get_وضعیت(psrb, us);
 
-	if ((result < 0) && !(us->pusb_dev->status & USB_ST_STALLED)) {
+	إذا ((نتیجه < 0) && !(us->pusb_dev->وضعیت & USB_ST_STALLED)) {
 		debug(" AUTO REQUEST ERROR %ld\n",
-		      us->pusb_dev->status);
-		return USB_STOR_TRANSPORT_ERROR;
+		      us->pusb_dev->وضعیت);
+		أرجع USB_STOR_TRANSPORT_ERROR;
 	}
 	debug("autorequest returned 0x%02X 0x%02X 0x%02X 0x%02X\n",
 	      srb->sense_buf[0], srb->sense_buf[2],
 	      srb->sense_buf[12], srb->sense_buf[13]);
 	/* Check the auto request result */
-	if ((srb->sense_buf[2] == 0) &&
+	إذا ((srb->sense_buf[2] == 0) &&
 	    (srb->sense_buf[12] == 0) &&
 	    (srb->sense_buf[13] == 0)) {
 		/* ok, no sense */
-		return USB_STOR_TRANSPORT_GOOD;
+		أرجع USB_STOR_TRANSPORT_GOOD;
 	}
 
 	/* Check the auto request result */
-	switch (srb->sense_buf[2]) {
-	case 0x01:
+	بدل (srb->sense_buf[2]) {
+	حالة 0x01:
 		/* Recovered Error */
-		return USB_STOR_TRANSPORT_GOOD;
-		break;
-	case 0x02:
+		أرجع USB_STOR_TRANSPORT_GOOD;
+		اكسر;
+	حالة 0x02:
 		/* Not Ready */
-		if (notready++ > USB_TRANSPORT_NOT_READY_RETRY) {
-			printf("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
+		إذا (notready++ > USB_TRANSPORT_NOT_READY_RETRY) {
+			چاپ_کن("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
 			       " 0x%02X (NOT READY)\n", srb->cmd[0],
 				srb->sense_buf[0], srb->sense_buf[2],
 				srb->sense_buf[12], srb->sense_buf[13]);
-			return USB_STOR_TRANSPORT_FAILED;
-		} else {
+			أرجع USB_STOR_TRANSPORT_FAILED;
+		} وإلا {
 			mdelay(100);
-			goto do_retry;
+			اذهب do_retry;
 		}
-		break;
-	default:
-		if (retry++ > USB_TRANSPORT_UNKNOWN_RETRY) {
-			printf("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
+		اكسر;
+	افتراضي:
+		إذا (retry++ > USB_TRANSPORT_UNKNOWN_RETRY) {
+			چاپ_کن("cmd 0x%02X returned 0x%02X 0x%02X 0x%02X"
 			       " 0x%02X\n", srb->cmd[0], srb->sense_buf[0],
 				srb->sense_buf[2], srb->sense_buf[12],
 				srb->sense_buf[13]);
-			return USB_STOR_TRANSPORT_FAILED;
-		} else
-			goto do_retry;
-		break;
+			أرجع USB_STOR_TRANSPORT_FAILED;
+		} وإلا
+			اذهب do_retry;
+		اكسر;
 	}
-	return USB_STOR_TRANSPORT_FAILED;
+	أرجع USB_STOR_TRANSPORT_FAILED;
 }
 
-static void usb_stor_set_max_xfer_blk(struct usb_device *udev,
-				      struct us_data *us)
+ساكن فراغ usb_stor_مجموعه_max_xfer_blk(بنية usb_device *udev,
+				      بنية us_داده *us)
 {
 	/*
 	 * Limit the total size of a transfer to 120 KB.
@@ -972,25 +972,25 @@ static void usb_stor_set_max_xfer_blk(struct usb_device *udev,
 	 * and Apple Mac OS X 10.11 limiting transfers to 256 sectors for USB2
 	 * and 2048 for USB3 devices.
 	 */
-	unsigned short blk = 240;
+	بیعلامت کوتاه blk = 240;
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	size_t size;
-	int ret;
+#إذا CONFIG_IS_ENABLED(DM_USB)
+	size_t اندازه;
+	صحيح ret;
 
-	ret = usb_get_max_xfer_size(udev, (size_t *)&size);
-	if ((ret >= 0) && (size < blk * 512))
-		blk = size / 512;
-#endif
+	ret = usb_get_max_xfer_اندازه(udev, (size_t *)&اندازه);
+	إذا ((ret >= 0) && (اندازه < blk * 512))
+		blk = اندازه / 512;
+#پایان_اگر
 
 	us->max_xfer_blk = blk;
 }
 
-static int usb_inquiry(struct scsi_cmd *srb, struct us_data *ss)
+ساكن صحيح usb_inquiry(بنية scsi_cmd *srb, بنية us_داده *ss)
 {
-	int retry, i;
+	صحيح retry, i;
 	retry = 5;
-	do {
+	افعل {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_INQUIRY;
 		srb->cmd[1] = srb->lun << 5;
@@ -999,22 +999,22 @@ static int usb_inquiry(struct scsi_cmd *srb, struct us_data *ss)
 		srb->cmdlen = ss->cmd12 ? 12 : 6;
 		i = ss->transport(srb, ss);
 		debug("inquiry returns %d\n", i);
-		if (i == 0)
-			break;
-	} while (--retry);
+		إذا (i == 0)
+			اكسر;
+	} طالما (--retry);
 
-	if (!retry) {
-		printf("error in inquiry\n");
-		return -1;
+	إذا (!retry) {
+		چاپ_کن("error in inquiry\n");
+		أرجع -1;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int usb_request_sense(struct scsi_cmd *srb, struct us_data *ss)
+ساكن صحيح usb_request_sense(بنية scsi_cmd *srb, بنية us_داده *ss)
 {
-	char *ptr;
+	حرف *ptr;
 
-	ptr = (char *)srb->pdata;
+	ptr = (حرف *)srb->pdata;
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_REQ_SENSE;
 	srb->cmd[1] = srb->lun << 5;
@@ -1027,22 +1027,22 @@ static int usb_request_sense(struct scsi_cmd *srb, struct us_data *ss)
 	      srb->sense_buf[2], srb->sense_buf[12],
 	      srb->sense_buf[13]);
 	srb->pdata = (uchar *)ptr;
-	return 0;
+	أرجع 0;
 }
 
-static int usb_test_unit_ready(struct scsi_cmd *srb, struct us_data *ss)
+ساكن صحيح usb_test_unit_ready(بنية scsi_cmd *srb, بنية us_داده *ss)
 {
-	int retries = 10;
+	صحيح retries = 10;
 
-	do {
+	افعل {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_TST_U_RDY;
 		srb->cmd[1] = srb->lun << 5;
 		srb->datalen = 0;
 		srb->cmdlen = ss->cmd12 ? 12 : 6;
-		if (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD) {
+		إذا (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD) {
 			ss->flags |= USB_READY;
-			return 0;
+			أرجع 0;
 		}
 		usb_request_sense(srb, ss);
 		/*
@@ -1052,68 +1052,68 @@ static int usb_test_unit_ready(struct scsi_cmd *srb, struct us_data *ss)
 		 * return immediately as the medium being absent won't change
 		 * unless there is a user action.
 		 */
-		if ((srb->sense_buf[2] == 0x02) &&
+		إذا ((srb->sense_buf[2] == 0x02) &&
 		    (srb->sense_buf[12] == 0x3a))
-			return -1;
+			أرجع -1;
 		mdelay(100);
-	} while (retries--);
+	} طالما (retries--);
 
-	return -1;
+	أرجع -1;
 }
 
-static int usb_read_capacity(struct scsi_cmd *srb, struct us_data *ss)
+ساكن صحيح usb_read_ظرفیت(بنية scsi_cmd *srb, بنية us_داده *ss)
 {
-	int retry;
+	صحيح retry;
 	/* XXX retries */
 	retry = 3;
-	do {
+	افعل {
 		memset(&srb->cmd[0], 0, 12);
 		srb->cmd[0] = SCSI_RD_CAPAC;
 		srb->cmd[1] = srb->lun << 5;
 		srb->datalen = 8;
 		srb->cmdlen = ss->cmd12 ? 12 : 10;
-		if (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD)
-			return 0;
-	} while (retry--);
+		إذا (ss->transport(srb, ss) == USB_STOR_TRANSPORT_GOOD)
+			أرجع 0;
+	} طالما (retry--);
 
-	return -1;
+	أرجع -1;
 }
 
-static int usb_read_10(struct scsi_cmd *srb, struct us_data *ss,
-		       unsigned long start, unsigned short blocks)
+ساكن صحيح usb_read_10(بنية scsi_cmd *srb, بنية us_داده *ss,
+		       بیعلامت دراز شروع, بیعلامت کوتاه بلوکها)
 {
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_READ10;
 	srb->cmd[1] = srb->lun << 5;
-	srb->cmd[2] = ((unsigned char) (start >> 24)) & 0xff;
-	srb->cmd[3] = ((unsigned char) (start >> 16)) & 0xff;
-	srb->cmd[4] = ((unsigned char) (start >> 8)) & 0xff;
-	srb->cmd[5] = ((unsigned char) (start)) & 0xff;
-	srb->cmd[7] = ((unsigned char) (blocks >> 8)) & 0xff;
-	srb->cmd[8] = (unsigned char) blocks & 0xff;
+	srb->cmd[2] = ((بیعلامت حرف) (شروع >> 24)) & 0xff;
+	srb->cmd[3] = ((بیعلامت حرف) (شروع >> 16)) & 0xff;
+	srb->cmd[4] = ((بیعلامت حرف) (شروع >> 8)) & 0xff;
+	srb->cmd[5] = ((بیعلامت حرف) (شروع)) & 0xff;
+	srb->cmd[7] = ((بیعلامت حرف) (بلوکها >> 8)) & 0xff;
+	srb->cmd[8] = (بیعلامت حرف) بلوکها & 0xff;
 	srb->cmdlen = ss->cmd12 ? 12 : 10;
-	debug("read10: start %lx blocks %x\n", start, blocks);
-	return ss->transport(srb, ss);
+	debug("read10: start %lx blocks %x\n", شروع, بلوکها);
+	أرجع ss->transport(srb, ss);
 }
 
-static int usb_write_10(struct scsi_cmd *srb, struct us_data *ss,
-			unsigned long start, unsigned short blocks)
+ساكن صحيح usb_write_10(بنية scsi_cmd *srb, بنية us_داده *ss,
+			بیعلامت دراز شروع, بیعلامت کوتاه بلوکها)
 {
 	memset(&srb->cmd[0], 0, 12);
 	srb->cmd[0] = SCSI_WRITE10;
 	srb->cmd[1] = srb->lun << 5;
-	srb->cmd[2] = ((unsigned char) (start >> 24)) & 0xff;
-	srb->cmd[3] = ((unsigned char) (start >> 16)) & 0xff;
-	srb->cmd[4] = ((unsigned char) (start >> 8)) & 0xff;
-	srb->cmd[5] = ((unsigned char) (start)) & 0xff;
-	srb->cmd[7] = ((unsigned char) (blocks >> 8)) & 0xff;
-	srb->cmd[8] = (unsigned char) blocks & 0xff;
+	srb->cmd[2] = ((بیعلامت حرف) (شروع >> 24)) & 0xff;
+	srb->cmd[3] = ((بیعلامت حرف) (شروع >> 16)) & 0xff;
+	srb->cmd[4] = ((بیعلامت حرف) (شروع >> 8)) & 0xff;
+	srb->cmd[5] = ((بیعلامت حرف) (شروع)) & 0xff;
+	srb->cmd[7] = ((بیعلامت حرف) (بلوکها >> 8)) & 0xff;
+	srb->cmd[8] = (بیعلامت حرف) بلوکها & 0xff;
 	srb->cmdlen = ss->cmd12 ? 12 : 10;
-	debug("write10: start %lx blocks %x\n", start, blocks);
-	return ss->transport(srb, ss);
+	debug("write10: start %lx blocks %x\n", شروع, بلوکها);
+	أرجع ss->transport(srb, ss);
 }
 
-#ifdef CONFIG_USB_BIN_FIXUP
+#اگر_تعریف_شده CONFIG_USB_BIN_FIXUP
 /*
  * Some USB storage devices queried for SCSI identification data respond with
  * binary strings, which if output to the console freeze the terminal. The
@@ -1123,212 +1123,212 @@ static int usb_write_10(struct scsi_cmd *srb, struct us_data *ss,
  * Vendor and product length limits are taken from the definition of
  * struct blk_desc in include/part.h.
  */
-static void usb_bin_fixup(struct usb_device_descriptor descriptor,
-				unsigned char vendor[],
-				unsigned char product[]) {
-	const unsigned char max_vendor_len = 40;
-	const unsigned char max_product_len = 20;
-	if (descriptor.idVendor == 0x0424 && descriptor.idProduct == 0x223a) {
-		strncpy((char *)vendor, "SMSC", max_vendor_len);
-		strncpy((char *)product, "Flash Media Cntrller",
-			max_product_len);
+ساكن فراغ usb_bin_fixup(بنية usb_device_descriptor descriptor,
+				بیعلامت حرف vendor[],
+				بیعلامت حرف حاصلضرب[]) {
+	ثابت بیعلامت حرف max_vendor_len = 40;
+	ثابت بیعلامت حرف max_حاصلضرب_len = 20;
+	إذا (descriptor.idVendor == 0x0424 && descriptor.id_حاصلضرب_2 == 0x223a) {
+		strncpy((حرف *)vendor, "SMSC", max_vendor_len);
+		strncpy((حرف *)حاصلضرب, "Flash Media Cntrller",
+			max_حاصلضرب_len);
 	}
 }
-#endif /* CONFIG_USB_BIN_FIXUP */
+#پایان_اگر /* CONFIG_USB_BIN_FIXUP */
 
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_read(struct udevice *dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer)
-#else
-static unsigned long usb_stor_read(struct blk_desc *block_dev, lbaint_t blknr,
-				   lbaint_t blkcnt, void *buffer)
-#endif
+#إذا CONFIG_IS_ENABLED(BLK)
+ساكن بیعلامت دراز usb_stor_read(بنية udevice *dev, lbaint_t blknr,
+				   lbaint_t blkcnt, فراغ *میانگیر)
+#وإلا
+ساكن بیعلامت دراز usb_stor_read(بنية blk_desc *بلوک_dev, lbaint_t blknr,
+				   lbaint_t blkcnt, فراغ *میانگیر)
+#پایان_اگر
 {
-	lbaint_t start, blks;
+	lbaint_t شروع, blks;
 	uintptr_t buf_addr;
-	unsigned short smallblks;
-	struct usb_device *udev;
-	struct us_data *ss;
-	int retry;
-	struct scsi_cmd *srb = &usb_ccb;
-#if CONFIG_IS_ENABLED(BLK)
-	struct blk_desc *block_dev;
-#endif
+	بیعلامت کوتاه smallblks;
+	بنية usb_device *udev;
+	بنية us_داده *ss;
+	صحيح retry;
+	بنية scsi_cmd *srb = &usb_ccb;
+#إذا CONFIG_IS_ENABLED(BLK)
+	بنية blk_desc *بلوک_dev;
+#پایان_اگر
 
-	if (blkcnt == 0)
-		return 0;
+	إذا (blkcnt == 0)
+		أرجع 0;
 	/* Setup  device */
-#if CONFIG_IS_ENABLED(BLK)
-	block_dev = dev_get_uclass_plat(dev);
-	udev = dev_get_parent_priv(dev_get_parent(dev));
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-#else
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-	udev = usb_dev_desc[block_dev->devnum].priv;
-	if (!udev) {
+#إذا CONFIG_IS_ENABLED(BLK)
+	بلوک_dev = dev_get_uclass_plat(dev);
+	udev = dev_get_والد_priv(dev_get_والد(dev));
+	debug("\nusb_read: udev %d\n", بلوک_dev->devnum);
+#وإلا
+	debug("\nusb_read: udev %d\n", بلوک_dev->devnum);
+	udev = usb_dev_desc[بلوک_dev->devnum].priv;
+	إذا (!udev) {
 		debug("%s: No device\n", __func__);
-		return 0;
+		أرجع 0;
 	}
-#endif
-	ss = (struct us_data *)udev->privptr;
+#پایان_اگر
+	ss = (بنية us_داده *)udev->privptr;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
-	usb_lock_async(udev, 1);
-	srb->lun = block_dev->lun;
-	buf_addr = (uintptr_t)buffer;
-	start = blknr;
+	usb_قفل_async(udev, 1);
+	srb->lun = بلوک_dev->lun;
+	buf_addr = (uintptr_t)میانگیر;
+	شروع = blknr;
 	blks = blkcnt;
 
 	debug("\nusb_read: dev %d startblk " LBAF ", blccnt " LBAF " buffer %lx\n",
-	      block_dev->devnum, start, blks, buf_addr);
+	      بلوک_dev->devnum, شروع, blks, buf_addr);
 
-	do {
+	افعل {
 		/* XXX need some comment here */
 		retry = 2;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (blks > ss->max_xfer_blk)
+		srb->pdata = (بیعلامت حرف *)buf_addr;
+		إذا (blks > ss->max_xfer_blk)
 			smallblks = ss->max_xfer_blk;
-		else
-			smallblks = (unsigned short) blks;
+		وإلا
+			smallblks = (بیعلامت کوتاه) blks;
 retry_it:
-		if (smallblks == ss->max_xfer_blk)
-			usb_show_progress();
-		srb->datalen = block_dev->blksz * smallblks;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (usb_read_10(srb, ss, start, smallblks)) {
+		إذا (smallblks == ss->max_xfer_blk)
+			usb_show_پیشرفت();
+		srb->datalen = بلوک_dev->blksz * smallblks;
+		srb->pdata = (بیعلامت حرف *)buf_addr;
+		إذا (usb_read_10(srb, ss, شروع, smallblks)) {
 			debug("Read ERROR\n");
 			ss->flags &= ~USB_READY;
 			usb_request_sense(srb, ss);
-			if (retry--)
-				goto retry_it;
+			إذا (retry--)
+				اذهب retry_it;
 			blkcnt -= blks;
-			break;
+			اكسر;
 		}
-		start += smallblks;
+		شروع += smallblks;
 		blks -= smallblks;
 		buf_addr += srb->datalen;
-	} while (blks != 0);
+	} طالما (blks != 0);
 
 	debug("usb_read: end startblk " LBAF ", blccnt %x buffer %lx\n",
-	      start, smallblks, buf_addr);
+	      شروع, smallblks, buf_addr);
 
-	usb_lock_async(udev, 0);
+	usb_قفل_async(udev, 0);
 	usb_disable_asynch(0); /* asynch transfer allowed */
-	if (blkcnt >= ss->max_xfer_blk)
+	إذا (blkcnt >= ss->max_xfer_blk)
 		debug("\n");
-	return blkcnt;
+	أرجع blkcnt;
 }
 
-#if CONFIG_IS_ENABLED(BLK)
-static unsigned long usb_stor_write(struct udevice *dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer)
-#else
-static unsigned long usb_stor_write(struct blk_desc *block_dev, lbaint_t blknr,
-				    lbaint_t blkcnt, const void *buffer)
-#endif
+#إذا CONFIG_IS_ENABLED(BLK)
+ساكن بیعلامت دراز usb_stor_write(بنية udevice *dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ثابت فراغ *میانگیر)
+#وإلا
+ساكن بیعلامت دراز usb_stor_write(بنية blk_desc *بلوک_dev, lbaint_t blknr,
+				    lbaint_t blkcnt, ثابت فراغ *میانگیر)
+#پایان_اگر
 {
-	lbaint_t start, blks;
+	lbaint_t شروع, blks;
 	uintptr_t buf_addr;
-	unsigned short smallblks;
-	struct usb_device *udev;
-	struct us_data *ss;
-	int retry;
-	struct scsi_cmd *srb = &usb_ccb;
-#if CONFIG_IS_ENABLED(BLK)
-	struct blk_desc *block_dev;
-#endif
+	بیعلامت کوتاه smallblks;
+	بنية usb_device *udev;
+	بنية us_داده *ss;
+	صحيح retry;
+	بنية scsi_cmd *srb = &usb_ccb;
+#إذا CONFIG_IS_ENABLED(BLK)
+	بنية blk_desc *بلوک_dev;
+#پایان_اگر
 
-	if (blkcnt == 0)
-		return 0;
+	إذا (blkcnt == 0)
+		أرجع 0;
 
 	/* Setup  device */
-#if CONFIG_IS_ENABLED(BLK)
-	block_dev = dev_get_uclass_plat(dev);
-	udev = dev_get_parent_priv(dev_get_parent(dev));
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-#else
-	debug("\nusb_read: udev %d\n", block_dev->devnum);
-	udev = usb_dev_desc[block_dev->devnum].priv;
-	if (!udev) {
+#إذا CONFIG_IS_ENABLED(BLK)
+	بلوک_dev = dev_get_uclass_plat(dev);
+	udev = dev_get_والد_priv(dev_get_والد(dev));
+	debug("\nusb_read: udev %d\n", بلوک_dev->devnum);
+#وإلا
+	debug("\nusb_read: udev %d\n", بلوک_dev->devnum);
+	udev = usb_dev_desc[بلوک_dev->devnum].priv;
+	إذا (!udev) {
 		debug("%s: No device\n", __func__);
-		return 0;
+		أرجع 0;
 	}
-#endif
-	ss = (struct us_data *)udev->privptr;
+#پایان_اگر
+	ss = (بنية us_داده *)udev->privptr;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
-	usb_lock_async(udev, 1);
+	usb_قفل_async(udev, 1);
 
-	srb->lun = block_dev->lun;
-	buf_addr = (uintptr_t)buffer;
-	start = blknr;
+	srb->lun = بلوک_dev->lun;
+	buf_addr = (uintptr_t)میانگیر;
+	شروع = blknr;
 	blks = blkcnt;
 
 	debug("\nusb_write: dev %d startblk " LBAF ", blccnt " LBAF " buffer %lx\n",
-	      block_dev->devnum, start, blks, buf_addr);
+	      بلوک_dev->devnum, شروع, blks, buf_addr);
 
-	do {
+	افعل {
 		/* If write fails retry for max retry count else
 		 * return with number of blocks written successfully.
 		 */
 		retry = 2;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (blks > ss->max_xfer_blk)
+		srb->pdata = (بیعلامت حرف *)buf_addr;
+		إذا (blks > ss->max_xfer_blk)
 			smallblks = ss->max_xfer_blk;
-		else
-			smallblks = (unsigned short) blks;
+		وإلا
+			smallblks = (بیعلامت کوتاه) blks;
 retry_it:
-		if (smallblks == ss->max_xfer_blk)
-			usb_show_progress();
-		srb->datalen = block_dev->blksz * smallblks;
-		srb->pdata = (unsigned char *)buf_addr;
-		if (usb_write_10(srb, ss, start, smallblks)) {
+		إذا (smallblks == ss->max_xfer_blk)
+			usb_show_پیشرفت();
+		srb->datalen = بلوک_dev->blksz * smallblks;
+		srb->pdata = (بیعلامت حرف *)buf_addr;
+		إذا (usb_write_10(srb, ss, شروع, smallblks)) {
 			debug("Write ERROR\n");
 			ss->flags &= ~USB_READY;
 			usb_request_sense(srb, ss);
-			if (retry--)
-				goto retry_it;
+			إذا (retry--)
+				اذهب retry_it;
 			blkcnt -= blks;
-			break;
+			اكسر;
 		}
-		start += smallblks;
+		شروع += smallblks;
 		blks -= smallblks;
 		buf_addr += srb->datalen;
-	} while (blks != 0);
+	} طالما (blks != 0);
 
 	debug("usb_write: end startblk " LBAF ", blccnt %x buffer %lx\n",
-	      start, smallblks, buf_addr);
+	      شروع, smallblks, buf_addr);
 
-	usb_lock_async(udev, 0);
+	usb_قفل_async(udev, 0);
 	usb_disable_asynch(0); /* asynch transfer allowed */
-	if (blkcnt >= ss->max_xfer_blk)
+	إذا (blkcnt >= ss->max_xfer_blk)
 		debug("\n");
-	return blkcnt;
+	أرجع blkcnt;
 
 }
 
 /* Probe to see if a new device is actually a Storage device */
-int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
-		      struct us_data *ss)
+صحيح usb_storage_probe(بنية usb_device *dev, بیعلامت صحيح ifnum,
+		      بنية us_داده *ss)
 {
-	struct usb_interface *iface;
-	int i;
-	struct usb_endpoint_descriptor *ep_desc;
-	unsigned int flags = 0;
+	بنية usb_interface *iface;
+	صحيح i;
+	بنية usb_endpoint_descriptor *ep_desc;
+	بیعلامت صحيح flags = 0;
 
 	/* let's examine the device now */
 	iface = &dev->config.if_desc[ifnum];
 
-	if (dev->descriptor.bDeviceClass != 0 ||
+	إذا (dev->descriptor.bDeviceClass != 0 ||
 			iface->desc.bInterfaceClass != USB_CLASS_MASS_STORAGE ||
 			iface->desc.bInterfaceSubClass < US_SC_MIN ||
 			iface->desc.bInterfaceSubClass > US_SC_MAX) {
 		debug("Not mass storage\n");
 		/* if it's not a mass storage, we go no further */
-		return 0;
+		أرجع 0;
 	}
 
-	memset(ss, 0, sizeof(struct us_data));
+	memset(ss, 0, حجم(بنية us_داده));
 
 	/* At this point, we know we've got a live one */
 	debug("\n\nUSB Mass Storage device detected\n");
@@ -1337,33 +1337,33 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	ss->flags = flags;
 	ss->ifnum = ifnum;
 	ss->pusb_dev = dev;
-	ss->attention_done = 0;
+	ss->attention_انجامشده = 0;
 	ss->subclass = iface->desc.bInterfaceSubClass;
 	ss->protocol = iface->desc.bInterfaceProtocol;
 
 	/* set the handler pointers based on the protocol */
 	debug("Transport: ");
-	switch (ss->protocol) {
-	case US_PR_CB:
+	بدل (ss->protocol) {
+	حالة US_PR_CB:
 		debug("Control/Bulk\n");
 		ss->transport = usb_stor_CB_transport;
 		ss->transport_reset = usb_stor_CB_reset;
-		break;
+		اكسر;
 
-	case US_PR_CBI:
+	حالة US_PR_CBI:
 		debug("Control/Bulk/Interrupt\n");
 		ss->transport = usb_stor_CB_transport;
 		ss->transport_reset = usb_stor_CB_reset;
-		break;
-	case US_PR_BULK:
+		اكسر;
+	حالة US_PR_BULK:
 		debug("Bulk/Bulk/Bulk\n");
 		ss->transport = usb_stor_BBB_transport;
 		ss->transport_reset = usb_stor_BBB_reset;
-		break;
-	default:
-		printf("USB Storage Transport unknown / not yet implemented\n");
-		return 0;
-		break;
+		اكسر;
+	افتراضي:
+		چاپ_کن("USB Storage Transport unknown / not yet implemented\n");
+		أرجع 0;
+		اكسر;
 	}
 
 	/*
@@ -1371,54 +1371,54 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	 * An optional interrupt is OK (necessary for CBI protocol).
 	 * We will ignore any others.
 	 */
-	for (i = 0; i < iface->desc.bNumEndpoints; i++) {
+	لكل (i = 0; i < iface->desc.b_رقم_Endpoints; i++) {
 		ep_desc = &iface->ep_desc[i];
 		/* is it an BULK endpoint? */
-		if ((ep_desc->bmAttributes &
-		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_BULK) {
-			if (ep_desc->bEndpointAddress & USB_DIR_IN)
-				ss->ep_in = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
-			else
-				ss->ep_out =
-					ep_desc->bEndpointAddress &
-					USB_ENDPOINT_NUMBER_MASK;
+		إذا ((ep_desc->bm_صفات &
+		     USB_ENDPOINT_XFERTYPE_ماسک) == USB_ENDPOINT_XFER_BULK) {
+			إذا (ep_desc->b_Endpoint_آدرس & USB_DIR_درون)
+				ss->ep_درون = ep_desc->b_Endpoint_آدرس &
+						USB_ENDPOINT_عدد_ماسک;
+			وإلا
+				ss->ep_بیرون =
+					ep_desc->b_Endpoint_آدرس &
+					USB_ENDPOINT_عدد_ماسک;
 		}
 
 		/* is it an interrupt endpoint? */
-		if ((ep_desc->bmAttributes &
-		     USB_ENDPOINT_XFERTYPE_MASK) == USB_ENDPOINT_XFER_INT) {
-			ss->ep_int = ep_desc->bEndpointAddress &
-						USB_ENDPOINT_NUMBER_MASK;
+		إذا ((ep_desc->bm_صفات &
+		     USB_ENDPOINT_XFERTYPE_ماسک) == USB_ENDPOINT_XFER_INT) {
+			ss->ep_int = ep_desc->b_Endpoint_آدرس &
+						USB_ENDPOINT_عدد_ماسک;
 			ss->irqinterval = ep_desc->bInterval;
 		}
 	}
 	debug("Endpoints In %d Out %d Int %d\n",
-	      ss->ep_in, ss->ep_out, ss->ep_int);
+	      ss->ep_درون, ss->ep_بیرون, ss->ep_int);
 
 	/* Do some basic sanity checks, and bail if we find a problem */
-	if (usb_set_interface(dev, iface->desc.bInterfaceNumber, 0) ||
-	    !ss->ep_in || !ss->ep_out ||
+	إذا (usb_مجموعه_interface(dev, iface->desc.b_Interface_عدد, 0) ||
+	    !ss->ep_درون || !ss->ep_بیرون ||
 	    (ss->protocol == US_PR_CBI && ss->ep_int == 0)) {
 		debug("Problems with device\n");
-		return 0;
+		أرجع 0;
 	}
 	/* set class specific stuff */
 	/* We only handle certain protocols.  Currently, these are
 	 * the only ones.
 	 * The SFF8070 accepts the requests used in u-boot
 	 */
-	if (ss->subclass != US_SC_UFI && ss->subclass != US_SC_SCSI &&
+	إذا (ss->subclass != US_SC_UFI && ss->subclass != US_SC_SCSI &&
 	    ss->subclass != US_SC_8070) {
-		printf("Sorry, protocol %d not yet supported.\n", ss->subclass);
-		return 0;
+		چاپ_کن("Sorry, protocol %d not yet supported.\n", ss->subclass);
+		أرجع 0;
 	}
 
 	/* UFI uses 12-byte commands (like RBC, unlike SCSI) */
-	if (ss->subclass == US_SC_UFI)
+	إذا (ss->subclass == US_SC_UFI)
 		ss->cmd12 = true;
 
-	if (ss->ep_int) {
+	إذا (ss->ep_int) {
 		/* we had found an interrupt endpoint, prepare irq pipe
 		 * set up the IRQ pipe and handler
 		 */
@@ -1429,30 +1429,30 @@ int usb_storage_probe(struct usb_device *dev, unsigned int ifnum,
 	}
 
 	/* Set the maximum transfer size per host controller setting */
-	usb_stor_set_max_xfer_blk(dev, ss);
+	usb_stor_مجموعه_max_xfer_blk(dev, ss);
 
-	dev->privptr = (void *)ss;
-	return 1;
+	dev->privptr = (فراغ *)ss;
+	أرجع 1;
 }
 
-int usb_stor_get_info(struct usb_device *dev, struct us_data *ss,
-		      struct blk_desc *dev_desc)
+صحيح usb_stor_get_info(بنية usb_device *dev, بنية us_داده *ss,
+		      بنية blk_desc *dev_desc)
 {
-	unsigned char perq, modi;
-	ALLOC_CACHE_ALIGN_BUFFER(u32, cap, 2);
-	ALLOC_CACHE_ALIGN_BUFFER(u8, usb_stor_buf, 36);
-	u32 capacity, blksz;
-	struct scsi_cmd *pccb = &usb_ccb;
+	بیعلامت حرف perq, modi;
+	ALLOC_CACHE_ALIGN_میانگیر(u32, cap, 2);
+	ALLOC_CACHE_ALIGN_میانگیر(u8, usb_stor_buf, 36);
+	u32 ظرفیت, blksz;
+	بنية scsi_cmd *pccb = &usb_ccb;
 
 	pccb->pdata = usb_stor_buf;
 
-	dev_desc->target = dev->devnum;
+	dev_desc->هدف = dev->devnum;
 	pccb->lun = dev_desc->lun;
-	debug(" address %d\n", dev_desc->target);
+	debug(" address %d\n", dev_desc->هدف);
 
-	if (usb_inquiry(pccb, ss)) {
+	إذا (usb_inquiry(pccb, ss)) {
 		debug("%s: usb_inquiry() failed\n", __func__);
-		return -1;
+		أرجع -1;
 	}
 
 	perq = usb_stor_buf[0];
@@ -1462,80 +1462,80 @@ int usb_stor_get_info(struct usb_device *dev, struct us_data *ss,
 	 * Skip unknown devices (0x1f) and enclosure service devices (0x0d),
 	 * they would not respond to test_unit_ready .
 	 */
-	if (((perq & 0x1f) == 0x1f) || ((perq & 0x1f) == 0x0d)) {
+	إذا (((perq & 0x1f) == 0x1f) || ((perq & 0x1f) == 0x0d)) {
 		debug("%s: unknown/unsupported device\n", __func__);
-		return 0;
+		أرجع 0;
 	}
-	if ((modi&0x80) == 0x80) {
+	إذا ((modi&0x80) == 0x80) {
 		/* drive is removable */
 		dev_desc->removable = 1;
 	}
-	memcpy(dev_desc->vendor, (const void *)&usb_stor_buf[8], 8);
-	memcpy(dev_desc->product, (const void *)&usb_stor_buf[16], 16);
-	memcpy(dev_desc->revision, (const void *)&usb_stor_buf[32], 4);
+	کپی_حافظه(dev_desc->vendor, (ثابت فراغ *)&usb_stor_buf[8], 8);
+	کپی_حافظه(dev_desc->حاصلضرب, (ثابت فراغ *)&usb_stor_buf[16], 16);
+	کپی_حافظه(dev_desc->revision, (ثابت فراغ *)&usb_stor_buf[32], 4);
 	dev_desc->vendor[8] = 0;
-	dev_desc->product[16] = 0;
+	dev_desc->حاصلضرب[16] = 0;
 	dev_desc->revision[4] = 0;
-#ifdef CONFIG_USB_BIN_FIXUP
+#اگر_تعریف_شده CONFIG_USB_BIN_FIXUP
 	usb_bin_fixup(dev->descriptor, (uchar *)dev_desc->vendor,
-		      (uchar *)dev_desc->product);
-#endif /* CONFIG_USB_BIN_FIXUP */
+		      (uchar *)dev_desc->حاصلضرب);
+#پایان_اگر /* CONFIG_USB_BIN_FIXUP */
 	debug("ISO Vers %X, Response Data %X\n", usb_stor_buf[2],
 	      usb_stor_buf[3]);
-	if (usb_test_unit_ready(pccb, ss)) {
-		printf("Device NOT ready\n"
+	إذا (usb_test_unit_ready(pccb, ss)) {
+		چاپ_کن("Device NOT ready\n"
 		       "   Request Sense returned %02X %02X %02X\n",
 		       pccb->sense_buf[2], pccb->sense_buf[12],
 		       pccb->sense_buf[13]);
-		if (dev_desc->removable == 1)
+		إذا (dev_desc->removable == 1)
 			dev_desc->type = perq;
-		return 0;
+		أرجع 0;
 	}
-	pccb->pdata = (unsigned char *)cap;
+	pccb->pdata = (بیعلامت حرف *)cap;
 	memset(pccb->pdata, 0, 8);
-	if (usb_read_capacity(pccb, ss) != 0) {
-		printf("READ_CAP ERROR\n");
+	إذا (usb_read_ظرفیت(pccb, ss) != 0) {
+		چاپ_کن("READ_CAP ERROR\n");
 		ss->flags &= ~USB_READY;
 		cap[0] = 2880;
 		cap[1] = 0x200;
 	}
 	debug("Read Capacity returns: 0x%08x, 0x%08x\n", cap[0], cap[1]);
-#if 0
-	if (cap[0] > (0x200000 * 10)) /* greater than 10 GByte */
+#إذا 0
+	إذا (cap[0] > (0x200000 * 10)) /* greater than 10 GByte */
 		cap[0] >>= 16;
 
-	cap[0] = cpu_to_be32(cap[0]);
-	cap[1] = cpu_to_be32(cap[1]);
-#endif
+	cap[0] = cpu_مقصد_be32(cap[0]);
+	cap[1] = cpu_مقصد_be32(cap[1]);
+#پایان_اگر
 
-	capacity = be32_to_cpu(cap[0]) + 1;
-	blksz = be32_to_cpu(cap[1]);
+	ظرفیت = be32_مقصد_cpu(cap[0]) + 1;
+	blksz = be32_مقصد_cpu(cap[1]);
 
-	debug("Capacity = 0x%08x, blocksz = 0x%08x\n", capacity, blksz);
-	dev_desc->lba = capacity;
+	debug("Capacity = 0x%08x, blocksz = 0x%08x\n", ظرفیت, blksz);
+	dev_desc->lba = ظرفیت;
 	dev_desc->blksz = blksz;
 	dev_desc->log2blksz = LOG2(dev_desc->blksz);
 	dev_desc->type = perq;
-	debug(" address %d\n", dev_desc->target);
+	debug(" address %d\n", dev_desc->هدف);
 
-	return 1;
+	أرجع 1;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#إذا CONFIG_IS_ENABLED(DM_USB)
 
-static int usb_mass_storage_probe(struct udevice *dev)
+ساكن صحيح usb_mass_storage_probe(بنية udevice *dev)
 {
-	struct usb_device *udev = dev_get_parent_priv(dev);
-	int ret;
+	بنية usb_device *udev = dev_get_والد_priv(dev);
+	صحيح ret;
 
 	usb_disable_asynch(1); /* asynch transfer not allowed */
 	ret = usb_stor_probe_device(udev);
 	usb_disable_asynch(0); /* asynch transfer allowed */
 
-	return ret;
+	أرجع ret;
 }
 
-static const struct udevice_id usb_mass_storage_ids[] = {
+ساكن ثابت بنية udevice_id usb_mass_storage_ids[] = {
 	{ .compatible = "usb-mass-storage" },
 	{ }
 };
@@ -1543,11 +1543,11 @@ static const struct udevice_id usb_mass_storage_ids[] = {
 U_BOOT_DRIVER(usb_mass_storage) = {
 	.name	= "usb_mass_storage",
 	.id	= UCLASS_MASS_STORAGE,
-	.of_match = usb_mass_storage_ids,
+	.از_تطابق = usb_mass_storage_ids,
 	.probe = usb_mass_storage_probe,
-#if CONFIG_IS_ENABLED(BLK)
-	.plat_auto	= sizeof(struct us_data),
-#endif
+#إذا CONFIG_IS_ENABLED(BLK)
+	.plat_auto	= حجم(بنية us_داده),
+#پایان_اگر
 };
 
 UCLASS_DRIVER(usb_mass_storage) = {
@@ -1555,21 +1555,21 @@ UCLASS_DRIVER(usb_mass_storage) = {
 	.name		= "usb_mass_storage",
 };
 
-static const struct usb_device_id mass_storage_id_table[] = {
+ساكن ثابت بنية usb_device_id mass_storage_id_جدول[] = {
 	{
-		.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS,
+		.تطابق_flags = USB_DEVICE_ID_تطابق_INT_CLASS,
 		.bInterfaceClass = USB_CLASS_MASS_STORAGE
 	},
 	{ }		/* Terminating entry */
 };
 
-U_BOOT_USB_DEVICE(usb_mass_storage, mass_storage_id_table);
-#endif
+U_BOOT_USB_DEVICE(usb_mass_storage, mass_storage_id_جدول);
+#پایان_اگر
 
-#if CONFIG_IS_ENABLED(BLK)
-static const struct blk_ops usb_storage_ops = {
-	.read	= usb_stor_read,
-	.write	= usb_stor_write,
+#إذا CONFIG_IS_ENABLED(BLK)
+ساكن ثابت بنية blk_ops usb_storage_ops = {
+	.اقرأ	= usb_stor_read,
+	.اكتب	= usb_stor_write,
 };
 
 U_BOOT_DRIVER(usb_storage_blk) = {
@@ -1577,11 +1577,11 @@ U_BOOT_DRIVER(usb_storage_blk) = {
 	.id		= UCLASS_BLK,
 	.ops		= &usb_storage_ops,
 };
-#else
+#وإلا
 U_BOOT_LEGACY_BLK(usb) = {
 	.uclass_idname	= "usb",
 	.uclass_id	= UCLASS_USB,
 	.max_devs	= USB_MAX_STOR_DEV,
 	.desc		= usb_dev_desc,
 };
-#endif
+#پایان_اگر

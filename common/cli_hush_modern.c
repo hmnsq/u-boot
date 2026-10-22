@@ -12,176 +12,176 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#ضمن <env.h>
+#ضمن <malloc.h>         /* malloc, free, realloc*/
+#ضمن <linux/ctype.h>    /* isalpha, isdigit */
+#ضمن <console.h>
+#ضمن <bootretry.h>
+#ضمن <cli.h>
+#ضمن <cli_hush.h>
+#ضمن <command.h>        /* find_cmd */
+#ضمن <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
  */
-#define BB_VER			"1.37.0.git23da5c4b716b"
+#تعریف_کن BB_VER			"1.37.0.git23da5c4b716b"
 
 /*
  * Define hush features by the names used upstream.
  */
-#define ENABLE_HUSH_INTERACTIVE	1
-#define ENABLE_FEATURE_EDITING	1
-#define ENABLE_HUSH_IF		1
-#define ENABLE_HUSH_LOOPS	1
+#تعریف_کن ENABLE_HUSH_INTERACTIVE	1
+#تعریف_کن ENABLE_FEATURE_EDITING	1
+#تعریف_کن ENABLE_HUSH_IF		1
+#تعریف_کن ENABLE_HUSH_LOOPS	1
 /* No MMU in U-Boot */
-#define BB_MMU			0
-#define USE_FOR_NOMMU(...)	__VA_ARGS__
-#define USE_FOR_MMU(...)
+#تعریف_کن BB_MMU			0
+#تعریف_کن USE_FOR_NOMMU(...)	__VA_ARGS__
+#تعریف_کن USE_FOR_MMU(...)
 
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#إذا CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+تعريفنوع علامتدار حرف smallint;
+تعريفنوع بیعلامت حرف smalluint;
+#وإلا
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
-#endif
+تعريفنوع صحيح smallint;
+تعريفنوع بیعلامت smalluint;
+#پایان_اگر
 
 /*
  * Alignment defines used by BusyBox.
  */
-#define ALIGN1			__attribute__((aligned(1)))
-#define ALIGN2			__attribute__((aligned(2)))
-#define ALIGN4			__attribute__((aligned(4)))
-#define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#تعریف_کن ALIGN1			__attribute__((aligned(1)))
+#تعریف_کن ALIGN2			__attribute__((aligned(2)))
+#تعریف_کن ALIGN4			__attribute__((aligned(4)))
+#تعریف_کن ALIGN8			__attribute__((aligned(8)))
+#تعریف_کن ALIGN_PTR		__attribute__((aligned(حجم(فراغ*))))
 
 /*
  * Miscellaneous compiler/platform defines.
  */
-#define FAST_FUNC /* not used in U-Boot */
-#define UNUSED_PARAM		__always_unused
-#define ALWAYS_INLINE		__always_inline
-#define NOINLINE		noinline
+#تعریف_کن FAST_FUNC /* not used in U-Boot */
+#تعریف_کن استفادهنشده_PARAM		__always_unused
+#تعریف_کن ALWAYS_INLINE		__always_inline
+#تعریف_کن NOINLINE		noinline
 
 /*
  * Defines to provide equivalents to what libc/BusyBox defines.
  */
-#define EOF			(-1)
-#define EXIT_SUCCESS		0
-#define EXIT_FAILURE		1
+#تعریف_کن EOF			(-1)
+#تعریف_کن EXIT_SUCCESS		0
+#تعریف_کن EXIT_FAILURE		1
 
 /*
  * Stubs to provide libc/BusyBox functions based on U-Boot equivalents where it
  * makes sense.
  */
-#define utoa			simple_itoa
+#تعریف_کن utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+ساكن فراغ __noreturn xfunc_die(فراغ)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#تعریف_کن bb_error_پیام_and_die(format, ...) افعل { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} طالما (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#تعریف_کن bb_simple_error_پیام_and_die(پیام) افعل { \
+panic_str("HUSH: " پیام); \
+} طالما (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+ساكن صحيح __maybe_unused fdprintf(صحيح fd, ثابت حرف *format, ...)
 {
-	va_list args;
+	va_list آرگومانها;
 	uint i;
 
-	assert(fd == 2);
+	أكد(fd == 2);
 
-	va_start(args, format);
-	i = vprintf(format, args);
-	va_end(args);
+	va_شروع(آرگومانها, format);
+	i = vprintf(format, آرگومانها);
+	va_انتها(آرگومانها);
 
-	return i;
+	أرجع i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+ساكن فراغ bb_verror_پیام(ثابت حرف *s, va_list p, ثابت حرف* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+ساكن فراغ bb_error_پیام(ثابت حرف *s, ...)
 {
 	va_list p;
 
-	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
-	va_end(p);
+	va_شروع(p, s);
+	bb_verror_پیام(s, p, عدم);
+	va_انتها(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+ساكن فراغ bb_simple_error_پیام(ثابت حرف *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_پیام("%s", s);
 }
 
-static void *xmalloc(size_t size)
+ساكن فراغ *xmalloc(size_t اندازه)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	فراغ *p = عدم;
+	إذا (!(p = حافظه_بده(اندازه)))
 		panic("out of memory");
-	return p;
+	أرجع p;
 }
 
-static void *xzalloc(size_t size)
+ساكن فراغ *xzalloc(size_t اندازه)
 {
-	void *p = xmalloc(size);
-	memset(p, 0, size);
-	return p;
+	فراغ *p = xmalloc(اندازه);
+	memset(p, 0, اندازه);
+	أرجع p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+ساكن فراغ *xrealloc(فراغ *ptr, size_t اندازه)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	فراغ *p = عدم;
+	إذا (!(p = realloc(ptr, اندازه)))
 		panic("out of memory");
-	return p;
+	أرجع p;
 }
 
-static void *xmemdup(const void *s, int n)
+ساكن فراغ *xmemdup(ثابت فراغ *s, صحيح n)
 {
-	return memcpy(xmalloc(n), s, n);
+	أرجع کپی_حافظه(xmalloc(n), s, n);
 }
 
-#define xstrdup		strdup
-#define xstrndup	strndup
+#تعریف_کن xstrdup		strdup
+#تعریف_کن xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+ساكن فراغ *mempcpy(فراغ *dest, ثابت فراغ *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	أرجع کپی_حافظه(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+ساكن فراغ overlapping_strcpy(حرف *dst, ثابت حرف *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	إذا (dst != src) {
+		طالما ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+ساكن حرف* skip_whitespace(ثابت حرف *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	طالما (*s == ' ' || (بیعلامت حرف)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	أرجع (حرف *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+ساكن حرف* skip_non_whitespace(ثابت حرف *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	طالما (*s != '\0' && *s != ' ' && (بیعلامت حرف)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	أرجع (حرف *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#تعریف_کن is_name(c)	((c) == '_' || آیا_حرف((بیعلامت حرف)(c)))
+#تعریف_کن is_درون_name(c)	((c) == '_' || آیا_حرف_یا_رقم((بیعلامت حرف)(c)))
 
-static const char* endofname(const char *name)
+ساكن ثابت حرف* endofname(ثابت حرف *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	إذا (!is_name(*name))
+		أرجع name;
+	طالما (*++name) {
+		إذا (!is_درون_name(*name))
+			اكسر;
 	}
-	return name;
+	أرجع name;
 }
 
 /**
@@ -226,98 +226,98 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+ساكن size_t list_اندازه(حرف **list)
 {
-	size_t size;
+	size_t اندازه;
 
-	for (size = 0; list[size] != NULL; size++);
+	لكل (اندازه = 0; list[اندازه] != عدم; اندازه++);
 
-	return size;
+	أرجع اندازه;
 }
 
-static int varcmp(const char *p, const char *q)
+ساكن صحيح varcmp(ثابت حرف *p, ثابت حرف *q)
 {
-	int c, d;
+	صحيح c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	طالما ((c = *p) == (d = *q)) {
+		إذا (c == '\0' || c == '=')
+			اذهب بیرون;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	إذا (c == '=')
 		c = '\0';
-	if (d == '=')
+	إذا (d == '=')
 		d = '\0';
-out:
-	return c - d;
+بیرون:
+	أرجع c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+بنية درون_str;
+ساكن صحيح u_boot_cli_readline(بنية درون_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+بنية درون_str;
+ساكن صحيح u_boot_cli_readline(بنية درون_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+ساكن uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
-#define defifs (defifsvar + 4)
+ساكن ثابت حرف defifsvar[] __aligned(1) = "IFS= \t\n";
+#تعریف_کن defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
-#define EXIT_RET_CODE -2
+#تعریف_کن EXIT_RET_کد -2
 
 /*
  * This define is used for changes that need be done directly in the upstream
  * sources still. Ideally, its use should be minimized as much as possible.
  */
-#define __U_BOOT__
+#تعریف_کن __U_BOOT__
 
 /*
  *
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#ضمن "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+صحيح u_boot_hush_شروع_modern(فراغ)
 {
 	INIT_G();
-	return 0;
+	أرجع 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+ساكن صحيح u_boot_cli_readline(بنية درون_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	حرف *prompt;
+	حرف __maybe_unused *ps_prompt = عدم;
 
-	if (!G.promptmode)
+	إذا (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
-#ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+#اگر_تعریف_شده CONFIG_SYS_PROMPT_HUSH_PS2
+	وإلا
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#وإلا
 	/* TODO: default value? */
-	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
-#endif
+	#خطا "SYS_PROMPT_HUSH_PS2 is not defined!"
+#پایان_اگر
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	إذا (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		إذا (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		وإلا
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		إذا (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	أرجع cli_readline(prompt);
 }

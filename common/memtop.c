@@ -3,169 +3,169 @@
  * Copyright (c) 2024, Linaro Limited
  */
 
-#include <fdt_support.h>
-#include <fdtdec.h>
-#include <memtop.h>
+#ضمن <fdt_support.h>
+#ضمن <fdtdec.h>
+#ضمن <memtop.h>
 
-#include <asm/types.h>
+#ضمن <asm/types.h>
 
-#define MEM_RGN_COUNT	64
+#تعریف_کن MEM_RGN_شمار	64
 
-struct region {
-	phys_addr_t base;
-	phys_size_t size;
+بنية region {
+	phys_addr_t پایه;
+	phys_اندازه_t اندازه;
 };
 
-struct mem_region {
-	struct region rgn[MEM_RGN_COUNT];
-	uint count;
+بنية mem_region {
+	بنية region rgn[MEM_RGN_شمار];
+	uint شمار;
 };
 
-static void add_mem_region(struct mem_region *mem_rgn, phys_addr_t base,
-			   phys_size_t size)
+ساكن فراغ جمع_کن_mem_region(بنية mem_region *mem_rgn, phys_addr_t پایه,
+			   phys_اندازه_t اندازه)
 {
-	long i;
+	دراز i;
 
-	for (i = mem_rgn->count; i >= 0; i--) {
-		if (i && base < mem_rgn->rgn[i - 1].base) {
+	لكل (i = mem_rgn->شمار; i >= 0; i--) {
+		إذا (i && پایه < mem_rgn->rgn[i - 1].پایه) {
 			mem_rgn->rgn[i] = mem_rgn->rgn[i - 1];
-		} else {
-			mem_rgn->rgn[i].base = base;
-			mem_rgn->rgn[i].size = size;
-			break;
+		} وإلا {
+			mem_rgn->rgn[i].پایه = پایه;
+			mem_rgn->rgn[i].اندازه = اندازه;
+			اكسر;
 		}
 	}
 
-	mem_rgn->count++;
+	mem_rgn->شمار++;
 }
 
-static void mem_regions_init(struct mem_region *mem)
+ساكن فراغ mem_regions_init(بنية mem_region *mem)
 {
 	uint i;
 
-	mem->count = 0;
-	for (i = 0; i < MEM_RGN_COUNT; i++) {
-		mem->rgn[i].base = 0;
-		mem->rgn[i].size = 0;
+	mem->شمار = 0;
+	لكل (i = 0; i < MEM_RGN_شمار; i++) {
+		mem->rgn[i].پایه = 0;
+		mem->rgn[i].اندازه = 0;
 	}
 }
 
-static int fdt_add_reserved_regions(struct mem_region *free_mem,
-				    struct mem_region *reserved_mem,
-				    void *fdt_blob)
+ساكن صحيح fdt_جمع_کن_reserved_regions(بنية mem_region *free_mem,
+				    بنية mem_region *reserved_mem,
+				    فراغ *fdt_blob)
 {
-	u64 addr, size;
-	int i, total, ret;
-	int nodeoffset, subnode;
-	struct fdt_resource res;
+	u64 addr, اندازه;
+	صحيح i, مجموع, ret;
+	صحيح nodeoffset, subnode;
+	بنية fdt_resource res;
 
-	if (fdt_check_header(fdt_blob) != 0)
-		return -1;
+	إذا (fdt_check_سرآیند(fdt_blob) != 0)
+		أرجع -1;
 
 	/* process memreserve sections */
-	total = fdt_num_mem_rsv(fdt_blob);
-	assert_noisy(total < MEM_RGN_COUNT);
-	for (i = 0; i < total; i++) {
-		if (fdt_get_mem_rsv(fdt_blob, i, &addr, &size) != 0)
-			continue;
-		add_mem_region(reserved_mem, addr, size);
+	مجموع = fdt_رقم_mem_rsv(fdt_blob);
+	assert_noisy(مجموع < MEM_RGN_شمار);
+	لكل (i = 0; i < مجموع; i++) {
+		إذا (fdt_get_mem_rsv(fdt_blob, i, &addr, &اندازه) != 0)
+			استمر;
+		جمع_کن_mem_region(reserved_mem, addr, اندازه);
 	}
 
 	i = 0;
 	/* process reserved-memory */
-	nodeoffset = fdt_subnode_offset(fdt_blob, 0, "reserved-memory");
-	if (nodeoffset >= 0) {
-		subnode = fdt_first_subnode(fdt_blob, nodeoffset);
-		while (subnode >= 0) {
+	nodeoffset = fdt_subnode_جابه_جایی(fdt_blob, 0, "reserved-memory");
+	إذا (nodeoffset >= 0) {
+		subnode = fdt_اولی_subnode(fdt_blob, nodeoffset);
+		طالما (subnode >= 0) {
 			/* check if this subnode has a reg property */
 			ret = fdt_get_resource(fdt_blob, subnode, "reg", 0,
 					       &res);
-			if (!ret && fdtdec_get_is_enabled(fdt_blob, subnode)) {
-				addr = res.start;
-				size = res.end - res.start + 1;
-				assert_noisy(i < MEM_RGN_COUNT);
-				add_mem_region(reserved_mem, addr, size);
+			إذا (!ret && fdtdec_get_is_enabled(fdt_blob, subnode)) {
+				addr = res.شروع;
+				اندازه = res.انتها_2 - res.شروع + 1;
+				assert_noisy(i < MEM_RGN_شمار);
+				جمع_کن_mem_region(reserved_mem, addr, اندازه);
 			}
 
-			subnode = fdt_next_subnode(fdt_blob, subnode);
+			subnode = fdt_بعدی_subnode(fdt_blob, subnode);
 			++i;
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static long addrs_overlap(phys_addr_t base1, phys_size_t size1,
-			  phys_addr_t base2, phys_size_t size2)
+ساكن دراز addrs_overlap(phys_addr_t base1, phys_اندازه_t size1,
+			  phys_addr_t base2, phys_اندازه_t size2)
 {
-	const phys_addr_t base1_end = base1 + size1 - 1;
-	const phys_addr_t base2_end = base2 + size2 - 1;
+	ثابت phys_addr_t base1_انتها = base1 + size1 - 1;
+	ثابت phys_addr_t base2_انتها = base2 + size2 - 1;
 
-	return ((base1 <= base2_end) && (base2 <= base1_end));
+	أرجع ((base1 <= base2_انتها) && (base2 <= base1_انتها));
 }
 
-static long region_overlap_check(struct mem_region *mem_rgn, phys_addr_t base,
-				 phys_size_t size)
+ساكن دراز region_overlap_check(بنية mem_region *mem_rgn, phys_addr_t پایه,
+				 phys_اندازه_t اندازه)
 {
-	unsigned long i;
-	struct region *rgn = mem_rgn->rgn;
+	بیعلامت دراز i;
+	بنية region *rgn = mem_rgn->rgn;
 
-	for (i = 0; i < mem_rgn->count; i++) {
-		phys_addr_t rgnbase = rgn[i].base;
-		phys_size_t rgnsize = rgn[i].size;
+	لكل (i = 0; i < mem_rgn->شمار; i++) {
+		phys_addr_t rgnbase = rgn[i].پایه;
+		phys_اندازه_t rgnsize = rgn[i].اندازه;
 
-		if (addrs_overlap(base, size, rgnbase, rgnsize))
-			break;
+		إذا (addrs_overlap(پایه, اندازه, rgnbase, rgnsize))
+			اكسر;
 	}
 
-	return (i < mem_rgn->count) ? i : -1;
+	أرجع (i < mem_rgn->شمار) ? i : -1;
 }
 
-static phys_addr_t find_ram_top(struct mem_region *free_mem,
-				struct mem_region *reserved_mem, phys_size_t size)
+ساكن phys_addr_t پیدا_کن_ram_بالاترین(بنية mem_region *free_mem,
+				بنية mem_region *reserved_mem, phys_اندازه_t اندازه)
 {
-	long i, rgn;
-	phys_addr_t base = 0;
-	phys_addr_t res_base;
+	دراز i, rgn;
+	phys_addr_t پایه = 0;
+	phys_addr_t res_پایه;
 
-	for (i = free_mem->count - 1; i >= 0; i--) {
-		phys_addr_t rgnbase = free_mem->rgn[i].base;
-		phys_size_t rgnsize = free_mem->rgn[i].size;
+	لكل (i = free_mem->شمار - 1; i >= 0; i--) {
+		phys_addr_t rgnbase = free_mem->rgn[i].پایه;
+		phys_اندازه_t rgnsize = free_mem->rgn[i].اندازه;
 
-		if (rgnsize < size)
-			continue;
+		إذا (rgnsize < اندازه)
+			استمر;
 
-		base = rgnbase + rgnsize - size;
-		while (base && rgnbase <= base) {
-			rgn = region_overlap_check(reserved_mem, base, size);
-			if (rgn < 0)
-				return base;
+		پایه = rgnbase + rgnsize - اندازه;
+		طالما (پایه && rgnbase <= پایه) {
+			rgn = region_overlap_check(reserved_mem, پایه, اندازه);
+			إذا (rgn < 0)
+				أرجع پایه;
 
-			res_base = reserved_mem->rgn[rgn].base;
-			if (res_base < size)
-				break;
-			base = res_base - size;
+			res_پایه = reserved_mem->rgn[rgn].پایه;
+			إذا (res_پایه < اندازه)
+				اكسر;
+			پایه = res_پایه - اندازه;
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-phys_addr_t get_mem_top(phys_addr_t ram_start, phys_size_t ram_size,
-			phys_size_t size, void *fdt)
+phys_addr_t get_mem_بالاترین(phys_addr_t ram_شروع, phys_اندازه_t ram_اندازه,
+			phys_اندازه_t اندازه, فراغ *fdt)
 {
-	int i;
-	struct mem_region free_mem;
-	struct mem_region reserved_mem;
+	صحيح i;
+	بنية mem_region free_mem;
+	بنية mem_region reserved_mem;
 
 	mem_regions_init(&free_mem);
 	mem_regions_init(&reserved_mem);
 
-	add_mem_region(&free_mem, ram_start, ram_size);
+	جمع_کن_mem_region(&free_mem, ram_شروع, ram_اندازه);
 
-	i = fdt_add_reserved_regions(&free_mem, &reserved_mem, fdt);
-	if (i < 0)
-		return 0;
+	i = fdt_جمع_کن_reserved_regions(&free_mem, &reserved_mem, fdt);
+	إذا (i < 0)
+		أرجع 0;
 
-	return find_ram_top(&free_mem, &reserved_mem, size);
+	أرجع پیدا_کن_ram_بالاترین(&free_mem, &reserved_mem, اندازه);
 }

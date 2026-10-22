@@ -9,84 +9,84 @@
  * Michal Simek <michal.simek@amd.com>
  * Stefan Agner <stefan.agner@toradex.com>
  */
-#include <binman_sym.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <linux/libfdt.h>
+#ضمن <binman_sym.h>
+#ضمن <image.h>
+#ضمن <log.h>
+#ضمن <mapmem.h>
+#ضمن <spl.h>
+#ضمن <linux/libfdt.h>
 
-static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+ساكن ulong spl_ram_بارگیری_read(بنية spl_بارگیری_info *بارگیری, ulong sector,
+			       ulong شمار, فراغ *buf)
 {
 	ulong addr = 0;
 
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
+	      __func__, sector, شمار, (ulong)buf);
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	إذا (IS_ENABLED(CONFIG_SPL_بارگیری_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_بارگیری_FIT,
+				      CONFIG_SPL_بارگیری_FIT_آدرس);
 
-#ifdef	CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#اگر_تعریف_شده	CONFIG_SPL_PCI_DFU
+		إذا (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_بارگیری_FIT_آدرس;
+#پایان_اگر
 	}
 	addr += sector;
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
-		addr += image_load_offset;
+	إذا (CONFIG_IS_ENABLED(IMAGE_PRE_بارگیری))
+		addr += image_بارگیری_جابه_جایی;
 
-	memcpy(buf, (void *)addr, count);
+	کپی_حافظه(buf, (فراغ *)addr, شمار);
 
-	return count;
+	أرجع شمار;
 }
 
-static int spl_ram_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساكن صحيح spl_ram_بارگیری_image(بنية spl_image_info *spl_image,
+			      بنية spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
+	بنية legacy_img_hdr *سرآیند;
 	ulong addr = 0;
-	int ret;
+	صحيح ret;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	إذا (IS_ENABLED(CONFIG_SPL_بارگیری_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_بارگیری_FIT,
+				      CONFIG_SPL_بارگیری_FIT_آدرس);
 
-#ifdef CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#اگر_تعریف_شده CONFIG_SPL_PCI_DFU
+		إذا (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_بارگیری_FIT_آدرس;
+#پایان_اگر
 	}
 
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD)) {
-		ret = image_pre_load(addr);
+	إذا (CONFIG_IS_ENABLED(IMAGE_PRE_بارگیری)) {
+		ret = image_pre_بارگیری(addr);
 
-		if (ret)
-			return ret;
+		إذا (ret)
+			أرجع ret;
 
-		addr += image_load_offset;
+		addr += image_بارگیری_جابه_جایی;
 	}
-	header = map_sysmem(addr, 0);
+	سرآیند = map_sysmem(addr, 0);
 
-#if CONFIG_IS_ENABLED(DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_DFU)
+#إذا CONFIG_IS_ENABLED(DFU)
+	إذا (bootdev->boot_device == BOOT_DEVICE_DFU)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#پایان_اگر
 
-#if CONFIG_IS_ENABLED(PCI_DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_PCIE)
+#إذا CONFIG_IS_ENABLED(PCI_DFU)
+	إذا (bootdev->boot_device == BOOT_DEVICE_PCIE)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#پایان_اگر
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic(header) == FDT_MAGIC) {
-		struct spl_load_info load;
+	إذا (IS_ENABLED(CONFIG_SPL_بارگیری_FIT) &&
+	    image_get_magic(سرآیند) == FDT_MAGIC) {
+		بنية spl_بارگیری_info بارگیری;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, spl_ram_load_read, NULL, 1);
-		ret = spl_load_simple_fit(spl_image, &load, 0, header);
-	} else {
+		spl_بارگیری_init(&بارگیری, spl_ram_بارگیری_read, عدم, 1);
+		ret = spl_بارگیری_simple_fit(spl_image, &بارگیری, 0, سرآیند);
+	} وإلا {
 		ulong u_boot_pos = spl_get_image_pos();
 
 		debug("Legacy image\n");
@@ -96,27 +96,27 @@ static int spl_ram_load_image(struct spl_image_info *spl_image,
 		 * the flash.
 		 */
 		debug("u_boot_pos = %lx\n", u_boot_pos);
-		if (u_boot_pos == BINMAN_SYM_MISSING) {
+		إذا (u_boot_pos == BINMAN_SYM_MISSING) {
 			/*
 			 * No binman support or no information. For now, fix it
 			 * to the address pointed to by U-Boot.
 			 */
-			u_boot_pos = (ulong)spl_get_load_buffer(-sizeof(*header),
-								sizeof(*header));
+			u_boot_pos = (ulong)spl_get_بارگیری_میانگیر(-حجم(*سرآیند),
+								حجم(*سرآیند));
 		}
-		header = map_sysmem(u_boot_pos, 0);
+		سرآیند = map_sysmem(u_boot_pos, 0);
 
-		ret = spl_parse_image_header(spl_image, bootdev, header);
+		ret = spl_parse_image_سرآیند(spl_image, bootdev, سرآیند);
 	}
 
-	return ret;
+	أرجع ret;
 }
-#if CONFIG_IS_ENABLED(RAM_DEVICE)
-SPL_LOAD_IMAGE_METHOD("RAM", 0, BOOT_DEVICE_RAM, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(DFU)
-SPL_LOAD_IMAGE_METHOD("DFU", 0, BOOT_DEVICE_DFU, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(PCI_DFU)
-SPL_LOAD_IMAGE_METHOD("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_load_image);
-#endif
+#إذا CONFIG_IS_ENABLED(RAM_DEVICE)
+SPL_بارگیری_IMAGE_روش("RAM", 0, BOOT_DEVICE_RAM, spl_ram_بارگیری_image);
+#پایان_اگر
+#إذا CONFIG_IS_ENABLED(DFU)
+SPL_بارگیری_IMAGE_روش("DFU", 0, BOOT_DEVICE_DFU, spl_ram_بارگیری_image);
+#پایان_اگر
+#إذا CONFIG_IS_ENABLED(PCI_DFU)
+SPL_بارگیری_IMAGE_روش("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_بارگیری_image);
+#پایان_اگر

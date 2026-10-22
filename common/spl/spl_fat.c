@@ -8,170 +8,170 @@
  * FAT Image Functions copied from spl_mmc.c
  */
 
-#include <env.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <fat.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/libfdt.h>
-#include <asm/cache.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <spl.h>
+#ضمن <spl_load.h>
+#ضمن <fat.h>
+#ضمن <errno.h>
+#ضمن <image.h>
+#ضمن <linux/libfdt.h>
+#ضمن <asm/cache.h>
 
-static int fat_registered;
+ساكن صحيح fat_registered;
 
-void spl_fat_force_reregister(void)
+فراغ spl_fat_force_reregister(فراغ)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+ساكن صحيح spl_ثبات_fat_device(بنية blk_desc *بلوک_dev, صحيح افراز)
 {
-	int err = 0;
+	صحيح err = 0;
 
-	if (fat_registered)
-		return err;
+	إذا (fat_registered)
+		أرجع err;
 
-	err = fat_register_device(block_dev, partition);
-	if (err) {
-		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+	err = fat_ثبات_device(بلوک_dev, افراز);
+	إذا (err) {
+		چاپ_کن("%s: fat register err - %d\n", __func__, err);
+		أرجع err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	أرجع err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+ساكن ulong spl_fit_read(بنية spl_بارگیری_info *بارگیری, ulong file_جابه_جایی,
+			  ulong اندازه, فراغ *buf)
 {
-	struct legacy_img_hdr *header;
+	بنية legacy_img_hdr *سرآیند;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	صحيح ret;
+	حرف *filename = بارگیری->priv;
 
-	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	ret = fat_read_file(filename, buf, file_جابه_جایی, اندازه, &actread);
+	إذا (ret)
+		أرجع ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	إذا (CONFIG_IS_ENABLED(OS_BOOT)) {
+		سرآیند = (بنية legacy_img_hdr *)buf;
+		إذا (image_get_magic(سرآیند) != FDT_MAGIC)
+			أرجع اندازه;
 	}
 
-	return actread;
+	أرجع actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+صحيح spl_بارگیری_image_fat(بنية spl_image_info *spl_image,
+		       بنية spl_boot_device *bootdev,
+		       بنية blk_desc *بلوک_dev, صحيح افراز,
+		       ثابت حرف *filename)
 {
-	int err;
-	loff_t size;
-	struct spl_load_info load;
+	صحيح err;
+	loff_t اندازه;
+	بنية spl_بارگیری_info بارگیری;
 
-	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		goto end;
+	err = spl_ثبات_fat_device(بلوک_dev, افراز);
+	إذا (err)
+		اذهب انتها_2;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
-		err = fat_size(filename, &size);
-		if (err)
-			goto end;
-	} else {
-		size = 0;
+	إذا (IS_ENABLED(CONFIG_SPL_بارگیری_FIT_پر)) {
+		err = fat_اندازه(filename, &اندازه);
+		إذا (err)
+			اذهب انتها_2;
+	} وإلا {
+		اندازه = 0;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename,
+	spl_بارگیری_init(&بارگیری, spl_fit_read, (فراغ *)filename,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
 
-	err = spl_load(spl_image, bootdev, &load, size, 0);
+	err = spl_بارگیری(spl_image, bootdev, &بارگیری, اندازه, 0);
 
-end:
-	if (err < 0) {
+انتها_2:
+	إذا (err < 0) {
 		spl_fat_force_reregister();
-		printf("%s: error reading image %s, err - %d\n",
+		چاپ_کن("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	أرجع err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#إذا CONFIG_IS_ENABLED(OS_BOOT)
+صحيح spl_بارگیری_image_fat_os(بنية spl_image_info *spl_image,
+			  بنية spl_boot_device *bootdev,
+			  بنية blk_desc *بلوک_dev, صحيح افراز)
 {
-	int err;
-	__maybe_unused char *file;
+	صحيح err;
+	__maybe_unused حرف *file;
 
-	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	err = spl_ثبات_fat_device(بلوک_dev, افراز);
+	إذا (err)
+		أرجع err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	إذا (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		اذهب defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
-		err = spl_load_image_fat(spl_image, bootdev, block_dev,
-					 partition, file);
-		if (err != 0) {
+	إذا (file) {
+		err = spl_بارگیری_image_fat(spl_image, bootdev, بلوک_dev,
+					 افراز, file);
+		إذا (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			اذهب defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT_آرگومانها)
 		file = env_get("falcon_args_file");
-		if (file) {
+		إذا (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
-				printf("spl: error reading args %s, err - %d, falling back to default\n",
+				file, (فراغ *)CONFIG_SPL_PAYLOAD_آرگومانها_ADDR, 0);
+			إذا (err <= 0) {
+				چاپ_کن("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				اذهب defaults;
 			}
-			return 0;
-		} else
+			أرجع 0;
+		} وإلا
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
-#endif
+#پایان_اگر
 
-	} else
+	} وإلا
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
 
-	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
-				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
+	err = spl_بارگیری_image_fat(spl_image, bootdev, بلوک_dev, افراز,
+				 CONFIG_SPL_FS_بارگیری_KERNEL_NAME);
 
-	if (err)
-		return err;
+	إذا (err)
+		أرجع err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
-		printf("%s: error reading image %s, err - %d\n",
-		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+#إذا IS_ENABLED(CONFIG_SPL_OS_BOOT_آرگومانها)
+	err = file_fat_read(CONFIG_SPL_FS_بارگیری_آرگومانها_NAME,
+			    (فراغ *)CONFIG_SPL_PAYLOAD_آرگومانها_ADDR, 0);
+	إذا (err <= 0) {
+		چاپ_کن("%s: error reading image %s, err - %d\n",
+		       __func__, CONFIG_SPL_FS_بارگیری_آرگومانها_NAME, err);
+		أرجع -1;
 	}
-#endif
+#پایان_اگر
 
-	return 0;
+	أرجع 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#وإلا
+صحيح spl_بارگیری_image_fat_os(بنية spl_image_info *spl_image,
+			  بنية spl_boot_device *bootdev,
+			  بنية blk_desc *بلوک_dev, صحيح افراز)
 {
-	return -ENOSYS;
+	أرجع -ENOSYS;
 }
-#endif
+#پایان_اگر

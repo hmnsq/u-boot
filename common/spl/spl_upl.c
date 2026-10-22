@@ -6,167 +6,167 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY UCLASS_BOOTSTD
+#تعریف_کن LOG_CATEGORY UCLASS_BOOTSTD
 
-#include <alist.h>
-#include <bloblist.h>
-#include <dm.h>
-#include <image.h>
-#include <mapmem.h>
-#include <serial.h>
-#include <spl.h>
-#include <upl.h>
-#include <video.h>
-#include <asm/global_data.h>
-#include <dm/read.h>
-#include <dm/uclass-internal.h>
+#ضمن <alist.h>
+#ضمن <bloblist.h>
+#ضمن <dm.h>
+#ضمن <image.h>
+#ضمن <mapmem.h>
+#ضمن <serial.h>
+#ضمن <spl.h>
+#ضمن <upl.h>
+#ضمن <video.h>
+#ضمن <asm/global_data.h>
+#ضمن <dm/read.h>
+#ضمن <dm/uclass-internal.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_داده_PTR;
 
-struct upl s_upl;
+بنية upl s_upl;
 
-void upl_set_fit_addr(ulong fit)
+فراغ upl_مجموعه_fit_addr(ulong fit)
 {
-	struct upl *upl = &s_upl;
+	بنية upl *upl = &s_upl;
 
 	upl->fit = fit;
 }
 
-void upl_set_fit_info(ulong fit, int conf_offset, ulong entry_addr)
+فراغ upl_مجموعه_fit_info(ulong fit, صحيح conf_جابه_جایی, ulong مدخل_addr)
 {
-	struct upl *upl = &s_upl;
+	بنية upl *upl = &s_upl;
 
 	upl->fit = fit;
-	upl->conf_offset = conf_offset;
-	log_debug("upl: add fit %lx conf %x\n", fit, conf_offset);
+	upl->conf_جابه_جایی = conf_جابه_جایی;
+	log_debug("upl: add fit %lx conf %x\n", fit, conf_جابه_جایی);
 }
 
-int _upl_add_image(int node, ulong load_addr, ulong size, const char *desc)
+صحيح upl_جمع_کن_image_2(صحيح گره, ulong بارگیری_addr, ulong اندازه, ثابت حرف *desc)
 {
-	struct upl *upl = &s_upl;
-	struct upl_image img;
+	بنية upl *upl = &s_upl;
+	بنية upl_image img;
 
-	img.load = load_addr;
-	img.size = size;
-	img.offset = node;
+	img.بارگیری = بارگیری_addr;
+	img.اندازه = اندازه;
+	img.جابه_جایی = گره;
 	img.description = desc;
-	if (!alist_add(&upl->image, img))
-		return -ENOMEM;
-	log_debug("upl: add image %s at %lx size %lx\n", desc, load_addr, size);
+	إذا (!alist_جمع_کن(&upl->image, img))
+		أرجع -ENOMEM;
+	log_debug("upl: add image %s at %lx size %lx\n", desc, بارگیری_addr, اندازه);
 
-	return 0;
+	أرجع 0;
 }
 
-static int write_serial(struct upl_serial *ser)
+ساكن صحيح write_serial(بنية upl_serial *ser)
 {
-	struct udevice *dev = gd->cur_serial_dev;
-	struct serial_device_info info;
-	struct memregion region;
-	int ret;
+	بنية udevice *dev = gd->cur_serial_dev;
+	بنية serial_device_info info;
+	بنية memregion region;
+	صحيح ret;
 
-	if (!dev)
-		return log_msg_ret("ser", -ENOENT);
+	إذا (!dev)
+		أرجع log_پیام_ret("ser", -ENOENT);
 	ret = serial_getinfo(dev, &info);
-	if (ret)
-		return log_msg_ret("inf", ret);
+	إذا (ret)
+		أرجع log_پیام_ret("inf", ret);
 
 	ser->compatible = ofnode_read_string(dev_ofnode(dev), "compatible");
 	ser->clock_frequency = info.clock;
-	ser->current_speed = gd->baudrate;
-	region.base = info.addr;
-	region.size = info.size;
-	alist_init_struct(&ser->reg, struct memregion);
-	if (!alist_add(&ser->reg, region))
-		return -ENOMEM;
-	ser->reg_io_shift = info.reg_shift;
-	ser->reg_offset = info.reg_offset;
-	ser->reg_io_width = info.reg_width;
+	ser->current_سرعت = gd->baudrate;
+	region.پایه = info.addr;
+	region.اندازه = info.اندازه;
+	alist_init_struct(&ser->reg, بنية memregion);
+	إذا (!alist_جمع_کن(&ser->reg, region))
+		أرجع -ENOMEM;
+	ser->reg_io_لغزش = info.reg_لغزش;
+	ser->reg_جابه_جایی = info.reg_جابه_جایی;
+	ser->reg_io_عرض = info.reg_عرض;
 	ser->virtual_reg = 0;
 	ser->access_type = info.addr_space;
 
-	return 0;
+	أرجع 0;
 }
 
-static int write_graphics(struct upl_graphics *gra)
+ساكن صحيح write_graphics(بنية upl_graphics *gra)
 {
-	struct video_uc_plat *plat;
-	struct video_priv *priv;
-	struct memregion region;
-	struct udevice *dev;
+	بنية video_uc_plat *plat;
+	بنية video_priv *priv;
+	بنية memregion region;
+	بنية udevice *dev;
 
-	alist_init_struct(&gra->reg, struct memregion);
-	uclass_find_first_device(UCLASS_VIDEO, &dev);
-	if (!dev || !device_active(dev))
-		return log_msg_ret("vid", -ENOENT);
+	alist_init_struct(&gra->reg, بنية memregion);
+	uclass_پیدا_کن_اولی_device(UCLASS_VIDEO, &dev);
+	إذا (!dev || !device_فعال(dev))
+		أرجع log_پیام_ret("vid", -ENOENT);
 
 	plat = dev_get_uclass_plat(dev);
-	region.base = plat->base;
-	region.size = plat->size;
-	if (!alist_add(&gra->reg, region))
-		return log_msg_ret("reg", -ENOMEM);
+	region.پایه = plat->پایه;
+	region.اندازه = plat->اندازه;
+	إذا (!alist_جمع_کن(&gra->reg, region))
+		أرجع log_پیام_ret("reg", -ENOMEM);
 
 	priv = dev_get_uclass_priv(dev);
-	gra->width = priv->xsize;
-	gra->height = priv->ysize;
-	gra->stride = priv->line_length;	/* private field */
-	switch (priv->format) {
-	case VIDEO_RGBA8888:
-	case VIDEO_X8R8G8B8:
+	gra->عرض = priv->xsize;
+	gra->ارتفاع = priv->ysize;
+	gra->stride = priv->سطر_درازی;	/* private field */
+	بدل (priv->format) {
+	حالة VIDEO_RGBA8888:
+	حالة VIDEO_X8R8G8B8:
 		gra->format = UPLGF_ARGB32;
-		break;
-	case VIDEO_X8B8G8R8:
+		اكسر;
+	حالة VIDEO_X8B8G8R8:
 		gra->format = UPLGF_ABGR32;
-		break;
-	case VIDEO_X2R10G10B10:
+		اكسر;
+	حالة VIDEO_X2R10G10B10:
 		log_debug("device '%s': VIDEO_X2R10G10B10 not supported\n",
 			  dev->name);
-		return log_msg_ret("for", -EPROTO);
-	case VIDEO_UNKNOWN:
+		أرجع log_پیام_ret("for", -EPROTO);
+	حالة VIDEO_UNKNOWN:
 		log_debug("device '%s': Unknown video format\n", dev->name);
-		return log_msg_ret("for", -EPROTO);
+		أرجع log_پیام_ret("for", -EPROTO);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-int spl_write_upl_handoff(struct spl_image_info *spl_image)
+صحيح spl_write_upl_handoff(بنية spl_image_info *spl_image)
 {
-	struct upl *upl = &s_upl;
-	struct abuf buf;
-	ofnode root;
-	void *ptr;
-	int ret;
+	بنية upl *upl = &s_upl;
+	بنية abuf buf;
+	ofnode ریشه;
+	فراغ *ptr;
+	صحيح ret;
 
-	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.count);
-	upl->addr_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
-	upl->size_cells = IS_ENABLED(CONFIG_PHYS_64BIT) ? 2 : 1;
+	log_debug("UPL: Writing handoff - image_count=%d\n", upl->image.شمار);
+	upl->addr_cells = IS_ENABLED(CONFIG_PHYS_64_بیت) ? 2 : 1;
+	upl->اندازه_cells = IS_ENABLED(CONFIG_PHYS_64_بیت) ? 2 : 1;
 	upl->bootmode = UPLBM_DEFAULT;
 	ret = write_serial(&upl->serial);
-	if (ret)
-		return log_msg_ret("ser", ret);
+	إذا (ret)
+		أرجع log_پیام_ret("ser", ret);
 	ret = write_graphics(&upl->graphics);
-	if (ret && ret != -ENOENT)
-		return log_msg_ret("gra", ret);
+	إذا (ret && ret != -ENOENT)
+		أرجع log_پیام_ret("gra", ret);
 
-	root = ofnode_root();
-	ret = upl_write_handoff(upl, root, true);
-	if (ret)
-		return log_msg_ret("wr", ret);
+	ریشه = ofnode_ریشه();
+	ret = upl_write_handoff(upl, ریشه, true);
+	إذا (ret)
+		أرجع log_پیام_ret("wr", ret);
 
-	ret = oftree_to_fdt(oftree_default(), &buf);
-	if (ret)
-		return log_msg_ret("fdt", ret);
-	log_debug("FDT size %zx\n", abuf_size(&buf));
+	ret = oftree_مقصد_fdt(oftree_default(), &buf);
+	إذا (ret)
+		أرجع log_پیام_ret("fdt", ret);
+	log_debug("FDT size %zx\n", abuf_اندازه(&buf));
 
-	ptr = bloblist_add(BLOBLISTT_CONTROL_FDT, abuf_size(&buf), 0);
-	if (!ptr)
-		return log_msg_ret("blo", -ENOENT);
-	memcpy(ptr, abuf_data(&buf), abuf_size(&buf));
+	ptr = bloblist_جمع_کن(BLOBLISTT_CONTROL_FDT, abuf_اندازه(&buf), 0);
+	إذا (!ptr)
+		أرجع log_پیام_ret("blo", -ENOENT);
+	کپی_حافظه(ptr, abuf_داده(&buf), abuf_اندازه(&buf));
 
-	return 0;
+	أرجع 0;
 }
 
-void spl_upl_init(void)
+فراغ spl_upl_init(فراغ)
 {
 	upl_init(&s_upl);
 }

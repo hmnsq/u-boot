@@ -5,106 +5,106 @@
  * Copyright (c) 2020, Heinrich Schuchardt <xypron.glpk@gmx.de>
  */
 
-#include <env.h>
-#include <log.h>
-#include <net.h>
-#include <asm/global_data.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <net.h>
+#ضمن <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_داده_PTR;
 
-#define BUFFER_SIZE 480
+#تعریف_کن میانگیر_اندازه_2 480
 
-static void append(char **buf, char *buf_end, const char *fmt, ...)
+ساكن فراغ append(حرف **buf, حرف *buf_انتها, ثابت حرف *fmt, ...)
 {
-	va_list args;
-	size_t size = buf_end - *buf;
+	va_list آرگومانها;
+	size_t اندازه = buf_انتها - *buf;
 
-	va_start(args, fmt);
-	vsnprintf(*buf, size, fmt, args);
-	va_end(args);
-	*buf += strlen(*buf);
+	va_شروع(آرگومانها, fmt);
+	vsnprintf(*buf, اندازه, fmt, آرگومانها);
+	va_انتها(آرگومانها);
+	*buf += طول_رشته(*buf);
 }
 
-static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
+ساكن صحيح log_syslog_emit(بنية log_device *ldev, بنية log_rec *rec)
 {
-	int ret;
-	int fmt = gd->log_fmt;
-	char msg[BUFFER_SIZE];
-	char *msg_end = msg + BUFFER_SIZE;
-	char *ptr = msg;
-	char *iphdr;
-	char *log_msg;
-	int eth_hdr_size;
-	struct in_addr bcast_ip;
-	unsigned int log_level;
-	char *log_hostname;
+	صحيح ret;
+	صحيح fmt = gd->log_fmt;
+	حرف پیام[میانگیر_اندازه_2];
+	حرف *پیام_انتها = پیام + میانگیر_اندازه_2;
+	حرف *ptr = پیام;
+	حرف *iphdr;
+	حرف *log_پیام;
+	صحيح eth_hdr_اندازه;
+	بنية درون_addr bcast_ip;
+	بیعلامت صحيح log_level;
+	حرف *log_hostname;
 
 	/* Setup packet buffers */
 	ret = net_init();
-	if (ret)
-		return ret;
+	إذا (ret)
+		أرجع ret;
 	/* Disable hardware and put it into the reset state */
 	eth_halt();
 	/* Set current device according to environment variables */
-	eth_set_current();
+	eth_مجموعه_current();
 	/* Get hardware ready for send and receive operations */
 	ret = eth_init();
-	if (ret < 0) {
+	إذا (ret < 0) {
 		eth_halt();
-		goto out;
+		اذهب بیرون;
 	}
 
-	memset(msg, 0, BUFFER_SIZE);
+	memset(پیام, 0, میانگیر_اندازه_2);
 
 	/* Set ethernet header */
-	eth_hdr_size = net_set_ether((uchar *)ptr, net_bcast_ethaddr, PROT_IP);
-	ptr += eth_hdr_size;
+	eth_hdr_اندازه = net_مجموعه_ether((uchar *)ptr, net_bcast_ethaddr, PROT_IP);
+	ptr += eth_hdr_اندازه;
 	iphdr = ptr;
-	ptr += IP_UDP_HDR_SIZE;
-	log_msg = ptr;
+	ptr += IP_UDP_HDR_اندازه;
+	log_پیام = ptr;
 
 	/*
 	 * The syslog log levels defined in RFC 5424 match the U-Boot ones up to
 	 * level 7 (debug).
 	 */
 	log_level = rec->level;
-	if (log_level > 7)
+	إذا (log_level > 7)
 		log_level = 7;
 	/* Leave high bits as 0 to write a 'kernel message' */
 
 	/* Write log message to buffer */
-	append(&ptr, msg_end, "<%u>", log_level);
+	append(&ptr, پیام_انتها, "<%u>", log_level);
 	log_hostname = env_get("log_hostname");
-	if (log_hostname)
-		append(&ptr, msg_end, "%s ", log_hostname);
-	append(&ptr, msg_end, "uboot: ");
-	if (fmt & BIT(LOGF_LEVEL))
-		append(&ptr, msg_end, "%s.",
+	إذا (log_hostname)
+		append(&ptr, پیام_انتها, "%s ", log_hostname);
+	append(&ptr, پیام_انتها, "uboot: ");
+	إذا (fmt & بیت(LOGF_LEVEL))
+		append(&ptr, پیام_انتها, "%s.",
 		       log_get_level_name(rec->level));
-	if (fmt & BIT(LOGF_CAT))
-		append(&ptr, msg_end, "%s,",
+	إذا (fmt & بیت(LOGF_CAT))
+		append(&ptr, پیام_انتها, "%s,",
 		       log_get_cat_name(rec->cat));
-	if (fmt & BIT(LOGF_FILE))
-		append(&ptr, msg_end, "%s:", rec->file);
-	if (fmt & BIT(LOGF_LINE))
-		append(&ptr, msg_end, "%d-", rec->line);
-	if (fmt & BIT(LOGF_FUNC))
-		append(&ptr, msg_end, "%s()", rec->func ?: "?");
-	if (fmt & BIT(LOGF_MSG))
-		append(&ptr, msg_end, "%s%s",
-		       fmt != BIT(LOGF_MSG) ? " " : "", rec->msg);
+	إذا (fmt & بیت(LOGF_FILE))
+		append(&ptr, پیام_انتها, "%s:", rec->file);
+	إذا (fmt & بیت(LOGF_سطر))
+		append(&ptr, پیام_انتها, "%d-", rec->سطر);
+	إذا (fmt & بیت(LOGF_FUNC))
+		append(&ptr, پیام_انتها, "%s()", rec->func ?: "?");
+	إذا (fmt & بیت(LOGF_پیام))
+		append(&ptr, پیام_انتها, "%s%s",
+		       fmt != بیت(LOGF_پیام) ? " " : "", rec->پیام);
 	/* Consider trailing 0x00 */
 	ptr++;
 
-	debug("log message: '%s'\n", log_msg);
+	debug("log message: '%s'\n", log_پیام);
 
 	/* Broadcast message */
 	bcast_ip.s_addr = 0xFFFFFFFFL;
-	net_set_udp_header((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_msg);
-	net_send_packet((uchar *)msg, ptr - msg);
+	net_مجموعه_udp_سرآیند((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_پیام);
+	net_send_packet((uchar *)پیام, ptr - پیام);
 
-out:
-	return ret;
+بیرون:
+	أرجع ret;
 }
 
 LOG_DRIVER(syslog) = {

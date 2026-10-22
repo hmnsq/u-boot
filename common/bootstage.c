@@ -8,218 +8,218 @@
  * permits accurate timestamping of each.
  */
 
-#define LOG_CATEGORY	LOGC_BOOT
+#تعریف_کن LOG_CATEGORY	LOGC_BOOT
 
-#include <bootstage.h>
-#include <hang.h>
-#include <log.h>
-#include <malloc.h>
-#include <sort.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <linux/compiler.h>
-#include <linux/libfdt.h>
+#ضمن <bootstage.h>
+#ضمن <hang.h>
+#ضمن <log.h>
+#ضمن <malloc.h>
+#ضمن <sort.h>
+#ضمن <spl.h>
+#ضمن <asm/global_data.h>
+#ضمن <linux/compiler.h>
+#ضمن <linux/libfdt.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_داده_PTR;
 
-enum {
-	RECORD_COUNT = CONFIG_VAL(BOOTSTAGE_RECORD_COUNT),
+تعداد {
+	رکورد_شمار = CONFIG_VAL(BOOTSTAGE_رکورد_شمار),
 };
 
-struct bootstage_record {
-	ulong time_us;
-	uint32_t start_us;
-	const char *name;
-	int flags;		/* see enum bootstage_flags */
-	enum bootstage_id id;
+بنية bootstage_رکورد {
+	ulong زمان_us;
+	uint32_t شروع_us;
+	ثابت حرف *name;
+	صحيح flags;		/* see enum bootstage_flags */
+	تعداد bootstage_id id;
 };
 
-struct bootstage_data {
-	uint rec_count;
-	uint next_id;
-	struct bootstage_record record[RECORD_COUNT];
+بنية bootstage_داده {
+	uint rec_شمار;
+	uint بعدی_id;
+	بنية bootstage_رکورد رکورد[رکورد_شمار];
 };
 
-enum {
-	BOOTSTAGE_VERSION	= 0,
+تعداد {
+	BOOTSTAGE_نسخه	= 0,
 	BOOTSTAGE_MAGIC		= 0xb00757a3,
 	BOOTSTAGE_DIGITS	= 9,
 };
 
-struct bootstage_hdr {
+بنية bootstage_hdr {
 	u32 version;		/* BOOTSTAGE_VERSION */
-	u32 count;		/* Number of records */
-	u32 size;		/* Total data size (non-zero if valid) */
+	u32 شمار;		/* Number of records */
+	u32 اندازه;		/* Total data size (non-zero if valid) */
 	u32 magic;		/* Magic number */
-	u32 next_id;		/* Next ID to use for bootstage */
+	u32 بعدی_id;		/* Next ID to use for bootstage */
 };
 
-int bootstage_relocate(void *to)
+صحيح bootstage_relocate(فراغ *مقصد)
 {
-	struct bootstage_data *data;
-	int i;
-	char *ptr;
+	بنية bootstage_داده *داده;
+	صحيح i;
+	حرف *ptr;
 
-	debug("Copying bootstage from %p to %p\n", gd->bootstage, to);
-	memcpy(to, gd->bootstage, sizeof(struct bootstage_data));
-	data = gd->bootstage = to;
+	debug("Copying bootstage from %p to %p\n", gd->bootstage, مقصد);
+	کپی_حافظه(مقصد, gd->bootstage, حجم(بنية bootstage_داده));
+	داده = gd->bootstage = مقصد;
 
 	/* Figure out where to relocate the strings to */
-	ptr = (char *)(data + 1);
+	ptr = (حرف *)(داده + 1);
 
 	/*
 	 * Duplicate all strings.  They may point to an old location in the
 	 * program .text section that can eventually get trashed.
 	 */
-	debug("Relocating %d records\n", data->rec_count);
-	for (i = 0; i < data->rec_count; i++) {
-		const char *from = data->record[i].name;
+	debug("Relocating %d records\n", داده->rec_شمار);
+	لكل (i = 0; i < داده->rec_شمار; i++) {
+		ثابت حرف *from = داده->رکورد[i].name;
 
-		if (!from)
-			continue;
+		إذا (!from)
+			استمر;
 		strcpy(ptr, from);
-		data->record[i].name = ptr;
-		ptr += strlen(ptr) + 1;
+		داده->رکورد[i].name = ptr;
+		ptr += طول_رشته(ptr) + 1;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-struct bootstage_record *find_id(struct bootstage_data *data,
-				 enum bootstage_id id)
+بنية bootstage_رکورد *پیدا_کن_id(بنية bootstage_داده *داده,
+				 تعداد bootstage_id id)
 {
-	struct bootstage_record *rec;
-	struct bootstage_record *end;
+	بنية bootstage_رکورد *rec;
+	بنية bootstage_رکورد *انتها_2;
 
-	for (rec = data->record, end = rec + data->rec_count; rec < end;
+	لكل (rec = داده->رکورد, انتها_2 = rec + داده->rec_شمار; rec < انتها_2;
 	     rec++) {
-		if (rec->id == id)
-			return rec;
+		إذا (rec->id == id)
+			أرجع rec;
 	}
 
-	return NULL;
+	أرجع عدم;
 }
 
-struct bootstage_record *ensure_id(struct bootstage_data *data,
-				   enum bootstage_id id)
+بنية bootstage_رکورد *ensure_id(بنية bootstage_داده *داده,
+				   تعداد bootstage_id id)
 {
-	struct bootstage_record *rec;
+	بنية bootstage_رکورد *rec;
 
-	rec = find_id(data, id);
-	if (!rec && data->rec_count < RECORD_COUNT) {
-		rec = &data->record[data->rec_count++];
+	rec = پیدا_کن_id(داده, id);
+	إذا (!rec && داده->rec_شمار < رکورد_شمار) {
+		rec = &داده->رکورد[داده->rec_شمار++];
 		rec->id = id;
-		return rec;
+		أرجع rec;
 	}
 
-	return rec;
+	أرجع rec;
 }
 
-ulong bootstage_add_record(enum bootstage_id id, const char *name,
-			   int flags, ulong mark)
+ulong bootstage_جمع_کن_رکورد(تعداد bootstage_id id, ثابت حرف *name,
+			   صحيح flags, ulong mark)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec;
+	بنية bootstage_داده *داده = gd->bootstage;
+	بنية bootstage_رکورد *rec;
 
 	/*
 	 * initf_bootstage() is called very early during boot but since hang()
 	 * calls bootstage_error() we can be called before bootstage is set up.
 	 * Add a check to avoid this.
 	 */
-	if (!data)
-		return mark;
-	if (flags & BOOTSTAGEF_ALLOC)
-		id = data->next_id++;
+	إذا (!داده)
+		أرجع mark;
+	إذا (flags & BOOTSTAGEF_ALLOC)
+		id = داده->بعدی_id++;
 
 	/* Only record the first event for each */
-	rec = find_id(data, id);
-	if (!rec) {
-		if (data->rec_count < RECORD_COUNT) {
-			rec = &data->record[data->rec_count++];
-			rec->time_us = mark;
+	rec = پیدا_کن_id(داده, id);
+	إذا (!rec) {
+		إذا (داده->rec_شمار < رکورد_شمار) {
+			rec = &داده->رکورد[داده->rec_شمار++];
+			rec->زمان_us = mark;
 			rec->name = name;
 			rec->flags = flags;
 			rec->id = id;
-		} else {
+		} وإلا {
 			log_warning("Bootstage space exhausted\n");
 		}
 	}
 
 	/* Tell the board about this progress */
-	show_boot_progress(flags & BOOTSTAGEF_ERROR ? -id : id);
+	show_boot_پیشرفت(flags & BOOTSTAGEF_ERROR ? -id : id);
 
-	return mark;
+	أرجع mark;
 }
 
-ulong bootstage_error_name(enum bootstage_id id, const char *name)
+ulong bootstage_error_name(تعداد bootstage_id id, ثابت حرف *name)
 {
-	return bootstage_add_record(id, name, BOOTSTAGEF_ERROR,
+	أرجع bootstage_جمع_کن_رکورد(id, name, BOOTSTAGEF_ERROR,
 				    timer_get_boot_us());
 }
 
-ulong bootstage_mark_name(enum bootstage_id id, const char *name)
+ulong bootstage_mark_name(تعداد bootstage_id id, ثابت حرف *name)
 {
-	int flags = 0;
+	صحيح flags = 0;
 
-	if (id == BOOTSTAGE_ID_ALLOC)
+	إذا (id == BOOTSTAGE_ID_ALLOC)
 		flags = BOOTSTAGEF_ALLOC;
 
-	return bootstage_add_record(id, name, flags, timer_get_boot_us());
+	أرجع bootstage_جمع_کن_رکورد(id, name, flags, timer_get_boot_us());
 }
 
-ulong bootstage_mark_code(const char *file, const char *func, int linenum)
+ulong bootstage_mark_کد(ثابت حرف *file, ثابت حرف *func, صحيح linenum)
 {
-	char *str, *p;
-	__maybe_unused char *end;
-	int len = 0;
+	حرف *str, *p;
+	__maybe_unused حرف *انتها_2;
+	صحيح len = 0;
 
 	/* First work out the length we need to allocate */
-	if (linenum != -1)
+	إذا (linenum != -1)
 		len = 11;
-	if (func)
-		len += strlen(func);
-	if (file)
-		len += strlen(file);
+	إذا (func)
+		len += طول_رشته(func);
+	إذا (file)
+		len += طول_رشته(file);
 
-	str = malloc(len + 1);
+	str = حافظه_بده(len + 1);
 	p = str;
-	end = p + len;
-	if (file)
-		p += snprintf(p, end - p, "%s,", file);
-	if (linenum != -1)
-		p += snprintf(p, end - p, "%d", linenum);
-	if (func)
-		p += snprintf(p, end - p, ": %s", func);
+	انتها_2 = p + len;
+	إذا (file)
+		p += snprintf(p, انتها_2 - p, "%s,", file);
+	إذا (linenum != -1)
+		p += snprintf(p, انتها_2 - p, "%d", linenum);
+	إذا (func)
+		p += snprintf(p, انتها_2 - p, ": %s", func);
 
-	return bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
+	أرجع bootstage_mark_name(BOOTSTAGE_ID_ALLOC, str);
 }
 
-uint32_t bootstage_start(enum bootstage_id id, const char *name)
+uint32_t bootstage_شروع(تعداد bootstage_id id, ثابت حرف *name)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
-	ulong start_us = timer_get_boot_us();
+	بنية bootstage_داده *داده = gd->bootstage;
+	بنية bootstage_رکورد *rec = ensure_id(داده, id);
+	ulong شروع_us = timer_get_boot_us();
 
-	if (rec) {
-		rec->start_us = start_us;
+	إذا (rec) {
+		rec->شروع_us = شروع_us;
 		rec->name = name;
 	}
 
-	return start_us;
+	أرجع شروع_us;
 }
 
-uint32_t bootstage_accum(enum bootstage_id id)
+uint32_t bootstage_accum(تعداد bootstage_id id)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = ensure_id(data, id);
+	بنية bootstage_داده *داده = gd->bootstage;
+	بنية bootstage_رکورد *rec = ensure_id(داده, id);
 	uint32_t duration;
 
-	if (!rec)
-		return 0;
-	duration = (uint32_t)timer_get_boot_us() - rec->start_us;
-	rec->time_us += duration;
+	إذا (!rec)
+		أرجع 0;
+	duration = (uint32_t)timer_get_boot_us() - rec->شروع_us;
+	rec->زمان_us += duration;
 
-	return duration;
+	أرجع duration;
 }
 
 /**
@@ -230,128 +230,128 @@ uint32_t bootstage_accum(enum bootstage_id id)
  * @param rec	Boot stage record to get the name from
  * Return: pointer to name, either from the record or pointing to buf.
  */
-static const char *get_record_name(char *buf, int len,
-				   const struct bootstage_record *rec)
+ساكن ثابت حرف *get_رکورد_name(حرف *buf, صحيح len,
+				   ثابت بنية bootstage_رکورد *rec)
 {
-	if (rec->name)
-		return rec->name;
-	else if (rec->id >= BOOTSTAGE_ID_USER)
+	إذا (rec->name)
+		أرجع rec->name;
+	وإلا إذا (rec->id >= BOOTSTAGE_ID_USER)
 		snprintf(buf, len, "user_%d", rec->id - BOOTSTAGE_ID_USER);
-	else
+	وإلا
 		snprintf(buf, len, "id=%d", rec->id);
 
-	return buf;
+	أرجع buf;
 }
 
-static uint32_t print_time_record(struct bootstage_record *rec, uint32_t prev)
+ساكن uint32_t print_زمان_رکورد(بنية bootstage_رکورد *rec, uint32_t prev)
 {
-	char buf[20];
+	حرف buf[20];
 
-	if (prev == -1U) {
-		printf("%11s", "");
-		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-	} else {
-		if (prev > rec->time_us)
+	إذا (prev == -1U) {
+		چاپ_کن("%11s", "");
+		print_grouped_ull(rec->زمان_us, BOOTSTAGE_DIGITS);
+	} وإلا {
+		إذا (prev > rec->زمان_us)
 			prev = 0;
-		print_grouped_ull(rec->time_us, BOOTSTAGE_DIGITS);
-		print_grouped_ull(rec->time_us - prev, BOOTSTAGE_DIGITS);
+		print_grouped_ull(rec->زمان_us, BOOTSTAGE_DIGITS);
+		print_grouped_ull(rec->زمان_us - prev, BOOTSTAGE_DIGITS);
 	}
-	printf("  %s\n", get_record_name(buf, sizeof(buf), rec));
+	چاپ_کن("  %s\n", get_رکورد_name(buf, حجم(buf), rec));
 
-	return rec->time_us;
+	أرجع rec->زمان_us;
 }
 
-#ifdef CONFIG_OF_LIBFDT
+#اگر_تعریف_شده CONFIG_از_LIBFDT
 /**
  * Add all bootstage timings to a device tree.
  *
  * @param blob	Device tree blob
  * Return: 0 on success, != 0 on failure.
  */
-static int add_bootstages_devicetree(struct fdt_header *blob)
+ساكن صحيح جمع_کن_bootstages_devicetree(بنية fdt_سرآیند *blob)
 {
-	struct bootstage_data *data = gd->bootstage;
-	int bootstage;
-	char buf[20];
-	int recnum;
-	int i;
+	بنية bootstage_داده *داده = gd->bootstage;
+	صحيح bootstage;
+	حرف buf[20];
+	صحيح recnum;
+	صحيح i;
 
-	if (!blob)
-		return 0;
+	إذا (!blob)
+		أرجع 0;
 
 	/*
 	 * Create the node for bootstage.
 	 * The address of flat device tree is set up by the command bootm.
 	 */
-	bootstage = fdt_add_subnode(blob, 0, "bootstage");
-	if (bootstage < 0)
-		return -EINVAL;
+	bootstage = fdt_جمع_کن_subnode(blob, 0, "bootstage");
+	إذا (bootstage < 0)
+		أرجع -EINVAL;
 
 	/*
 	 * Insert the timings to the device tree in the reverse order so
 	 * that they can be printed in the Linux kernel in the right order.
 	 */
-	for (recnum = data->rec_count - 1, i = 0; recnum >= 0; recnum--, i++) {
-		struct bootstage_record *rec = &data->record[recnum];
-		int node;
+	لكل (recnum = داده->rec_شمار - 1, i = 0; recnum >= 0; recnum--, i++) {
+		بنية bootstage_رکورد *rec = &داده->رکورد[recnum];
+		صحيح گره;
 
-		if (rec->id != BOOTSTAGE_ID_AWAKE && rec->time_us == 0)
-			continue;
+		إذا (rec->id != BOOTSTAGE_ID_AWAKE && rec->زمان_us == 0)
+			استمر;
 
-		node = fdt_add_subnode(blob, bootstage, simple_itoa(i));
-		if (node < 0)
-			break;
+		گره = fdt_جمع_کن_subnode(blob, bootstage, simple_itoa(i));
+		إذا (گره < 0)
+			اكسر;
 
 		/* add properties to the node. */
-		if (fdt_setprop_string(blob, node, "name",
-				       get_record_name(buf, sizeof(buf), rec)))
-			return -EINVAL;
+		إذا (fdt_setprop_string(blob, گره, "name",
+				       get_رکورد_name(buf, حجم(buf), rec)))
+			أرجع -EINVAL;
 
 		/* Check if this is a 'mark' or 'accum' record */
-		if (fdt_setprop_cell(blob, node,
-				rec->start_us ? "accum" : "mark",
-				rec->time_us))
-			return -EINVAL;
+		إذا (fdt_setprop_cell(blob, گره,
+				rec->شروع_us ? "accum" : "mark",
+				rec->زمان_us))
+			أرجع -EINVAL;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-int bootstage_fdt_add_report(void)
+صحيح bootstage_fdt_جمع_کن_report(فراغ)
 {
-	if (add_bootstages_devicetree(working_fdt))
+	إذا (جمع_کن_bootstages_devicetree(working_fdt))
 		puts("bootstage: Failed to add to device tree\n");
 
-	return 0;
+	أرجع 0;
 }
-#endif
+#پایان_اگر
 
-void bootstage_report(void)
+فراغ bootstage_report(فراغ)
 {
-	struct bootstage_data *data = gd->bootstage;
-	struct bootstage_record *rec = data->record;
+	بنية bootstage_داده *داده = gd->bootstage;
+	بنية bootstage_رکورد *rec = داده->رکورد;
 	uint32_t prev;
-	int i;
+	صحيح i;
 
-	printf("Timer summary in microseconds (%d records):\n",
-	       data->rec_count);
-	printf("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
+	چاپ_کن("Timer summary in microseconds (%d records):\n",
+	       داده->rec_شمار);
+	چاپ_کن("%11s%11s  %s\n", "Mark", "Elapsed", "Stage");
 
-	prev = print_time_record(rec, 0);
+	prev = print_زمان_رکورد(rec, 0);
 
-	for (i = 1, rec++; i < data->rec_count; i++, rec++) {
-		if (rec->id && !rec->start_us)
-			prev = print_time_record(rec, prev);
+	لكل (i = 1, rec++; i < داده->rec_شمار; i++, rec++) {
+		إذا (rec->id && !rec->شروع_us)
+			prev = print_زمان_رکورد(rec, prev);
 	}
-	if (data->rec_count > RECORD_COUNT)
-		printf("Overflowed internal boot id table by %d entries\n"
+	إذا (داده->rec_شمار > رکورد_شمار)
+		چاپ_کن("Overflowed internal boot id table by %d entries\n"
 		       "Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		       data->rec_count - RECORD_COUNT);
+		       داده->rec_شمار - رکورد_شمار);
 
 	puts("\nAccumulated time:\n");
-	for (i = 0, rec = data->record; i < data->rec_count; i++, rec++) {
-		if (rec->start_us)
-			prev = print_time_record(rec, -1);
+	لكل (i = 0, rec = داده->رکورد; i < داده->rec_شمار; i++, rec++) {
+		إذا (rec->شروع_us)
+			prev = print_زمان_رکورد(rec, -1);
 	}
 }
 
@@ -366,186 +366,186 @@ void bootstage_report(void)
  * @param data	Data to write to buffer
  * @param size	Size of data
  */
-static void append_data(char **ptrp, char *end, const void *data, int size)
+ساكن فراغ append_داده(حرف **ptrp, حرف *انتها_2, ثابت فراغ *داده, صحيح اندازه)
 {
-	char *ptr = *ptrp;
+	حرف *ptr = *ptrp;
 
-	*ptrp += size;
-	if (*ptrp > end)
-		return;
+	*ptrp += اندازه;
+	إذا (*ptrp > انتها_2)
+		أرجع;
 
-	memcpy(ptr, data, size);
+	کپی_حافظه(ptr, داده, اندازه);
 }
 
-int bootstage_stash(void *base, int size)
+صحيح bootstage_stash(فراغ *پایه, صحيح اندازه)
 {
-	const struct bootstage_data *data = gd->bootstage;
-	struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	const struct bootstage_record *rec;
-	char buf[20];
-	char *ptr = base, *end = ptr + size;
-	int i;
+	ثابت بنية bootstage_داده *داده = gd->bootstage;
+	بنية bootstage_hdr *hdr = (بنية bootstage_hdr *)پایه;
+	ثابت بنية bootstage_رکورد *rec;
+	حرف buf[20];
+	حرف *ptr = پایه, *انتها_2 = ptr + اندازه;
+	صحيح i;
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	إذا (hdr + 1 > (بنية bootstage_hdr *)انتها_2) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -ENOSPC;
+		أرجع -ENOSPC;
 	}
 
 	/* Write an arbitrary version number */
-	hdr->version = BOOTSTAGE_VERSION;
+	hdr->version = BOOTSTAGE_نسخه;
 
-	hdr->count = data->rec_count;
-	hdr->size = 0;
+	hdr->شمار = داده->rec_شمار;
+	hdr->اندازه = 0;
 	hdr->magic = BOOTSTAGE_MAGIC;
-	hdr->next_id = data->next_id;
-	ptr += sizeof(*hdr);
+	hdr->بعدی_id = داده->بعدی_id;
+	ptr += حجم(*hdr);
 
 	/* Write the records, silently stopping when we run out of space */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-		append_data(&ptr, end, rec, sizeof(*rec));
+	لكل (rec = داده->رکورد, i = 0; i < داده->rec_شمار; i++, rec++)
+		append_داده(&ptr, انتها_2, rec, حجم(*rec));
 
 	/* Write the name strings */
-	for (rec = data->record, i = 0; i < data->rec_count; i++, rec++) {
-		const char *name;
+	لكل (rec = داده->رکورد, i = 0; i < داده->rec_شمار; i++, rec++) {
+		ثابت حرف *name;
 
-		name = get_record_name(buf, sizeof(buf), rec);
-		append_data(&ptr, end, name, strlen(name) + 1);
+		name = get_رکورد_name(buf, حجم(buf), rec);
+		append_داده(&ptr, انتها_2, name, طول_رشته(name) + 1);
 	}
 
 	/* Check for buffer overflow */
-	if (ptr > end) {
+	إذا (ptr > انتها_2) {
 		debug("%s: Not enough space for bootstage stash\n", __func__);
-		return -ENOSPC;
+		أرجع -ENOSPC;
 	}
 
 	/* Update total data size */
-	hdr->size = ptr - (char *)base;
-	debug("Stashed %d records\n", hdr->count);
+	hdr->اندازه = ptr - (حرف *)پایه;
+	debug("Stashed %d records\n", hdr->شمار);
 
-	return 0;
+	أرجع 0;
 }
 
-int bootstage_unstash(const void *base, int size)
+صحيح bootstage_unstash(ثابت فراغ *پایه, صحيح اندازه)
 {
-	const struct bootstage_hdr *hdr = (struct bootstage_hdr *)base;
-	struct bootstage_data *data = gd->bootstage;
-	const char *ptr = base, *end = ptr + size;
-	struct bootstage_record *rec;
-	uint rec_size;
-	int i;
+	ثابت بنية bootstage_hdr *hdr = (بنية bootstage_hdr *)پایه;
+	بنية bootstage_داده *داده = gd->bootstage;
+	ثابت حرف *ptr = پایه, *انتها_2 = ptr + اندازه;
+	بنية bootstage_رکورد *rec;
+	uint rec_اندازه;
+	صحيح i;
 
-	if (size == -1)
-		end = (char *)(~(uintptr_t)0);
+	إذا (اندازه == -1)
+		انتها_2 = (حرف *)(~(uintptr_t)0);
 
-	if (hdr + 1 > (struct bootstage_hdr *)end) {
+	إذا (hdr + 1 > (بنية bootstage_hdr *)انتها_2) {
 		debug("%s: Not enough space for bootstage hdr\n", __func__);
-		return -EPERM;
+		أرجع -EPERM;
 	}
 
-	if (hdr->magic != BOOTSTAGE_MAGIC) {
+	إذا (hdr->magic != BOOTSTAGE_MAGIC) {
 		debug("%s: Invalid bootstage magic\n", __func__);
-		return -ENOENT;
+		أرجع -ENOENT;
 	}
 
-	if (ptr + hdr->size > end) {
+	إذا (ptr + hdr->اندازه > انتها_2) {
 		debug("%s: Bootstage data runs past buffer end\n", __func__);
-		return -ENOSPC;
+		أرجع -ENOSPC;
 	}
 
-	if (hdr->count * sizeof(*rec) > hdr->size) {
+	إذا (hdr->شمار * حجم(*rec) > hdr->اندازه) {
 		debug("%s: Bootstage has %d records needing %lu bytes, but "
-			"only %d bytes is available\n", __func__, hdr->count,
-		      (ulong)hdr->count * sizeof(*rec), hdr->size);
-		return -ENOSPC;
+			"only %d bytes is available\n", __func__, hdr->شمار,
+		      (ulong)hdr->شمار * حجم(*rec), hdr->اندازه);
+		أرجع -ENOSPC;
 	}
 
-	if (hdr->version != BOOTSTAGE_VERSION) {
+	إذا (hdr->version != BOOTSTAGE_نسخه) {
 		debug("%s: Bootstage data version %#0x unrecognised\n",
 		      __func__, hdr->version);
-		return -EINVAL;
+		أرجع -EINVAL;
 	}
 
-	if (data->rec_count + hdr->count > RECORD_COUNT) {
+	إذا (داده->rec_شمار + hdr->شمار > رکورد_شمار) {
 		debug("%s: Bootstage has %d records, we have space for %d\n"
 			"Please increase CONFIG_(PHASE_)BOOTSTAGE_RECORD_COUNT\n",
-		      __func__, hdr->count, RECORD_COUNT - data->rec_count);
-		return -ENOSPC;
+		      __func__, hdr->شمار, رکورد_شمار - داده->rec_شمار);
+		أرجع -ENOSPC;
 	}
 
-	ptr += sizeof(*hdr);
+	ptr += حجم(*hdr);
 
 	/* Read the records */
-	rec_size = hdr->count * sizeof(*data->record);
-	memcpy(data->record + data->rec_count, ptr, rec_size);
+	rec_اندازه = hdr->شمار * حجم(*داده->رکورد);
+	کپی_حافظه(داده->رکورد + داده->rec_شمار, ptr, rec_اندازه);
 
 	/* Read the name strings */
-	ptr += rec_size;
-	for (rec = data->record + data->rec_count, i = 0; i < hdr->count;
+	ptr += rec_اندازه;
+	لكل (rec = داده->رکورد + داده->rec_شمار, i = 0; i < hdr->شمار;
 	     i++, rec++) {
 		rec->name = ptr;
-		if (xpl_phase() == PHASE_SPL)
+		إذا (xpl_phase() == PHASE_SPL)
 			rec->name = strdup(ptr);
 
 		/* Assume no data corruption here */
-		ptr += strlen(ptr) + 1;
+		ptr += طول_رشته(ptr) + 1;
 	}
 
 	/* Mark the records as read */
-	data->rec_count += hdr->count;
-	data->next_id = hdr->next_id;
-	debug("Unstashed %d records\n", hdr->count);
+	داده->rec_شمار += hdr->شمار;
+	داده->بعدی_id = hdr->بعدی_id;
+	debug("Unstashed %d records\n", hdr->شمار);
 
-	return 0;
+	أرجع 0;
 }
 
-#if IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
-int _bootstage_stash_default(void)
+#إذا IS_ENABLED(CONFIG_BOOTSTAGE_STASH)
+صحيح _bootstage_stash_default(فراغ)
 {
-	return bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
-			       CONFIG_BOOTSTAGE_STASH_SIZE);
+	أرجع bootstage_stash(map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR, 0),
+			       CONFIG_BOOTSTAGE_STASH_اندازه);
 }
 
-int _bootstage_unstash_default(void)
+صحيح _bootstage_unstash_default(فراغ)
 {
-	const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
-				       CONFIG_BOOTSTAGE_STASH_SIZE);
+	ثابت فراغ *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
+				       CONFIG_BOOTSTAGE_STASH_اندازه);
 
-	return bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+	أرجع bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_اندازه);
 }
-#endif
+#پایان_اگر
 
-int bootstage_get_size(bool add_strings)
+صحيح bootstage_get_اندازه(bool جمع_کن_رشتهها)
 {
-	int size;
+	صحيح اندازه;
 
-	size = sizeof(struct bootstage_data);
-	if (add_strings) {
-		struct bootstage_data *data = gd->bootstage;
-		struct bootstage_record *rec;
-		int i;
+	اندازه = حجم(بنية bootstage_داده);
+	إذا (جمع_کن_رشتهها) {
+		بنية bootstage_داده *داده = gd->bootstage;
+		بنية bootstage_رکورد *rec;
+		صحيح i;
 
-		for (rec = data->record, i = 0; i < data->rec_count; i++, rec++)
-			if (rec->name)
-				size += strlen(rec->name) + 1;
+		لكل (rec = داده->رکورد, i = 0; i < داده->rec_شمار; i++, rec++)
+			إذا (rec->name)
+				اندازه += طول_رشته(rec->name) + 1;
 	}
 
-	return size;
+	أرجع اندازه;
 }
 
-int bootstage_init(bool first)
+صحيح bootstage_init(bool اولی)
 {
-	struct bootstage_data *data;
-	int size = sizeof(struct bootstage_data);
+	بنية bootstage_داده *داده;
+	صحيح اندازه = حجم(بنية bootstage_داده);
 
-	gd->bootstage = (struct bootstage_data *)malloc(size);
-	if (!gd->bootstage)
-		return -ENOMEM;
-	data = gd->bootstage;
-	memset(data, '\0', size);
-	if (first) {
-		data->next_id = BOOTSTAGE_ID_USER;
-		bootstage_add_record(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
+	gd->bootstage = (بنية bootstage_داده *)حافظه_بده(اندازه);
+	إذا (!gd->bootstage)
+		أرجع -ENOMEM;
+	داده = gd->bootstage;
+	memset(داده, '\0', اندازه);
+	إذا (اولی) {
+		داده->بعدی_id = BOOTSTAGE_ID_USER;
+		bootstage_جمع_کن_رکورد(BOOTSTAGE_ID_AWAKE, "reset", 0, 0);
 	}
 
-	return 0;
+	أرجع 0;
 }

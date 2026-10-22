@@ -55,250 +55,250 @@
  *  Proven for both default and pedantic mode: confirms U-Boot to be clean, and catches
  *  intentional/testing corruptions. Working with malloc_trim is not tested.
  */
-#ifndef _MCHECKCORE_INC_H
-#define _MCHECKCORE_INC_H      1
-#include "mcheck.h"
+#اگر_تعریف_نشده _MCHECKCORE_INC_H
+#تعریف_کن _MCHECKCORE_INC_H      1
+#ضمن "mcheck.h"
 
-#if defined(MCHECK_HEAP_PROTECTION)
-#define mcheck_flood memset
+#إذا defined(MCHECK_انباشته_PROTECTION)
+#تعریف_کن mcheck_flood memset
 
 // these are from /dev/random:
-#define MAGICWORD	0x99ccf430fa562a05ULL
-#define MAGICFREE	0x4875e63c0c6fc08eULL
-#define MAGICTAIL	0x918dbcd7df78dcd6ULL
-#define MALLOCFLOOD	((char)0xb6)
-#define FREEFLOOD	((char)0xf5)
-#define PADDINGFLOOD	((char)0x58)
+#تعریف_کن MAGICWORD	0x99ccf430fa562a05ULL
+#تعریف_کن MAGICFREE	0x4875e63c0c6fc08eULL
+#تعریف_کن MAGICTAIL	0x918dbcd7df78dcd6ULL
+#تعریف_کن MALLOCFLOOD	((حرف)0xb6)
+#تعریف_کن FREEFLOOD	((حرف)0xf5)
+#تعریف_کن PADDINGFLOOD	((حرف)0x58)
 
 // my normal run demands 4427-6449 chunks:
-#define REGISTRY_SZ	6608
-#define CANARY_DEPTH	2
+#تعریف_کن REGISTRY_SZ	6608
+#تعریف_کن CANARY_عمق	2
 
 // avoid problems with BSS at early stage:
-static char mcheck_pedantic_flag __section(".data") = 0;
-static void *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
-static size_t mcheck_chunk_count __section(".data") = 0;
-static size_t mcheck_chunk_count_max __section(".data") = 0;
+ساكن حرف mcheck_pedantic_flag __section(".data") = 0;
+ساكن فراغ *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
+ساكن size_t mcheck_chunk_شمار __section(".data") = 0;
+ساكن size_t mcheck_chunk_شمار_max __section(".data") = 0;
 
-typedef unsigned long long mcheck_elem;
-typedef struct {
-	mcheck_elem elems[CANARY_DEPTH];
+تعريفنوع بیعلامت دراز دراز mcheck_elem;
+تعريفنوع بنية {
+	mcheck_elem elems[CANARY_عمق];
 } mcheck_canary;
-struct mcheck_hdr {
-	size_t size; /* Exact size requested by user.  */
+بنية mcheck_hdr {
+	size_t اندازه; /* Exact size requested by user.  */
 	size_t aln_skip; /* Ignored bytes, before the mcheck_hdr, to fulfill alignment */
 	mcheck_canary canary; /* Magic number to check header integrity.  */
 };
 
-static void mcheck_default_abort(enum mcheck_status status, const void *p)
+ساكن فراغ mcheck_default_abort(تعداد mcheck_status وضعیت, ثابت فراغ *p)
 {
-	const char *msg;
+	ثابت حرف *پیام;
 
-	switch (status) {
-	case MCHECK_OK:
-		msg = "memory is consistent, library is buggy\n";
-		break;
-	case MCHECK_HEAD:
-		msg = "memory clobbered before allocated block\n";
-		break;
-	case MCHECK_TAIL:
-		msg = "memory clobbered past end of allocated block\n";
-		break;
-	case MCHECK_FREE:
-		msg = "block freed twice\n";
-		break;
-	default:
-		msg = "bogus mcheck_status, library is buggy\n";
-		break;
+	بدل (وضعیت) {
+	حالة MCHECK_OK:
+		پیام = "memory is consistent, library is buggy\n";
+		اكسر;
+	حالة MCHECK_HEAD:
+		پیام = "memory clobbered before allocated block\n";
+		اكسر;
+	حالة MCHECK_TAIL:
+		پیام = "memory clobbered past end of allocated block\n";
+		اكسر;
+	حالة MCHECK_FREE:
+		پیام = "block freed twice\n";
+		اكسر;
+	افتراضي:
+		پیام = "bogus mcheck_status, library is buggy\n";
+		اكسر;
 	}
-	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, msg, mcheck_chunk_count_max);
+	چاپ_کن("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, پیام, mcheck_chunk_شمار_max);
 }
 
-static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
+ساكن mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
 
-static inline size_t allign_size_up(size_t sz, size_t grain)
+ساكن مضمن size_t allign_اندازه_به_بالا(size_t sz, size_t grain)
 {
-	return (sz + grain - 1) & ~(grain - 1);
+	أرجع (sz + grain - 1) & ~(grain - 1);
 }
 
-#define mcheck_allign_customer_size(SZ) allign_size_up(SZ, sizeof(mcheck_elem))
-#define mcheck_evaluate_memalign_prefix_size(ALIGN) allign_size_up(sizeof(struct mcheck_hdr), ALIGN)
+#تعریف_کن mcheck_allign_customer_اندازه(SZ) allign_اندازه_به_بالا(SZ, حجم(mcheck_elem))
+#تعریف_کن mcheck_evaluate_memalign_پیشوند_اندازه(ALIGN) allign_اندازه_به_بالا(حجم(بنية mcheck_hdr), ALIGN)
 
-static enum mcheck_status mcheck_OnNok(enum mcheck_status status, const void *p)
+ساكن تعداد mcheck_status mcheck_OnNok(تعداد mcheck_status وضعیت, ثابت فراغ *p)
 {
-	(*mcheck_abortfunc)(status, p);
-	return status;
+	(*mcheck_abortfunc)(وضعیت, p);
+	أرجع وضعیت;
 }
 
-static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
+ساكن تعداد mcheck_status mcheck_checkhdr(ثابت بنية mcheck_hdr *hdr)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] == MAGICFREE)
-			return mcheck_OnNok(MCHECK_FREE, hdr + 1);
+	لكل (i = 0; i < CANARY_عمق; ++i)
+		إذا (hdr->canary.elems[i] == MAGICFREE)
+			أرجع mcheck_OnNok(MCHECK_FREE, hdr + 1);
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] != MAGICWORD)
-			return mcheck_OnNok(MCHECK_HEAD, hdr + 1);
+	لكل (i = 0; i < CANARY_عمق; ++i)
+		إذا (hdr->canary.elems[i] != MAGICWORD)
+			أرجع mcheck_OnNok(MCHECK_HEAD, hdr + 1);
 
-	const size_t payload_size = hdr->size;
-	const size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
-	const size_t padd_size = payload_size_aligned - hdr->size;
+	ثابت size_t payload_اندازه = hdr->اندازه;
+	ثابت size_t payload_اندازه_aligned = mcheck_allign_customer_اندازه(payload_اندازه);
+	ثابت size_t padd_اندازه = payload_اندازه_aligned - hdr->اندازه;
 
-	const char *payload = (const char *)&hdr[1];
+	ثابت حرف *payload = (ثابت حرف *)&hdr[1];
 
-	for (i = 0; i < padd_size; ++i)
-		if (payload[payload_size + i] != PADDINGFLOOD)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	لكل (i = 0; i < padd_اندازه; ++i)
+		إذا (payload[payload_اندازه + i] != PADDINGFLOOD)
+			أرجع mcheck_OnNok(MCHECK_TAIL, hdr + 1);
 
-	const mcheck_canary *tail = (const mcheck_canary *)&payload[payload_size_aligned];
+	ثابت mcheck_canary *دم = (ثابت mcheck_canary *)&payload[payload_اندازه_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (tail->elems[i] != MAGICTAIL)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
-	return MCHECK_OK;
+	لكل (i = 0; i < CANARY_عمق; ++i)
+		إذا (دم->elems[i] != MAGICTAIL)
+			أرجع mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	أرجع MCHECK_OK;
 }
 
-enum { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
-static void *mcheck_free_helper(void *ptr, int clean_content)
+تعداد { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
+ساكن فراغ *mcheck_free_helper(فراغ *ptr, صحيح clean_content)
 {
-	if (!ptr)
-		return ptr;
+	إذا (!ptr)
+		أرجع ptr;
 
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
-	int i;
+	بنية mcheck_hdr *hdr = &((بنية mcheck_hdr *)ptr)[-1];
+	صحيح i;
 
 	mcheck_checkhdr(hdr);
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	لكل (i = 0; i < CANARY_عمق; ++i)
 		hdr->canary.elems[i] = MAGICFREE;
 
-	if (clean_content)
-		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_size(hdr->size));
+	إذا (clean_content)
+		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_اندازه(hdr->اندازه));
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i] == hdr) {
+	لكل (i = 0; i < REGISTRY_SZ; ++i)
+		إذا (mcheck_registry[i] == hdr) {
 			mcheck_registry[i] = 0;
-			break;
+			اكسر;
 		}
 
-	--mcheck_chunk_count;
-	return (char *)hdr - hdr->aln_skip;
+	--mcheck_chunk_شمار;
+	أرجع (حرف *)hdr - hdr->aln_skip;
 }
 
-static void *mcheck_free_prehook(void *ptr) { return mcheck_free_helper(ptr, CLEAN_CONTENT); }
-static void *mcheck_reallocfree_prehook(void *ptr) { return mcheck_free_helper(ptr, KEEP_CONTENT); }
+ساكن فراغ *mcheck_free_prehook(فراغ *ptr) { أرجع mcheck_free_helper(ptr, CLEAN_CONTENT); }
+ساكن فراغ *mcheck_reallocfree_prehook(فراغ *ptr) { أرجع mcheck_free_helper(ptr, KEEP_CONTENT); }
 
-static size_t mcheck_alloc_prehook(size_t sz)
+ساكن size_t mcheck_alloc_prehook(size_t sz)
 {
-	sz = mcheck_allign_customer_size(sz);
-	return sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
+	sz = mcheck_allign_customer_اندازه(sz);
+	أرجع حجم(بنية mcheck_hdr) + sz + حجم(mcheck_canary);
 }
 
-static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
-				     size_t alignment, int clean_content)
+ساكن فراغ *mcheck_allocated_helper(فراغ *altoghether_ptr, size_t customer_sz,
+				     size_t alignment, صحيح clean_content)
 {
-	const size_t slop = alignment ?
-		mcheck_evaluate_memalign_prefix_size(alignment) - sizeof(struct mcheck_hdr) : 0;
-	struct mcheck_hdr *hdr = (struct mcheck_hdr *)((char *)altoghether_ptr + slop);
-	int i;
+	ثابت size_t slop = alignment ?
+		mcheck_evaluate_memalign_پیشوند_اندازه(alignment) - حجم(بنية mcheck_hdr) : 0;
+	بنية mcheck_hdr *hdr = (بنية mcheck_hdr *)((حرف *)altoghether_ptr + slop);
+	صحيح i;
 
-	hdr->size = customer_sz;
+	hdr->اندازه = customer_sz;
 	hdr->aln_skip = slop;
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	لكل (i = 0; i < CANARY_عمق; ++i)
 		hdr->canary.elems[i] = MAGICWORD;
 
-	char *payload = (char *)&hdr[1];
+	حرف *payload = (حرف *)&hdr[1];
 
-	if (clean_content)
+	إذا (clean_content)
 		mcheck_flood(payload, MALLOCFLOOD, customer_sz);
 
-	const size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
+	ثابت size_t customer_اندازه_aligned = mcheck_allign_customer_اندازه(customer_sz);
 
-	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_size_aligned - customer_sz);
+	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_اندازه_aligned - customer_sz);
 
-	mcheck_canary *tail = (mcheck_canary *)&payload[customer_size_aligned];
+	mcheck_canary *دم = (mcheck_canary *)&payload[customer_اندازه_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		tail->elems[i] = MAGICTAIL;
+	لكل (i = 0; i < CANARY_عمق; ++i)
+		دم->elems[i] = MAGICTAIL;
 
-	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
-		mcheck_chunk_count_max = mcheck_chunk_count;
+	++mcheck_chunk_شمار;
+	إذا (mcheck_chunk_شمار > mcheck_chunk_شمار_max)
+		mcheck_chunk_شمار_max = mcheck_chunk_شمار;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (!mcheck_registry[i]) {
+	لكل (i = 0; i < REGISTRY_SZ; ++i)
+		إذا (!mcheck_registry[i]) {
 			mcheck_registry[i] = hdr;
-			return payload; // normal end
+			أرجع payload; // normal end
 		}
 
-	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
+	ساكن حرف *سرریز_پیام = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
-	printf("%s", overflow_msg);
-	overflow_msg = "(mcheck registry full)";
-	return payload;
+	چاپ_کن("%s", سرریز_پیام);
+	سرریز_پیام = "(mcheck registry full)";
+	أرجع payload;
 }
 
-static void *mcheck_alloc_posthook(void *altoghether_ptr, size_t customer_sz)
+ساكن فراغ *mcheck_alloc_posthook(فراغ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
+	أرجع mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
 }
 
-static void *mcheck_alloc_noclean_posthook(void *altoghether_ptr, size_t customer_sz)
+ساكن فراغ *mcheck_alloc_noclean_posthook(فراغ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
+	أرجع mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
 }
 
-static size_t mcheck_memalign_prehook(size_t alig, size_t sz)
+ساكن size_t mcheck_memalign_prehook(size_t alig, size_t sz)
 {
-	return mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
+	أرجع mcheck_evaluate_memalign_پیشوند_اندازه(alig) + sz + حجم(mcheck_canary);
 }
 
-static void *mcheck_memalign_posthook(size_t alignment, void *altoghether_ptr, size_t customer_sz)
+ساكن فراغ *mcheck_memalign_posthook(size_t alignment, فراغ *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
+	أرجع mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
 }
 
-static enum mcheck_status mcheck_mprobe(void *ptr)
+ساكن تعداد mcheck_status mcheck_mprobe(فراغ *ptr)
 {
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
+	بنية mcheck_hdr *hdr = &((بنية mcheck_hdr *)ptr)[-1];
 
-	return mcheck_checkhdr(hdr);
+	أرجع mcheck_checkhdr(hdr);
 }
 
-static void mcheck_pedantic_check(void)
+ساكن فراغ mcheck_pedantic_check(فراغ)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i])
+	لكل (i = 0; i < REGISTRY_SZ; ++i)
+		إذا (mcheck_registry[i])
 			mcheck_checkhdr(mcheck_registry[i]);
 }
 
-static void mcheck_pedantic_prehook(void)
+ساكن فراغ mcheck_pedantic_prehook(فراغ)
 {
-	if (mcheck_pedantic_flag)
+	إذا (mcheck_pedantic_flag)
 		mcheck_pedantic_check();
 }
 
-static void mcheck_initialize(mcheck_abortfunc_t new_func, char pedantic_flag)
+ساكن فراغ mcheck_initialize(mcheck_abortfunc_t new_func, حرف pedantic_flag)
 {
 	mcheck_abortfunc = (new_func) ? new_func : &mcheck_default_abort;
 	mcheck_pedantic_flag = pedantic_flag;
 }
 
-void mcheck_on_ramrelocation(size_t offset)
+فراغ mcheck_on_ramrelocation(size_t جابه_جایی)
 {
-	char *p;
-	int i;
+	حرف *p;
+	صحيح i;
 	// Simple, but inaccurate strategy: drop the pre-reloc heap
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if ((p = mcheck_registry[i]) != NULL ) {
-			printf("mcheck, WRN: forgetting %p chunk\n", p);
+	لكل (i = 0; i < REGISTRY_SZ; ++i)
+		إذا ((p = mcheck_registry[i]) != عدم ) {
+			چاپ_کن("mcheck, WRN: forgetting %p chunk\n", p);
 			mcheck_registry[i] = 0;
 		}
 
-	mcheck_chunk_count = 0;
+	mcheck_chunk_شمار = 0;
 }
-#endif
-#endif
+#پایان_اگر
+#پایان_اگر
