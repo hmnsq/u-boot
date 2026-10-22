@@ -9,16 +9,16 @@
  * channel.
  */
 
-#include <dm.h>
-#include <log.h>
-#include <miiphy.h>
-#include <phy.h>
-#include <linux/delay.h>
+#अन्तर्भाव <dm.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <miiphy.h>
+#अन्तर्भाव <phy.h>
+#अन्तर्भाव <linux/delay.h>
 
-#include <asm/types.h>
-#include <linux/list.h>
-#include <malloc.h>
-#include <net.h>
+#अन्तर्भाव <asm/types.h>
+#अन्तर्भाव <linux/list.h>
+#अन्तर्भाव <malloc.h>
+#अन्तर्भाव <net.h>
 
 /* local debug macro */
 #undef MII_DEBUG
@@ -26,195 +26,195 @@
 #undef debug
 #ifdef MII_DEBUG
 #define debug(fmt, args...)	printf(fmt, ##args)
-#else
+#अन्यथा
 #define debug(fmt, args...)
 #endif /* MII_DEBUG */
 
-static LIST_HEAD(mii_devs);
-static struct mii_dev *current_mii;
+स्थिर LIST_HEAD(mii_devs);
+स्थिर संरचना mii_dev *current_mii;
 
 /*
  * Lookup the mii_dev struct by the registered device name.
  */
-struct mii_dev *miiphy_get_dev_by_name(const char *devname)
+संरचना mii_dev *miiphy_get_dev_by_name(ध्रुव वर्ण *devname)
 {
-	struct list_head *entry;
-	struct mii_dev *dev;
+	संरचना list_head *entry;
+	संरचना mii_dev *dev;
 
-	if (!devname) {
+	यदि (!devname) {
 		printf("NULL device name!\n");
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
 	list_for_each(entry, &mii_devs) {
-		dev = list_entry(entry, struct mii_dev, link);
-		if (strcmp(dev->name, devname) == 0)
-			return dev;
+		dev = list_entry(entry, संरचना mii_dev, link);
+		यदि (strcmp(dev->name, devname) == 0)
+			प्रत्यागम dev;
 	}
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-struct mii_dev *mdio_alloc(void)
+संरचना mii_dev *mdio_alloc(शून्य)
 {
-	struct mii_dev *bus;
+	संरचना mii_dev *bus;
 
-	bus = malloc(sizeof(*bus));
-	if (!bus)
-		return bus;
+	bus = malloc(परिमाण(*bus));
+	यदि (!bus)
+		प्रत्यागम bus;
 
-	memset(bus, 0, sizeof(*bus));
+	memset(bus, 0, परिमाण(*bus));
 
 	/* initialize mii_dev struct fields */
 	INIT_LIST_HEAD(&bus->link);
 
-	return bus;
+	प्रत्यागम bus;
 }
 
-void mdio_free(struct mii_dev *bus)
+शून्य mdio_free(संरचना mii_dev *bus)
 {
-	free(bus);
+	मुक्त(bus);
 }
 
-int mdio_register(struct mii_dev *bus)
+पूर्णाङ्क mdio_register(संरचना mii_dev *bus)
 {
-	if (!bus || !bus->read || !bus->write)
-		return -1;
+	यदि (!bus || !bus->पठ || !bus->लिख)
+		प्रत्यागम -1;
 
 	/* check if we have unique name */
-	if (miiphy_get_dev_by_name(bus->name)) {
+	यदि (miiphy_get_dev_by_name(bus->name)) {
 		printf("mdio_register: non unique device name '%s'\n",
 			bus->name);
-		return -1;
+		प्रत्यागम -1;
 	}
 
 	/* add it to the list */
 	list_add_tail(&bus->link, &mii_devs);
 
-	if (!current_mii)
+	यदि (!current_mii)
 		current_mii = bus;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int mdio_register_seq(struct mii_dev *bus, int seq)
+पूर्णाङ्क mdio_register_seq(संरचना mii_dev *bus, पूर्णाङ्क seq)
 {
-	int ret;
+	पूर्णाङ्क ret;
 
 	/* Setup a unique name for each mdio bus */
 	ret = snprintf(bus->name, MDIO_NAME_LEN, "eth%d", seq);
-	if (ret < 0)
-		return ret;
+	यदि (ret < 0)
+		प्रत्यागम ret;
 
-	return mdio_register(bus);
+	प्रत्यागम mdio_register(bus);
 }
 
-int mdio_unregister(struct mii_dev *bus)
+पूर्णाङ्क mdio_unregister(संरचना mii_dev *bus)
 {
-	if (!bus)
-		return 0;
+	यदि (!bus)
+		प्रत्यागम 0;
 
 	/* delete it from the list */
 	list_del(&bus->link);
 
-	if (current_mii == bus)
-		current_mii = NULL;
+	यदि (current_mii == bus)
+		current_mii = रिक्त;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void mdio_list_devices(void)
+शून्य mdio_list_devices(शून्य)
 {
-	struct list_head *entry;
+	संरचना list_head *entry;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
-		struct mii_dev *bus = list_entry(entry, struct mii_dev, link);
+		पूर्णाङ्क i;
+		संरचना mii_dev *bus = list_entry(entry, संरचना mii_dev, link);
 
 		printf("%s:\n", bus->name);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
-			struct phy_device *phydev = bus->phymap[i];
+		प्रति (i = 0; i < PHY_MAX_ADDR; i++) {
+			संरचना phy_device *phydev = bus->phymap[i];
 
-			if (phydev) {
+			यदि (phydev) {
 				printf("%x - %s", i, phydev->drv->name);
 
-				if (phydev->dev)
+				यदि (phydev->dev)
 					printf(" <--> %s\n", phydev->dev->name);
-				else
+				अन्यथा
 					printf("\n");
 			}
 		}
 	}
 }
 
-int miiphy_set_current_dev(const char *devname)
+पूर्णाङ्क miiphy_set_current_dev(ध्रुव वर्ण *devname)
 {
-	struct mii_dev *dev;
+	संरचना mii_dev *dev;
 
 	dev = miiphy_get_dev_by_name(devname);
-	if (dev) {
+	यदि (dev) {
 		current_mii = dev;
-		return 0;
+		प्रत्यागम 0;
 	}
 
 	printf("No such device: %s\n", devname);
 
-	return 1;
+	प्रत्यागम 1;
 }
 
-struct mii_dev *mdio_get_current_dev(void)
+संरचना mii_dev *mdio_get_current_dev(शून्य)
 {
-	return current_mii;
+	प्रत्यागम current_mii;
 }
 
-struct list_head *mdio_get_list_head(void)
+संरचना list_head *mdio_get_list_head(शून्य)
 {
-	return &mii_devs;
+	प्रत्यागम &mii_devs;
 }
 
-struct phy_device *mdio_phydev_for_ethname(const char *ethname)
+संरचना phy_device *mdio_phydev_for_ethname(ध्रुव वर्ण *ethname)
 {
-	struct list_head *entry;
-	struct mii_dev *bus;
+	संरचना list_head *entry;
+	संरचना mii_dev *bus;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
-		bus = list_entry(entry, struct mii_dev, link);
+		पूर्णाङ्क i;
+		bus = list_entry(entry, संरचना mii_dev, link);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
-			if (!bus->phymap[i] || !bus->phymap[i]->dev)
-				continue;
+		प्रति (i = 0; i < PHY_MAX_ADDR; i++) {
+			यदि (!bus->phymap[i] || !bus->phymap[i]->dev)
+				अनुवर्त;
 
-			if (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
-				return bus->phymap[i];
+			यदि (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
+				प्रत्यागम bus->phymap[i];
 		}
 	}
 
 	printf("%s is not a known ethernet\n", ethname);
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-const char *miiphy_get_current_dev(void)
+ध्रुव वर्ण *miiphy_get_current_dev(शून्य)
 {
-	if (current_mii)
-		return current_mii->name;
+	यदि (current_mii)
+		प्रत्यागम current_mii->name;
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static struct mii_dev *miiphy_get_active_dev(const char *devname)
+स्थिर संरचना mii_dev *miiphy_get_active_dev(ध्रुव वर्ण *devname)
 {
 	/* If the current mii is the one we want, return it */
-	if (current_mii)
-		if (strcmp(current_mii->name, devname) == 0)
-			return current_mii;
+	यदि (current_mii)
+		यदि (strcmp(current_mii->name, devname) == 0)
+			प्रत्यागम current_mii;
 
 	/* Otherwise, set the active one to the one we want */
-	if (miiphy_set_current_dev(devname))
-		return NULL;
-	else
-		return current_mii;
+	यदि (miiphy_set_current_dev(devname))
+		प्रत्यागम रिक्त;
+	अन्यथा
+		प्रत्यागम current_mii;
 }
 
 /*****************************************************************************
@@ -227,22 +227,22 @@ static struct mii_dev *miiphy_get_active_dev(const char *devname)
  * Returns:
  *   0 on success
  */
-int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
-		 unsigned short *value)
+पूर्णाङ्क miiphy_read(ध्रुव वर्ण *devname, unsigned वर्ण addr, unsigned वर्ण reg,
+		 unsigned short *मूल्य)
 {
-	struct mii_dev *bus;
-	int ret;
+	संरचना mii_dev *bus;
+	पूर्णाङ्क ret;
 
 	bus = miiphy_get_active_dev(devname);
-	if (!bus)
-		return 1;
+	यदि (!bus)
+		प्रत्यागम 1;
 
-	ret = bus->read(bus, addr, MDIO_DEVAD_NONE, reg);
-	if (ret < 0)
-		return 1;
+	ret = bus->पठ(bus, addr, MDIO_DEVAD_NONE, reg);
+	यदि (ret < 0)
+		प्रत्यागम 1;
 
-	*value = (unsigned short)ret;
-	return 0;
+	*मूल्य = (unsigned short)ret;
+	प्रत्यागम 0;
 }
 
 /*****************************************************************************
@@ -255,35 +255,35 @@ int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
  * Returns:
  *   0 on success
  */
-int miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
-		  unsigned short value)
+पूर्णाङ्क miiphy_write(ध्रुव वर्ण *devname, unsigned वर्ण addr, unsigned वर्ण reg,
+		  unsigned short मूल्य)
 {
-	struct mii_dev *bus;
+	संरचना mii_dev *bus;
 
 	bus = miiphy_get_active_dev(devname);
-	if (bus)
-		return bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
+	यदि (bus)
+		प्रत्यागम bus->लिख(bus, addr, MDIO_DEVAD_NONE, reg, मूल्य);
 
-	return 1;
+	प्रत्यागम 1;
 }
 
 /*****************************************************************************
  *
  * Print out list of registered MII capable devices.
  */
-void miiphy_listdev(void)
+शून्य miiphy_listdev(शून्य)
 {
-	struct list_head *entry;
-	struct mii_dev *dev;
+	संरचना list_head *entry;
+	संरचना mii_dev *dev;
 
 	puts("MII devices: ");
 	list_for_each(entry, &mii_devs) {
-		dev = list_entry(entry, struct mii_dev, link);
+		dev = list_entry(entry, संरचना mii_dev, link);
 		printf("'%s' ", dev->name);
 	}
 	puts("\n");
 
-	if (current_mii)
+	यदि (current_mii)
 		printf("Current device: '%s'\n", current_mii->name);
 }
 
@@ -300,36 +300,36 @@ void miiphy_listdev(void)
  * Returns:
  *   0 on success
  */
-int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
-		 unsigned char *model, unsigned char *rev)
+पूर्णाङ्क miiphy_info(ध्रुव वर्ण *devname, unsigned वर्ण addr, unsigned पूर्णाङ्क *oui,
+		 unsigned वर्ण *model, unsigned वर्ण *rev)
 {
-	unsigned int reg = 0;
+	unsigned पूर्णाङ्क reg = 0;
 	unsigned short tmp;
 
-	if (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
+	यदि (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
 		debug("PHY ID register 2 read failed\n");
-		return -1;
+		प्रत्यागम -1;
 	}
 	reg = tmp;
 
 	debug("MII_PHYSID2 @ 0x%x = 0x%04x\n", addr, reg);
 
-	if (reg == 0xFFFF) {
+	यदि (reg == 0xFFFF) {
 		/* No physical device present at this address */
-		return -1;
+		प्रत्यागम -1;
 	}
 
-	if (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
+	यदि (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
 		debug("PHY ID register 1 read failed\n");
-		return -1;
+		प्रत्यागम -1;
 	}
 	reg |= tmp << 16;
 	debug("PHY_PHYIDR[1,2] @ 0x%x = 0x%08x\n", addr, reg);
 
 	*oui = (reg >> 10);
-	*model = (unsigned char)((reg >> 4) & 0x0000003F);
-	*rev = (unsigned char)(reg & 0x0000000F);
-	return 0;
+	*model = (unsigned वर्ण)((reg >> 4) & 0x0000003F);
+	*rev = (unsigned वर्ण)(reg & 0x0000000F);
+	प्रत्यागम 0;
 }
 
 #ifndef CONFIG_PHYLIB
@@ -342,20 +342,20 @@ int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
  * Returns:
  *   0 on success
  */
-int miiphy_reset(const char *devname, unsigned char addr)
+पूर्णाङ्क miiphy_reset(ध्रुव वर्ण *devname, unsigned वर्ण addr)
 {
 	unsigned short reg;
-	int timeout = 500;
+	पूर्णाङ्क timeout = 500;
 
-	if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	यदि (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 		debug("PHY status read failed\n");
-		return -1;
+		प्रत्यागम -1;
 	}
-	if (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
+	यदि (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
 		debug("PHY reset failed\n");
-		return -1;
+		प्रत्यागम -1;
 	}
-#if CONFIG_PHY_RESET_DELAY > 0
+#यदि CONFIG_PHY_RESET_DELAY > 0
 	udelay(CONFIG_PHY_RESET_DELAY);	/* Intel LXT971A needs this */
 #endif
 	/*
@@ -364,20 +364,20 @@ int miiphy_reset(const char *devname, unsigned char addr)
 	 * IEEE spec.
 	 */
 	reg = 0x8000;
-	while (((reg & 0x8000) != 0) && timeout--) {
-		if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	यावत् (((reg & 0x8000) != 0) && timeout--) {
+		यदि (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 			debug("PHY status read failed\n");
-			return -1;
+			प्रत्यागम -1;
 		}
 		udelay(1000);
 	}
-	if ((reg & 0x8000) == 0) {
-		return 0;
-	} else {
+	यदि ((reg & 0x8000) == 0) {
+		प्रत्यागम 0;
+	} अन्यथा {
 		puts("PHY reset timed out\n");
-		return -1;
+		प्रत्यागम -1;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 #endif /* !PHYLIB */
 
@@ -385,122 +385,122 @@ int miiphy_reset(const char *devname, unsigned char addr)
  *
  * Determine the ethernet speed (10/100/1000).  Return 10 on error.
  */
-int miiphy_speed(const char *devname, unsigned char addr)
+पूर्णाङ्क miiphy_speed(ध्रुव वर्ण *devname, unsigned वर्ण addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#यदि defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/*
 	 * Check for 1000BASE-X.  If it is supported, then assume that the speed
 	 * is 1000.
 	 */
-	if (miiphy_is_1000base_x(devname, addr))
-		return _1000BASET;
+	यदि (miiphy_is_1000base_x(devname, addr))
+		प्रत्यागम _1000BASET;
 
 	/*
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	यदि (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
-		goto miiphy_read_failed;
+		गच्छ miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF &&
+	यदि (btsr != 0xFFFF &&
 			(btsr & (PHY_1000BTSR_1000FD | PHY_1000BTSR_1000HD)))
-		return _1000BASET;
+		प्रत्यागम _1000BASET;
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	यदि (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		printf("PHY speed");
-		goto miiphy_read_failed;
+		गच्छ miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	यदि (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		यदि (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("PHY AN speed");
-			goto miiphy_read_failed;
+			गच्छ miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		यदि (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv speed");
-			goto miiphy_read_failed;
+			गच्छ miiphy_read_failed;
 		}
-		return ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
+		प्रत्यागम ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
+	प्रत्यागम (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
 
 miiphy_read_failed:
 	printf(" read failed, assuming 10BASE-T\n");
-	return _10BASET;
+	प्रत्यागम _10BASET;
 }
 
 /*****************************************************************************
  *
  * Determine full/half duplex.  Return half on error.
  */
-int miiphy_duplex(const char *devname, unsigned char addr)
+पूर्णाङ्क miiphy_duplex(ध्रुव वर्ण *devname, unsigned वर्ण addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#यदि defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/* Check for 1000BASE-X. */
-	if (miiphy_is_1000base_x(devname, addr)) {
+	यदि (miiphy_is_1000base_x(devname, addr)) {
 		/* 1000BASE-X */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		यदि (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("1000BASE-X PHY AN duplex");
-			goto miiphy_read_failed;
+			गच्छ miiphy_read_failed;
 		}
 	}
 	/*
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	यदि (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
-		goto miiphy_read_failed;
+		गच्छ miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF) {
-		if (btsr & PHY_1000BTSR_1000FD) {
-			return FULL;
-		} else if (btsr & PHY_1000BTSR_1000HD) {
-			return HALF;
+	यदि (btsr != 0xFFFF) {
+		यदि (btsr & PHY_1000BTSR_1000FD) {
+			प्रत्यागम FULL;
+		} अन्यथा यदि (btsr & PHY_1000BTSR_1000HD) {
+			प्रत्यागम HALF;
 		}
 	}
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	यदि (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		puts("PHY duplex");
-		goto miiphy_read_failed;
+		गच्छ miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	यदि (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		यदि (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			puts("PHY AN duplex");
-			goto miiphy_read_failed;
+			गच्छ miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		यदि (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv duplex");
-			goto miiphy_read_failed;
+			गच्छ miiphy_read_failed;
 		}
-		return ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
+		प्रत्यागम ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
 		    FULL : HALF;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
+	प्रत्यागम (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
 
 miiphy_read_failed:
 	printf(" read failed, assuming half duplex\n");
-	return HALF;
+	प्रत्यागम HALF;
 }
 
 /*****************************************************************************
@@ -508,18 +508,18 @@ miiphy_read_failed:
  * Return 1 if PHY supports 1000BASE-X, 0 if PHY supports 10BASE-T/100BASE-TX/
  * 1000BASE-T, or on error.
  */
-int miiphy_is_1000base_x(const char *devname, unsigned char addr)
+पूर्णाङ्क miiphy_is_1000base_x(ध्रुव वर्ण *devname, unsigned वर्ण addr)
 {
-#if defined(CONFIG_PHY_GIGE)
+#यदि defined(CONFIG_PHY_GIGE)
 	u16 exsr;
 
-	if (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
+	यदि (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
 		printf("PHY extended status read failed, assuming no "
 			"1000BASE-X\n");
-		return 0;
+		प्रत्यागम 0;
 	}
-	return 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
-#else
-	return 0;
+	प्रत्यागम 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
+#अन्यथा
+	प्रत्यागम 0;
 #endif
 }
