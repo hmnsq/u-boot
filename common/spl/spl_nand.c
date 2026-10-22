@@ -3,169 +3,169 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#شامل <config.h>
+#شامل <fdt_support.h>
+#شامل <image.h>
+#شامل <imx_container.h>
+#شامل <log.h>
+#شامل <spl.h>
+#شامل <spl_load.h>
+#شامل <asm/io.h>
+#شامل <mapmem.h>
+#شامل <nand.h>
+#شامل <linux/libfdt_env.h>
+#شامل <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_صفحہ(خالی)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	واپس CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#اگر defined(CONFIG_SPL_NAND_RAW_ONLY)
+ساکن صحیح spl_nand_بھرو_image(ساخت spl_image_info *spl_image,
+			ساخت spl_boot_device *bootdev)
 {
 	nand_init();
 
-	printf("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
-	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_SIZE,
+	لکھو("Loading U-Boot from 0x%08x (size 0x%08x) to 0x%08x\n",
+	       CONFIG_SYS_NAND_U_BOOT_OFFS, CFG_SYS_NAND_U_BOOT_سائز,
 	       CFG_SYS_NAND_U_BOOT_DST);
 
-	nand_spl_load_image(spl_nand_get_uboot_raw_page(),
-			    CFG_SYS_NAND_U_BOOT_SIZE,
+	nand_spl_بھرو_image(spl_nand_get_uboot_raw_صفحہ(),
+			    CFG_SYS_NAND_U_BOOT_سائز,
 			    map_sysmem(CFG_SYS_NAND_U_BOOT_DST,
-				       CFG_SYS_NAND_U_BOOT_SIZE));
-	spl_set_header_raw_uboot(spl_image);
+				       CFG_SYS_NAND_U_BOOT_سائز));
+	spl_سیٹ_سرخی_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	واپس 0;
 }
-#else
+#ورنہ
 
-__weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
+__weak u32 nand_spl_adjust_انحراف(u32 sector, u32 offs)
 {
-	return offs;
+	واپس offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+ساکن ulong spl_nand_read(ساخت spl_بھرو_info *بھرو, ulong offs, ulong سائز,
+			   خالی *dst)
 {
-	int err;
+	صحیح err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
-	      __func__, offs, size, dst);
+	      __func__, offs, سائز, dst);
 
-	sector = *(int *)load->priv;
-	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
-	err = nand_spl_load_image(offs, size, dst);
-	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	sector = *(صحیح *)بھرو->priv;
+	offs = sector + nand_spl_adjust_انحراف(sector, offs - sector);
+	err = nand_spl_بھرو_image(offs, سائز, dst);
+	spl_سیٹ_bl_len(بھرو, nand_صفحہ_سائز());
+	اگر (err)
+		واپس 0;
 
-	return size;
+	واپس سائز;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+ساکن صحیح spl_nand_بھرو_element(ساخت spl_image_info *spl_image,
+				 ساخت spl_boot_device *bootdev, صحیح انحراف)
 {
-	struct spl_load_info load;
+	ساخت spl_بھرو_info بھرو;
 
-	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	spl_بھرو_init(&بھرو, spl_nand_read, &انحراف, 1);
+	واپس spl_بھرو(spl_image, bootdev, &بھرو, 0, انحراف);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ساکن صحیح spl_nand_بھرو_image_os(ساخت spl_image_info *spl_image,
+				  ساخت spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	صحیح err;
+	ساخت legacy_img_hdr *سرخی = spl_get_بھرو_بفر(0, حجم(*سرخی));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
-	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	nand_spl_بھرو_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, حجم(*سرخی),
+			    (خالی *)سرخی);
+	err = spl_parse_image_سرخی(spl_image, bootdev, سرخی);
+	اگر (err)
+		واپس err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	اگر (سرخی->ih_os != IH_OS_LINUX)
+		واپس -EINVAL;
 
 	/* happy - was a linux */
-	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
-				  spl_image->size,
-				  (void *)spl_image->load_addr);
+	err = nand_spl_بھرو_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
+				  spl_image->سائز,
+				  (خالی *)spl_image->بھرو_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	اگر (err)
+		واپس err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT_دلائل)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
-	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+	صحیح *src, *dst;
+	nand_spl_بھرو_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_سائز,
+			    (خالی *)CONFIG_متن_بنیاد);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	برائے (dst = (صحیح *)CONFIG_SPL_PAYLOAD_دلائل_ADDR,
+	    src = (صحیح *)CONFIG_متن_بنیاد;
+	     src < (صحیح *)(CONFIG_متن_بنیاد + CONFIG_CMD_SPL_WRITE_سائز);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
-#endif
+#اگر_ختم
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ساکن صحیح spl_nand_بھرو_image(ساخت spl_image_info *spl_image,
+			       ساخت spl_boot_device *bootdev)
 {
-	int err;
+	صحیح err;
 
-#ifdef CONFIG_SPL_NAND_SOFTECC
+#اگر_تعریف_شدہ CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#ورنہ
 	debug("spl: nand - using hw ecc\n");
-#endif
+#اگر_ختم
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+#اگر CONFIG_IS_ENABLED(OS_BOOT)
+	اگر (!spl_آغاز_uboot()) {
+		err = spl_nand_بھرو_image_os(spl_image, bootdev);
+		اگر (!err)
+			واپس 0;
+		لکھو("%s: Failed in falcon boot: %d", __func__, err);
+		اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			واپس err;
+		لکھو("Fallback to U-Boot\n");
 	}
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_NAND_ENV_DST
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET);
-#ifdef CONFIG_ENV_OFFSET_REDUND
-	spl_nand_load_element(spl_image, bootdev, CONFIG_ENV_OFFSET_REDUND);
-#endif
-#endif
+#اگر_تعریف_شدہ CONFIG_NAND_ENV_DST
+	spl_nand_بھرو_element(spl_image, bootdev, CONFIG_ENV_انحراف);
+#اگر_تعریف_شدہ CONFIG_ENV_انحراف_REDUND
+	spl_nand_بھرو_element(spl_image, bootdev, CONFIG_ENV_انحراف_REDUND);
+#اگر_ختم
+#اگر_ختم
 	/* Load u-boot */
-	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
-#ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
-		err = spl_nand_load_element(spl_image, bootdev,
+	err = spl_nand_بھرو_element(spl_image, bootdev, spl_nand_get_uboot_raw_صفحہ());
+#اگر_تعریف_شدہ CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+#اگر CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	اگر (err)
+		err = spl_nand_بھرو_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
-#endif
-#endif
+#اگر_ختم
+#اگر_ختم
 	nand_deselect();
-	return err;
+	واپس err;
 }
-#endif
+#اگر_ختم
 /* Use priorty 1 so that Ubi can override this */
-SPL_LOAD_IMAGE_METHOD("NAND", 1, BOOT_DEVICE_NAND, spl_nand_load_image);
+SPL_بھرو_IMAGE_طریقہ("NAND", 1, BOOT_DEVICE_NAND, spl_nand_بھرو_image);

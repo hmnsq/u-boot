@@ -5,22 +5,22 @@
  *
  */
 
-#include <spl.h>
-#include <nvme.h>
+#شامل <spl.h>
+#شامل <nvme.h>
 
-static int spl_nvme_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ساکن صحیح spl_nvme_بھرو_image(ساخت spl_image_info *spl_image,
+			       ساخت spl_boot_device *bootdev)
 {
-	int ret;
+	صحیح ret;
 
-	ret = nvme_scan_namespace();
-	if (ret < 0)
-		return ret;
+	ret = nvme_جائزہ_namespace();
+	اگر (ret < 0)
+		واپس ret;
 
-	ret = spl_blk_load_image(spl_image, bootdev, UCLASS_NVME,
+	ret = spl_blk_بھرو_image(spl_image, bootdev, UCLASS_NVME,
 				 CONFIG_SPL_NVME_BOOT_DEVICE,
-				 CONFIG_SYS_NVME_BOOT_PARTITION);
-	return ret;
+				 CONFIG_SYS_NVME_BOOT_تقسیم);
+	واپس ret;
 }
 
-SPL_LOAD_IMAGE_METHOD("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_load_image);
+SPL_بھرو_IMAGE_طریقہ("NVME", 0, BOOT_DEVICE_NVME, spl_nvme_بھرو_image);

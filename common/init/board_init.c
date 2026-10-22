@@ -6,35 +6,35 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <config.h>
-#include <bootstage.h>
-#include <init.h>
-#include <asm/global_data.h>
+#شامل <config.h>
+#شامل <bootstage.h>
+#شامل <init.h>
+#شامل <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
 /*
  * Unfortunately x86, ARM and RISC-V can't compile this code as gd is defined
  * as macro and cannot be assigned.
  */
-#if !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
-__weak void arch_setup_gd(struct global_data *gd_ptr)
+#اگر !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
+__weak خالی arch_تیاری_gd(ساخت global_ڈیٹا *gd_ptr)
 {
 	gd = gd_ptr;
 }
-#endif /* !CONFIG_X86 && !CONFIG_ARM */
+#اگر_ختم /* !CONFIG_X86 && !CONFIG_ARM */
 
 /**
  * This function is called from board_init_f_init_reserve to set up
  * gd->start_addr_sp for stack protection if not already set otherwise
  */
-__weak void board_init_f_init_stack_protection_addr(ulong base)
+__weak خالی board_init_f_init_ڈھیر_protection_addr(ulong بنیاد)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
+#اگر CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE)
 	/* set up stack pointer for stack usage if not set yet */
-	if (!gd->start_addr_sp)
-		gd->start_addr_sp = base;
-#endif
+	اگر (!gd->آغاز_addr_sp)
+		gd->آغاز_addr_sp = بنیاد;
+#اگر_ختم
 }
 
 /**
@@ -42,16 +42,16 @@ __weak void board_init_f_init_stack_protection_addr(ulong base)
  * determined in gd->start_addr_sp. Boards can override it to set up
  * stack-checking markers.
  */
-__weak void board_init_f_init_stack_protection(void)
+__weak خالی board_init_f_init_ڈھیر_protection(خالی)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
-	ulong stack_bottom = gd->start_addr_sp -
-		CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK);
+#اگر CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE)
+	ulong ڈھیر_bottom = gd->آغاز_addr_sp -
+		CONFIG_VAL(سائز_حد_بندی_PROVIDE_ڈھیر);
 
 	/* substact some safety margin (0x20) since stack is in use here */
-	memset((void *)stack_bottom, CONFIG_VAL(SYS_STACK_F_CHECK_BYTE),
-	       CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK) - 0x20);
-#endif
+	memset((خالی *)ڈھیر_bottom, CONFIG_VAL(SYS_ڈھیر_F_CHECK_BYTE),
+	       CONFIG_VAL(سائز_حد_بندی_PROVIDE_ڈھیر) - 0x20);
+#اگر_ختم
 }
 
 /*
@@ -78,18 +78,18 @@ __weak void board_init_f_init_stack_protection(void)
  *   the calling context need it.
  */
 
-ulong board_init_f_alloc_reserve(ulong top)
+ulong board_init_f_alloc_reserve(ulong چوٹی)
 {
 	/* Reserve early malloc arena */
-#ifndef CFG_MALLOC_F_ADDR
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	top -= CONFIG_VAL(SYS_MALLOC_F_LEN);
-#endif
-#endif
+#اگر_غیر_تعریف_شدہ CFG_MALLOC_F_ADDR
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	چوٹی -= CONFIG_VAL(SYS_MALLOC_F_LEN);
+#اگر_ختم
+#اگر_ختم
 	/* LAST : reserve GD (rounded up to a multiple of 16 bytes) */
-	top = rounddown(top-sizeof(struct global_data), 16);
+	چوٹی = rounddown(چوٹی-حجم(ساخت global_ڈیٹا), 16);
 
-	return top;
+	واپس چوٹی;
 }
 
 /*
@@ -134,49 +134,49 @@ ulong board_init_f_alloc_reserve(ulong top)
  * (seemingly useless) incrementation causes no code increase.
  */
 
-void board_init_f_init_reserve(ulong base)
+خالی board_init_f_init_reserve(ulong بنیاد)
 {
-	struct global_data *gd_ptr;
+	ساخت global_ڈیٹا *gd_ptr;
 
 	/*
 	 * clear GD entirely and set it up.
 	 * Use gd_ptr, as gd may not be properly set yet.
 	 */
 
-	gd_ptr = (struct global_data *)base;
+	gd_ptr = (ساخت global_ڈیٹا *)بنیاد;
 	/* zero the area */
-	memset(gd_ptr, '\0', sizeof(*gd));
+	memset(gd_ptr, '\0', حجم(*gd));
 	/* set GD unless architecture did it already */
-#if !defined(CONFIG_ARM)
-	arch_setup_gd(gd_ptr);
-#endif
+#اگر !defined(CONFIG_ARM)
+	arch_تیاری_gd(gd_ptr);
+#اگر_ختم
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
-		board_init_f_init_stack_protection_addr(base);
+	اگر (CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE))
+		board_init_f_init_ڈھیر_protection_addr(بنیاد);
 
 	/* next alloc will be higher by one GD plus 16-byte alignment */
-	base += roundup(sizeof(struct global_data), 16);
+	بنیاد += roundup(حجم(ساخت global_ڈیٹا), 16);
 
 	/*
 	 * record early malloc arena start.
 	 * Use gd as it is now properly set for all architectures.
 	 */
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	/* go down one 'early malloc arena' */
-	gd->malloc_base = base;
-#if CONFIG_IS_ENABLED(ZERO_MEM_BEFORE_USE)
-	memset((void *)base, '\0', CONFIG_VAL(SYS_MALLOC_F_LEN));
-#endif
-#endif
+	gd->malloc_بنیاد = بنیاد;
+#اگر CONFIG_IS_ENABLED(ZERO_MEM_BEFORE_USE)
+	memset((خالی *)بنیاد, '\0', CONFIG_VAL(SYS_MALLOC_F_LEN));
+#اگر_ختم
+#اگر_ختم
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
-		board_init_f_init_stack_protection();
+	اگر (CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE))
+		board_init_f_init_ڈھیر_protection();
 }
 
-#if CONFIG_IS_ENABLED(SHOW_BOOT_PROGRESS)
+#اگر CONFIG_IS_ENABLED(SHOW_BOOT_پیش_رفت)
 /*
  * Board-specific Platform code can reimplement show_boot_progress () if needed
  */
-__weak void show_boot_progress(int val) {}
-#endif
+__weak خالی show_boot_پیش_رفت(صحیح val) {}
+#اگر_ختم

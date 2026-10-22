@@ -8,27 +8,27 @@
  * JinHua Luo, GuangDong Linux Center, <luo.jinhua@gd-linux.com>
  */
 
-#define pr_fmt(fmt) "cli: %s: " fmt, __func__
+#تعریف_کرو pr_fmt(fmt) "cli: %s: " fmt, __func__
 
-#include <ansi.h>
-#include <bootstage.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <fdtdec.h>
-#include <hang.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <dm/ofnode.h>
-#include <linux/errno.h>
+#شامل <ansi.h>
+#شامل <bootstage.h>
+#شامل <cli.h>
+#شامل <cli_hush.h>
+#شامل <command.h>
+#شامل <console.h>
+#شامل <env.h>
+#شامل <fdtdec.h>
+#شامل <hang.h>
+#شامل <malloc.h>
+#شامل <asm/global_data.h>
+#شامل <dm/ofnode.h>
+#شامل <linux/errno.h>
 
-#ifdef CONFIG_CMDLINE
+#اگر_تعریف_شدہ CONFIG_CMDLINE
 
-static inline bool use_hush_old(void)
+ساکن اندرونی bool use_hush_old(خالی)
 {
-	return IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
+	واپس IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
 	gd->flags & GD_FLG_HUSH_OLD_PARSER :
 	IS_ENABLED(CONFIG_HUSH_OLD_PARSER);
 }
@@ -40,24 +40,24 @@ static inline bool use_hush_old(void)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 on success, or != 0 on error.
  */
-int run_command(const char *cmd, int flag)
+صحیح تسلسل_command(ثابت حرف *cmd, صحیح flag)
 {
-#if !IS_ENABLED(CONFIG_HUSH_PARSER)
+#اگر !IS_ENABLED(CONFIG_HUSH_PARSER)
 	/*
 	 * cli_run_command can return 0 or 1 for success, so clean up
 	 * its result.
 	 */
-	if (cli_simple_run_command(cmd, flag) == -1)
-		return 1;
+	اگر (cli_simple_تسلسل_command(cmd, flag) == -1)
+		واپس 1;
 
-	return 0;
-#else
-	if (use_hush_old()) {
-		int hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
+	واپس 0;
+#ورنہ
+	اگر (use_hush_old()) {
+		صحیح hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
 
-		if (flag & CMD_FLAG_ENV)
+		اگر (flag & CMD_FLAG_ENV)
 			hush_flags |= FLAG_CONT_ON_NEWLINE;
-		return parse_string_outer(cmd, hush_flags);
+		واپس parse_string_outer(cmd, hush_flags);
 	}
 	/*
 	 * Possible values for flags are the following:
@@ -74,8 +74,8 @@ int run_command(const char *cmd, int flag)
 	 * run_command(). In this case, modern Hush reads until it finds
 	 * '\0'. So, I think we do not need this flag.
 	 */
-	return parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
-#endif
+	واپس parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
+#اگر_ختم
 }
 
 /*
@@ -85,18 +85,18 @@ int run_command(const char *cmd, int flag)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 (not repeatable) or 1 (repeatable) on success, -1 on error.
  */
-int run_command_repeatable(const char *cmd, int flag)
+صحیح تسلسل_command_repeatable(ثابت حرف *cmd, صحیح flag)
 {
-#ifndef CONFIG_HUSH_PARSER
-	return cli_simple_run_command(cmd, flag);
-#else
-	int ret;
+#اگر_غیر_تعریف_شدہ CONFIG_HUSH_PARSER
+	واپس cli_simple_تسلسل_command(cmd, flag);
+#ورنہ
+	صحیح ret;
 
-	if (use_hush_old()) {
+	اگر (use_hush_old()) {
 		ret = parse_string_outer(cmd,
 					 FLAG_PARSE_SEMICOLON
 					 | FLAG_EXIT_FROM_LOOP);
-	} else {
+	} ورنہ {
 		ret = parse_string_outer_modern(cmd,
 					      FLAG_PARSE_SEMICOLON
 					      | FLAG_EXIT_FROM_LOOP);
@@ -106,49 +106,49 @@ int run_command_repeatable(const char *cmd, int flag)
 	 * parse_string_outer() returns 1 for failure, so clean up
 	 * its result.
 	 */
-	if (ret)
-		return -1;
+	اگر (ret)
+		واپس -1;
 
-	return 0;
-#endif
+	واپس 0;
+#اگر_ختم
 }
-#else
-__weak int board_run_command(const char *cmdline)
+#ورنہ
+__weak صحیح board_تسلسل_command(ثابت حرف *cmdline)
 {
-	printf("## Commands are disabled. Please enable CONFIG_CMDLINE.\n");
+	لکھو("## Commands are disabled. Please enable CONFIG_CMDLINE.\n");
 
-	return 1;
+	واپس 1;
 }
-#endif /* CONFIG_CMDLINE */
+#اگر_ختم /* CONFIG_CMDLINE */
 
-int run_command_list(const char *cmd, int len, int flag)
+صحیح تسلسل_command_list(ثابت حرف *cmd, صحیح len, صحیح flag)
 {
-	int need_buff = 1;
-	char *buff = (char *)cmd;	/* cast away const */
-	int rcode = 0;
+	صحیح need_buff = 1;
+	حرف *buff = (حرف *)cmd;	/* cast away const */
+	صحیح rcode = 0;
 
-	if (len == -1) {
-		len = strlen(cmd);
-#ifdef CONFIG_HUSH_PARSER
+	اگر (len == -1) {
+		len = لڑی_لمبائی(cmd);
+#اگر_تعریف_شدہ CONFIG_HUSH_PARSER
 		/* hush will never change our string */
 		need_buff = 0;
-#else
+#ورنہ
 		/* the built-in parser will change our string if it sees \n */
-		need_buff = strchr(cmd, '\n') != NULL;
-#endif
+		need_buff = strchr(cmd, '\n') != تہی;
+#اگر_ختم
 	}
-	if (need_buff) {
+	اگر (need_buff) {
 		buff = memdup_nul(cmd, len);
-		if (!buff)
-			return 1;
+		اگر (!buff)
+			واپس 1;
 	}
-#ifdef CONFIG_HUSH_PARSER
-	if (use_hush_old()) {
+#اگر_تعریف_شدہ CONFIG_HUSH_PARSER
+	اگر (use_hush_old()) {
 		rcode = parse_string_outer(buff, FLAG_PARSE_SEMICOLON);
-	} else {
+	} ورنہ {
 		rcode = parse_string_outer_modern(buff, FLAG_PARSE_SEMICOLON);
 	}
-#else
+#ورنہ
 	/*
 	 * This function will overwrite any \n it sees with a \0, which
 	 * is why it can't work with a const char *. Here we are making
@@ -156,83 +156,83 @@ int run_command_list(const char *cmd, int len, int flag)
 	 * doing a malloc() which is actually required only in a case that
 	 * is pretty rare.
 	 */
-#ifdef CONFIG_CMDLINE
-	rcode = cli_simple_run_command_list(buff, flag);
-#else
-	rcode = board_run_command(buff);
-#endif
-#endif
-	if (need_buff)
-		free(buff);
+#اگر_تعریف_شدہ CONFIG_CMDLINE
+	rcode = cli_simple_تسلسل_command_list(buff, flag);
+#ورنہ
+	rcode = board_تسلسل_command(buff);
+#اگر_ختم
+#اگر_ختم
+	اگر (need_buff)
+		آزاد(buff);
 
-	return rcode;
+	واپس rcode;
 }
 
-int run_commandf(const char *fmt, ...)
+صحیح تسلسل_commandf(ثابت حرف *fmt, ...)
 {
-	va_list args;
-	int nbytes;
+	va_list دلائل;
+	صحیح nbytes;
 
-	va_start(args, fmt);
+	va_آغاز(دلائل, fmt);
 	/*
 	 * Limit the console_buffer space being used to CONFIG_SYS_CBSIZE,
 	 * because its last byte is used to fit the replacement of \0 by \n\0
 	 * in underlying hush parser
 	 */
-	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, args);
-	va_end(args);
+	nbytes = vsnprintf(console_بفر, CONFIG_SYS_CBSIZE, fmt, دلائل);
+	va_انتہا(دلائل);
 
-	if (nbytes < 0) {
+	اگر (nbytes < 0) {
 		pr_debug("I/O internal error occurred.\n");
-		return -EIO;
-	} else if (nbytes >= CONFIG_SYS_CBSIZE) {
+		واپس -EIO;
+	} ورنہ اگر (nbytes >= CONFIG_SYS_CBSIZE) {
 		pr_debug("'fmt' size:%d exceeds the limit(%d)\n",
 			 nbytes, CONFIG_SYS_CBSIZE);
-		return -ENOSPC;
+		واپس -ENOSPC;
 	}
-	return run_command(console_buffer, 0);
+	واپس تسلسل_command(console_بفر, 0);
 }
 
 /****************************************************************************/
 
-#if defined(CONFIG_CMD_RUN)
-int do_run(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+#اگر defined(CONFIG_CMD_تسلسل)
+صحیح do_تسلسل(ساخت cmd_tbl *cmdtp, صحیح flag, صحیح argc, حرف *ثابت argv[])
 {
-	int i, ret;
+	صحیح i, ret;
 
-	if (argc < 2)
-		return CMD_RET_USAGE;
+	اگر (argc < 2)
+		واپس CMD_RET_USAGE;
 
-	for (i = 1; i < argc; ++i) {
-		char *arg;
+	برائے (i = 1; i < argc; ++i) {
+		حرف *arg;
 
 		arg = env_get(argv[i]);
-		if (arg == NULL) {
-			printf("## Error: \"%s\" not defined\n", argv[i]);
-			return 1;
+		اگر (arg == تہی) {
+			لکھو("## Error: \"%s\" not defined\n", argv[i]);
+			واپس 1;
 		}
 
-		ret = run_command(arg, flag | CMD_FLAG_ENV);
-		if (ret)
-			return ret;
+		ret = تسلسل_command(arg, flag | CMD_FLAG_ENV);
+		اگر (ret)
+			واپس ret;
 	}
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#if CONFIG_IS_ENABLED(OF_CONTROL)
-bool cli_process_fdt(const char **cmdp)
+#اگر CONFIG_IS_ENABLED(کا_CONTROL)
+bool cli_process_fdt(ثابت حرف **cmdp)
 {
 	/* Allow the fdt to override the boot command */
-	const char *env = ofnode_conf_read_str("bootcmd");
-	if (env)
+	ثابت حرف *env = ofnode_conf_read_str("bootcmd");
+	اگر (env)
 		*cmdp = env;
 	/*
 	 * If the bootsecure option was chosen, use secure_boot_cmd().
 	 * Always use 'env' in this case, since bootsecure requres that the
 	 * bootcmd was specified in the FDT too.
 	 */
-	return ofnode_conf_read_int("bootsecure", 0);
+	واپس ofnode_conf_read_int("bootsecure", 0);
 }
 
 /*
@@ -248,38 +248,38 @@ bool cli_process_fdt(const char **cmdp)
  * Upon any failures, this function will drop into an infinite loop after
  * printing the error message to console.
  */
-void cli_secure_boot_cmd(const char *cmd)
+خالی cli_secure_boot_cmd(ثابت حرف *cmd)
 {
-#ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-#endif
-	int rc;
+#اگر_تعریف_شدہ CONFIG_CMDLINE
+	ساخت cmd_tbl *cmdtp;
+#اگر_ختم
+	صحیح rc;
 
-	if (!cmd) {
-		printf("## Error: Secure boot command not specified\n");
-		goto err;
+	اگر (!cmd) {
+		لکھو("## Error: Secure boot command not specified\n");
+		جاؤ err;
 	}
 
 	/* Disable Ctrl-C just in case some command is used that checks it. */
 	disable_ctrlc(1);
 
 	/* Find the command directly. */
-#ifdef CONFIG_CMDLINE
-	cmdtp = find_cmd(cmd);
-	if (!cmdtp) {
-		printf("## Error: \"%s\" not defined\n", cmd);
-		goto err;
+#اگر_تعریف_شدہ CONFIG_CMDLINE
+	cmdtp = ڈھونڈو_cmd(cmd);
+	اگر (!cmdtp) {
+		لکھو("## Error: \"%s\" not defined\n", cmd);
+		جاؤ err;
 	}
 
 	/* Run the command, forcing no flags and faking argc and argv. */
-	rc = (cmdtp->cmd)(cmdtp, 0, 1, (char **)&cmd);
+	rc = (cmdtp->cmd)(cmdtp, 0, 1, (حرف **)&cmd);
 
-#else
-	rc = board_run_command(cmd);
-#endif
+#ورنہ
+	rc = board_تسلسل_command(cmd);
+#اگر_ختم
 
 	/* Shouldn't ever return from boot command. */
-	printf("## Error: \"%s\" returned (code %d)\n", cmd, rc);
+	لکھو("## Error: \"%s\" returned (code %d)\n", cmd, rc);
 
 err:
 	/*
@@ -288,57 +288,57 @@ err:
 	 */
 	hang();
 }
-#endif /* CONFIG_IS_ENABLED(OF_CONTROL) */
+#اگر_ختم /* CONFIG_IS_ENABLED(OF_CONTROL) */
 
-void cli_loop(void)
+خالی cli_loop(خالی)
 {
 	bootstage_mark(BOOTSTAGE_ID_ENTER_CLI_LOOP);
 
-	if (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
+	اگر (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
 		console_flush_stdin();
 
-#if CONFIG_IS_ENABLED(HUSH_PARSER)
-	if (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
-		parse_and_run_file();
-	else if (gd->flags & GD_FLG_HUSH_OLD_PARSER)
+#اگر CONFIG_IS_ENABLED(HUSH_PARSER)
+	اگر (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
+		parse_and_تسلسل_file();
+	ورنہ اگر (gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		parse_file_outer();
 
-	printf("Problem\n");
+	لکھو("Problem\n");
 	/* This point is never reached */
-	for (;;);
-#elif defined(CONFIG_CMDLINE)
+	برائے (;;);
+#وگرنہ_اگر defined(CONFIG_CMDLINE)
 	cli_simple_loop();
-#else
-	printf("## U-Boot command line is disabled. Please enable CONFIG_CMDLINE\n");
-#endif /*CONFIG_HUSH_PARSER*/
+#ورنہ
+	لکھو("## U-Boot command line is disabled. Please enable CONFIG_CMDLINE\n");
+#اگر_ختم /*CONFIG_HUSH_PARSER*/
 }
 
-void cli_init(void)
+خالی cli_init(خالی)
 {
-#ifdef CONFIG_HUSH_PARSER
+#اگر_تعریف_شدہ CONFIG_HUSH_PARSER
 	/* This if block is used to initialize hush parser gd flag. */
-	if (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	اگر (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		&& !(gd->flags & GD_FLG_HUSH_MODERN_PARSER)) {
-		if (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
+		اگر (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
 			gd->flags |= GD_FLG_HUSH_OLD_PARSER;
-		else if (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
+		ورنہ اگر (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
 			gd->flags |= GD_FLG_HUSH_MODERN_PARSER;
 	}
 
-	if (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
-		u_boot_hush_start();
-	} else if (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
-		u_boot_hush_start_modern();
-	} else {
-		printf("No valid hush parser to use, cli will not initialized!\n");
-		return;
+	اگر (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
+		u_boot_hush_آغاز();
+	} ورنہ اگر (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
+		u_boot_hush_آغاز_modern();
+	} ورنہ {
+		لکھو("No valid hush parser to use, cli will not initialized!\n");
+		واپس;
 	}
-#endif
+#اگر_ختم
 
-#if defined(CONFIG_HUSH_INIT_VAR)
+#اگر defined(CONFIG_HUSH_INIT_VAR)
 	hush_init_var();
-#endif
+#اگر_ختم
 
-	if (CONFIG_IS_ENABLED(VIDEO_ANSI))
-		printf(ANSI_CURSOR_SHOW "\n");
+	اگر (CONFIG_IS_ENABLED(VIDEO_ANSI))
+		لکھو(ANSI_CURSOR_SHOW "\n");
 }

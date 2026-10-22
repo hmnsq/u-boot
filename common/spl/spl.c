@@ -6,86 +6,86 @@
  * Aneesh V <aneesh@ti.com>
  */
 
-#include <config.h>
-#include <bloblist.h>
-#include <binman_sym.h>
-#include <bootstage.h>
-#include <dm.h>
-#include <handoff.h>
-#include <hang.h>
-#include <init.h>
-#include <irq_func.h>
-#include <log.h>
-#include <mapmem.h>
-#include <of_live.h>
-#include <serial.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <system-constants.h>
-#include <asm/global_data.h>
-#include <asm-generic/gpio.h>
-#include <nand.h>
-#include <fat.h>
-#include <u-boot/crc.h>
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
-#include <timestamp.h>
-#endif
-#include <version.h>
-#include <image.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <dm/root.h>
-#include <dm/util.h>
-#include <dm/device-internal.h>
-#include <dm/uclass-internal.h>
-#include <linux/compiler.h>
-#include <fdt_support.h>
-#include <bootcount.h>
-#include <wdt.h>
-#include <video.h>
+#شامل <config.h>
+#شامل <bloblist.h>
+#شامل <binman_sym.h>
+#شامل <bootstage.h>
+#شامل <dm.h>
+#شامل <handoff.h>
+#شامل <hang.h>
+#شامل <init.h>
+#شامل <irq_func.h>
+#شامل <log.h>
+#شامل <mapmem.h>
+#شامل <of_live.h>
+#شامل <serial.h>
+#شامل <spl.h>
+#شامل <spl_load.h>
+#شامل <system-constants.h>
+#شامل <asm/global_data.h>
+#شامل <asm-generic/gpio.h>
+#شامل <nand.h>
+#شامل <fat.h>
+#شامل <u-boot/crc.h>
+#اگر CONFIG_IS_ENABLED(BANNER_PRINT)
+#شامل <timestamp.h>
+#اگر_ختم
+#شامل <version.h>
+#شامل <image.h>
+#شامل <malloc.h>
+#شامل <mapmem.h>
+#شامل <dm/root.h>
+#شامل <dm/util.h>
+#شامل <dm/device-internal.h>
+#شامل <dm/uclass-internal.h>
+#شامل <linux/compiler.h>
+#شامل <fdt_support.h>
+#شامل <bootcount.h>
+#شامل <wdt.h>
+#شامل <video.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 DECLARE_BINMAN_MAGIC_SYM;
 
-u32 *boot_params_ptr = NULL;
+u32 *boot_params_ptr = تہی;
 
-#if CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS)
+#اگر CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS)
 /* See spl.h for information about this */
-#if defined(CONFIG_SPL_BUILD)
+#اگر defined(CONFIG_SPL_BUILD)
 binman_sym_declare(ulong, u_boot_any, image_pos);
-binman_sym_declare(ulong, u_boot_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_any, سائز);
+#اگر_ختم
 
-#ifdef CONFIG_TPL
+#اگر_تعریف_شدہ CONFIG_TPL
 binman_sym_declare(ulong, u_boot_spl_any, image_pos);
-binman_sym_declare(ulong, u_boot_spl_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_spl_any, سائز);
+#اگر_ختم
 
-#ifdef CONFIG_VPL
+#اگر_تعریف_شدہ CONFIG_VPL
 binman_sym_declare(ulong, u_boot_vpl_any, image_pos);
-binman_sym_declare(ulong, u_boot_vpl_any, size);
-#endif
+binman_sym_declare(ulong, u_boot_vpl_any, سائز);
+#اگر_ختم
 
-#endif /* BINMAN_UBOOT_SYMBOLS */
+#اگر_ختم /* BINMAN_UBOOT_SYMBOLS */
 
 /* Define board data structure */
-static struct bd_info bdata __attribute__ ((section(".data")));
+ساکن ساخت bd_info bdata __attribute__ ((section(".data")));
 
-#if CONFIG_IS_ENABLED(SHOW_BOOT_PROGRESS)
+#اگر CONFIG_IS_ENABLED(SHOW_BOOT_پیش_رفت)
 /*
  * Board-specific Platform code can reimplement show_boot_progress () if needed
  */
-__weak void show_boot_progress(int val) {}
-#endif
+__weak خالی show_boot_پیش_رفت(صحیح val) {}
+#اگر_ختم
 
-#if defined(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) || \
+#اگر defined(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) || \
 	defined(CONFIG_SPL_ATF)
 /* weak, default platform-specific function to initialize dram banks */
-__weak int dram_init_banksize(void)
+__weak صحیح dram_init_banksize(خالی)
 {
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
 /*
  * Default function to determine if u-boot or the OS should
@@ -97,129 +97,129 @@ __weak int dram_init_banksize(void)
  * 0 to not start u-boot
  * positive if u-boot should start
  */
-#if CONFIG_IS_ENABLED(OS_BOOT)
-__weak int spl_start_uboot(void)
+#اگر CONFIG_IS_ENABLED(OS_BOOT)
+__weak صحیح spl_آغاز_uboot(خالی)
 {
 	puts(PHASE_PROMPT
 	     "Please implement spl_start_uboot() for your board\n");
 	puts(PHASE_PROMPT "Direct Linux boot not active!\n");
-	return 1;
+	واپس 1;
 }
 
 /*
  * Weak default function for arch specific zImage check. Return zero
  * and fill start and end address if image is recognized.
  */
-int __weak bootz_setup(ulong image, ulong *start, ulong *end)
+صحیح __weak bootz_تیاری(ulong image, ulong *آغاز, ulong *انتہا_2)
 {
-	 return 1;
+	 واپس 1;
 }
 
-int __weak booti_setup(ulong image, ulong *relocated_addr, ulong *size, bool force_reloc)
+صحیح __weak booti_تیاری(ulong image, ulong *relocated_addr, ulong *سائز, bool force_reloc)
 {
-	 return 1;
+	 واپس 1;
 }
-#endif
+#اگر_ختم
 
 /* Weak default function for arch specific fixups to the spl_image_info */
-void __weak spl_perform_arch_fixups(struct spl_image_info *spl_image)
+خالی __weak spl_perform_arch_fixups(ساخت spl_image_info *spl_image)
 {
 }
 
 /* Weak default function for board specific fixups to the spl_image_info */
-void __weak spl_perform_board_fixups(struct spl_image_info *spl_image)
+خالی __weak spl_perform_board_fixups(ساخت spl_image_info *spl_image)
 {
 }
 
-void spl_fixup_fdt(void *fdt_blob)
+خالی spl_fixup_fdt(خالی *fdt_blob)
 {
-#if defined(CONFIG_SPL_OF_LIBFDT)
-	int err;
+#اگر defined(CONFIG_SPL_کا_LIBFDT)
+	صحیح err;
 
-	if (!fdt_blob)
-		return;
+	اگر (!fdt_blob)
+		واپس;
 
-	err = fdt_check_header(fdt_blob);
-	if (err < 0) {
-		printf("fdt_root: %s\n", fdt_strerror(err));
-		return;
+	err = fdt_check_سرخی(fdt_blob);
+	اگر (err < 0) {
+		لکھو("fdt_root: %s\n", fdt_strerror(err));
+		واپس;
 	}
 
 	/* fixup the memory dt node */
-	err = fdt_shrink_to_minimum(fdt_blob, 0);
-	if (err == 0) {
-		printf(PHASE_PROMPT "fdt_shrink_to_minimum err - %d\n", err);
-		return;
+	err = fdt_shrink_مقصد_minimum(fdt_blob, 0);
+	اگر (err == 0) {
+		لکھو(PHASE_PROMPT "fdt_shrink_to_minimum err - %d\n", err);
+		واپس;
 	}
 
 	err = arch_fixup_fdt(fdt_blob);
-	if (err) {
-		printf(PHASE_PROMPT "arch_fixup_fdt err - %d\n", err);
-		return;
+	اگر (err) {
+		لکھو(PHASE_PROMPT "arch_fixup_fdt err - %d\n", err);
+		واپس;
 	}
-#endif
+#اگر_ختم
 }
 
-int spl_reserve_video_from_ram_top(void)
+صحیح spl_reserve_video_from_ram_چوٹی(خالی)
 {
-	if (CONFIG_IS_ENABLED(VIDEO)) {
+	اگر (CONFIG_IS_ENABLED(VIDEO)) {
 		ulong addr;
-		int ret;
+		صحیح ret;
 
-		addr = gd->ram_top;
+		addr = gd->ram_چوٹی;
 		ret = video_reserve(&addr);
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 		debug("Reserving %luk for video at: %08lx\n",
-		      ((unsigned long)gd->relocaddr - addr) >> 10, addr);
+		      ((غیرعلامتی طویل)gd->relocaddr - addr) >> 10, addr);
 		gd->relocaddr = addr;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-ulong spl_get_image_pos(void)
+ulong spl_get_image_pos(خالی)
 {
-	if (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
-		return BINMAN_SYM_MISSING;
+	اگر (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
+		واپس BINMAN_SYM_MISSING;
 
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return binman_sym(ulong, u_boot_vpl_any, image_pos);
-#endif
-#if defined(CONFIG_TPL) && !defined(CONFIG_VPL)
-	if (xpl_next_phase() == PHASE_SPL)
-		return binman_sym(ulong, u_boot_spl_any, image_pos);
-#endif
-#if defined(CONFIG_SPL_BUILD)
-	return binman_sym(ulong, u_boot_any, image_pos);
-#endif
+#اگر_تعریف_شدہ CONFIG_VPL
+	اگر (xpl_اگلا_phase() == PHASE_VPL)
+		واپس binman_sym(ulong, u_boot_vpl_any, image_pos);
+#اگر_ختم
+#اگر defined(CONFIG_TPL) && !defined(CONFIG_VPL)
+	اگر (xpl_اگلا_phase() == PHASE_SPL)
+		واپس binman_sym(ulong, u_boot_spl_any, image_pos);
+#اگر_ختم
+#اگر defined(CONFIG_SPL_BUILD)
+	واپس binman_sym(ulong, u_boot_any, image_pos);
+#اگر_ختم
 
-	return BINMAN_SYM_MISSING;
+	واپس BINMAN_SYM_MISSING;
 }
 
-ulong spl_get_image_size(void)
+ulong spl_get_image_سائز(خالی)
 {
-	if (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
-		return BINMAN_SYM_MISSING;
+	اگر (!CONFIG_IS_ENABLED(BINMAN_UBOOT_SYMBOLS))
+		واپس BINMAN_SYM_MISSING;
 
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return binman_sym(ulong, u_boot_vpl_any, size);
-#endif
-	return xpl_next_phase() == PHASE_SPL ?
-		binman_sym(ulong, u_boot_spl_any, size) :
-		binman_sym(ulong, u_boot_any, size);
+#اگر_تعریف_شدہ CONFIG_VPL
+	اگر (xpl_اگلا_phase() == PHASE_VPL)
+		واپس binman_sym(ulong, u_boot_vpl_any, سائز);
+#اگر_ختم
+	واپس xpl_اگلا_phase() == PHASE_SPL ?
+		binman_sym(ulong, u_boot_spl_any, سائز) :
+		binman_sym(ulong, u_boot_any, سائز);
 }
 
-ulong spl_get_image_text_base(void)
+ulong spl_get_image_متن_بنیاد(خالی)
 {
-#ifdef CONFIG_VPL
-	if (xpl_next_phase() == PHASE_VPL)
-		return CONFIG_VPL_TEXT_BASE;
-#endif
-	return xpl_next_phase() == PHASE_SPL ? CONFIG_SPL_TEXT_BASE :
-		CONFIG_TEXT_BASE;
+#اگر_تعریف_شدہ CONFIG_VPL
+	اگر (xpl_اگلا_phase() == PHASE_VPL)
+		واپس CONFIG_VPL_متن_بنیاد;
+#اگر_ختم
+	واپس xpl_اگلا_phase() == PHASE_SPL ? CONFIG_SPL_متن_بنیاد :
+		CONFIG_متن_بنیاد;
 }
 
 /*
@@ -227,109 +227,109 @@ ulong spl_get_image_text_base(void)
  * Linux boot. Some boards/platforms might not need it, so just provide
  * an empty stub here.
  */
-__weak void spl_board_prepare_for_linux(void)
+__weak خالی spl_board_prepare_for_linux(خالی)
 {
 	/* Nothing to do! */
 }
 
-__weak void spl_board_prepare_for_optee(void *fdt)
+__weak خالی spl_board_prepare_for_optee(خالی *fdt)
 {
 }
 
-__weak const char *spl_board_loader_name(u32 boot_device)
+__weak ثابت حرف *spl_board_loader_name(u32 boot_device)
 {
-	return NULL;
+	واپس تہی;
 }
 
-#if CONFIG_IS_ENABLED(OPTEE_IMAGE)
-__weak void __noreturn jump_to_image_optee(struct spl_image_info *spl_image)
+#اگر CONFIG_IS_ENABLED(OPTEE_IMAGE)
+__weak خالی __noreturn jump_مقصد_image_optee(ساخت spl_image_info *spl_image)
 {
-	spl_optee_entry(NULL, NULL, spl_image->fdt_addr,
-			(void *)spl_image->entry_point);
+	spl_optee_اندراج(تہی, تہی, spl_image->fdt_addr,
+			(خالی *)spl_image->اندراج_نقطہ);
 }
-#endif
+#اگر_ختم
 
-__weak void spl_board_prepare_for_boot(void)
+__weak خالی spl_board_prepare_for_boot(خالی)
 {
 	/* Nothing to do! */
 }
 
-__weak struct legacy_img_hdr *spl_get_load_buffer(ssize_t offset, size_t size)
+__weak ساخت legacy_img_hdr *spl_get_بھرو_بفر(ssize_t انحراف, size_t سائز)
 {
-	return map_sysmem(CONFIG_TEXT_BASE + offset, 0);
+	واپس map_sysmem(CONFIG_متن_بنیاد + انحراف, 0);
 }
 
-void spl_set_header_raw_uboot(struct spl_image_info *spl_image)
+خالی spl_سیٹ_سرخی_raw_uboot(ساخت spl_image_info *spl_image)
 {
 	ulong u_boot_pos = spl_get_image_pos();
 
-#if CONFIG_SYS_MONITOR_LEN != 0
-	spl_image->size = CONFIG_SYS_MONITOR_LEN;
-#else
+#اگر CONFIG_SYS_MONITOR_LEN != 0
+	spl_image->سائز = CONFIG_SYS_MONITOR_LEN;
+#ورنہ
 	/* Unknown U-Boot size, let's assume it will not be more than 200 KB */
-	spl_image->size = 200 * 1024;
-#endif
+	spl_image->سائز = 200 * 1024;
+#اگر_ختم
 
 	/*
 	 * Binman error cases: address of the end of the previous region or the
 	 * start of the image's entry area (usually 0) if there is no previous
 	 * region.
 	 */
-	if (u_boot_pos && u_boot_pos != BINMAN_SYM_MISSING) {
+	اگر (u_boot_pos && u_boot_pos != BINMAN_SYM_MISSING) {
 		/* Binman does not support separated entry addresses */
-		spl_image->entry_point = spl_get_image_text_base();
-		spl_image->load_addr = spl_get_image_text_base();
-		spl_image->size = spl_get_image_size();
-		log_debug("Next load addr %lx\n", spl_image->load_addr);
-	} else {
-		spl_image->entry_point = CONFIG_SYS_UBOOT_START;
-		spl_image->load_addr = CONFIG_TEXT_BASE;
+		spl_image->اندراج_نقطہ = spl_get_image_متن_بنیاد();
+		spl_image->بھرو_addr = spl_get_image_متن_بنیاد();
+		spl_image->سائز = spl_get_image_سائز();
+		log_debug("Next load addr %lx\n", spl_image->بھرو_addr);
+	} ورنہ {
+		spl_image->اندراج_نقطہ = CONFIG_SYS_UBOOT_آغاز;
+		spl_image->بھرو_addr = CONFIG_متن_بنیاد;
 		log_debug("Default load addr %lx (u_boot_pos=%lx)\n",
-			  spl_image->load_addr, u_boot_pos);
+			  spl_image->بھرو_addr, u_boot_pos);
 	}
 	spl_image->os = IH_OS_U_BOOT;
-	spl_image->name = xpl_name(xpl_next_phase());
+	spl_image->name = xpl_name(xpl_اگلا_phase());
 	log_debug("Next phase: %s at %lx size %lx\n", spl_image->name,
-		  spl_image->load_addr, (ulong)spl_image->size);
+		  spl_image->بھرو_addr, (ulong)spl_image->سائز);
 }
 
-__weak int spl_parse_board_header(struct spl_image_info *spl_image,
-				  const struct spl_boot_device *bootdev,
-				  const void *image_header, size_t size)
+__weak صحیح spl_parse_board_سرخی(ساخت spl_image_info *spl_image,
+				  ثابت ساخت spl_boot_device *bootdev,
+				  ثابت خالی *image_سرخی, size_t سائز)
 {
-	return -EINVAL;
+	واپس -EINVAL;
 }
 
-__weak int spl_parse_legacy_header(struct spl_image_info *spl_image,
-				   const struct legacy_img_hdr *header)
+__weak صحیح spl_parse_legacy_سرخی(ساخت spl_image_info *spl_image,
+				   ثابت ساخت legacy_img_hdr *سرخی)
 {
 	/* LEGACY image not supported */
 	debug("Legacy boot image support not enabled, proceeding to other boot methods\n");
-	return -EINVAL;
+	واپس -EINVAL;
 }
 
-int spl_parse_image_header(struct spl_image_info *spl_image,
-			   const struct spl_boot_device *bootdev,
-			   const struct legacy_img_hdr *header)
+صحیح spl_parse_image_سرخی(ساخت spl_image_info *spl_image,
+			   ثابت ساخت spl_boot_device *bootdev,
+			   ثابت ساخت legacy_img_hdr *سرخی)
 {
-	int ret;
+	صحیح ret;
 
-	if (CONFIG_IS_ENABLED(LOAD_FIT_FULL)) {
-		ret = spl_load_fit_image(spl_image, header);
+	اگر (CONFIG_IS_ENABLED(بھرو_FIT_بھرا)) {
+		ret = spl_بھرو_fit_image(spl_image, سرخی);
 
-		if (!ret)
-			return ret;
+		اگر (!ret)
+			واپس ret;
 	}
-	if (image_get_magic(header) == IH_MAGIC) {
-		int ret;
+	اگر (image_get_magic(سرخی) == IH_MAGIC) {
+		صحیح ret;
 
-		ret = spl_parse_legacy_header(spl_image, header);
-		if (ret)
-			return ret;
-		return 0;
+		ret = spl_parse_legacy_سرخی(spl_image, سرخی);
+		اگر (ret)
+			واپس ret;
+		واپس 0;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_PANIC_ON_RAW_IMAGE)) {
+	اگر (IS_ENABLED(CONFIG_SPL_PANIC_ON_RAW_IMAGE)) {
 		/*
 		 * CONFIG_SPL_PANIC_ON_RAW_IMAGE is defined when the
 		 * code which loads images in SPL cannot guarantee that
@@ -341,118 +341,118 @@ int spl_parse_image_header(struct spl_image_info *spl_image,
 		panic("** no mkimage signature but raw image not supported");
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT) && IS_ENABLED(CONFIG_SPL_BOOTI)) {
-		ulong start, size;
+	اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT) && IS_ENABLED(CONFIG_SPL_BOOTI)) {
+		ulong آغاز, سائز;
 
-		if (!booti_setup((ulong)header, &start, &size, 0)) {
+		اگر (!booti_تیاری((ulong)سرخی, &آغاز, &سائز, 0)) {
 			spl_image->name = "Linux";
 			spl_image->os = IH_OS_LINUX;
-			spl_image->load_addr = start;
-			spl_image->entry_point = start;
-			spl_image->size = size;
+			spl_image->بھرو_addr = آغاز;
+			spl_image->اندراج_نقطہ = آغاز;
+			spl_image->سائز = سائز;
 			debug(PHASE_PROMPT
 			      "payload Image, load addr: 0x%lx size: %d\n",
-			      spl_image->load_addr, spl_image->size);
-			return 0;
+			      spl_image->بھرو_addr, spl_image->سائز);
+			واپس 0;
 		}
-	} else if (IS_ENABLED(CONFIG_SPL_OS_BOOT) &&
+	} ورنہ اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT) &&
 		   IS_ENABLED(CONFIG_SPL_BOOTZ)) {
-		ulong start, end;
+		ulong آغاز, انتہا_2;
 
-		if (!bootz_setup((ulong)header, &start, &end)) {
+		اگر (!bootz_تیاری((ulong)سرخی, &آغاز, &انتہا_2)) {
 			spl_image->name = "Linux";
 			spl_image->os = IH_OS_LINUX;
-			spl_image->load_addr = CONFIG_SYS_LOAD_ADDR;
-			spl_image->entry_point = CONFIG_SYS_LOAD_ADDR;
-			spl_image->size = end - start;
+			spl_image->بھرو_addr = CONFIG_SYS_بھرو_ADDR;
+			spl_image->اندراج_نقطہ = CONFIG_SYS_بھرو_ADDR;
+			spl_image->سائز = انتہا_2 - آغاز;
 			debug(PHASE_PROMPT
 			      "payload zImage, load addr: 0x%lx size: %d\n",
-			      spl_image->load_addr, spl_image->size);
-			return 0;
+			      spl_image->بھرو_addr, spl_image->سائز);
+			واپس 0;
 		}
 	}
 
-	if (!spl_parse_board_header(spl_image, bootdev, (const void *)header,
-				    sizeof(*header)))
-		return 0;
+	اگر (!spl_parse_board_سرخی(spl_image, bootdev, (ثابت خالی *)سرخی,
+				    حجم(*سرخی)))
+		واپس 0;
 
-	if (IS_ENABLED(CONFIG_SPL_RAW_IMAGE_SUPPORT)) {
+	اگر (IS_ENABLED(CONFIG_SPL_RAW_IMAGE_SUPPORT)) {
 		/* Signature not found - assume u-boot.bin */
 		debug("mkimage signature not found - ih_magic = %x\n",
-		      header->ih_magic);
-		spl_set_header_raw_uboot(spl_image);
-	} else {
+		      سرخی->ih_magic);
+		spl_سیٹ_سرخی_raw_uboot(spl_image);
+	} ورنہ {
 		/* RAW image not supported, proceed to other boot methods. */
 		debug("Raw boot image support not enabled, proceeding to other boot methods\n");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-#if SPL_LOAD_USERS > 1
-int spl_load(struct spl_image_info *spl_image,
-	     const struct spl_boot_device *bootdev, struct spl_load_info *info,
-	     size_t size, size_t offset)
+#اگر SPL_بھرو_USERS > 1
+صحیح spl_بھرو(ساخت spl_image_info *spl_image,
+	     ثابت ساخت spl_boot_device *bootdev, ساخت spl_بھرو_info *info,
+	     size_t سائز, size_t انحراف)
 {
-	return _spl_load(spl_image, bootdev, info, size, offset);
+	واپس spl_بھرو_2(spl_image, bootdev, info, سائز, انحراف);
 }
-#endif
+#اگر_ختم
 
-__weak void __noreturn jump_to_image(struct spl_image_info *spl_image)
+__weak خالی __noreturn jump_مقصد_image(ساخت spl_image_info *spl_image)
 {
-	typedef void __noreturn (*image_entry_noargs_t)(void);
+	قسمتعریف خالی __noreturn (*image_اندراج_noargs_t)(خالی);
 
-	image_entry_noargs_t image_entry =
-		(image_entry_noargs_t)spl_image->entry_point;
+	image_اندراج_noargs_t image_اندراج =
+		(image_اندراج_noargs_t)spl_image->اندراج_نقطہ;
 
-	debug("image entry point: 0x%lx\n", spl_image->entry_point);
-	image_entry();
+	debug("image entry point: 0x%lx\n", spl_image->اندراج_نقطہ);
+	image_اندراج();
 }
 
-#if CONFIG_IS_ENABLED(HANDOFF)
+#اگر CONFIG_IS_ENABLED(HANDOFF)
 /**
  * Set up the SPL hand-off information
  *
  * This is initially empty (zero) but can be written by
  */
-static int setup_spl_handoff(void)
+ساکن صحیح تیاری_spl_handoff(خالی)
 {
-	struct spl_handoff *ho;
+	ساخت spl_handoff *ho;
 
-	ho = bloblist_ensure(BLOBLISTT_U_BOOT_SPL_HANDOFF, sizeof(struct spl_handoff));
-	if (!ho)
-		return -ENOENT;
+	ho = bloblist_ensure(BLOBLISTT_U_BOOT_SPL_HANDOFF, حجم(ساخت spl_handoff));
+	اگر (!ho)
+		واپس -ENOENT;
 
-	return 0;
+	واپس 0;
 }
 
-__weak int handoff_arch_save(struct spl_handoff *ho)
+__weak صحیح handoff_arch_save(ساخت spl_handoff *ho)
 {
-	return 0;
+	واپس 0;
 }
 
-static int write_spl_handoff(void)
+ساکن صحیح write_spl_handoff(خالی)
 {
-	struct spl_handoff *ho;
-	int ret;
+	ساخت spl_handoff *ho;
+	صحیح ret;
 
-	ho = bloblist_find(BLOBLISTT_U_BOOT_SPL_HANDOFF, sizeof(struct spl_handoff));
-	if (!ho)
-		return -ENOENT;
+	ho = bloblist_ڈھونڈو(BLOBLISTT_U_BOOT_SPL_HANDOFF, حجم(ساخت spl_handoff));
+	اگر (!ho)
+		واپس -ENOENT;
 	handoff_save_dram(ho);
 	ret = handoff_arch_save(ho);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 	debug(PHASE_PROMPT "Wrote SPL handoff\n");
 
-	return 0;
+	واپس 0;
 }
-#else
-static inline int setup_spl_handoff(void) { return 0; }
-static inline int write_spl_handoff(void) { return 0; }
+#ورنہ
+ساکن اندرونی صحیح تیاری_spl_handoff(خالی) { واپس 0; }
+ساکن اندرونی صحیح write_spl_handoff(خالی) { واپس 0; }
 
-#endif /* HANDOFF */
+#اگر_ختم /* HANDOFF */
 
 /**
  * get_bootstage_id() - Get the bootstage ID to emit
@@ -460,166 +460,166 @@ static inline int write_spl_handoff(void) { return 0; }
  * @start: true if this is for starting SPL, false for ending it
  * Return: bootstage ID to use
  */
-static enum bootstage_id get_bootstage_id(bool start)
+ساکن شمار bootstage_id get_bootstage_id(bool آغاز)
 {
-	enum xpl_phase_t phase = xpl_phase();
+	شمار xpl_phase_t phase = xpl_phase();
 
-	if (IS_ENABLED(CONFIG_TPL_BUILD) && phase == PHASE_TPL)
-		return start ? BOOTSTAGE_ID_START_TPL : BOOTSTAGE_ID_END_TPL;
-	else if (IS_ENABLED(CONFIG_VPL_BUILD) && phase == PHASE_VPL)
-		return start ? BOOTSTAGE_ID_START_VPL : BOOTSTAGE_ID_END_VPL;
-	else
-		return start ? BOOTSTAGE_ID_START_SPL : BOOTSTAGE_ID_END_SPL;
+	اگر (IS_ENABLED(CONFIG_TPL_BUILD) && phase == PHASE_TPL)
+		واپس آغاز ? BOOTSTAGE_ID_آغاز_TPL : BOOTSTAGE_ID_انتہا_TPL;
+	ورنہ اگر (IS_ENABLED(CONFIG_VPL_BUILD) && phase == PHASE_VPL)
+		واپس آغاز ? BOOTSTAGE_ID_آغاز_VPL : BOOTSTAGE_ID_انتہا_VPL;
+	ورنہ
+		واپس آغاز ? BOOTSTAGE_ID_آغاز_SPL : BOOTSTAGE_ID_انتہا_SPL;
 }
 
-static int spl_common_init(bool setup_malloc)
+ساکن صحیح spl_common_init(bool تیاری_malloc)
 {
-	int ret;
+	صحیح ret;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (setup_malloc) {
-#ifdef CFG_MALLOC_F_ADDR
-		gd->malloc_base = CFG_MALLOC_F_ADDR;
-#endif
-		gd->malloc_limit = CONFIG_VAL(SYS_MALLOC_F_LEN);
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (تیاری_malloc) {
+#اگر_تعریف_شدہ CFG_MALLOC_F_ADDR
+		gd->malloc_بنیاد = CFG_MALLOC_F_ADDR;
+#اگر_ختم
+		gd->malloc_حد_بندی = CONFIG_VAL(SYS_MALLOC_F_LEN);
 		gd->malloc_ptr = 0;
 	}
-#endif
-	ret = bootstage_init(xpl_is_first_phase());
-	if (ret) {
+#اگر_ختم
+	ret = bootstage_init(xpl_is_پہلا_phase());
+	اگر (ret) {
 		debug("%s: Failed to set up bootstage: ret=%d\n", __func__,
 		      ret);
-		return ret;
+		واپس ret;
 	}
-	if (!xpl_is_first_phase()) {
+	اگر (!xpl_is_پہلا_phase()) {
 		ret = bootstage_unstash_default();
-		if (ret)
+		اگر (ret)
 			log_debug("Failed to unstash bootstage: ret=%d\n", ret);
 	}
 	bootstage_mark_name(get_bootstage_id(true), xpl_name(xpl_phase()));
-#if CONFIG_IS_ENABLED(LOG)
+#اگر CONFIG_IS_ENABLED(LOG)
 	ret = log_init();
-	if (ret) {
+	اگر (ret) {
 		debug("%s: Failed to set up logging\n", __func__);
-		return ret;
+		واپس ret;
 	}
-#endif
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
-		ret = fdtdec_setup();
-		if (ret) {
+#اگر_ختم
+	اگر (CONFIG_IS_ENABLED(کا_REAL)) {
+		ret = fdtdec_تیاری();
+		اگر (ret) {
 			debug("fdtdec_setup() returned error %d\n", ret);
-			return ret;
+			واپس ret;
 		}
 	}
-	if (CONFIG_IS_ENABLED(OF_LIVE)) {
-		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
-		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
-		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
-		if (ret)
-			return ret;
+	اگر (CONFIG_IS_ENABLED(کا_زندہ)) {
+		bootstage_آغاز(BOOTSTAGE_ID_ACCUM_کا_زندہ, "of_live");
+		ret = کا_زندہ_build(gd->fdt_blob,
+				    (ساخت device_گرہ **)gd_کا_جڑ_ptr());
+		bootstage_accum(BOOTSTAGE_ID_ACCUM_کا_زندہ);
+		اگر (ret)
+			واپس ret;
 	}
-	if (CONFIG_IS_ENABLED(DM)) {
-		bootstage_start(BOOTSTAGE_ID_ACCUM_DM_SPL,
+	اگر (CONFIG_IS_ENABLED(DM)) {
+		bootstage_آغاز(BOOTSTAGE_ID_ACCUM_DM_SPL,
 				xpl_phase() == PHASE_TPL ? "dm tpl" : "dm_spl");
 		/* With CONFIG_SPL_OF_PLATDATA, bring in all devices */
-		ret = dm_init_and_scan(!CONFIG_IS_ENABLED(OF_PLATDATA));
+		ret = dm_init_and_جائزہ(!CONFIG_IS_ENABLED(کا_PLATDATA));
 		bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_SPL);
-		if (ret) {
+		اگر (ret) {
 			debug("dm_init_and_scan() returned error %d\n", ret);
-			return ret;
+			واپس ret;
 		}
 
 		ret = dm_autoprobe();
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-void spl_set_bd(void)
+خالی spl_سیٹ_bd(خالی)
 {
 	/*
 	 * NOTE: On some platforms (e.g. x86) bdata may be in flash and not
 	 * writeable.
 	 */
-	if (!gd->bd)
+	اگر (!gd->bd)
 		gd->bd = &bdata;
 }
 
-int spl_early_init(void)
+صحیح spl_early_init(خالی)
 {
-	int ret;
+	صحیح ret;
 
 	debug("%s\n", __func__);
 
 	ret = spl_common_init(true);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 	gd->flags |= GD_FLG_SPL_EARLY_INIT;
 
-	return 0;
+	واپس 0;
 }
 
-int spl_init(void)
+صحیح spl_init(خالی)
 {
-	int ret;
-	bool setup_malloc = !(IS_ENABLED(CONFIG_SPL_STACK_R) &&
+	صحیح ret;
+	bool تیاری_malloc = !(IS_ENABLED(CONFIG_SPL_ڈھیر_R) &&
 			IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIMPLE));
 
 	debug("%s\n", __func__);
 
-	if (!(gd->flags & GD_FLG_SPL_EARLY_INIT)) {
-		ret = spl_common_init(setup_malloc);
-		if (ret)
-			return ret;
+	اگر (!(gd->flags & GD_FLG_SPL_EARLY_INIT)) {
+		ret = spl_common_init(تیاری_malloc);
+		اگر (ret)
+			واپس ret;
 	}
 	gd->flags |= GD_FLG_SPL_INIT;
 
-	return 0;
+	واپس 0;
 }
 
-#ifndef BOOT_DEVICE_NONE
-#define BOOT_DEVICE_NONE 0xdeadbeef
-#endif
+#اگر_غیر_تعریف_شدہ BOOT_DEVICE_NONE
+#تعریف_کرو BOOT_DEVICE_NONE 0xdeadbeef
+#اگر_ختم
 
-__weak void board_boot_order(u32 *spl_boot_list)
+__weak خالی board_boot_ترتیب(u32 *spl_boot_list)
 {
 	spl_boot_list[0] = spl_boot_device();
 }
 
-__weak int spl_check_board_image(struct spl_image_info *spl_image,
-				 const struct spl_boot_device *bootdev)
+__weak صحیح spl_check_board_image(ساخت spl_image_info *spl_image,
+				 ثابت ساخت spl_boot_device *bootdev)
 {
-	return 0;
+	واپس 0;
 }
 
-static int spl_load_image(struct spl_image_info *spl_image,
-			  struct spl_image_loader *loader)
+ساکن صحیح spl_بھرو_image(ساخت spl_image_info *spl_image,
+			  ساخت spl_image_loader *loader)
 {
-	int ret;
-	struct spl_boot_device bootdev;
+	صحیح ret;
+	ساخت spl_boot_device bootdev;
 
 	bootdev.boot_device = loader->boot_device;
-	bootdev.boot_device_name = NULL;
+	bootdev.boot_device_name = تہی;
 
-	ret = loader->load_image(spl_image, &bootdev);
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
-	if (!ret && spl_image->dcrc_length) {
+	ret = loader->بھرو_image(spl_image, &bootdev);
+#اگر_تعریف_شدہ CONFIG_SPL_LEGACY_IMAGE_چکری_جانچ_CHECK
+	اگر (!ret && spl_image->dcrc_لمبائی) {
 		/* check data crc */
-		ulong dcrc = crc32_wd(0, (unsigned char *)spl_image->dcrc_data,
-				      spl_image->dcrc_length, CHUNKSZ_CRC32);
-		if (dcrc != spl_image->dcrc) {
+		ulong dcrc = چکری_جانچ_32_wd(0, (غیرعلامتی حرف *)spl_image->dcrc_ڈیٹا,
+				      spl_image->dcrc_لمبائی, CHUNKSZ_چکری_جانچ_32);
+		اگر (dcrc != spl_image->dcrc) {
 			puts("SPL: Image data CRC check failed!\n");
 			ret = -EINVAL;
 		}
 	}
-#endif
-	if (!ret)
+#اگر_ختم
+	اگر (!ret)
 		ret = spl_check_board_image(spl_image, &bootdev);
 
-	return ret;
+	واپس ret;
 }
 
 /**
@@ -632,53 +632,53 @@ static int spl_load_image(struct spl_image_info *spl_image,
  *	if CONFIG_SHOW_ERRORS is enabled, returns -ENXIO if there were
  *	devices but none worked
  */
-static int boot_from_devices(struct spl_image_info *spl_image,
-			     u32 spl_boot_list[], int count)
+ساکن صحیح boot_from_devices(ساخت spl_image_info *spl_image,
+			     u32 spl_boot_list[], صحیح گنتی)
 {
-	struct spl_image_loader *drv =
-		ll_entry_start(struct spl_image_loader, spl_image_loader);
-	const int n_ents =
-		ll_entry_count(struct spl_image_loader, spl_image_loader);
-	int ret = -ENODEV;
-	int i;
+	ساخت spl_image_loader *drv =
+		ll_اندراج_آغاز(ساخت spl_image_loader, spl_image_loader);
+	ثابت صحیح n_ents =
+		ll_اندراج_گنتی(ساخت spl_image_loader, spl_image_loader);
+	صحیح ret = -ENODEV;
+	صحیح i;
 
-	for (i = 0; i < count && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
-		struct spl_image_loader *loader;
-		int bootdev = spl_boot_list[i];
+	برائے (i = 0; i < گنتی && spl_boot_list[i] != BOOT_DEVICE_NONE; i++) {
+		ساخت spl_image_loader *loader;
+		صحیح bootdev = spl_boot_list[i];
 
-		if (CONFIG_IS_ENABLED(SHOW_ERRORS))
+		اگر (CONFIG_IS_ENABLED(SHOW_ERRORS))
 			ret = -ENXIO;
-		for (loader = drv; loader != drv + n_ents; loader++) {
-			if (loader && bootdev != loader->boot_device)
-				continue;
-			if (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
-				printf("Trying to boot from %s\n",
+		برائے (loader = drv; loader != drv + n_ents; loader++) {
+			اگر (loader && bootdev != loader->boot_device)
+				جاری;
+			اگر (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
+				لکھو("Trying to boot from %s\n",
 				       spl_loader_name(loader));
 			}
 
-			ret = spl_load_image(spl_image, loader);
-			if (!ret) {
+			ret = spl_بھرو_image(spl_image, loader);
+			اگر (!ret) {
 				spl_image->boot_device = bootdev;
-				return 0;
+				واپس 0;
 			}
-			printf("Error: %d\n", ret);
+			لکھو("Error: %d\n", ret);
 		}
 
-		if (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
-			if (CONFIG_IS_ENABLED(SHOW_ERRORS))
-				printf(PHASE_PROMPT
+		اگر (!CONFIG_IS_ENABLED(SILENT_CONSOLE)) {
+			اگر (CONFIG_IS_ENABLED(SHOW_ERRORS))
+				لکھو(PHASE_PROMPT
 				       "Unsupported Boot Device %d\n",
 				       bootdev);
-			else
-				printf(PHASE_PROMPT
+			ورنہ
+				لکھو(PHASE_PROMPT
 				       "Unsupported Boot Device!\n");
 		}
 	}
 
-	return ret;
+	واپس ret;
 }
 
-void board_init_r(gd_t *dummy1, ulong dummy2)
+خالی board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	u32 spl_boot_list[] = {
 		BOOT_DEVICE_NONE,
@@ -687,89 +687,89 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 		BOOT_DEVICE_NONE,
 		BOOT_DEVICE_NONE,
 	};
-	spl_jump_to_image_t jumper = &jump_to_image;
-	struct spl_image_info spl_image;
-	int ret, os;
-	void *fdt;
+	spl_jump_مقصد_image_t jumper = &jump_مقصد_image;
+	ساخت spl_image_info spl_image;
+	صحیح ret, os;
+	خالی *fdt;
 
 	debug(">>" PHASE_PROMPT "board_init_r()\n");
 
-	spl_set_bd();
+	spl_سیٹ_bd();
 
-	if (IS_ENABLED(CONFIG_SPL_SYS_MALLOC)) {
-		mem_malloc_init(SPL_SYS_MALLOC_START, SPL_SYS_MALLOC_SIZE);
-		gd->flags |= GD_FLG_FULL_MALLOC_INIT;
+	اگر (IS_ENABLED(CONFIG_SPL_SYS_MALLOC)) {
+		mem_malloc_init(SPL_SYS_MALLOC_آغاز, SPL_SYS_MALLOC_سائز);
+		gd->flags |= GD_FLG_بھرا_MALLOC_INIT;
 	}
-	if (!(gd->flags & GD_FLG_SPL_INIT)) {
-		if (spl_init())
+	اگر (!(gd->flags & GD_FLG_SPL_INIT)) {
+		اگر (spl_init())
 			hang();
 	}
 	timer_init();
-	if (CONFIG_IS_ENABLED(BLOBLIST)) {
+	اگر (CONFIG_IS_ENABLED(BLOBLIST)) {
 		ret = bloblist_init();
-		if (ret) {
+		اگر (ret) {
 			debug("%s: Failed to set up bloblist: ret=%d\n",
 			      __func__, ret);
 			puts(PHASE_PROMPT "Cannot set up bloblist\n");
 			hang();
 		}
 	}
-	if (CONFIG_IS_ENABLED(HANDOFF)) {
-		int ret;
+	اگر (CONFIG_IS_ENABLED(HANDOFF)) {
+		صحیح ret;
 
-		ret = setup_spl_handoff();
-		if (ret) {
+		ret = تیاری_spl_handoff();
+		اگر (ret) {
 			puts(PHASE_PROMPT "Cannot set up SPL handoff\n");
 			hang();
 		}
 	}
 
-	if (CONFIG_IS_ENABLED(SOC_INIT))
+	اگر (CONFIG_IS_ENABLED(SOC_INIT))
 		spl_soc_init();
 
-	if (IS_ENABLED(CONFIG_SPL_WATCHDOG) && CONFIG_IS_ENABLED(WDT))
+	اگر (IS_ENABLED(CONFIG_SPL_WATCHDOG) && CONFIG_IS_ENABLED(WDT))
 		initr_watchdog();
 
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) ||
+	اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) ||
 	    IS_ENABLED(CONFIG_SPL_ATF) || IS_ENABLED(CONFIG_SPL_NET))
 		dram_init_banksize();
 
-	if (IS_ENABLED(CONFIG_SPL_LMB))
+	اگر (IS_ENABLED(CONFIG_SPL_LMB))
 		lmb_init();
 
-	if (CONFIG_IS_ENABLED(PCI) && !(gd->flags & GD_FLG_DM_DEAD)) {
+	اگر (CONFIG_IS_ENABLED(PCI) && !(gd->flags & GD_FLG_DM_DEAD)) {
 		ret = pci_init();
-		if (ret)
+		اگر (ret)
 			puts(PHASE_PROMPT "Cannot initialize PCI\n");
 		/* Don't fail. We still can try other boot methods. */
 	}
 
-	if (CONFIG_IS_ENABLED(BOARD_INIT))
+	اگر (CONFIG_IS_ENABLED(BOARD_INIT))
 		spl_board_init();
 
 	bootcount_inc();
 
 	/* Dump driver model states to aid analysis */
-	if (CONFIG_IS_ENABLED(DM_STATS)) {
-		struct dm_stats mem;
+	اگر (CONFIG_IS_ENABLED(DM_STATS)) {
+		ساخت dm_stats mem;
 
 		dm_get_mem(&mem);
 		dm_dump_mem(&mem);
 	}
 
-	memset(&spl_image, '\0', sizeof(spl_image));
-	if (IS_ENABLED(CONFIG_SPL_OS_BOOT))
-		spl_image.arg = (void *)SPL_PAYLOAD_ARGS_ADDR;
+	memset(&spl_image, '\0', حجم(spl_image));
+	اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT))
+		spl_image.arg = (خالی *)SPL_PAYLOAD_دلائل_ADDR;
 	spl_image.boot_device = BOOT_DEVICE_NONE;
-	board_boot_order(spl_boot_list);
+	board_boot_ترتیب(spl_boot_list);
 
 	ret = boot_from_devices(&spl_image, spl_boot_list,
-				ARRAY_SIZE(spl_boot_list));
-	if (ret) {
-		if (CONFIG_IS_ENABLED(SHOW_ERRORS))
-			printf(PHASE_PROMPT "failed to boot from all boot devices (err=%d)\n",
+				ARRAY_سائز(spl_boot_list));
+	اگر (ret) {
+		اگر (CONFIG_IS_ENABLED(SHOW_ERRORS))
+			لکھو(PHASE_PROMPT "failed to boot from all boot devices (err=%d)\n",
 			       ret);
-		else
+		ورنہ
 			puts(PHASE_PROMPT "failed to boot from all boot devices\n");
 		hang();
 	}
@@ -778,84 +778,84 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	spl_perform_board_fixups(&spl_image);
 
 	os = spl_image.os;
-	if (os == IH_OS_U_BOOT) {
-		debug("Jumping to %s...\n", xpl_name(xpl_next_phase()));
-	} else if (CONFIG_IS_ENABLED(ATF) && os == IH_OS_ARM_TRUSTED_FIRMWARE) {
+	اگر (os == IH_OS_U_BOOT) {
+		debug("Jumping to %s...\n", xpl_name(xpl_اگلا_phase()));
+	} ورنہ اگر (CONFIG_IS_ENABLED(ATF) && os == IH_OS_ARM_TRUSTED_FIRMWARE) {
 		debug("Jumping to U-Boot via ARM Trusted Firmware\n");
 		spl_fixup_fdt(spl_image_fdt_addr(&spl_image));
 		jumper = &spl_invoke_atf;
-	} else if (CONFIG_IS_ENABLED(OPTEE_IMAGE) && os == IH_OS_TEE) {
+	} ورنہ اگر (CONFIG_IS_ENABLED(OPTEE_IMAGE) && os == IH_OS_TEE) {
 		debug("Jumping to U-Boot via OP-TEE\n");
 		spl_board_prepare_for_optee(spl_image_fdt_addr(&spl_image));
-		jumper = &jump_to_image_optee;
-	} else if (CONFIG_IS_ENABLED(OPENSBI) && os == IH_OS_OPENSBI) {
+		jumper = &jump_مقصد_image_optee;
+	} ورنہ اگر (CONFIG_IS_ENABLED(OPENSBI) && os == IH_OS_OPENSBI) {
 		debug("Jumping to U-Boot via RISC-V OpenSBI\n");
 		jumper = &spl_invoke_opensbi;
-	} else if (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
+	} ورنہ اگر (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
 		debug("Jumping to Linux\n");
-		if (CONFIG_IS_ENABLED(OS_BOOT_ARGS))
-			fdt = (void *)SPL_PAYLOAD_ARGS_ADDR;
-		else
+		اگر (CONFIG_IS_ENABLED(OS_BOOT_دلائل))
+			fdt = (خالی *)SPL_PAYLOAD_دلائل_ADDR;
+		ورنہ
 			fdt = spl_image_fdt_addr(&spl_image);
 		spl_fixup_fdt(fdt);
 		spl_board_prepare_for_linux();
 		spl_image.arg = fdt;
-		jumper = &jump_to_image_linux;
-	} else {
+		jumper = &jump_مقصد_image_linux;
+	} ورنہ {
 		debug("Unsupported OS image.. Jumping nevertheless..\n");
 	}
-	if (CONFIG_IS_ENABLED(SYS_MALLOC_F) &&
-	    !IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIZE))
+	اگر (CONFIG_IS_ENABLED(SYS_MALLOC_F) &&
+	    !IS_ENABLED(CONFIG_SPL_SYS_MALLOC_سائز))
 		debug("SPL malloc() used 0x%x bytes (%d KB)\n",
 		      gd_malloc_ptr(), gd_malloc_ptr() / 1024);
 
 	bootstage_mark_name(get_bootstage_id(false), "end phase");
 	ret = bootstage_stash_default();
-	if (ret)
+	اگر (ret)
 		debug("Failed to stash bootstage: err=%d\n", ret);
 
-	if (IS_ENABLED(CONFIG_SPL_VIDEO_REMOVE)) {
-		struct udevice *dev;
-		int rc;
+	اگر (IS_ENABLED(CONFIG_SPL_VIDEO_REMOVE)) {
+		ساخت udevice *dev;
+		صحیح rc;
 
-		rc = uclass_find_device(UCLASS_VIDEO, 0, &dev);
-		if (!rc && dev) {
-			rc = device_remove(dev, DM_REMOVE_NORMAL);
-			if (rc)
-				printf("Cannot remove video device '%s' (err=%d)\n",
+		rc = uclass_ڈھونڈو_device(UCLASS_VIDEO, 0, &dev);
+		اگر (!rc && dev) {
+			rc = device_remove(dev, DM_REMOVE_معمول);
+			اگر (rc)
+				لکھو("Cannot remove video device '%s' (err=%d)\n",
 				       dev->name, rc);
 		}
 	}
-	if (CONFIG_IS_ENABLED(HANDOFF)) {
+	اگر (CONFIG_IS_ENABLED(HANDOFF)) {
 		ret = write_spl_handoff();
-		if (ret)
-			printf(PHASE_PROMPT
+		اگر (ret)
+			لکھو(PHASE_PROMPT
 			       "SPL hand-off write failed (err=%d)\n", ret);
 	}
-	if (CONFIG_IS_ENABLED(UPL_OUT) && (gd->flags & GD_FLG_UPL)) {
+	اگر (CONFIG_IS_ENABLED(UPL_برآمد) && (gd->flags & GD_FLG_UPL)) {
 		ret = spl_write_upl_handoff(&spl_image);
-		if (ret) {
-			printf(PHASE_PROMPT
+		اگر (ret) {
+			لکھو(PHASE_PROMPT
 			       "UPL hand-off write failed (err=%d)\n", ret);
 			hang();
 		}
 	}
-	if (CONFIG_IS_ENABLED(BLOBLIST)) {
-		ret = bloblist_finish();
-		if (ret)
-			printf("Warning: Failed to finish bloblist (ret=%d)\n",
+	اگر (CONFIG_IS_ENABLED(BLOBLIST)) {
+		ret = bloblist_اختتام();
+		اگر (ret)
+			لکھو("Warning: Failed to finish bloblist (ret=%d)\n",
 			       ret);
 	}
 
 	spl_board_prepare_for_boot();
 
-	if (CONFIG_IS_ENABLED(RELOC_LOADER)) {
-		int ret;
+	اگر (CONFIG_IS_ENABLED(RELOC_LOADER)) {
+		صحیح ret;
 
 		ret = spl_reloc_jump(&spl_image, jumper);
-		if (ret) {
-			if (xpl_phase() == PHASE_VPL)
-				printf("jump failed %d\n", ret);
+		اگر (ret) {
+			اگر (xpl_phase() == PHASE_VPL)
+				لکھو("jump failed %d\n", ret);
 			hang();
 		}
 	}
@@ -867,45 +867,45 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
  * This requires UART clocks to be enabled.  In order for this to work the
  * caller must ensure that the gd pointer is valid.
  */
-void preloader_console_init(void)
+خالی preloader_console_init(خالی)
 {
-#if CONFIG_IS_ENABLED(SERIAL)
+#اگر CONFIG_IS_ENABLED(SERIAL)
 	gd->baudrate = CONFIG_BAUDRATE;
 
 	serial_init();		/* serial communications setup */
 
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
-#if CONFIG_IS_ENABLED(BANNER_PRINT)
-	puts("\nU-Boot " PHASE_NAME " " PLAIN_VERSION " (" U_BOOT_DATE " - "
-	     U_BOOT_TIME " " U_BOOT_TZ ")\n");
-#endif
-#ifdef CONFIG_SPL_DISPLAY_PRINT
+#اگر CONFIG_IS_ENABLED(BANNER_PRINT)
+	puts("\nU-Boot " PHASE_NAME " " PLAIN_نسخہ " (" U_BOOT_DATE " - "
+	     U_BOOT_وقت " " U_BOOT_TZ ")\n");
+#اگر_ختم
+#اگر_تعریف_شدہ CONFIG_SPL_DISPLAY_PRINT
 	spl_display_print();
-#endif
-#endif
+#اگر_ختم
+#اگر_ختم
 }
 
 /**
  * This function is called before the stack is changed from initial stack to
  * relocated stack. It tries to dump the stack size used
  */
-__weak void spl_relocate_stack_check(void)
+__weak خالی spl_relocate_ڈھیر_check(خالی)
 {
-#if CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE)
-	ulong init_sp = gd->start_addr_sp;
-	ulong stack_bottom = init_sp - CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK);
-	u8 *ptr = (u8 *)stack_bottom;
+#اگر CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE)
+	ulong init_sp = gd->آغاز_addr_sp;
+	ulong ڈھیر_bottom = init_sp - CONFIG_VAL(سائز_حد_بندی_PROVIDE_ڈھیر);
+	u8 *ptr = (u8 *)ڈھیر_bottom;
 	ulong i;
 
-	for (i = 0; i < CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK); i++) {
-		if (*ptr != CONFIG_VAL(SYS_STACK_F_CHECK_BYTE))
-			break;
+	برائے (i = 0; i < CONFIG_VAL(سائز_حد_بندی_PROVIDE_ڈھیر); i++) {
+		اگر (*ptr != CONFIG_VAL(SYS_ڈھیر_F_CHECK_BYTE))
+			توڑو;
 		ptr++;
 	}
-	printf("SPL initial stack usage: %lu bytes\n",
-	       CONFIG_VAL(SIZE_LIMIT_PROVIDE_STACK) - i);
-#endif
+	لکھو("SPL initial stack usage: %lu bytes\n",
+	       CONFIG_VAL(سائز_حد_بندی_PROVIDE_ڈھیر) - i);
+#اگر_ختم
 }
 
 /**
@@ -926,54 +926,54 @@ __weak void spl_relocate_stack_check(void)
  *
  * Return: new stack location, or 0 to use the same stack
  */
-ulong spl_relocate_stack_gd(void)
+ulong spl_relocate_ڈھیر_gd(خالی)
 {
-#if CONFIG_IS_ENABLED(STACK_R)
+#اگر CONFIG_IS_ENABLED(ڈھیر_R)
 	gd_t *new_gd;
-	ulong ptr = CONFIG_SPL_STACK_R_ADDR;
+	ulong ptr = CONFIG_SPL_ڈھیر_R_ADDR;
 
-	if (CONFIG_IS_ENABLED(SYS_REPORT_STACK_F_USAGE))
-		spl_relocate_stack_check();
+	اگر (CONFIG_IS_ENABLED(SYS_REPORT_ڈھیر_F_USAGE))
+		spl_relocate_ڈھیر_check();
 
-#if defined(CONFIG_SPL_SYS_MALLOC_SIMPLE) && CONFIG_IS_ENABLED(SYS_MALLOC_F)
-	if (CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN) {
+#اگر defined(CONFIG_SPL_SYS_MALLOC_SIMPLE) && CONFIG_IS_ENABLED(SYS_MALLOC_F)
+	اگر (CONFIG_SPL_ڈھیر_R_MALLOC_SIMPLE_LEN) {
 		debug("SPL malloc() before relocation used 0x%x bytes (%d KB)\n",
 		      gd->malloc_ptr, gd->malloc_ptr / 1024);
-		ptr -= CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
-		gd->malloc_base = ptr;
-		gd->malloc_limit = CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN;
+		ptr -= CONFIG_SPL_ڈھیر_R_MALLOC_SIMPLE_LEN;
+		gd->malloc_بنیاد = ptr;
+		gd->malloc_حد_بندی = CONFIG_SPL_ڈھیر_R_MALLOC_SIMPLE_LEN;
 		gd->malloc_ptr = 0;
 	}
-#endif
+#اگر_ختم
 	/* Get stack position: use 8-byte alignment for ABI compliance */
-	ptr -= roundup(sizeof(gd_t), 16);
-	gd->start_addr_sp = ptr;
+	ptr -= roundup(حجم(gd_t), 16);
+	gd->آغاز_addr_sp = ptr;
 	new_gd = (gd_t *)ptr;
-	memcpy(new_gd, (void *)gd, sizeof(gd_t));
-#if CONFIG_IS_ENABLED(DM)
+	حافظہ_نقل(new_gd, (خالی *)gd, حجم(gd_t));
+#اگر CONFIG_IS_ENABLED(DM)
 	dm_fixup_for_gd_move(new_gd);
-#endif
-#if CONFIG_IS_ENABLED(LOG)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(LOG)
 	log_fixup_for_gd_move(new_gd);
-#endif
-#if !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
+#اگر_ختم
+#اگر !defined(CONFIG_ARM) && !defined(CONFIG_RISCV)
 	gd = new_gd;
-#endif
-	return ptr;
-#else
-	return 0;
-#endif
+#اگر_ختم
+	واپس ptr;
+#ورنہ
+	واپس 0;
+#اگر_ختم
 }
 
-#if defined(CONFIG_BOOTCOUNT_LIMIT) && \
-	((!defined(CONFIG_TPL_BUILD) && !defined(CONFIG_SPL_BOOTCOUNT_LIMIT)) || \
-	 (defined(CONFIG_TPL_BUILD) && !defined(CONFIG_TPL_BOOTCOUNT_LIMIT)))
-void bootcount_store(ulong a)
+#اگر defined(CONFIG_BOOTCOUNT_حد_بندی) && \
+	((!defined(CONFIG_TPL_BUILD) && !defined(CONFIG_SPL_BOOTCOUNT_حد_بندی)) || \
+	 (defined(CONFIG_TPL_BUILD) && !defined(CONFIG_TPL_BOOTCOUNT_حد_بندی)))
+خالی bootcount_store(ulong a)
 {
 }
 
-ulong bootcount_load(void)
+ulong bootcount_بھرو(خالی)
 {
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم

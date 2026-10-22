@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#شامل <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+ساکن صحیح hex1_bin (حرف  c);
+ساکن صحیح hex2_bin (حرف *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+صحیح srec_decode (حرف *داخلہ, صحیح *گنتی, ulong *addr, حرف *ڈیٹا)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	صحیح	i;
+	صحیح	v;				/* conversion buffer	*/
+	صحیح	srec_type;			/* S-Record type	*/
+	غیرعلامتی حرف chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	برائے (; *داخلہ; ++داخلہ) {
+		اگر (*داخلہ == 'S') {		/* skip 'S' */
+			++داخلہ;
+			توڑو;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	اگر (*داخلہ == '\0') {			/* no more data?	*/
+		واپس (SREC_خالی_خانے);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *داخلہ++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	اگر ((*گنتی = hex2_bin(داخلہ)) < 0) {
+		واپس (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *گنتی;
+	داخلہ  += 2;
 
-	switch (v) {				/* record type		*/
+	انتخاب (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
-		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+	حالت '0':				/* start record		*/
+		srec_type = SREC_آغاز;		/* 2 byte addr field	*/
+		*گنتی   -= 3;			/* - checksum and addr	*/
+		توڑو;
+	حالت '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*گنتی   -= 3;			/* - checksum and addr	*/
+		توڑو;
+	حالت '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*گنتی   -= 4;			/* - checksum and addr	*/
+		توڑو;
+	حالت '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*گنتی   -= 5;			/* - checksum and addr	*/
+		توڑو;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	حالت '5':			/* count record, addr field contains */
+		srec_type = SREC_گنتی;	/* a 2 byte record counter	*/
+		*گنتی    = 0;			/* no data		*/
+		توڑو;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	حالت '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*گنتی   -= 5;			/* - checksum and addr	*/
+		توڑو;
+	حالت '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*گنتی   -= 4;			/* - checksum and addr	*/
+		توڑو;
+	حالت '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*گنتی   -= 3;			/* - checksum and addr	*/
+		توڑو;
+	طےشدہ:
+		واپس (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	انتخاب (v) {
+	حالت '3':				/* 4 byte addr field	*/
+	حالت '7':
+		اگر ((v = hex2_bin(داخلہ)) < 0) {
+			واپس (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		داخلہ  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	حالت '2':				/* 3 byte addr field	*/
+	حالت '8':
+		اگر ((v = hex2_bin(داخلہ)) < 0) {
+			واپس (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		داخلہ  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	حالت '0':				/* 2 byte addr field	*/
+	حالت '1':
+	حالت '5':
+	حالت '9':
+		اگر ((v = hex2_bin(داخلہ)) < 0) {
+			واپس (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		داخلہ  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		اگر ((v = hex2_bin(داخلہ)) < 0) {
+			واپس (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		داخلہ  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		توڑو;
+	طےشدہ:
+		واپس (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	برائے (i=0; i < *گنتی; ++i) {
+		اگر ((v = hex2_bin(داخلہ)) < 0) {
+			واپس (SREC_E_NOSREC);
 		}
-		data[i] = v;
+		ڈیٹا[i] = v;
 		chksum += v;
-		input  += 2;
+		داخلہ  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	اگر ((v = hex2_bin(داخلہ)) < 0) {
+		واپس (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	اگر ((غیرعلامتی حرف)v != (غیرعلامتی حرف)~chksum) {
+		واپس (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	واپس (srec_type);
 }
 
-static int hex1_bin (char c)
+ساکن صحیح hex1_bin (حرف c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	اگر (c >= '0' && c <= '9')
+		واپس (c - '0');
+	اگر (c >= 'a' && c <= 'f')
+		واپس (c + 10 - 'a');
+	اگر (c >= 'A' && c <= 'F')
+		واپس (c + 10 - 'A');
+	واپس (-1);
 }
 
-static int hex2_bin (char *s)
+ساکن صحیح hex2_bin (حرف *s)
 {
-	int i, j;
+	صحیح i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	اگر ((i = hex1_bin(*s++)) < 0) {
+		واپس (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	اگر ((j = hex1_bin(*s)) < 0) {
+		واپس (-1);
 	}
 
-	return ((i<<4) + j);
+	واپس ((i<<4) + j);
 }

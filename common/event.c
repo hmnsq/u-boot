@@ -7,22 +7,22 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY	LOGC_EVENT
+#تعریف_کرو LOG_CATEGORY	LOGC_EVENT
 
-#include <event.h>
-#include <event_internal.h>
-#include <log.h>
-#include <linker_lists.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <relocate.h>
+#شامل <event.h>
+#شامل <event_internal.h>
+#شامل <log.h>
+#شامل <linker_lists.h>
+#شامل <malloc.h>
+#شامل <asm/global_data.h>
+#شامل <linux/errno.h>
+#شامل <linux/list.h>
+#شامل <relocate.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#اگر CONFIG_IS_ENABLED(EVENT_DEBUG)
+ثابت حرف *ثابت type_name[] = {
 	"none",
 	"test",
 
@@ -56,41 +56,41 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
-#endif
+_Static_assert(ARRAY_سائز(type_name) == EVT_گنتی, "event type_name size");
+#اگر_ختم
 
-const char *event_type_name(enum event_t type)
+ثابت حرف *event_type_name(شمار event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
-#endif
+#اگر CONFIG_IS_ENABLED(EVENT_DEBUG)
+	اگر (type < ARRAY_سائز(type_name))
+		واپس type_name[type];
+	ورنہ
+		واپس "(unknown)";
+#ورنہ
+	واپس "(unknown)";
+#اگر_ختم
 }
 
-static int notify_static(struct event *ev)
+ساکن صحیح notify_static(ساخت event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	ساخت evspy_info *آغاز =
+		ll_اندراج_آغاز(ساخت evspy_info, evspy_info);
+	ثابت صحیح n_ents = ll_اندراج_گنتی(ساخت evspy_info, evspy_info);
+	ساخت evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	برائے (spy = آغاز; spy != آغاز + n_ents; spy++) {
+		اگر (spy->type == ev->type) {
+			صحیح ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			اگر (spy->flags & EVSPYF_SIMPLE) {
+				ثابت ساخت evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (ساخت evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
-				ret = spy->func(NULL, ev);
+			} ورنہ {
+				ret = spy->func(تہی, ev);
 			}
 
 			/*
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			اگر (ret)
+				واپس log_پیغام_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int notify_dynamic(struct event *ev)
+ساکن صحیح notify_dynamic(ساخت event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ساخت event_state *state = gd_event_state();
+	ساخت event_spy *spy, *اگلا;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+	list_for_each_اندراج_محفوظ(spy, اگلا, &state->spy_سر, sibling_گرہ) {
+		اگر (spy->type == ev->type) {
+			صحیح ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,99 +126,99 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			اگر (ret)
+				واپس log_پیغام_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+صحیح event_notify(شمار event_t type, خالی *ڈیٹا, صحیح سائز)
 {
-	struct event event;
-	int ret;
+	ساخت event event;
+	صحیح ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
-	memcpy(&event.data, data, size);
+	اگر (سائز > حجم(event.ڈیٹا))
+		واپس log_پیغام_ret("size", -E2BIG);
+	حافظہ_نقل(&event.ڈیٹا, ڈیٹا, سائز);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	اگر (ret)
+		واپس log_پیغام_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	اگر (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		اگر (ret)
+			واپس log_پیغام_ret("dyn", ret);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-int event_notify_null(enum event_t type)
+صحیح event_notify_null(شمار event_t type)
 {
-	return event_notify(type, NULL, 0);
+	واپس event_notify(type, تہی, 0);
 }
 
-void event_show_spy_list(void)
+خالی event_show_spy_list(خالی)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	ساخت evspy_info *آغاز =
+		ll_اندراج_آغاز(ساخت evspy_info, evspy_info);
+	ثابت صحیح n_ents = ll_اندراج_گنتی(ساخت evspy_info, evspy_info);
+	ساخت evspy_info *spy;
+	ثابت صحیح سائز = حجم(ulong) * 2;
 
-	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
-		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
-		       spy->type, event_type_name(spy->type), size, spy->func,
+	لکھو("Seq  %-24s  %*s  %s\n", "Type", سائز, "Function", "ID");
+	برائے (spy = آغاز; spy != آغاز + n_ents; spy++) {
+		لکھو("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - آغاز),
+		       spy->type, event_type_name(spy->type), سائز, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#اگر CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+ساکن خالی spy_free(ساخت event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_گرہ);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+صحیح event_رجسٹر(ثابت حرف *id, شمار event_t type, event_handler_t func, خالی *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	ساخت event_state *state = gd_event_state();
+	ساخت event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = حافظہ_دو(حجم(*spy));
+	اگر (!spy)
+		واپس log_پیغام_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_جوڑو_دم(&spy->sibling_گرہ, &state->spy_سر);
 
-	return 0;
+	واپس 0;
 }
 
-int event_uninit(void)
+صحیح event_uninit(خالی)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	ساخت event_state *state = gd_event_state();
+	ساخت event_spy *spy, *اگلا;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_اندراج_محفوظ(spy, اگلا, &state->spy_سر, sibling_گرہ)
 		spy_free(spy);
 
-	return 0;
+	واپس 0;
 }
 
-int event_init(void)
+صحیح event_init(خالی)
 {
-	struct event_state *state = gd_event_state();
+	ساخت event_state *state = gd_event_state();
 
-	INIT_LIST_HEAD(&state->spy_head);
+	INIT_LIST_سر(&state->spy_سر);
 
-	return 0;
+	واپس 0;
 }
-#endif /* EVENT_DYNAMIC */
+#اگر_ختم /* EVENT_DYNAMIC */

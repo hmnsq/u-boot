@@ -5,88 +5,88 @@
  * Copyright (c) 2014 Google, Inc
  */
 
-#define LOG_CATEGORY LOGC_ALLOC
+#تعریف_کرو LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#شامل <log.h>
+#شامل <malloc.h>
+#شامل <mapmem.h>
+#شامل <asm/global_data.h>
+#شامل <asm/io.h>
+#شامل <valgrind/valgrind.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+ساکن خالی *alloc_simple(size_t بائٹیں, صحیح align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	خالی *ptr;
 
-	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
-	new_ptr = addr + bytes - gd->malloc_base;
-	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
-		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	addr = ALIGN(gd->malloc_بنیاد + gd->malloc_ptr, align);
+	new_ptr = addr + بائٹیں - gd->malloc_بنیاد;
+	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)بائٹیں, new_ptr,
+		  gd->malloc_حد_بندی);
+	اگر (new_ptr > gd->malloc_حد_بندی) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
-			gd->malloc_limit);
-		return NULL;
+			gd->malloc_حد_بندی);
+		واپس تہی;
 	}
 
-	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	ptr = map_sysmem(addr, بائٹیں);
+	gd->malloc_ptr = ALIGN(new_ptr, حجم(new_ptr));
 
-	return ptr;
+	واپس ptr;
 }
 
-void *malloc_simple(size_t bytes)
+خالی *malloc_simple(size_t بائٹیں)
 {
-	void *ptr;
+	خالی *ptr;
 
-	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(بائٹیں, 1);
+	اگر (!ptr)
+		واپس ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_بلاک(ptr, بائٹیں, 0, false);
 
-	return ptr;
+	واپس ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+خالی *memalign_simple(size_t align, size_t بائٹیں)
 {
-	void *ptr;
+	خالی *ptr;
 
-	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(بائٹیں, align);
+	اگر (!ptr)
+		واپس ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_بلاک(ptr, بائٹیں, 0, false);
 
-	return ptr;
+	واپس ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+خالی *صفر_حافظہ_دو(size_t nmemb, size_t elem_سائز)
 {
-	size_t size = nmemb * elem_size;
-	void *ptr;
+	size_t سائز = nmemb * elem_سائز;
+	خالی *ptr;
 
-	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
-	memset(ptr, '\0', size);
+	ptr = حافظہ_دو(سائز);
+	اگر (!ptr)
+		واپس ptr;
+	memset(ptr, '\0', سائز);
 
-	return ptr;
+	واپس ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#اگر IS_ENABLED(CONFIG_VALGRIND)
+خالی free_simple(خالی *ptr)
 {
-	VALGRIND_FREELIKE_BLOCK(ptr, 0);
+	VALGRIND_FREELIKE_بلاک(ptr, 0);
 }
-#endif
-#endif
+#اگر_ختم
+#اگر_ختم
 
-void malloc_simple_info(void)
+خالی malloc_simple_info(خالی)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

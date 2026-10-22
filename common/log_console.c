@@ -6,15 +6,15 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <log.h>
-#include <asm/global_data.h>
+#شامل <log.h>
+#شامل <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+ساکن صحیح log_console_emit(ساخت log_device *ldev, ساخت log_rec *rec)
 {
-	int fmt = gd->log_fmt;
-	bool add_space = false;
+	صحیح fmt = gd->log_fmt;
+	bool جوڑو_space = false;
 
 	/*
 	 * The output format is designed to give someone a fighting chance of
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
-		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
-			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
-			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
-			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
-				printf("%s()", rec->func ?: "?");
-			} else {
-				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
+	اگر (!(rec->flags & LOGRECF_CONT) && fmt != ثنائی_ہندسہ(LOGF_پیغام)) {
+		جوڑو_space = true;
+		اگر (fmt & ثنائی_ہندسہ(LOGF_LEVEL))
+			لکھو("%s.", log_get_level_name(rec->level));
+		اگر (fmt & ثنائی_ہندسہ(LOGF_CAT))
+			لکھو("%s,", log_get_cat_name(rec->cat));
+		اگر (fmt & ثنائی_ہندسہ(LOGF_FILE))
+			لکھو("%s:", rec->file);
+		اگر (fmt & ثنائی_ہندسہ(LOGF_سطر))
+			لکھو("%d-", rec->سطر);
+		اگر (fmt & ثنائی_ہندسہ(LOGF_FUNC)) {
+			اگر (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+				لکھو("%s()", rec->func ?: "?");
+			} ورنہ {
+				لکھو("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	اگر (fmt & ثنائی_ہندسہ(LOGF_پیغام))
+		لکھو("%s%s", جوڑو_space ? " " : "", rec->پیغام);
 
-	return 0;
+	واپس 0;
 }
 
 LOG_DRIVER(console) = {

@@ -9,157 +9,157 @@
  * Marius Groeger <mgroeger@sysgo.de>
  */
 
-#include <config.h>
-#include <api.h>
-#include <bootstage.h>
-#include <cpu_func.h>
-#include <cyclic.h>
-#include <display_options.h>
-#include <exports.h>
-#ifdef CONFIG_MTD_NOR_FLASH
-#include <flash.h>
-#endif
-#include <hang.h>
-#include <image.h>
-#include <irq_func.h>
-#include <lmb.h>
-#include <log.h>
-#include <net.h>
-#include <asm/cache.h>
-#include <asm/global_data.h>
-#include <u-boot/crc.h>
-#include <binman.h>
-#include <command.h>
-#include <console.h>
-#include <dm.h>
-#include <efi_loader.h>
-#include <env.h>
-#include <env_internal.h>
-#include <fdtdec.h>
-#include <init.h>
-#include <initcall.h>
-#include <kgdb.h>
-#include <irq_func.h>
-#include <led.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <miiphy.h>
-#include <mmc.h>
-#include <mux.h>
-#include <nand.h>
-#include <of_live.h>
-#include <onenand_uboot.h>
-#include <pvblock.h>
-#include <scsi.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <timer.h>
-#include <trace.h>
-#include <watchdog.h>
-#include <xen.h>
-#include <asm/sections.h>
-#include <dm/root.h>
-#include <dm/ofnode.h>
-#include <linux/compiler.h>
-#include <linux/err.h>
-#include <wdt.h>
-#include <asm-generic/gpio.h>
-#include <relocate.h>
+#شامل <config.h>
+#شامل <api.h>
+#شامل <bootstage.h>
+#شامل <cpu_func.h>
+#شامل <cyclic.h>
+#شامل <display_options.h>
+#شامل <exports.h>
+#اگر_تعریف_شدہ CONFIG_MTD_NOR_FLASH
+#شامل <flash.h>
+#اگر_ختم
+#شامل <hang.h>
+#شامل <image.h>
+#شامل <irq_func.h>
+#شامل <lmb.h>
+#شامل <log.h>
+#شامل <net.h>
+#شامل <asm/cache.h>
+#شامل <asm/global_data.h>
+#شامل <u-boot/crc.h>
+#شامل <binman.h>
+#شامل <command.h>
+#شامل <console.h>
+#شامل <dm.h>
+#شامل <efi_loader.h>
+#شامل <env.h>
+#شامل <env_internal.h>
+#شامل <fdtdec.h>
+#شامل <init.h>
+#شامل <initcall.h>
+#شامل <kgdb.h>
+#شامل <irq_func.h>
+#شامل <led.h>
+#شامل <malloc.h>
+#شامل <mapmem.h>
+#شامل <miiphy.h>
+#شامل <mmc.h>
+#شامل <mux.h>
+#شامل <nand.h>
+#شامل <of_live.h>
+#شامل <onenand_uboot.h>
+#شامل <pvblock.h>
+#شامل <scsi.h>
+#شامل <serial.h>
+#شامل <stdio_dev.h>
+#شامل <timer.h>
+#شامل <trace.h>
+#شامل <watchdog.h>
+#شامل <xen.h>
+#شامل <asm/sections.h>
+#شامل <dm/root.h>
+#شامل <dm/ofnode.h>
+#شامل <linux/compiler.h>
+#شامل <linux/err.h>
+#شامل <wdt.h>
+#شامل <asm-generic/gpio.h>
+#شامل <relocate.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
 ulong monitor_flash_len;
 
-__weak int board_flash_wp_on(void)
+__weak صحیح board_flash_wp_on(خالی)
 {
 	/*
 	 * Most flashes can't be detected when write protection is enabled,
 	 * so provide a way to let U-Boot gracefully ignore write protected
 	 * devices.
 	 */
-	return 0;
+	واپس 0;
 }
 
-__weak int cpu_secondary_init_r(void)
+__weak صحیح cpu_secondary_init_r(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-static int initr_trace(void)
+ساکن صحیح initr_trace(خالی)
 {
-#ifdef CONFIG_TRACE
-	trace_init(gd->trace_buff, CONFIG_TRACE_BUFFER_SIZE);
-#endif
+#اگر_تعریف_شدہ CONFIG_TRACE
+	trace_init(gd->trace_buff, CONFIG_TRACE_بفر_سائز);
+#اگر_ختم
 
-	return 0;
+	واپس 0;
 }
 
-static int initr_reloc(void)
+ساکن صحیح initr_reloc(خالی)
 {
 	/* tell others: relocation done */
-	gd->flags |= GD_FLG_RELOC | GD_FLG_FULL_MALLOC_INIT;
+	gd->flags |= GD_FLG_RELOC | GD_FLG_بھرا_MALLOC_INIT;
 
-	return 0;
+	واپس 0;
 }
 
-#if defined(CONFIG_ARM) || defined(CONFIG_RISCV)
+#اگر defined(CONFIG_ARM) || defined(CONFIG_RISCV)
 /*
  * Some of these functions are needed purely because the functions they
  * call return void. If we change them to return 0, these stubs can go away.
  */
-static int initr_caches(void)
+ساکن صحیح initr_caches(خالی)
 {
 	/* Enable caches */
 	enable_caches();
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-__weak int fixup_cpu(void)
+__weak صحیح fixup_cpu(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-static int initr_reloc_global_data(void)
+ساکن صحیح initr_reloc_global_ڈیٹا(خالی)
 {
-#ifdef __ARM__
-	monitor_flash_len = _end - __image_copy_start;
-#elif defined(CONFIG_RISCV)
-	monitor_flash_len = (ulong)_end - (ulong)_start;
-#elif !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
+#اگر_تعریف_شدہ __ARM__
+	monitor_flash_len = انتہا - __image_copy_start;
+#وگرنہ_اگر defined(CONFIG_RISCV)
+	monitor_flash_len = (ulong)انتہا - (ulong)آغاز_2;
+#وگرنہ_اگر !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
 	monitor_flash_len = (ulong)__init_end - gd->relocaddr;
-#endif
-#if defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
+#اگر_ختم
+#اگر defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
 	/*
 	 * The gd->cpu pointer is set to an address in flash before relocation.
 	 * We need to update it to point to the same CPU entry in RAM.
 	 * TODO: why not just add gd->reloc_ofs?
 	 */
-	gd->arch.cpu += gd->relocaddr - CONFIG_SYS_MONITOR_BASE;
+	gd->arch.cpu += gd->relocaddr - CONFIG_SYS_MONITOR_بنیاد;
 
 	/*
 	 * If we didn't know the cpu mask & # cores, we can save them of
 	 * now rather than 'computing' them constantly
 	 */
 	fixup_cpu();
-#endif
-#ifdef CONFIG_ENV_RELOC_GD_ENV_ADDR
+#اگر_ختم
+#اگر_تعریف_شدہ CONFIG_ENV_RELOC_GD_ENV_ADDR
 	/*
 	 * Relocate the early env_addr pointer unless we know it is not inside
 	 * the binary. Some systems need this and for the rest, it doesn't hurt.
 	 */
 	gd->env_addr += gd->reloc_off;
-#endif
+#اگر_ختم
 
 	/*
 	 * For CONFIG_OF_EMBED case the FDT is embedded into ELF, available by
 	 * __dtb_dt_begin. After U-Boot ELF self-relocation to RAM top address
 	 * it is worth to update fdt_blob in global_data
 	 */
-	if (IS_ENABLED(CONFIG_OF_EMBED))
-		fdtdec_setup_embed();
+	اگر (IS_ENABLED(CONFIG_کا_EMBED))
+		fdtdec_تیاری_embed();
 
-#ifdef CONFIG_EFI_LOADER
+#اگر_تعریف_شدہ CONFIG_EFI_LOADER
 	/*
 	 * On the ARM architecture gd is mapped to a fixed register (r9 or x18).
 	 * As this register may be overwritten by an EFI payload we save it here
@@ -167,10 +167,10 @@ static int initr_reloc_global_data(void)
 	 */
 	efi_save_gd();
 
-	if (!(gd->flags & GD_FLG_SKIP_RELOC))
-		efi_runtime_relocate(gd->relocaddr, NULL);
+	اگر (!(gd->flags & GD_FLG_SKIP_RELOC))
+		efi_runtime_relocate(gd->relocaddr, تہی);
 
-#endif
+#اگر_ختم
 	/*
 	 * We are done with all relocations change the permissions of the binary
 	 * NOTE: __start_rodata etc are defined in arm64 linker scripts and
@@ -179,251 +179,251 @@ static int initr_reloc_global_data(void)
 	 * random addresses.
 	 *
 	 */
-	if (IS_ENABLED(CONFIG_MMU_PGPROT)) {
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__start_rodata),
+	اگر (IS_ENABLED(CONFIG_MMU_PGPROT)) {
+		pgprot_سیٹ_attrs((phys_addr_t)(uintptr_t)(__start_rodata),
 				 (size_t)(uintptr_t)(__end_rodata - __start_rodata),
 				 MMU_ATTR_RO);
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__start_data),
+		pgprot_سیٹ_attrs((phys_addr_t)(uintptr_t)(__start_data),
 				 (size_t)(uintptr_t)(__end_data - __start_data),
 				 MMU_ATTR_RW);
-		pgprot_set_attrs((phys_addr_t)(uintptr_t)(__text_start),
+		pgprot_سیٹ_attrs((phys_addr_t)(uintptr_t)(__text_start),
 				 (size_t)(uintptr_t)(__text_end - __text_start),
 				 MMU_ATTR_RX);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-__weak int arch_initr_trap(void)
+__weak صحیح arch_initr_trap(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-#if defined(CONFIG_SYS_INIT_RAM_LOCK) && defined(CONFIG_E500)
-static int initr_unlock_ram_in_cache(void)
+#اگر defined(CONFIG_SYS_INIT_RAM_تالا) && defined(CONFIG_E500)
+ساکن صحیح initr_unlock_ram_اندر_cache(خالی)
 {
-	unlock_ram_in_cache();	/* it's time to unlock D-cache in e500 */
-	return 0;
+	unlock_ram_اندر_cache();	/* it's time to unlock D-cache in e500 */
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-static int initr_barrier(void)
+ساکن صحیح initr_barrier(خالی)
 {
-#ifdef CONFIG_PPC
+#اگر_تعریف_شدہ CONFIG_PPC
 	/* TODO: Can we not use dmb() macros for this? */
 	asm("sync ; isync");
-#endif
-	return 0;
+#اگر_ختم
+	واپس 0;
 }
 
-static int initr_malloc(void)
+ساکن صحیح initr_malloc(خالی)
 {
-	ulong start;
+	ulong آغاز;
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_F)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_F)
 	debug("Pre-reloc malloc() used %#x bytes (%d KB)\n", gd->malloc_ptr,
 	      gd->malloc_ptr / 1024);
-#endif
+#اگر_ختم
 	/* The malloc area is immediately below the monitor copy in DRAM */
 	/*
 	 * This value MUST match the value of gd->start_addr_sp in board_f.c:
 	 * reserve_noncached().
 	 */
-	start = gd->relocaddr - TOTAL_MALLOC_LEN;
-	gd_set_malloc_start(start);
-	mem_malloc_init(start, TOTAL_MALLOC_LEN);
-	return 0;
+	آغاز = gd->relocaddr - کل_MALLOC_LEN;
+	gd_سیٹ_malloc_آغاز(آغاز);
+	mem_malloc_init(آغاز, کل_MALLOC_LEN);
+	واپس 0;
 }
 
-static int initr_of_live(void)
+ساکن صحیح initr_کا_زندہ(خالی)
 {
-	if (CONFIG_IS_ENABLED(OF_LIVE)) {
-		int ret;
+	اگر (CONFIG_IS_ENABLED(کا_زندہ)) {
+		صحیح ret;
 
-		bootstage_start(BOOTSTAGE_ID_ACCUM_OF_LIVE, "of_live");
-		ret = of_live_build(gd->fdt_blob,
-				    (struct device_node **)gd_of_root_ptr());
-		bootstage_accum(BOOTSTAGE_ID_ACCUM_OF_LIVE);
-		if (ret)
-			return ret;
+		bootstage_آغاز(BOOTSTAGE_ID_ACCUM_کا_زندہ, "of_live");
+		ret = کا_زندہ_build(gd->fdt_blob,
+				    (ساخت device_گرہ **)gd_کا_جڑ_ptr());
+		bootstage_accum(BOOTSTAGE_ID_ACCUM_کا_زندہ);
+		اگر (ret)
+			واپس ret;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-#ifdef CONFIG_DM
-static int initr_dm(void)
+#اگر_تعریف_شدہ CONFIG_DM
+ساکن صحیح initr_dm(خالی)
 {
-	int ret;
+	صحیح ret;
 
 	oftree_reset();
 
 	/* Drop the pre-reloc driver model and start a new one */
-	gd->dm_root = NULL;
-#ifdef CONFIG_TIMER
-	gd->timer = NULL;
-#endif
-	bootstage_start(BOOTSTAGE_ID_ACCUM_DM_R, "dm_r");
-	ret = dm_init_and_scan(false);
+	gd->dm_جڑ = تہی;
+#اگر_تعریف_شدہ CONFIG_TIMER
+	gd->timer = تہی;
+#اگر_ختم
+	bootstage_آغاز(BOOTSTAGE_ID_ACCUM_DM_R, "dm_r");
+	ret = dm_init_and_جائزہ(false);
 	bootstage_accum(BOOTSTAGE_ID_ACCUM_DM_R);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
-	return dm_autoprobe();
+	واپس dm_autoprobe();
 }
-#endif
+#اگر_ختم
 
-static int initr_dm_devices(void)
+ساکن صحیح initr_dm_devices(خالی)
 {
-	int ret;
+	صحیح ret;
 
-	if (IS_ENABLED(CONFIG_TIMER_EARLY)) {
+	اگر (IS_ENABLED(CONFIG_TIMER_EARLY)) {
 		ret = dm_timer_init();
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 	}
 
-	if (IS_ENABLED(CONFIG_MULTIPLEXER)) {
+	اگر (IS_ENABLED(CONFIG_MULTIPLEXER)) {
 		/*
 		 * Initialize the multiplexer controls to their default state.
 		 * This must be done early as other drivers may unknowingly
 		 * rely on it.
 		 */
 		ret = dm_mux_init();
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int initr_bootstage(void)
+ساکن صحیح initr_bootstage(خالی)
 {
-	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_R, "board_init_r");
+	bootstage_mark_name(BOOTSTAGE_ID_آغاز_UBOOT_R, "board_init_r");
 
-	return 0;
+	واپس 0;
 }
 
-__weak int power_init_board(void)
+__weak صحیح power_init_board(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-static int initr_announce(void)
+ساکن صحیح initr_announce(خالی)
 {
 	debug("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
-	return 0;
+	واپس 0;
 }
 
-static int __maybe_unused initr_binman(void)
+ساکن صحیح __maybe_unused initr_binman(خالی)
 {
-	int ret;
+	صحیح ret;
 
 	ret = binman_init();
-	if (ret)
-		printf("binman_init failed:%d\n", ret);
+	اگر (ret)
+		لکھو("binman_init failed:%d\n", ret);
 
-	return ret;
+	واپس ret;
 }
 
-#if defined(CONFIG_MTD_NOR_FLASH)
-__weak int is_flash_available(void)
+#اگر defined(CONFIG_MTD_NOR_FLASH)
+__weak صحیح is_flash_دستیاب(خالی)
 {
-	return 1;
+	واپس 1;
 }
 
-static int initr_flash(void)
+ساکن صحیح initr_flash(خالی)
 {
-	ulong flash_size = 0;
-	struct bd_info *bd = gd->bd;
+	ulong flash_سائز = 0;
+	ساخت bd_info *bd = gd->bd;
 
-	if (!is_flash_available())
-		return 0;
+	اگر (!is_flash_دستیاب())
+		واپس 0;
 
 	puts("Flash: ");
 
-	if (board_flash_wp_on())
-		printf("Uninitialized - Write Protect On\n");
-	else
-		flash_size = flash_init();
+	اگر (board_flash_wp_on())
+		لکھو("Uninitialized - Write Protect On\n");
+	ورنہ
+		flash_سائز = flash_init();
 
-	print_size(flash_size, "");
-#ifdef CONFIG_SYS_FLASH_CHECKSUM
+	print_سائز(flash_سائز, "");
+#اگر_تعریف_شدہ CONFIG_SYS_FLASH_CHECKSUM
 	/*
 	 * Compute and print flash CRC if flashchecksum is set to 'y'
 	 *
 	 * NOTE: Maybe we should add some schedule()? XXX
 	 */
-	if (env_get_yesno("flashchecksum") == 1) {
-		const uchar *flash_base = (const uchar *)CFG_SYS_FLASH_BASE;
+	اگر (env_get_yesno("flashchecksum") == 1) {
+		ثابت uchar *flash_بنیاد = (ثابت uchar *)CFG_SYS_FLASH_بنیاد;
 
-		printf("  CRC: %08X", crc32(0,
-					    flash_base,
-					    flash_size));
+		لکھو("  CRC: %08X", چکری_جانچ_32(0,
+					    flash_بنیاد,
+					    flash_سائز));
 	}
-#endif /* CONFIG_SYS_FLASH_CHECKSUM */
+#اگر_ختم /* CONFIG_SYS_FLASH_CHECKSUM */
 	putc('\n');
 
 	/* update start of FLASH memory    */
-#ifdef CFG_SYS_FLASH_BASE
-	bd->bi_flashstart = CFG_SYS_FLASH_BASE;
-#endif
+#اگر_تعریف_شدہ CFG_SYS_FLASH_بنیاد
+	bd->bi_flashstart = CFG_SYS_FLASH_بنیاد;
+#اگر_ختم
 	/* size of FLASH memory (final value) */
-	bd->bi_flashsize = flash_size;
+	bd->bi_flashsize = flash_سائز;
 
-#if defined(CONFIG_SYS_UPDATE_FLASH_SIZE)
+#اگر defined(CONFIG_SYS_UPDATE_FLASH_سائز)
 	/* Make a update of the Memctrl. */
-	update_flash_size(flash_size);
-#endif
+	update_flash_سائز(flash_سائز);
+#اگر_ختم
 
-#if defined(CONFIG_OXC) || defined(CONFIG_RMU)
+#اگر defined(CONFIG_OXC) || defined(CONFIG_RMU)
 	/* flash mapped at end of memory map */
-	bd->bi_flashoffset = CONFIG_TEXT_BASE + flash_size;
-#elif CONFIG_SYS_MONITOR_BASE == CFG_SYS_FLASH_BASE
+	bd->bi_flashoffset = CONFIG_متن_بنیاد + flash_سائز;
+#وگرنہ_اگر CONFIG_SYS_MONITOR_بنیاد == CFG_SYS_FLASH_بنیاد
 	bd->bi_flashoffset = monitor_flash_len;	/* reserved area for monitor */
-#endif
-	return 0;
+#اگر_ختم
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_CMD_NAND
+#اگر_تعریف_شدہ CONFIG_CMD_NAND
 /* go init the NAND */
-static int initr_nand(void)
+ساکن صحیح initr_nand(خالی)
 {
 	puts("NAND:  ");
 	nand_init();
-	printf("%lu MiB\n", nand_size() / 1024);
-	return 0;
+	لکھو("%lu MiB\n", nand_سائز() / 1024);
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#if defined(CONFIG_CMD_ONENAND)
+#اگر defined(CONFIG_CMD_ONENAND)
 /* go init the NAND */
-static int initr_onenand(void)
+ساکن صحیح initr_onenand(خالی)
 {
 	puts("NAND:  ");
 	onenand_init();
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_MMC
-static int initr_mmc(void)
+#اگر_تعریف_شدہ CONFIG_MMC
+ساکن صحیح initr_mmc(خالی)
 {
 	puts("MMC:   ");
 	mmc_initialize(gd->bd);
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_PVBLOCK
-static int initr_pvblock(void)
+#اگر_تعریف_شدہ CONFIG_PVBLOCK
+ساکن صحیح initr_pvblock(خالی)
 {
 	puts("PVBLOCK: ");
 	pvblock_init();
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
 /*
  * Tell if it's OK to load the environment early in boot.
@@ -436,153 +436,153 @@ static int initr_pvblock(void)
  *
  * Return: 0 if environment should not be loaded, !=0 if it is ok to load
  */
-static int should_load_env(void)
+ساکن صحیح should_بھرو_env(خالی)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
-		return ofnode_conf_read_int("load-environment", 1);
+	اگر (IS_ENABLED(CONFIG_کا_CONTROL))
+		واپس ofnode_conf_read_int("load-environment", 1);
 
-	return 1;
+	واپس 1;
 }
 
-static int initr_env(void)
+ساکن صحیح initr_env(خالی)
 {
 	/* initialize environment */
-	if (should_load_env())
+	اگر (should_بھرو_env())
 		env_relocate();
-	else
-		env_set_default(NULL, 0);
+	ورنہ
+		env_سیٹ_default(تہی, 0);
 
 	env_import_fdt();
 
-	if (IS_ENABLED(CONFIG_OF_CONTROL))
-		env_set_hex("fdtcontroladdr",
-			    (unsigned long)map_to_sysmem(gd->fdt_blob));
+	اگر (IS_ENABLED(CONFIG_کا_CONTROL))
+		env_سیٹ_hex("fdtcontroladdr",
+			    (غیرعلامتی طویل)map_مقصد_sysmem(gd->fdt_blob));
 
-	#if (IS_ENABLED(CONFIG_SAVE_PREV_BL_INITRAMFS_START_ADDR) || \
-						IS_ENABLED(CONFIG_SAVE_PREV_BL_FDT_ADDR))
-		save_prev_bl_data();
-	#endif
+	#اگر (IS_ENABLED(CONFIG_SAVE_پچھلا_BL_INITRAMFS_آغاز_ADDR) || \
+						IS_ENABLED(CONFIG_SAVE_پچھلا_BL_FDT_ADDR))
+		save_پچھلا_bl_ڈیٹا();
+	#اگر_ختم
 
 	/* Initialize from environment */
-	image_load_addr = env_get_ulong("loadaddr", 16, image_load_addr);
+	image_بھرو_addr = env_get_ulong("loadaddr", 16, image_بھرو_addr);
 
-	return 0;
+	واپس 0;
 }
 
-#ifdef CONFIG_SYS_MALLOC_BOOTPARAMS
-static int initr_malloc_bootparams(void)
+#اگر_تعریف_شدہ CONFIG_SYS_MALLOC_BOOTPARAMS
+ساکن صحیح initr_malloc_bootparams(خالی)
 {
-	gd->bd->bi_boot_params = (ulong)malloc(CONFIG_SYS_BOOTPARAMS_LEN);
-	if (!gd->bd->bi_boot_params) {
+	gd->bd->bi_boot_params = (ulong)حافظہ_دو(CONFIG_SYS_BOOTPARAMS_LEN);
+	اگر (!gd->bd->bi_boot_params) {
 		puts("WARNING: Cannot allocate space for boot parameters\n");
-		return -ENOMEM;
+		واپس -ENOMEM;
 	}
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-static int initr_boot_led_blink(void)
+ساکن صحیح initr_boot_led_blink(خالی)
 {
 	led_boot_blink();
 
-	return 0;
+	واپس 0;
 }
 
-static int initr_boot_led_on(void)
+ساکن صحیح initr_boot_led_on(خالی)
 {
 	led_boot_on();
 
-	return 0;
+	واپس 0;
 }
 
-#if CONFIG_IS_ENABLED(NET)
-static int initr_net(void)
+#اگر CONFIG_IS_ENABLED(NET)
+ساکن صحیح initr_net(خالی)
 {
 	puts("Net:   ");
 	eth_initialize();
-#if defined(CONFIG_RESET_PHY_R)
+#اگر defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");
 	reset_phy();
-#endif
-	return 0;
+#اگر_ختم
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_POST
-static int initr_post(void)
+#اگر_تعریف_شدہ CONFIG_POST
+ساکن صحیح initr_post(خالی)
 {
-	post_run(NULL, POST_RAM | post_bootmode_get(0));
-	return 0;
+	post_تسلسل(تہی, POST_RAM | post_bootmode_get(0));
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-#if defined(CFG_PRAM)
+#اگر defined(CFG_PRAM)
 /*
  * Export available size of memory for Linux, taking into account the
  * protected RAM at top of memory
  */
-int initr_mem(void)
+صحیح initr_mem(خالی)
 {
 	ulong pram = 0;
-	char memsz[32];
+	حرف memsz[32];
 
 	pram = env_get_ulong("pram", 10, CFG_PRAM);
-	sprintf(memsz, "%ldk", (long int)((gd->ram_size / 1024) - pram));
-	env_set("mem", memsz);
+	sprintf(memsz, "%ldk", (طویل صحیح)((gd->ram_سائز / 1024) - pram));
+	env_سیٹ("mem", memsz);
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-static int initr_lmb(void)
+ساکن صحیح initr_lmb(خالی)
 {
-	if (CONFIG_IS_ENABLED(LMB))
-		return lmb_init();
-	else
-		return 0;
+	اگر (CONFIG_IS_ENABLED(LMB))
+		واپس lmb_init();
+	ورنہ
+		واپس 0;
 }
 
-static int dm_announce(void)
+ساکن صحیح dm_announce(خالی)
 {
-	int device_count;
-	int uclass_count;
+	صحیح device_گنتی;
+	صحیح uclass_گنتی;
 
-	if (IS_ENABLED(CONFIG_DM)) {
-		dm_get_stats(&device_count, &uclass_count);
-		printf("Core:  %d devices, %d uclasses", device_count,
-		       uclass_count);
-		if (CONFIG_IS_ENABLED(OF_REAL))
-			printf(", devicetree: %s", fdtdec_get_srcname());
-		if (CONFIG_IS_ENABLED(UPL))
-			printf(", universal payload active");
-		printf("\n");
-		if (IS_ENABLED(CONFIG_OF_HAS_PRIOR_STAGE) &&
+	اگر (IS_ENABLED(CONFIG_DM)) {
+		dm_get_stats(&device_گنتی, &uclass_گنتی);
+		لکھو("Core:  %d devices, %d uclasses", device_گنتی,
+		       uclass_گنتی);
+		اگر (CONFIG_IS_ENABLED(کا_REAL))
+			لکھو(", devicetree: %s", fdtdec_get_srcname());
+		اگر (CONFIG_IS_ENABLED(UPL))
+			لکھو(", universal payload active");
+		لکھو("\n");
+		اگر (IS_ENABLED(CONFIG_کا_HAS_پیشگی_STAGE) &&
 		    (gd->fdt_src == FDTSRC_SEPARATE ||
 		     gd->fdt_src == FDTSRC_EMBED)) {
-			printf("Warning: Unexpected devicetree source (not from a prior stage)");
-			printf("Warning: U-Boot may not function properly\n");
+			لکھو("Warning: Unexpected devicetree source (not from a prior stage)");
+			لکھو("Warning: U-Boot may not function properly\n");
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int run_main_loop(void)
+ساکن صحیح تسلسل_main_loop(خالی)
 {
-	int ret;
+	صحیح ret;
 
-#ifdef CONFIG_SANDBOX
+#اگر_تعریف_شدہ CONFIG_SANDBOX
 	sandbox_main_loop_init();
-#endif
+#اگر_ختم
 
 	ret = event_notify_null(EVT_MAIN_LOOP);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
 	/* main_loop() can return to retry autoboot, if so just run it again */
-	for (;;)
+	برائے (;;)
 		main_loop();
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -592,7 +592,7 @@ static int run_main_loop(void)
  * TODO: perhaps reset the watchdog in the initcall function after each call?
  */
 
-static void initcall_run_r(void)
+ساکن خالی initcall_تسلسل_r(خالی)
 {
 	/*
 	 * Please do not add logic to this function (variables, if (), etc.).
@@ -602,7 +602,7 @@ static void initcall_run_r(void)
 	INITCALL(initr_reloc);
 	INITCALL(event_init);
 	/* TODO: could x86/PPC have this also perhaps? */
-#if CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
+#اگر CONFIG_IS_ENABLED(ARM) || CONFIG_IS_ENABLED(RISCV)
 	INITCALL(initr_caches);
 	/* Note: For Freescale LS2 SoCs, new MMU table is created in DDR.
 	 *	 A temporary mapping of IFC high region is since removed,
@@ -610,173 +610,173 @@ static void initcall_run_r(void)
 	 *	 until board_init() is called below to remap IFC to high
 	 *	 region.
 	 */
-#endif
-	INITCALL(initr_reloc_global_data);
-#if CONFIG_IS_ENABLED(SYS_INIT_RAM_LOCK) && CONFIG_IS_ENABLED(E500)
-	INITCALL(initr_unlock_ram_in_cache);
-#endif
+#اگر_ختم
+	INITCALL(initr_reloc_global_ڈیٹا);
+#اگر CONFIG_IS_ENABLED(SYS_INIT_RAM_تالا) && CONFIG_IS_ENABLED(E500)
+	INITCALL(initr_unlock_ram_اندر_cache);
+#اگر_ختم
 	INITCALL(initr_barrier);
 	INITCALL(initr_malloc);
 	INITCALL(log_init);
 	INITCALL(initr_bootstage); /* Needs malloc() but has its own timer */
-#if CONFIG_IS_ENABLED(CONSOLE_RECORD)
-	INITCALL(console_record_init);
-#endif
-#if CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_MEMORY)
+#اگر CONFIG_IS_ENABLED(CONSOLE_ریکارڈ)
+	INITCALL(console_ریکارڈ_init);
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(SYS_HAS_NONCACHED_حافظہ)
 	INITCALL(noncached_init);
-#endif
-	INITCALL(initr_of_live);
-#if CONFIG_IS_ENABLED(DM)
+#اگر_ختم
+	INITCALL(initr_کا_زندہ);
+#اگر CONFIG_IS_ENABLED(DM)
 	INITCALL(initr_dm);
-#endif
-#if CONFIG_IS_ENABLED(ADDR_MAP)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(ADDR_MAP)
 	INITCALL(init_addr_map);
-#endif
-#if CONFIG_IS_ENABLED(BOARD_INIT)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(BOARD_INIT)
 	INITCALL(board_init);	/* Setup chipselects */
-#endif
+#اگر_ختم
 	/*
 	 * TODO: printing of the clock inforamtion of the board is now
 	 * implemented as part of bdinfo command. Currently only support for
 	 * davinci SOC's is added. Remove this check once all the board
 	 * implement this.
 	 */
-#if CONFIG_IS_ENABLED(CLOCKS)
-	INITCALL(set_cpu_clk_info);
-#endif
+#اگر CONFIG_IS_ENABLED(CLOCKS)
+	INITCALL(سیٹ_cpu_clk_info);
+#اگر_ختم
 	INITCALL(initr_lmb);
-#if CONFIG_IS_ENABLED(EFI_LOADER)
-	INITCALL(efi_memory_init);
-#endif
-#if CONFIG_IS_ENABLED(BINMAN_FDT)
+#اگر CONFIG_IS_ENABLED(EFI_LOADER)
+	INITCALL(efi_حافظہ_init);
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(BINMAN_FDT)
 	INITCALL(initr_binman);
-#endif
-#if CONFIG_IS_ENABLED(FSP_VERSION2)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(FSP_VERSION2)
 	INITCALL(arch_fsp_init_r);
-#endif
+#اگر_ختم
 	INITCALL(initr_dm_devices);
 	INITCALL(stdio_init_tables);
 	INITCALL(serial_initialize);
 	INITCALL(initr_announce);
 	INITCALL(dm_announce);
-#if CONFIG_IS_ENABLED(WDT)
+#اگر CONFIG_IS_ENABLED(WDT)
 	INITCALL(initr_watchdog);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
 	INITCALL(arch_initr_trap);
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
+#اگر CONFIG_IS_ENABLED(BOARD_EARLY_INIT_R)
 	INITCALL(board_early_init_r);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(POST)
+#اگر CONFIG_IS_ENABLED(POST)
 	INITCALL(post_output_backlog);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#اگر CONFIG_IS_ENABLED(PCI_INIT_R) && CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do early PCI configuration _before_ the flash gets initialised,
 	 * because PCU resources are crucial for flash access on some boards.
 	 */
 	INITCALL(pci_init);
-#endif
-#if CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(ARCH_EARLY_INIT_R)
 	INITCALL(arch_early_init_r);
-#endif
+#اگر_ختم
 	INITCALL(power_init_board);
-#if CONFIG_IS_ENABLED(MTD_NOR_FLASH)
+#اگر CONFIG_IS_ENABLED(MTD_NOR_FLASH)
 	INITCALL(initr_flash);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
-#if IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
+#اگر IS_ENABLED(CONFIG_PPC) || CONFIG_IS_ENABLED(M68K) || CONFIG_IS_ENABLED(X86)
 	/* initialize higher level parts of CPU like time base and timers */
 	INITCALL(cpu_init_r);
-#endif
-#if CONFIG_IS_ENABLED(EFI_LOADER)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(EFI_LOADER)
 	INITCALL(efi_init_early);
-#endif
-#if CONFIG_IS_ENABLED(CMD_NAND)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(CMD_NAND)
 	INITCALL(initr_nand);
-#endif
-#if CONFIG_IS_ENABLED(CMD_ONENAND)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(CMD_ONENAND)
 	INITCALL(initr_onenand);
-#endif
-#if CONFIG_IS_ENABLED(MMC)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(MMC)
 	INITCALL(initr_mmc);
-#endif
-#if CONFIG_IS_ENABLED(XEN)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(XEN)
 	INITCALL(xen_init);
-#endif
-#if CONFIG_IS_ENABLED(PVBLOCK)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(PVBLOCK)
 	INITCALL(initr_pvblock);
-#endif
+#اگر_ختم
 	INITCALL(initr_env);
-#if CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
+#اگر CONFIG_IS_ENABLED(SYS_MALLOC_BOOTPARAMS)
 	INITCALL(initr_malloc_bootparams);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
 	INITCALL(cpu_secondary_init_r);
-#if CONFIG_IS_ENABLED(ID_EEPROM)
+#اگر CONFIG_IS_ENABLED(ID_EEPROM)
 	INITCALL(mac_read_from_eeprom);
-#endif
+#اگر_ختم
 	INITCALL_EVT(EVT_SETTINGS_R);
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
+#اگر CONFIG_IS_ENABLED(PCI_INIT_R) && !CONFIG_IS_ENABLED(SYS_EARLY_PCI_INIT)
 	/*
 	 * Do pci configuration
 	 */
 	INITCALL(pci_init);
-#endif
-	INITCALL(stdio_add_devices);
+#اگر_ختم
+	INITCALL(stdio_جوڑو_devices);
 	INITCALL(jumptable_init);
-#if CONFIG_IS_ENABLED(API)
+#اگر CONFIG_IS_ENABLED(API)
 	INITCALL(api_init);
-#endif
+#اگر_ختم
 	INITCALL(console_init_r);	/* fully init console as a device */
-#if CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
+#اگر CONFIG_IS_ENABLED(DISPLAY_BOARDINFO_LATE)
 	INITCALL(console_announce_r);
 	INITCALL(show_board_info);
-#endif
+#اگر_ختم
 	/* miscellaneous arch-dependent init */
-#if CONFIG_IS_ENABLED(ARCH_MISC_INIT)
+#اگر CONFIG_IS_ENABLED(ARCH_MISC_INIT)
 	INITCALL(arch_misc_init);
-#endif
+#اگر_ختم
 	/* miscellaneous platform-dependent init */
-#if CONFIG_IS_ENABLED(MISC_INIT_R)
+#اگر CONFIG_IS_ENABLED(MISC_INIT_R)
 	INITCALL(misc_init_r);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
-#if CONFIG_IS_ENABLED(CMD_KGDB)
+#اگر CONFIG_IS_ENABLED(CMD_KGDB)
 	INITCALL(kgdb_init);
-#endif
-	INITCALL(interrupt_init);
-#if defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
+#اگر_ختم
+	INITCALL(مداخلت_init);
+#اگر defined(CONFIG_MICROBLAZE) || defined(CONFIG_M68K)
 	INITCALL(timer_init);		/* initialize timer */
-#endif
+#اگر_ختم
 	INITCALL(initr_boot_led_blink);
 	/* PPC has a udelay(20) here dating from 2002. Why? */
-#if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
+#اگر CONFIG_IS_ENABLED(BOARD_LATE_INIT)
 	INITCALL(board_late_init);
-#endif
-#if CONFIG_IS_ENABLED(PCI_ENDPOINT)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(PCI_ENDPOINT)
 	INITCALL(pci_ep_init);
-#endif
-#if CONFIG_IS_ENABLED(NET)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(NET)
 	WATCHDOG_RESET();
 	INITCALL(initr_net);
-#endif
-#if CONFIG_IS_ENABLED(POST)
+#اگر_ختم
+#اگر CONFIG_IS_ENABLED(POST)
 	INITCALL(initr_post);
-#endif
+#اگر_ختم
 	WATCHDOG_RESET();
-	INITCALL_EVT(EVT_LAST_STAGE_INIT);
-#if defined(CFG_PRAM)
+	INITCALL_EVT(EVT_آخری_STAGE_INIT);
+#اگر defined(CFG_PRAM)
 	INITCALL(initr_mem);
-#endif
+#اگر_ختم
 	INITCALL(initr_boot_led_on);
-	INITCALL(run_main_loop);
+	INITCALL(تسلسل_main_loop);
 }
 
-void board_init_r(gd_t *new_gd, ulong dest_addr)
+خالی board_init_r(gd_t *new_gd, ulong dest_addr)
 {
 	/*
 	 * The pre-relocation drivers may be using memory that has now gone
@@ -793,17 +793,17 @@ void board_init_r(gd_t *new_gd, ulong dest_addr)
 	 * TODO(sjg@chromium.org): Consider doing this for all archs, or
 	 * dropping the new_gd parameter.
 	 */
-	if (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
-		arch_setup_gd(new_gd);
+	اگر (CONFIG_IS_ENABLED(X86_64) && !IS_ENABLED(CONFIG_EFI_APP))
+		arch_تیاری_gd(new_gd);
 
-#if defined(CONFIG_RISCV)
-	set_gd(new_gd);
-#elif !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+#اگر defined(CONFIG_RISCV)
+	سیٹ_gd(new_gd);
+#وگرنہ_اگر !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
 	gd = new_gd;
-#endif
+#اگر_ختم
 	gd->flags &= ~GD_FLG_LOG_READY;
 
-	initcall_run_r();
+	initcall_تسلسل_r();
 
 	/* NOTREACHED - run_main_loop() does not return */
 	hang();

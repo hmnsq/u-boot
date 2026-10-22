@@ -87,393 +87,393 @@
  *
  ****************************************************************************/
 
-#include <asm/ptrace.h>
+#شامل <asm/ptrace.h>
 
-#include <kgdb.h>
-#include <command.h>
+#شامل <kgdb.h>
+#شامل <command.h>
 
-#undef KGDB_DEBUG
+#تعریف_منسوخ KGDB_DEBUG
 
 /*
  * BUFMAX defines the maximum number of characters in inbound/outbound buffers
  */
-#define BUFMAX 1024
-static char remcomInBuffer[BUFMAX];
-static char remcomOutBuffer[BUFMAX];
-static char remcomRegBuffer[BUFMAX];
+#تعریف_کرو BUFMAX 1024
+ساکن حرف remcom_اندر_بفر[BUFMAX];
+ساکن حرف remcom_برآمد_بفر[BUFMAX];
+ساکن حرف remcom_Reg_بفر[BUFMAX];
 
-static int initialized = 0;
-static int kgdb_active;
-static struct pt_regs entry_regs;
-static long error_jmp_buf[BUFMAX/2];
-static int longjmp_on_fault = 0;
-#ifdef KGDB_DEBUG
-static int kdebug = 1;
-#endif
+ساکن صحیح initialized = 0;
+ساکن صحیح kgdb_فعال;
+ساکن ساخت pt_regs اندراج_regs;
+ساکن طویل error_jmp_buf[BUFMAX/2];
+ساکن صحیح longjmp_on_fault = 0;
+#اگر_تعریف_شدہ KGDB_DEBUG
+ساکن صحیح kdebug = 1;
+#اگر_ختم
 
-static const char hexchars[]="0123456789abcdef";
+ساکن ثابت حرف hexchars[]="0123456789abcdef";
 
 /* Convert ch from a hex digit to an int */
-static int
-hex(unsigned char ch)
+ساکن صحیح
+hex(غیرعلامتی حرف ch)
 {
-	if (ch >= 'a' && ch <= 'f')
-		return ch-'a'+10;
-	if (ch >= '0' && ch <= '9')
-		return ch-'0';
-	if (ch >= 'A' && ch <= 'F')
-		return ch-'A'+10;
-	return -1;
+	اگر (ch >= 'a' && ch <= 'f')
+		واپس ch-'a'+10;
+	اگر (ch >= '0' && ch <= '9')
+		واپس ch-'0';
+	اگر (ch >= 'A' && ch <= 'F')
+		واپس ch-'A'+10;
+	واپس -1;
 }
 
 /* Convert the memory pointed to by mem into hex, placing result in buf.
  * Return a pointer to the last char put in buf (null).
  */
-static unsigned char *
-mem2hex(char *mem, char *buf, int count)
+ساکن غیرعلامتی حرف *
+mem2hex(حرف *mem, حرف *buf, صحیح گنتی)
 {
-	char *tmp;
-	unsigned char ch;
+	حرف *tmp;
+	غیرعلامتی حرف ch;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory copy.  Hex conversion will work against this one.
 	 */
-	tmp = buf + count;
+	tmp = buf + گنتی;
 	longjmp_on_fault = 1;
 
-	memcpy(tmp, mem, count);
+	حافظہ_نقل(tmp, mem, گنتی);
 
-	while (count-- > 0) {
+	جب (گنتی-- > 0) {
 		ch = *tmp++;
 		*buf++ = hexchars[ch >> 4];
 		*buf++ = hexchars[ch & 0xf];
 	}
 	*buf = 0;
 	longjmp_on_fault = 0;
-	return (unsigned char *)buf;
+	واپس (غیرعلامتی حرف *)buf;
 }
 
 /* convert the hex array pointed to by buf into binary to be placed in mem
  * return a pointer to the character AFTER the last byte fetched from buf.
 */
-static char *
-hex2mem(char *buf, char *mem, int count)
+ساکن حرف *
+hex2mem(حرف *buf, حرف *mem, صحیح گنتی)
 {
-	int hexValue;
-	char *tmp_raw, *tmp_hex;
+	صحیح hex_قدر;
+	حرف *tmp_raw, *tmp_hex;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory that is converted from hex.
 	 */
-	tmp_raw = buf + count * 2;
+	tmp_raw = buf + گنتی * 2;
 	tmp_hex = tmp_raw - 1;
 
 	longjmp_on_fault = 1;
-	while (tmp_hex >= buf) {
+	جب (tmp_hex >= buf) {
 		tmp_raw--;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		hex_قدر = hex(*tmp_hex--);
+		اگر (hex_قدر < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw = hexValue;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		*tmp_raw = hex_قدر;
+		hex_قدر = hex(*tmp_hex--);
+		اگر (hex_قدر < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw |= hexValue << 4;
+		*tmp_raw |= hex_قدر << 4;
 
 	}
 
-	memcpy(mem, tmp_raw, count);
+	حافظہ_نقل(mem, tmp_raw, گنتی);
 
-	kgdb_flush_cache_range((void *)mem, (void *)(mem+count));
+	kgdb_flush_cache_range((خالی *)mem, (خالی *)(mem+گنتی));
 	longjmp_on_fault = 0;
 
-	return buf;
+	واپس buf;
 }
 
 /*
  * While we find nice hex chars, build an int.
  * Return number of chars processed.
  */
-static int
-hexToInt(char **ptr, int *intValue)
+ساکن صحیح
+hex_مقصد_Int(حرف **ptr, صحیح *int_قدر)
 {
-	int numChars = 0;
-	int hexValue;
+	صحیح عدد_Chars = 0;
+	صحیح hex_قدر;
 
-	*intValue = 0;
+	*int_قدر = 0;
 
 	longjmp_on_fault = 1;
-	while (**ptr) {
-		hexValue = hex(**ptr);
-		if (hexValue < 0)
-			break;
+	جب (**ptr) {
+		hex_قدر = hex(**ptr);
+		اگر (hex_قدر < 0)
+			توڑو;
 
-		*intValue = (*intValue << 4) | hexValue;
-		numChars ++;
+		*int_قدر = (*int_قدر << 4) | hex_قدر;
+		عدد_Chars ++;
 
 		(*ptr)++;
 	}
 	longjmp_on_fault = 0;
 
-	return (numChars);
+	واپس (عدد_Chars);
 }
 
 /* scan for the sequence $<data>#<checksum>     */
-static void
-getpacket(char *buffer)
+ساکن خالی
+getpacket(حرف *بفر)
 {
-	unsigned char checksum;
-	unsigned char xmitcsum;
-	int i;
-	int count;
-	unsigned char ch;
+	غیرعلامتی حرف checksum;
+	غیرعلامتی حرف xmitcsum;
+	صحیح i;
+	صحیح گنتی;
+	غیرعلامتی حرف ch;
 
-	do {
+	کرو {
 		/* wait around for the start character, ignore all other
 		 * characters */
-		while ((ch = (getDebugChar() & 0x7f)) != '$') {
-#ifdef KGDB_DEBUG
-			if (kdebug)
+		جب ((ch = (getDebugChar() & 0x7f)) != '$') {
+#اگر_تعریف_شدہ KGDB_DEBUG
+			اگر (kdebug)
 				putc(ch);
-#endif
+#اگر_ختم
 			;
 		}
 
 		checksum = 0;
 		xmitcsum = -1;
 
-		count = 0;
+		گنتی = 0;
 
 		/* now, read until a # or end of buffer is found */
-		while (count < BUFMAX) {
+		جب (گنتی < BUFMAX) {
 			ch = getDebugChar() & 0x7f;
-			if (ch == '#')
-				break;
+			اگر (ch == '#')
+				توڑو;
 			checksum = checksum + ch;
-			buffer[count] = ch;
-			count = count + 1;
+			بفر[گنتی] = ch;
+			گنتی = گنتی + 1;
 		}
 
-		if (count >= BUFMAX)
-			continue;
+		اگر (گنتی >= BUFMAX)
+			جاری;
 
-		buffer[count] = 0;
+		بفر[گنتی] = 0;
 
-		if (ch == '#') {
+		اگر (ch == '#') {
 			xmitcsum = hex(getDebugChar() & 0x7f) << 4;
 			xmitcsum |= hex(getDebugChar() & 0x7f);
-			if (checksum != xmitcsum)
+			اگر (checksum != xmitcsum)
 				putDebugChar('-');	/* failed checksum */
-			else {
+			ورنہ {
 				putDebugChar('+'); /* successful transfer */
 				/* if a sequence char is present, reply the ID */
-				if (buffer[2] == ':') {
-					putDebugChar(buffer[0]);
-					putDebugChar(buffer[1]);
+				اگر (بفر[2] == ':') {
+					putDebugChar(بفر[0]);
+					putDebugChar(بفر[1]);
 					/* remove sequence chars from buffer */
-					count = strlen(buffer);
-					for (i=3; i <= count; i++)
-						buffer[i-3] = buffer[i];
+					گنتی = لڑی_لمبائی(بفر);
+					برائے (i=3; i <= گنتی; i++)
+						بفر[i-3] = بفر[i];
 				}
 			}
 		}
-	} while (checksum != xmitcsum);
+	} جب (checksum != xmitcsum);
 }
 
 /* send the packet in buffer.  */
-static void
-putpacket(unsigned char *buffer)
+ساکن خالی
+putpacket(غیرعلامتی حرف *بفر)
 {
-	unsigned char checksum;
-	int count;
-	unsigned char ch, recv;
+	غیرعلامتی حرف checksum;
+	صحیح گنتی;
+	غیرعلامتی حرف ch, recv;
 
 	/*  $<packet info>#<checksum>. */
-	do {
+	کرو {
 		putDebugChar('$');
 		checksum = 0;
-		count = 0;
+		گنتی = 0;
 
-		while ((ch = buffer[count])) {
+		جب ((ch = بفر[گنتی])) {
 			putDebugChar(ch);
 			checksum += ch;
-			count += 1;
+			گنتی += 1;
 		}
 
 		putDebugChar('#');
 		putDebugChar(hexchars[checksum >> 4]);
 		putDebugChar(hexchars[checksum & 0xf]);
 		recv = getDebugChar();
-	} while ((recv & 0x7f) != '+');
+	} جب ((recv & 0x7f) != '+');
 }
 
 /*
  * This function does all command processing for interfacing to gdb.
  */
-static int
-handle_exception (struct pt_regs *regs)
+ساکن صحیح
+handle_exception (ساخت pt_regs *regs)
 {
-	int addr;
-	int length;
-	char *ptr;
-	kgdb_data kd;
-	int i;
+	صحیح addr;
+	صحیح لمبائی;
+	حرف *ptr;
+	kgdb_ڈیٹا kd;
+	صحیح i;
 
-	if (!initialized) {
-		printf("kgdb: exception before kgdb is initialized! huh?\n");
-		return (0);
+	اگر (!initialized) {
+		لکھو("kgdb: exception before kgdb is initialized! huh?\n");
+		واپس (0);
 	}
 
 	/* probably should check which exception occurred as well */
-	if (longjmp_on_fault) {
+	اگر (longjmp_on_fault) {
 		longjmp_on_fault = 0;
 		kgdb_longjmp(error_jmp_buf, KGDBERR_MEMFAULT);
 		panic("kgdb longjump failed!\n");
 	}
 
-	if (kgdb_active) {
-		printf("kgdb: unexpected exception from within kgdb\n");
-		return (0);
+	اگر (kgdb_فعال) {
+		لکھو("kgdb: unexpected exception from within kgdb\n");
+		واپس (0);
 	}
-	kgdb_active = 1;
+	kgdb_فعال = 1;
 
 	kgdb_interruptible(0);
 
-	printf("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
+	لکھو("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
 
-	if (kgdb_setjmp(error_jmp_buf) != 0)
+	اگر (kgdb_setjmp(error_jmp_buf) != 0)
 		panic("kgdb: error or fault in entry init!\n");
 
 	kgdb_enter(regs, &kd);
 
-	entry_regs = *regs;
+	اندراج_regs = *regs;
 
-	ptr = remcomOutBuffer;
+	ptr = remcom_برآمد_بفر;
 
 	*ptr++ = 'T';
 
 	*ptr++ = hexchars[kd.sigval >> 4];
 	*ptr++ = hexchars[kd.sigval & 0xf];
 
-	for (i = 0; i < kd.nregs; i++) {
+	برائے (i = 0; i < kd.nregs; i++) {
 		kgdb_reg *rp = &kd.regs[i];
 
-		*ptr++ = hexchars[rp->num >> 4];
-		*ptr++ = hexchars[rp->num & 0xf];
+		*ptr++ = hexchars[rp->عدد >> 4];
+		*ptr++ = hexchars[rp->عدد & 0xf];
 		*ptr++ = ':';
-		ptr = (char *)mem2hex((char *)&rp->val, ptr, 4);
+		ptr = (حرف *)mem2hex((حرف *)&rp->val, ptr, 4);
 		*ptr++ = ';';
 	}
 
 	*ptr = 0;
 
-#ifdef KGDB_DEBUG
-	if (kdebug)
-		printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
-#endif
+#اگر_تعریف_شدہ KGDB_DEBUG
+	اگر (kdebug)
+		لکھو("kgdb: remcomOutBuffer: %s\n", remcom_برآمد_بفر);
+#اگر_ختم
 
-	putpacket((unsigned char *)&remcomOutBuffer);
+	putpacket((غیرعلامتی حرف *)&remcom_برآمد_بفر);
 
-	while (1) {
-		volatile int errnum;
+	جب (1) {
+		متلون صحیح errnum;
 
-		remcomOutBuffer[0] = 0;
+		remcom_برآمد_بفر[0] = 0;
 
-		getpacket(remcomInBuffer);
-		ptr = &remcomInBuffer[1];
+		getpacket(remcom_اندر_بفر);
+		ptr = &remcom_اندر_بفر[1];
 
-#ifdef KGDB_DEBUG
-		if (kdebug)
-			printf("kgdb:  remcomInBuffer: %s\n", remcomInBuffer);
-#endif
+#اگر_تعریف_شدہ KGDB_DEBUG
+		اگر (kdebug)
+			لکھو("kgdb:  remcomInBuffer: %s\n", remcom_اندر_بفر);
+#اگر_ختم
 
 		errnum = kgdb_setjmp(error_jmp_buf);
 
-		if (errnum == 0) switch (remcomInBuffer[0]) {
+		اگر (errnum == 0) انتخاب (remcom_اندر_بفر[0]) {
 
-		case '?':               /* report most recent signal */
-			remcomOutBuffer[0] = 'S';
-			remcomOutBuffer[1] = hexchars[kd.sigval >> 4];
-			remcomOutBuffer[2] = hexchars[kd.sigval & 0xf];
-			remcomOutBuffer[3] = 0;
-			break;
+		حالت '?':               /* report most recent signal */
+			remcom_برآمد_بفر[0] = 'S';
+			remcom_برآمد_بفر[1] = hexchars[kd.sigval >> 4];
+			remcom_برآمد_بفر[2] = hexchars[kd.sigval & 0xf];
+			remcom_برآمد_بفر[3] = 0;
+			توڑو;
 
-#ifdef KGDB_DEBUG
-		case 'd':
+#اگر_تعریف_شدہ KGDB_DEBUG
+		حالت 'd':
 			/* toggle debug flag */
 			kdebug ^= 1;
-			break;
-#endif
+			توڑو;
+#اگر_ختم
 
-		case 'g':	/* return the value of the CPU registers. */
-			length = kgdb_getregs(regs, remcomRegBuffer, BUFMAX);
-			mem2hex(remcomRegBuffer, remcomOutBuffer, length);
-			break;
+		حالت 'g':	/* return the value of the CPU registers. */
+			لمبائی = kgdb_getregs(regs, remcom_Reg_بفر, BUFMAX);
+			mem2hex(remcom_Reg_بفر, remcom_برآمد_بفر, لمبائی);
+			توڑو;
 
-		case 'G':   /* set the value of the CPU registers */
-			length = strlen(ptr);
-			if ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
-			hex2mem(ptr, remcomRegBuffer, length/2);
-			kgdb_putregs(regs, remcomRegBuffer, length/2);
-			strcpy(remcomOutBuffer,"OK");
-			break;
+		حالت 'G':   /* set the value of the CPU registers */
+			لمبائی = لڑی_لمبائی(ptr);
+			اگر ((لمبائی & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
+			hex2mem(ptr, remcom_Reg_بفر, لمبائی/2);
+			kgdb_putregs(regs, remcom_Reg_بفر, لمبائی/2);
+			strcpy(remcom_برآمد_بفر,"OK");
+			توڑو;
 
-		case 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
+		حالت 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
 				/* Try to read %x,%x.  */
 
-			if (hexToInt(&ptr, &addr)
+			اگر (hex_مقصد_Int(&ptr, &addr)
 			    && *ptr++ == ','
-			    && hexToInt(&ptr, &length))	{
-				mem2hex((char *)addr, remcomOutBuffer, length);
-			} else {
+			    && hex_مقصد_Int(&ptr, &لمبائی))	{
+				mem2hex((حرف *)addr, remcom_برآمد_بفر, لمبائی);
+			} ورنہ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			توڑو;
 
-		case 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
+		حالت 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
 			/* Try to read '%x,%x:'.  */
 
-			if (hexToInt(&ptr, &addr)
+			اگر (hex_مقصد_Int(&ptr, &addr)
 			    && *ptr++ == ','
-			    && hexToInt(&ptr, &length)
+			    && hex_مقصد_Int(&ptr, &لمبائی)
 			    && *ptr++ == ':') {
-				hex2mem(ptr, (char *)addr, length);
-				strcpy(remcomOutBuffer, "OK");
-			} else {
+				hex2mem(ptr, (حرف *)addr, لمبائی);
+				strcpy(remcom_برآمد_بفر, "OK");
+			} ورنہ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			توڑو;
 
-		case 'k':    /* kill the program, actually return to monitor */
+		حالت 'k':    /* kill the program, actually return to monitor */
 			kd.extype = KGDBEXIT_KILL;
-			*regs = entry_regs;
-			goto doexit;
+			*regs = اندراج_regs;
+			جاؤ doexit;
 
-		case 'C':    /* CSS  continue with signal SS */
+		حالت 'C':    /* CSS  continue with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 'c':    /* cAA..AA  Continue; address AA..AA optional */
+		حالت 'c':    /* cAA..AA  Continue; address AA..AA optional */
 			/* try to read optional parameter, pc unchanged if no parm */
 			kd.extype = KGDBEXIT_CONTINUE;
 
-			if (hexToInt(&ptr, &addr)) {
+			اگر (hex_مقصد_Int(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
 
-			goto doexit;
+			جاؤ doexit;
 
-		case 'S':    /* SSS  single step with signal SS */
+		حالت 'S':    /* SSS  single step with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 's':
+		حالت 's':
 			kd.extype = KGDBEXIT_SINGLE;
 
-			if (hexToInt(&ptr, &addr)) {
+			اگر (hex_مقصد_Int(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
@@ -485,38 +485,38 @@ handle_exception (struct pt_regs *regs)
  */
 			kgdb_flush_cache_all();
 			kgdb_exit(regs, &kd);
-			kgdb_active = 0;
+			kgdb_فعال = 0;
 			kgdb_interruptible(1);
-			return (1);
+			واپس (1);
 
-		case 'r':		/* Reset (if user process..exit ???)*/
+		حالت 'r':		/* Reset (if user process..exit ???)*/
 			panic("kgdb reset.");
-			break;
+			توڑو;
 
-		case 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
-			if (hexToInt(&ptr, &addr)
+		حالت 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
+			اگر (hex_مقصد_Int(&ptr, &addr)
 			    && *ptr++ == '='
-			    && ((length = strlen(ptr)) & 1) == 0) {
-				hex2mem(ptr, remcomRegBuffer, length/2);
+			    && ((لمبائی = لڑی_لمبائی(ptr)) & 1) == 0) {
+				hex2mem(ptr, remcom_Reg_بفر, لمبائی/2);
 				kgdb_putreg(regs, addr,
-					remcomRegBuffer, length/2);
-				strcpy(remcomOutBuffer,"OK");
-			} else {
+					remcom_Reg_بفر, لمبائی/2);
+				strcpy(remcom_برآمد_بفر,"OK");
+			} ورنہ {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			توڑو;
 		}			/* switch */
 
-		if (errnum != 0)
-			sprintf(remcomOutBuffer, "E%02d", errnum);
+		اگر (errnum != 0)
+			sprintf(remcom_برآمد_بفر, "E%02d", errnum);
 
-#ifdef KGDB_DEBUG
-		if (kdebug)
-			printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
-#endif
+#اگر_تعریف_شدہ KGDB_DEBUG
+		اگر (kdebug)
+			لکھو("kgdb: remcomOutBuffer: %s\n", remcom_برآمد_بفر);
+#اگر_ختم
 
 		/* reply to the request */
-		putpacket((unsigned char *)&remcomOutBuffer);
+		putpacket((غیرعلامتی حرف *)&remcom_برآمد_بفر);
 
 	} /* while(1) */
 }
@@ -525,7 +525,7 @@ handle_exception (struct pt_regs *regs)
  * kgdb_init must be called *after* the
  * monitor is relocated into ram
  */
-int kgdb_init(void)
+صحیح kgdb_init(خالی)
 {
 	puts("KGDB:  ");
 
@@ -536,11 +536,11 @@ int kgdb_init(void)
 	putDebugStr("kgdb ready\n");
 	puts("ready\n");
 
-	return 0;
+	واپس 0;
 }
 
-void
-kgdb_error(int errnum)
+خالی
+kgdb_error(صحیح errnum)
 {
 	longjmp_on_fault = 0;
 	kgdb_longjmp(error_jmp_buf, errnum);
@@ -549,39 +549,39 @@ kgdb_error(int errnum)
 
 /* Output string in GDB O-packet format if GDB has connected. If nothing
    output, returns 0 (caller must then handle output). */
-int
-kgdb_output_string (const char* s, unsigned int count)
+صحیح
+kgdb_output_string (ثابت حرف* s, غیرعلامتی صحیح گنتی)
 {
-	char buffer[512];
+	حرف بفر[512];
 
-	count = (count <= (sizeof(buffer) / 2 - 2))
-		? count : (sizeof(buffer) / 2 - 2);
+	گنتی = (گنتی <= (حجم(بفر) / 2 - 2))
+		? گنتی : (حجم(بفر) / 2 - 2);
 
-	buffer[0] = 'O';
-	mem2hex ((char *)s, &buffer[1], count);
-	putpacket((unsigned char *)&buffer);
+	بفر[0] = 'O';
+	mem2hex ((حرف *)s, &بفر[1], گنتی);
+	putpacket((غیرعلامتی حرف *)&بفر);
 
-	return 1;
+	واپس 1;
 }
 
-void
-breakpoint(void)
+خالی
+breakpoint(خالی)
 {
-	if (!initialized) {
-		printf("breakpoint() called b4 kgdb init\n");
-		return;
+	اگر (!initialized) {
+		لکھو("breakpoint() called b4 kgdb init\n");
+		واپس;
 	}
 
 	kgdb_breakpoint(0, 0);
 }
 
-int
-do_kgdb(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+صحیح
+do_kgdb(ساخت cmd_tbl *cmdtp, صحیح flag, صحیح argc, حرف *ثابت argv[])
 {
-    printf("Entering KGDB mode via exception handler...\n\n");
+    لکھو("Entering KGDB mode via exception handler...\n\n");
     kgdb_breakpoint(argc - 1, argv + 1);
-    printf("\nReturned from KGDB mode\n");
-    return 0;
+    لکھو("\nReturned from KGDB mode\n");
+    واپس 0;
 }
 
 U_BOOT_CMD(

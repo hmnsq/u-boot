@@ -21,119 +21,119 @@
  * Probes device for being a hub and configurate it
  */
 
-#include <command.h>
-#include <dm.h>
-#include <env.h>
-#include <errno.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <time.h>
-#include <asm/processor.h>
-#include <asm/unaligned.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <asm/byteorder.h>
-#ifdef CONFIG_SANDBOX
-#include <asm/state.h>
-#endif
-#include <asm/unaligned.h>
+#شامل <command.h>
+#شامل <dm.h>
+#شامل <env.h>
+#شامل <errno.h>
+#شامل <log.h>
+#شامل <malloc.h>
+#شامل <memalign.h>
+#شامل <time.h>
+#شامل <asm/processor.h>
+#شامل <asm/unaligned.h>
+#شامل <linux/ctype.h>
+#شامل <linux/delay.h>
+#شامل <linux/list.h>
+#شامل <asm/byteorder.h>
+#اگر_تعریف_شدہ CONFIG_SANDBOX
+#شامل <asm/state.h>
+#اگر_ختم
+#شامل <asm/unaligned.h>
 
-#include <usb.h>
+#شامل <usb.h>
 
-#define USB_BUFSIZ	512
+#تعریف_کرو USB_BUFSIZ	512
 
-#define HUB_SHORT_RESET_TIME	20
-#define HUB_LONG_RESET_TIME	200
+#تعریف_کرو HUB_SHORT_RESET_وقت	20
+#تعریف_کرو HUB_LONG_RESET_وقت	200
 
-#define HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
+#تعریف_کرو HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
 
-#define PORT_OVERCURRENT_MAX_SCAN_COUNT		3
+#تعریف_کرو پورٹ_OVERCURRENT_MAX_جائزہ_گنتی		3
 
-struct usb_device_scan {
-	struct usb_device *dev;		/* USB hub device to scan */
-	struct usb_hub_device *hub;	/* USB hub struct */
-	int port;			/* USB port to scan */
-	struct list_head list;
+ساخت usb_device_جائزہ {
+	ساخت usb_device *dev;		/* USB hub device to scan */
+	ساخت usb_hub_device *hub;	/* USB hub struct */
+	صحیح پورٹ;			/* USB port to scan */
+	ساخت list_سر list;
 };
 
-static LIST_HEAD(usb_scan_list);
+ساکن LIST_سر(usb_جائزہ_list);
 
-__weak void usb_hub_reset_devices(struct usb_hub_device *hub, int port)
+__weak خالی usb_hub_reset_devices(ساخت usb_hub_device *hub, صحیح پورٹ)
 {
-	return;
+	واپس;
 }
 
-static inline bool usb_hub_is_superspeed(struct usb_device *hdev)
+ساکن اندرونی bool usb_hub_is_superspeed(ساخت usb_device *hdev)
 {
-	return hdev->descriptor.bDeviceProtocol == 3;
+	واپس hdev->descriptor.bDeviceProtocol == 3;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-bool usb_hub_is_root_hub(struct udevice *hub)
+#اگر CONFIG_IS_ENABLED(DM_USB)
+bool usb_hub_is_جڑ_hub(ساخت udevice *hub)
 {
-	if (device_get_uclass_id(hub->parent) != UCLASS_USB_HUB)
-		return true;
+	اگر (device_get_uclass_id(hub->والد) != UCLASS_USB_HUB)
+		واپس true;
 
-	return false;
+	واپس false;
 }
 
-static int usb_set_hub_depth(struct usb_device *dev, int depth)
+ساکن صحیح usb_سیٹ_hub_گہرائی(ساخت usb_device *dev, صحیح گہرائی)
 {
-	if (depth < 0 || depth > 4)
-		return -EINVAL;
+	اگر (گہرائی < 0 || گہرائی > 4)
+		واپس -EINVAL;
 
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_HUB_DEPTH, USB_DIR_OUT | USB_RT_HUB,
-		depth, 0, NULL, 0, USB_CNTL_TIMEOUT);
+	واپس usb_control_پیغام(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_سیٹ_HUB_گہرائی, USB_DIR_برآمد | USB_RT_HUB,
+		گہرائی, 0, تہی, 0, USB_CNTL_TIMEOUT);
 }
-#endif
+#اگر_ختم
 
-static int usb_get_hub_descriptor(struct usb_device *dev, void *data, int size)
+ساکن صحیح usb_get_hub_descriptor(ساخت usb_device *dev, خالی *ڈیٹا, صحیح سائز)
 {
-	unsigned short dtype = USB_DT_HUB;
+	غیرعلامتی مختصر dtype = USB_DT_HUB;
 
-	if (usb_hub_is_superspeed(dev))
+	اگر (usb_hub_is_superspeed(dev))
 		dtype = USB_DT_SS_HUB;
 
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-		USB_REQ_GET_DESCRIPTOR, USB_DIR_IN | USB_RT_HUB,
-		dtype << 8, 0, data, size, USB_CNTL_TIMEOUT);
+	واپس usb_control_پیغام(dev, usb_rcvctrlpipe(dev, 0),
+		USB_REQ_GET_DESCRIPTOR, USB_DIR_اندر | USB_RT_HUB,
+		dtype << 8, 0, ڈیٹا, سائز, USB_CNTL_TIMEOUT);
 }
 
-static int usb_clear_port_feature(struct usb_device *dev, int port, int feature)
+ساکن صحیح usb_clear_پورٹ_feature(ساخت usb_device *dev, صحیح پورٹ, صحیح feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_CLEAR_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	واپس usb_control_پیغام(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_CLEAR_FEATURE, USB_RT_پورٹ, feature,
+				پورٹ, تہی, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_set_port_feature(struct usb_device *dev, int port, int feature)
+ساکن صحیح usb_سیٹ_پورٹ_feature(ساخت usb_device *dev, صحیح پورٹ, صحیح feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	واپس usb_control_پیغام(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_سیٹ_FEATURE, USB_RT_پورٹ, feature,
+				پورٹ, تہی, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_get_hub_status(struct usb_device *dev, void *data)
+ساکن صحیح usb_get_hub_حالت(ساخت usb_device *dev, خالی *ڈیٹا)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_HUB, 0, 0,
-			data, sizeof(struct usb_hub_status), USB_CNTL_TIMEOUT);
+	واپس usb_control_پیغام(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_حالت, USB_DIR_اندر | USB_RT_HUB, 0, 0,
+			ڈیٹا, حجم(ساخت usb_hub_حالت), USB_CNTL_TIMEOUT);
 }
 
-int usb_get_port_status(struct usb_device *dev, int port, void *data)
+صحیح usb_get_پورٹ_حالت(ساخت usb_device *dev, صحیح پورٹ, خالی *ڈیٹا)
 {
-	int ret;
+	صحیح ret;
 
-	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_PORT, 0, port,
-			data, sizeof(struct usb_port_status), USB_CNTL_TIMEOUT);
+	ret = usb_control_پیغام(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_حالت, USB_DIR_اندر | USB_RT_پورٹ, 0, پورٹ,
+			ڈیٹا, حجم(ساخت usb_پورٹ_حالت), USB_CNTL_TIMEOUT);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	if (ret < 0)
-		return ret;
+#اگر CONFIG_IS_ENABLED(DM_USB)
+	اگر (ret < 0)
+		واپس ret;
 
 	/*
 	 * Translate the USB 3.0 hub port status field into the old version
@@ -144,51 +144,51 @@ int usb_get_port_status(struct usb_device *dev, int port, void *data)
 	 * Note: this only supports driver model.
 	 */
 
-	if (!usb_hub_is_root_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
-		struct usb_port_status *status = (struct usb_port_status *)data;
-		u16 tmp = le16_to_cpu(status->wPortStatus) &
-			USB_SS_PORT_STAT_MASK;
+	اگر (!usb_hub_is_جڑ_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
+		ساخت usb_پورٹ_حالت *حالت_2 = (ساخت usb_پورٹ_حالت *)ڈیٹا;
+		u16 tmp = le16_مقصد_cpu(حالت_2->w_پورٹ_حالت) &
+			USB_SS_پورٹ_STAT_نقاب;
 
-		if (status->wPortStatus & USB_SS_PORT_STAT_POWER)
-			tmp |= USB_PORT_STAT_POWER;
-		if ((status->wPortStatus & USB_SS_PORT_STAT_SPEED) ==
-		    USB_SS_PORT_STAT_SPEED_5GBPS)
-			tmp |= USB_PORT_STAT_SUPER_SPEED;
+		اگر (حالت_2->w_پورٹ_حالت & USB_SS_پورٹ_STAT_POWER)
+			tmp |= USB_پورٹ_STAT_POWER;
+		اگر ((حالت_2->w_پورٹ_حالت & USB_SS_پورٹ_STAT_رفتار) ==
+		    USB_SS_پورٹ_STAT_رفتار_5_GBPS)
+			tmp |= USB_پورٹ_STAT_SUPER_رفتار;
 
-		status->wPortStatus = cpu_to_le16(tmp);
+		حالت_2->w_پورٹ_حالت = cpu_مقصد_le16(tmp);
 	}
-#endif
+#اگر_ختم
 
-	return ret;
+	واپس ret;
 }
 
-static void usb_hub_power_on(struct usb_hub_device *hub)
+ساکن خالی usb_hub_power_on(ساخت usb_hub_device *hub)
 {
-	int i;
-	struct usb_device *dev;
-	unsigned pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
-	const char __maybe_unused *env;
+	صحیح i;
+	ساخت usb_device *dev;
+	غیرعلامتی pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
+	ثابت حرف __maybe_unused *env;
 
 	dev = hub->pusb_dev;
 
 	debug("enabling power on all ports\n");
-	for (i = 0; i < dev->maxchild; i++) {
-		if (usb_hub_is_superspeed(dev)) {
-			usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_RESET);
-			debug("Reset : port %d returns %lX\n", i + 1, dev->status);
+	برائے (i = 0; i < dev->maxchild; i++) {
+		اگر (usb_hub_is_superspeed(dev)) {
+			usb_سیٹ_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_RESET);
+			debug("Reset : port %d returns %lX\n", i + 1, dev->حالت_2);
 		}
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		debug("PowerOn : port %d returns %lX\n", i + 1, dev->status);
+		usb_سیٹ_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_POWER);
+		debug("PowerOn : port %d returns %lX\n", i + 1, dev->حالت_2);
 	}
 
-#ifdef CONFIG_SANDBOX
+#اگر_تعریف_شدہ CONFIG_SANDBOX
 	/*
 	 * Don't set timeout / delay values here. This results
 	 * in these values still being reset to 0.
 	 */
-	if (state_get_skip_delays())
-		return;
-#endif
+	اگر (state_get_skip_delays())
+		واپس;
+#اگر_ختم
 
 	/*
 	 * Wait for power to become stable,
@@ -196,19 +196,19 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 * but allow this time to be increased via env variable as some
 	 * devices break the spec and require longer warm-up times
 	 */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#اگر CONFIG_IS_ENABLED(ENV_SUPPORT)
 	env = env_get("usb_pgood_delay");
-	if (env)
+	اگر (env)
 		pgood_delay = max(pgood_delay,
-			          (unsigned)simple_strtol(env, NULL, 0));
-#endif
+			          (غیرعلامتی)simple_strtol(env, تہی, 0));
+#اگر_ختم
 	debug("pgood_delay=%dms\n", pgood_delay);
 
 	/*
 	 * Do a minimum delay of the larger value of 100ms or pgood_delay
 	 * so that the power can stablize before the devices are queried
 	 */
-	hub->query_delay = get_timer(0) + max(100, (int)pgood_delay);
+	hub->query_delay = get_timer(0) + max(100, (صحیح)pgood_delay);
 
 	/*
 	 * Record the power-on timeout here. The max. delay (timeout)
@@ -217,45 +217,45 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 */
 	hub->connect_timeout = hub->query_delay + HUB_DEBOUNCE_TIMEOUT;
 	debug("devnum=%d poweron: query_delay=%d connect_timeout=%d\n",
-	      dev->devnum, max(100, (int)pgood_delay),
-	      max(100, (int)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
+	      dev->devnum, max(100, (صحیح)pgood_delay),
+	      max(100, (صحیح)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_hub_device hub_dev[USB_MAX_HUB];
-static int usb_hub_index;
+#اگر !CONFIG_IS_ENABLED(DM_USB)
+ساکن ساخت usb_hub_device hub_dev[USB_MAX_HUB];
+ساکن صحیح usb_hub_اشاریہ;
 
-void usb_hub_reset(void)
+خالی usb_hub_reset(خالی)
 {
-	usb_hub_index = 0;
+	usb_hub_اشاریہ = 0;
 
 	/* Zero out global hub_dev in case its re-used again */
-	memset(hub_dev, 0, sizeof(hub_dev));
+	memset(hub_dev, 0, حجم(hub_dev));
 }
 
-static struct usb_hub_device *usb_hub_allocate(void)
+ساکن ساخت usb_hub_device *usb_hub_allocate(خالی)
 {
-	if (usb_hub_index < USB_MAX_HUB)
-		return &hub_dev[usb_hub_index++];
+	اگر (usb_hub_اشاریہ < USB_MAX_HUB)
+		واپس &hub_dev[usb_hub_اشاریہ++];
 
-	printf("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
-	return NULL;
+	لکھو("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
+	واپس تہی;
 }
-#endif
+#اگر_ختم
 
-#define MAX_TRIES 5
+#تعریف_کرو MAX_TRIES 5
 
-static inline const char *portspeed(int portstatus)
+ساکن اندرونی ثابت حرف *portspeed(صحیح portstatus)
 {
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		return "5 Gb/s";
-	case USB_PORT_STAT_HIGH_SPEED:
-		return "480 Mb/s";
-	case USB_PORT_STAT_LOW_SPEED:
-		return "1.5 Mb/s";
-	default:
-		return "12 Mb/s";
+	انتخاب (portstatus & USB_پورٹ_STAT_رفتار_نقاب) {
+	حالت USB_پورٹ_STAT_SUPER_رفتار:
+		واپس "5 Gb/s";
+	حالت USB_پورٹ_STAT_بلند_رفتار:
+		واپس "480 Mb/s";
+	حالت USB_پورٹ_STAT_کم_رفتار:
+		واپس "1.5 Mb/s";
+	طےشدہ:
+		واپس "12 Mb/s";
 	}
 }
 
@@ -269,43 +269,43 @@ static inline const char *portspeed(int portstatus)
  * @port:	Port number to reset (note ports are numbered from 0 here)
  * @portstat:	Returns port status
  */
-static int usb_hub_port_reset(struct usb_device *dev, int port,
-			      unsigned short *portstat)
+ساکن صحیح usb_hub_پورٹ_reset(ساخت usb_device *dev, صحیح پورٹ,
+			      غیرعلامتی مختصر *portstat)
 {
-	int err, tries;
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus, portchange;
-	int delay = HUB_SHORT_RESET_TIME; /* start with short reset delay */
+	صحیح err, tries;
+	ALLOC_CACHE_ALIGN_بفر(ساخت usb_پورٹ_حالت, portsts, 1);
+	غیرعلامتی مختصر portstatus, portchange;
+	صحیح delay = HUB_SHORT_RESET_وقت; /* start with short reset delay */
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#اگر CONFIG_IS_ENABLED(DM_USB)
 	debug("%s: resetting '%s' port %d...\n", __func__, dev->dev->name,
-	      port + 1);
-#else
-	debug("%s: resetting port %d...\n", __func__, port + 1);
-#endif
-	for (tries = 0; tries < MAX_TRIES; tries++) {
-		err = usb_set_port_feature(dev, port + 1, USB_PORT_FEAT_RESET);
-		if (err < 0)
-			return err;
+	      پورٹ + 1);
+#ورنہ
+	debug("%s: resetting port %d...\n", __func__, پورٹ + 1);
+#اگر_ختم
+	برائے (tries = 0; tries < MAX_TRIES; tries++) {
+		err = usb_سیٹ_پورٹ_feature(dev, پورٹ + 1, USB_پورٹ_FEAT_RESET);
+		اگر (err < 0)
+			واپس err;
 
 		mdelay(delay);
 
-		if (usb_get_port_status(dev, port + 1, portsts) < 0) {
+		اگر (usb_get_پورٹ_حالت(dev, پورٹ + 1, portsts) < 0) {
 			debug("get_port_status failed status %lX\n",
-			      dev->status);
-			return -1;
+			      dev->حالت_2);
+			واپس -1;
 		}
-		portstatus = le16_to_cpu(portsts->wPortStatus);
-		portchange = le16_to_cpu(portsts->wPortChange);
+		portstatus = le16_مقصد_cpu(portsts->w_پورٹ_حالت);
+		portchange = le16_مقصد_cpu(portsts->w_پورٹ_Change);
 
 		debug("portstatus %x, change %x, %s\n", portstatus, portchange,
 							portspeed(portstatus));
 
 		debug("STAT_C_CONNECTION = %d STAT_CONNECTION = %d" \
 		      "  USB_PORT_STAT_ENABLE %d\n",
-		      (portchange & USB_PORT_STAT_C_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_ENABLE) ? 1 : 0);
+		      (portchange & USB_پورٹ_STAT_C_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_پورٹ_STAT_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_پورٹ_STAT_ENABLE) ? 1 : 0);
 
 		/*
 		 * Perhaps we should check for the following here:
@@ -324,78 +324,78 @@ static int usb_hub_port_reset(struct usb_device *dev, int port,
 		 * back after another reset or two.
 		 */
 
-		if (portstatus & USB_PORT_STAT_ENABLE)
-			break;
+		اگر (portstatus & USB_پورٹ_STAT_ENABLE)
+			توڑو;
 
 		/* Switch to long reset delay for the next round */
-		delay = HUB_LONG_RESET_TIME;
+		delay = HUB_LONG_RESET_وقت;
 	}
 
-	if (tries == MAX_TRIES) {
+	اگر (tries == MAX_TRIES) {
 		debug("Cannot enable port %i after %i retries, " \
-		      "disabling port.\n", port + 1, MAX_TRIES);
+		      "disabling port.\n", پورٹ + 1, MAX_TRIES);
 		debug("Maybe the USB cable is bad?\n");
-		return -1;
+		واپس -1;
 	}
 
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_RESET);
+	usb_clear_پورٹ_feature(dev, پورٹ + 1, USB_پورٹ_FEAT_C_RESET);
 	*portstat = portstatus;
-	return 0;
+	واپس 0;
 }
 
-int usb_hub_port_connect_change(struct usb_device *dev, int port)
+صحیح usb_hub_پورٹ_connect_change(ساخت usb_device *dev, صحیح پورٹ)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	int ret, speed;
+	ALLOC_CACHE_ALIGN_بفر(ساخت usb_پورٹ_حالت, portsts, 1);
+	غیرعلامتی مختصر portstatus;
+	صحیح ret, رفتار;
 
 	/* Check status */
-	ret = usb_get_port_status(dev, port + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_پورٹ_حالت(dev, پورٹ + 1, portsts);
+	اگر (ret < 0) {
 		debug("get_port_status failed\n");
-		return ret;
+		واپس ret;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
+	portstatus = le16_مقصد_cpu(portsts->w_پورٹ_حالت);
 	debug("portstatus %x, change %x, %s\n",
 	      portstatus,
-	      le16_to_cpu(portsts->wPortChange),
+	      le16_مقصد_cpu(portsts->w_پورٹ_Change),
 	      portspeed(portstatus));
 
 	/* Clear the connection change status */
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_CONNECTION);
+	usb_clear_پورٹ_feature(dev, پورٹ + 1, USB_پورٹ_FEAT_C_CONNECTION);
 
 	/* Disconnect any existing devices under this port */
-	if (((!(portstatus & USB_PORT_STAT_CONNECTION)) &&
-	     (!(portstatus & USB_PORT_STAT_ENABLE))) ||
-	    usb_device_has_child_on_port(dev, port)) {
+	اگر (((!(portstatus & USB_پورٹ_STAT_CONNECTION)) &&
+	     (!(portstatus & USB_پورٹ_STAT_ENABLE))) ||
+	    usb_device_has_بچہ_on_پورٹ(dev, پورٹ)) {
 		debug("usb_disconnect(&hub->children[port]);\n");
 		/* Return now if nothing is connected */
-		if (!(portstatus & USB_PORT_STAT_CONNECTION))
-			return -ENOTCONN;
+		اگر (!(portstatus & USB_پورٹ_STAT_CONNECTION))
+			واپس -ENOTCONN;
 	}
 
 	/* Reset the port */
-	ret = usb_hub_port_reset(dev, port, &portstatus);
-	if (ret < 0) {
-		if (ret != -ENXIO)
-			printf("cannot reset port %i!?\n", port + 1);
-		return ret;
+	ret = usb_hub_پورٹ_reset(dev, پورٹ, &portstatus);
+	اگر (ret < 0) {
+		اگر (ret != -ENXIO)
+			لکھو("cannot reset port %i!?\n", پورٹ + 1);
+		واپس ret;
 	}
 
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		speed = USB_SPEED_SUPER;
-		break;
-	case USB_PORT_STAT_HIGH_SPEED:
-		speed = USB_SPEED_HIGH;
-		break;
-	case USB_PORT_STAT_LOW_SPEED:
-		speed = USB_SPEED_LOW;
-		break;
-	default:
-		speed = USB_SPEED_FULL;
-		break;
+	انتخاب (portstatus & USB_پورٹ_STAT_رفتار_نقاب) {
+	حالت USB_پورٹ_STAT_SUPER_رفتار:
+		رفتار = USB_رفتار_SUPER;
+		توڑو;
+	حالت USB_پورٹ_STAT_بلند_رفتار:
+		رفتار = USB_رفتار_بلند;
+		توڑو;
+	حالت USB_پورٹ_STAT_کم_رفتار:
+		رفتار = USB_رفتار_کم;
+		توڑو;
+	طےشدہ:
+		رفتار = USB_رفتار_بھرا;
+		توڑو;
 	}
 
 	/*
@@ -405,76 +405,76 @@ int usb_hub_port_connect_change(struct usb_device *dev, int port)
 	 */
 	mdelay(10);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	struct udevice *child;
+#اگر CONFIG_IS_ENABLED(DM_USB)
+	ساخت udevice *بچہ;
 
-	ret = usb_scan_device(dev->dev, port + 1, speed, &child);
-#else
-	struct usb_device *usb;
+	ret = usb_جائزہ_device(dev->dev, پورٹ + 1, رفتار, &بچہ);
+#ورنہ
+	ساخت usb_device *usb;
 
 	ret = usb_alloc_new_device(dev->controller, &usb);
-	if (ret) {
-		printf("cannot create new device: ret=%d", ret);
-		return ret;
+	اگر (ret) {
+		لکھو("cannot create new device: ret=%d", ret);
+		واپس ret;
 	}
 
-	dev->children[port] = usb;
-	usb->speed = speed;
-	usb->parent = dev;
-	usb->portnr = port + 1;
+	dev->children[پورٹ] = usb;
+	usb->رفتار = رفتار;
+	usb->والد = dev;
+	usb->portnr = پورٹ + 1;
 	/* Run it through the hoops (find a driver, etc) */
 	ret = usb_new_device(usb);
-	if (ret < 0) {
+	اگر (ret < 0) {
 		/* Woops, disable the port */
 		usb_free_device(dev->controller);
-		dev->children[port] = NULL;
+		dev->children[پورٹ] = تہی;
 	}
-#endif
-	if (ret < 0) {
-		debug("hub: disabling port %d\n", port + 1);
-		usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_ENABLE);
+#اگر_ختم
+	اگر (ret < 0) {
+		debug("hub: disabling port %d\n", پورٹ + 1);
+		usb_clear_پورٹ_feature(dev, پورٹ + 1, USB_پورٹ_FEAT_ENABLE);
 	}
 
-	return ret;
+	واپس ret;
 }
 
-static int usb_scan_port(struct usb_device_scan *usb_scan)
+ساکن صحیح usb_جائزہ_پورٹ(ساخت usb_device_جائزہ *usb_جائزہ)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	unsigned short portchange;
-	struct usb_device *dev;
-	struct usb_hub_device *hub;
-	int ret = 0;
-	int i;
+	ALLOC_CACHE_ALIGN_بفر(ساخت usb_پورٹ_حالت, portsts, 1);
+	غیرعلامتی مختصر portstatus;
+	غیرعلامتی مختصر portchange;
+	ساخت usb_device *dev;
+	ساخت usb_hub_device *hub;
+	صحیح ret = 0;
+	صحیح i;
 
-	dev = usb_scan->dev;
-	hub = usb_scan->hub;
-	i = usb_scan->port;
+	dev = usb_جائزہ->dev;
+	hub = usb_جائزہ->hub;
+	i = usb_جائزہ->پورٹ;
 
 	/*
 	 * Don't talk to the device before the query delay is expired.
 	 * This is needed for voltages to stabalize.
 	 */
-	if (get_timer(0) < hub->query_delay)
-		return 0;
+	اگر (get_timer(0) < hub->query_delay)
+		واپس 0;
 
-	ret = usb_get_port_status(dev, i + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_پورٹ_حالت(dev, i + 1, portsts);
+	اگر (ret < 0) {
 		debug("get_port_status failed\n");
-		if (get_timer(0) >= hub->connect_timeout) {
+		اگر (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_جائزہ->list);
+			آزاد(usb_جائزہ);
+			واپس 0;
 		}
-		return 0;
+		واپس 0;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
-	portchange = le16_to_cpu(portsts->wPortChange);
+	portstatus = le16_مقصد_cpu(portsts->w_پورٹ_حالت);
+	portchange = le16_مقصد_cpu(portsts->w_پورٹ_Change);
 	debug("Port %d Status %X Change %X\n", i + 1, portstatus, portchange);
 
 	/*
@@ -484,117 +484,117 @@ static int usb_scan_port(struct usb_device_scan *usb_scan)
 	 * device is connected to the port (eg: CCS bit is set but CSC is not
 	 * in the PORTSC register of a root hub), ignore such case.
 	 */
-	if (!(portchange & USB_PORT_STAT_C_CONNECTION) &&
-	    !(portstatus & USB_PORT_STAT_CONNECTION)) {
-		if (get_timer(0) >= hub->connect_timeout) {
+	اگر (!(portchange & USB_پورٹ_STAT_C_CONNECTION) &&
+	    !(portstatus & USB_پورٹ_STAT_CONNECTION)) {
+		اگر (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_جائزہ->list);
+			آزاد(usb_جائزہ);
+			واپس 0;
 		}
-		return 0;
+		واپس 0;
 	}
 
-	if (portchange & USB_PORT_STAT_C_RESET) {
+	اگر (portchange & USB_پورٹ_STAT_C_RESET) {
 		debug("port %d reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_RESET);
+		usb_clear_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_C_RESET);
 	}
 
-	if ((portchange & USB_SS_PORT_STAT_C_BH_RESET) &&
+	اگر ((portchange & USB_SS_پورٹ_STAT_C_BH_RESET) &&
 	    usb_hub_is_superspeed(dev)) {
 		debug("port %d BH reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_SS_PORT_FEAT_C_BH_RESET);
+		usb_clear_پورٹ_feature(dev, i + 1, USB_SS_پورٹ_FEAT_C_BH_RESET);
 	}
 
 	/* A new USB device is ready at this point */
 	debug("devnum=%d port=%d: USB dev found\n", dev->devnum, i + 1);
 
-	usb_hub_port_connect_change(dev, i);
+	usb_hub_پورٹ_connect_change(dev, i);
 
-	if (portchange & USB_PORT_STAT_C_ENABLE) {
+	اگر (portchange & USB_پورٹ_STAT_C_ENABLE) {
 		debug("port %d enable change, status %x\n", i + 1, portstatus);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_ENABLE);
+		usb_clear_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_C_ENABLE);
 		/*
 		 * EM interference sometimes causes bad shielded USB
 		 * devices to be shutdown by the hub, this hack enables
 		 * them again. Works at least with mouse driver
 		 */
-		if (!(portstatus & USB_PORT_STAT_ENABLE) &&
-		    (portstatus & USB_PORT_STAT_CONNECTION) &&
-		    usb_device_has_child_on_port(dev, i)) {
+		اگر (!(portstatus & USB_پورٹ_STAT_ENABLE) &&
+		    (portstatus & USB_پورٹ_STAT_CONNECTION) &&
+		    usb_device_has_بچہ_on_پورٹ(dev, i)) {
 			debug("already running port %i disabled by hub (EMI?), re-enabling...\n",
 			      i + 1);
-			usb_hub_port_connect_change(dev, i);
+			usb_hub_پورٹ_connect_change(dev, i);
 		}
 	}
 
-	if (portstatus & USB_PORT_STAT_SUSPEND) {
+	اگر (portstatus & USB_پورٹ_STAT_SUSPEND) {
 		debug("port %d suspend change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_SUSPEND);
+		usb_clear_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_SUSPEND);
 	}
 
-	if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
+	اگر (portchange & USB_پورٹ_STAT_C_OVERCURRENT) {
 		debug("port %d over-current change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1,
-				       USB_PORT_FEAT_C_OVER_CURRENT);
+		usb_clear_پورٹ_feature(dev, i + 1,
+				       USB_پورٹ_FEAT_C_OVER_CURRENT);
 		/* Only power-on this one port */
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		hub->overcurrent_count[i]++;
+		usb_سیٹ_پورٹ_feature(dev, i + 1, USB_پورٹ_FEAT_POWER);
+		hub->overcurrent_گنتی[i]++;
 
 		/*
 		 * If the max-scan-count is not reached, return without removing
 		 * the device from scan-list. This will re-issue a new scan.
 		 */
-		if (hub->overcurrent_count[i] <=
-		    PORT_OVERCURRENT_MAX_SCAN_COUNT)
-			return 0;
+		اگر (hub->overcurrent_گنتی[i] <=
+		    پورٹ_OVERCURRENT_MAX_جائزہ_گنتی)
+			واپس 0;
 
 		/* Otherwise the device will get removed */
-		printf("Port %d over-current occurred %d times\n", i + 1,
-		       hub->overcurrent_count[i]);
+		لکھو("Port %d over-current occurred %d times\n", i + 1,
+		       hub->overcurrent_گنتی[i]);
 	}
 
 	/*
 	 * We're done with this device, so let's remove this device from
 	 * scanning list
 	 */
-	list_del(&usb_scan->list);
-	free(usb_scan);
+	list_del(&usb_جائزہ->list);
+	آزاد(usb_جائزہ);
 
-	return 0;
+	واپس 0;
 }
 
-static int usb_device_list_scan(void)
+ساکن صحیح usb_device_list_جائزہ(خالی)
 {
-	struct usb_device_scan *usb_scan;
-	struct usb_device_scan *tmp;
-	static int running;
-	int ret = 0;
+	ساخت usb_device_جائزہ *usb_جائزہ;
+	ساخت usb_device_جائزہ *tmp;
+	ساکن صحیح running;
+	صحیح ret = 0;
 
 	/* Only run this loop once for each controller */
-	if (running)
-		return 0;
+	اگر (running)
+		واپس 0;
 
 	running = 1;
 
-	while (1) {
+	جب (1) {
 		/* We're done, once the list is empty again */
-		if (list_empty(&usb_scan_list))
-			goto out;
+		اگر (list_خالی_خانے(&usb_جائزہ_list))
+			جاؤ برآمد;
 
-		list_for_each_entry_safe(usb_scan, tmp, &usb_scan_list, list) {
-			int ret;
+		list_for_each_اندراج_محفوظ(usb_جائزہ, tmp, &usb_جائزہ_list, list) {
+			صحیح ret;
 
 			/* Scan this port */
-			ret = usb_scan_port(usb_scan);
-			if (ret)
-				goto out;
+			ret = usb_جائزہ_پورٹ(usb_جائزہ);
+			اگر (ret)
+				جاؤ برآمد;
 		}
 	}
 
-out:
+برآمد:
 	/*
 	 * This USB controller has finished scanning all its connected
 	 * USB devices. Set "running" back to 0, so that other USB controllers
@@ -602,160 +602,160 @@ out:
 	 */
 	running = 0;
 
-	return ret;
+	واپس ret;
 }
 
-static struct usb_hub_device *usb_get_hub_device(struct usb_device *dev)
+ساکن ساخت usb_hub_device *usb_get_hub_device(ساخت usb_device *dev)
 {
-	struct usb_hub_device *hub;
+	ساخت usb_hub_device *hub;
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#اگر !CONFIG_IS_ENABLED(DM_USB)
 	/* "allocate" Hub device */
 	hub = usb_hub_allocate();
-#else
+#ورنہ
 	hub = dev_get_uclass_priv(dev->dev);
-#endif
+#اگر_ختم
 
-	return hub;
+	واپس hub;
 }
 
-static int usb_hub_configure(struct usb_device *dev)
+ساکن صحیح usb_hub_configure(ساخت usb_device *dev)
 {
-	int i, length;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, USB_BUFSIZ);
-	unsigned char *bitmap;
-	short hubCharacteristics;
-	struct usb_hub_descriptor *descriptor;
-	struct usb_hub_device *hub;
-	struct usb_hub_status *hubsts;
-	int ret;
+	صحیح i, لمبائی;
+	ALLOC_CACHE_ALIGN_بفر(غیرعلامتی حرف, بفر, USB_BUFSIZ);
+	غیرعلامتی حرف *bitmap;
+	مختصر hubCharacteristics;
+	ساخت usb_hub_descriptor *descriptor;
+	ساخت usb_hub_device *hub;
+	ساخت usb_hub_حالت *hubsts;
+	صحیح ret;
 
 	hub = usb_get_hub_device(dev);
-	if (hub == NULL)
-		return -ENOMEM;
+	اگر (hub == تہی)
+		واپس -ENOMEM;
 	hub->pusb_dev = dev;
 
 	/* Get the the hub descriptor */
-	ret = usb_get_hub_descriptor(dev, buffer, 4);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, بفر, 4);
+	اگر (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor, giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor, giving up %lX\n", dev->حالت_2);
+		واپس ret;
 	}
-	descriptor = (struct usb_hub_descriptor *)buffer;
+	descriptor = (ساخت usb_hub_descriptor *)بفر;
 
-	length = min_t(int, descriptor->bLength,
-		       sizeof(struct usb_hub_descriptor));
+	لمبائی = min_t(صحیح, descriptor->b_لمبائی,
+		       حجم(ساخت usb_hub_descriptor));
 
-	ret = usb_get_hub_descriptor(dev, buffer, length);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, بفر, لمبائی);
+	اگر (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor 2nd giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor 2nd giving up %lX\n", dev->حالت_2);
+		واپس ret;
 	}
-	memcpy((unsigned char *)&hub->desc, buffer, length);
+	حافظہ_نقل((غیرعلامتی حرف *)&hub->desc, بفر, لمبائی);
 	/* adjust 16bit values */
-	put_unaligned(le16_to_cpu(get_unaligned(
+	put_unaligned(le16_مقصد_cpu(get_unaligned(
 			&descriptor->wHubCharacteristics)),
 			&hub->desc.wHubCharacteristics);
 	/* set the bitmap */
-	bitmap = (unsigned char *)&hub->desc.u.hs.DeviceRemovable[0];
+	bitmap = (غیرعلامتی حرف *)&hub->desc.u.hs.DeviceRemovable[0];
 	/* devices not removable by default */
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8);
-	bitmap = (unsigned char *)&hub->desc.u.hs.PortPowerCtrlMask[0];
+	bitmap = (غیرعلامتی حرف *)&hub->desc.u.hs.پورٹ_Power_Ctrl_نقاب[0];
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8); /* PowerMask = 1B */
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+	برائے (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
 		hub->desc.u.hs.DeviceRemovable[i] =
 			descriptor->u.hs.DeviceRemovable[i];
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
-		hub->desc.u.hs.PortPowerCtrlMask[i] =
-			descriptor->u.hs.PortPowerCtrlMask[i];
+	برائے (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+		hub->desc.u.hs.پورٹ_Power_Ctrl_نقاب[i] =
+			descriptor->u.hs.پورٹ_Power_Ctrl_نقاب[i];
 
 	dev->maxchild = descriptor->bNbrPorts;
 	debug("%d ports detected\n", dev->maxchild);
 
 	hubCharacteristics = get_unaligned(&hub->desc.wHubCharacteristics);
-	switch (hubCharacteristics & HUB_CHAR_LPSM) {
-	case 0x00:
+	انتخاب (hubCharacteristics & HUB_CHAR_LPSM) {
+	حالت 0x00:
 		debug("ganged power switching\n");
-		break;
-	case 0x01:
+		توڑو;
+	حالت 0x01:
 		debug("individual port power switching\n");
-		break;
-	case 0x02:
-	case 0x03:
+		توڑو;
+	حالت 0x02:
+	حالت 0x03:
 		debug("unknown reserved power switching mode\n");
-		break;
+		توڑو;
 	}
 
-	if (hubCharacteristics & HUB_CHAR_COMPOUND)
+	اگر (hubCharacteristics & HUB_CHAR_COMPOUND)
 		debug("part of a compound device\n");
-	else
+	ورنہ
 		debug("standalone hub\n");
 
-	switch (hubCharacteristics & HUB_CHAR_OCPM) {
-	case 0x00:
+	انتخاب (hubCharacteristics & HUB_CHAR_OCPM) {
+	حالت 0x00:
 		debug("global over-current protection\n");
-		break;
-	case 0x08:
+		توڑو;
+	حالت 0x08:
 		debug("individual port over-current protection\n");
-		break;
-	case 0x10:
-	case 0x18:
+		توڑو;
+	حالت 0x10:
+	حالت 0x18:
 		debug("no over-current protection\n");
-		break;
+		توڑو;
 	}
 
-	switch (dev->descriptor.bDeviceProtocol) {
-	case USB_HUB_PR_FS:
-		break;
-	case USB_HUB_PR_HS_SINGLE_TT:
+	انتخاب (dev->descriptor.bDeviceProtocol) {
+	حالت USB_HUB_PR_FS:
+		توڑو;
+	حالت USB_HUB_PR_HS_SINGLE_TT:
 		debug("Single TT\n");
-		break;
-	case USB_HUB_PR_HS_MULTI_TT:
-		ret = usb_set_interface(dev, 0, 1);
-		if (ret == 0) {
+		توڑو;
+	حالت USB_HUB_PR_HS_MULTI_TT:
+		ret = usb_سیٹ_interface(dev, 0, 1);
+		اگر (ret == 0) {
 			debug("TT per port\n");
 			hub->tt.multi = true;
-		} else {
+		} ورنہ {
 			debug("Using single TT (err %d)\n", ret);
 		}
-		break;
-	case USB_HUB_PR_SS:
+		توڑو;
+	حالت USB_HUB_PR_SS:
 		/* USB 3.0 hubs don't have a TT */
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		debug("Unrecognized hub protocol %d\n",
 		      dev->descriptor.bDeviceProtocol);
-		break;
+		توڑو;
 	}
 
 	/* Note 8 FS bit times == (8 bits / 12000000 bps) ~= 666ns */
-	switch (hubCharacteristics & HUB_CHAR_TTTT) {
-	case HUB_TTTT_8_BITS:
-		if (dev->descriptor.bDeviceProtocol != 0) {
-			hub->tt.think_time = 666;
+	انتخاب (hubCharacteristics & HUB_CHAR_TTTT) {
+	حالت HUB_TTTT_8_بٹ:
+		اگر (dev->descriptor.bDeviceProtocol != 0) {
+			hub->tt.think_وقت = 666;
 			debug("TT requires at most %d FS bit times (%d ns)\n",
-			      8, hub->tt.think_time);
+			      8, hub->tt.think_وقت);
 		}
-		break;
-	case HUB_TTTT_16_BITS:
-		hub->tt.think_time = 666 * 2;
+		توڑو;
+	حالت HUB_TTTT_16_بٹ:
+		hub->tt.think_وقت = 666 * 2;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      16, hub->tt.think_time);
-		break;
-	case HUB_TTTT_24_BITS:
-		hub->tt.think_time = 666 * 3;
+		      16, hub->tt.think_وقت);
+		توڑو;
+	حالت HUB_TTTT_24_بٹ:
+		hub->tt.think_وقت = 666 * 3;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      24, hub->tt.think_time);
-		break;
-	case HUB_TTTT_32_BITS:
-		hub->tt.think_time = 666 * 4;
+		      24, hub->tt.think_وقت);
+		توڑو;
+	حالت HUB_TTTT_32_بٹ:
+		hub->tt.think_وقت = 666 * 4;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      32, hub->tt.think_time);
-		break;
+		      32, hub->tt.think_وقت);
+		توڑو;
 	}
 
 	debug("power on to power good time: %dms\n",
@@ -763,46 +763,46 @@ static int usb_hub_configure(struct usb_device *dev)
 	debug("hub controller current requirement: %dmA\n",
 	      descriptor->bHubContrCurrent);
 
-	for (i = 0; i < dev->maxchild; i++)
+	برائے (i = 0; i < dev->maxchild; i++)
 		debug("port %d is%s removable\n", i + 1,
 		      hub->desc.u.hs.DeviceRemovable[(i + 1) / 8] & \
 		      (1 << ((i + 1) % 8)) ? " not" : "");
 
-	if (sizeof(struct usb_hub_status) > USB_BUFSIZ) {
+	اگر (حجم(ساخت usb_hub_حالت) > USB_BUFSIZ) {
 		debug("usb_hub_configure: failed to get Status - " \
-		      "too long: %d\n", descriptor->bLength);
-		return -EFBIG;
+		      "too long: %d\n", descriptor->b_لمبائی);
+		واپس -EFBIG;
 	}
 
-	ret = usb_get_hub_status(dev, buffer);
-	if (ret < 0) {
+	ret = usb_get_hub_حالت(dev, بفر);
+	اگر (ret < 0) {
 		debug("usb_hub_configure: failed to get Status %lX\n",
-		      dev->status);
-		return ret;
+		      dev->حالت_2);
+		واپس ret;
 	}
 
-	hubsts = (struct usb_hub_status *)buffer;
+	hubsts = (ساخت usb_hub_حالت *)بفر;
 
 	debug("get_hub_status returned status %X, change %X\n",
-	      le16_to_cpu(hubsts->wHubStatus),
-	      le16_to_cpu(hubsts->wHubChange));
+	      le16_مقصد_cpu(hubsts->w_Hub_حالت),
+	      le16_مقصد_cpu(hubsts->wHubChange));
 	debug("local power source is %s\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_LOCAL_POWER) ? \
+	      (le16_مقصد_cpu(hubsts->w_Hub_حالت) & HUB_حالت_LOCAL_POWER) ? \
 	      "lost (inactive)" : "good");
 	debug("%sover-current condition exists\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_OVERCURRENT) ? \
+	      (le16_مقصد_cpu(hubsts->w_Hub_حالت) & HUB_حالت_OVERCURRENT) ? \
 	      "" : "no ");
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#اگر CONFIG_IS_ENABLED(DM_USB)
 	/*
 	 * Update USB host controller's internal representation of this hub
 	 * after the hub descriptor is fetched.
 	 */
 	ret = usb_update_hub_device(dev);
-	if (ret < 0 && ret != -ENOSYS) {
+	اگر (ret < 0 && ret != -ENOSYS) {
 		debug("%s: failed to update hub device for HCD (%x)\n",
 		      __func__, ret);
-		return ret;
+		واپس ret;
 	}
 
 	/*
@@ -814,36 +814,36 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * string' to locate the bits it uses to determine the downstream
 	 * port number.
 	 */
-	if (usb_hub_is_root_hub(dev->dev)) {
-		hub->hub_depth = -1;
-	} else {
-		struct udevice *hdev;
-		int depth = 0;
+	اگر (usb_hub_is_جڑ_hub(dev->dev)) {
+		hub->hub_گہرائی = -1;
+	} ورنہ {
+		ساخت udevice *hdev;
+		صحیح گہرائی = 0;
 
-		hdev = dev->dev->parent;
-		while (!usb_hub_is_root_hub(hdev)) {
-			depth++;
-			hdev = hdev->parent;
+		hdev = dev->dev->والد;
+		جب (!usb_hub_is_جڑ_hub(hdev)) {
+			گہرائی++;
+			hdev = hdev->والد;
 		}
 
-		hub->hub_depth = depth;
+		hub->hub_گہرائی = گہرائی;
 
-		if (usb_hub_is_superspeed(dev)) {
-			debug("set hub (%p) depth to %d\n", dev, depth);
+		اگر (usb_hub_is_superspeed(dev)) {
+			debug("set hub (%p) depth to %d\n", dev, گہرائی);
 			/*
 			 * This request sets the value that the hub uses to
 			 * determine the index into the 'route string index'
 			 * for this hub.
 			 */
-			ret = usb_set_hub_depth(dev, depth);
-			if (ret < 0) {
+			ret = usb_سیٹ_hub_گہرائی(dev, گہرائی);
+			اگر (ret < 0) {
 				debug("%s: failed to set hub depth (%lX)\n",
-				      __func__, dev->status);
-				return ret;
+				      __func__, dev->حالت_2);
+				واپس ret;
 			}
 		}
 	}
-#endif
+#اگر_ختم
 
 	usb_hub_power_on(hub);
 
@@ -852,7 +852,7 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * the power.  This is a __weak function.  Resetting of the devices
 	 * should occur in the board file of the device.
 	 */
-	for (i = 0; i < dev->maxchild; i++)
+	برائے (i = 0; i < dev->maxchild; i++)
 		usb_hub_reset_devices(hub, i + 1);
 
 	/*
@@ -862,94 +862,94 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * will get removed from this list. Scanning of the devices on this
 	 * list will continue until all devices are removed.
 	 */
-	for (i = 0; i < dev->maxchild; i++) {
-		struct usb_device_scan *usb_scan;
+	برائے (i = 0; i < dev->maxchild; i++) {
+		ساخت usb_device_جائزہ *usb_جائزہ;
 
-		usb_scan = calloc(1, sizeof(*usb_scan));
-		if (!usb_scan) {
-			printf("Can't allocate memory for USB device!\n");
-			return -ENOMEM;
+		usb_جائزہ = صفر_حافظہ_دو(1, حجم(*usb_جائزہ));
+		اگر (!usb_جائزہ) {
+			لکھو("Can't allocate memory for USB device!\n");
+			واپس -ENOMEM;
 		}
-		usb_scan->dev = dev;
-		usb_scan->hub = hub;
-		usb_scan->port = i;
-		list_add_tail(&usb_scan->list, &usb_scan_list);
+		usb_جائزہ->dev = dev;
+		usb_جائزہ->hub = hub;
+		usb_جائزہ->پورٹ = i;
+		list_جوڑو_دم(&usb_جائزہ->list, &usb_جائزہ_list);
 	}
 
 	/*
 	 * And now call the scanning code which loops over the generated list
 	 */
-	ret = usb_device_list_scan();
+	ret = usb_device_list_جائزہ();
 
-	return ret;
+	واپس ret;
 }
 
-static int usb_hub_check(struct usb_device *dev, int ifnum)
+ساکن صحیح usb_hub_check(ساخت usb_device *dev, صحیح ifnum)
 {
-	struct usb_interface *iface;
-	struct usb_endpoint_descriptor *ep = NULL;
+	ساخت usb_interface *iface;
+	ساخت usb_endpoint_descriptor *ep = تہی;
 
 	iface = &dev->config.if_desc[ifnum];
 	/* Is it a hub? */
-	if (iface->desc.bInterfaceClass != USB_CLASS_HUB)
-		goto err;
+	اگر (iface->desc.bInterfaceClass != USB_CLASS_HUB)
+		جاؤ err;
 	/* Some hubs have a subclass of 1, which AFAICT according to the */
 	/*  specs is not defined, but it works */
-	if ((iface->desc.bInterfaceSubClass != 0) &&
+	اگر ((iface->desc.bInterfaceSubClass != 0) &&
 	    (iface->desc.bInterfaceSubClass != 1))
-		goto err;
+		جاؤ err;
 	/* Multiple endpoints? What kind of mutant ninja-hub is this? */
-	if (iface->desc.bNumEndpoints != 1)
-		goto err;
+	اگر (iface->desc.b_عدد_Endpoints != 1)
+		جاؤ err;
 	ep = &iface->ep_desc[0];
 	/* Output endpoint? Curiousier and curiousier.. */
-	if (!(ep->bEndpointAddress & USB_DIR_IN))
-		goto err;
+	اگر (!(ep->b_Endpoint_پتہ & USB_DIR_اندر))
+		جاؤ err;
 	/* If it's not an interrupt endpoint, we'd better punt! */
-	if ((ep->bmAttributes & 3) != 3)
-		goto err;
+	اگر ((ep->bm_اوصاف & 3) != 3)
+		جاؤ err;
 	/* We found a hub */
 	debug("USB hub found\n");
-	return 0;
+	واپس 0;
 
 err:
 	debug("USB hub not found: bInterfaceClass=%d, bInterfaceSubClass=%d, bNumEndpoints=%d\n",
 	      iface->desc.bInterfaceClass, iface->desc.bInterfaceSubClass,
-	      iface->desc.bNumEndpoints);
-	if (ep) {
+	      iface->desc.b_عدد_Endpoints);
+	اگر (ep) {
 		debug("   bEndpointAddress=%#x, bmAttributes=%d",
-		      ep->bEndpointAddress, ep->bmAttributes);
+		      ep->b_Endpoint_پتہ, ep->bm_اوصاف);
 	}
 
-	return -ENOENT;
+	واپس -ENOENT;
 }
 
-int usb_hub_probe(struct usb_device *dev, int ifnum)
+صحیح usb_hub_probe(ساخت usb_device *dev, صحیح ifnum)
 {
-	int ret;
+	صحیح ret;
 
 	ret = usb_hub_check(dev, ifnum);
-	if (ret)
-		return 0;
+	اگر (ret)
+		واپس 0;
 	ret = usb_hub_configure(dev);
-	return ret;
+	واپس ret;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-int usb_hub_scan(struct udevice *hub)
+#اگر CONFIG_IS_ENABLED(DM_USB)
+صحیح usb_hub_جائزہ(ساخت udevice *hub)
 {
-	struct usb_device *udev = dev_get_parent_priv(hub);
+	ساخت usb_device *udev = dev_get_والد_priv(hub);
 
-	return usb_hub_configure(udev);
+	واپس usb_hub_configure(udev);
 }
 
-static int usb_hub_post_probe(struct udevice *dev)
+ساکن صحیح usb_hub_post_probe(ساخت udevice *dev)
 {
 	debug("%s\n", __func__);
-	return usb_hub_scan(dev);
+	واپس usb_hub_جائزہ(dev);
 }
 
-static const struct udevice_id usb_hub_ids[] = {
+ساکن ثابت ساخت udevice_id usb_hub_ids[] = {
 	{ .compatible = "usb-hub" },
 	{ }
 };
@@ -957,29 +957,29 @@ static const struct udevice_id usb_hub_ids[] = {
 U_BOOT_DRIVER(usb_generic_hub) = {
 	.name	= "usb_hub",
 	.id	= UCLASS_USB_HUB,
-	.of_match = usb_hub_ids,
+	.کا_مطابقت = usb_hub_ids,
 	.flags	= DM_FLAG_ALLOC_PRIV_DMA,
 };
 
 UCLASS_DRIVER(usb_hub) = {
 	.id		= UCLASS_USB_HUB,
 	.name		= "usb_hub",
-	.post_bind	= dm_scan_fdt_dev,
+	.post_bind	= dm_جائزہ_fdt_dev,
 	.post_probe	= usb_hub_post_probe,
-	.child_pre_probe	= usb_child_pre_probe,
-	.per_child_auto	= sizeof(struct usb_device),
-	.per_child_plat_auto	= sizeof(struct usb_dev_plat),
-	.per_device_auto	= sizeof(struct usb_hub_device),
+	.بچہ_pre_probe	= usb_بچہ_pre_probe,
+	.فی_بچہ_auto	= حجم(ساخت usb_device),
+	.فی_بچہ_plat_auto	= حجم(ساخت usb_dev_plat),
+	.فی_device_auto	= حجم(ساخت usb_hub_device),
 };
 
-static const struct usb_device_id hub_id_table[] = {
+ساکن ثابت ساخت usb_device_id hub_id_جدول[] = {
 	{
-		.match_flags = USB_DEVICE_ID_MATCH_DEV_CLASS,
+		.مطابقت_flags = USB_DEVICE_ID_مطابقت_DEV_CLASS,
 		.bDeviceClass = USB_CLASS_HUB
 	},
 	{ }	/* Terminating entry */
 };
 
-U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_table);
+U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_جدول);
 
-#endif
+#اگر_ختم

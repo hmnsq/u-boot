@@ -4,42 +4,42 @@
  * Gary Jennejohn, DENX Software Engineering GmbH, garyj@denx.de.
  */
 
-#include <console.h>
-#include <serial.h>
-#include <malloc.h>
+#شامل <console.h>
+#شامل <serial.h>
+#شامل <malloc.h>
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-void iomux_printdevs(const int console)
+#اگر CONFIG_IS_ENABLED(CONSOLE_MUX)
+خالی iomux_printdevs(ثابت صحیح console)
 {
-	int i;
-	struct stdio_dev *dev;
+	صحیح i;
+	ساخت stdio_dev *dev;
 
 	for_each_console_dev(i, console, dev)
-		printf("%s ", dev->name);
-	printf("\n");
+		لکھو("%s ", dev->name);
+	لکھو("\n");
 }
 
-int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sdev)
+صحیح iomux_مطابقت_device(ساخت stdio_dev **سیٹ, ثابت صحیح n, ساخت stdio_dev *sdev)
 {
-	int i;
+	صحیح i;
 
-	for (i = 0; i < n; i++)
-		if (sdev == set[i])
-			return i;
-	return -ENOENT;
+	برائے (i = 0; i < n; i++)
+		اگر (sdev == سیٹ[i])
+			واپس i;
+	واپس -ENOENT;
 }
 
 /* This tries to preserve the old list if an error occurs. */
-int iomux_doenv(const int console, const char *arg)
+صحیح iomux_doenv(ثابت صحیح console, ثابت حرف *arg)
 {
-	char *console_args, *temp, **start;
-	int i, j, io_flag, cs_idx, repeat;
-	struct stdio_dev **cons_set, **old_set;
-	struct stdio_dev *dev;
+	حرف *console_دلائل, *عارضی, **آغاز;
+	صحیح i, j, io_flag, cs_idx, repeat;
+	ساخت stdio_dev **cons_سیٹ, **old_سیٹ;
+	ساخت stdio_dev *dev;
 
-	console_args = strdup(arg);
-	if (console_args == NULL)
-		return 1;
+	console_دلائل = strdup(arg);
+	اگر (console_دلائل == تہی)
+		واپس 1;
 	/*
 	 * Check whether a comma separated list of devices was
 	 * entered and count how many devices were entered.
@@ -50,129 +50,129 @@ int iomux_doenv(const int console, const char *arg)
 	 * commas and then again to populate start.
 	 */
 	i = 0;
-	temp = console_args;
-	for (;;) {
+	عارضی = console_دلائل;
+	برائے (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
 
-		temp = strchr(temp, ',');
-		if (temp == NULL)
-			break;
+		عارضی = strchr(عارضی, ',');
+		اگر (عارضی == تہی)
+			توڑو;
 
-		temp++;
+		عارضی++;
 	}
-	start = (char **)malloc(i * sizeof(char *));
-	if (start == NULL) {
-		free(console_args);
-		return 1;
+	آغاز = (حرف **)حافظہ_دو(i * حجم(حرف *));
+	اگر (آغاز == تہی) {
+		آزاد(console_دلائل);
+		واپس 1;
 	}
 	i = 0;
-	start[0] = console_args;
-	for (;;) {
-		temp = strchr(start[i++], ',');
-		if (temp == NULL)
-			break;
-		*temp = '\0';
-		start[i] = temp + 1;
+	آغاز[0] = console_دلائل;
+	برائے (;;) {
+		عارضی = strchr(آغاز[i++], ',');
+		اگر (عارضی == تہی)
+			توڑو;
+		*عارضی = '\0';
+		آغاز[i] = عارضی + 1;
 	}
-	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
-	if (cons_set == NULL) {
-		free(start);
-		free(console_args);
-		return 1;
+	cons_سیٹ = (ساخت stdio_dev **)صفر_حافظہ_دو(i, حجم(ساخت stdio_dev *));
+	اگر (cons_سیٹ == تہی) {
+		آزاد(آغاز);
+		آزاد(console_دلائل);
+		واپس 1;
 	}
 
-	io_flag = stdio_file_to_flags(console);
-	if (io_flag < 0) {
-		free(start);
-		free(console_args);
-		free(cons_set);
-		return 1;
+	io_flag = stdio_file_مقصد_flags(console);
+	اگر (io_flag < 0) {
+		آزاد(آغاز);
+		آزاد(console_دلائل);
+		آزاد(cons_سیٹ);
+		واپس 1;
 	}
 
 	cs_idx = 0;
-	for (j = 0; j < i; j++) {
+	برائے (j = 0; j < i; j++) {
 		/*
 		 * Check whether the device exists and is valid.
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
-		dev = console_search_dev(io_flag, start[j]);
-		if (dev == NULL)
-			continue;
+		dev = console_تلاش_dev(io_flag, آغاز[j]);
+		اگر (dev == تہی)
+			جاری;
 		/*
 		 * Prevent multiple entries for a device.
 		 */
-		 repeat = iomux_match_device(cons_set, cs_idx, dev);
-		 if (repeat >= 0)
-			continue;
+		 repeat = iomux_مطابقت_device(cons_سیٹ, cs_idx, dev);
+		 اگر (repeat >= 0)
+			جاری;
 		/*
 		 * Try assigning the specified device.
 		 * This could screw up the console settings for apps.
 		 */
-		if (console_assign(console, start[j]) < 0)
-			continue;
-		cons_set[cs_idx++] = dev;
+		اگر (console_تفویض(console, آغاز[j]) < 0)
+			جاری;
+		cons_سیٹ[cs_idx++] = dev;
 	}
-	free(console_args);
-	free(start);
+	آزاد(console_دلائل);
+	آزاد(آغاز);
 	/* failed to set any console */
-	if (cs_idx == 0) {
-		free(cons_set);
-		return 1;
+	اگر (cs_idx == 0) {
+		آزاد(cons_سیٹ);
+		واپس 1;
 	}
 
-	old_set = console_devices[console];
-	repeat = cd_count[console];
+	old_سیٹ = console_devices[console];
+	repeat = cd_گنتی[console];
 
-	console_devices[console] = cons_set;
-	cd_count[console] = cs_idx;
+	console_devices[console] = cons_سیٹ;
+	cd_گنتی[console] = cs_idx;
 
 	/* Stop dropped consoles */
-	for (i = 0; i < repeat; i++) {
-		j = iomux_match_device(cons_set, cs_idx, old_set[i]);
-		if (j == -ENOENT)
-			console_stop(console, old_set[i]);
+	برائے (i = 0; i < repeat; i++) {
+		j = iomux_مطابقت_device(cons_سیٹ, cs_idx, old_سیٹ[i]);
+		اگر (j == -ENOENT)
+			console_stop(console, old_سیٹ[i]);
 	}
 
-	free(old_set);
-	return 0;
+	آزاد(old_سیٹ);
+	واپس 0;
 }
 
-int iomux_replace_device(const int console, const char *old, const char *new)
+صحیح iomux_replace_device(ثابت صحیح console, ثابت حرف *old, ثابت حرف *new)
 {
-	struct stdio_dev *dev;
-	char *arg = NULL;	/* Initial empty list */
-	int size = 1;		/* For NUL terminator */
-	int i, ret;
+	ساخت stdio_dev *dev;
+	حرف *arg = تہی;	/* Initial empty list */
+	صحیح سائز = 1;		/* For NUL terminator */
+	صحیح i, ret;
 
 	for_each_console_dev(i, console, dev) {
-		const char *name = strcmp(dev->name, old) ? dev->name : new;
-		char *tmp;
+		ثابت حرف *name = strcmp(dev->name, old) ? dev->name : new;
+		حرف *tmp;
 
 		/* Append name with a ',' (comma) separator */
-		tmp = realloc(arg, size + strlen(name) + 1);
-		if (!tmp) {
-			free(arg);
-			return -ENOMEM;
+		tmp = realloc(arg, سائز + لڑی_لمبائی(name) + 1);
+		اگر (!tmp) {
+			آزاد(arg);
+			واپس -ENOMEM;
 		}
 
-		if (arg) {
+		اگر (arg) {
 			strcat(tmp, ",");
 			strcat(tmp, name);
 		}
-		else
+		ورنہ
 			strcpy(tmp, name);
 
 		arg = tmp;
-		size = strlen(tmp) + 1;
+		سائز = لڑی_لمبائی(tmp) + 1;
 	}
 
 	ret = iomux_doenv(console, arg);
-	if (ret)
+	اگر (ret)
 		ret = -EINVAL;
 
-	free(arg);
-	return ret;
+	آزاد(arg);
+	واپس ret;
 }
-#endif /* CONSOLE_MUX */
+#اگر_ختم /* CONSOLE_MUX */

@@ -1,79 +1,79 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <dm.h>
-#include <init.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <linux/libfdt.h>
-#include <linux/compiler.h>
+#شامل <dm.h>
+#شامل <init.h>
+#شامل <sysinfo.h>
+#شامل <asm/global_data.h>
+#شامل <linux/libfdt.h>
+#شامل <linux/compiler.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_ڈیٹا_PTR;
 
-int __weak checkboard(void)
+صحیح __weak checkboard(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
-} to_show[] = {
+ساکن ثابت ساخت مقصد_show {
+	ثابت حرف *name;
+	شمار sysinfo_id id;
+} مقصد_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
-	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
-	{ "Prior-stage date", SYSID_PRIOR_STAGE_DATE },
+	{ "Prior-stage version", SYSID_پیشگی_STAGE_نسخہ },
+	{ "Prior-stage date", SYSID_پیشگی_STAGE_DATE },
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+ساکن صحیح try_sysinfo(خالی)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	ساخت udevice *dev;
+	حرف str[80];
+	صحیح ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
-	printf("Model: %s\n", str);
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, حجم(str), str);
+	اگر (ret)
+		واپس ret;
+	لکھو("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	اگر (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		ثابت ساخت مقصد_show *شے;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
-				printf("%s: %s\n", item->name, str);
+		برائے (شے = مقصد_show; شے->id; شے++) {
+			ret = sysinfo_get_str(dev, شے->id, حجم(str), str);
+			اگر (!ret)
+				لکھو("%s: %s\n", شے->name, str);
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-int show_board_info(void)
+صحیح show_board_info(خالی)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	اگر (IS_ENABLED(CONFIG_کا_CONTROL)) {
+		صحیح ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		اگر (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		اگر (ret) {
+			ثابت حرف *model;
 
-			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
-				printf("Model: %s\n", model);
+			model = fdt_getprop(gd->fdt_blob, 0, "model", تہی);
+			اگر (model)
+				لکھو("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	واپس checkboard();
 }

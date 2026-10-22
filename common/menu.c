@@ -4,18 +4,18 @@
  * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
  */
 
-#include <ansi.h>
-#include <cli.h>
-#include <malloc.h>
-#include <errno.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <watchdog.h>
+#شامل <ansi.h>
+#شامل <cli.h>
+#شامل <malloc.h>
+#شامل <errno.h>
+#شامل <linux/ctype.h>
+#شامل <linux/delay.h>
+#شامل <linux/list.h>
+#شامل <watchdog.h>
 
-#include "menu.h"
+#شامل "menu.h"
 
-#define ansi 1
+#تعریف_کرو ansi 1
 
 /*
  * Internally, each item in a menu is represented by a struct menu_item.
@@ -24,10 +24,10 @@
  * by menu_item_destroy, and the consumer of the interface never sees that
  * this struct is used at all.
  */
-struct menu_item {
-	char *key;
-	void *data;
-	struct list_head list;
+ساخت menu_شے {
+	حرف *کلید;
+	خالی *ڈیٹا;
+	ساخت list_سر list;
 };
 
 /*
@@ -36,18 +36,18 @@ struct menu_item {
  * in menu.h, but the full definition is here to prevent consumers from
  * relying on its contents.
  */
-struct menu {
-	struct menu_item *default_item;
-	int timeout;
-	char *title;
-	int prompt;
-	void (*display_statusline)(struct menu *);
-	void (*item_data_print)(void *);
-	char *(*item_choice)(void *);
-	bool (*need_reprint)(void *);
-	void *item_choice_data;
-	struct list_head items;
-	int item_cnt;
+ساخت menu {
+	ساخت menu_شے *default_شے;
+	صحیح timeout;
+	حرف *title;
+	صحیح prompt;
+	خالی (*display_statusline)(ساخت menu *);
+	خالی (*شے_ڈیٹا_print)(خالی *);
+	حرف *(*شے_choice)(خالی *);
+	bool (*need_reprint)(خالی *);
+	خالی *شے_choice_ڈیٹا;
+	ساخت list_سر اشیاء;
+	صحیح شے_cnt;
 };
 
 /*
@@ -58,24 +58,24 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
-		void *(*callback)(struct menu *, struct menu_item *, void *),
-		void *extra)
+ساکن اندرونی خالی *menu_اشیاء_iter(ساخت menu *m,
+		خالی *(*callback)(ساخت menu *, ساخت menu_شے *, خالی *),
+		خالی *extra)
 {
-	struct list_head *pos, *n;
-	struct menu_item *item;
-	void *ret;
+	ساخت list_سر *pos, *n;
+	ساخت menu_شے *شے;
+	خالی *ret;
 
-	list_for_each_safe(pos, n, &m->items) {
-		item = list_entry(pos, struct menu_item, list);
+	list_for_each_محفوظ(pos, n, &m->اشیاء) {
+		شے = list_اندراج(pos, ساخت menu_شے, list);
 
-		ret = callback(m, item, extra);
+		ret = callback(m, شے, extra);
 
-		if (ret)
-			return ret;
+		اگر (ret)
+			واپس ret;
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
 /*
@@ -83,55 +83,55 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+ساکن اندرونی خالی *menu_شے_print(ساخت menu *m,
+				ساخت menu_شے *شے,
+				خالی *extra)
 {
-	if (!m->item_data_print) {
-		puts(item->key);
+	اگر (!m->شے_ڈیٹا_print) {
+		puts(شے->کلید);
 		putc('\n');
-	} else {
-		m->item_data_print(item->data);
+	} ورنہ {
+		m->شے_ڈیٹا_print(شے->ڈیٹا);
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
 /*
  * Free the memory used by a menu item. This includes the memory used by its
  * key.
  */
-static inline void *menu_item_destroy(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+ساکن اندرونی خالی *menu_شے_destroy(ساخت menu *m,
+				ساخت menu_شے *شے,
+				خالی *extra)
 {
-	if (item->key)
-		free(item->key);
+	اگر (شے->کلید)
+		آزاد(شے->کلید);
 
-	free(item);
+	آزاد(شے);
 
-	return NULL;
+	واپس تہی;
 }
 
 /*
  * Display a menu so the user can make a choice of an item. First display its
  * title, if any, and then each item in the menu.
  */
-static inline void menu_display(struct menu *m)
+ساکن اندرونی خالی menu_display(ساخت menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	اگر (m->need_reprint) {
+		اگر (!m->need_reprint(m->شے_choice_ڈیٹا))
+			واپس;
 	}
 
-	if (m->title) {
+	اگر (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	اگر (m->display_statusline)
 		m->display_statusline(m);
 
-	menu_items_iter(m, menu_item_print, NULL);
+	menu_اشیاء_iter(m, menu_شے_print, تہی);
 }
 
 /*
@@ -142,45 +142,45 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
-			struct menu_item *item, void *extra)
+ساکن اندرونی خالی *menu_شے_کلید_مطابقت(ساخت menu *m,
+			ساخت menu_شے *شے, خالی *extra)
 {
-	char *item_key = extra;
+	حرف *شے_کلید = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	اگر (!شے_کلید || !شے->کلید) {
+		اگر (شے_کلید == شے->کلید)
+			واپس شے;
 
-		return NULL;
+		واپس تہی;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	اگر (strcmp(شے->کلید, شے_کلید) == 0)
+		واپس شے;
 
-	return NULL;
+	واپس تہی;
 }
 
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+ساکن اندرونی ساخت menu_شے *menu_شے_by_کلید(ساخت menu *m,
+							حرف *شے_کلید)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	واپس menu_اشیاء_iter(m, menu_شے_کلید_مطابقت, شے_کلید);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+صحیح menu_default_choice(ساخت menu *m, خالی **choice)
 {
-	if (m->default_item) {
-		*choice = m->default_item->data;
-		return 1;
+	اگر (m->default_شے) {
+		*choice = m->default_شے->ڈیٹا;
+		واپس 1;
 	}
 
-	return -ENOENT;
+	واپس -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+ساکن اندرونی صحیح menu_interactive_choice(ساخت menu *m, خالی **choice)
 {
-	char cbuf[CONFIG_SYS_CBSIZE];
-	struct menu_item *choice_item = NULL;
-	int readret;
+	حرف cbuf[CONFIG_SYS_CBSIZE];
+	ساخت menu_شے *choice_شے = تہی;
+	صحیح readret;
 
-	while (!choice_item) {
+	جب (!choice_شے) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
-			readret = cli_readline_into_buffer("Enter choice: ",
+		اگر (!m->شے_choice) {
+			readret = cli_readline_into_بفر("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
-				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
-					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
-				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+			اگر (readret >= 0) {
+				choice_شے = menu_شے_by_کلید(m, cbuf);
+				اگر (!choice_شے)
+					لکھو("%s not found\n", cbuf);
+			} ورنہ اگر (readret == -1)  {
+				لکھو("<INTERRUPT>\n");
+				واپس -EINTR;
+			} ورنہ {
+				واپس menu_default_choice(m, choice);
 			}
-		} else {
-			char *key = m->item_choice(m->item_choice_data);
+		} ورنہ {
+			حرف *کلید = m->شے_choice(m->شے_choice_ڈیٹا);
 
-			if (key)
-				choice_item = menu_item_by_key(m, key);
+			اگر (کلید)
+				choice_شے = menu_شے_by_کلید(m, کلید);
 		}
 
-		if (!choice_item)
+		اگر (!choice_شے)
 			m->timeout = 0;
 	}
 
-	*choice = choice_item->data;
+	*choice = choice_شے->ڈیٹا;
 
-	return 1;
+	واپس 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+صحیح menu_default_سیٹ(ساخت menu *m, حرف *شے_کلید)
 {
-	struct menu_item *item;
+	ساخت menu_شے *شے;
 
-	if (!m)
-		return -EINVAL;
+	اگر (!m)
+		واپس -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	شے = menu_شے_by_کلید(m, شے_کلید);
 
-	if (!item)
-		return -ENOENT;
+	اگر (!شے)
+		واپس -ENOENT;
 
-	m->default_item = item;
+	m->default_شے = شے;
 
-	return 1;
+	واپس 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+صحیح menu_get_choice(ساخت menu *m, خالی **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	اگر (!m || !choice)
+		واپس -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	اگر (!m->شے_cnt)
+		واپس -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	اگر (!m->prompt)
+		واپس menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	واپس menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,37 +309,37 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+صحیح menu_شے_جوڑو(ساخت menu *m, حرف *شے_کلید, خالی *شے_ڈیٹا)
 {
-	struct menu_item *item;
+	ساخت menu_شے *شے;
 
-	if (!m)
-		return -EINVAL;
+	اگر (!m)
+		واپس -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	شے = menu_شے_by_کلید(m, شے_کلید);
 
-	if (item) {
-		item->data = item_data;
-		return 1;
+	اگر (شے) {
+		شے->ڈیٹا = شے_ڈیٹا;
+		واپس 1;
 	}
 
-	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	شے = حافظہ_دو(حجم *شے);
+	اگر (!شے)
+		واپس -ENOMEM;
 
-	item->key = strdup(item_key);
+	شے->کلید = strdup(شے_کلید);
 
-	if (!item->key) {
-		free(item);
-		return -ENOMEM;
+	اگر (!شے->کلید) {
+		آزاد(شے);
+		واپس -ENOMEM;
 	}
 
-	item->data = item_data;
+	شے->ڈیٹا = شے_ڈیٹا;
 
-	list_add_tail(&item->list, &m->items);
-	m->item_cnt++;
+	list_جوڑو_دم(&شے->list, &m->اشیاء);
+	m->شے_cnt++;
 
-	return 1;
+	واپس 1;
 }
 
 /*
@@ -377,42 +377,42 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
-				void (*display_statusline)(struct menu *),
-				void (*item_data_print)(void *),
-				char *(*item_choice)(void *),
-				bool (*need_reprint)(void *),
-				void *item_choice_data)
+ساخت menu *menu_create(حرف *title, صحیح timeout, صحیح prompt,
+				خالی (*display_statusline)(ساخت menu *),
+				خالی (*شے_ڈیٹا_print)(خالی *),
+				حرف *(*شے_choice)(خالی *),
+				bool (*need_reprint)(خالی *),
+				خالی *شے_choice_ڈیٹا)
 {
-	struct menu *m;
+	ساخت menu *m;
 
-	m = malloc(sizeof *m);
+	m = حافظہ_دو(حجم *m);
 
-	if (!m)
-		return NULL;
+	اگر (!m)
+		واپس تہی;
 
-	m->default_item = NULL;
+	m->default_شے = تہی;
 	m->prompt = prompt;
 	m->timeout = timeout;
 	m->display_statusline = display_statusline;
-	m->item_data_print = item_data_print;
-	m->item_choice = item_choice;
+	m->شے_ڈیٹا_print = شے_ڈیٹا_print;
+	m->شے_choice = شے_choice;
 	m->need_reprint = need_reprint;
-	m->item_choice_data = item_choice_data;
-	m->item_cnt = 0;
+	m->شے_choice_ڈیٹا = شے_choice_ڈیٹا;
+	m->شے_cnt = 0;
 
-	if (title) {
+	اگر (title) {
 		m->title = strdup(title);
-		if (!m->title) {
-			free(m);
-			return NULL;
+		اگر (!m->title) {
+			آزاد(m);
+			واپس تہی;
 		}
-	} else
-		m->title = NULL;
+	} ورنہ
+		m->title = تہی;
 
-	INIT_LIST_HEAD(&m->items);
+	INIT_LIST_سر(&m->اشیاء);
 
-	return m;
+	واپس m;
 }
 
 /*
@@ -422,61 +422,61 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+صحیح menu_destroy(ساخت menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	اگر (!m)
+		واپس -EINVAL;
 
-	menu_items_iter(m, menu_item_destroy, NULL);
+	menu_اشیاء_iter(m, menu_شے_destroy, تہی);
 
-	if (m->title)
-		free(m->title);
+	اگر (m->title)
+		آزاد(m->title);
 
-	free(m);
+	آزاد(m);
 
-	return 1;
+	واپس 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+ساکن صحیح bootmenu_conv_shortcut_کلید(ساخت bootmenu_ڈیٹا *menu, صحیح ichar)
 {
-	int shortcut_key;
+	صحیح shortcut_کلید;
 
 	ichar = tolower(ichar);
-	switch (ichar) {
+	انتخاب (ichar) {
 	/* a-z for bootmenu entry > 9 */
-	case 'a' ... 'z':
-		shortcut_key = ichar - 'a' + 9;
-		break;
+	حالت 'a' ... 'z':
+		shortcut_کلید = ichar - 'a' + 9;
+		توڑو;
 	/* 1-9 for bootmenu entry <= 9 */
-	case '1' ... '9':
-		shortcut_key = ichar - '1';
-		break;
+	حالت '1' ... '9':
+		shortcut_کلید = ichar - '1';
+		توڑو;
 	/* Reserve 0 for last option (aka Exit) */
-	case '0':
-	default:
-		return -1;
+	حالت '0':
+	طےشدہ:
+		واپس -1;
 	}
 
-	return shortcut_key;
+	واپس shortcut_کلید;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
-					 struct cli_ch_state *cch)
+شمار bootmenu_کلید bootmenu_autoboot_loop(ساخت bootmenu_ڈیٹا *menu,
+					 ساخت cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	شمار bootmenu_کلید کلید = BKEY_NONE;
+	صحیح i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	جب (menu->delay > 0) {
+		صحیح ichar;
 
-		if (ansi)
-			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
-		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
-				schedule();
+		اگر (ansi)
+			لکھو(ANSI_CURSOR_POSITION, menu->گنتی + 5, 3);
+		لکھو("Hit any key to stop autoboot: %d ", menu->delay);
+		برائے (i = 0; i < 100; ++i) {
+			اگر (!tstc()) {
+				جدول_وقت();
 				mdelay(10);
-				continue;
+				جاری;
 			}
 
 			menu->delay = -1;
@@ -484,112 +484,112 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 
 			ichar = cli_ch_process(cch, c);
 
-			switch (ichar) {
-			case '\0':
-				key = BKEY_NONE;
-				break;
-			case '\n':
-				key = BKEY_SELECT;
-				break;
-			case 0x3: /* ^C */
-				key = BKEY_QUIT;
-				break;
-			case 'A' ... 'Z':
-			case 'a' ... 'z':
-			case '0' ... '9':
-				key = BKEY_SHORTCUT;
-				break;
-			default:
-				key = BKEY_NONE;
-				break;
+			انتخاب (ichar) {
+			حالت '\0':
+				کلید = BKEY_NONE;
+				توڑو;
+			حالت '\n':
+				کلید = BKEY_SELECT;
+				توڑو;
+			حالت 0x3: /* ^C */
+				کلید = BKEY_QUIT;
+				توڑو;
+			حالت 'A' ... 'Z':
+			حالت 'a' ... 'z':
+			حالت '0' ... '9':
+				کلید = BKEY_SHORTCUT;
+				توڑو;
+			طےشدہ:
+				کلید = BKEY_NONE;
+				توڑو;
 			}
-			break;
+			توڑو;
 		}
 
-		if (key == BKEY_SHORTCUT)
-			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
+		اگر (کلید == BKEY_SHORTCUT)
+			cch->shortcut_کلید = bootmenu_conv_shortcut_کلید(menu, ichar);
 
-		if (menu->delay < 0)
-			break;
+		اگر (menu->delay < 0)
+			توڑو;
 
 		--menu->delay;
 	}
 
-	if (ansi)
-		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
+	اگر (ansi)
+		لکھو(ANSI_CURSOR_POSITION ANSI_CLEAR_سطر, menu->گنتی + 5, 1);
 
-	if (menu->delay == 0)
-		key = BKEY_SELECT;
+	اگر (menu->delay == 0)
+		کلید = BKEY_SELECT;
 
-	return key;
+	واپس کلید;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+شمار bootmenu_کلید bootmenu_conv_کلید(صحیح ichar)
 {
-	enum bootmenu_key key;
+	شمار bootmenu_کلید کلید;
 
-	switch (ichar) {
-	case '\n':
+	انتخاب (ichar) {
+	حالت '\n':
 		/* enter key was pressed */
-		key = BKEY_SELECT;
-		break;
-	case CTL_CH('c'):
-	case '\e':
+		کلید = BKEY_SELECT;
+		توڑو;
+	حالت CTL_CH('c'):
+	حالت '\e':
 		/* ^C was pressed */
-		key = BKEY_QUIT;
-		break;
-	case CTL_CH('p'):
-		key = BKEY_UP;
-		break;
-	case CTL_CH('n'):
-		key = BKEY_DOWN;
-		break;
-	case CTL_CH('s'):
-		key = BKEY_SAVE;
-		break;
-	case '+':
-		key = BKEY_PLUS;
-		break;
-	case '-':
-		key = BKEY_MINUS;
-		break;
-	case ' ':
-		key = BKEY_SPACE;
-		break;
-	default:
-		key = BKEY_NONE;
-		break;
+		کلید = BKEY_QUIT;
+		توڑو;
+	حالت CTL_CH('p'):
+		کلید = BKEY_اوپر;
+		توڑو;
+	حالت CTL_CH('n'):
+		کلید = BKEY_نیچے_کو;
+		توڑو;
+	حالت CTL_CH('s'):
+		کلید = BKEY_SAVE;
+		توڑو;
+	حالت '+':
+		کلید = BKEY_PLUS;
+		توڑو;
+	حالت '-':
+		کلید = BKEY_MINUS;
+		توڑو;
+	حالت ' ':
+		کلید = BKEY_SPACE;
+		توڑو;
+	طےشدہ:
+		کلید = BKEY_NONE;
+		توڑو;
 	}
 
-	return key;
+	واپس کلید;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
-				struct cli_ch_state *cch)
+شمار bootmenu_کلید bootmenu_loop(ساخت bootmenu_ڈیٹا *menu,
+				ساخت cli_ch_state *cch)
 {
-	enum bootmenu_key key;
-	int c, errchar = 0;
+	شمار bootmenu_کلید کلید;
+	صحیح c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
-			schedule();
+	اگر (!c) {
+		جب (!c && !tstc()) {
+			جدول_وقت();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		اگر (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
 	}
 
-	key = bootmenu_conv_key(c);
+	کلید = bootmenu_conv_کلید(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
-		key = BKEY_SHORTCUT;
-		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
+	اگر (کلید == BKEY_NONE && حرف_یا_ہندسہ(c)) {
+		کلید = BKEY_SHORTCUT;
+		cch->shortcut_کلید = bootmenu_conv_shortcut_کلید(menu, c);
 	}
 
-	return key;
+	واپس کلید;
 }

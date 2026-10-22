@@ -3,80 +3,80 @@
  * Copyright (C) 2012 Stefan Roese <sr@denx.de>
  */
 
-#include <config.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
+#شامل <config.h>
+#شامل <image.h>
+#شامل <imx_container.h>
+#شامل <log.h>
+#شامل <spl.h>
+#شامل <spl_load.h>
 
-static ulong spl_nor_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+ساکن ulong spl_nor_بھرو_read(ساخت spl_بھرو_info *بھرو, ulong sector,
+			       ulong گنتی, خالی *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %p\n",
-	      __func__, sector, count, buf);
-	memcpy(buf, map_sysmem(sector, count), count);
+	      __func__, sector, گنتی, buf);
+	حافظہ_نقل(buf, map_sysmem(sector, گنتی), گنتی);
 
-	return count;
+	واپس گنتی;
 }
 
-unsigned long __weak spl_nor_get_uboot_base(void)
+غیرعلامتی طویل __weak spl_nor_get_uboot_بنیاد(خالی)
 {
-	return CFG_SYS_UBOOT_BASE;
+	واپس CFG_SYS_UBOOT_بنیاد;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nor_load_image_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev)
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ساکن صحیح spl_nor_بھرو_image_os(ساخت spl_image_info *spl_image,
+				 ساخت spl_boot_device *bootdev)
 {
 	/*
 	 * Load Linux from its location in NOR flash to its defined
 	 * location in SDRAM
 	 */
-	const struct legacy_img_hdr *header =
-		(const struct legacy_img_hdr *)CONFIG_SYS_OS_BASE;
-	struct spl_load_info load;
+	ثابت ساخت legacy_img_hdr *سرخی =
+		(ثابت ساخت legacy_img_hdr *)CONFIG_SYS_OS_بنیاد;
+	ساخت spl_بھرو_info بھرو;
 
-#ifdef CONFIG_SPL_LOAD_FIT
-	if (image_get_magic(header) == FDT_MAGIC) {
-		int ret;
+#اگر_تعریف_شدہ CONFIG_SPL_بھرو_FIT
+	اگر (image_get_magic(سرخی) == FDT_MAGIC) {
+		صحیح ret;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, spl_nor_load_read, NULL, 1);
+		spl_بھرو_init(&بھرو, spl_nor_بھرو_read, تہی, 1);
 
-		ret = spl_load_simple_fit(spl_image, &load, CONFIG_SYS_OS_BASE,
-					  (void *)header);
+		ret = spl_بھرو_simple_fit(spl_image, &بھرو, CONFIG_SYS_OS_بنیاد,
+					  (خالی *)سرخی);
 
-#if defined CONFIG_SPL_PAYLOAD_ARGS_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
-		memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-		       (void *)CONFIG_CMD_SPL_NOR_OFS,
-		       CONFIG_CMD_SPL_WRITE_SIZE);
-#endif
-		return ret;
+#اگر defined CONFIG_SPL_PAYLOAD_دلائل_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
+		حافظہ_نقل((خالی *)CONFIG_SPL_PAYLOAD_دلائل_ADDR,
+		       (خالی *)CONFIG_CMD_SPL_NOR_OFS,
+		       CONFIG_CMD_SPL_WRITE_سائز);
+#اگر_ختم
+		واپس ret;
 	}
-#endif
-	if (image_get_os(header) != IH_OS_LINUX)
-		return -EINVAL;
+#اگر_ختم
+	اگر (image_get_os(سرخی) != IH_OS_LINUX)
+		واپس -EINVAL;
 
 	/* happy - was a Linux */
-	int ret;
+	صحیح ret;
 
-	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ret = spl_parse_image_سرخی(spl_image, bootdev, سرخی);
+	اگر (ret)
+		واپس ret;
 
-	memcpy((void *)spl_image->load_addr,
-	       (void *)(CONFIG_SYS_OS_BASE + sizeof(struct legacy_img_hdr)),
-	       spl_image->size);
+	حافظہ_نقل((خالی *)spl_image->بھرو_addr,
+	       (خالی *)(CONFIG_SYS_OS_بنیاد + حجم(ساخت legacy_img_hdr)),
+	       spl_image->سائز);
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-static int spl_nor_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ساکن صحیح spl_nor_بھرو_image(ساخت spl_image_info *spl_image,
+			      ساخت spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
+	ساخت spl_بھرو_info بھرو;
 
 	/*
 	 * Loading of the payload to SDRAM is done with skipping of
@@ -84,26 +84,26 @@ static int spl_nor_load_image(struct spl_image_info *spl_image,
 	 */
 	spl_image->flags |= SPL_COPY_PAYLOAD_ONLY;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-	int err;
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT)
+	صحیح err;
 
-	if (!spl_start_uboot()) {
-		err = spl_nor_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+	اگر (!spl_آغاز_uboot()) {
+		err = spl_nor_بھرو_image_os(spl_image, bootdev);
+		اگر (!err)
+			واپس 0;
 
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+		لکھو("%s: Failed in falcon boot: %d", __func__, err);
+		اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			واپس err;
+		لکھو("Fallback to U-Boot\n");
 	}
-#endif
+#اگر_ختم
 
 	/*
 	 * Load real U-Boot from its location in NOR flash to its
 	 * defined location in SDRAM
 	 */
-	spl_load_init(&load, spl_nor_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, spl_nor_get_uboot_base());
+	spl_بھرو_init(&بھرو, spl_nor_بھرو_read, تہی, 1);
+	واپس spl_بھرو(spl_image, bootdev, &بھرو, 0, spl_nor_get_uboot_بنیاد());
 }
-SPL_LOAD_IMAGE_METHOD("NOR", 0, BOOT_DEVICE_NOR, spl_nor_load_image);
+SPL_بھرو_IMAGE_طریقہ("NOR", 0, BOOT_DEVICE_NOR, spl_nor_بھرو_image);

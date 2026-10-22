@@ -343,87 +343,87 @@
 //usage:#define hush_full_usage "\n\n"
 //usage:	"Unix shell interpreter"
 
-#ifndef __U_BOOT__
-#if !(defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) \
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر !(defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) \
 	|| defined(__APPLE__) \
     )
 # include <malloc.h>   /* for malloc_trim */
-#endif
-#include <glob.h>
+#اگر_ختم
+#شامل <glob.h>
 /* #include <dmalloc.h> */
-#if ENABLE_HUSH_CASE
+#اگر ENABLE_HUSH_CASE
 # include <fnmatch.h>
-#endif
-#include <sys/times.h>
-#include <sys/utsname.h> /* for setting $HOSTNAME */
+#اگر_ختم
+#شامل <sys/times.h>
+#شامل <sys/utsname.h> /* for setting $HOSTNAME */
 
-#include "busybox.h"  /* for APPLET_IS_NOFORK/NOEXEC */
-#include "unicode.h"
-#include "shell_common.h"
-#include "math.h"
-#include "match.h"
-#if ENABLE_HUSH_RANDOM_SUPPORT
+#شامل "busybox.h"  /* for APPLET_IS_NOFORK/NOEXEC */
+#شامل "unicode.h"
+#شامل "shell_common.h"
+#شامل "math.h"
+#شامل "match.h"
+#اگر ENABLE_HUSH_RANDOM_SUPPORT
 # include "random.h"
-#else
-# define CLEAR_RANDOM_T(rnd) ((void)0)
-#endif
-#ifndef O_CLOEXEC
+#ورنہ
+# define CLEAR_RANDOM_T(rnd) ((خالی)0)
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ O_CLOEXEC
 # define O_CLOEXEC 0
-#endif
-#ifndef F_DUPFD_CLOEXEC
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ F_DUPFD_CLOEXEC
 # define F_DUPFD_CLOEXEC F_DUPFD
-#endif
+#اگر_ختم
 
-#if ENABLE_FEATURE_SH_EMBEDDED_SCRIPTS && !ENABLE_SHELL_ASH
+#اگر ENABLE_FEATURE_SH_EMBEDDED_SCRIPTS && !ENABLE_SHELL_ASH
 # include "embedded_scripts.h"
-#else
-# define NUM_SCRIPTS 0
-#endif
-#endif /* !__U_BOOT__ */
+#ورنہ
+# define عدد_SCRIPTS 0
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
 /* So far, all bash compat is controlled by one config option */
 /* Separate defines document which part of code implements what */
-#define BASH_PATTERN_SUBST ENABLE_HUSH_BASH_COMPAT
-#define BASH_SUBSTR        ENABLE_HUSH_BASH_COMPAT
-#define BASH_SOURCE        ENABLE_HUSH_BASH_COMPAT
-#define BASH_DOLLAR_SQUOTE ENABLE_HUSH_BASH_COMPAT
-#define BASH_HOSTNAME_VAR  ENABLE_HUSH_BASH_COMPAT
-#define BASH_EPOCH_VARS    ENABLE_HUSH_BASH_COMPAT
-#define BASH_TEST2         (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
-#define BASH_READ_D        ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_نمونہ_SUBST ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_SUBSTR        ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_ماخذ        ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_DOLLAR_SQUOTE ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_HOSTNAME_VAR  ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_EPOCH_VARS    ENABLE_HUSH_BASH_COMPAT
+#تعریف_کرو BASH_TEST2         (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
+#تعریف_کرو BASH_READ_D        ENABLE_HUSH_BASH_COMPAT
 
 /* Build knobs */
-#define LEAK_HUNTING 0
-#define BUILD_AS_NOMMU 0
+#تعریف_کرو LEAK_HUNTING 0
+#تعریف_کرو BUILD_AS_NOMMU 0
 /* Enable/disable sanity checks. Ok to enable in production,
  * only adds a bit of bloat. Set to >1 to get non-production level verbosity.
  * Keeping 1 for now even in released versions.
  */
-#define HUSH_DEBUG 1
+#تعریف_کرو HUSH_DEBUG 1
 /* Slightly bigger (+200 bytes), but faster hush.
  * So far it only enables a trick with counting SIGCHLDs and forks,
  * which allows us to do fewer waitpid's.
  * (we can detect a case where neither forks were done nor SIGCHLDs happened
  * and therefore waitpid will return the same result as last time)
  */
-#define ENABLE_HUSH_FAST 0
+#تعریف_کرو ENABLE_HUSH_FAST 0
 /* TODO: implement simplified code for users which do not need ${var%...} ops
  * So far ${var%...} ops are always enabled:
  */
-#define ENABLE_HUSH_DOLLAR_OPS 1
+#تعریف_کرو ENABLE_HUSH_DOLLAR_OPS 1
 
-#if BUILD_AS_NOMMU
+#اگر BUILD_AS_NOMMU
 # undef BB_MMU
 # undef USE_FOR_NOMMU
 # undef USE_FOR_MMU
 # define BB_MMU 0
 # define USE_FOR_NOMMU(...) __VA_ARGS__
 # define USE_FOR_MMU(...)
-#endif
+#اگر_ختم
 
-#ifndef __U_BOOT__
-#include "NUM_APPLETS.h"
-#if NUM_APPLETS == 1
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#شامل "NUM_APPLETS.h"
+#اگر عدد_APPLETS == 1
 /* STANDALONE does not make sense, and won't compile */
 # undef ENABLE_FEATURE_SH_STANDALONE
 # undef IF_FEATURE_SH_STANDALONE
@@ -431,135 +431,135 @@
 # define ENABLE_FEATURE_SH_STANDALONE 0
 # define IF_FEATURE_SH_STANDALONE(...)
 # define IF_NOT_FEATURE_SH_STANDALONE(...) __VA_ARGS__
-#endif
-#endif /* __U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* __U_BOOT__ */
 
-#if !ENABLE_HUSH_INTERACTIVE
+#اگر !ENABLE_HUSH_INTERACTIVE
 # undef ENABLE_FEATURE_EDITING
 # define ENABLE_FEATURE_EDITING 0
 # undef ENABLE_FEATURE_EDITING_FANCY_PROMPT
 # define ENABLE_FEATURE_EDITING_FANCY_PROMPT 0
 # undef ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
 # define ENABLE_FEATURE_EDITING_SAVE_ON_EXIT 0
-#endif
+#اگر_ختم
 
 /* Do we support ANY keywords? */
-#if ENABLE_HUSH_IF || ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+#اگر ENABLE_HUSH_IF || ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
 # define HAS_KEYWORDS 1
 # define IF_HAS_KEYWORDS(...) __VA_ARGS__
 # define IF_HAS_NO_KEYWORDS(...)
-#else
+#ورنہ
 # define HAS_KEYWORDS 0
 # define IF_HAS_KEYWORDS(...)
 # define IF_HAS_NO_KEYWORDS(...) __VA_ARGS__
-#endif
+#اگر_ختم
 
 /* If you comment out one of these below, it will be #defined later
  * to perform debug printfs to stderr: */
-#define debug_printf(...)         do {} while (0)
+#تعریف_کرو debug_printf(...)         کرو {} جب (0)
 /* Finer-grained debug switches */
-#define debug_printf_parse(...)   do {} while (0)
-#define debug_printf_heredoc(...) do {} while (0)
-#define debug_print_tree(a, b)    do {} while (0)
-#define debug_printf_exec(...)    do {} while (0)
-#define debug_printf_env(...)     do {} while (0)
-#define debug_printf_jobs(...)    do {} while (0)
-#define debug_printf_expand(...)  do {} while (0)
-#define debug_printf_varexp(...)  do {} while (0)
-#define debug_printf_glob(...)    do {} while (0)
-#define debug_printf_redir(...)   do {} while (0)
-#define debug_printf_list(...)    do {} while (0)
-#define debug_printf_subst(...)   do {} while (0)
-#define debug_printf_prompt(...)  do {} while (0)
-#define debug_printf_clean(...)   do {} while (0)
+#تعریف_کرو debug_printf_parse(...)   کرو {} جب (0)
+#تعریف_کرو debug_printf_heredoc(...) کرو {} جب (0)
+#تعریف_کرو debug_print_درخت(a, b)    کرو {} جب (0)
+#تعریف_کرو debug_printf_exec(...)    کرو {} جب (0)
+#تعریف_کرو debug_printf_env(...)     کرو {} جب (0)
+#تعریف_کرو debug_printf_jobs(...)    کرو {} جب (0)
+#تعریف_کرو debug_printf_expand(...)  کرو {} جب (0)
+#تعریف_کرو debug_printf_varexp(...)  کرو {} جب (0)
+#تعریف_کرو debug_printf_glob(...)    کرو {} جب (0)
+#تعریف_کرو debug_printf_redir(...)   کرو {} جب (0)
+#تعریف_کرو debug_printf_list(...)    کرو {} جب (0)
+#تعریف_کرو debug_printf_subst(...)   کرو {} جب (0)
+#تعریف_کرو debug_printf_prompt(...)  کرو {} جب (0)
+#تعریف_کرو debug_printf_clean(...)   کرو {} جب (0)
 
-#define ERR_PTR ((void*)(long)1)
+#تعریف_کرو ERR_PTR ((خالی*)(طویل)1)
 
-#define JOB_STATUS_FORMAT    "[%u] %-22s %.40s\n"
+#تعریف_کرو کام_حالت_FORMAT    "[%u] %-22s %.40s\n"
 
-#define _SPECIAL_VARS_STR     "_*@$!?#-"
-#ifndef __U_BOOT__
-#define SPECIAL_VARS_STR     ("_*@$!?#-" + 1)
-#define NUMERIC_SPECVARS_STR ("_*@$!?#-" + 3)
-#else /* __U_BOOT__ */
-#define SPECIAL_VARS_STR     "*@$!?#-"
-#define NUMERIC_SPECVARS_STR "$!?#-"
-#endif /* __U_BOOT__ */
-#if BASH_PATTERN_SUBST
+#تعریف_کرو _SPECIAL_VARS_STR     "_*@$!?#-"
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#تعریف_کرو SPECIAL_VARS_STR     ("_*@$!?#-" + 1)
+#تعریف_کرو NUMERIC_SPECVARS_STR ("_*@$!?#-" + 3)
+#ورنہ /* __U_BOOT__ */
+#تعریف_کرو SPECIAL_VARS_STR     "*@$!?#-"
+#تعریف_کرو NUMERIC_SPECVARS_STR "$!?#-"
+#اگر_ختم /* __U_BOOT__ */
+#اگر BASH_نمونہ_SUBST
 /* Support / and // replace ops */
 /* Note that // is stored as \ in "encoded" string representation */
 # define VAR_ENCODED_SUBST_OPS      "\\/%#:-=+?"
 # define VAR_SUBST_OPS             ("\\/%#:-=+?" + 1)
 # define MINUS_PLUS_EQUAL_QUESTION ("\\/%#:-=+?" + 5)
-#else
+#ورنہ
 # define VAR_ENCODED_SUBST_OPS      "%#:-=+?"
 # define VAR_SUBST_OPS              "%#:-=+?"
 # define MINUS_PLUS_EQUAL_QUESTION ("%#:-=+?" + 3)
-#endif
+#اگر_ختم
 
-#define SPECIAL_VAR_SYMBOL_STR "\3"
-#define SPECIAL_VAR_SYMBOL       3
+#تعریف_کرو SPECIAL_VAR_علامت_STR "\3"
+#تعریف_کرو SPECIAL_VAR_علامت       3
 /* The "variable" with name "\1" emits string "\3". Testcase: "echo ^C" */
-#define SPECIAL_VAR_QUOTED_SVS   1
+#تعریف_کرو SPECIAL_VAR_QUOTED_SVS   1
 
-struct variable;
+ساخت variable;
 
-static const char hush_version_str[] ALIGN1 = "HUSH_VERSION="BB_VER;
+ساکن ثابت حرف hush_نسخہ_str[] ALIGN1 = "HUSH_VERSION="BB_VER;
 
 /* This supports saving pointers malloced in vfork child,
  * to be freed in the parent.
  */
-#if !BB_MMU
-typedef struct nommu_save_t {
-	struct variable *old_vars;
-	char **argv;
-	char **argv_from_re_execing;
+#اگر !BB_MMU
+قسمتعریف ساخت nommu_save_t {
+	ساخت variable *old_vars;
+	حرف **argv;
+	حرف **argv_from_re_execing;
 } nommu_save_t;
-#endif
+#اگر_ختم
 
-enum {
+شمار {
 	RES_NONE  = 0,
-#if ENABLE_HUSH_IF
+#اگر ENABLE_HUSH_IF
 	RES_IF    ,
 	RES_THEN  ,
 	RES_ELIF  ,
 	RES_ELSE  ,
 	RES_FI    ,
-#endif
-#if ENABLE_HUSH_LOOPS
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
 	RES_FOR   ,
 	RES_WHILE ,
 	RES_UNTIL ,
 	RES_DO    ,
-	RES_DONE  ,
-#endif
-#if ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
-	RES_IN    ,
-#endif
-#if ENABLE_HUSH_CASE
+	RES_مکمل  ,
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+	RES_اندر    ,
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
 	RES_CASE  ,
 	/* three pseudo-keywords support contrived "case" syntax: */
-	RES_CASE_IN,   /* "case ... IN", turns into RES_MATCH when IN is observed */
-	RES_MATCH ,    /* "word)" */
+	RES_CASE_اندر,   /* "case ... IN", turns into RES_MATCH when IN is observed */
+	RES_مطابقت ,    /* "word)" */
 	RES_CASE_BODY, /* "this command is inside CASE" */
 	RES_ESAC  ,
-#endif
+#اگر_ختم
 	RES_XXXX  ,
 	RES_SNTX
 };
 
-typedef struct o_string {
-	char *data;
-	int length; /* position where data is appended */
-	int maxlen;
-	int o_expflags;
+قسمتعریف ساخت o_string {
+	حرف *ڈیٹا;
+	صحیح لمبائی; /* position where data is appended */
+	صحیح maxlen;
+	صحیح o_expflags;
 	/* At least some part of the string was inside '' or "",
 	 * possibly empty one: word"", wo''rd etc. */
 	smallint has_quoted_part;
-	smallint has_empty_slot;
-	smallint ended_in_ifs;
+	smallint has_خالی_خانے_خانہ;
+	smallint ended_اندر_ifs;
 } o_string;
-enum {
+شمار {
 	EXP_FLAG_SINGLEWORD     = 0x80, /* must be 0x80 */
 	EXP_FLAG_GLOB           = 0x2,
 	/* Protect newly added chars against globbing
@@ -567,16 +567,16 @@ enum {
 	EXP_FLAG_ESC_GLOB_CHARS = 0x1,
 };
 /* Used for initialization: o_string foo = NULL_O_STRING; */
-#define NULL_O_STRING { NULL }
+#تعریف_کرو NULL_O_STRING { تہی }
 
-#ifndef debug_printf_parse
-static const char *const assignment_flag[] ALIGN_PTR = {
+#اگر_غیر_تعریف_شدہ debug_printf_parse
+ساکن ثابت حرف *ثابت assignment_flag[] ALIGN_PTR = {
 	"MAYBE_ASSIGNMENT",
 	"DEFINITELY_ASSIGNMENT",
 	"NOT_ASSIGNMENT",
 	"WORD_IS_KEYWORD",
 };
-#endif
+#اگر_ختم
 
 /* We almost can use standard FILE api, but we need an ability to move
  * its fd when redirects coincide with it. No api exists for that
@@ -585,29 +585,29 @@ static const char *const assignment_flag[] ALIGN_PTR = {
  * Since we now can, we incorporate linked list of all opened HFILEs
  * into the struct (used to be a separate mini-list).
  */
-typedef struct HFILE {
-	char *cur;
-	char *end;
-	struct HFILE *next_hfile;
-	int fd;
-	char buf[1024];
+قسمتعریف ساخت HFILE {
+	حرف *cur;
+	حرف *انتہا_2;
+	ساخت HFILE *اگلا_hfile;
+	صحیح fd;
+	حرف buf[1024];
 } HFILE;
 
-typedef struct in_str {
-	const char *p;
-	int peek_buf[2];
-	int last_char;
+قسمتعریف ساخت اندر_str {
+	ثابت حرف *p;
+	صحیح peek_buf[2];
+	صحیح آخری_char;
 	HFILE *file;
-} in_str;
+} اندر_str;
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* The descrip member of this structure is only used to make
  * debugging output pretty */
-static const struct {
-	int32_t mode;
-	signed char default_fd;
-	char descrip[3];
-} redir_table[] ALIGN4 = {
+ساکن ثابت ساخت {
+	int32_t منوال;
+	علامتی حرف default_fd;
+	حرف descrip[3];
+} redir_جدول[] ALIGN4 = {
 	{ O_RDONLY,                  0, "<"  },
 	{ O_CREAT|O_TRUNC|O_WRONLY,  1, ">"  },
 	{ O_CREAT|O_APPEND|O_WRONLY, 1, ">>" },
@@ -617,12 +617,12 @@ static const struct {
 /*	{ O_RDONLY,                 77, "<<" }, */
 };
 
-struct redir_struct {
-	struct redir_struct *next;
-	char *rd_filename;          /* filename */
-	int rd_fd;                  /* fd to redirect */
+ساخت redir_struct {
+	ساخت redir_struct *اگلا;
+	حرف *rd_filename;          /* filename */
+	صحیح rd_fd;                  /* fd to redirect */
 	/* fd to redirect to, or -3 if rd_fd is to be closed (n>&-) */
-	int rd_dup;
+	صحیح rd_dup;
 	smallint rd_type;           /* (enum redir_type) */
 	/* note: for heredocs, rd_filename contains heredoc delimiter,
 	 * and subsequently heredoc itself; and rd_dup is a bitmask:
@@ -630,8 +630,8 @@ struct redir_struct {
 	 * bit 1: is heredoc quoted (<<'delim' syntax) ?
 	 */
 };
-typedef enum redir_type {
-	REDIRECT_INPUT     = 0,
+قسمتعریف شمار redir_type {
+	REDIRECT_داخلہ     = 0,
 	REDIRECT_OVERWRITE = 1,
 	REDIRECT_APPEND    = 2,
 	REDIRECT_IO        = 3,
@@ -640,46 +640,46 @@ typedef enum redir_type {
 
 	REDIRFD_CLOSE      = -3,
 	REDIRFD_SYNTAX_ERR = -2,
-	REDIRFD_TO_FILE    = -1,
+	REDIRFD_مقصد_FILE    = -1,
 	/* otherwise, rd_fd is redirected to rd_dup */
 
 	HEREDOC_SKIPTABS = 1,
 	HEREDOC_QUOTED   = 2,
 } redir_type;
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-struct command {
-#ifndef __U_BOOT__
+ساخت command {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	pid_t pid;                  /* 0 if exited */
-#endif /* !__U_BOOT__ */
-	unsigned assignment_cnt;    /* how many argv[i] are assignments? */
-#if ENABLE_HUSH_LINENO_VAR
-	unsigned lineno;
-#endif
+#اگر_ختم /* !__U_BOOT__ */
+	غیرعلامتی assignment_cnt;    /* how many argv[i] are assignments? */
+#اگر ENABLE_HUSH_LINENO_VAR
+	غیرعلامتی lineno;
+#اگر_ختم
 	smallint cmd_type;          /* CMD_xxx */
-#define CMD_NORMAL   0
-#define CMD_SUBSHELL 1
-#if BASH_TEST2
+#تعریف_کرو CMD_معمول   0
+#تعریف_کرو CMD_SUBSHELL 1
+#اگر BASH_TEST2
 /* used for "[[ EXPR ]]" */
 # define CMD_TEST2_SINGLEWORD_NOGLOB 2
-#endif
-#if BASH_TEST2 || ENABLE_HUSH_LOCAL || ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY
+#اگر_ختم
+#اگر BASH_TEST2 || ENABLE_HUSH_LOCAL || ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY
 /* used to prevent word splitting and globbing in "export v=t*" */
 # define CMD_SINGLEWORD_NOGLOB 3
-#endif
-#if ENABLE_HUSH_FUNCTIONS
+#اگر_ختم
+#اگر ENABLE_HUSH_FUNCTIONS
 # define CMD_FUNCDEF 4
-#endif
+#اگر_ختم
 
 	smalluint cmd_exitcode;
 	/* if non-NULL, this "command" is { list }, ( list ), or a compound statement */
-	struct pipe *group;
-#if !BB_MMU
-	char *group_as_string;
-#endif
-#if ENABLE_HUSH_FUNCTIONS
-	struct function *child_func;
+	ساخت pipe *گروہ;
+#اگر !BB_MMU
+	حرف *گروہ_as_string;
+#اگر_ختم
+#اگر ENABLE_HUSH_FUNCTIONS
+	ساخت function *بچہ_func;
 /* This field is used to prevent a bug here:
  * while...do f1() {a;}; f1; f1() {b;}; f1; done
  * When we execute "f1() {a;}" cmd, we create new function and clear
@@ -694,82 +694,82 @@ struct command {
  * When command is freed, it severs the link
  * (sets ->child_func->parent_cmd to NULL).
  */
-#endif
-#ifdef __U_BOOT__
-	int argc; /* number of program arguments */
-#endif
-	char **argv;                /* command name and arguments */
+#اگر_ختم
+#اگر_تعریف_شدہ __U_BOOT__
+	صحیح argc; /* number of program arguments */
+#اگر_ختم
+	حرف **argv;                /* command name and arguments */
 /* argv vector may contain variable references (^Cvar^C, ^C0^C etc)
  * and on execution these are substituted with their values.
  * Substitution can make _several_ words out of one argv[n]!
  * Example: argv[0]=='.^C*^C.' here: echo .$*.
  * References of the form ^C`cmd arg^C are `cmd arg` substitutions.
  */
-#ifndef __U_BOOT__
-	struct redir_struct *redirects; /* I/O redirections */
-#endif /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	ساخت redir_struct *redirects; /* I/O redirections */
+#اگر_ختم /* !__U_BOOT__ */
 };
 /* Is there anything in this command at all? */
-#ifndef __U_BOOT__
-#define IS_NULL_CMD(cmd) \
-	(!(cmd)->group && !(cmd)->argv && !(cmd)->redirects)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#تعریف_کرو IS_NULL_CMD(cmd) \
+	(!(cmd)->گروہ && !(cmd)->argv && !(cmd)->redirects)
 
-#else /* __U_BOOT__ */
-#define IS_NULL_CMD(cmd) \
-	(!(cmd)->group && !(cmd)->argv)
-#endif /* __U_BOOT__ */
-struct pipe {
-	struct pipe *next;
-	int num_cmds;               /* total number of commands in pipe */
-#ifndef __U_BOOT__
-	int alive_cmds;             /* number of commands running (not exited) */
-	int stopped_cmds;           /* number of commands alive, but stopped */
-#if ENABLE_HUSH_JOB
-	unsigned jobid;             /* job number */
+#ورنہ /* __U_BOOT__ */
+#تعریف_کرو IS_NULL_CMD(cmd) \
+	(!(cmd)->گروہ && !(cmd)->argv)
+#اگر_ختم /* __U_BOOT__ */
+ساخت pipe {
+	ساخت pipe *اگلا;
+	صحیح عدد_cmds;               /* total number of commands in pipe */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	صحیح alive_cmds;             /* number of commands running (not exited) */
+	صحیح stopped_cmds;           /* number of commands alive, but stopped */
+#اگر ENABLE_HUSH_کام
+	غیرعلامتی jobid;             /* job number */
 	pid_t pgrp;                 /* process group ID for the job */
-	char *cmdtext;              /* name of job */
-#endif
-#endif /* !__U_BOOT__ */
-	struct command *cmds;       /* array of commands in pipe */
+	حرف *cmdtext;              /* name of job */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
+	ساخت command *cmds;       /* array of commands in pipe */
 	smallint followup;          /* PIPE_BG, PIPE_SEQ, PIPE_OR, PIPE_AND */
 	IF_HAS_KEYWORDS(smallint pi_inverted;) /* "! cmd | cmd" */
-	IF_HAS_KEYWORDS(smallint res_word;) /* needed for if, for, while, until... */
+	IF_HAS_KEYWORDS(smallint res_لفظ;) /* needed for if, for, while, until... */
 };
-typedef enum pipe_style {
+قسمتعریف شمار pipe_style {
 	PIPE_SEQ = 0,
 	PIPE_AND = 1,
 	PIPE_OR  = 2,
 	PIPE_BG  = 3,
 } pipe_style;
 /* Is there anything in this pipe at all? */
-#define IS_NULL_PIPE(pi) \
-	((pi)->num_cmds == 0 IF_HAS_KEYWORDS( && (pi)->res_word == RES_NONE))
+#تعریف_کرو IS_NULL_PIPE(pi) \
+	((pi)->عدد_cmds == 0 IF_HAS_KEYWORDS( && (pi)->res_لفظ == RES_NONE))
 
 /* This holds pointers to the various results of parsing */
-struct parse_context {
+ساخت parse_context {
 	/* linked list of pipes */
-	struct pipe *list_head;
+	ساخت pipe *list_سر;
 	/* last pipe (being constructed right now) */
-	struct pipe *pipe;
+	ساخت pipe *pipe;
 	/* last command in pipe (being constructed right now) */
-	struct command *command;
-#ifndef __U_BOOT__
+	ساخت command *command;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* last redirect in command->redirects list */
-	struct redir_struct *pending_redirect;
-#endif /* !__U_BOOT__ */
-	o_string word;
-#if !BB_MMU
+	ساخت redir_struct *pending_redirect;
+#اگر_ختم /* !__U_BOOT__ */
+	o_string لفظ;
+#اگر !BB_MMU
 	o_string as_string;
-#endif
+#اگر_ختم
 	smallint is_assignment; /* 0:maybe, 1:yes, 2:no, 3:keyword */
-#if HAS_KEYWORDS
+#اگر HAS_KEYWORDS
 	smallint ctx_res_w;
 	smallint ctx_inverted; /* "! cmd | cmd" */
-#if ENABLE_HUSH_CASE
+#اگر ENABLE_HUSH_CASE
 	smallint ctx_dsemicolon; /* ";;" seen */
-#endif
+#اگر_ختم
 	/* bitmask of FLAG_xxx, for figuring out valid reserved words */
-	int old_flag;
+	صحیح old_flag;
 	/* group we are enclosed in:
 	 * example: "if pipe1; pipe2; then pipe3; fi"
 	 * when we see "if" or "then", we malloc and copy current context,
@@ -779,52 +779,52 @@ struct parse_context {
 	 * copy ->stack into current context, and delete ->stack.
 	 * (parsing of { list } and ( list ) doesn't use this method)
 	 */
-	struct parse_context *stack;
-#endif
+	ساخت parse_context *ڈھیر;
+#اگر_ختم
 };
-enum {
+شمار {
 	MAYBE_ASSIGNMENT      = 0,
 	DEFINITELY_ASSIGNMENT = 1,
 	NOT_ASSIGNMENT        = 2,
 	/* Not an assignment, but next word may be: "if v=xyz cmd;" */
-	WORD_IS_KEYWORD       = 3,
+	لفظ_IS_KEYWORD       = 3,
 };
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* On program start, environ points to initial environment.
  * putenv adds new pointers into it, unsetenv removes them.
  * Neither of these (de)allocates the strings.
  * setenv allocates new strings in malloc space and does putenv,
  * and thus setenv is unusable (leaky) for shell's purposes */
-#define setenv(...) setenv_is_leaky_dont_use()
-#endif /* !__U_BOOT__ */
-struct variable {
-	struct variable *next;
-	char *varstr;        /* points to "name=" portion */
-	int max_len;         /* if > 0, name is part of initial env; else name is malloced */
-#ifndef __U_BOOT__
+#تعریف_کرو setenv(...) setenv_is_leaky_dont_use()
+#اگر_ختم /* !__U_BOOT__ */
+ساخت variable {
+	ساخت variable *اگلا;
+	حرف *varstr;        /* points to "name=" portion */
+	صحیح max_len;         /* if > 0, name is part of initial env; else name is malloced */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	uint16_t var_nest_level;
 	smallint flg_export; /* putenv should be done on this var */
 	smallint flg_read_only;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 };
 
-enum {
+شمار {
 	BC_BREAK = 1,
 	BC_CONTINUE = 2,
 };
 
-#if ENABLE_HUSH_FUNCTIONS
-struct function {
-	struct function *next;
-	char *name;
-	struct command *parent_cmd;
-	struct pipe *body;
-# if !BB_MMU
-	char *body_as_string;
+#اگر ENABLE_HUSH_FUNCTIONS
+ساخت function {
+	ساخت function *اگلا;
+	حرف *name;
+	ساخت command *والد_cmd;
+	ساخت pipe *body;
+# اگر !BB_MMU
+	حرف *body_as_string;
 # endif
 };
-#endif
+#اگر_ختم
 
 /* set -/+o OPT support. (TODO: make it optional)
  * bash supports the following opts:
@@ -856,28 +856,28 @@ struct function {
  * vi              off
  * xtrace          off
  */
-static const char o_opt_strings[] ALIGN1 =
+ساکن ثابت حرف o_opt_لڑیاں[] ALIGN1 =
 	"pipefail\0"
 	"noexec\0"
 	"errexit\0"
-#if ENABLE_HUSH_MODE_X
+#اگر ENABLE_HUSH_منوال_X
 	"xtrace\0"
-#endif
+#اگر_ختم
 	;
-enum {
+شمار {
 	OPT_O_PIPEFAIL,
 	OPT_O_NOEXEC,
 	OPT_O_ERREXIT,
-#if ENABLE_HUSH_MODE_X
+#اگر ENABLE_HUSH_منوال_X
 	OPT_O_XTRACE,
-#endif
-	NUM_OPT_O
+#اگر_ختم
+	عدد_OPT_O
 };
 
 /* "Globals" within this file */
 /* Sorted roughly by size (smaller offsets == smaller code) */
-struct globals {
-#ifndef __U_BOOT__
+ساخت globals {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* interactive_fd != 0 means we are an interactive shell.
 	 * If we are, then saved_tty_pgrp can also be != 0, meaning
 	 * that controlling tty is available. With saved_tty_pgrp == 0,
@@ -889,41 +889,41 @@ struct globals {
 	 * and will take it back when the group is stopped (^Z)
 	 * or killed (^C).
 	 */
-#if ENABLE_HUSH_INTERACTIVE
+#اگر ENABLE_HUSH_INTERACTIVE
 	/* 'interactive_fd' is a fd# open to ctty, if we have one
 	 * _AND_ if we decided to act interactively */
-	int interactive_fd;
-	IF_NOT_FEATURE_EDITING_FANCY_PROMPT(char *PS1;)
+	صحیح interactive_fd;
+	IF_NOT_FEATURE_EDITING_FANCY_PROMPT(حرف *PS1;)
 # define G_interactive_fd (G.interactive_fd)
-#else
+#ورنہ
 # define G_interactive_fd 0
-#endif
-#else /* __U_BOOT__ */
+#اگر_ختم
+#ورنہ /* __U_BOOT__ */
 # define G_interactive_fd 0
-#endif /* __U_BOOT__ */
-#ifndef __U_BOOT__
-#if ENABLE_FEATURE_EDITING
-	line_input_t *line_input_state;
-#endif
-	pid_t root_pid;
-	pid_t root_ppid;
-	pid_t last_bg_pid;
-#if ENABLE_HUSH_RANDOM_SUPPORT
+#اگر_ختم /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_FEATURE_EDITING
+	سطر_داخلہ_t *سطر_داخلہ_state;
+#اگر_ختم
+	pid_t جڑ_pid;
+	pid_t جڑ_ppid;
+	pid_t آخری_bg_pid;
+#اگر ENABLE_HUSH_RANDOM_SUPPORT
 	random_t random_gen;
-#endif
-#if ENABLE_HUSH_JOB
-	int run_list_level;
-	unsigned last_jobid;
+#اگر_ختم
+#اگر ENABLE_HUSH_کام
+	صحیح تسلسل_list_level;
+	غیرعلامتی آخری_jobid;
 	pid_t saved_tty_pgrp;
-	struct pipe *job_list;
+	ساخت pipe *کام_list;
 # define G_saved_tty_pgrp (G.saved_tty_pgrp)
-#else
+#ورنہ
 # define G_saved_tty_pgrp 0
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 	/* How deeply are we in context where "set -e" is ignored */
-	int errexit_depth;
-#ifndef __U_BOOT__
+	صحیح errexit_گہرائی;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* "set -e" rules (do we follow them correctly?):
 	 * Exit if pipe, list, or compound command exits with a non-zero status.
 	 * Shell does not exit if failed command is part of condition in
@@ -941,100 +941,100 @@ struct globals {
 	 * the compound command or the command containing the function call completes.
 	 */
 
-	char o_opt[NUM_OPT_O];
-#if ENABLE_HUSH_MODE_X
-# define G_x_mode (G.o_opt[OPT_O_XTRACE])
-#else
-# define G_x_mode 0
-#endif
-	char opt_s;
-	char opt_c;
-#endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_INTERACTIVE
+	حرف o_opt[عدد_OPT_O];
+#اگر ENABLE_HUSH_منوال_X
+# define G_x_منوال (G.o_opt[OPT_O_XTRACE])
+#ورنہ
+# define G_x_منوال 0
+#اگر_ختم
+	حرف opt_s;
+	حرف opt_c;
+#اگر_ختم /* !__U_BOOT__ */
+#اگر ENABLE_HUSH_INTERACTIVE
 	smallint promptmode; /* 0: PS1, 1: PS2 */
-#endif
+#اگر_ختم
 	/* set by signal handler if SIGINT is received _and_ its trap is not set */
 	smallint flag_SIGINT;
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_LOOPS
 	smallint flag_break_continue;
-#endif
-#endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_FUNCTIONS
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
+#اگر ENABLE_HUSH_FUNCTIONS
 	/* 0: outside of a function (or sourced file)
 	 * -1: inside of a function, ok to use return builtin
 	 * 1: return is invoked, skip all till end of func
 	 */
-	smallint flag_return_in_progress;
-# define G_flag_return_in_progress (G.flag_return_in_progress)
-#else
-# define G_flag_return_in_progress 0
-#endif
+	smallint flag_return_اندر_پیش_رفت;
+# define G_flag_return_اندر_پیش_رفت (G.flag_return_اندر_پیش_رفت)
+#ورنہ
+# define G_flag_return_اندر_پیش_رفت 0
+#اگر_ختم
 	smallint exiting; /* used to prevent EXIT trap recursion */
 	/* These support $? */
-	smalluint last_exitcode;
+	smalluint آخری_exitcode;
 	smalluint expand_exitcode;
-	smalluint last_bg_pid_exitcode;
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_SET
+	smalluint آخری_bg_pid_exitcode;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_سیٹ
 	/* are global_argv and global_argv[1..n] malloced? (note: not [0]) */
-	smalluint global_args_malloced;
-# define G_global_args_malloced (G.global_args_malloced)
-#else
-# define G_global_args_malloced 0
-#endif
-#if ENABLE_HUSH_BASH_COMPAT
-	int dead_job_exitcode; /* for "wait -n" */
-#endif
-#endif /* !__U_BOOT__ */
+	smalluint global_دلائل_malloced;
+# define G_global_دلائل_malloced (G.global_دلائل_malloced)
+#ورنہ
+# define G_global_دلائل_malloced 0
+#اگر_ختم
+#اگر ENABLE_HUSH_BASH_COMPAT
+	صحیح dead_کام_exitcode; /* for "wait -n" */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 	/* how many non-NULL argv's we have. NB: $# + 1 */
-	int global_argc;
-	char **global_argv;
-#if !BB_MMU
-	char *argv0_for_re_execing;
-#endif
-#if ENABLE_HUSH_LOOPS
-#ifndef __U_BOOT__
-	unsigned depth_break_continue;
-#endif /* !__U_BOOT__ */
-	unsigned depth_of_loop;
-#endif
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_GETOPTS
-	unsigned getopt_count;
-#endif
-#endif /* !__U_BOOT__ */
-	const char *ifs;
-#ifdef __U_BOOT__
-	int flag_repeat;
-	int do_repeat;
-	int run_command_flags;
-#endif /* __U_BOOT__ */
-	char *ifs_whitespace; /* = G.ifs or malloced */
-#ifndef __U_BOOT__
-	const char *cwd;
-#endif /* !__U_BOOT__ */
-	struct variable *top_var;
-	char **expanded_assignments;
-	struct variable **shadowed_vars_pp;
-	unsigned var_nest_level;
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_FUNCTIONS
-# if ENABLE_HUSH_LOCAL
-	unsigned func_nest_level; /* solely to prevent "local v" in non-functions */
+	صحیح global_argc;
+	حرف **global_argv;
+#اگر !BB_MMU
+	حرف *argv0_for_re_execing;
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	غیرعلامتی گہرائی_break_continue;
+#اگر_ختم /* !__U_BOOT__ */
+	غیرعلامتی گہرائی_کا_loop;
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_GETOPTS
+	غیرعلامتی getopt_گنتی;
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
+	ثابت حرف *ifs;
+#اگر_تعریف_شدہ __U_BOOT__
+	صحیح flag_repeat;
+	صحیح do_repeat;
+	صحیح تسلسل_command_flags;
+#اگر_ختم /* __U_BOOT__ */
+	حرف *ifs_whitespace; /* = G.ifs or malloced */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	ثابت حرف *cwd;
+#اگر_ختم /* !__U_BOOT__ */
+	ساخت variable *چوٹی_var;
+	حرف **expanded_assignments;
+	ساخت variable **shadowed_vars_pp;
+	غیرعلامتی var_nest_level;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_FUNCTIONS
+# اگر ENABLE_HUSH_LOCAL
+	غیرعلامتی func_nest_level; /* solely to prevent "local v" in non-functions */
 # endif
-	struct function *top_func;
-#endif
+	ساخت function *چوٹی_func;
+#اگر_ختم
 	/* Signal and trap handling */
-#if ENABLE_HUSH_FAST
-	unsigned count_SIGCHLD;
-	unsigned handled_SIGCHLD;
+#اگر ENABLE_HUSH_FAST
+	غیرعلامتی گنتی_SIGCHLD;
+	غیرعلامتی handled_SIGCHLD;
 	smallint we_have_children;
-#endif
-#if ENABLE_HUSH_LINENO_VAR
-	unsigned parse_lineno;
-	unsigned execute_lineno;
-#endif
+#اگر_ختم
+#اگر ENABLE_HUSH_LINENO_VAR
+	غیرعلامتی parse_lineno;
+	غیرعلامتی execute_lineno;
+#اگر_ختم
 	HFILE *HFILE_list;
 	HFILE *HFILE_stdin;
 	/* Which signals have non-DFL handler (even with no traps set)?
@@ -1044,155 +1044,155 @@ struct globals {
 	 * The rest is cleared right before execv syscalls.
 	 * Other than these two times, never modified.
 	 */
-	unsigned special_sig_mask;
-#if ENABLE_HUSH_JOB
-	unsigned fatal_sig_mask;
-# define G_fatal_sig_mask (G.fatal_sig_mask)
-#else
-# define G_fatal_sig_mask 0
-#endif
-#if ENABLE_HUSH_TRAP
-	int pre_trap_exitcode;
-# if ENABLE_HUSH_FUNCTIONS
-	int return_exitcode;
+	غیرعلامتی special_sig_نقاب;
+#اگر ENABLE_HUSH_کام
+	غیرعلامتی fatal_sig_نقاب;
+# define G_fatal_sig_نقاب (G.fatal_sig_نقاب)
+#ورنہ
+# define G_fatal_sig_نقاب 0
+#اگر_ختم
+#اگر ENABLE_HUSH_TRAP
+	صحیح pre_trap_exitcode;
+# اگر ENABLE_HUSH_FUNCTIONS
+	صحیح return_exitcode;
 # endif
-	char **traps; /* char *traps[NSIG] */
+	حرف **traps; /* char *traps[NSIG] */
 # define G_traps G.traps
-#else
-# define G_traps ((char**)NULL)
-#endif
-	sigset_t pending_set;
-#if ENABLE_HUSH_MEMLEAK
-	unsigned long memleak_value;
-#endif
-#if ENABLE_HUSH_MODE_X
-	unsigned x_mode_depth;
+#ورنہ
+# define G_traps ((حرف**)تہی)
+#اگر_ختم
+	sigset_t pending_سیٹ;
+#اگر ENABLE_HUSH_MEMLEAK
+	غیرعلامتی طویل memleak_قدر;
+#اگر_ختم
+#اگر ENABLE_HUSH_منوال_X
+	غیرعلامتی x_منوال_گہرائی;
 	/* "set -x" output should not be redirectable with subsequent 2>FILE.
 	 * We dup fd#2 to x_mode_fd when "set -x" is executed, and use it
 	 * for all subsequent output.
 	 */
-	int x_mode_fd;
-	o_string x_mode_buf;
-#endif
-#endif /* !__U_BOOT__ */
-#if HUSH_DEBUG >= 2
-	int debug_indent;
-#endif
-#ifndef __U_BOOT__
-	struct sigaction sa;
-	char optstring_buf[sizeof("eixcs")];
-#if BASH_EPOCH_VARS
-	char epoch_buf[sizeof("%llu.nnnnnn") + sizeof(long long)*3];
-#endif
-#if ENABLE_FEATURE_EDITING
-	char user_input_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
-#endif
-#endif /* !__U_BOOT__ */
+	صحیح x_منوال_fd;
+	o_string x_منوال_buf;
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
+#اگر HUSH_DEBUG >= 2
+	صحیح debug_indent;
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	ساخت sigaction sa;
+	حرف optstring_buf[حجم("eixcs")];
+#اگر BASH_EPOCH_VARS
+	حرف epoch_buf[حجم("%llu.nnnnnn") + حجم(طویل طویل)*3];
+#اگر_ختم
+#اگر ENABLE_FEATURE_EDITING
+	حرف user_داخلہ_buf[CONFIG_FEATURE_EDITING_MAX_LEN];
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 };
-#ifdef __U_BOOT__
-struct globals *ptr_to_globals;
-#endif /* __U_BOOT__ */
-#define G (*ptr_to_globals)
+#اگر_تعریف_شدہ __U_BOOT__
+ساخت globals *ptr_مقصد_globals;
+#اگر_ختم /* __U_BOOT__ */
+#تعریف_کرو G (*ptr_مقصد_globals)
 /* Not #defining name to G.name - this quickly gets unwieldy
  * (too many defines). Also, I actually prefer to see when a variable
  * is global, thus "G." prefix is a useful hint */
-#ifdef __U_BOOT__
-#define SET_PTR_TO_GLOBALS(x) do { \
-	(*(struct globals**)&ptr_to_globals) = (void*)(x); \
+#اگر_تعریف_شدہ __U_BOOT__
+#تعریف_کرو سیٹ_PTR_مقصد_GLOBALS(x) کرو { \
+	(*(ساخت globals**)&ptr_مقصد_globals) = (خالی*)(x); \
 	barrier(); \
-} while (0)
-#define INIT_G() do { \
-	SET_PTR_TO_GLOBALS(xzalloc(sizeof(G))); \
+} جب (0)
+#تعریف_کرو INIT_G() کرو { \
+	سیٹ_PTR_مقصد_GLOBALS(xzalloc(حجم(G))); \
 	G.promptmode = 1; \
-} while (0)
-#else /* !__U_BOOT__ */
-#define INIT_G() do { \
-	SET_PTR_TO_GLOBALS(xzalloc(sizeof(G))); \
+} جب (0)
+#ورنہ /* !__U_BOOT__ */
+#تعریف_کرو INIT_G() کرو { \
+	سیٹ_PTR_مقصد_GLOBALS(xzalloc(حجم(G))); \
 	/* memset(&G.sa, 0, sizeof(G.sa)); */  \
-	sigfillset(&G.sa.sa_mask); \
+	sigfillset(&G.sa.sa_نقاب); \
 	G.sa.sa_flags = SA_RESTART; \
-} while (0)
-#endif /* !__U_BOOT__ */
+} جب (0)
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Function prototypes for builtins */
-static int builtin_cd(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_ECHO
-static int builtin_echo(char **argv) FAST_FUNC;
-#endif
-static int builtin_eval(char **argv) FAST_FUNC;
-static int builtin_exec(char **argv) FAST_FUNC;
-static int builtin_exit(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_EXPORT
-static int builtin_export(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_READONLY
-static int builtin_readonly(char **argv) FAST_FUNC;
-#endif
-static int builtin_false(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_JOB
-static int builtin_fg_bg(char **argv) FAST_FUNC;
-static int builtin_jobs(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_GETOPTS
-static int builtin_getopts(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_HELP
-static int builtin_help(char **argv) FAST_FUNC;
-#endif
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
-static int builtin_history(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_LOCAL
-static int builtin_local(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_MEMLEAK
-static int builtin_memleak(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_PRINTF
-static int builtin_printf(char **argv) FAST_FUNC;
-#endif
-static int builtin_pwd(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_READ
-static int builtin_read(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_SET
-static int builtin_set(char **argv) FAST_FUNC;
-#endif
-static int builtin_shift(char **argv) FAST_FUNC;
-static int builtin_source(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_TEST || BASH_TEST2
-static int builtin_test(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_TRAP
-static int builtin_trap(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_TYPE
-static int builtin_type(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_TIMES
-static int builtin_times(char **argv) FAST_FUNC;
-#endif
-static int builtin_true(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_UMASK
-static int builtin_umask(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_UNSET
-static int builtin_unset(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_KILL
-static int builtin_kill(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_WAIT
-static int builtin_wait(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_LOOPS
-static int builtin_break(char **argv) FAST_FUNC;
-static int builtin_continue(char **argv) FAST_FUNC;
-#endif
-#if ENABLE_HUSH_FUNCTIONS
-static int builtin_return(char **argv) FAST_FUNC;
-#endif
+ساکن صحیح builtin_cd(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_ECHO
+ساکن صحیح builtin_echo(حرف **argv) FAST_FUNC;
+#اگر_ختم
+ساکن صحیح builtin_eval(حرف **argv) FAST_FUNC;
+ساکن صحیح builtin_exec(حرف **argv) FAST_FUNC;
+ساکن صحیح builtin_exit(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_EXPORT
+ساکن صحیح builtin_export(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_READONLY
+ساکن صحیح builtin_readonly(حرف **argv) FAST_FUNC;
+#اگر_ختم
+ساکن صحیح builtin_false(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_کام
+ساکن صحیح builtin_fg_bg(حرف **argv) FAST_FUNC;
+ساکن صحیح builtin_jobs(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_GETOPTS
+ساکن صحیح builtin_getopts(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_HELP
+ساکن صحیح builtin_help(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر MAX_HISTORY && ENABLE_FEATURE_EDITING
+ساکن صحیح builtin_history(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_LOCAL
+ساکن صحیح builtin_local(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_MEMLEAK
+ساکن صحیح builtin_memleak(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_PRINTF
+ساکن صحیح builtin_printf(حرف **argv) FAST_FUNC;
+#اگر_ختم
+ساکن صحیح builtin_pwd(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_READ
+ساکن صحیح builtin_read(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_سیٹ
+ساکن صحیح builtin_سیٹ(حرف **argv) FAST_FUNC;
+#اگر_ختم
+ساکن صحیح builtin_سرکاؤ(حرف **argv) FAST_FUNC;
+ساکن صحیح builtin_ماخذ(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_TEST || BASH_TEST2
+ساکن صحیح builtin_test(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_TRAP
+ساکن صحیح builtin_trap(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_TYPE
+ساکن صحیح builtin_type(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_TIMES
+ساکن صحیح builtin_times(حرف **argv) FAST_FUNC;
+#اگر_ختم
+ساکن صحیح builtin_true(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_UMASK
+ساکن صحیح builtin_umask(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_UNSET
+ساکن صحیح builtin_unset(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_KILL
+ساکن صحیح builtin_kill(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_WAIT
+ساکن صحیح builtin_wait(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
+ساکن صحیح builtin_break(حرف **argv) FAST_FUNC;
+ساکن صحیح builtin_continue(حرف **argv) FAST_FUNC;
+#اگر_ختم
+#اگر ENABLE_HUSH_FUNCTIONS
+ساکن صحیح builtin_return(حرف **argv) FAST_FUNC;
+#اگر_ختم
 
 /* Table of built-in functions.  They can be forked or not, depending on
  * context: within pipes, they fork.  As simple commands, they do not.
@@ -1200,363 +1200,363 @@ static int builtin_return(char **argv) FAST_FUNC;
  * in the parent shell process.  If forked, of course they cannot.
  * For example, 'unset foo | whatever' will parse and run, but foo will
  * still be set at the end. */
-struct built_in_command {
-	const char *b_cmd;
-	int (*b_function)(char **argv) FAST_FUNC;
-#if ENABLE_HUSH_HELP
-	const char *b_descr;
+ساخت built_اندر_command {
+	ثابت حرف *b_cmd;
+	صحیح (*b_function)(حرف **argv) FAST_FUNC;
+#اگر ENABLE_HUSH_HELP
+	ثابت حرف *b_descr;
 # define BLTIN(cmd, func, help) { cmd, func, help }
-#else
+#ورنہ
 # define BLTIN(cmd, func, help) { cmd, func }
-#endif
+#اگر_ختم
 };
 
-static const struct built_in_command bltins1[] ALIGN_PTR = {
-	BLTIN("."        , builtin_source  , "Run commands in file"),
-	BLTIN(":"        , builtin_true    , NULL),
-#if ENABLE_HUSH_JOB
+ساکن ثابت ساخت built_اندر_command bltins1[] ALIGN_PTR = {
+	BLTIN("."        , builtin_ماخذ  , "Run commands in file"),
+	BLTIN(":"        , builtin_true    , تہی),
+#اگر ENABLE_HUSH_کام
 	BLTIN("bg"       , builtin_fg_bg   , "Resume job in background"),
-#endif
-#if ENABLE_HUSH_LOOPS
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
 	BLTIN("break"    , builtin_break   , "Exit loop"),
-#endif
+#اگر_ختم
 	BLTIN("cd"       , builtin_cd      , "Change directory"),
-#if ENABLE_HUSH_LOOPS
+#اگر ENABLE_HUSH_LOOPS
 	BLTIN("continue" , builtin_continue, "Start new loop iteration"),
-#endif
+#اگر_ختم
 	BLTIN("eval"     , builtin_eval    , "Construct and run shell command"),
 	BLTIN("exec"     , builtin_exec    , "Execute command, don't return to shell"),
-	BLTIN("exit"     , builtin_exit    , NULL),
-#if ENABLE_HUSH_EXPORT
+	BLTIN("exit"     , builtin_exit    , تہی),
+#اگر ENABLE_HUSH_EXPORT
 	BLTIN("export"   , builtin_export  , "Set environment variables"),
-#endif
-	BLTIN("false"    , builtin_false   , NULL),
-#if ENABLE_HUSH_JOB
+#اگر_ختم
+	BLTIN("false"    , builtin_false   , تہی),
+#اگر ENABLE_HUSH_کام
 	BLTIN("fg"       , builtin_fg_bg   , "Bring job to foreground"),
-#endif
-#if ENABLE_HUSH_GETOPTS
-	BLTIN("getopts"  , builtin_getopts , NULL),
-#endif
-#if ENABLE_HUSH_HELP
-	BLTIN("help"     , builtin_help    , NULL),
-#endif
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
+#اگر_ختم
+#اگر ENABLE_HUSH_GETOPTS
+	BLTIN("getopts"  , builtin_getopts , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_HELP
+	BLTIN("help"     , builtin_help    , تہی),
+#اگر_ختم
+#اگر MAX_HISTORY && ENABLE_FEATURE_EDITING
 	BLTIN("history"  , builtin_history , "Show history"),
-#endif
-#if ENABLE_HUSH_JOB
+#اگر_ختم
+#اگر ENABLE_HUSH_کام
 	BLTIN("jobs"     , builtin_jobs    , "List jobs"),
-#endif
-#if ENABLE_HUSH_KILL
+#اگر_ختم
+#اگر ENABLE_HUSH_KILL
 	BLTIN("kill"     , builtin_kill    , "Send signals to processes"),
-#endif
-#if ENABLE_HUSH_LOCAL
+#اگر_ختم
+#اگر ENABLE_HUSH_LOCAL
 	BLTIN("local"    , builtin_local   , "Set local variables"),
-#endif
-#if ENABLE_HUSH_MEMLEAK
-	BLTIN("memleak"  , builtin_memleak , NULL),
-#endif
-#if ENABLE_HUSH_READ
+#اگر_ختم
+#اگر ENABLE_HUSH_MEMLEAK
+	BLTIN("memleak"  , builtin_memleak , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_READ
 	BLTIN("read"     , builtin_read    , "Input into variable"),
-#endif
-#if ENABLE_HUSH_READONLY
+#اگر_ختم
+#اگر ENABLE_HUSH_READONLY
 	BLTIN("readonly" , builtin_readonly, "Make variables read-only"),
-#endif
-#if ENABLE_HUSH_FUNCTIONS
+#اگر_ختم
+#اگر ENABLE_HUSH_FUNCTIONS
 	BLTIN("return"   , builtin_return  , "Return from function"),
-#endif
-#if ENABLE_HUSH_SET
-	BLTIN("set"      , builtin_set     , "Set positional parameters"),
-#endif
-	BLTIN("shift"    , builtin_shift   , "Shift positional parameters"),
-#if BASH_SOURCE
-	BLTIN("source"   , builtin_source  , NULL),
-#endif
-#if ENABLE_HUSH_TIMES
-	BLTIN("times"    , builtin_times   , NULL),
-#endif
-#if ENABLE_HUSH_TRAP
+#اگر_ختم
+#اگر ENABLE_HUSH_سیٹ
+	BLTIN("set"      , builtin_سیٹ     , "Set positional parameters"),
+#اگر_ختم
+	BLTIN("shift"    , builtin_سرکاؤ   , "Shift positional parameters"),
+#اگر BASH_ماخذ
+	BLTIN("source"   , builtin_ماخذ  , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_TIMES
+	BLTIN("times"    , builtin_times   , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_TRAP
 	BLTIN("trap"     , builtin_trap    , "Trap signals"),
-#endif
-	BLTIN("true"     , builtin_true    , NULL),
-#if ENABLE_HUSH_TYPE
+#اگر_ختم
+	BLTIN("true"     , builtin_true    , تہی),
+#اگر ENABLE_HUSH_TYPE
 	BLTIN("type"     , builtin_type    , "Show command type"),
-#endif
-#if ENABLE_HUSH_ULIMIT
+#اگر_ختم
+#اگر ENABLE_HUSH_ULIMIT
 	BLTIN("ulimit"   , shell_builtin_ulimit, "Control resource limits"),
-#endif
-#if ENABLE_HUSH_UMASK
+#اگر_ختم
+#اگر ENABLE_HUSH_UMASK
 	BLTIN("umask"    , builtin_umask   , "Set file creation mask"),
-#endif
-#if ENABLE_HUSH_UNSET
+#اگر_ختم
+#اگر ENABLE_HUSH_UNSET
 	BLTIN("unset"    , builtin_unset   , "Unset variables"),
-#endif
-#if ENABLE_HUSH_WAIT
+#اگر_ختم
+#اگر ENABLE_HUSH_WAIT
 	BLTIN("wait"     , builtin_wait    , "Wait for process to finish"),
-#endif
+#اگر_ختم
 };
 /* These builtins won't be used if we are on NOMMU and need to re-exec
  * (it's cheaper to run an external program in this case):
  */
-static const struct built_in_command bltins2[] ALIGN_PTR = {
-#if ENABLE_HUSH_TEST
-	BLTIN("["        , builtin_test    , NULL),
-#endif
-#if BASH_TEST2
-	BLTIN("[["       , builtin_test    , NULL),
-#endif
-#if ENABLE_HUSH_ECHO
-	BLTIN("echo"     , builtin_echo    , NULL),
-#endif
-#if ENABLE_HUSH_PRINTF
-	BLTIN("printf"   , builtin_printf  , NULL),
-#endif
-	BLTIN("pwd"      , builtin_pwd     , NULL),
-#if ENABLE_HUSH_TEST
-	BLTIN("test"     , builtin_test    , NULL),
-#endif
+ساکن ثابت ساخت built_اندر_command bltins2[] ALIGN_PTR = {
+#اگر ENABLE_HUSH_TEST
+	BLTIN("["        , builtin_test    , تہی),
+#اگر_ختم
+#اگر BASH_TEST2
+	BLTIN("[["       , builtin_test    , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_ECHO
+	BLTIN("echo"     , builtin_echo    , تہی),
+#اگر_ختم
+#اگر ENABLE_HUSH_PRINTF
+	BLTIN("printf"   , builtin_printf  , تہی),
+#اگر_ختم
+	BLTIN("pwd"      , builtin_pwd     , تہی),
+#اگر ENABLE_HUSH_TEST
+	BLTIN("test"     , builtin_test    , تہی),
+#اگر_ختم
 };
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 /* Debug printouts.
  */
-#if HUSH_DEBUG >= 2
+#اگر HUSH_DEBUG >= 2
 /* prevent disasters with G.debug_indent < 0 */
 # define indent() fdprintf(2, "%*s", (G.debug_indent * 2) & 0xff, "")
 # define debug_enter() (G.debug_indent++)
 # define debug_leave() (G.debug_indent--)
-#else
-# define indent()      ((void)0)
-# define debug_enter() ((void)0)
-# define debug_leave() ((void)0)
-#endif
+#ورنہ
+# define indent()      ((خالی)0)
+# define debug_enter() ((خالی)0)
+# define debug_leave() ((خالی)0)
+#اگر_ختم
 
-#ifndef debug_printf
+#اگر_غیر_تعریف_شدہ debug_printf
 # define debug_printf(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_parse
+#اگر_غیر_تعریف_شدہ debug_printf_parse
 # define debug_printf_parse(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_heredoc
+#اگر_غیر_تعریف_شدہ debug_printf_heredoc
 # define debug_printf_heredoc(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_exec
-#define debug_printf_exec(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_غیر_تعریف_شدہ debug_printf_exec
+#تعریف_کرو debug_printf_exec(...) (indent(), fdprintf(2, __VA_ARGS__))
+#اگر_ختم
 
-#ifndef debug_printf_env
+#اگر_غیر_تعریف_شدہ debug_printf_env
 # define debug_printf_env(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_jobs
+#اگر_غیر_تعریف_شدہ debug_printf_jobs
 # define debug_printf_jobs(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_JOBS 1
-#else
+#ورنہ
 # define DEBUG_JOBS 0
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_expand
+#اگر_غیر_تعریف_شدہ debug_printf_expand
 # define debug_printf_expand(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_EXPAND 1
-#else
+#ورنہ
 # define DEBUG_EXPAND 0
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_varexp
+#اگر_غیر_تعریف_شدہ debug_printf_varexp
 # define debug_printf_varexp(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_glob
+#اگر_غیر_تعریف_شدہ debug_printf_glob
 # define debug_printf_glob(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_GLOB 1
-#else
+#ورنہ
 # define DEBUG_GLOB 0
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_redir
+#اگر_غیر_تعریف_شدہ debug_printf_redir
 # define debug_printf_redir(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_list
+#اگر_غیر_تعریف_شدہ debug_printf_list
 # define debug_printf_list(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_subst
+#اگر_غیر_تعریف_شدہ debug_printf_subst
 # define debug_printf_subst(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_prompt
+#اگر_غیر_تعریف_شدہ debug_printf_prompt
 # define debug_printf_prompt(...) (indent(), fdprintf(2, __VA_ARGS__))
-#endif
+#اگر_ختم
 
-#ifndef debug_printf_clean
+#اگر_غیر_تعریف_شدہ debug_printf_clean
 # define debug_printf_clean(...) (indent(), fdprintf(2, __VA_ARGS__))
 # define DEBUG_CLEAN 1
-#else
+#ورنہ
 # define DEBUG_CLEAN 0
-#endif
+#اگر_ختم
 
-#if DEBUG_EXPAND
-static void debug_print_strings(const char *prefix, char **vv)
+#اگر DEBUG_EXPAND
+ساکن خالی debug_print_لڑیاں(ثابت حرف *سابقہ, حرف **vv)
 {
 	indent();
-	fdprintf(2, "%s:\n", prefix);
-	while (*vv)
+	fdprintf(2, "%s:\n", سابقہ);
+	جب (*vv)
 		fdprintf(2, " '%s'\n", *vv++);
 }
-#else
-# define debug_print_strings(prefix, vv) ((void)0)
-#endif
+#ورنہ
+# define debug_print_لڑیاں(سابقہ, vv) ((خالی)0)
+#اگر_ختم
 
 /* Leak hunting. Use hush_leaktool.sh for post-processing.
  */
-#if LEAK_HUNTING
-static void *xxmalloc(int lineno, size_t size)
+#اگر LEAK_HUNTING
+ساکن خالی *xxmalloc(صحیح lineno, size_t سائز)
 {
-	void *ptr = xmalloc((size + 0xff) & ~0xff);
+	خالی *ptr = xmalloc((سائز + 0xff) & ~0xff);
 	fdprintf(2, "line %d: malloc %p\n", lineno, ptr);
-	return ptr;
+	واپس ptr;
 }
-static void *xxrealloc(int lineno, void *ptr, size_t size)
+ساکن خالی *xxrealloc(صحیح lineno, خالی *ptr, size_t سائز)
 {
-	ptr = xrealloc(ptr, (size + 0xff) & ~0xff);
+	ptr = xrealloc(ptr, (سائز + 0xff) & ~0xff);
 	fdprintf(2, "line %d: realloc %p\n", lineno, ptr);
-	return ptr;
+	واپس ptr;
 }
-static char *xxstrdup(int lineno, const char *str)
+ساکن حرف *xxstrdup(صحیح lineno, ثابت حرف *str)
 {
-	char *ptr = xstrdup(str);
+	حرف *ptr = xstrdup(str);
 	fdprintf(2, "line %d: strdup %p\n", lineno, ptr);
-	return ptr;
+	واپس ptr;
 }
-static void xxfree(void *ptr)
+ساکن خالی xxfree(خالی *ptr)
 {
 	fdprintf(2, "free %p\n", ptr);
-	free(ptr);
+	آزاد(ptr);
 }
 # define xmalloc(s)     xxmalloc(__LINE__, s)
 # define xrealloc(p, s) xxrealloc(__LINE__, p, s)
 # define xstrdup(s)     xxstrdup(__LINE__, s)
-# define free(p)        xxfree(p)
-#endif
+# define آزاد(p)        xxfree(p)
+#اگر_ختم
 
 /* Syntax and runtime errors. They always abort scripts.
  * In interactive use they usually discard unparsed and/or unexecuted commands
  * and return to the prompt.
  * HUSH_DEBUG >= 2 prints line number in this file where it was detected.
  */
-#if HUSH_DEBUG < 2
-# define msg_and_die_if_script(lineno, ...)     msg_and_die_if_script(__VA_ARGS__)
-# define syntax_error(lineno, msg)              syntax_error(msg)
-# define syntax_error_at(lineno, msg)           syntax_error_at(msg)
+#اگر HUSH_DEBUG < 2
+# define پیغام_and_die_if_script(lineno, ...)     پیغام_and_die_if_script(__VA_ARGS__)
+# define syntax_error(lineno, پیغام)              syntax_error(پیغام)
+# define syntax_error_at(lineno, پیغام)           syntax_error_at(پیغام)
 # define syntax_error_unterm_ch(lineno, ch)     syntax_error_unterm_ch(ch)
 # define syntax_error_unterm_str(lineno, s)     syntax_error_unterm_str(s)
 # define syntax_error_unexpected_ch(lineno, ch) syntax_error_unexpected_ch(ch)
-#endif
+#اگر_ختم
 
-static void die_if_script(void)
+ساکن خالی die_if_script(خالی)
 {
-	if (!G_interactive_fd) {
-		if (G.last_exitcode) /* sometines it's 2, not 1 (bash compat) */
-			xfunc_error_retval = G.last_exitcode;
+	اگر (!G_interactive_fd) {
+		اگر (G.آخری_exitcode) /* sometines it's 2, not 1 (bash compat) */
+			xfunc_error_retval = G.آخری_exitcode;
 		xfunc_die();
 	}
 }
 
-#ifdef __U_BOOT__
-static void __maybe_unused msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
-#else /* !__U_BOOT__ */
-static void msg_and_die_if_script(unsigned lineno, const char *fmt, ...)
-#endif /* !__U_BOOT__ */
+#اگر_تعریف_شدہ __U_BOOT__
+ساکن خالی __maybe_unused پیغام_and_die_if_script(غیرعلامتی lineno, ثابت حرف *fmt, ...)
+#ورنہ /* !__U_BOOT__ */
+ساکن خالی پیغام_and_die_if_script(غیرعلامتی lineno, ثابت حرف *fmt, ...)
+#اگر_ختم /* !__U_BOOT__ */
 {
 	va_list p;
 
-#if HUSH_DEBUG >= 2
-	bb_error_msg("hush.c:%u", lineno);
-#endif
-	va_start(p, fmt);
-	bb_verror_msg(fmt, p, NULL);
-	va_end(p);
+#اگر HUSH_DEBUG >= 2
+	bb_error_پیغام("hush.c:%u", lineno);
+#اگر_ختم
+	va_آغاز(p, fmt);
+	bb_verror_پیغام(fmt, p, تہی);
+	va_انتہا(p);
 	die_if_script();
 }
 
-static void syntax_error(unsigned lineno UNUSED_PARAM, const char *msg)
+ساکن خالی syntax_error(غیرعلامتی lineno غیر_مستعمل_PARAM, ثابت حرف *پیغام)
 {
-	if (msg)
-		bb_error_msg("syntax error: %s", msg);
-	else
-		bb_simple_error_msg("syntax error");
+	اگر (پیغام)
+		bb_error_پیغام("syntax error: %s", پیغام);
+	ورنہ
+		bb_simple_error_پیغام("syntax error");
 	die_if_script();
 }
 
-static void syntax_error_at(unsigned lineno UNUSED_PARAM, const char *msg)
+ساکن خالی syntax_error_at(غیرعلامتی lineno غیر_مستعمل_PARAM, ثابت حرف *پیغام)
 {
-	bb_error_msg("syntax error at '%s'", msg);
+	bb_error_پیغام("syntax error at '%s'", پیغام);
 	die_if_script();
 }
 
-static void syntax_error_unterm_str(unsigned lineno UNUSED_PARAM, const char *s)
+ساکن خالی syntax_error_unterm_str(غیرعلامتی lineno غیر_مستعمل_PARAM, ثابت حرف *s)
 {
-	bb_error_msg("syntax error: unterminated %s", s);
+	bb_error_پیغام("syntax error: unterminated %s", s);
 //? source4.tests fails: in bash, echo ${^} in script does not terminate the script
 // (but bash --posix, or if bash is run as "sh", does terminate in script, so maybe uncomment this?)
 //	die_if_script();
 }
 
-static void syntax_error_unterm_ch(unsigned lineno, char ch)
+ساکن خالی syntax_error_unterm_ch(غیرعلامتی lineno, حرف ch)
 {
-	char msg[2] = { ch, '\0' };
-	syntax_error_unterm_str(lineno, msg);
+	حرف پیغام[2] = { ch, '\0' };
+	syntax_error_unterm_str(lineno, پیغام);
 }
 
-static void syntax_error_unexpected_ch(unsigned lineno UNUSED_PARAM, int ch)
+ساکن خالی syntax_error_unexpected_ch(غیرعلامتی lineno غیر_مستعمل_PARAM, صحیح ch)
 {
-	char msg[2];
-	msg[0] = ch;
-	msg[1] = '\0';
-#if HUSH_DEBUG >= 2
-	bb_error_msg("hush.c:%u", lineno);
-#endif
-	bb_error_msg("syntax error: unexpected %s", ch == EOF ? "EOF" : msg);
+	حرف پیغام[2];
+	پیغام[0] = ch;
+	پیغام[1] = '\0';
+#اگر HUSH_DEBUG >= 2
+	bb_error_پیغام("hush.c:%u", lineno);
+#اگر_ختم
+	bb_error_پیغام("syntax error: unexpected %s", ch == EOF ? "EOF" : پیغام);
 	die_if_script();
 }
 
-#if HUSH_DEBUG < 2
-# undef msg_and_die_if_script
+#اگر HUSH_DEBUG < 2
+# undef پیغام_and_die_if_script
 # undef syntax_error
 # undef syntax_error_at
 # undef syntax_error_unterm_ch
 # undef syntax_error_unterm_str
 # undef syntax_error_unexpected_ch
-#else
-# define msg_and_die_if_script(...)     msg_and_die_if_script(__LINE__, __VA_ARGS__)
-# define syntax_error(msg)              syntax_error(__LINE__, msg)
-# define syntax_error_at(msg)           syntax_error_at(__LINE__, msg)
+#ورنہ
+# define پیغام_and_die_if_script(...)     پیغام_and_die_if_script(__LINE__, __VA_ARGS__)
+# define syntax_error(پیغام)              syntax_error(__LINE__, پیغام)
+# define syntax_error_at(پیغام)           syntax_error_at(__LINE__, پیغام)
 # define syntax_error_unterm_ch(ch)     syntax_error_unterm_ch(__LINE__, ch)
 # define syntax_error_unterm_str(s)     syntax_error_unterm_str(__LINE__, s)
 # define syntax_error_unexpected_ch(ch) syntax_error_unexpected_ch(__LINE__, ch)
-#endif
+#اگر_ختم
 
 /* Utility functions
  */
 /* Replace each \x with x in place, return ptr past NUL. */
-static char *unbackslash(char *src)
+ساکن حرف *unbackslash(حرف *src)
 {
-#ifdef __U_BOOT__
-	char *dst = src = (char *)strchrnul(src, '\\');
-#else /* !__U_BOOT__ */
-	char *dst = src = strchrnul(src, '\\');
-#endif /* !__U_BOOT__ */
-	while (1) {
-		if (*src == '\\') {
+#اگر_تعریف_شدہ __U_BOOT__
+	حرف *dst = src = (حرف *)strchrnul(src, '\\');
+#ورنہ /* !__U_BOOT__ */
+	حرف *dst = src = strchrnul(src, '\\');
+#اگر_ختم /* !__U_BOOT__ */
+	جب (1) {
+		اگر (*src == '\\') {
 			src++;
-			if (*src != '\0') {
+			اگر (*src != '\0') {
 				/* \x -> x */
 				*dst++ = *src++;
-				continue;
+				جاری;
 			}
 			/* else: "\<nul>". Do not delete this backslash.
 			 * Testcase: eval 'echo ok\'
@@ -1564,100 +1564,100 @@ static char *unbackslash(char *src)
 			*dst++ = '\\';
 			/* fallthrough */
 		}
-		if ((*dst++ = *src++) == '\0')
-			break;
+		اگر ((*dst++ = *src++) == '\0')
+			توڑو;
 	}
-	return dst;
+	واپس dst;
 }
 
-static char **add_strings_to_strings(char **strings, char **add, int need_to_dup)
+ساکن حرف **جوڑو_لڑیاں_مقصد_لڑیاں(حرف **لڑیاں, حرف **جوڑو, صحیح need_مقصد_dup)
 {
-	int i;
-	unsigned count1;
-	unsigned count2;
-	char **v;
+	صحیح i;
+	غیرعلامتی count1;
+	غیرعلامتی count2;
+	حرف **v;
 
-	v = strings;
+	v = لڑیاں;
 	count1 = 0;
-	if (v) {
-		while (*v) {
+	اگر (v) {
+		جب (*v) {
 			count1++;
 			v++;
 		}
 	}
 	count2 = 0;
-	v = add;
-	while (*v) {
+	v = جوڑو;
+	جب (*v) {
 		count2++;
 		v++;
 	}
-	v = xrealloc(strings, (count1 + count2 + 1) * sizeof(char*));
-	v[count1 + count2] = NULL;
+	v = xrealloc(لڑیاں, (count1 + count2 + 1) * حجم(حرف*));
+	v[count1 + count2] = تہی;
 	i = count2;
-	while (--i >= 0)
-		v[count1 + i] = (need_to_dup ? xstrdup(add[i]) : add[i]);
-	return v;
+	جب (--i >= 0)
+		v[count1 + i] = (need_مقصد_dup ? xstrdup(جوڑو[i]) : جوڑو[i]);
+	واپس v;
 }
-#if LEAK_HUNTING
-static char **xx_add_strings_to_strings(int lineno, char **strings, char **add, int need_to_dup)
+#اگر LEAK_HUNTING
+ساکن حرف **xx_جوڑو_لڑیاں_مقصد_لڑیاں(صحیح lineno, حرف **لڑیاں, حرف **جوڑو, صحیح need_مقصد_dup)
 {
-	char **ptr = add_strings_to_strings(strings, add, need_to_dup);
+	حرف **ptr = جوڑو_لڑیاں_مقصد_لڑیاں(لڑیاں, جوڑو, need_مقصد_dup);
 	fdprintf(2, "line %d: add_strings_to_strings %p\n", lineno, ptr);
-	return ptr;
+	واپس ptr;
 }
-#define add_strings_to_strings(strings, add, need_to_dup) \
-	xx_add_strings_to_strings(__LINE__, strings, add, need_to_dup)
-#endif
+#تعریف_کرو جوڑو_لڑیاں_مقصد_لڑیاں(لڑیاں, جوڑو, need_مقصد_dup) \
+	xx_جوڑو_لڑیاں_مقصد_لڑیاں(__LINE__, لڑیاں, جوڑو, need_مقصد_dup)
+#اگر_ختم
 
 /* Note: takes ownership of "add" ptr (it is not strdup'ed) */
-static char **add_string_to_strings(char **strings, char *add)
+ساکن حرف **جوڑو_string_مقصد_لڑیاں(حرف **لڑیاں, حرف *جوڑو)
 {
-	char *v[2];
-	v[0] = add;
-	v[1] = NULL;
-	return add_strings_to_strings(strings, v, /*dup:*/ 0);
+	حرف *v[2];
+	v[0] = جوڑو;
+	v[1] = تہی;
+	واپس جوڑو_لڑیاں_مقصد_لڑیاں(لڑیاں, v, /*dup:*/ 0);
 }
 
-#if LEAK_HUNTING
-static char **xx_add_string_to_strings(int lineno, char **strings, char *add)
+#اگر LEAK_HUNTING
+ساکن حرف **xx_جوڑو_string_مقصد_لڑیاں(صحیح lineno, حرف **لڑیاں, حرف *جوڑو)
 {
-	char **ptr = add_string_to_strings(strings, add);
+	حرف **ptr = جوڑو_string_مقصد_لڑیاں(لڑیاں, جوڑو);
 	fdprintf(2, "line %d: add_string_to_strings %p\n", lineno, ptr);
-	return ptr;
+	واپس ptr;
 }
-#define add_string_to_strings(strings, add) \
-	xx_add_string_to_strings(__LINE__, strings, add)
-#endif
+#تعریف_کرو جوڑو_string_مقصد_لڑیاں(لڑیاں, جوڑو) \
+	xx_جوڑو_string_مقصد_لڑیاں(__LINE__, لڑیاں, جوڑو)
+#اگر_ختم
 
-static void free_strings(char **strings)
+ساکن خالی free_لڑیاں(حرف **لڑیاں)
 {
-	char **v;
+	حرف **v;
 
-	if (!strings)
-		return;
-	v = strings;
-	while (*v) {
-		free(*v);
+	اگر (!لڑیاں)
+		واپس;
+	v = لڑیاں;
+	جب (*v) {
+		آزاد(*v);
 		v++;
 	}
-	free(strings);
+	آزاد(لڑیاں);
 }
 
-#ifndef __U_BOOT__
-static int dup_CLOEXEC(int fd, int avoid_fd)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن صحیح dup_CLOEXEC(صحیح fd, صحیح avoid_fd)
 {
-	int newfd;
+	صحیح newfd;
  repeat:
 	newfd = fcntl(fd, F_DUPFD_CLOEXEC, avoid_fd + 1);
-	if (newfd >= 0) {
-		if (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
+	اگر (newfd >= 0) {
+		اگر (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
 			close_on_exec_on(newfd);
-	} else { /* newfd < 0 */
-		if (errno == EBUSY)
-			goto repeat;
-		if (errno == EINTR)
-			goto repeat;
-		if (errno != EBADF) {
+	} ورنہ { /* newfd < 0 */
+		اگر (errno == EBUSY)
+			جاؤ repeat;
+		اگر (errno == EINTR)
+			جاؤ repeat;
+		اگر (errno != EBADF) {
 			/* "echo >&9999" gets EINVAL trying to save fd 1 to above 9999.
 			 * We could try saving it _below_ 9999 instead (how?), but
 			 * this probably means that dup2(9999,1) to effectuate >&9999
@@ -1665,150 +1665,150 @@ static int dup_CLOEXEC(int fd, int avoid_fd)
 			 * (This differs from "echo >&99" where saving works, but
 			 * subsequent dup2(99,1) fails if fd 99 is not open).
 			 */
-			bb_perror_msg("fcntl(%d,F_DUPFD,%d)", fd, avoid_fd + 1);
+			bb_perror_پیغام("fcntl(%d,F_DUPFD,%d)", fd, avoid_fd + 1);
 		}
 	}
-	return newfd;
+	واپس newfd;
 }
 
-static int xdup_CLOEXEC_and_close(int fd, int avoid_fd)
+ساکن صحیح xdup_CLOEXEC_and_close(صحیح fd, صحیح avoid_fd)
 {
-	int newfd;
+	صحیح newfd;
  repeat:
 	newfd = fcntl(fd, F_DUPFD_CLOEXEC, avoid_fd + 1);
-	if (newfd < 0) {
-		if (errno == EBUSY)
-			goto repeat;
-		if (errno == EINTR)
-			goto repeat;
+	اگر (newfd < 0) {
+		اگر (errno == EBUSY)
+			جاؤ repeat;
+		اگر (errno == EINTR)
+			جاؤ repeat;
 		/* fd was not open? */
-		if (errno == EBADF)
-			return fd;
+		اگر (errno == EBADF)
+			واپس fd;
 		xfunc_die();
 	}
-	if (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
+	اگر (F_DUPFD_CLOEXEC == F_DUPFD) /* if old libc (w/o F_DUPFD_CLOEXEC) */
 		close_on_exec_on(newfd);
 	close(fd);
-	return newfd;
+	واپس newfd;
 }
 
 /* Manipulating HFILEs */
-static HFILE *hfopen(const char *name)
+ساکن HFILE *hfopen(ثابت حرف *name)
 {
 	HFILE *fp;
-	int fd;
+	صحیح fd;
 
 	fd = STDIN_FILENO;
-	if (name) {
+	اگر (name) {
 		fd = open(name, O_RDONLY | O_CLOEXEC);
-		if (fd < 0)
-			return NULL;
-		if (O_CLOEXEC == 0) /* ancient libc */
+		اگر (fd < 0)
+			واپس تہی;
+		اگر (O_CLOEXEC == 0) /* ancient libc */
 			close_on_exec_on(fd);
 	}
 
-	fp = xmalloc(sizeof(*fp));
-	if (name == NULL)
+	fp = xmalloc(حجم(*fp));
+	اگر (name == تہی)
 		G.HFILE_stdin = fp;
 	fp->fd = fd;
-	fp->cur = fp->end = fp->buf;
-	fp->next_hfile = G.HFILE_list;
+	fp->cur = fp->انتہا_2 = fp->buf;
+	fp->اگلا_hfile = G.HFILE_list;
 	G.HFILE_list = fp;
-	return fp;
+	واپس fp;
 }
-static void hfclose(HFILE *fp)
+ساکن خالی hfclose(HFILE *fp)
 {
 	HFILE **pp = &G.HFILE_list;
-	while (*pp) {
+	جب (*pp) {
 		HFILE *cur = *pp;
-		if (cur == fp) {
-			*pp = cur->next_hfile;
-			break;
+		اگر (cur == fp) {
+			*pp = cur->اگلا_hfile;
+			توڑو;
 		}
-		pp = &cur->next_hfile;
+		pp = &cur->اگلا_hfile;
 	}
-	if (fp->fd >= 0)
+	اگر (fp->fd >= 0)
 		close(fp->fd);
-	free(fp);
+	آزاد(fp);
 }
-static int refill_HFILE_and_getc(HFILE *fp)
+ساکن صحیح refill_HFILE_and_getc(HFILE *fp)
 {
-	int n;
+	صحیح n;
 
-	if (fp->fd < 0) {
+	اگر (fp->fd < 0) {
 		/* Already saw EOF */
-		return EOF;
+		واپس EOF;
 	}
-#if ENABLE_HUSH_INTERACTIVE && !ENABLE_FEATURE_EDITING
+#اگر ENABLE_HUSH_INTERACTIVE && !ENABLE_FEATURE_EDITING
 	/* If user presses ^C, read() restarts after SIGINT (we use SA_RESTART).
 	 * IOW: ^C will not immediately stop line input.
 	 * But poll() is different: it does NOT restart after signals.
 	 */
-	if (fp == G.HFILE_stdin) {
-		struct pollfd pfd[1];
+	اگر (fp == G.HFILE_stdin) {
+		ساخت pollfd pfd[1];
 		pfd[0].fd = fp->fd;
 		pfd[0].events = POLLIN;
 		n = poll(pfd, 1, -1);
-		if (n < 0
+		اگر (n < 0
 		 /*&& errno == EINTR - assumed true */
-		 && sigismember(&G.pending_set, SIGINT)
+		 && sigismember(&G.pending_سیٹ, SIGINT)
 		) {
-			return '\0';
+			واپس '\0';
 		}
 	}
-#else
+#ورنہ
 /* if FEATURE_EDITING=y, we do not use this routine for interactive input */
-#endif
+#اگر_ختم
 	/* Try to buffer more input */
-	n = safe_read(fp->fd, fp->buf, sizeof(fp->buf));
-	if (n < 0) {
-		bb_simple_perror_msg("read error");
+	n = محفوظ_read(fp->fd, fp->buf, حجم(fp->buf));
+	اگر (n < 0) {
+		bb_simple_perror_پیغام("read error");
 		n = 0;
 	}
 	fp->cur = fp->buf;
-	fp->end = fp->buf + n;
-	if (n == 0) {
+	fp->انتہا_2 = fp->buf + n;
+	اگر (n == 0) {
 		/* EOF/error */
 		close(fp->fd);
 		fp->fd = -1;
-		return EOF;
+		واپس EOF;
 	}
-	return (unsigned char)(*fp->cur++);
+	واپس (غیرعلامتی حرف)(*fp->cur++);
 }
 /* Inlined for common case of non-empty buffer.
  */
-static ALWAYS_INLINE int hfgetc(HFILE *fp)
+ساکن ALWAYS_INLINE صحیح hfgetc(HFILE *fp)
 {
-	if (fp->cur < fp->end)
-		return (unsigned char)(*fp->cur++);
+	اگر (fp->cur < fp->انتہا_2)
+		واپس (غیرعلامتی حرف)(*fp->cur++);
 	/* Buffer empty */
-	return refill_HFILE_and_getc(fp);
+	واپس refill_HFILE_and_getc(fp);
 }
-static int move_HFILEs_on_redirect(int fd, int avoid_fd)
+ساکن صحیح move_HFILEs_on_redirect(صحیح fd, صحیح avoid_fd)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
-		if (fd == fl->fd) {
+	جب (fl) {
+		اگر (fd == fl->fd) {
 			/* We use it only on script files, they are all CLOEXEC */
 			fl->fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
 			debug_printf_redir("redirect_fd %d: matches a script fd, moving it to %d\n", fd, fl->fd);
-			return 1; /* "found and moved" */
+			واپس 1; /* "found and moved" */
 		}
-		fl = fl->next_hfile;
+		fl = fl->اگلا_hfile;
 	}
-#if ENABLE_HUSH_MODE_X
-	if (G.x_mode_fd > 0 && fd == G.x_mode_fd) {
-		G.x_mode_fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
-		return 1; /* "found and moved" */
+#اگر ENABLE_HUSH_منوال_X
+	اگر (G.x_منوال_fd > 0 && fd == G.x_منوال_fd) {
+		G.x_منوال_fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
+		واپس 1; /* "found and moved" */
 	}
-#endif
-	return 0; /* "not in the list" */
+#اگر_ختم
+	واپس 0; /* "not in the list" */
 }
-#if ENABLE_FEATURE_SH_STANDALONE && BB_MMU
-static void close_all_HFILE_list(void)
+#اگر ENABLE_FEATURE_SH_STANDALONE && BB_MMU
+ساکن خالی close_all_HFILE_list(خالی)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
+	جب (fl) {
 		/* hfclose would also free HFILE object.
 		 * It is disastrous if we share memory with a vforked parent.
 		 * I'm not sure we never come here after vfork.
@@ -1820,71 +1820,71 @@ static void close_all_HFILE_list(void)
 		 * If we'd close it here, then e.g. interactive "set | sort"
 		 * with NOFORKed sort, would have sort's input fd closed.
 		 */
-		if (fl->fd > 0)
+		اگر (fl->fd > 0)
 			/*hfclose(fl); - unsafe */
 			close(fl->fd);
-		fl = fl->next_hfile;
+		fl = fl->اگلا_hfile;
 	}
 }
-#endif
-static int fd_in_HFILEs(int fd)
+#اگر_ختم
+ساکن صحیح fd_اندر_HFILEs(صحیح fd)
 {
 	HFILE *fl = G.HFILE_list;
-	while (fl) {
-		if (fl->fd == fd)
-			return 1;
-		fl = fl->next_hfile;
+	جب (fl) {
+		اگر (fl->fd == fd)
+			واپس 1;
+		fl = fl->اگلا_hfile;
 	}
-	return 0;
+	واپس 0;
 }
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 /* Helpers for setting new $n and restoring them back
  */
-typedef struct save_arg_t {
-	char *sv_argv0;
-	char **sv_g_argv;
-	int sv_g_argc;
-#ifndef __U_BOOT__
-	IF_HUSH_SET(smallint sv_g_malloced;)
-#endif /* !__U_BOOT__ */
+قسمتعریف ساخت save_arg_t {
+	حرف *sv_argv0;
+	حرف **sv_g_argv;
+	صحیح sv_g_argc;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	IF_HUSH_سیٹ(smallint sv_g_malloced;)
+#اگر_ختم /* !__U_BOOT__ */
 } save_arg_t;
 
-#ifndef __U_BOOT__
-static void save_and_replace_G_args(save_arg_t *sv, char **argv)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی save_and_replace_G_دلائل(save_arg_t *sv, حرف **argv)
 {
 	sv->sv_argv0 = argv[0];
 	sv->sv_g_argv = G.global_argv;
 	sv->sv_g_argc = G.global_argc;
-	IF_HUSH_SET(sv->sv_g_malloced = G.global_args_malloced;)
+	IF_HUSH_سیٹ(sv->sv_g_malloced = G.global_دلائل_malloced;)
 
 	argv[0] = G.global_argv[0]; /* retain $0 */
 	G.global_argv = argv;
-	IF_HUSH_SET(G.global_args_malloced = 0;)
+	IF_HUSH_سیٹ(G.global_دلائل_malloced = 0;)
 
 	G.global_argc = 1 + string_array_len(argv + 1);
 }
 
-static void restore_G_args(save_arg_t *sv, char **argv)
+ساکن خالی restore_G_دلائل(save_arg_t *sv, حرف **argv)
 {
-#if ENABLE_HUSH_SET
-	if (G.global_args_malloced) {
+#اگر ENABLE_HUSH_سیٹ
+	اگر (G.global_دلائل_malloced) {
 		/* someone ran "set -- arg1 arg2 ...", undo */
-		char **pp = G.global_argv;
-		while (*++pp) /* note: does not free $0 */
-			free(*pp);
-		free(G.global_argv);
+		حرف **pp = G.global_argv;
+		جب (*++pp) /* note: does not free $0 */
+			آزاد(*pp);
+		آزاد(G.global_argv);
 	}
-#endif
+#اگر_ختم
 	argv[0] = sv->sv_argv0;
 	G.global_argv = sv->sv_g_argv;
 	G.global_argc = sv->sv_g_argc;
-	IF_HUSH_SET(G.global_args_malloced = sv->sv_g_malloced;)
+	IF_HUSH_سیٹ(G.global_دلائل_malloced = sv->sv_g_malloced;)
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Basic theory of signal handling in shell
  * ========================================
  * This does not describe what hush does, rather, it is current understanding
@@ -2026,43 +2026,43 @@ static void restore_G_args(save_arg_t *sv, char **argv)
  * are set to the default actions". bash interprets it so that traps which
  * are set to '' (ignore) are NOT reset to defaults. We do the same.
  */
-enum {
+شمار {
 	SPECIAL_INTERACTIVE_SIGS = 0
 		| (1 << SIGTERM)
 		| (1 << SIGINT)
 		| (1 << SIGHUP)
 		,
 	SPECIAL_JOBSTOP_SIGS = 0
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 		| (1 << SIGTTIN)
 		| (1 << SIGTTOU)
 		| (1 << SIGTSTP)
-#endif
+#اگر_ختم
 		,
 };
 
-static void record_pending_signo(int sig)
+ساکن خالی ریکارڈ_pending_signo(صحیح sig)
 {
-	sigaddset(&G.pending_set, sig);
-#if ENABLE_FEATURE_EDITING
-	if (sig != SIGCHLD
+	sigaddset(&G.pending_سیٹ, sig);
+#اگر ENABLE_FEATURE_EDITING
+	اگر (sig != SIGCHLD
 	 || (G_traps && G_traps[SIGCHLD] && G_traps[SIGCHLD][0])
 	 /* ^^^ if SIGCHLD, interrupt line reading only if it has a trap */
 	) {
 		bb_got_signal = sig; /* for read_line_input: "we got a signal" */
 	}
-#endif
-#if ENABLE_HUSH_FAST
-	if (sig == SIGCHLD) {
-		G.count_SIGCHLD++;
+#اگر_ختم
+#اگر ENABLE_HUSH_FAST
+	اگر (sig == SIGCHLD) {
+		G.گنتی_SIGCHLD++;
 //bb_error_msg("[%d] SIGCHLD_handler: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 	}
-#endif
+#اگر_ختم
 }
 
-static sighandler_t install_sighandler(int sig, sighandler_t handler)
+ساکن sighandler_t install_sighandler(صحیح sig, sighandler_t handler)
 {
-	struct sigaction old_sa;
+	ساخت sigaction old_sa;
 
 	/* We could use signal() to install handlers... almost:
 	 * except that we need to mask ALL signals while handlers run.
@@ -2075,15 +2075,15 @@ static sighandler_t install_sighandler(int sig, sighandler_t handler)
 	/* G.sa.sa_flags = SA_RESTART;     - already done */
 	G.sa.sa_handler = handler;
 	sigaction(sig, &G.sa, &old_sa);
-	return old_sa.sa_handler;
+	واپس old_sa.sa_handler;
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-static void hush_exit(int exitcode) NORETURN;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی hush_exit(صحیح exitcode) NORETURN;
 
-static void restore_ttypgrp_and__exit(void) NORETURN;
-static void restore_ttypgrp_and__exit(void)
+ساکن خالی restore_ttypgrp_and__exit(خالی) NORETURN;
+ساکن خالی restore_ttypgrp_and__exit(خالی)
 {
 	/* xfunc has failed! die die die */
 	/* no EXIT traps, this is an escape hatch! */
@@ -2091,7 +2091,7 @@ static void restore_ttypgrp_and__exit(void)
 	hush_exit(xfunc_error_retval);
 }
 
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 
 /* Needed only on some libc:
  * It was observed that on exit(), fgetc'ed buffered data
@@ -2106,8 +2106,8 @@ static void restore_ttypgrp_and__exit(void)
  * and in `cmd` handling.
  * If set as die_func(), this makes xfunc_die() exit via _exit(), not exit():
  */
-static void fflush_and__exit(void) NORETURN;
-static void fflush_and__exit(void)
+ساکن خالی fflush_and__exit(خالی) NORETURN;
+ساکن خالی fflush_and__exit(خالی)
 {
 	fflush_all();
 	_exit(xfunc_error_retval);
@@ -2124,76 +2124,76 @@ static void fflush_and__exit(void)
  * or called directly with -EXITCODE.
  * We also call it if xfunc is exiting.
  */
-static void sigexit(int sig) NORETURN;
-static void sigexit(int sig)
+ساکن خالی sigexit(صحیح sig) NORETURN;
+ساکن خالی sigexit(صحیح sig)
 {
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid) {
+	اگر (G_saved_tty_pgrp && getpid() == G.جڑ_pid) {
 		/* Disable all signals: job control, SIGPIPE, etc.
 		 * Mostly paranoid measure, to prevent infinite SIGTTOU.
 		 */
-		sigprocmask_allsigs(SIG_BLOCK);
+		sigprocmask_allsigs(SIG_بلاک);
 		tcsetpgrp(G_interactive_fd, G_saved_tty_pgrp);
 	}
 
 	/* Not a signal, just exit */
-	if (sig <= 0)
+	اگر (sig <= 0)
 		_exit(- sig);
 
 	kill_myself_with_sig(sig); /* does not return */
 }
-#else
+#ورنہ
 
-# define disable_restore_tty_pgrp_on_exit() ((void)0)
-# define enable_restore_tty_pgrp_on_exit()  ((void)0)
+# define disable_restore_tty_pgrp_on_exit() ((خالی)0)
+# define enable_restore_tty_pgrp_on_exit()  ((خالی)0)
 
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-static sighandler_t pick_sighandler(unsigned sig)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن sighandler_t pick_sighandler(غیرعلامتی sig)
 {
 	sighandler_t handler = SIG_DFL;
-	if (sig < sizeof(unsigned)*8) {
-		unsigned sigmask = (1 << sig);
+	اگر (sig < حجم(غیرعلامتی)*8) {
+		غیرعلامتی sigmask = (1 << sig);
 
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 		/* is sig fatal? */
-		if (G_fatal_sig_mask & sigmask)
+		اگر (G_fatal_sig_نقاب & sigmask)
 			handler = sigexit;
-		else
-#endif
+		ورنہ
+#اگر_ختم
 		/* sig has special handling? */
-		if (G.special_sig_mask & sigmask) {
-			handler = record_pending_signo;
+		اگر (G.special_sig_نقاب & sigmask) {
+			handler = ریکارڈ_pending_signo;
 			/* TTIN/TTOU/TSTP can't be set to record_pending_signo
 			 * in order to ignore them: they will be raised
 			 * in an endless loop when we try to do some
 			 * terminal ioctls! We do have to _ignore_ these.
 			 */
-			if (SPECIAL_JOBSTOP_SIGS & sigmask)
+			اگر (SPECIAL_JOBSTOP_SIGS & sigmask)
 				handler = SIG_IGN;
 		}
 	}
-	return handler;
+	واپس handler;
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Restores tty foreground process group, and exits. */
-static void hush_exit(int exitcode)
+ساکن خالی hush_exit(صحیح exitcode)
 {
-#if ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
-	save_history(G.line_input_state); /* may be NULL */
-#endif
+#اگر ENABLE_FEATURE_EDITING_SAVE_ON_EXIT
+	save_history(G.سطر_داخلہ_state); /* may be NULL */
+#اگر_ختم
 
 	fflush_all();
-	if (G.exiting <= 0 && G_traps && G_traps[0] && G_traps[0][0]) {
-		char *argv[3];
+	اگر (G.exiting <= 0 && G_traps && G_traps[0] && G_traps[0][0]) {
+		حرف *argv[3];
 		/* argv[0] is unused */
 		argv[1] = xstrdup(G_traps[0]); /* copy, since EXIT trap handler may modify G_traps[0] */
-		argv[2] = NULL;
+		argv[2] = تہی;
 		G.exiting = 1; /* prevent EXIT trap recursion */
 		/* Note: G_traps[0] is not cleared!
 		 * "trap" will still show it, if executed
@@ -2201,88 +2201,88 @@ static void hush_exit(int exitcode)
 		builtin_eval(argv);
 	}
 
-#if ENABLE_FEATURE_CLEAN_UP
+#اگر ENABLE_FEATURE_CLEAN_اوپر
 	{
-		struct variable *cur_var;
-		if (G.cwd != bb_msg_unknown)
-			free((char*)G.cwd);
-		cur_var = G.top_var;
-		while (cur_var) {
-			struct variable *tmp = cur_var;
-			if (!cur_var->max_len)
-				free(cur_var->varstr);
-			cur_var = cur_var->next;
-			free(tmp);
+		ساخت variable *cur_var;
+		اگر (G.cwd != bb_پیغام_unknown)
+			آزاد((حرف*)G.cwd);
+		cur_var = G.چوٹی_var;
+		جب (cur_var) {
+			ساخت variable *tmp = cur_var;
+			اگر (!cur_var->max_len)
+				آزاد(cur_var->varstr);
+			cur_var = cur_var->اگلا;
+			آزاد(tmp);
 		}
 	}
-#endif
+#اگر_ختم
 
 	fflush_all();
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 	sigexit(- (exitcode & 0xff));
-#else
+#ورنہ
 	_exit(exitcode);
-#endif
+#اگر_ختم
 }
 
 //TODO: return a mask of ALL handled sigs?
-static int check_and_run_traps(void)
+ساکن صحیح check_and_تسلسل_traps(خالی)
 {
-	int last_sig = 0;
+	صحیح آخری_sig = 0;
 
-	while (1) {
-		int sig;
+	جب (1) {
+		صحیح sig;
 
-		if (sigisemptyset(&G.pending_set))
-			break;
+		اگر (sigisemptyset(&G.pending_سیٹ))
+			توڑو;
 		sig = 0;
-		do {
+		کرو {
 			sig++;
-			if (sigismember(&G.pending_set, sig)) {
-				sigdelset(&G.pending_set, sig);
-				goto got_sig;
+			اگر (sigismember(&G.pending_سیٹ, sig)) {
+				sigdelset(&G.pending_سیٹ, sig);
+				جاؤ got_sig;
 			}
-		} while (sig < NSIG);
-		break;
+		} جب (sig < NSIG);
+		توڑو;
  got_sig:
-#if ENABLE_HUSH_TRAP
-		if (G_traps && G_traps[sig]) {
+#اگر ENABLE_HUSH_TRAP
+		اگر (G_traps && G_traps[sig]) {
 			debug_printf_exec("%s: sig:%d handler:'%s'\n", __func__, sig, G.traps[sig]);
-			if (G_traps[sig][0]) {
+			اگر (G_traps[sig][0]) {
 				/* We have user-defined handler */
 				smalluint save_rcode;
-				int save_pre;
-				char *argv[3];
+				صحیح save_pre;
+				حرف *argv[3];
 				/* argv[0] is unused */
 				argv[1] = xstrdup(G_traps[sig]);
 				/* why strdup? trap can modify itself: trap 'trap "echo oops" INT' INT */
-				argv[2] = NULL;
+				argv[2] = تہی;
 				save_pre = G.pre_trap_exitcode;
-				G.pre_trap_exitcode = save_rcode = G.last_exitcode;
+				G.pre_trap_exitcode = save_rcode = G.آخری_exitcode;
 				builtin_eval(argv);
-				free(argv[1]);
+				آزاد(argv[1]);
 				G.pre_trap_exitcode = save_pre;
-				G.last_exitcode = save_rcode;
-# if ENABLE_HUSH_FUNCTIONS
-				if (G.return_exitcode >= 0) {
+				G.آخری_exitcode = save_rcode;
+# اگر ENABLE_HUSH_FUNCTIONS
+				اگر (G.return_exitcode >= 0) {
 					debug_printf_exec("trap exitcode:%d\n", G.return_exitcode);
-					G.last_exitcode = G.return_exitcode;
+					G.آخری_exitcode = G.return_exitcode;
 				}
 # endif
-				last_sig = sig;
+				آخری_sig = sig;
 			} /* else: "" trap, ignoring signal */
-			continue;
+			جاری;
 		}
-#endif
+#اگر_ختم
 		/* not a trap: special action */
-		switch (sig) {
-		case SIGINT:
+		انتخاب (sig) {
+		حالت SIGINT:
 			debug_printf_exec("%s: sig:%d default SIGINT handler\n", __func__, sig);
 			G.flag_SIGINT = 1;
-			last_sig = sig;
-			break;
-#if ENABLE_HUSH_JOB
-		case SIGHUP: {
+			آخری_sig = sig;
+			توڑو;
+#اگر ENABLE_HUSH_کام
+		حالت SIGHUP: {
 			/* if (G_interactive_fd) - no need to check, the handler
 			 * is only installed if we *are* interactive */
 			{
@@ -2291,34 +2291,34 @@ static int check_and_run_traps(void)
 				 * or stopped.  Stopped jobs are sent SIGCONT
 				 * to ensure that they receive the SIGHUP."
 				 */
-				struct pipe *job;
+				ساخت pipe *کام;
 				debug_printf_exec("%s: sig:%d default SIGHUP handler\n", __func__, sig);
 				/* bash is observed to signal whole process groups,
 				 * not individual processes */
-				for (job = G.job_list; job; job = job->next) {
-					if (job->pgrp <= 0)
-						continue;
-					debug_printf_exec("HUPing pgrp %d\n", job->pgrp);
-					if (kill(- job->pgrp, SIGHUP) == 0)
-						kill(- job->pgrp, SIGCONT);
+				برائے (کام = G.کام_list; کام; کام = کام->اگلا) {
+					اگر (کام->pgrp <= 0)
+						جاری;
+					debug_printf_exec("HUPing pgrp %d\n", کام->pgrp);
+					اگر (kill(- کام->pgrp, SIGHUP) == 0)
+						kill(- کام->pgrp, SIGCONT);
 				}
 			}
 			/* this restores tty pgrp, then kills us with SIGHUP */
 			sigexit(SIGHUP);
 		}
-#endif
-#if ENABLE_HUSH_FAST
-		case SIGCHLD:
+#اگر_ختم
+#اگر ENABLE_HUSH_FAST
+		حالت SIGCHLD:
 			debug_printf_exec("%s: sig:%d default SIGCHLD handler\n", __func__, sig);
-			G.count_SIGCHLD++;
+			G.گنتی_SIGCHLD++;
 //bb_error_msg("[%d] check_and_run_traps: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 			/* Note:
 			 * We don't do 'last_sig = sig' here -> NOT returning this sig.
 			 * This simplifies wait builtin a bit.
 			 */
-			break;
-#endif
-		default: /* ignored: */
+			توڑو;
+#اگر_ختم
+		طےشدہ: /* ignored: */
 			debug_printf_exec("%s: sig:%d default handling is to ignore\n", __func__, sig);
 			/* SIGTERM, SIGQUIT, SIGTTIN, SIGTTOU, SIGTSTP */
 			/* Note:
@@ -2326,166 +2326,166 @@ static int check_and_run_traps(void)
 			 * Example: wait is not interrupted by TERM
 			 * in interactive shell, because TERM is ignored.
 			 */
-			break;
+			توڑو;
 		}
 	}
-	return last_sig;
+	واپس آخری_sig;
 }
 
-static const char *get_cwd(int force)
+ساکن ثابت حرف *get_cwd(صحیح force)
 {
-	if (force || G.cwd == NULL) {
+	اگر (force || G.cwd == تہی) {
 		/* xrealloc_getcwd_or_warn(arg) calls free(arg),
 		 * we must not try to free(bb_msg_unknown) */
-		if (G.cwd == bb_msg_unknown)
-			G.cwd = NULL;
-		G.cwd = xrealloc_getcwd_or_warn((char *)G.cwd);
-		if (!G.cwd)
-			G.cwd = bb_msg_unknown;
+		اگر (G.cwd == bb_پیغام_unknown)
+			G.cwd = تہی;
+		G.cwd = xrealloc_getcwd_or_warn((حرف *)G.cwd);
+		اگر (!G.cwd)
+			G.cwd = bb_پیغام_unknown;
 	}
-	return G.cwd;
+	واپس G.cwd;
 }
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 /*
  * Shell and environment variable support
  */
-static struct variable **get_ptr_to_local_var(const char *name)
+ساکن ساخت variable **get_ptr_مقصد_local_var(ثابت حرف *name)
 {
-	struct variable **pp;
-	struct variable *cur;
+	ساخت variable **pp;
+	ساخت variable *cur;
 
-	pp = &G.top_var;
-	while ((cur = *pp) != NULL) {
-		if (varcmp(cur->varstr, name) == 0)
-			return pp;
-		pp = &cur->next;
+	pp = &G.چوٹی_var;
+	جب ((cur = *pp) != تہی) {
+		اگر (varcmp(cur->varstr, name) == 0)
+			واپس pp;
+		pp = &cur->اگلا;
 	}
-	return NULL;
+	واپس تہی;
 }
 
-static const char* FAST_FUNC get_local_var_value(const char *name)
+ساکن ثابت حرف* FAST_FUNC get_local_var_قدر(ثابت حرف *name)
 {
-	struct variable **vpp;
+	ساخت variable **vpp;
 
-	if (G.expanded_assignments) {
-		char **cpp = G.expanded_assignments;
-		while (*cpp) {
-			char *cp = *cpp;
-			if (varcmp(cp, name) == 0)
-				return strchr(cp, '=') + 1;
+	اگر (G.expanded_assignments) {
+		حرف **cpp = G.expanded_assignments;
+		جب (*cpp) {
+			حرف *cp = *cpp;
+			اگر (varcmp(cp, name) == 0)
+				واپس strchr(cp, '=') + 1;
 			cpp++;
 		}
 	}
 
-	vpp = get_ptr_to_local_var(name);
-	if (vpp)
-		return strchr((*vpp)->varstr, '=') + 1;
+	vpp = get_ptr_مقصد_local_var(name);
+	اگر (vpp)
+		واپس strchr((*vpp)->varstr, '=') + 1;
 
-#ifndef __U_BOOT__
-	if (strcmp(name, "PPID") == 0)
-		return utoa(G.root_ppid);
-#endif /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (strcmp(name, "PPID") == 0)
+		واپس utoa(G.جڑ_ppid);
+#اگر_ختم /* !__U_BOOT__ */
 	// bash compat: UID? EUID?
-#if ENABLE_HUSH_RANDOM_SUPPORT
-	if (strcmp(name, "RANDOM") == 0)
-		return utoa(next_random(&G.random_gen));
-#endif
-#if ENABLE_HUSH_LINENO_VAR
-	if (strcmp(name, "LINENO") == 0)
-		return utoa(G.execute_lineno);
-#endif
-#if BASH_EPOCH_VARS
+#اگر ENABLE_HUSH_RANDOM_SUPPORT
+	اگر (strcmp(name, "RANDOM") == 0)
+		واپس utoa(اگلا_random(&G.random_gen));
+#اگر_ختم
+#اگر ENABLE_HUSH_LINENO_VAR
+	اگر (strcmp(name, "LINENO") == 0)
+		واپس utoa(G.execute_lineno);
+#اگر_ختم
+#اگر BASH_EPOCH_VARS
 	{
-		const char *fmt = NULL;
-		if (strcmp(name, "EPOCHSECONDS") == 0)
+		ثابت حرف *fmt = تہی;
+		اگر (strcmp(name, "EPOCHSECONDS") == 0)
 			fmt = "%llu";
-		else if (strcmp(name, "EPOCHREALTIME") == 0)
+		ورنہ اگر (strcmp(name, "EPOCHREALTIME") == 0)
 			fmt = "%llu.%06u";
-		if (fmt) {
-			struct timeval tv;
+		اگر (fmt) {
+			ساخت timeval tv;
 			xgettimeofday(&tv);
-			sprintf(G.epoch_buf, fmt, (unsigned long long)tv.tv_sec,
-					(unsigned)tv.tv_usec);
-			return G.epoch_buf;
+			sprintf(G.epoch_buf, fmt, (غیرعلامتی طویل طویل)tv.tv_sec,
+					(غیرعلامتی)tv.tv_usec);
+			واپس G.epoch_buf;
 		}
 	}
-#endif
-	return NULL;
+#اگر_ختم
+	واپس تہی;
 }
 
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_GETOPTS
-static void handle_changed_special_names(const char *name)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_GETOPTS
+ساکن خالی handle_بدلا_special_نام(ثابت حرف *name)
 {
-	if (varcmp(name, "OPTIND") == 0) {
-		G.getopt_count = 0;
-		return;
+	اگر (varcmp(name, "OPTIND") == 0) {
+		G.getopt_گنتی = 0;
+		واپس;
 	}
 }
-#else
+#ورنہ
 /* Do not even bother evaluating arguments */
-# define handle_changed_special_names(...) ((void)0)
-#endif
-#else /* __U_BOOT__ */
+# define handle_بدلا_special_نام(...) ((خالی)0)
+#اگر_ختم
+#ورنہ /* __U_BOOT__ */
 /* Do not even bother evaluating arguments */
-# define handle_changed_special_names(...) ((void)0)
-#endif /* __U_BOOT__ */
+# define handle_بدلا_special_نام(...) ((خالی)0)
+#اگر_ختم /* __U_BOOT__ */
 
 /* str holds "NAME=VAL" and is expected to be malloced.
  * We take ownership of it.
  */
-#ifndef __U_BOOT__
-#define SETFLAG_EXPORT   (1 << 0)
-#define SETFLAG_UNEXPORT (1 << 1)
-#define SETFLAG_MAKE_RO  (1 << 2)
-#endif /* !__U_BOOT__ */
-#define SETFLAG_VARLVL_SHIFT   3
-#ifndef __U_BOOT__
-static int set_local_var(char *str, unsigned flags)
-#else /* __U_BOOT__ */
-int set_local_var_modern(char *str, int flags)
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#تعریف_کرو SETFLAG_EXPORT   (1 << 0)
+#تعریف_کرو SETFLAG_UNEXPORT (1 << 1)
+#تعریف_کرو SETFLAG_MAKE_RO  (1 << 2)
+#اگر_ختم /* !__U_BOOT__ */
+#تعریف_کرو SETFLAG_VARLVL_سرکاؤ   3
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن صحیح سیٹ_local_var(حرف *str, غیرعلامتی flags)
+#ورنہ /* __U_BOOT__ */
+صحیح سیٹ_local_var_modern(حرف *str, صحیح flags)
+#اگر_ختم /* __U_BOOT__ */
 {
-	struct variable **cur_pp;
-	struct variable *cur;
-	char *free_me = NULL;
-	char *eq_sign;
-	int name_len;
-	int retval;
-#ifndef __U_BOOT__
-	unsigned local_lvl = (flags >> SETFLAG_VARLVL_SHIFT);
-#endif /* !__U_BOOT__ */
+	ساخت variable **cur_pp;
+	ساخت variable *cur;
+	حرف *free_me = تہی;
+	حرف *eq_sign;
+	صحیح name_len;
+	صحیح retval;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	غیرعلامتی local_lvl = (flags >> SETFLAG_VARLVL_سرکاؤ);
+#اگر_ختم /* !__U_BOOT__ */
 
 	eq_sign = strchr(str, '=');
-	if (HUSH_DEBUG && !eq_sign)
-		bb_simple_error_msg_and_die("BUG in setvar");
+	اگر (HUSH_DEBUG && !eq_sign)
+		bb_simple_error_پیغام_and_die("BUG in setvar");
 
 	name_len = eq_sign - str + 1; /* including '=' */
-	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (strncmp(cur->varstr, str, name_len) != 0) {
-			cur_pp = &cur->next;
-			continue;
+	cur_pp = &G.چوٹی_var;
+	جب ((cur = *cur_pp) != تہی) {
+		اگر (لڑی_موازنہ(cur->varstr, str, name_len) != 0) {
+			cur_pp = &cur->اگلا;
+			جاری;
 		}
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		/* We found an existing var with this name */
-		if (cur->flg_read_only) {
-			bb_error_msg("%s: readonly variable", str);
-			free(str);
+		اگر (cur->flg_read_only) {
+			bb_error_پیغام("%s: readonly variable", str);
+			آزاد(str);
 //NOTE: in bash, assignment in "export READONLY_VAR=Z" fails, and sets $?=1,
 //but export per se succeeds (does put the var in env). We don't mimic that.
-			return -1;
+			واپس -1;
 		}
-		if (flags & SETFLAG_UNEXPORT) { // && cur->flg_export ?
+		اگر (flags & SETFLAG_UNEXPORT) { // && cur->flg_export ?
 			debug_printf_env("%s: unsetenv '%s'\n", __func__, str);
 			*eq_sign = '\0';
 			unsetenv(str);
 			*eq_sign = '=';
 		}
-		if (cur->var_nest_level < local_lvl) {
+		اگر (cur->var_nest_level < local_lvl) {
 			/* bash 3.2.33(1) and exported vars:
 			 * # export z=z
 			 * # f() { local z=a; env | grep ^z; }
@@ -2494,7 +2494,7 @@ int set_local_var_modern(char *str, int flags)
 			 * # env | grep ^z
 			 * z=z
 			 */
-			if (cur->flg_export)
+			اگر (cur->flg_export)
 				flags |= SETFLAG_EXPORT;
 			/* New variable is local ("local VAR=VAL" or
 			 * "VAR=VAL cmd")
@@ -2502,47 +2502,47 @@ int set_local_var_modern(char *str, int flags)
 			 * on a lower level that new one.
 			 * Remove it from global variable list:
 			 */
-			*cur_pp = cur->next;
-			if (G.shadowed_vars_pp) {
+			*cur_pp = cur->اگلا;
+			اگر (G.shadowed_vars_pp) {
 				/* Save in "shadowed" list */
 				debug_printf_env("shadowing %s'%s'/%u by '%s'/%u\n",
 					cur->flg_export ? "exported " : "",
 					cur->varstr, cur->var_nest_level, str, local_lvl
 				);
-				cur->next = *G.shadowed_vars_pp;
+				cur->اگلا = *G.shadowed_vars_pp;
 				*G.shadowed_vars_pp = cur;
-			} else {
+			} ورنہ {
 				/* Came from pseudo_exec_argv(), no need to save: delete it */
 				debug_printf_env("shadow-deleting %s'%s'/%u by '%s'/%u\n",
 					cur->flg_export ? "exported " : "",
 					cur->varstr, cur->var_nest_level, str, local_lvl
 				);
-				if (cur->max_len == 0) /* allocated "VAR=VAL"? */
+				اگر (cur->max_len == 0) /* allocated "VAR=VAL"? */
 					free_me = cur->varstr; /* then free it later */
-				free(cur);
+				آزاد(cur);
 			}
-			break;
+			توڑو;
 		}
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-		if (strcmp(cur->varstr + name_len, eq_sign + 1) == 0) {
+		اگر (strcmp(cur->varstr + name_len, eq_sign + 1) == 0) {
 			debug_printf_env("assignement '%s' does not change anything\n", str);
  free_and_exp:
-			free(str);
-			goto exp;
+			آزاد(str);
+			جاؤ قوت_نما;
 		}
 
 		/* Replace the value in the found "struct variable" */
-		if (cur->max_len != 0) {
-			if (cur->max_len >= strnlen(str, cur->max_len + 1)) {
+		اگر (cur->max_len != 0) {
+			اگر (cur->max_len >= strnlen(str, cur->max_len + 1)) {
 				/* This one is from startup env, reuse space */
 				debug_printf_env("reusing startup env for '%s'\n", str);
 				strcpy(cur->varstr, str);
-				goto free_and_exp;
+				جاؤ free_and_exp;
 			}
 			/* Can't reuse */
 			cur->max_len = 0;
-			goto set_str_and_exp;
+			جاؤ سیٹ_str_and_exp;
 		}
 		/* max_len == 0 signifies "malloced" var, which we can
 		 * (and have to) free. But we can't free(cur->varstr) here:
@@ -2551,41 +2551,41 @@ int set_local_var_modern(char *str, int flags)
 		 * then putenv(new)+free(old).
 		 */
 		free_me = cur->varstr;
-		goto set_str_and_exp;
+		جاؤ سیٹ_str_and_exp;
 	}
 
 	/* Not found or shadowed - create new variable struct */
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	debug_printf_env("%s: alloc new var '%s'/%u\n", __func__, str, local_lvl);
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 	debug_printf_env("%s: alloc new var '%s'\n", __func__, str);
-#endif /* __U_BOOT__ */
-	cur = xzalloc(sizeof(*cur));
-#ifndef __U_BOOT__
+#اگر_ختم /* __U_BOOT__ */
+	cur = xzalloc(حجم(*cur));
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	cur->var_nest_level = local_lvl;
-#endif /* !__U_BOOT__ */
-	cur->next = *cur_pp;
+#اگر_ختم /* !__U_BOOT__ */
+	cur->اگلا = *cur_pp;
 	*cur_pp = cur;
 
- set_str_and_exp:
+ سیٹ_str_and_exp:
 	cur->varstr = str;
- exp:
-#ifndef __U_BOOT__
-#if !BB_MMU || ENABLE_HUSH_READONLY
-	if (flags & SETFLAG_MAKE_RO) {
+ قوت_نما:
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر !BB_MMU || ENABLE_HUSH_READONLY
+	اگر (flags & SETFLAG_MAKE_RO) {
 		cur->flg_read_only = 1;
 	}
-#endif
-	if (flags & SETFLAG_EXPORT)
+#اگر_ختم
+	اگر (flags & SETFLAG_EXPORT)
 		cur->flg_export = 1;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	retval = 0;
-#ifndef __U_BOOT__
-	if (cur->flg_export) {
-		if (flags & SETFLAG_UNEXPORT) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (cur->flg_export) {
+		اگر (flags & SETFLAG_UNEXPORT) {
 			cur->flg_export = 0;
 			/* unsetenv was already done */
-		} else {
+		} ورنہ {
 			debug_printf_env("%s: putenv '%s'/%u\n", __func__, cur->varstr, cur->var_nest_level);
 			retval = putenv(cur->varstr);
 			/* fall through to "free(free_me)" -
@@ -2593,85 +2593,85 @@ int set_local_var_modern(char *str, int flags)
 			 */
 		}
 	}
-#endif /* !__U_BOOT__ */
-	free(free_me);
+#اگر_ختم /* !__U_BOOT__ */
+	آزاد(free_me);
 
-	handle_changed_special_names(cur->varstr);
+	handle_بدلا_special_نام(cur->varstr);
 
-	return retval;
+	واپس retval;
 }
 
-#ifndef __U_BOOT__
-static int set_local_var0(char *str)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن صحیح سیٹ_local_var0(حرف *str)
 {
-	return set_local_var(str, 0);
+	واپس سیٹ_local_var(str, 0);
 }
 
-static void FAST_FUNC set_local_var_from_halves(const char *name, const char *val)
+ساکن خالی FAST_FUNC سیٹ_local_var_from_halves(ثابت حرف *name, ثابت حرف *val)
 {
-	char *var = xasprintf("%s=%s", name, val);
-	set_local_var0(var);
+	حرف *var = xasprintf("%s=%s", name, val);
+	سیٹ_local_var0(var);
 }
 
 /* Used at startup and after each cd */
-static void set_pwd_var(unsigned flag)
+ساکن خالی سیٹ_pwd_var(غیرعلامتی flag)
 {
-	set_local_var(xasprintf("PWD=%s", get_cwd(/*force:*/ 1)), flag);
+	سیٹ_local_var(xasprintf("PWD=%s", get_cwd(/*force:*/ 1)), flag);
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#if ENABLE_HUSH_UNSET || ENABLE_HUSH_GETOPTS
-static int unset_local_var(const char *name)
+#اگر ENABLE_HUSH_UNSET || ENABLE_HUSH_GETOPTS
+ساکن صحیح unset_local_var(ثابت حرف *name)
 {
-	struct variable *cur;
-	struct variable **cur_pp;
+	ساخت variable *cur;
+	ساخت variable **cur_pp;
 
-	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (varcmp(cur->varstr, name) == 0) {
-			if (cur->flg_read_only) {
-				bb_error_msg("%s: readonly variable", name);
-				return EXIT_FAILURE;
+	cur_pp = &G.چوٹی_var;
+	جب ((cur = *cur_pp) != تہی) {
+		اگر (varcmp(cur->varstr, name) == 0) {
+			اگر (cur->flg_read_only) {
+				bb_error_پیغام("%s: readonly variable", name);
+				واپس EXIT_FAILURE;
 			}
 
-			*cur_pp = cur->next;
+			*cur_pp = cur->اگلا;
 			debug_printf_env("%s: unsetenv '%s'\n", __func__, cur->varstr);
 			bb_unsetenv(cur->varstr);
-			if (!cur->max_len)
-				free(cur->varstr);
-			free(cur);
+			اگر (!cur->max_len)
+				آزاد(cur->varstr);
+			آزاد(cur);
 
-			break;
+			توڑو;
 		}
-		cur_pp = &cur->next;
+		cur_pp = &cur->اگلا;
 	}
 
 	/* Handle "unset LINENO" et al even if did not find the variable to unset */
-	handle_changed_special_names(name);
+	handle_بدلا_special_نام(name);
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /*
  * Helpers for "var1=val1 var2=val2 cmd" feature
  */
-static void add_vars(struct variable *var)
+ساکن خالی جوڑو_vars(ساخت variable *var)
 {
-	struct variable *next;
+	ساخت variable *اگلا;
 
-	while (var) {
-		next = var->next;
-		var->next = G.top_var;
-		G.top_var = var;
-		if (var->flg_export) {
+	جب (var) {
+		اگلا = var->اگلا;
+		var->اگلا = G.چوٹی_var;
+		G.چوٹی_var = var;
+		اگر (var->flg_export) {
 			debug_printf_env("%s: restoring exported '%s'/%u\n", __func__, var->varstr, var->var_nest_level);
 			putenv(var->varstr);
-		} else {
+		} ورنہ {
 			debug_printf_env("%s: restoring variable '%s'/%u\n", __func__, var->varstr, var->var_nest_level);
 		}
-		var = next;
+		var = اگلا;
 	}
 }
 
@@ -2680,28 +2680,28 @@ static void add_vars(struct variable *var)
  * which attempts to overwrite it.
  * The strings[] vector itself is freed.
  */
-static void set_vars_and_save_old(char **strings)
+ساکن خالی سیٹ_vars_and_save_old(حرف **لڑیاں)
 {
-	char **s;
+	حرف **s;
 
-	if (!strings)
-		return;
+	اگر (!لڑیاں)
+		واپس;
 
-	s = strings;
-	while (*s) {
-		struct variable *var_p;
-		struct variable **var_pp;
-		char *eq;
+	s = لڑیاں;
+	جب (*s) {
+		ساخت variable *var_p;
+		ساخت variable **var_pp;
+		حرف *eq;
 
 		eq = strchr(*s, '=');
-		if (HUSH_DEBUG && !eq)
-			bb_simple_error_msg_and_die("BUG in varexp4");
-		var_pp = get_ptr_to_local_var(*s);
-		if (var_pp) {
+		اگر (HUSH_DEBUG && !eq)
+			bb_simple_error_پیغام_and_die("BUG in varexp4");
+		var_pp = get_ptr_مقصد_local_var(*s);
+		اگر (var_pp) {
 			var_p = *var_pp;
-			if (var_p->flg_read_only) {
-				char **p;
-				bb_error_msg("%s: readonly variable", *s);
+			اگر (var_p->flg_read_only) {
+				حرف **p;
+				bb_error_پیغام("%s: readonly variable", *s);
 				/*
 				 * "VAR=V BLTIN" unsets VARs after BLTIN completes.
 				 * If VAR is readonly, leaving it in the list
@@ -2709,10 +2709,10 @@ static void set_vars_and_save_old(char **strings)
 				 * causes doubled error message later, on unset.
 				 */
 				debug_printf_env("removing/freeing '%s' element\n", *s);
-				free(*s);
+				آزاد(*s);
 				p = s;
-				do { *p = p[1]; p++; } while (*p);
-				goto next;
+				کرو { *p = p[1]; p++; } جب (*p);
+				جاؤ اگلا;
 			}
 			/* below, set_local_var() with nest level will
 			 * "shadow" (remove) this variable from
@@ -2720,39 +2720,39 @@ static void set_vars_and_save_old(char **strings)
 			 */
 		}
 		debug_printf_env("%s: env override '%s'/%u\n", __func__, *s, G.var_nest_level);
-		set_local_var(*s, (G.var_nest_level << SETFLAG_VARLVL_SHIFT) | SETFLAG_EXPORT);
+		سیٹ_local_var(*s, (G.var_nest_level << SETFLAG_VARLVL_سرکاؤ) | SETFLAG_EXPORT);
 		s++;
- next: ;
+ اگلا: ;
 	}
-	free(strings);
+	آزاد(لڑیاں);
 }
 
 /*
  * Unicode helper
  */
-static void reinit_unicode_for_hush(void)
+ساکن خالی reinit_unicode_for_hush(خالی)
 {
 	/* Unicode support should be activated even if LANG is set
 	 * _during_ shell execution, not only if it was set when
 	 * shell was started. Therefore, re-check LANG every time:
 	 */
-	if (ENABLE_FEATURE_CHECK_UNICODE_IN_ENV
+	اگر (ENABLE_FEATURE_CHECK_UNICODE_اندر_ENV
 	 || ENABLE_UNICODE_USING_LOCALE
 	) {
-		const char *s = get_local_var_value("LC_ALL");
-		if (!s) s = get_local_var_value("LC_CTYPE");
-		if (!s) s = get_local_var_value("LANG");
+		ثابت حرف *s = get_local_var_قدر("LC_ALL");
+		اگر (!s) s = get_local_var_قدر("LC_CTYPE");
+		اگر (!s) s = get_local_var_قدر("LANG");
 		reinit_unicode(s);
 	}
 }
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 /*
  * in_str support (strings, and "strings" read from files).
  */
 
-#if ENABLE_HUSH_INTERACTIVE
-#ifndef __U_BOOT__
+#اگر ENABLE_HUSH_INTERACTIVE
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* To test correct lineedit/interactive behavior, type from command line:
  *	echo $P\
  *	\
@@ -2761,21 +2761,21 @@ static void reinit_unicode_for_hush(void)
  *	\
  * It exercises a lot of corner cases.
  */
-static const char *setup_prompt_string(void)
+ساکن ثابت حرف *تیاری_prompt_string(خالی)
 {
-	const char *prompt_str;
+	ثابت حرف *prompt_str;
 
 	debug_printf_prompt("%s promptmode:%d\n", __func__, G.promptmode);
 
-# if ENABLE_FEATURE_EDITING_FANCY_PROMPT
-	prompt_str = get_local_var_value(G.promptmode == 0 ? "PS1" : "PS2");
-	if (!prompt_str)
+# اگر ENABLE_FEATURE_EDITING_FANCY_PROMPT
+	prompt_str = get_local_var_قدر(G.promptmode == 0 ? "PS1" : "PS2");
+	اگر (!prompt_str)
 		prompt_str = "";
-# else
+# ورنہ
 	prompt_str = "> "; /* if PS2, else... */
-	if (G.promptmode == 0) { /* PS1 */
+	اگر (G.promptmode == 0) { /* PS1 */
 		/* No fancy prompts supported, (re)generate "CURDIR $ " by hand */
-		free(G.PS1);
+		آزاد(G.PS1);
 		/* bash uses $PWD value, even if it is set by user.
 		 * It uses current dir only if PWD is unset.
 		 * We always use current dir. */
@@ -2783,34 +2783,34 @@ static const char *setup_prompt_string(void)
 	}
 # endif
 	debug_printf("prompt_str '%s'\n", prompt_str);
-	return prompt_str;
+	واپس prompt_str;
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-static int get_user_input(struct in_str *i)
-#else /* __U_BOOT__ */
-static void get_user_input(struct in_str *i)
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن صحیح get_user_داخلہ(ساخت اندر_str *i)
+#ورنہ /* __U_BOOT__ */
+ساکن خالی get_user_داخلہ(ساخت اندر_str *i)
+#اگر_ختم /* __U_BOOT__ */
 {
-#ifndef __U_BOOT__
-# if ENABLE_FEATURE_EDITING
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+# اگر ENABLE_FEATURE_EDITING
 	/* In EDITING case, this function reads next input line,
 	 * saves it in i->p, then returns 1st char of it.
 	 */
-	int r;
-	const char *prompt_str;
+	صحیح r;
+	ثابت حرف *prompt_str;
 
-	prompt_str = setup_prompt_string();
-	for (;;) {
+	prompt_str = تیاری_prompt_string();
+	برائے (;;) {
 		reinit_unicode_for_hush();
 		G.flag_SIGINT = 0;
 
 		bb_got_signal = 0;
-		if (!sigisemptyset(&G.pending_set)) {
+		اگر (!sigisemptyset(&G.pending_سیٹ)) {
 			/* Whoops, already got a signal, do not call read_line_input */
 			bb_got_signal = r = -1;
-		} else {
+		} ورنہ {
 			/* For shell, LI_INTERRUPTIBLE is set:
 			 * read_line_input will abort on either
 			 * getting EINTR in poll() and bb_got_signal became != 0,
@@ -2825,53 +2825,53 @@ static void get_user_input(struct in_str *i)
 			 * #^^^ prints "T", prints prompt, repeats
 			 * #(bash 5.0.17 exits after first "T", looks like a bug)
 			 */
-			r = read_line_input(G.line_input_state, prompt_str,
-				G.user_input_buf, CONFIG_FEATURE_EDITING_MAX_LEN-1
+			r = read_سطر_داخلہ(G.سطر_داخلہ_state, prompt_str,
+				G.user_داخلہ_buf, CONFIG_FEATURE_EDITING_MAX_LEN-1
 			);
 			/* read_line_input intercepts ^C, "convert" it to SIGINT */
-			if (r == 0)
-				raise(SIGINT);
+			اگر (r == 0)
+				اٹھاؤ(SIGINT);
 		}
 		/* bash prints ^C (before running a trap, if any)
 		 * both on keyboard ^C and on real SIGINT (non-kbd generated).
 		 */
-		if (sigismember(&G.pending_set, SIGINT)) {
-			write(STDOUT_FILENO, "^C\n", 3);
-			G.last_exitcode = 128 | SIGINT;
+		اگر (sigismember(&G.pending_سیٹ, SIGINT)) {
+			اكتب(STDOUT_FILENO, "^C\n", 3);
+			G.آخری_exitcode = 128 | SIGINT;
 		}
-		check_and_run_traps();
-		if (r == 0) /* keyboard ^C? */
-			continue; /* go back, read another input line */
-		if (r > 0) /* normal input? (no ^C, no ^D, no signals) */
-			break;
-		if (!bb_got_signal) {
+		check_and_تسلسل_traps();
+		اگر (r == 0) /* keyboard ^C? */
+			جاری; /* go back, read another input line */
+		اگر (r > 0) /* normal input? (no ^C, no ^D, no signals) */
+			توڑو;
+		اگر (!bb_got_signal) {
 			/* r < 0: ^D/EOF/error detected (but not signal) */
 			/* ^D on interactive input goes to next line before exiting: */
-			write(STDOUT_FILENO, "\n", 1);
-			i->p = NULL;
+			اكتب(STDOUT_FILENO, "\n", 1);
+			i->p = تہی;
 			i->peek_buf[0] = r = EOF;
-			return r;
+			واپس r;
 		}
 		/* it was a signal: go back, read another input line */
 	}
-	i->p = G.user_input_buf;
-	return (unsigned char)*i->p++;
-# else
+	i->p = G.user_داخلہ_buf;
+	واپس (غیرعلامتی حرف)*i->p++;
+# ورنہ
 	/* In !EDITING case, this function gets called for every char.
 	 * Buffering happens deeper in the call chain, in hfgetc(i->file).
 	 */
-	int r;
+	صحیح r;
 
-	for (;;) {
+	برائے (;;) {
 		G.flag_SIGINT = 0;
-		if (i->last_char == '\0' || i->last_char == '\n') {
-			const char *prompt_str = setup_prompt_string();
+		اگر (i->آخری_char == '\0' || i->آخری_char == '\n') {
+			ثابت حرف *prompt_str = تیاری_prompt_string();
 			/* Why check_and_run_traps here? Try this interactively:
 			 * $ trap 'echo INT' INT; (sleep 2; kill -INT $$) &
 			 * $ <[enter], repeatedly...>
 			 * Without check_and_run_traps, handler never runs.
 			 */
-			check_and_run_traps();
+			check_and_تسلسل_traps();
 			fputs_stdout(prompt_str);
 			fflush_all();
 		}
@@ -2880,116 +2880,116 @@ static void get_user_input(struct in_str *i)
 		 * no ^C masking happens during fgetc, no special code for ^C:
 		 * it generates SIGINT as usual.
 		 */
-		check_and_run_traps();
-		if (r != '\0' && !G.flag_SIGINT)
-			break;
-		if (G.flag_SIGINT) {
+		check_and_تسلسل_traps();
+		اگر (r != '\0' && !G.flag_SIGINT)
+			توڑو;
+		اگر (G.flag_SIGINT) {
 			/* ^C or SIGINT: repeat */
 			/* bash prints ^C even on real SIGINT (non-kbd generated) */
 			/* kernel prints "^C" itself, just print newline: */
-			write(STDOUT_FILENO, "\n", 1);
-			G.last_exitcode = 128 | SIGINT;
+			اكتب(STDOUT_FILENO, "\n", 1);
+			G.آخری_exitcode = 128 | SIGINT;
 		}
 	}
-	return r;
+	واپس r;
 # endif
-#else /* __U_BOOT__ */
-	int n;
-	int promptme;
-	static char the_command[CONFIG_SYS_CBSIZE + 1];
+#ورنہ /* __U_BOOT__ */
+	صحیح n;
+	صحیح promptme;
+	ساکن حرف the_command[CONFIG_SYS_CBSIZE + 1];
 
 	bootretry_reset_cmd_timeout();
 	promptme = 1;
 	n = u_boot_cli_readline(i);
 
-# ifdef CONFIG_BOOT_RETRY_TIME
-	if (n == -2) {
+# ifdef CONFIG_BOOT_RETRY_وقت
+	اگر (n == -2) {
 		puts("\nTimeout waiting for command\n");
-#  ifdef CONFIG_RESET_TO_RETRY
-		do_reset(NULL, 0, 0, NULL);
+#  ifdef CONFIG_RESET_مقصد_RETRY
+		do_reset(تہی, 0, 0, تہی);
 #  elif IS_ENABLED(CONFIG_RETRY_BOOTCMD)
-	strcpy(console_buffer, "run bootcmd\n");
-# else
+	strcpy(console_بفر, "run bootcmd\n");
+# ورنہ
 #	error "This only works with CONFIG_RESET_TO_RETRY or CONFIG_BOOT_RETRY_COMMAND enabled"
 #  endif
 	}
 # endif
-	if (n == -1 ) {
+	اگر (n == -1 ) {
 		G.flag_repeat = 0;
 		promptme = 0;
 	}
-	n = strlen(console_buffer);
-	console_buffer[n] = '\n';
-	console_buffer[n+1]= '\0';
-	if (had_ctrlc())
+	n = لڑی_لمبائی(console_بفر);
+	console_بفر[n] = '\n';
+	console_بفر[n+1]= '\0';
+	اگر (had_ctrlc())
 		G.flag_repeat = 0;
 	clear_ctrlc();
 	G.do_repeat = 0;
-#ifndef __U_BOOT__
-	if (G.promptmode == 1) {
-#else /* __U_BOOT__ */
-	if (!G.promptmode) {
-#endif /* __U_BOOT__ */
-		if (console_buffer[0] == '\n'&& G.flag_repeat == 0) {
-			strcpy(the_command, console_buffer);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (G.promptmode == 1) {
+#ورنہ /* __U_BOOT__ */
+	اگر (!G.promptmode) {
+#اگر_ختم /* __U_BOOT__ */
+		اگر (console_بفر[0] == '\n'&& G.flag_repeat == 0) {
+			strcpy(the_command, console_بفر);
 		}
-		else {
-			if (console_buffer[0] != '\n') {
-				strcpy(the_command, console_buffer);
+		ورنہ {
+			اگر (console_بفر[0] != '\n') {
+				strcpy(the_command, console_بفر);
 				G.flag_repeat = 1;
 			}
-			else {
+			ورنہ {
 				G.do_repeat = 1;
 			}
 		}
 		i->p = the_command;
 	}
-	else {
-		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer)
+	ورنہ {
+		اگر (console_بفر[0] != '\n') {
+			اگر (لڑی_لمبائی(the_command) + لڑی_لمبائی(console_بفر)
 				< CONFIG_SYS_CBSIZE) {
-				n = strlen(the_command);
-#ifdef __U_BOOT__
+				n = لڑی_لمبائی(the_command);
+#اگر_تعریف_شدہ __U_BOOT__
 				/*
 				 * To avoid writing to bad places, we check if
 				 * n is greater than 0.
 				 * This bug was found by Harald Seiler.
 				 */
-				if (n > 0)
+				اگر (n > 0)
 					the_command[n-1] = ' ';
-				strcpy(&the_command[n], console_buffer);
-#else /* !__U_BOOT__ */
+				strcpy(&the_command[n], console_بفر);
+#ورنہ /* !__U_BOOT__ */
 			the_command[n-1] = ' ';
-			strcpy(&the_command[n], console_buffer);
-#endif /* !__U_BOOT__ */
+			strcpy(&the_command[n], console_بفر);
+#اگر_ختم /* !__U_BOOT__ */
 				}
-				else {
+				ورنہ {
 					the_command[0] = '\n';
 					the_command[1] = '\0';
 					G.flag_repeat = 0;
 				}
 		}
-		if (promptme == 0) {
+		اگر (promptme == 0) {
 			the_command[0] = '\n';
 			the_command[1] = '\0';
 		}
-		i->p = console_buffer;
+		i->p = console_بفر;
 	}
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 }
 /* This is the magic location that prints prompts
  * and gets data back from the user */
-static int fgetc_interactive(struct in_str *i)
+ساکن صحیح fgetc_interactive(ساخت اندر_str *i)
 {
-	int ch;
-#ifndef __U_BOOT__
+	صحیح ch;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* If it's interactive stdin, get new line. */
-	if (G_interactive_fd && i->file == G.HFILE_stdin) {
-#endif /* !__U_BOOT__ */
-#ifndef __U_BOOT__
+	اگر (G_interactive_fd && i->file == G.HFILE_stdin) {
+#اگر_ختم /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		/* Returns first char (or EOF), the rest is in i->p[] */
-		ch = get_user_input(i);
-#else /* __U_BOOT__ */
+		ch = get_user_داخلہ(i);
+#ورنہ /* __U_BOOT__ */
 		/* Avoid garbage value and make clang happy. */
 		ch = 0;
 		/*
@@ -2997,65 +2997,65 @@ static int fgetc_interactive(struct in_str *i)
 		 * U-Boot.
 		 * So, we need to take the read character from i->p[].
 		 */
-		get_user_input(i);
-		if (i->p && *i->p) {
+		get_user_داخلہ(i);
+		اگر (i->p && *i->p) {
 			ch = *i->p++;
 		}
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 		G.promptmode = 1; /* PS2 */
 		debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
-#ifndef __U_BOOT__
-	} else {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	} ورنہ {
 		/* Not stdin: script file, sourced file, etc */
-		do ch = hfgetc(i->file); while (ch == '\0');
+		کرو ch = hfgetc(i->file); جب (ch == '\0');
 	}
-#endif /* !__U_BOOT__ */
-	return ch;
+#اگر_ختم /* !__U_BOOT__ */
+	واپس ch;
 }
-#else  /* !INTERACTIVE */
-#ifndef __U_BOOT__
-static ALWAYS_INLINE int fgetc_interactive(struct in_str *i)
+#ورنہ  /* !INTERACTIVE */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن ALWAYS_INLINE صحیح fgetc_interactive(ساخت اندر_str *i)
 {
-	int ch;
-	do ch = hfgetc(i->file); while (ch == '\0');
-	return ch;
+	صحیح ch;
+	کرو ch = hfgetc(i->file); جب (ch == '\0');
+	واپس ch;
 }
-#endif /* !__U_BOOT__ */
-#endif  /* !INTERACTIVE */
+#اگر_ختم /* !__U_BOOT__ */
+#اگر_ختم  /* !INTERACTIVE */
 
-static int i_getch(struct in_str *i)
+ساکن صحیح i_getch(ساخت اندر_str *i)
 {
-	int ch;
+	صحیح ch;
 
-#ifndef __U_BOOT__
-	if (!i->file) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (!i->file) {
 		/* string-based in_str */
-		ch = (unsigned char)*i->p;
-		if (ch != '\0') {
+		ch = (غیرعلامتی حرف)*i->p;
+		اگر (ch != '\0') {
 			i->p++;
-			i->last_char = ch;
-#if ENABLE_HUSH_LINENO_VAR
-			if (ch == '\n') {
+			i->آخری_char = ch;
+#اگر ENABLE_HUSH_LINENO_VAR
+			اگر (ch == '\n') {
 				G.parse_lineno++;
 				debug_printf_parse("G.parse_lineno++ = %u\n", G.parse_lineno);
 			}
-#endif
-			return ch;
+#اگر_ختم
+			واپس ch;
 		}
-		return EOF;
+		واپس EOF;
 	}
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	/* FILE-based in_str */
 
-#if ENABLE_FEATURE_EDITING
+#اگر ENABLE_FEATURE_EDITING
 	/* This can be stdin, check line editing char[] buffer */
-	if (i->p && *i->p != '\0') {
-		ch = (unsigned char)*i->p++;
-		goto out;
-#ifndef __U_BOOT__
+	اگر (i->p && *i->p != '\0') {
+		ch = (غیرعلامتی حرف)*i->p++;
+		جاؤ برآمد;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	}
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 	/*
 	 * There are two ways for command to be called:
 	 * 1. The first one is when they are typed by the user.
@@ -3067,90 +3067,90 @@ static int i_getch(struct in_str *i)
 	 * NOTE G.run_command_flags is only set on run_command call stack, so
 	 * we use this to know if we come from user input or run_command().
 	 */
-	} else if (i->p && *i->p == '\0' && G.run_command_flags){
-		return EOF;
+	} ورنہ اگر (i->p && *i->p == '\0' && G.تسلسل_command_flags){
+		واپس EOF;
 	}
-#endif /* __U_BOOT__ */
-#endif
-#ifndef __U_BOOT__
+#اگر_ختم /* __U_BOOT__ */
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	ch = i->peek_buf[0];
-	if (ch != 0) {
-		int ch2 = i->peek_buf[1];
+	اگر (ch != 0) {
+		صحیح ch2 = i->peek_buf[1];
 		i->peek_buf[0] = ch2;
-		if (ch2 == 0) /* very likely, avoid redundant write */
-			goto out;
+		اگر (ch2 == 0) /* very likely, avoid redundant write */
+			جاؤ برآمد;
 		i->peek_buf[1] = 0;
-		goto out;
+		جاؤ برآمد;
 	}
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	ch = fgetc_interactive(i);
- out:
+ برآمد:
 	debug_printf("file_get: got '%c' %d\n", ch, ch);
-	i->last_char = ch;
-#if ENABLE_HUSH_LINENO_VAR
-	if (ch == '\n') {
+	i->آخری_char = ch;
+#اگر ENABLE_HUSH_LINENO_VAR
+	اگر (ch == '\n') {
 		G.parse_lineno++;
 		debug_printf_parse("G.parse_lineno++ = %u\n", G.parse_lineno);
 	}
-#endif
-	return ch;
+#اگر_ختم
+	واپس ch;
 }
 
-static int i_peek(struct in_str *i)
+ساکن صحیح i_peek(ساخت اندر_str *i)
 {
-#ifndef __U_BOOT__
-	int ch;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	صحیح ch;
 
-	if (!i->file) {
+	اگر (!i->file) {
 		/* string-based in_str */
 		/* Doesn't report EOF on NUL. None of the callers care. */
-		return (unsigned char)*i->p;
+		واپس (غیرعلامتی حرف)*i->p;
 	}
 
 	/* FILE-based in_str */
 
-#if ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
+#اگر ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
 	/* This can be stdin, check line editing char[] buffer */
-	if (i->p && *i->p != '\0')
-		return (unsigned char)*i->p;
-#endif
+	اگر (i->p && *i->p != '\0')
+		واپس (غیرعلامتی حرف)*i->p;
+#اگر_ختم
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	ch = i->peek_buf[0];
-	if (ch != 0)
-		return ch;
+	اگر (ch != 0)
+		واپس ch;
 
 	/* Need to get a new char */
 	ch = fgetc_interactive(i);
 	debug_printf("file_peek: got '%c' %d\n", ch, ch);
 
 	/* Save it by either rolling back line editing buffer, or in i->peek_buf[0] */
-#if ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
-	if (i->p) {
+#اگر ENABLE_FEATURE_EDITING && ENABLE_HUSH_INTERACTIVE
+	اگر (i->p) {
 		i->p -= 1;
-		return ch;
+		واپس ch;
 	}
-#endif
+#اگر_ختم
 	i->peek_buf[0] = ch;
 	/*i->peek_buf[1] = 0; - already is */
-	return ch;
-#else /* __U_BOOT__ */
+	واپس ch;
+#ورنہ /* __U_BOOT__ */
 	/* string-based in_str */
 	/* Doesn't report EOF on NUL. None of the callers care. */
-	return (unsigned char)*i->p;
-#endif /* __U_BOOT__ */
+	واپس (غیرعلامتی حرف)*i->p;
+#اگر_ختم /* __U_BOOT__ */
 }
 
 /* Only ever called if i_peek() was called, and did not return EOF.
  * IOW: we know the previous peek saw an ordinary char, not EOF, not NUL,
  * not end-of-line. Therefore we never need to read a new editing line here.
  */
-static int i_peek2(struct in_str *i)
+ساکن صحیح i_peek2(ساخت اندر_str *i)
 {
-#ifndef __U_BOOT__
-	int ch;
-#endif /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	صحیح ch;
+#اگر_ختم /* !__U_BOOT__ */
 
 	/* There are two cases when i->p[] buffer exists.
 	 * (1) it's a string in_str.
@@ -3158,80 +3158,80 @@ static int i_peek2(struct in_str *i)
 	 * In both cases, we know that i->p[0] exists and not NUL, and
 	 * the peek2 result is in i->p[1].
 	 */
-	if (i->p)
-		return (unsigned char)i->p[1];
+	اگر (i->p)
+		واپس (غیرعلامتی حرف)i->p[1];
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* Now we know it is a file-based in_str. */
 
 	/* peek_buf[] is an int array, not char. Can contain EOF. */
 	/* Is there 2nd char? */
 	ch = i->peek_buf[1];
-	if (ch == 0) {
+	اگر (ch == 0) {
 		/* We did not read it yet, get it now */
-		do ch = hfgetc(i->file); while (ch == '\0');
+		کرو ch = hfgetc(i->file); جب (ch == '\0');
 		i->peek_buf[1] = ch;
 	}
 
 	debug_printf("file_peek2: got '%c' %d\n", ch, ch);
-	return ch;
-#else
-	return 0;
-#endif /* __U_BOOT__ */
+	واپس ch;
+#ورنہ
+	واپس 0;
+#اگر_ختم /* __U_BOOT__ */
 }
 
-static int i_getch_and_eat_bkslash_nl(struct in_str *input)
+ساکن صحیح i_getch_and_eat_bkslash_nl(ساخت اندر_str *داخلہ)
 {
-	for (;;) {
-		int ch, ch2;
+	برائے (;;) {
+		صحیح ch, ch2;
 
-		ch = i_getch(input);
-		if (ch != '\\')
-			return ch;
-		ch2 = i_peek(input);
-		if (ch2 != '\n')
-			return ch;
+		ch = i_getch(داخلہ);
+		اگر (ch != '\\')
+			واپس ch;
+		ch2 = i_peek(داخلہ);
+		اگر (ch2 != '\n')
+			واپس ch;
 		/* backslash+newline, skip it */
-		i_getch(input);
+		i_getch(داخلہ);
 	}
 }
 
 /* Note: this function _eats_ \<newline> pairs, safe to use plain
  * i_getch() after it instead of i_getch_and_eat_bkslash_nl().
  */
-static int i_peek_and_eat_bkslash_nl(struct in_str *input)
+ساکن صحیح i_peek_and_eat_bkslash_nl(ساخت اندر_str *داخلہ)
 {
-	for (;;) {
-		int ch, ch2;
+	برائے (;;) {
+		صحیح ch, ch2;
 
-		ch = i_peek(input);
-		if (ch != '\\')
-			return ch;
-		ch2 = i_peek2(input);
-		if (ch2 != '\n')
-			return ch;
+		ch = i_peek(داخلہ);
+		اگر (ch != '\\')
+			واپس ch;
+		ch2 = i_peek2(داخلہ);
+		اگر (ch2 != '\n')
+			واپس ch;
 		/* backslash+newline, skip it */
-		i_getch(input);
-		i_getch(input);
+		i_getch(داخلہ);
+		i_getch(داخلہ);
 	}
 }
 
-#ifndef __U_BOOT__
-static void setup_file_in_str(struct in_str *i, HFILE *fp)
-#else /* __U_BOOT__ */
-static void setup_file_in_str(struct in_str *i)
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی تیاری_file_اندر_str(ساخت اندر_str *i, HFILE *fp)
+#ورنہ /* __U_BOOT__ */
+ساکن خالی تیاری_file_اندر_str(ساخت اندر_str *i)
+#اگر_ختم /* __U_BOOT__ */
 {
-	memset(i, 0, sizeof(*i));
-#ifndef __U_BOOT__
+	memset(i, 0, حجم(*i));
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	i->file = fp;
 	/* i->p = NULL; */
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 }
 
-static void setup_string_in_str(struct in_str *i, const char *s)
+ساکن خالی تیاری_string_اندر_str(ساخت اندر_str *i, ثابت حرف *s)
 {
-	memset(i, 0, sizeof(*i));
+	memset(i, 0, حجم(*i));
 	/*i->file = NULL */;
 	i->p = s;
 }
@@ -3239,120 +3239,120 @@ static void setup_string_in_str(struct in_str *i, const char *s)
 /*
  * o_string support
  */
-#define B_CHUNK  (32 * sizeof(char*))
+#تعریف_کرو B_CHUNK  (32 * حجم(حرف*))
 
-static void o_reset_to_empty_unquoted(o_string *o)
+ساکن خالی o_reset_مقصد_خالی_خانے_unquoted(o_string *o)
 {
-	o->length = 0;
+	o->لمبائی = 0;
 	o->has_quoted_part = 0;
-	if (o->data)
-		o->data[0] = '\0';
+	اگر (o->ڈیٹا)
+		o->ڈیٹا[0] = '\0';
 }
 
-static void o_free_and_set_NULL(o_string *o)
+ساکن خالی o_free_and_سیٹ_NULL(o_string *o)
 {
-	free(o->data);
-	memset(o, 0, sizeof(*o));
+	آزاد(o->ڈیٹا);
+	memset(o, 0, حجم(*o));
 }
 
-static ALWAYS_INLINE void o_free(o_string *o)
+ساکن ALWAYS_INLINE خالی o_free(o_string *o)
 {
-	free(o->data);
+	آزاد(o->ڈیٹا);
 }
 
-static void o_grow_by(o_string *o, int len)
+ساکن خالی o_grow_by(o_string *o, صحیح len)
 {
-	if (o->length + len > o->maxlen) {
+	اگر (o->لمبائی + len > o->maxlen) {
 		o->maxlen += (2 * len) | (B_CHUNK-1);
-		o->data = xrealloc(o->data, 1 + o->maxlen);
+		o->ڈیٹا = xrealloc(o->ڈیٹا, 1 + o->maxlen);
 	}
 }
 
-static void o_addchr(o_string *o, int ch)
+ساکن خالی o_addchr(o_string *o, صحیح ch)
 {
-	debug_printf("o_addchr: '%c' o->length=%d o=%p\n", ch, o->length, o);
-	if (o->length < o->maxlen) {
+	debug_printf("o_addchr: '%c' o->length=%d o=%p\n", ch, o->لمبائی, o);
+	اگر (o->لمبائی < o->maxlen) {
 		/* likely. avoid o_grow_by() call */
- add:
-		o->data[o->length] = ch;
-		o->length++;
-		o->data[o->length] = '\0';
-		return;
+ جوڑو:
+		o->ڈیٹا[o->لمبائی] = ch;
+		o->لمبائی++;
+		o->ڈیٹا[o->لمبائی] = '\0';
+		واپس;
 	}
 	o_grow_by(o, 1);
-	goto add;
+	جاؤ جوڑو;
 }
 
-#if 0
+#اگر 0
 /* Valid only if we know o_string is not empty */
-static void o_delchr(o_string *o)
+ساکن خالی o_delchr(o_string *o)
 {
-	o->length--;
-	o->data[o->length] = '\0';
+	o->لمبائی--;
+	o->ڈیٹا[o->لمبائی] = '\0';
 }
-#endif
+#اگر_ختم
 
-static void o_addblock(o_string *o, const char *str, int len)
+ساکن خالی o_addblock(o_string *o, ثابت حرف *str, صحیح len)
 {
 	o_grow_by(o, len);
-	((char*)mempcpy(&o->data[o->length], str, len))[0] = '\0';
-	o->length += len;
+	((حرف*)mempcpy(&o->ڈیٹا[o->لمبائی], str, len))[0] = '\0';
+	o->لمبائی += len;
 }
 
-static void o_addstr(o_string *o, const char *str)
+ساکن خالی o_addstr(o_string *o, ثابت حرف *str)
 {
-	o_addblock(o, str, strlen(str));
+	o_addblock(o, str, لڑی_لمبائی(str));
 }
 
-#ifndef __U_BOOT__
-static void o_addstr_with_NUL(o_string *o, const char *str)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی o_addstr_with_NUL(o_string *o, ثابت حرف *str)
 {
-	o_addblock(o, str, strlen(str) + 1);
+	o_addblock(o, str, لڑی_لمبائی(str) + 1);
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#if !BB_MMU
-static void nommu_addchr(o_string *o, int ch)
+#اگر !BB_MMU
+ساکن خالی nommu_addchr(o_string *o, صحیح ch)
 {
-	if (o)
+	اگر (o)
 		o_addchr(o, ch);
 }
-#else
-# define nommu_addchr(o, str) ((void)0)
-#endif
+#ورنہ
+# define nommu_addchr(o, str) ((خالی)0)
+#اگر_ختم
 
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_MODE_X
-static void x_mode_addchr(int ch)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_منوال_X
+ساکن خالی x_منوال_addchr(صحیح ch)
 {
-	o_addchr(&G.x_mode_buf, ch);
+	o_addchr(&G.x_منوال_buf, ch);
 }
-static void x_mode_addstr(const char *str)
+ساکن خالی x_منوال_addstr(ثابت حرف *str)
 {
-	o_addstr(&G.x_mode_buf, str);
+	o_addstr(&G.x_منوال_buf, str);
 }
-static void x_mode_addblock(const char *str, int len)
+ساکن خالی x_منوال_addblock(ثابت حرف *str, صحیح len)
 {
-	o_addblock(&G.x_mode_buf, str, len);
+	o_addblock(&G.x_منوال_buf, str, len);
 }
-static void x_mode_prefix(void)
+ساکن خالی x_منوال_سابقہ(خالی)
 {
-	int n = G.x_mode_depth;
-	do x_mode_addchr('+'); while (--n >= 0);
+	صحیح n = G.x_منوال_گہرائی;
+	کرو x_منوال_addchr('+'); جب (--n >= 0);
 }
-static void x_mode_flush(void)
+ساکن خالی x_منوال_flush(خالی)
 {
-	int len = G.x_mode_buf.length;
-	if (len <= 0)
-		return;
-	if (G.x_mode_fd > 0) {
-		G.x_mode_buf.data[len] = '\n';
-		full_write(G.x_mode_fd, G.x_mode_buf.data, len + 1);
+	صحیح len = G.x_منوال_buf.لمبائی;
+	اگر (len <= 0)
+		واپس;
+	اگر (G.x_منوال_fd > 0) {
+		G.x_منوال_buf.ڈیٹا[len] = '\n';
+		بھرا_write(G.x_منوال_fd, G.x_منوال_buf.ڈیٹا, len + 1);
 	}
-	G.x_mode_buf.length = 0;
+	G.x_منوال_buf.لمبائی = 0;
 }
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
 /*
  * HUSH_BRACE_EXPANSION code needs corresponding quoting on variable expansion side.
@@ -3365,90 +3365,90 @@ static void x_mode_flush(void)
  * We have only second one.
  */
 
-#if ENABLE_HUSH_BRACE_EXPANSION
+#اگر ENABLE_HUSH_BRACE_EXPANSION
 # define MAYBE_BRACES "{}"
-#else
+#ورنہ
 # define MAYBE_BRACES ""
-#endif
+#اگر_ختم
 
 /* My analysis of quoting semantics tells me that state information
  * is associated with a destination, not a source.
  */
-static void o_addqchr(o_string *o, int ch)
+ساکن خالی o_addqchr(o_string *o, صحیح ch)
 {
-	int sz = 1;
+	صحیح sz = 1;
 	/* '-' is included because of this case:
 	 * >filename0 >filename1 >filename9; v='-'; echo filename[0"$v"9]
 	 */
-	char *found = strchr("*?[-\\" MAYBE_BRACES, ch);
-	if (found)
+	حرف *ملا = strchr("*?[-\\" MAYBE_BRACES, ch);
+	اگر (ملا)
 		sz++;
 	o_grow_by(o, sz);
-	if (found) {
-		o->data[o->length] = '\\';
-		o->length++;
+	اگر (ملا) {
+		o->ڈیٹا[o->لمبائی] = '\\';
+		o->لمبائی++;
 	}
-	o->data[o->length] = ch;
-	o->length++;
-	o->data[o->length] = '\0';
+	o->ڈیٹا[o->لمبائی] = ch;
+	o->لمبائی++;
+	o->ڈیٹا[o->لمبائی] = '\0';
 }
 
-static void o_addQchr(o_string *o, int ch)
+ساکن خالی o_جوڑو_Qchr(o_string *o, صحیح ch)
 {
-	int sz = 1;
-	if ((o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)
+	صحیح sz = 1;
+	اگر ((o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)
 	 && strchr("*?[-\\" MAYBE_BRACES, ch)
 	) {
 		sz++;
-		o->data[o->length] = '\\';
-		o->length++;
+		o->ڈیٹا[o->لمبائی] = '\\';
+		o->لمبائی++;
 	}
 	o_grow_by(o, sz);
-	o->data[o->length] = ch;
-	o->length++;
-	o->data[o->length] = '\0';
+	o->ڈیٹا[o->لمبائی] = ch;
+	o->لمبائی++;
+	o->ڈیٹا[o->لمبائی] = '\0';
 }
 
-static void o_addqblock(o_string *o, const char *str, int len)
+ساکن خالی o_addqblock(o_string *o, ثابت حرف *str, صحیح len)
 {
-	while (len) {
-		char ch;
-		int sz;
-		int ordinary_cnt = strcspn(str, "*?[-\\" MAYBE_BRACES);
-		if (ordinary_cnt > len) /* paranoia */
+	جب (len) {
+		حرف ch;
+		صحیح sz;
+		صحیح ordinary_cnt = strcspn(str, "*?[-\\" MAYBE_BRACES);
+		اگر (ordinary_cnt > len) /* paranoia */
 			ordinary_cnt = len;
 		o_addblock(o, str, ordinary_cnt);
-		if (ordinary_cnt == len)
-			return; /* NUL is already added by o_addblock */
+		اگر (ordinary_cnt == len)
+			واپس; /* NUL is already added by o_addblock */
 		str += ordinary_cnt;
 		len -= ordinary_cnt + 1; /* we are processing + 1 char below */
 
 		ch = *str++;
 		sz = 1;
-		if (ch) { /* it is necessarily one of "*?[-\\" MAYBE_BRACES */
+		اگر (ch) { /* it is necessarily one of "*?[-\\" MAYBE_BRACES */
 			sz++;
-			o->data[o->length] = '\\';
-			o->length++;
+			o->ڈیٹا[o->لمبائی] = '\\';
+			o->لمبائی++;
 		}
 		o_grow_by(o, sz);
-		o->data[o->length] = ch;
-		o->length++;
+		o->ڈیٹا[o->لمبائی] = ch;
+		o->لمبائی++;
 	}
-	o->data[o->length] = '\0';
+	o->ڈیٹا[o->لمبائی] = '\0';
 }
 
-static void o_addQblock(o_string *o, const char *str, int len)
+ساکن خالی o_جوڑو_Qblock(o_string *o, ثابت حرف *str, صحیح len)
 {
-	if (!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)) {
+	اگر (!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS)) {
 		o_addblock(o, str, len);
-		return;
+		واپس;
 	}
 	o_addqblock(o, str, len);
 }
 
-static void o_addQstr(o_string *o, const char *str)
+ساکن خالی o_جوڑو_Qstr(o_string *o, ثابت حرف *str)
 {
-	o_addQblock(o, str, strlen(str));
+	o_جوڑو_Qblock(o, str, لڑی_لمبائی(str));
 }
 
 /* A special kind of o_string for $VAR and `cmd` expansion.
@@ -3461,58 +3461,58 @@ static void o_addQstr(o_string *o, const char *str)
  * o_finalize_list() operation post-processes this structure - calculates
  * and stores actual char* ptrs in list[]. Oh, it NULL terminates it as well.
  */
-#if DEBUG_EXPAND || DEBUG_GLOB
-static void debug_print_list(const char *prefix, o_string *o, int n)
+#اگر DEBUG_EXPAND || DEBUG_GLOB
+ساکن خالی debug_print_list(ثابت حرف *سابقہ, o_string *o, صحیح n)
 {
-	char **list = (char**)o->data;
-	int string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
-	int i = 0;
+	حرف **list = (حرف**)o->ڈیٹا;
+	صحیح string_آغاز = ((n + 0xf) & ~0xf) * حجم(list[0]);
+	صحیح i = 0;
 
 	indent();
 	fdprintf(2, "%s: list:%p n:%d string_start:%d length:%d maxlen:%d glob:%d quoted:%d escape:%d\n",
-			prefix, list, n, string_start, o->length, o->maxlen,
+			سابقہ, list, n, string_آغاز, o->لمبائی, o->maxlen,
 			!!(o->o_expflags & EXP_FLAG_GLOB),
 			o->has_quoted_part,
 			!!(o->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-	while (i < n) {
+	جب (i < n) {
 		indent();
-		fdprintf(2, " list[%d]=%d '%s' %p\n", i, (int)(uintptr_t)list[i],
-				o->data + (int)(uintptr_t)list[i] + string_start,
-				o->data + (int)(uintptr_t)list[i] + string_start);
+		fdprintf(2, " list[%d]=%d '%s' %p\n", i, (صحیح)(uintptr_t)list[i],
+				o->ڈیٹا + (صحیح)(uintptr_t)list[i] + string_آغاز,
+				o->ڈیٹا + (صحیح)(uintptr_t)list[i] + string_آغاز);
 		i++;
 	}
-	if (n) {
-		const char *p = o->data + (int)(uintptr_t)list[n - 1] + string_start;
+	اگر (n) {
+		ثابت حرف *p = o->ڈیٹا + (صحیح)(uintptr_t)list[n - 1] + string_آغاز;
 		indent();
-#ifndef __U_BOOT__
-		fdprintf(2, " total_sz:%ld\n", (long)((p + strlen(p) + 1) - o->data));
-#else /* __U_BOOT__ */
-		printf(" total_sz:%ld\n", (long)((p + strlen(p) + 1) - o->data));
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		fdprintf(2, " total_sz:%ld\n", (طویل)((p + لڑی_لمبائی(p) + 1) - o->ڈیٹا));
+#ورنہ /* __U_BOOT__ */
+		لکھو(" total_sz:%ld\n", (طویل)((p + لڑی_لمبائی(p) + 1) - o->ڈیٹا));
+#اگر_ختم /* __U_BOOT__ */
 	}
 }
-#else
-# define debug_print_list(prefix, o, n) ((void)0)
-#endif
+#ورنہ
+# define debug_print_list(سابقہ, o, n) ((خالی)0)
+#اگر_ختم
 
 /* n = o_save_ptr_helper(str, n) "starts new string" by storing an index value
  * in list[n] so that it points past last stored byte so far.
  * It returns n+1. */
-static int o_save_ptr_helper(o_string *o, int n)
+ساکن صحیح o_save_ptr_helper(o_string *o, صحیح n)
 {
-	char **list = (char**)o->data;
-	int string_start;
-	int string_len;
+	حرف **list = (حرف**)o->ڈیٹا;
+	صحیح string_آغاز;
+	صحیح string_len;
 
-	if (!o->has_empty_slot) {
-		string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
-		string_len = o->length - string_start;
-		if (!(n & 0xf)) { /* 0, 0x10, 0x20...? */
-			debug_printf_list("list[%d]=%d string_start=%d (growing)\n", n, string_len, string_start);
+	اگر (!o->has_خالی_خانے_خانہ) {
+		string_آغاز = ((n + 0xf) & ~0xf) * حجم(list[0]);
+		string_len = o->لمبائی - string_آغاز;
+		اگر (!(n & 0xf)) { /* 0, 0x10, 0x20...? */
+			debug_printf_list("list[%d]=%d string_start=%d (growing)\n", n, string_len, string_آغاز);
 			/* list[n] points to string_start, make space for 16 more pointers */
-			o->maxlen += 0x10 * sizeof(list[0]);
-			o->data = xrealloc(o->data, o->maxlen + 1);
-			list = (char**)o->data;
+			o->maxlen += 0x10 * حجم(list[0]);
+			o->ڈیٹا = xrealloc(o->ڈیٹا, o->maxlen + 1);
+			list = (حرف**)o->ڈیٹا;
 			memmove(list + n + 0x10, list + n, string_len);
 			/*
 			 * expand_on_ifs() has a "previous argv[] ends in IFS?"
@@ -3521,31 +3521,31 @@ static int o_save_ptr_helper(o_string *o, int n)
 			 * but zero bytes, to save index check there.
 			 */
 			list[n + 0x10 - 1] = 0;
-			o->length += 0x10 * sizeof(list[0]);
-		} else {
+			o->لمبائی += 0x10 * حجم(list[0]);
+		} ورنہ {
 			debug_printf_list("list[%d]=%d string_start=%d\n",
-					n, string_len, string_start);
+					n, string_len, string_آغاز);
 		}
-	} else {
+	} ورنہ {
 		/* We have empty slot at list[n], reuse without growth */
-		string_start = ((n+1 + 0xf) & ~0xf) * sizeof(list[0]); /* NB: n+1! */
-		string_len = o->length - string_start;
+		string_آغاز = ((n+1 + 0xf) & ~0xf) * حجم(list[0]); /* NB: n+1! */
+		string_len = o->لمبائی - string_آغاز;
 		debug_printf_list("list[%d]=%d string_start=%d (empty slot)\n",
-				n, string_len, string_start);
-		o->has_empty_slot = 0;
+				n, string_len, string_آغاز);
+		o->has_خالی_خانے_خانہ = 0;
 	}
 	o->has_quoted_part = 0;
-	list[n] = (char*)(uintptr_t)string_len;
-	return n + 1;
+	list[n] = (حرف*)(uintptr_t)string_len;
+	واپس n + 1;
 }
 
 /* "What was our last o_save_ptr'ed position (byte offset relative o->data)?" */
-static int o_get_last_ptr(o_string *o, int n)
+ساکن صحیح o_get_آخری_ptr(o_string *o, صحیح n)
 {
-	char **list = (char**)o->data;
-	int string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
+	حرف **list = (حرف**)o->ڈیٹا;
+	صحیح string_آغاز = ((n + 0xf) & ~0xf) * حجم(list[0]);
 
-	return ((int)(uintptr_t)list[n-1]) + string_start;
+	واپس ((صحیح)(uintptr_t)list[n-1]) + string_آغاز;
 }
 
 /*
@@ -3583,7 +3583,7 @@ static int o_get_last_ptr(o_string *o, int n)
  * should be is made using that encoded representation. Not glob pattern.
  */
 
-#if ENABLE_HUSH_BRACE_EXPANSION
+#اگر ENABLE_HUSH_BRACE_EXPANSION
 /* There in a GNU extension, GLOB_BRACE, but it is not usable:
  * first, it processes even {a} (no commas), second,
  * I didn't manage to make it return strings when they don't match
@@ -3591,96 +3591,96 @@ static int o_get_last_ptr(o_string *o, int n)
  */
 
 /* Helper */
-static int glob_needed(const char *s)
+ساکن صحیح glob_needed(ثابت حرف *s)
 {
-	while (*s) {
-		if (*s == '\\') {
-			if (!s[1])
-				return 0;
+	جب (*s) {
+		اگر (*s == '\\') {
+			اگر (!s[1])
+				واپس 0;
 			s += 2;
-			continue;
+			جاری;
 		}
-		if (*s == '*' || *s == '[' || *s == '?' || *s == '{')
-			return 1;
+		اگر (*s == '*' || *s == '[' || *s == '?' || *s == '{')
+			واپس 1;
 		s++;
 	}
-	return 0;
+	واپس 0;
 }
 /* Return pointer to next closing brace or to comma */
-static const char *next_brace_sub(const char *cp)
+ساکن ثابت حرف *اگلا_brace_sub(ثابت حرف *cp)
 {
-	unsigned depth = 0;
+	غیرعلامتی گہرائی = 0;
 	cp++;
-	while (*cp != '\0') {
-		if (*cp == '\\') {
-			if (*++cp == '\0')
-				break;
+	جب (*cp != '\0') {
+		اگر (*cp == '\\') {
+			اگر (*++cp == '\0')
+				توڑو;
 			cp++;
-			continue;
+			جاری;
 		}
-		if ((*cp == '}' && depth-- == 0) || (*cp == ',' && depth == 0))
-			break;
-		if (*cp++ == '{')
-			depth++;
+		اگر ((*cp == '}' && گہرائی-- == 0) || (*cp == ',' && گہرائی == 0))
+			توڑو;
+		اگر (*cp++ == '{')
+			گہرائی++;
 	}
 
-	return *cp != '\0' ? cp : NULL;
+	واپس *cp != '\0' ? cp : تہی;
 }
 /* Recursive brace globber. Note: may garble pattern[]. */
-static int glob_brace(char *pattern, o_string *o, int n)
+ساکن صحیح glob_brace(حرف *نمونہ, o_string *o, صحیح n)
 {
-	char *new_pattern_buf;
-	const char *begin;
-	const char *next;
-	const char *rest;
-	const char *p;
+	حرف *new_نمونہ_buf;
+	ثابت حرف *begin;
+	ثابت حرف *اگلا;
+	ثابت حرف *rest;
+	ثابت حرف *p;
 	size_t rest_len;
 
-	debug_printf_glob("glob_brace('%s')\n", pattern);
+	debug_printf_glob("glob_brace('%s')\n", نمونہ);
 
-	begin = pattern;
-	while (1) {
-		if (*begin == '\0')
-			goto simple_glob;
-		if (*begin == '{') {
+	begin = نمونہ;
+	جب (1) {
+		اگر (*begin == '\0')
+			جاؤ simple_glob;
+		اگر (*begin == '{') {
 			/* Find the first sub-pattern and at the same time
 			 * find the rest after the closing brace */
-			next = next_brace_sub(begin);
-			if (next == NULL) {
+			اگلا = اگلا_brace_sub(begin);
+			اگر (اگلا == تہی) {
 				/* An illegal expression */
-				goto simple_glob;
+				جاؤ simple_glob;
 			}
-			if (*next == '}') {
+			اگر (*اگلا == '}') {
 				/* "{abc}" with no commas - illegal
 				 * brace expr, disregard and skip it */
-				begin = next + 1;
-				continue;
+				begin = اگلا + 1;
+				جاری;
 			}
-			break;
+			توڑو;
 		}
-		if (*begin == '\\' && begin[1] != '\0')
+		اگر (*begin == '\\' && begin[1] != '\0')
 			begin++;
 		begin++;
 	}
 	debug_printf_glob("begin:%s\n", begin);
-	debug_printf_glob("next:%s\n", next);
+	debug_printf_glob("next:%s\n", اگلا);
 
 	/* Now find the end of the whole brace expression */
-	rest = next;
-	while (*rest != '}') {
-		rest = next_brace_sub(rest);
-		if (rest == NULL) {
+	rest = اگلا;
+	جب (*rest != '}') {
+		rest = اگلا_brace_sub(rest);
+		اگر (rest == تہی) {
 			/* An illegal expression */
-			goto simple_glob;
+			جاؤ simple_glob;
 		}
 		debug_printf_glob("rest:%s\n", rest);
 	}
-	rest_len = strlen(++rest) + 1;
+	rest_len = لڑی_لمبائی(++rest) + 1;
 
 	/* We are sure the brace expression is well-formed */
 
 	/* Allocate working buffer large enough for our work */
-	new_pattern_buf = xmalloc(strlen(pattern));
+	new_نمونہ_buf = xmalloc(لڑی_لمبائی(نمونہ));
 
 	/* We have a brace expression.  BEGIN points to the opening {,
 	 * NEXT points past the terminator of the first element, and REST
@@ -3689,308 +3689,308 @@ static int glob_brace(char *pattern, o_string *o, int n)
 	 * GLOB_APPEND. */
 
 	p = begin + 1;
-	while (1) {
+	جب (1) {
 		/* Construct the new glob expression */
-		memcpy(
+		حافظہ_نقل(
 			mempcpy(
-				mempcpy(new_pattern_buf,
+				mempcpy(new_نمونہ_buf,
 					/* We know the prefix for all sub-patterns */
-					pattern, begin - pattern),
-				p, next - p),
+					نمونہ, begin - نمونہ),
+				p, اگلا - p),
 			rest, rest_len);
 
 		/* Note: glob_brace() may garble new_pattern_buf[].
 		 * That's why we re-copy prefix every time (1st memcpy above).
 		 */
-		n = glob_brace(new_pattern_buf, o, n);
-		if (*next == '}') {
+		n = glob_brace(new_نمونہ_buf, o, n);
+		اگر (*اگلا == '}') {
 			/* We saw the last entry */
-			break;
+			توڑو;
 		}
-		p = next + 1;
-		next = next_brace_sub(next);
+		p = اگلا + 1;
+		اگلا = اگلا_brace_sub(اگلا);
 	}
-	free(new_pattern_buf);
-	return n;
+	آزاد(new_نمونہ_buf);
+	واپس n;
 
  simple_glob:
 	{
-		int gr;
+		صحیح gr;
 		glob_t globdata;
 
-		memset(&globdata, 0, sizeof(globdata));
-		gr = glob(pattern, 0, NULL, &globdata);
-		debug_printf_glob("glob('%s'):%d\n", pattern, gr);
-		if (gr != 0) {
-			if (gr == GLOB_NOMATCH) {
+		memset(&globdata, 0, حجم(globdata));
+		gr = glob(نمونہ, 0, تہی, &globdata);
+		debug_printf_glob("glob('%s'):%d\n", نمونہ, gr);
+		اگر (gr != 0) {
+			اگر (gr == GLOB_NOMATCH) {
 				globfree(&globdata);
 				/* NB: garbles parameter */
-				unbackslash(pattern);
-				o_addstr_with_NUL(o, pattern);
-				debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-				return o_save_ptr_helper(o, n);
+				unbackslash(نمونہ);
+				o_addstr_with_NUL(o, نمونہ);
+				debug_printf_glob("glob pattern '%s' is literal\n", نمونہ);
+				واپس o_save_ptr_helper(o, n);
 			}
-			if (gr == GLOB_NOSPACE)
-				bb_die_memory_exhausted();
+			اگر (gr == GLOB_NOSPACE)
+				bb_die_حافظہ_exhausted();
 			/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 			 * but we didn't specify it. Paranoia again. */
-			bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
+			bb_error_پیغام_and_die("glob error %d on '%s'", gr, نمونہ);
 		}
-		if (globdata.gl_pathv && globdata.gl_pathv[0]) {
-			char **argv = globdata.gl_pathv;
-			while (1) {
+		اگر (globdata.gl_pathv && globdata.gl_pathv[0]) {
+			حرف **argv = globdata.gl_pathv;
+			جب (1) {
 				o_addstr_with_NUL(o, *argv);
 				n = o_save_ptr_helper(o, n);
 				argv++;
-				if (!*argv)
-					break;
+				اگر (!*argv)
+					توڑو;
 			}
 		}
 		globfree(&globdata);
 	}
-	return n;
+	واپس n;
 }
 /* Performs globbing on last list[],
  * saving each result as a new list[].
  */
-static int perform_glob(o_string *o, int n)
+ساکن صحیح perform_glob(o_string *o, صحیح n)
 {
-	char *pattern, *copy;
+	حرف *نمونہ, *copy;
 
-	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->data);
-	if (!o->data)
-		return o_save_ptr_helper(o, n);
-	pattern = o->data + o_get_last_ptr(o, n);
-	debug_printf_glob("glob pattern '%s'\n", pattern);
-	if (!glob_needed(pattern)) {
+	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->ڈیٹا);
+	اگر (!o->ڈیٹا)
+		واپس o_save_ptr_helper(o, n);
+	نمونہ = o->ڈیٹا + o_get_آخری_ptr(o, n);
+	debug_printf_glob("glob pattern '%s'\n", نمونہ);
+	اگر (!glob_needed(نمونہ)) {
 		/* unbackslash last string in o in place, fix length */
-		o->length = unbackslash(pattern) - o->data;
-		debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-		return o_save_ptr_helper(o, n);
+		o->لمبائی = unbackslash(نمونہ) - o->ڈیٹا;
+		debug_printf_glob("glob pattern '%s' is literal\n", نمونہ);
+		واپس o_save_ptr_helper(o, n);
 	}
 
-	copy = xstrdup(pattern);
+	copy = xstrdup(نمونہ);
 	/* "forget" pattern in o */
-	o->length = pattern - o->data;
+	o->لمبائی = نمونہ - o->ڈیٹا;
 	n = glob_brace(copy, o, n);
-	free(copy);
-	if (DEBUG_GLOB)
+	آزاد(copy);
+	اگر (DEBUG_GLOB)
 		debug_print_list("perform_glob returning", o, n);
-	return n;
+	واپس n;
 }
 
-#else /* !HUSH_BRACE_EXPANSION */
+#ورنہ /* !HUSH_BRACE_EXPANSION */
 
 /* Helper */
-static int glob_needed(const char *s)
+ساکن صحیح glob_needed(ثابت حرف *s)
 {
-	while (*s) {
-		if (*s == '\\') {
-			if (!s[1])
-				return 0;
+	جب (*s) {
+		اگر (*s == '\\') {
+			اگر (!s[1])
+				واپس 0;
 			s += 2;
-			continue;
+			جاری;
 		}
-		if (*s == '*' || *s == '[' || *s == '?')
-			return 1;
+		اگر (*s == '*' || *s == '[' || *s == '?')
+			واپس 1;
 		s++;
 	}
-	return 0;
+	واپس 0;
 }
 /* Performs globbing on last list[],
  * saving each result as a new list[].
  */
-static int perform_glob(o_string *o, int n)
+ساکن صحیح perform_glob(o_string *o, صحیح n)
 {
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	glob_t globdata;
-	int gr;
-#endif /* __U_BOOT__ */
-	char *pattern;
+	صحیح gr;
+#اگر_ختم /* __U_BOOT__ */
+	حرف *نمونہ;
 
-	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->data);
-	if (!o->data)
-		return o_save_ptr_helper(o, n);
-	pattern = o->data + o_get_last_ptr(o, n);
-	debug_printf_glob("glob pattern '%s'\n", pattern);
-	if (!glob_needed(pattern)) {
-#ifndef __U_BOOT__
+	debug_printf_glob("start perform_glob: n:%d o->data:%p\n", n, o->ڈیٹا);
+	اگر (!o->ڈیٹا)
+		واپس o_save_ptr_helper(o, n);
+	نمونہ = o->ڈیٹا + o_get_آخری_ptr(o, n);
+	debug_printf_glob("glob pattern '%s'\n", نمونہ);
+	اگر (!glob_needed(نمونہ)) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
  literal:
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 		/* unbackslash last string in o in place, fix length */
-		o->length = unbackslash(pattern) - o->data;
-		debug_printf_glob("glob pattern '%s' is literal\n", pattern);
-		return o_save_ptr_helper(o, n);
+		o->لمبائی = unbackslash(نمونہ) - o->ڈیٹا;
+		debug_printf_glob("glob pattern '%s' is literal\n", نمونہ);
+		واپس o_save_ptr_helper(o, n);
 	}
 
-#ifndef __U_BOOT__
-	memset(&globdata, 0, sizeof(globdata));
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	memset(&globdata, 0, حجم(globdata));
 	/* Can't use GLOB_NOCHECK: it does not unescape the string.
 	 * If we glob "*.\*" and don't find anything, we need
 	 * to fall back to using literal "*.*", but GLOB_NOCHECK
 	 * will return "*.\*"!
 	 */
-	gr = glob(pattern, 0, NULL, &globdata);
-	debug_printf_glob("glob('%s'):%d\n", pattern, gr);
-	if (gr != 0) {
-		if (gr == GLOB_NOMATCH) {
+	gr = glob(نمونہ, 0, تہی, &globdata);
+	debug_printf_glob("glob('%s'):%d\n", نمونہ, gr);
+	اگر (gr != 0) {
+		اگر (gr == GLOB_NOMATCH) {
 			globfree(&globdata);
-			goto literal;
+			جاؤ literal;
 		}
-		if (gr == GLOB_NOSPACE)
-			bb_die_memory_exhausted();
+		اگر (gr == GLOB_NOSPACE)
+			bb_die_حافظہ_exhausted();
 		/* GLOB_ABORTED? Only happens with GLOB_ERR flag,
 		 * but we didn't specify it. Paranoia again. */
-		bb_error_msg_and_die("glob error %d on '%s'", gr, pattern);
+		bb_error_پیغام_and_die("glob error %d on '%s'", gr, نمونہ);
 	}
-	if (globdata.gl_pathv && globdata.gl_pathv[0]) {
-		char **argv = globdata.gl_pathv;
+	اگر (globdata.gl_pathv && globdata.gl_pathv[0]) {
+		حرف **argv = globdata.gl_pathv;
 		/* "forget" pattern in o */
-		o->length = pattern - o->data;
-		while (1) {
+		o->لمبائی = نمونہ - o->ڈیٹا;
+		جب (1) {
 			o_addstr_with_NUL(o, *argv);
 			n = o_save_ptr_helper(o, n);
 			argv++;
-			if (!*argv)
-				break;
+			اگر (!*argv)
+				توڑو;
 		}
 	}
 	globfree(&globdata);
-	if (DEBUG_GLOB)
+	اگر (DEBUG_GLOB)
 		debug_print_list("perform_glob returning", o, n);
-	return n;
-#else /* __U_BOOT__ */
+	واپس n;
+#ورنہ /* __U_BOOT__ */
 	/*
 	 * NOTE We only use perform glob to call unbackslash to remove backslash
 	 * from string once expanded.
 	 * So, it seems OK to return this if no previous return was done.
 	 */
-	return o_save_ptr_helper(o, n);
-#endif /* __U_BOOT__ */
+	واپس o_save_ptr_helper(o, n);
+#اگر_ختم /* __U_BOOT__ */
 }
 
-#endif /* !HUSH_BRACE_EXPANSION */
+#اگر_ختم /* !HUSH_BRACE_EXPANSION */
 
 /* If o->o_expflags & EXP_FLAG_GLOB, glob the string so far remembered.
  * Otherwise, just finish current list[] and start new */
-static int o_save_ptr(o_string *o, int n)
+ساکن صحیح o_save_ptr(o_string *o, صحیح n)
 {
-	if (o->o_expflags & EXP_FLAG_GLOB) {
+	اگر (o->o_expflags & EXP_FLAG_GLOB) {
 		/* If o->has_empty_slot, list[n] was already globbed
 		 * (if it was requested back then when it was filled)
 		 * so don't do that again! */
-		if (!o->has_empty_slot)
-			return perform_glob(o, n); /* o_save_ptr_helper is inside */
+		اگر (!o->has_خالی_خانے_خانہ)
+			واپس perform_glob(o, n); /* o_save_ptr_helper is inside */
 	}
-	return o_save_ptr_helper(o, n);
+	واپس o_save_ptr_helper(o, n);
 }
 
 /* "Please convert list[n] to real char* ptrs, and NULL terminate it." */
-static char **o_finalize_list(o_string *o, int n)
+ساکن حرف **o_finalize_list(o_string *o, صحیح n)
 {
-	char **list;
-	int string_start;
+	حرف **list;
+	صحیح string_آغاز;
 
-	if (DEBUG_EXPAND)
+	اگر (DEBUG_EXPAND)
 		debug_print_list("finalized", o, n);
 	debug_printf_expand("finalized n:%d\n", n);
-	list = (char**)o->data;
-	string_start = ((n + 0xf) & ~0xf) * sizeof(list[0]);
-	list[--n] = NULL;
-	while (n) {
+	list = (حرف**)o->ڈیٹا;
+	string_آغاز = ((n + 0xf) & ~0xf) * حجم(list[0]);
+	list[--n] = تہی;
+	جب (n) {
 		n--;
-		list[n] = o->data + (int)(uintptr_t)list[n] + string_start;
+		list[n] = o->ڈیٹا + (صحیح)(uintptr_t)list[n] + string_آغاز;
 	}
-	return list;
+	واپس list;
 }
 
-static void free_pipe_list(struct pipe *pi);
+ساکن خالی free_pipe_list(ساخت pipe *pi);
 
 /* Returns pi->next - next pipe in the list */
-static struct pipe *free_pipe(struct pipe *pi)
+ساکن ساخت pipe *free_pipe(ساخت pipe *pi)
 {
-	struct pipe *next;
-	int i;
+	ساخت pipe *اگلا;
+	صحیح i;
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	debug_printf_clean("free_pipe (pid %d)\n", getpid());
-#endif /* !__U_BOOT__ */
-	for (i = 0; i < pi->num_cmds; i++) {
-		struct command *command;
-#ifndef __U_BOOT__
-		struct redir_struct *r, *rnext;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
+	برائے (i = 0; i < pi->عدد_cmds; i++) {
+		ساخت command *command;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		ساخت redir_struct *r, *rnext;
+#اگر_ختم /* !__U_BOOT__ */
 
 		command = &pi->cmds[i];
 		debug_printf_clean("  command %d:\n", i);
-		if (command->argv) {
-			if (DEBUG_CLEAN) {
-				int a;
-				char **p;
-				for (a = 0, p = command->argv; *p; a++, p++) {
+		اگر (command->argv) {
+			اگر (DEBUG_CLEAN) {
+				صحیح a;
+				حرف **p;
+				برائے (a = 0, p = command->argv; *p; a++, p++) {
 					debug_printf_clean("   argv[%d] = %s\n", a, *p);
 				}
 			}
-			free_strings(command->argv);
+			free_لڑیاں(command->argv);
 			//command->argv = NULL;
 		}
 		/* not "else if": on syntax error, we may have both! */
-		if (command->group) {
+		اگر (command->گروہ) {
 			debug_printf_clean("   begin group (cmd_type:%d)\n",
 					command->cmd_type);
-			free_pipe_list(command->group);
+			free_pipe_list(command->گروہ);
 			debug_printf_clean("   end group\n");
 			//command->group = NULL;
 		}
 		/* else is crucial here.
 		 * If group != NULL, child_func is meaningless */
-#if ENABLE_HUSH_FUNCTIONS
-		else if (command->child_func) {
-			debug_printf_exec("cmd %p releases child func at %p\n", command, command->child_func);
-			command->child_func->parent_cmd = NULL;
+#اگر ENABLE_HUSH_FUNCTIONS
+		ورنہ اگر (command->بچہ_func) {
+			debug_printf_exec("cmd %p releases child func at %p\n", command, command->بچہ_func);
+			command->بچہ_func->والد_cmd = تہی;
 		}
-#endif
-#if !BB_MMU
-		free(command->group_as_string);
+#اگر_ختم
+#اگر !BB_MMU
+		آزاد(command->گروہ_as_string);
 		//command->group_as_string = NULL;
-#endif
-#ifndef __U_BOOT__
-		for (r = command->redirects; r; r = rnext) {
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		برائے (r = command->redirects; r; r = rnext) {
 			debug_printf_clean("   redirect %d%s",
-					r->rd_fd, redir_table[r->rd_type].descrip);
+					r->rd_fd, redir_جدول[r->rd_type].descrip);
 			/* guard against the case >$FOO, where foo is unset or blank */
-			if (r->rd_filename) {
+			اگر (r->rd_filename) {
 				debug_printf_clean(" fname:'%s'\n", r->rd_filename);
-				free(r->rd_filename);
+				آزاد(r->rd_filename);
 				//r->rd_filename = NULL;
 			}
 			debug_printf_clean(" rd_dup:%d\n", r->rd_dup);
-			rnext = r->next;
-			free(r);
+			rnext = r->اگلا;
+			آزاد(r);
 		}
 		//command->redirects = NULL;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	}
-	free(pi->cmds);   /* children are an array, they get freed all at once */
+	آزاد(pi->cmds);   /* children are an array, they get freed all at once */
 	//pi->cmds = NULL;
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_JOB
-	free(pi->cmdtext);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_کام
+	آزاد(pi->cmdtext);
 	//pi->cmdtext = NULL;
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-	next = pi->next;
-	free(pi);
-	return next;
+	اگلا = pi->اگلا;
+	آزاد(pi);
+	واپس اگلا;
 }
 
-static void free_pipe_list(struct pipe *pi)
+ساکن خالی free_pipe_list(ساخت pipe *pi)
 {
-	while (pi) {
-#if HAS_KEYWORDS
-		debug_printf_clean("pipe reserved word %d\n", pi->res_word);
-#endif
+	جب (pi) {
+#اگر HAS_KEYWORDS
+		debug_printf_clean("pipe reserved word %d\n", pi->res_لفظ);
+#اگر_ختم
 		debug_printf_clean("pipe followup code %d\n", pi->followup);
 		pi = free_pipe(pi);
 	}
@@ -3998,209 +3998,209 @@ static void free_pipe_list(struct pipe *pi)
 
 /*** Parsing routines ***/
 
-#ifndef debug_print_tree
-static void debug_print_tree(struct pipe *pi, int lvl)
+#اگر_غیر_تعریف_شدہ debug_print_درخت
+ساکن خالی debug_print_درخت(ساخت pipe *pi, صحیح lvl)
 {
-	static const char *const PIPE[] ALIGN_PTR = {
+	ساکن ثابت حرف *ثابت PIPE[] ALIGN_PTR = {
 		[PIPE_SEQ] = "SEQ",
 		[PIPE_AND] = "AND",
 		[PIPE_OR ] = "OR" ,
 		[PIPE_BG ] = "BG" ,
 	};
-	static const char *RES[] = {
+	ساکن ثابت حرف *RES[] = {
 		[RES_NONE ] = "NONE" ,
-# if ENABLE_HUSH_IF
+# اگر ENABLE_HUSH_IF
 		[RES_IF   ] = "IF"   ,
 		[RES_THEN ] = "THEN" ,
 		[RES_ELIF ] = "ELIF" ,
 		[RES_ELSE ] = "ELSE" ,
 		[RES_FI   ] = "FI"   ,
 # endif
-# if ENABLE_HUSH_LOOPS
+# اگر ENABLE_HUSH_LOOPS
 		[RES_FOR  ] = "FOR"  ,
 		[RES_WHILE] = "WHILE",
 		[RES_UNTIL] = "UNTIL",
 		[RES_DO   ] = "DO"   ,
-		[RES_DONE ] = "DONE" ,
+		[RES_مکمل ] = "DONE" ,
 # endif
-# if ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
-		[RES_IN   ] = "IN"   ,
+# اگر ENABLE_HUSH_LOOPS || ENABLE_HUSH_CASE
+		[RES_اندر   ] = "IN"   ,
 # endif
-# if ENABLE_HUSH_CASE
+# اگر ENABLE_HUSH_CASE
 		[RES_CASE ] = "CASE" ,
-		[RES_CASE_IN ] = "CASE_IN" ,
-		[RES_MATCH] = "MATCH",
+		[RES_CASE_اندر ] = "CASE_IN" ,
+		[RES_مطابقت] = "MATCH",
 		[RES_CASE_BODY] = "CASE_BODY",
 		[RES_ESAC ] = "ESAC" ,
 # endif
 		[RES_XXXX ] = "XXXX" ,
 		[RES_SNTX ] = "SNTX" ,
 	};
-	static const char *const CMDTYPE[] ALIGN_PTR = {
+	ساکن ثابت حرف *ثابت CMDTYPE[] ALIGN_PTR = {
 		"{}",
 		"()",
 		"[noglob]",
-# if ENABLE_HUSH_FUNCTIONS
+# اگر ENABLE_HUSH_FUNCTIONS
 		"func()",
 # endif
 	};
 
-	int pin, prn;
+	صحیح pin, prn;
 
 	pin = 0;
-	while (pi) {
+	جب (pi) {
 		fdprintf(2, "%*spipe %d #cmds:%d %sres_word=%s followup=%d %s\n",
 				lvl*2, "",
 				pin,
-				pi->num_cmds,
+				pi->عدد_cmds,
 				(IF_HAS_KEYWORDS(pi->pi_inverted ? "! " :) ""),
-				RES[pi->res_word],
+				RES[pi->res_لفظ],
 				pi->followup, PIPE[pi->followup]
 		);
 		prn = 0;
-		while (prn < pi->num_cmds) {
-			struct command *command = &pi->cmds[prn];
-			char **argv = command->argv;
+		جب (prn < pi->عدد_cmds) {
+			ساخت command *command = &pi->cmds[prn];
+			حرف **argv = command->argv;
 
 			fdprintf(2, "%*s cmd %d assignment_cnt:%d",
 					lvl*2, "", prn,
 					command->assignment_cnt);
-# if ENABLE_HUSH_LINENO_VAR
+# اگر ENABLE_HUSH_LINENO_VAR
 			fdprintf(2, " LINENO:%u", command->lineno);
 # endif
-			if (command->group) {
+			اگر (command->گروہ) {
 				fdprintf(2, " group %s: (argv=%p)%s%s\n",
 						CMDTYPE[command->cmd_type],
 						argv
-# if !BB_MMU
-						, " group_as_string:", command->group_as_string
-# else
+# اگر !BB_MMU
+						, " group_as_string:", command->گروہ_as_string
+# ورنہ
 						, "", ""
 # endif
 				);
-				debug_print_tree(command->group, lvl+1);
+				debug_print_درخت(command->گروہ, lvl+1);
 				prn++;
-				continue;
+				جاری;
 			}
-			if (argv) while (*argv) {
+			اگر (argv) جب (*argv) {
 				fdprintf(2, " '%s'", *argv);
 				argv++;
 			}
-#ifndef __U_BOOT__
-			if (command->redirects)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (command->redirects)
 				fdprintf(2, " {redir}");
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 			fdprintf(2, "\n");
 			prn++;
 		}
-		pi = pi->next;
+		pi = pi->اگلا;
 		pin++;
 	}
 }
-#endif /* debug_print_tree */
+#اگر_ختم /* debug_print_tree */
 
-static struct pipe *new_pipe(void)
+ساکن ساخت pipe *new_pipe(خالی)
 {
-	struct pipe *pi;
-	pi = xzalloc(sizeof(struct pipe));
+	ساخت pipe *pi;
+	pi = xzalloc(حجم(ساخت pipe));
 	/*pi->res_word = RES_NONE; - RES_NONE is 0 anyway */
-	return pi;
+	واپس pi;
 }
 
 /* Command (member of a pipe) is complete, or we start a new pipe
  * if ctx->command is NULL.
  * No errors possible here.
  */
-static int done_command(struct parse_context *ctx)
+ساکن صحیح مکمل_command(ساخت parse_context *ctx)
 {
 	/* The command is really already in the pipe structure, so
 	 * advance the pipe counter and make a new, null command. */
-	struct pipe *pi = ctx->pipe;
-	struct command *command = ctx->command;
+	ساخت pipe *pi = ctx->pipe;
+	ساخت command *command = ctx->command;
 
-#if 0	/* Instead we emit error message at run time */
-	if (ctx->pending_redirect) {
+#اگر 0	/* Instead we emit error message at run time */
+	اگر (ctx->pending_redirect) {
 		/* For example, "cmd >" (no filename to redirect to) */
 		syntax_error("invalid redirect");
-		ctx->pending_redirect = NULL;
+		ctx->pending_redirect = تہی;
 	}
-#endif
+#اگر_ختم
 
-	if (command) {
-		if (IS_NULL_CMD(command)) {
-			debug_printf_parse("done_command: skipping null cmd, num_cmds=%d\n", pi->num_cmds);
-			goto clear_and_ret;
+	اگر (command) {
+		اگر (IS_NULL_CMD(command)) {
+			debug_printf_parse("done_command: skipping null cmd, num_cmds=%d\n", pi->عدد_cmds);
+			جاؤ clear_and_ret;
 		}
-		pi->num_cmds++;
-		debug_printf_parse("done_command: ++num_cmds=%d\n", pi->num_cmds);
+		pi->عدد_cmds++;
+		debug_printf_parse("done_command: ++num_cmds=%d\n", pi->عدد_cmds);
 		//debug_print_tree(ctx->list_head, 20);
-	} else {
-		debug_printf_parse("done_command: initializing, num_cmds=%d\n", pi->num_cmds);
+	} ورنہ {
+		debug_printf_parse("done_command: initializing, num_cmds=%d\n", pi->عدد_cmds);
 	}
 
 	/* Only real trickiness here is that the uncommitted
 	 * command structure is not counted in pi->num_cmds. */
-	pi->cmds = xrealloc(pi->cmds, sizeof(*pi->cmds) * (pi->num_cmds+1));
-	ctx->command = command = &pi->cmds[pi->num_cmds];
+	pi->cmds = xrealloc(pi->cmds, حجم(*pi->cmds) * (pi->عدد_cmds+1));
+	ctx->command = command = &pi->cmds[pi->عدد_cmds];
  clear_and_ret:
-	memset(command, 0, sizeof(*command));
-#if ENABLE_HUSH_LINENO_VAR
+	memset(command, 0, حجم(*command));
+#اگر ENABLE_HUSH_LINENO_VAR
 	command->lineno = G.parse_lineno;
 	debug_printf_parse("command->lineno = G.parse_lineno (%u)\n", G.parse_lineno);
-#endif
-	return pi->num_cmds; /* used only for 0/nonzero check */
+#اگر_ختم
+	واپس pi->عدد_cmds; /* used only for 0/nonzero check */
 }
 
-static void done_pipe(struct parse_context *ctx, pipe_style type)
+ساکن خالی مکمل_pipe(ساخت parse_context *ctx, pipe_style type)
 {
-	int not_null;
+	صحیح not_null;
 
 	debug_printf_parse("done_pipe entered, followup %d\n", type);
 	/* Close previous command */
-	not_null = done_command(ctx);
-#if HAS_KEYWORDS
+	not_null = مکمل_command(ctx);
+#اگر HAS_KEYWORDS
 	ctx->pipe->pi_inverted = ctx->ctx_inverted;
 	ctx->ctx_inverted = 0;
-	ctx->pipe->res_word = ctx->ctx_res_w;
-#endif
-	if (type == PIPE_BG && ctx->list_head != ctx->pipe) {
+	ctx->pipe->res_لفظ = ctx->ctx_res_w;
+#اگر_ختم
+	اگر (type == PIPE_BG && ctx->list_سر != ctx->pipe) {
 		/* Necessary since && and || have precedence over &:
 		 * "cmd1 && cmd2 &" must spawn both cmds, not only cmd2,
 		 * in a backgrounded subshell.
 		 */
-		struct pipe *pi;
-		struct command *command;
+		ساخت pipe *pi;
+		ساخت command *command;
 
 		/* Is this actually this construct, all pipes end with && or ||? */
-		pi = ctx->list_head;
-		while (pi != ctx->pipe) {
-			if (pi->followup != PIPE_AND && pi->followup != PIPE_OR)
-				goto no_conv;
-			pi = pi->next;
+		pi = ctx->list_سر;
+		جب (pi != ctx->pipe) {
+			اگر (pi->followup != PIPE_AND && pi->followup != PIPE_OR)
+				جاؤ no_conv;
+			pi = pi->اگلا;
 		}
 
 		debug_printf_parse("BG with more than one pipe, converting to { p1 &&...pN; } &\n");
 		pi->followup = PIPE_SEQ; /* close pN _not_ with "&"! */
-		pi = xzalloc(sizeof(*pi));
+		pi = xzalloc(حجم(*pi));
 		pi->followup = PIPE_BG;
-		pi->num_cmds = 1;
-		pi->cmds = xzalloc(sizeof(pi->cmds[0]));
+		pi->عدد_cmds = 1;
+		pi->cmds = xzalloc(حجم(pi->cmds[0]));
 		command = &pi->cmds[0];
-		if (CMD_NORMAL != 0) /* "if xzalloc didn't do that already" */
-			command->cmd_type = CMD_NORMAL;
-		command->group = ctx->list_head;
-#if !BB_MMU
-		command->group_as_string = xstrndup(
-			    ctx->as_string.data,
-			    ctx->as_string.length - 1 /* do not copy last char, "&" */
+		اگر (CMD_معمول != 0) /* "if xzalloc didn't do that already" */
+			command->cmd_type = CMD_معمول;
+		command->گروہ = ctx->list_سر;
+#اگر !BB_MMU
+		command->گروہ_as_string = xstrndup(
+			    ctx->as_string.ڈیٹا,
+			    ctx->as_string.لمبائی - 1 /* do not copy last char, "&" */
 		);
-#endif
+#اگر_ختم
 		/* Replace all pipes in ctx with one newly created */
-		ctx->list_head = ctx->pipe = pi;
+		ctx->list_سر = ctx->pipe = pi;
 		/* for cases like "cmd && &", do not be tricked by last command
 		 * being null - the entire {...} & is NOT null! */
 		not_null = 1;
-	} else {
+	} ورنہ {
  no_conv:
 		ctx->pipe->followup = type;
 	}
@@ -4208,30 +4208,30 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 	/* Without this check, even just <enter> on command line generates
 	 * tree of three NOPs (!). Which is harmless but annoying.
 	 * IOW: it is safe to do it unconditionally. */
-	if (not_null
-#if ENABLE_HUSH_IF
+	اگر (not_null
+#اگر ENABLE_HUSH_IF
 	 || ctx->ctx_res_w == RES_FI
-#endif
-#if ENABLE_HUSH_LOOPS
-	 || ctx->ctx_res_w == RES_DONE
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
+	 || ctx->ctx_res_w == RES_مکمل
 	 || ctx->ctx_res_w == RES_FOR
-	 || ctx->ctx_res_w == RES_IN
-#endif
-#if ENABLE_HUSH_CASE
+	 || ctx->ctx_res_w == RES_اندر
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
 	 || ctx->ctx_res_w == RES_ESAC
-#endif
+#اگر_ختم
 	) {
-		struct pipe *new_p;
+		ساخت pipe *new_p;
 		debug_printf_parse("done_pipe: adding new pipe: "
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 				"not_null:%d ctx->ctx_res_w:%d\n",
 				not_null, ctx->ctx_res_w);
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 				"not_null:%d\n",
 				not_null);
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 		new_p = new_pipe();
-		ctx->pipe->next = new_p;
+		ctx->pipe->اگلا = new_p;
 		ctx->pipe = new_p;
 		/* RES_THEN, RES_DO etc are "sticky" -
 		 * they remain set for pipes inside if/while.
@@ -4239,161 +4239,161 @@ static void done_pipe(struct parse_context *ctx, pipe_style type)
 		 * RES_FOR and RES_IN are NOT sticky (needed to support
 		 * cases where variable or value happens to match a keyword):
 		 */
-#if ENABLE_HUSH_LOOPS
-		if (ctx->ctx_res_w == RES_FOR
-		 || ctx->ctx_res_w == RES_IN)
+#اگر ENABLE_HUSH_LOOPS
+		اگر (ctx->ctx_res_w == RES_FOR
+		 || ctx->ctx_res_w == RES_اندر)
 			ctx->ctx_res_w = RES_NONE;
-#endif
-#if ENABLE_HUSH_CASE
-		if (ctx->ctx_res_w == RES_MATCH)
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
+		اگر (ctx->ctx_res_w == RES_مطابقت)
 			ctx->ctx_res_w = RES_CASE_BODY;
-		if (ctx->ctx_res_w == RES_CASE)
-			ctx->ctx_res_w = RES_CASE_IN;
-#endif
-		ctx->command = NULL; /* trick done_command below */
+		اگر (ctx->ctx_res_w == RES_CASE)
+			ctx->ctx_res_w = RES_CASE_اندر;
+#اگر_ختم
+		ctx->command = تہی; /* trick done_command below */
 		/* Create the memory for command, roughly:
 		 * ctx->pipe->cmds = new struct command;
 		 * ctx->command = &ctx->pipe->cmds[0];
 		 */
-		done_command(ctx);
+		مکمل_command(ctx);
 		//debug_print_tree(ctx->list_head, 10);
 	}
 	debug_printf_parse("done_pipe return\n");
 }
 
-static void initialize_context(struct parse_context *ctx)
+ساکن خالی initialize_context(ساخت parse_context *ctx)
 {
-	memset(ctx, 0, sizeof(*ctx));
-	if (MAYBE_ASSIGNMENT != 0)
+	memset(ctx, 0, حجم(*ctx));
+	اگر (MAYBE_ASSIGNMENT != 0)
 		ctx->is_assignment = MAYBE_ASSIGNMENT;
-	ctx->pipe = ctx->list_head = new_pipe();
+	ctx->pipe = ctx->list_سر = new_pipe();
 	/* Create the memory for command, roughly:
 	 * ctx->pipe->cmds = new struct command;
 	 * ctx->command = &ctx->pipe->cmds[0];
 	 */
-	done_command(ctx);
+	مکمل_command(ctx);
 }
 
 /* If a reserved word is found and processed, parse context is modified
  * and 1 is returned.
  */
-#if HAS_KEYWORDS
-struct reserved_combo {
-	char literal[6];
-	unsigned char res;
-	unsigned char assignment_flag;
+#اگر HAS_KEYWORDS
+ساخت reserved_combo {
+	حرف literal[6];
+	غیرعلامتی حرف res;
+	غیرعلامتی حرف assignment_flag;
 	uint32_t flag;
 };
-enum {
-	FLAG_END   = (1 << RES_NONE ),
-# if ENABLE_HUSH_IF
+شمار {
+	FLAG_انتہا   = (1 << RES_NONE ),
+# اگر ENABLE_HUSH_IF
 	FLAG_IF    = (1 << RES_IF   ),
 	FLAG_THEN  = (1 << RES_THEN ),
 	FLAG_ELIF  = (1 << RES_ELIF ),
 	FLAG_ELSE  = (1 << RES_ELSE ),
 	FLAG_FI    = (1 << RES_FI   ),
 # endif
-# if ENABLE_HUSH_LOOPS
+# اگر ENABLE_HUSH_LOOPS
 	FLAG_FOR   = (1 << RES_FOR  ),
 	FLAG_WHILE = (1 << RES_WHILE),
 	FLAG_UNTIL = (1 << RES_UNTIL),
 	FLAG_DO    = (1 << RES_DO   ),
-	FLAG_DONE  = (1 << RES_DONE ),
-	FLAG_IN    = (1 << RES_IN   ),
+	FLAG_مکمل  = (1 << RES_مکمل ),
+	FLAG_اندر    = (1 << RES_اندر   ),
 # endif
-# if ENABLE_HUSH_CASE
-	FLAG_MATCH = (1 << RES_MATCH),
+# اگر ENABLE_HUSH_CASE
+	FLAG_مطابقت = (1 << RES_مطابقت),
 	FLAG_ESAC  = (1 << RES_ESAC ),
 # endif
-	FLAG_START = (1 << RES_XXXX ),
+	FLAG_آغاز = (1 << RES_XXXX ),
 };
 
-static const struct reserved_combo* match_reserved_word(o_string *word)
+ساکن ثابت ساخت reserved_combo* مطابقت_reserved_لفظ(o_string *لفظ)
 {
 	/* Mostly a list of accepted follow-up reserved words.
 	 * FLAG_END means we are done with the sequence, and are ready
 	 * to turn the compound list into a command.
 	 * FLAG_START means the word must start a new compound list.
 	 */
-	static const struct reserved_combo reserved_list[] ALIGN4 = {
-# if ENABLE_HUSH_IF
+	ساکن ثابت ساخت reserved_combo reserved_list[] ALIGN4 = {
+# اگر ENABLE_HUSH_IF
 		{ "!",     RES_NONE,  NOT_ASSIGNMENT  , 0 },
-		{ "if",    RES_IF,    MAYBE_ASSIGNMENT, FLAG_THEN | FLAG_START },
+		{ "if",    RES_IF,    MAYBE_ASSIGNMENT, FLAG_THEN | FLAG_آغاز },
 		{ "then",  RES_THEN,  MAYBE_ASSIGNMENT, FLAG_ELIF | FLAG_ELSE | FLAG_FI },
 		{ "elif",  RES_ELIF,  MAYBE_ASSIGNMENT, FLAG_THEN },
 		{ "else",  RES_ELSE,  MAYBE_ASSIGNMENT, FLAG_FI   },
-		{ "fi",    RES_FI,    NOT_ASSIGNMENT  , FLAG_END  },
+		{ "fi",    RES_FI,    NOT_ASSIGNMENT  , FLAG_انتہا  },
 # endif
-# if ENABLE_HUSH_LOOPS
-		{ "for",   RES_FOR,   NOT_ASSIGNMENT  , FLAG_IN | FLAG_DO | FLAG_START },
-		{ "while", RES_WHILE, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_START },
-		{ "until", RES_UNTIL, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_START },
-		{ "in",    RES_IN,    NOT_ASSIGNMENT  , FLAG_DO   },
-		{ "do",    RES_DO,    MAYBE_ASSIGNMENT, FLAG_DONE },
-		{ "done",  RES_DONE,  NOT_ASSIGNMENT  , FLAG_END  },
+# اگر ENABLE_HUSH_LOOPS
+		{ "for",   RES_FOR,   NOT_ASSIGNMENT  , FLAG_اندر | FLAG_DO | FLAG_آغاز },
+		{ "while", RES_WHILE, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_آغاز },
+		{ "until", RES_UNTIL, MAYBE_ASSIGNMENT, FLAG_DO | FLAG_آغاز },
+		{ "in",    RES_اندر,    NOT_ASSIGNMENT  , FLAG_DO   },
+		{ "do",    RES_DO,    MAYBE_ASSIGNMENT, FLAG_مکمل },
+		{ "done",  RES_مکمل,  NOT_ASSIGNMENT  , FLAG_انتہا  },
 # endif
-# if ENABLE_HUSH_CASE
-		{ "case",  RES_CASE,  NOT_ASSIGNMENT  , FLAG_MATCH | FLAG_START },
-		{ "esac",  RES_ESAC,  NOT_ASSIGNMENT  , FLAG_END  },
+# اگر ENABLE_HUSH_CASE
+		{ "case",  RES_CASE,  NOT_ASSIGNMENT  , FLAG_مطابقت | FLAG_آغاز },
+		{ "esac",  RES_ESAC,  NOT_ASSIGNMENT  , FLAG_انتہا  },
 # endif
 	};
-	const struct reserved_combo *r;
+	ثابت ساخت reserved_combo *r;
 
-	for (r = reserved_list; r < reserved_list + ARRAY_SIZE(reserved_list); r++) {
-		if (strcmp(word->data, r->literal) == 0)
-			return r;
+	برائے (r = reserved_list; r < reserved_list + ARRAY_سائز(reserved_list); r++) {
+		اگر (strcmp(لفظ->ڈیٹا, r->literal) == 0)
+			واپس r;
 	}
-	return NULL;
+	واپس تہی;
 }
 /* Return NULL: not a keyword, else: keyword
  */
-static const struct reserved_combo* reserved_word(struct parse_context *ctx)
+ساکن ثابت ساخت reserved_combo* reserved_لفظ(ساخت parse_context *ctx)
 {
-# if ENABLE_HUSH_CASE
-	static const struct reserved_combo reserved_match = {
-		"",        RES_MATCH, NOT_ASSIGNMENT , FLAG_MATCH | FLAG_ESAC
+# اگر ENABLE_HUSH_CASE
+	ساکن ثابت ساخت reserved_combo reserved_مطابقت = {
+		"",        RES_مطابقت, NOT_ASSIGNMENT , FLAG_مطابقت | FLAG_ESAC
 	};
 # endif
-	const struct reserved_combo *r;
+	ثابت ساخت reserved_combo *r;
 
-	if (ctx->word.has_quoted_part)
-		return 0;
-	r = match_reserved_word(&ctx->word);
-	if (!r)
-		return r; /* NULL */
+	اگر (ctx->لفظ.has_quoted_part)
+		واپس 0;
+	r = مطابقت_reserved_لفظ(&ctx->لفظ);
+	اگر (!r)
+		واپس r; /* NULL */
 
 	debug_printf("found reserved word %s, res %d\n", r->literal, r->res);
-# if ENABLE_HUSH_CASE
-	if (r->res == RES_IN && ctx->ctx_res_w == RES_CASE_IN) {
+# اگر ENABLE_HUSH_CASE
+	اگر (r->res == RES_اندر && ctx->ctx_res_w == RES_CASE_اندر) {
 		/* "case word IN ..." - IN part starts first MATCH part */
-		r = &reserved_match;
-	} else
+		r = &reserved_مطابقت;
+	} ورنہ
 # endif
-	if (r->flag == 0) { /* '!' */
-		if (ctx->ctx_inverted) { /* bash doesn't accept '! ! true' */
+	اگر (r->flag == 0) { /* '!' */
+		اگر (ctx->ctx_inverted) { /* bash doesn't accept '! ! true' */
 			syntax_error("! ! command");
 			ctx->ctx_res_w = RES_SNTX;
 		}
 		ctx->ctx_inverted = 1;
-		return r;
+		واپس r;
 	}
-	if (r->flag & FLAG_START) {
-		struct parse_context *old;
+	اگر (r->flag & FLAG_آغاز) {
+		ساخت parse_context *old;
 
-		old = xmemdup(ctx, sizeof(*ctx));
+		old = xmemdup(ctx, حجم(*ctx));
 		debug_printf_parse("push stack %p\n", old);
 		initialize_context(ctx);
-		ctx->stack = old;
-	} else if (/*ctx->ctx_res_w == RES_NONE ||*/ !(ctx->old_flag & (1 << r->res))) {
-		syntax_error_at(ctx->word.data);
+		ctx->ڈھیر = old;
+	} ورنہ اگر (/*ctx->ctx_res_w == RES_NONE ||*/ !(ctx->old_flag & (1 << r->res))) {
+		syntax_error_at(ctx->لفظ.ڈیٹا);
 		ctx->ctx_res_w = RES_SNTX;
-		return r;
-	} else {
+		واپس r;
+	} ورنہ {
 		/* "{...} fi" is ok. "{...} if" is not
 		 * Example:
 		 * if { echo foo; } then { echo bar; } fi */
-		if (ctx->command->group)
-			done_pipe(ctx, PIPE_SEQ);
+		اگر (ctx->command->گروہ)
+			مکمل_pipe(ctx, PIPE_SEQ);
 	}
 
 	ctx->ctx_res_w = r->res;
@@ -4401,15 +4401,15 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 	ctx->is_assignment = r->assignment_flag;
 	debug_printf_parse("ctx->is_assignment='%s'\n", assignment_flag[ctx->is_assignment]);
 
-	if (ctx->old_flag & FLAG_END) {
-		struct parse_context *old;
+	اگر (ctx->old_flag & FLAG_انتہا) {
+		ساخت parse_context *old;
 
-		done_pipe(ctx, PIPE_SEQ);
-		debug_printf_parse("pop stack %p\n", ctx->stack);
-		old = ctx->stack;
-		old->command->group = ctx->list_head;
-		old->command->cmd_type = CMD_NORMAL;
-# if !BB_MMU
+		مکمل_pipe(ctx, PIPE_SEQ);
+		debug_printf_parse("pop stack %p\n", ctx->ڈھیر);
+		old = ctx->ڈھیر;
+		old->command->گروہ = ctx->list_سر;
+		old->command->cmd_type = CMD_معمول;
+# اگر !BB_MMU
 		/* At this point, the compound command's string is in
 		 * ctx->as_string... except for the leading keyword!
 		 * Consider this example: "echo a | if true; then echo a; fi"
@@ -4417,46 +4417,46 @@ static const struct reserved_combo* reserved_word(struct parse_context *ctx)
 		 * with "if " remaining in old->as_string!
 		 */
 		{
-			char *str;
-			int len = old->as_string.length;
+			حرف *str;
+			صحیح len = old->as_string.لمبائی;
 			/* Concatenate halves */
-			o_addstr(&old->as_string, ctx->as_string.data);
+			o_addstr(&old->as_string, ctx->as_string.ڈیٹا);
 			o_free(&ctx->as_string);
 			/* Find where leading keyword starts in first half */
-			str = old->as_string.data + len;
-			if (str > old->as_string.data)
+			str = old->as_string.ڈیٹا + len;
+			اگر (str > old->as_string.ڈیٹا)
 				str--; /* skip whitespace after keyword */
-			while (str > old->as_string.data && isalpha(str[-1]))
+			جب (str > old->as_string.ڈیٹا && حرف_ہے(str[-1]))
 				str--;
 			/* Ugh, we're done with this horrid hack */
-			old->command->group_as_string = xstrdup(str);
+			old->command->گروہ_as_string = xstrdup(str);
 			debug_printf_parse("pop, remembering as:'%s'\n",
-					old->command->group_as_string);
+					old->command->گروہ_as_string);
 		}
 # endif
 		*ctx = *old;   /* physical copy */
-		free(old);
+		آزاد(old);
 	}
-	return r;
+	واپس r;
 }
-#endif /* HAS_KEYWORDS */
+#اگر_ختم /* HAS_KEYWORDS */
 
 /* Word is complete, look at it and update parsing context.
  * Normal return is 0. Syntax errors return 1.
  * Note: on return, word is reset, but not o_free'd!
  */
-static int done_word(struct parse_context *ctx)
+ساکن صحیح مکمل_لفظ(ساخت parse_context *ctx)
 {
-	struct command *command = ctx->command;
+	ساخت command *command = ctx->command;
 
-	debug_printf_parse("done_word entered: '%s' %p\n", ctx->word.data, command);
-	if (ctx->word.length == 0 && !ctx->word.has_quoted_part) {
+	debug_printf_parse("done_word entered: '%s' %p\n", ctx->لفظ.ڈیٹا, command);
+	اگر (ctx->لفظ.لمبائی == 0 && !ctx->لفظ.has_quoted_part) {
 		debug_printf_parse("done_word return 0: true null, ignored\n");
-		return 0;
+		واپس 0;
 	}
 
-#ifndef __U_BOOT__
-	if (ctx->pending_redirect) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (ctx->pending_redirect) {
 		/* We do not glob in e.g. >*.tmp case. bash seems to glob here
 		 * only if run as "bash", not "sh" */
 		/* http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
@@ -4481,82 +4481,82 @@ static int done_word(struct parse_context *ctx)
 // <<EOF$((1))
 // <<EOF`true`  [this case also makes heredoc "quoted", a-la <<"EOF". Probably bash-4.3.43 bug]
 
-		ctx->pending_redirect->rd_filename = xstrdup(ctx->word.data);
+		ctx->pending_redirect->rd_filename = xstrdup(ctx->لفظ.ڈیٹا);
 		/* Cater for >\file case:
 		 * >\a creates file a; >\\a, >"\a", >"\\a" create file \a
 		 * Same with heredocs:
 		 * for <<\H delim is H; <<\\H, <<"\H", <<"\\H" - \H
 		 */
-		if (ctx->pending_redirect->rd_type == REDIRECT_HEREDOC) {
+		اگر (ctx->pending_redirect->rd_type == REDIRECT_HEREDOC) {
 			unbackslash(ctx->pending_redirect->rd_filename);
 			/* Is it <<"HEREDOC"? */
-			if (ctx->word.has_quoted_part) {
+			اگر (ctx->لفظ.has_quoted_part) {
 				ctx->pending_redirect->rd_dup |= HEREDOC_QUOTED;
 			}
 		}
-		debug_printf_parse("word stored in rd_filename: '%s'\n", ctx->word.data);
-		ctx->pending_redirect = NULL;
-	} else {
-#endif /* !__U_BOOT__ */
-#if HAS_KEYWORDS
-# if ENABLE_HUSH_CASE
-		if (ctx->ctx_dsemicolon
-		 && strcmp(ctx->word.data, "esac") != 0 /* not "... pattern) cmd;; esac" */
+		debug_printf_parse("word stored in rd_filename: '%s'\n", ctx->لفظ.ڈیٹا);
+		ctx->pending_redirect = تہی;
+	} ورنہ {
+#اگر_ختم /* !__U_BOOT__ */
+#اگر HAS_KEYWORDS
+# اگر ENABLE_HUSH_CASE
+		اگر (ctx->ctx_dsemicolon
+		 && strcmp(ctx->لفظ.ڈیٹا, "esac") != 0 /* not "... pattern) cmd;; esac" */
 		) {
 			/* already done when ctx_dsemicolon was set to 1: */
 			/* ctx->ctx_res_w = RES_MATCH; */
 			ctx->ctx_dsemicolon = 0;
-		} else
+		} ورنہ
 # endif
-# if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB
-		 && strcmp(ctx->word.data, "]]") == 0
+# اگر defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		اگر (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB
+		 && strcmp(ctx->لفظ.ڈیٹا, "]]") == 0
 		) {
 			/* allow "[[ ]] >file" etc */
 			command->cmd_type = CMD_SINGLEWORD_NOGLOB;
-		} else
+		} ورنہ
 # endif
-		if (!command->argv /* if it's the first word... */
-# if ENABLE_HUSH_LOOPS
+		اگر (!command->argv /* if it's the first word... */
+# اگر ENABLE_HUSH_LOOPS
 		 && ctx->ctx_res_w != RES_FOR /* ...not after FOR or IN */
-		 && ctx->ctx_res_w != RES_IN
+		 && ctx->ctx_res_w != RES_اندر
 # endif
-# if ENABLE_HUSH_CASE
+# اگر ENABLE_HUSH_CASE
 		 && ctx->ctx_res_w != RES_CASE
 # endif
 		) {
-			const struct reserved_combo *reserved;
-			reserved = reserved_word(ctx);
+			ثابت ساخت reserved_combo *reserved;
+			reserved = reserved_لفظ(ctx);
 			debug_printf_parse("checking for reserved-ness: %d\n", !!reserved);
-			if (reserved) {
-# if ENABLE_HUSH_LINENO_VAR
+			اگر (reserved) {
+# اگر ENABLE_HUSH_LINENO_VAR
 /* Case:
  * "while ...; do
  *	cmd ..."
  * If we don't close the pipe _now_, immediately after "do", lineno logic
  * sees "cmd" as starting at "do" - i.e., at the previous line.
  */
-				if (0
+				اگر (0
 				 IF_HUSH_IF(|| reserved->res == RES_THEN)
 				 IF_HUSH_IF(|| reserved->res == RES_ELIF)
 				 IF_HUSH_IF(|| reserved->res == RES_ELSE)
 				 IF_HUSH_LOOPS(|| reserved->res == RES_DO)
 				) {
-					done_pipe(ctx, PIPE_SEQ);
+					مکمل_pipe(ctx, PIPE_SEQ);
 				}
 # endif
-				o_reset_to_empty_unquoted(&ctx->word);
+				o_reset_مقصد_خالی_خانے_unquoted(&ctx->لفظ);
 				debug_printf_parse("done_word return %d\n",
 						(ctx->ctx_res_w == RES_SNTX));
-				return (ctx->ctx_res_w == RES_SNTX);
+				واپس (ctx->ctx_res_w == RES_SNTX);
 			}
-# if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-			if (strcmp(ctx->word.data, "[[") == 0) {
+# اگر defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+			اگر (strcmp(ctx->لفظ.ڈیٹا, "[[") == 0) {
 				command->cmd_type = CMD_TEST2_SINGLEWORD_NOGLOB;
-			} else
+			} ورنہ
 # endif
-# if defined(CMD_SINGLEWORD_NOGLOB)
-			if (0
+# اگر defined(CMD_SINGLEWORD_NOGLOB)
+			اگر (0
 			/* In bash, local/export/readonly are special, args
 			 * are assignments and therefore expansion of them
 			 * should be "one-word" expansion:
@@ -4572,34 +4572,34 @@ static int done_word(struct parse_context *ctx)
 			 *  $ "export" i=`echo 'aaa  bbb'`; echo "$i"
 			 *  aaa
 			 */
-			 IF_HUSH_LOCAL(   || strcmp(ctx->word.data, "local") == 0)
-			 IF_HUSH_EXPORT(  || strcmp(ctx->word.data, "export") == 0)
-			 IF_HUSH_READONLY(|| strcmp(ctx->word.data, "readonly") == 0)
+			 IF_HUSH_LOCAL(   || strcmp(ctx->لفظ.ڈیٹا, "local") == 0)
+			 IF_HUSH_EXPORT(  || strcmp(ctx->لفظ.ڈیٹا, "export") == 0)
+			 IF_HUSH_READONLY(|| strcmp(ctx->لفظ.ڈیٹا, "readonly") == 0)
 			) {
 				command->cmd_type = CMD_SINGLEWORD_NOGLOB;
 			}
-# else
+# ورنہ
 			{ /* empty block to pair "if ... else" */ }
 # endif
 		}
-#endif /* HAS_KEYWORDS */
+#اگر_ختم /* HAS_KEYWORDS */
 
-		if (command->group) {
+		اگر (command->گروہ) {
 			/* "{ echo foo; } echo bar" - bad */
-			syntax_error_at(ctx->word.data);
+			syntax_error_at(ctx->لفظ.ڈیٹا);
 			debug_printf_parse("done_word return 1: syntax error, "
 					"groups and arglists don't mix\n");
-			return 1;
+			واپس 1;
 		}
 
 		/* If this word wasn't an assignment, next ones definitely
 		 * can't be assignments. Even if they look like ones. */
-		if (ctx->is_assignment != DEFINITELY_ASSIGNMENT
-		 && ctx->is_assignment != WORD_IS_KEYWORD
+		اگر (ctx->is_assignment != DEFINITELY_ASSIGNMENT
+		 && ctx->is_assignment != لفظ_IS_KEYWORD
 		) {
 			ctx->is_assignment = NOT_ASSIGNMENT;
-		} else {
-			if (ctx->is_assignment == DEFINITELY_ASSIGNMENT) {
+		} ورنہ {
+			اگر (ctx->is_assignment == DEFINITELY_ASSIGNMENT) {
 				command->assignment_cnt++;
 				debug_printf_parse("++assignment_cnt=%d\n", command->assignment_cnt);
 			}
@@ -4607,46 +4607,46 @@ static int done_word(struct parse_context *ctx)
 			ctx->is_assignment = MAYBE_ASSIGNMENT;
 		}
 		debug_printf_parse("ctx->is_assignment='%s'\n", assignment_flag[ctx->is_assignment]);
-		command->argv = add_string_to_strings(command->argv, xstrdup(ctx->word.data));
-#ifdef __U_BOOT__
+		command->argv = جوڑو_string_مقصد_لڑیاں(command->argv, xstrdup(ctx->لفظ.ڈیٹا));
+#اگر_تعریف_شدہ __U_BOOT__
 		command->argc++;
-#endif /* __U_BOOT__ */
-		debug_print_strings("word appended to argv", command->argv);
+#اگر_ختم /* __U_BOOT__ */
+		debug_print_لڑیاں("word appended to argv", command->argv);
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	}
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#if ENABLE_HUSH_LOOPS
-	if (ctx->ctx_res_w == RES_FOR) {
-		if (ctx->word.has_quoted_part
+#اگر ENABLE_HUSH_LOOPS
+	اگر (ctx->ctx_res_w == RES_FOR) {
+		اگر (ctx->لفظ.has_quoted_part
 		 || endofname(command->argv[0])[0] != '\0'
 		) {
 			/* bash says just "not a valid identifier" */
 			syntax_error("bad for loop variable");
-			return 1;
+			واپس 1;
 		}
 		/* Force FOR to have just one word (variable name) */
 		/* NB: basically, this makes hush see "for v in ..."
 		 * syntax as if it is "for v; in ...". FOR and IN become
 		 * two pipe structs in parse tree. */
-		done_pipe(ctx, PIPE_SEQ);
+		مکمل_pipe(ctx, PIPE_SEQ);
 	}
-#endif
-#if ENABLE_HUSH_CASE
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
 	/* Force CASE to have just one word */
-	if (ctx->ctx_res_w == RES_CASE) {
-		done_pipe(ctx, PIPE_SEQ);
+	اگر (ctx->ctx_res_w == RES_CASE) {
+		مکمل_pipe(ctx, PIPE_SEQ);
 	}
-#endif
+#اگر_ختم
 
-	o_reset_to_empty_unquoted(&ctx->word);
+	o_reset_مقصد_خالی_خانے_unquoted(&ctx->لفظ);
 
 	debug_printf_parse("done_word return 0\n");
-	return 0;
+	واپس 0;
 }
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Peek ahead in the input to find out if we have a "&n" construct,
  * as in "2>&1", that represents duplicating a file descriptor.
  * Return:
@@ -4655,116 +4655,116 @@ static int done_word(struct parse_context *ctx)
  * REDIRFD_TO_FILE if no & was seen,
  * or the number found.
  */
-#if BB_MMU
-#define parse_redir_right_fd(as_string, input) \
-	parse_redir_right_fd(input)
-#endif
-static int parse_redir_right_fd(o_string *as_string, struct in_str *input)
+#اگر BB_MMU
+#تعریف_کرو parse_redir_دایاں_fd(as_string, داخلہ) \
+	parse_redir_دایاں_fd(داخلہ)
+#اگر_ختم
+ساکن صحیح parse_redir_دایاں_fd(o_string *as_string, ساخت اندر_str *داخلہ)
 {
-	int ch, d, ok;
+	صحیح ch, d, ok;
 
-	ch = i_peek(input);
-	if (ch != '&')
-		return REDIRFD_TO_FILE;
+	ch = i_peek(داخلہ);
+	اگر (ch != '&')
+		واپس REDIRFD_مقصد_FILE;
 
-	ch = i_getch(input);  /* get the & */
+	ch = i_getch(داخلہ);  /* get the & */
 	nommu_addchr(as_string, ch);
-	ch = i_peek(input);
-	if (ch == '-') {
-		ch = i_getch(input);
+	ch = i_peek(داخلہ);
+	اگر (ch == '-') {
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-		return REDIRFD_CLOSE;
+		واپس REDIRFD_CLOSE;
 	}
 	d = 0;
 	ok = 0;
-	while (ch != EOF && isdigit(ch)) {
+	جب (ch != EOF && ہندسہ_ہے(ch)) {
 		d = d*10 + (ch-'0');
 		ok = 1;
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-		ch = i_peek(input);
+		ch = i_peek(داخلہ);
 	}
-	if (ok) return d;
+	اگر (ok) واپس d;
 
 //TODO: this is the place to catch ">&file" bashism (redirect both fd 1 and 2)
 
-	bb_simple_error_msg("ambiguous redirect");
-	return REDIRFD_SYNTAX_ERR;
+	bb_simple_error_پیغام("ambiguous redirect");
+	واپس REDIRFD_SYNTAX_ERR;
 }
 
 /* Return code is 0 normal, 1 if a syntax error is detected
  */
-static int parse_redirect(struct parse_context *ctx,
-		int fd,
+ساکن صحیح parse_redirect(ساخت parse_context *ctx,
+		صحیح fd,
 		redir_type style,
-		struct in_str *input)
+		ساخت اندر_str *داخلہ)
 {
-	struct command *command = ctx->command;
-	struct redir_struct *redir;
-	struct redir_struct **redirp;
-	int dup_num;
+	ساخت command *command = ctx->command;
+	ساخت redir_struct *redir;
+	ساخت redir_struct **redirp;
+	صحیح dup_عدد;
 
-	dup_num = REDIRFD_TO_FILE;
-	if (style != REDIRECT_HEREDOC) {
+	dup_عدد = REDIRFD_مقصد_FILE;
+	اگر (style != REDIRECT_HEREDOC) {
 		/* Check for a '>&1' type redirect */
-		dup_num = parse_redir_right_fd(&ctx->as_string, input);
-		if (dup_num == REDIRFD_SYNTAX_ERR)
-			return 1;
-	} else {
-		int ch = i_peek_and_eat_bkslash_nl(input);
-		dup_num = (ch == '-'); /* HEREDOC_SKIPTABS bit is 1 */
-		if (dup_num) { /* <<-... */
-			ch = i_getch(input);
+		dup_عدد = parse_redir_دایاں_fd(&ctx->as_string, داخلہ);
+		اگر (dup_عدد == REDIRFD_SYNTAX_ERR)
+			واپس 1;
+	} ورنہ {
+		صحیح ch = i_peek_and_eat_bkslash_nl(داخلہ);
+		dup_عدد = (ch == '-'); /* HEREDOC_SKIPTABS bit is 1 */
+		اگر (dup_عدد) { /* <<-... */
+			ch = i_getch(داخلہ);
 			nommu_addchr(&ctx->as_string, ch);
-			ch = i_peek(input);
+			ch = i_peek(داخلہ);
 		}
 	}
 
-	if (style == REDIRECT_OVERWRITE && dup_num == REDIRFD_TO_FILE) {
-		int ch = i_peek_and_eat_bkslash_nl(input);
-		if (ch == '|') {
+	اگر (style == REDIRECT_OVERWRITE && dup_عدد == REDIRFD_مقصد_FILE) {
+		صحیح ch = i_peek_and_eat_bkslash_nl(داخلہ);
+		اگر (ch == '|') {
 			/* >|FILE redirect ("clobbering" >).
 			 * Since we do not support "set -o noclobber" yet,
 			 * >| and > are the same for now. Just eat |.
 			 */
-			ch = i_getch(input);
+			ch = i_getch(داخلہ);
 			nommu_addchr(&ctx->as_string, ch);
 		}
 	}
 
 	/* Create a new redir_struct and append it to the linked list */
 	redirp = &command->redirects;
-	while ((redir = *redirp) != NULL) {
-		redirp = &(redir->next);
+	جب ((redir = *redirp) != تہی) {
+		redirp = &(redir->اگلا);
 	}
-	*redirp = redir = xzalloc(sizeof(*redir));
+	*redirp = redir = xzalloc(حجم(*redir));
 	/* redir->next = NULL; */
 	/* redir->rd_filename = NULL; */
 	redir->rd_type = style;
-	redir->rd_fd = (fd == -1) ? redir_table[style].default_fd : fd;
+	redir->rd_fd = (fd == -1) ? redir_جدول[style].default_fd : fd;
 
 	debug_printf_parse("redirect type %d %s\n", redir->rd_fd,
-				redir_table[style].descrip);
+				redir_جدول[style].descrip);
 
-	redir->rd_dup = dup_num;
-	if (style != REDIRECT_HEREDOC && dup_num != REDIRFD_TO_FILE) {
+	redir->rd_dup = dup_عدد;
+	اگر (style != REDIRECT_HEREDOC && dup_عدد != REDIRFD_مقصد_FILE) {
 		/* Erik had a check here that the file descriptor in question
 		 * is legit; I postpone that to "run time"
 		 * A "-" representation of "close me" shows up as a -3 here */
 		debug_printf_parse("duplicating redirect '%d>&%d'\n",
 				redir->rd_fd, redir->rd_dup);
-	} else {
-#if 0		/* Instead we emit error message at run time */
-		if (ctx->pending_redirect) {
+	} ورنہ {
+#اگر 0		/* Instead we emit error message at run time */
+		اگر (ctx->pending_redirect) {
 			/* For example, "cmd > <file" */
 			syntax_error("invalid redirect");
 		}
-#endif
+#اگر_ختم
 		/* Set ctx->pending_redirect, so we know what to do at the
 		 * end of the next parsed word. */
 		ctx->pending_redirect = redir;
 	}
-	return 0;
+	واپس 0;
 }
 
 /* If a redirect is immediately preceded by a number, that number is
@@ -4787,32 +4787,32 @@ static int parse_redirect(struct parse_context *ctx,
  * A -1 return means no valid number was found,
  * the caller should use the appropriate default for this redirection.
  */
-static int redirect_opt_num(o_string *o)
+ساکن صحیح redirect_opt_عدد(o_string *o)
 {
-	int num;
+	صحیح عدد;
 
-	if (o->data == NULL)
-		return -1;
-	num = bb_strtou(o->data, NULL, 10);
-	if (errno || num < 0)
-		return -1;
-	o_reset_to_empty_unquoted(o);
-	return num;
+	اگر (o->ڈیٹا == تہی)
+		واپس -1;
+	عدد = bb_strtou(o->ڈیٹا, تہی, 10);
+	اگر (errno || عدد < 0)
+		واپس -1;
+	o_reset_مقصد_خالی_خانے_unquoted(o);
+	واپس عدد;
 }
 
-#if BB_MMU
-#define fetch_till_str(as_string, input, word, skip_tabs) \
-	fetch_till_str(input, word, skip_tabs)
-#endif
-static char *fetch_till_str(o_string *as_string,
-		struct in_str *input,
-		const char *word,
-		int heredoc_flags)
+#اگر BB_MMU
+#تعریف_کرو fetch_till_str(as_string, داخلہ, لفظ, skip_tabs) \
+	fetch_till_str(داخلہ, لفظ, skip_tabs)
+#اگر_ختم
+ساکن حرف *fetch_till_str(o_string *as_string,
+		ساخت اندر_str *داخلہ,
+		ثابت حرف *لفظ,
+		صحیح heredoc_flags)
 {
 	o_string heredoc = NULL_O_STRING;
-	unsigned past_EOL;
-	int prev = 0; /* not \ */
-	int ch;
+	غیرعلامتی past_EOL;
+	صحیح پچھلا = 0; /* not \ */
+	صحیح ch;
 
 	/* Starting with "" is necessary for this case:
 	 * cat <<EOF
@@ -4820,52 +4820,52 @@ static char *fetch_till_str(o_string *as_string,
 	 * xxx
 	 * EOF
 	 */
-	heredoc.data = xzalloc(1); /* start as "", not as NULL */
+	heredoc.ڈیٹا = xzalloc(1); /* start as "", not as NULL */
 
-	goto jump_in;
+	جاؤ jump_اندر;
 
-	while (1) {
-		ch = i_getch(input);
-		if (ch != EOF)
+	جب (1) {
+		ch = i_getch(داخلہ);
+		اگر (ch != EOF)
 			nommu_addchr(as_string, ch);
-		if (ch == '\n' || ch == EOF) {
- check_heredoc_end:
-#ifndef __U_BOOT__
-			if ((heredoc_flags & HEREDOC_QUOTED) || prev != '\\') {
-#else /* __U_BOOT__ */
-			if (prev != '\\') {
-#endif
+		اگر (ch == '\n' || ch == EOF) {
+ check_heredoc_انتہا:
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر ((heredoc_flags & HEREDOC_QUOTED) || پچھلا != '\\') {
+#ورنہ /* __U_BOOT__ */
+			اگر (پچھلا != '\\') {
+#اگر_ختم
 				/* End-of-line, and not a line continuation */
-				if (strcmp(heredoc.data + past_EOL, word) == 0) {
-					heredoc.data[past_EOL] = '\0';
-					debug_printf_heredoc("parsed '%s' heredoc '%s'\n", word, heredoc.data);
-					return heredoc.data;
+				اگر (strcmp(heredoc.ڈیٹا + past_EOL, لفظ) == 0) {
+					heredoc.ڈیٹا[past_EOL] = '\0';
+					debug_printf_heredoc("parsed '%s' heredoc '%s'\n", لفظ, heredoc.ڈیٹا);
+					واپس heredoc.ڈیٹا;
 				}
-				if (ch == '\n') {
+				اگر (ch == '\n') {
 					/* This is a new line.
 					 * Remember position and backslash-escaping status.
 					 */
 					o_addchr(&heredoc, ch);
-					prev = ch;
- jump_in:
-					past_EOL = heredoc.length;
+					پچھلا = ch;
+ jump_اندر:
+					past_EOL = heredoc.لمبائی;
 					/* Get 1st char of next line, possibly skipping leading tabs */
-					do {
-						ch = i_getch(input);
-						if (ch != EOF)
+					کرو {
+						ch = i_getch(داخلہ);
+						اگر (ch != EOF)
 							nommu_addchr(as_string, ch);
-#ifndef __U_BOOT__
-					} while ((heredoc_flags & HEREDOC_SKIPTABS) && ch == '\t');
-#else /* __U_BOOT__ */
-				} while (ch == '\t');
-#endif
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+					} جب ((heredoc_flags & HEREDOC_SKIPTABS) && ch == '\t');
+#ورنہ /* __U_BOOT__ */
+				} جب (ch == '\t');
+#اگر_ختم
 					/* If this immediately ended the line,
 					 * go back to end-of-line checks.
 					 */
-					if (ch == '\n')
-						goto check_heredoc_end;
+					اگر (ch == '\n')
+						جاؤ check_heredoc_انتہا;
 				}
-			} else {
+			} ورنہ {
 				/* Backslash-line continuation in an unquoted
 				 * heredoc. This does not need special handling
 				 * for heredoc body (unquoted heredocs are
@@ -4877,140 +4877,140 @@ static char *fetch_till_str(o_string *as_string,
 				 *  EO\
 				 *  F
 				 */
-				heredoc.data[--heredoc.length] = '\0';
-				prev = 0; /* not '\' */
-				continue;
+				heredoc.ڈیٹا[--heredoc.لمبائی] = '\0';
+				پچھلا = 0; /* not '\' */
+				جاری;
 			}
 		}
-		if (ch == EOF) {
+		اگر (ch == EOF) {
 			o_free(&heredoc);
-			return NULL; /* error */
+			واپس تہی; /* error */
 		}
 		o_addchr(&heredoc, ch);
 		nommu_addchr(as_string, ch);
-		if (prev == '\\' && ch == '\\')
+		اگر (پچھلا == '\\' && ch == '\\')
 			/* Correctly handle foo\\<eol> (not a line cont.) */
-			prev = 0; /* not '\' */
-		else
-			prev = ch;
+			پچھلا = 0; /* not '\' */
+		ورنہ
+			پچھلا = ch;
 	}
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 /* Look at entire parse tree for not-yet-loaded REDIRECT_HEREDOCs
  * and load them all. There should be exactly heredoc_cnt of them.
  */
-#if BB_MMU
-#define fetch_heredocs(as_string, pi, heredoc_cnt, input) \
-	fetch_heredocs(pi, heredoc_cnt, input)
-#endif
-static int fetch_heredocs(o_string *as_string, struct pipe *pi, int heredoc_cnt, struct in_str *input)
+#اگر BB_MMU
+#تعریف_کرو fetch_heredocs(as_string, pi, heredoc_cnt, داخلہ) \
+	fetch_heredocs(pi, heredoc_cnt, داخلہ)
+#اگر_ختم
+ساکن صحیح fetch_heredocs(o_string *as_string, ساخت pipe *pi, صحیح heredoc_cnt, ساخت اندر_str *داخلہ)
 {
-	while (pi && heredoc_cnt) {
-		int i;
-		struct command *cmd = pi->cmds;
+	جب (pi && heredoc_cnt) {
+		صحیح i;
+		ساخت command *cmd = pi->cmds;
 
 		debug_printf_heredoc("fetch_heredocs: num_cmds:%d cmd argv0:'%s'\n",
-				pi->num_cmds,
+				pi->عدد_cmds,
 				cmd->argv ? cmd->argv[0] : "NONE"
 		);
-		for (i = 0; i < pi->num_cmds; i++) {
-#ifndef __U_BOOT__
-			struct redir_struct *redir = cmd->redirects;
+		برائے (i = 0; i < pi->عدد_cmds; i++) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			ساخت redir_struct *redir = cmd->redirects;
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 			debug_printf_heredoc("fetch_heredocs: %d cmd argv0:'%s'\n",
 					i, cmd->argv ? cmd->argv[0] : "NONE");
-#ifndef __U_BOOT__
-			while (redir) {
-				if (redir->rd_type == REDIRECT_HEREDOC) {
-					char *p;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			جب (redir) {
+				اگر (redir->rd_type == REDIRECT_HEREDOC) {
+					حرف *p;
 
 					redir->rd_type = REDIRECT_HEREDOC2;
 					/* redir->rd_dup is (ab)used to indicate <<- */
-					p = fetch_till_str(as_string, input,
+					p = fetch_till_str(as_string, داخلہ,
 							redir->rd_filename, redir->rd_dup);
-					if (!p) {
+					اگر (!p) {
 						syntax_error("unexpected EOF in here document");
-						return -1;
+						واپس -1;
 					}
-					free(redir->rd_filename);
+					آزاد(redir->rd_filename);
 					redir->rd_filename = p;
 					heredoc_cnt--;
 				}
-				redir = redir->next;
+				redir = redir->اگلا;
 			}
-#endif /* !__U_BOOT__ */
-			if (cmd->group) {
+#اگر_ختم /* !__U_BOOT__ */
+			اگر (cmd->گروہ) {
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
-				heredoc_cnt = fetch_heredocs(as_string, cmd->group, heredoc_cnt, input);
+				heredoc_cnt = fetch_heredocs(as_string, cmd->گروہ, heredoc_cnt, داخلہ);
 				//bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
-				if (heredoc_cnt < 0)
-					return heredoc_cnt; /* error */
+				اگر (heredoc_cnt < 0)
+					واپس heredoc_cnt; /* error */
 			}
 			cmd++;
 		}
-		pi = pi->next;
+		pi = pi->اگلا;
 	}
-	return heredoc_cnt;
+	واپس heredoc_cnt;
 }
 
-static int run_list(struct pipe *pi);
-#if BB_MMU
-#define parse_stream(pstring, heredoc_cnt_ptr, input, end_trigger) \
-	parse_stream(heredoc_cnt_ptr, input, end_trigger)
-#endif
-static struct pipe *parse_stream(char **pstring,
-		int *heredoc_cnt_ptr,
-		struct in_str *input,
-		int end_trigger);
+ساکن صحیح تسلسل_list(ساخت pipe *pi);
+#اگر BB_MMU
+#تعریف_کرو parse_دھارا(pstring, heredoc_cnt_ptr, داخلہ, انتہا_trigger) \
+	parse_دھارا(heredoc_cnt_ptr, داخلہ, انتہا_trigger)
+#اگر_ختم
+ساکن ساخت pipe *parse_دھارا(حرف **pstring,
+		صحیح *heredoc_cnt_ptr,
+		ساخت اندر_str *داخلہ,
+		صحیح انتہا_trigger);
 
 /* Returns number of heredocs not yet consumed,
  * or -1 on error.
  */
-static int parse_group(struct parse_context *ctx,
-		struct in_str *input, int ch)
+ساکن صحیح parse_گروہ(ساخت parse_context *ctx,
+		ساخت اندر_str *داخلہ, صحیح ch)
 {
 	/* ctx->word contains characters seen prior to ( or {.
 	 * Typically it's empty, but for function defs,
 	 * it contains function name (without '()'). */
-#if BB_MMU
-# define as_string NULL
-#else
-	char *as_string = NULL;
-#endif
-	struct pipe *pipe_list;
-	int heredoc_cnt = 0;
-	int endch;
-	struct command *command = ctx->command;
+#اگر BB_MMU
+# define as_string تہی
+#ورنہ
+	حرف *as_string = تہی;
+#اگر_ختم
+	ساخت pipe *pipe_list;
+	صحیح heredoc_cnt = 0;
+	صحیح endch;
+	ساخت command *command = ctx->command;
 
 	debug_printf_parse("parse_group entered\n");
-#if ENABLE_HUSH_FUNCTIONS
-	if (ch == '(' && !ctx->word.has_quoted_part) {
-		if (ctx->word.length)
-			if (done_word(ctx))
-				return -1;
-		if (!command->argv)
-			goto skip; /* (... */
-		if (command->argv[1]) { /* word word ... (... */
+#اگر ENABLE_HUSH_FUNCTIONS
+	اگر (ch == '(' && !ctx->لفظ.has_quoted_part) {
+		اگر (ctx->لفظ.لمبائی)
+			اگر (مکمل_لفظ(ctx))
+				واپس -1;
+		اگر (!command->argv)
+			جاؤ skip; /* (... */
+		اگر (command->argv[1]) { /* word word ... (... */
 			syntax_error_unexpected_ch('(');
-			return -1;
+			واپس -1;
 		}
 		/* it is "word(..." or "word (..." */
-		do
-			ch = i_getch(input);
-		while (ch == ' ' || ch == '\t');
-		if (ch != ')') {
+		کرو
+			ch = i_getch(داخلہ);
+		جب (ch == ' ' || ch == '\t');
+		اگر (ch != ')') {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			واپس -1;
 		}
 		nommu_addchr(&ctx->as_string, ch);
-		do
-			ch = i_getch(input);
-		while (ch == ' ' || ch == '\t' || ch == '\n');
-		if (ch != '{' && ch != '(') {
+		کرو
+			ch = i_getch(داخلہ);
+		جب (ch == ' ' || ch == '\t' || ch == '\n');
+		اگر (ch != '{' && ch != '(') {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			واپس -1;
 		}
 //bash allows functions named "123", "..", "return"!
 //		if (endofname(command->argv[0])[0] != '\0') {
@@ -5019,153 +5019,153 @@ static int parse_group(struct parse_context *ctx,
 //		}
 		nommu_addchr(&ctx->as_string, ch);
 		command->cmd_type = CMD_FUNCDEF;
-		goto skip;
+		جاؤ skip;
 	}
-#endif
+#اگر_ختم
 
-#if 0 /* Prevented by caller */
-	if (command->argv /* word [word]{... */
-	 || ctx->word.length /* word{... */
-	 || ctx->word.has_quoted_part /* ""{... */
+#اگر 0 /* Prevented by caller */
+	اگر (command->argv /* word [word]{... */
+	 || ctx->لفظ.لمبائی /* word{... */
+	 || ctx->لفظ.has_quoted_part /* ""{... */
 	) {
-		syntax_error(NULL);
+		syntax_error(تہی);
 		debug_printf_parse("parse_group return -1: "
 			"syntax error, groups and arglists don't mix\n");
-		return -1;
+		واپس -1;
 	}
-#endif
+#اگر_ختم
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
  IF_HUSH_FUNCTIONS(skip:)
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 	endch = '}';
-	if (ch == '(') {
+	اگر (ch == '(') {
 		endch = ')';
-#ifndef __U_BOOT__
-		IF_HUSH_FUNCTIONS(if (command->cmd_type != CMD_FUNCDEF))
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		IF_HUSH_FUNCTIONS(اگر (command->cmd_type != CMD_FUNCDEF))
 			command->cmd_type = CMD_SUBSHELL;
-#endif /* !__U_BOOT__ */
-	} else {
+#اگر_ختم /* !__U_BOOT__ */
+	} ورنہ {
 		/* bash does not allow "{echo...", requires whitespace */
-		ch = i_peek(input);
-		if (ch != ' ' && ch != '\t' && ch != '\n'
+		ch = i_peek(داخلہ);
+		اگر (ch != ' ' && ch != '\t' && ch != '\n'
 		 && ch != '('	/* but "{(..." is allowed (without whitespace) */
 		) {
 			syntax_error_unexpected_ch(ch);
-			return -1;
+			واپس -1;
 		}
-		if (ch != '(') {
-			ch = i_getch(input);
+		اگر (ch != '(') {
+			ch = i_getch(داخلہ);
 			nommu_addchr(&ctx->as_string, ch);
 		}
 	}
 
 	debug_printf_heredoc("calling parse_stream, heredoc_cnt:%d\n", heredoc_cnt);
-	pipe_list = parse_stream(&as_string, &heredoc_cnt, input, endch);
+	pipe_list = parse_دھارا(&as_string, &heredoc_cnt, داخلہ, endch);
 	debug_printf_heredoc("parse_stream returned: heredoc_cnt:%d\n", heredoc_cnt);
-#if !BB_MMU
-	if (as_string)
+#اگر !BB_MMU
+	اگر (as_string)
 		o_addstr(&ctx->as_string, as_string);
-#endif
+#اگر_ختم
 
 	/* empty ()/{} or parse error? */
-	if (!pipe_list || pipe_list == ERR_PTR) {
+	اگر (!pipe_list || pipe_list == ERR_PTR) {
 		/* parse_stream already emitted error msg */
-		if (!BB_MMU)
-			free(as_string);
+		اگر (!BB_MMU)
+			آزاد(as_string);
 		debug_printf_parse("parse_group return -1: "
 			"parse_stream returned %p\n", pipe_list);
-		return -1;
+		واپس -1;
 	}
-#if !BB_MMU
-	as_string[strlen(as_string) - 1] = '\0'; /* plink ')' or '}' */
-	command->group_as_string = as_string;
+#اگر !BB_MMU
+	as_string[لڑی_لمبائی(as_string) - 1] = '\0'; /* plink ')' or '}' */
+	command->گروہ_as_string = as_string;
 	debug_printf_parse("end of group, remembering as:'%s'\n",
-			command->group_as_string);
-#endif
+			command->گروہ_as_string);
+#اگر_ختم
 
-#if ENABLE_HUSH_FUNCTIONS
+#اگر ENABLE_HUSH_FUNCTIONS
 	/* Convert "f() (cmds)" to "f() {(cmds)}" */
-	if (command->cmd_type == CMD_FUNCDEF && endch == ')') {
-		struct command *cmd2;
+	اگر (command->cmd_type == CMD_FUNCDEF && endch == ')') {
+		ساخت command *cmd2;
 
-		cmd2 = xzalloc(sizeof(*cmd2));
+		cmd2 = xzalloc(حجم(*cmd2));
 		cmd2->cmd_type = CMD_SUBSHELL;
-		cmd2->group = pipe_list;
-# if !BB_MMU
+		cmd2->گروہ = pipe_list;
+# اگر !BB_MMU
 //UNTESTED!
-		cmd2->group_as_string = command->group_as_string;
-		command->group_as_string = xasprintf("(%s)", command->group_as_string);
+		cmd2->گروہ_as_string = command->گروہ_as_string;
+		command->گروہ_as_string = xasprintf("(%s)", command->گروہ_as_string);
 # endif
 
 		pipe_list = new_pipe();
 		pipe_list->cmds = cmd2;
-		pipe_list->num_cmds = 1;
+		pipe_list->عدد_cmds = 1;
 	}
-#endif
+#اگر_ختم
 
-	command->group = pipe_list;
+	command->گروہ = pipe_list;
 
 	debug_printf_parse("parse_group return %d\n", heredoc_cnt);
-	return heredoc_cnt;
+	واپس heredoc_cnt;
 	/* command remains "open", available for possible redirects */
-#undef as_string
+#تعریف_منسوخ as_string
 }
 
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS
 /* Subroutines for copying $(...) and `...` things */
 /* '...' */
-static int add_till_single_quote(o_string *dest, struct in_str *input)
+ساکن صحیح جوڑو_till_single_quote(o_string *dest, ساخت اندر_str *داخلہ)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	جب (1) {
+		صحیح ch = i_getch(داخلہ);
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			واپس 0;
 		}
-		if (ch == '\'')
-			return 1;
+		اگر (ch == '\'')
+			واپس 1;
 		o_addchr(dest, ch);
 	}
 }
-static int add_till_single_quote_dquoted(o_string *dest, struct in_str *input)
+ساکن صحیح جوڑو_till_single_quote_dquoted(o_string *dest, ساخت اندر_str *داخلہ)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	جب (1) {
+		صحیح ch = i_getch(داخلہ);
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			واپس 0;
 		}
-		if (ch == '\'')
-			return 1;
+		اگر (ch == '\'')
+			واپس 1;
 		o_addqchr(dest, ch);
 	}
 }
 
 /* "...\"...`..`...." - do we need to handle "...$(..)..." too? */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote);
-static int add_till_double_quote(o_string *dest, struct in_str *input)
+ساکن صحیح جوڑو_till_backquote(o_string *dest, ساخت اندر_str *داخلہ, صحیح اندر_dquote);
+ساکن صحیح جوڑو_till_double_quote(o_string *dest, ساخت اندر_str *داخلہ)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == EOF) {
+	جب (1) {
+		صحیح ch = i_getch(داخلہ);
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			return 0;
+			واپس 0;
 		}
-		if (ch == '"')
-			return 1;
-		if (ch == '\\') {  /* \x. Copy both chars. */
+		اگر (ch == '"')
+			واپس 1;
+		اگر (ch == '\\') {  /* \x. Copy both chars. */
 			o_addchr(dest, ch);
-			ch = i_getch(input);
+			ch = i_getch(داخلہ);
 		}
 		o_addchr(dest, ch);
-		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 1))
-				return 0;
+		اگر (ch == '`') {
+			اگر (!جوڑو_till_backquote(dest, داخلہ, /*in_dquote:*/ 1))
+				واپس 0;
 			o_addchr(dest, ch);
-			continue;
+			جاری;
 		}
 		//if (ch == '$') ...
 	}
@@ -5185,26 +5185,26 @@ static int add_till_double_quote(o_string *dest, struct in_str *input)
  * Example                               Output
  * echo `echo '\'TEST\`echo ZZ\`BEST`    \TESTZZBEST
  */
-static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquote)
+ساکن صحیح جوڑو_till_backquote(o_string *dest, ساخت اندر_str *داخلہ, صحیح اندر_dquote)
 {
-	while (1) {
-		int ch = i_getch(input);
-		if (ch == '`')
-			return 1;
-		if (ch == '\\') {
+	جب (1) {
+		صحیح ch = i_getch(داخلہ);
+		اگر (ch == '`')
+			واپس 1;
+		اگر (ch == '\\') {
 			/* \x. Copy both unless it is \`, \$, \\ and maybe \" */
-			ch = i_getch(input);
-			if (ch != '`'
+			ch = i_getch(داخلہ);
+			اگر (ch != '`'
 			 && ch != '$'
 			 && ch != '\\'
-			 && (!in_dquote || ch != '"')
+			 && (!اندر_dquote || ch != '"')
 			) {
 				o_addchr(dest, '\\');
 			}
 		}
-		if (ch == EOF) {
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('`');
-			return 0;
+			واپس 0;
 		}
 		o_addchr(dest, ch);
 	}
@@ -5226,165 +5226,165 @@ static int add_till_backquote(o_string *dest, struct in_str *input, int in_dquot
  * In bash compat mode, it needs to also be able to stop on ':' or '/'
  * for ${var:N[:M]} and ${var/P[/R]} parsing.
  */
-#define DOUBLE_CLOSE_CHAR_FLAG 0x80
-static int add_till_closing_bracket(o_string *dest, struct in_str *input, unsigned end_ch)
+#تعریف_کرو DOUBLE_CLOSE_CHAR_FLAG 0x80
+ساکن صحیح جوڑو_till_closing_bracket(o_string *dest, ساخت اندر_str *داخلہ, غیرعلامتی انتہا_ch)
 {
-	int ch;
-	char dbl = end_ch & DOUBLE_CLOSE_CHAR_FLAG;
-# if BASH_SUBSTR || BASH_PATTERN_SUBST
-	char end_char2 = end_ch >> 8;
+	صحیح ch;
+	حرف dbl = انتہا_ch & DOUBLE_CLOSE_CHAR_FLAG;
+# اگر BASH_SUBSTR || BASH_نمونہ_SUBST
+	حرف انتہا_char2 = انتہا_ch >> 8;
 # endif
-	end_ch &= (DOUBLE_CLOSE_CHAR_FLAG - 1);
+	انتہا_ch &= (DOUBLE_CLOSE_CHAR_FLAG - 1);
 
-# if ENABLE_HUSH_INTERACTIVE
+# اگر ENABLE_HUSH_INTERACTIVE
 	G.promptmode = 1; /* PS2 */
 # endif
 	debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 
-	while (1) {
-		ch = i_getch(input);
-		if (ch == EOF) {
-			syntax_error_unterm_ch(end_ch);
-			return 0;
+	جب (1) {
+		ch = i_getch(داخلہ);
+		اگر (ch == EOF) {
+			syntax_error_unterm_ch(انتہا_ch);
+			واپس 0;
 		}
-		if (ch == end_ch
-# if BASH_SUBSTR || BASH_PATTERN_SUBST
-		 || ch == end_char2
+		اگر (ch == انتہا_ch
+# اگر BASH_SUBSTR || BASH_نمونہ_SUBST
+		 || ch == انتہا_char2
 # endif
 		) {
-			if (!dbl)
-				break;
+			اگر (!dbl)
+				توڑو;
 			/* we look for closing )) of $((EXPR)) */
-			if (i_peek_and_eat_bkslash_nl(input) == end_ch) {
-				i_getch(input); /* eat second ')' */
-				break;
+			اگر (i_peek_and_eat_bkslash_nl(داخلہ) == انتہا_ch) {
+				i_getch(داخلہ); /* eat second ')' */
+				توڑو;
 			}
 		}
 		o_addchr(dest, ch);
 		//bb_error_msg("%s:o_addchr('%c')", __func__, ch);
-		if (ch == '(' || ch == '{') {
+		اگر (ch == '(' || ch == '{') {
 			ch = (ch == '(' ? ')' : '}');
-			if (!add_till_closing_bracket(dest, input, ch))
-				return 0;
+			اگر (!جوڑو_till_closing_bracket(dest, داخلہ, ch))
+				واپس 0;
 			o_addchr(dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '\'') {
-			if (!add_till_single_quote(dest, input))
-				return 0;
+		اگر (ch == '\'') {
+			اگر (!جوڑو_till_single_quote(dest, داخلہ))
+				واپس 0;
 			o_addchr(dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '"') {
-			if (!add_till_double_quote(dest, input))
-				return 0;
+		اگر (ch == '"') {
+			اگر (!جوڑو_till_double_quote(dest, داخلہ))
+				واپس 0;
 			o_addchr(dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '`') {
-			if (!add_till_backquote(dest, input, /*in_dquote:*/ 0))
-				return 0;
+		اگر (ch == '`') {
+			اگر (!جوڑو_till_backquote(dest, داخلہ, /*in_dquote:*/ 0))
+				واپس 0;
 			o_addchr(dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '\\') {
+		اگر (ch == '\\') {
 			/* \x. Copy verbatim. Important for  \(, \) */
-			ch = i_getch(input);
-			if (ch == EOF) {
-				syntax_error_unterm_ch(end_ch);
-				return 0;
+			ch = i_getch(داخلہ);
+			اگر (ch == EOF) {
+				syntax_error_unterm_ch(انتہا_ch);
+				واپس 0;
 			}
-# if 0
-			if (ch == '\n') {
+# اگر 0
+			اگر (ch == '\n') {
 				/* "backslash+newline", ignore both */
 				o_delchr(dest); /* undo insertion of '\' */
-				continue;
+				جاری;
 			}
 # endif
 			o_addchr(dest, ch);
 			//bb_error_msg("%s:o_addchr('%c') after '\\'", __func__, ch);
-			continue;
+			جاری;
 		}
 	}
-	debug_printf_parse("%s return '%s' ch:'%c'\n", __func__, dest->data, ch);
-	return ch;
+	debug_printf_parse("%s return '%s' ch:'%c'\n", __func__, dest->ڈیٹا, ch);
+	واپس ch;
 }
-#endif /* ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS */
+#اگر_ختم /* ENABLE_HUSH_TICK || ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_DOLLAR_OPS */
 
-#if BASH_DOLLAR_SQUOTE
+#اگر BASH_DOLLAR_SQUOTE
 /* Return code: 1 for "found and parsed", 0 for "seen something else" */
-# if BB_MMU
-#define parse_dollar_squote(as_string, dest, input) \
-	parse_dollar_squote(dest, input)
-#define as_string NULL
+# اگر BB_MMU
+#تعریف_کرو parse_dollar_squote(as_string, dest, داخلہ) \
+	parse_dollar_squote(dest, داخلہ)
+#تعریف_کرو as_string تہی
 # endif
-static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_str *input)
+ساکن صحیح parse_dollar_squote(o_string *as_string, o_string *dest, ساخت اندر_str *داخلہ)
 {
-	int start;
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	صحیح آغاز;
+	صحیح ch = i_peek_and_eat_bkslash_nl(داخلہ);  /* first character after the $ */
 	debug_printf_parse("parse_dollar_squote entered: ch='%c'\n", ch);
-	if (ch != '\'')
-		return 0;
+	اگر (ch != '\'')
+		واپس 0;
 
 	dest->has_quoted_part = 1;
-	start = dest->length;
+	آغاز = dest->لمبائی;
 
-	ch = i_getch(input); /* eat ' */
+	ch = i_getch(داخلہ); /* eat ' */
 	nommu_addchr(as_string, ch);
-	while (1) {
-		ch = i_getch(input);
+	جب (1) {
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-		if (ch == EOF) {
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('\'');
-			return 0;
+			واپس 0;
 		}
-		if (ch == '\'')
-			break;
-		if (ch == SPECIAL_VAR_SYMBOL) {
+		اگر (ch == '\'')
+			توڑو;
+		اگر (ch == SPECIAL_VAR_علامت) {
 			/* Convert raw ^C to corresponding special variable reference */
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(dest, SPECIAL_VAR_علامت);
 			o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
 			/* will addchr() another SPECIAL_VAR_SYMBOL (see after the if() block) */
-		} else if (ch == '\\') {
-			static const char C_escapes[] ALIGN1 = "nrbtfav""x\\01234567";
+		} ورنہ اگر (ch == '\\') {
+			ساکن ثابت حرف C_escapes[] ALIGN1 = "nrbtfav""x\\01234567";
 
-			ch = i_getch(input);
+			ch = i_getch(داخلہ);
 			nommu_addchr(as_string, ch);
-			if (strchr(C_escapes, ch)) {
-				char buf[4];
-				char *p = buf;
-				int cnt = 2;
+			اگر (strchr(C_escapes, ch)) {
+				حرف buf[4];
+				حرف *p = buf;
+				صحیح cnt = 2;
 
 				buf[0] = ch;
-				if ((unsigned char)(ch - '0') <= 7) { /* \ooo */
-					do {
-						ch = i_peek(input);
-						if ((unsigned char)(ch - '0') > 7)
-							break;
-						*++p = ch = i_getch(input);
+				اگر ((غیرعلامتی حرف)(ch - '0') <= 7) { /* \ooo */
+					کرو {
+						ch = i_peek(داخلہ);
+						اگر ((غیرعلامتی حرف)(ch - '0') > 7)
+							توڑو;
+						*++p = ch = i_getch(داخلہ);
 						nommu_addchr(as_string, ch);
-					} while (--cnt != 0);
-				} else if (ch == 'x') { /* \xHH */
-					do {
-						ch = i_peek(input);
-						if (!isxdigit(ch))
-							break;
-						*++p = ch = i_getch(input);
+					} جب (--cnt != 0);
+				} ورنہ اگر (ch == 'x') { /* \xHH */
+					کرو {
+						ch = i_peek(داخلہ);
+						اگر (!isxdigit(ch))
+							توڑو;
+						*++p = ch = i_getch(داخلہ);
 						nommu_addchr(as_string, ch);
-					} while (--cnt != 0);
-					if (cnt == 2) { /* \x but next char is "bad" */
+					} جب (--cnt != 0);
+					اگر (cnt == 2) { /* \x but next char is "bad" */
 						ch = 'x';
-						goto unrecognized;
+						جاؤ unrecognized;
 					}
 				} /* else simple seq like \\ or \t */
 				*++p = '\0';
 				p = buf;
-				ch = bb_process_escape_sequence((void*)&p);
+				ch = bb_process_escape_sequence((خالی*)&p);
 				//bb_error_msg("buf:'%s' ch:%x", buf, ch);
-				if (ch == '\0')
-					continue; /* bash compat: $'...\0...' emits nothing */
-			} else { /* unrecognized "\z": encode both chars unless ' or " */
-				if (ch != '\'' && ch != '"') {
+				اگر (ch == '\0')
+					جاری; /* bash compat: $'...\0...' emits nothing */
+			} ورنہ { /* unrecognized "\z": encode both chars unless ' or " */
+				اگر (ch != '\'' && ch != '"') {
  unrecognized:
 					o_addqchr(dest, '\\');
 				}
@@ -5393,103 +5393,103 @@ static int parse_dollar_squote(o_string *as_string, o_string *dest, struct in_st
 		o_addqchr(dest, ch);
 	}
 
-	if (dest->length == start) {
+	اگر (dest->لمبائی == آغاز) {
 		/* $'', $'\0', $'\000\x00' and the like */
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 	}
 
-	return 1;
+	واپس 1;
 # undef as_string
 }
-#else
-# define parse_dollar_squote(as_string, dest, input) 0
-#endif /* BASH_DOLLAR_SQUOTE */
-#endif /* !__U_BOOT__ */
+#ورنہ
+# define parse_dollar_squote(as_string, dest, داخلہ) 0
+#اگر_ختم /* BASH_DOLLAR_SQUOTE */
+#اگر_ختم /* !__U_BOOT__ */
 
 /* Return code: 0 for OK, 1 for syntax error */
-#if BB_MMU
-#define parse_dollar(as_string, dest, input, quote_mask) \
-	parse_dollar(dest, input, quote_mask)
-#define as_string NULL
-#endif
-static int parse_dollar(o_string *as_string,
+#اگر BB_MMU
+#تعریف_کرو parse_dollar(as_string, dest, داخلہ, quote_نقاب) \
+	parse_dollar(dest, داخلہ, quote_نقاب)
+#تعریف_کرو as_string تہی
+#اگر_ختم
+ساکن صحیح parse_dollar(o_string *as_string,
 		o_string *dest,
-		struct in_str *input, unsigned char quote_mask)
+		ساخت اندر_str *داخلہ, غیرعلامتی حرف quote_نقاب)
 {
-	int ch = i_peek_and_eat_bkslash_nl(input);  /* first character after the $ */
+	صحیح ch = i_peek_and_eat_bkslash_nl(داخلہ);  /* first character after the $ */
 
-	debug_printf_parse("parse_dollar entered: ch='%c' quote_mask:0x%x\n", ch, quote_mask);
-	if (isalpha(ch)) {
+	debug_printf_parse("parse_dollar entered: ch='%c' quote_mask:0x%x\n", ch, quote_نقاب);
+	اگر (حرف_ہے(ch)) {
  make_var:
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
  /*make_var1:*/
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		while (1) {
+		o_addchr(dest, SPECIAL_VAR_علامت);
+		جب (1) {
 			debug_printf_parse(": '%c'\n", ch);
-			o_addchr(dest, ch | quote_mask);
-			quote_mask = 0;
-			ch = i_peek_and_eat_bkslash_nl(input);
-			if (!isalnum(ch) && ch != '_') {
+			o_addchr(dest, ch | quote_نقاب);
+			quote_نقاب = 0;
+			ch = i_peek_and_eat_bkslash_nl(داخلہ);
+			اگر (!حرف_یا_ہندسہ(ch) && ch != '_') {
 				/* End of variable name reached */
-				break;
+				توڑو;
 			}
-			ch = i_getch(input);
+			ch = i_getch(داخلہ);
 			nommu_addchr(as_string, ch);
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-	} else if (isdigit(ch)) {
+		o_addchr(dest, SPECIAL_VAR_علامت);
+	} ورنہ اگر (ہندسہ_ہے(ch)) {
  make_one_char_var:
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 		debug_printf_parse(": '%c'\n", ch);
-		o_addchr(dest, ch | quote_mask);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-	} else switch (ch) {
-#ifndef __U_BOOT__
-	case '$': /* pid */
-	case '!': /* last bg pid */
-#endif /* !__U_BOOT__ */
-	case '?': /* last exit code */
-	case '#': /* number of args */
-	case '*': /* args */
-	case '@': /* args */
-	case '-': /* $- option flags set by set builtin or shell options (-i etc) */
-		goto make_one_char_var;
-	case '{': {
-		char len_single_ch;
+		o_addchr(dest, ch | quote_نقاب);
+		o_addchr(dest, SPECIAL_VAR_علامت);
+	} ورنہ انتخاب (ch) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	حالت '$': /* pid */
+	حالت '!': /* last bg pid */
+#اگر_ختم /* !__U_BOOT__ */
+	حالت '?': /* last exit code */
+	حالت '#': /* number of args */
+	حالت '*': /*دلائل*/
+	حالت '@': /*دلائل*/
+	حالت '-': /* $- option flags set by set builtin or shell options (-i etc) */
+		جاؤ make_one_char_var;
+	حالت '{': {
+		حرف len_single_ch;
 
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 
-		ch = i_getch(input); /* eat '{' */
+		ch = i_getch(داخلہ); /* eat '{' */
 		nommu_addchr(as_string, ch);
 
-		ch = i_getch_and_eat_bkslash_nl(input); /* first char after '{' */
+		ch = i_getch_and_eat_bkslash_nl(داخلہ); /* first char after '{' */
 		/* It should be ${?}, or ${#var},
 		 * or even ${?+subst} - operator acting on a special variable,
 		 * or the beginning of variable name.
 		 */
-		if (ch == EOF
-		 || (!strchr(_SPECIAL_VARS_STR, ch) && !isalnum(ch)) /* not one of those */
+		اگر (ch == EOF
+		 || (!strchr(_SPECIAL_VARS_STR, ch) && !حرف_یا_ہندسہ(ch)) /* not one of those */
 		) {
  bad_dollar_syntax:
 			syntax_error_unterm_str("${name}");
 			debug_printf_parse("parse_dollar return 0: unterminated ${name}\n");
-			return 0;
+			واپس 0;
 		}
 		nommu_addchr(as_string, ch);
 		len_single_ch = ch;
-		ch |= quote_mask;
+		ch |= quote_نقاب;
 
 		/* It's possible to just call add_till_closing_bracket() at this point.
 		 * However, this regresses some of our testsuite cases
 		 * which check invalid constructs like ${%}.
 		 * Oh well... let's check that the var name part is fine... */
 
-		if (isdigit(len_single_ch)
-		 || (len_single_ch == '#' && isdigit(i_peek_and_eat_bkslash_nl(input)))
+		اگر (ہندسہ_ہے(len_single_ch)
+		 || (len_single_ch == '#' && ہندسہ_ہے(i_peek_and_eat_bkslash_nl(داخلہ)))
 		) {
 			/* Execution engine uses plain xatoi_positive()
 			 * to interpret ${NNN} and {#NNN},
@@ -5497,36 +5497,36 @@ static int parse_dollar(o_string *as_string,
 			 * (bash does not support expressions in ${#NN},
 			 * e.g. ${#$var} and {#1:+WORD} are not supported).
 			 */
-			unsigned cnt = 9; /* max 9 digits for ${NN} and 8 for {#NN} */
-			while (1) {
+			غیرعلامتی cnt = 9; /* max 9 digits for ${NN} and 8 for {#NN} */
+			جب (1) {
 				o_addchr(dest, ch);
 				debug_printf_parse(": '%c'\n", ch);
-				ch = i_getch_and_eat_bkslash_nl(input);
+				ch = i_getch_and_eat_bkslash_nl(داخلہ);
 				nommu_addchr(as_string, ch);
-				if (ch == '}')
-					break;
-				if (--cnt == 0)
-					goto bad_dollar_syntax;
-				if (len_single_ch != '#' && strchr(VAR_SUBST_OPS, ch))
+				اگر (ch == '}')
+					توڑو;
+				اگر (--cnt == 0)
+					جاؤ bad_dollar_syntax;
+				اگر (len_single_ch != '#' && strchr(VAR_SUBST_OPS, ch))
 					/* ${NN<op>...} is valid */
-					goto eat_until_closing;
-				if (!isdigit(ch))
-					goto bad_dollar_syntax;
+					جاؤ eat_until_closing;
+				اگر (!ہندسہ_ہے(ch))
+					جاؤ bad_dollar_syntax;
 			}
-		} else
-		while (1) {
-			unsigned pos;
+		} ورنہ
+		جب (1) {
+			غیرعلامتی pos;
 
 			o_addchr(dest, ch);
 			debug_printf_parse(": '%c'\n", ch);
 
-			ch = i_getch(input);
+			ch = i_getch(داخلہ);
 			nommu_addchr(as_string, ch);
-			if (ch == '}')
-				break;
-#ifndef __U_BOOT__
-			if (!isalnum(ch) && ch != '_') {
-#else /* __U_BOOT__ */
+			اگر (ch == '}')
+				توڑو;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (!حرف_یا_ہندسہ(ch) && ch != '_') {
+#ورنہ /* __U_BOOT__ */
 			/*
 			 * In several places in U-Boot, we use variable like
 			 * foo# (e.g. serial#), particularly in env.
@@ -5536,21 +5536,21 @@ static int parse_dollar(o_string *as_string,
 			 * upstream hush but expansion will be done (even though
 			 * the result will be empty).
 			 */
-			if (!isalnum(ch) && ch != '_' && ch != '#') {
-#endif /* __U_BOOT__ */
-				unsigned end_ch;
-#ifndef __U_BOOT__
-				unsigned char last_ch;
-#endif /* !__U_BOOT__ */
+			اگر (!حرف_یا_ہندسہ(ch) && ch != '_' && ch != '#') {
+#اگر_ختم /* __U_BOOT__ */
+				غیرعلامتی انتہا_ch;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+				غیرعلامتی حرف آخری_ch;
+#اگر_ختم /* !__U_BOOT__ */
 				/* handle parameter expansions
 				 * http://www.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_06_02
 				 */
-				if (!strchr(VAR_SUBST_OPS, ch)) { /* ${var<bad_char>... */
-					if (len_single_ch != '#'
+				اگر (!strchr(VAR_SUBST_OPS, ch)) { /* ${var<bad_char>... */
+					اگر (len_single_ch != '#'
 					/*|| !strchr(SPECIAL_VARS_STR, ch) - disallow errors like ${#+} ? */
-					 || i_peek(input) != '}'
+					 || i_peek(داخلہ) != '}'
 					) {
-						goto bad_dollar_syntax;
+						جاؤ bad_dollar_syntax;
 					}
 					/* else: it's "length of C" ${#C} op,
 					 * where C is a single char
@@ -5559,27 +5559,27 @@ static int parse_dollar(o_string *as_string,
 				}
  eat_until_closing:
 				/* Eat everything until closing '}' (or ':') */
-				end_ch = '}';
-#ifndef __U_BOOT__
-				if (BASH_SUBSTR
+				انتہا_ch = '}';
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+				اگر (BASH_SUBSTR
 				 && ch == ':'
-				 && !strchr(MINUS_PLUS_EQUAL_QUESTION, i_peek(input))
+				 && !strchr(MINUS_PLUS_EQUAL_QUESTION, i_peek(داخلہ))
 				) {
 					/* It's ${var:N[:M]} thing */
-					end_ch = '}' * 0x100 + ':';
+					انتہا_ch = '}' * 0x100 + ':';
 				}
-				if (BASH_PATTERN_SUBST
+				اگر (BASH_نمونہ_SUBST
 				 && ch == '/'
 				) {
 					/* It's ${var/[/]pattern[/repl]} thing */
-					if (i_peek(input) == '/') { /* ${var//pattern[/repl]}? */
-						i_getch(input);
+					اگر (i_peek(داخلہ) == '/') { /* ${var//pattern[/repl]}? */
+						i_getch(داخلہ);
 						nommu_addchr(as_string, '/');
 						ch = '\\';
 					}
-					end_ch = '}' * 0x100 + '/';
+					انتہا_ch = '}' * 0x100 + '/';
 				}
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 				o_addchr(dest, ch);
 				/* The pattern can't be empty.
 				 * IOW: if the first char after "${v//" is a slash,
@@ -5587,162 +5587,162 @@ static int parse_dollar(o_string *as_string,
 				 *  v=/dev/ram; echo ${v////-}  prints -dev-ram (pattern is "/")
 				 *  v=/dev/ram; echo ${v///r/-} prints /dev-am  (pattern is "/r")
 				 */
-				if (i_peek(input) == '/') {
-					o_addchr(dest, i_getch(input));
+				اگر (i_peek(داخلہ) == '/') {
+					o_addchr(dest, i_getch(داخلہ));
 				}
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
  again:
-#endif /* !__U_BOOT__ */
-				if (!BB_MMU)
-					pos = dest->length;
-#if ENABLE_HUSH_DOLLAR_OPS
-#ifndef __U_BOOT__
-				last_ch = add_till_closing_bracket(dest, input, end_ch);
-				if (last_ch == 0) /* error? */
-					return 0;
-#endif /* !__U_BOOT__ */
-#else
-# error Simple code to only allow ${var} is not implemented
-#endif
-				if (as_string) {
-					o_addstr(as_string, dest->data + pos);
-#ifndef __U_BOOT__
-					o_addchr(as_string, last_ch);
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
+				اگر (!BB_MMU)
+					pos = dest->لمبائی;
+#اگر ENABLE_HUSH_DOLLAR_OPS
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+				آخری_ch = جوڑو_till_closing_bracket(dest, داخلہ, انتہا_ch);
+				اگر (آخری_ch == 0) /* error? */
+					واپس 0;
+#اگر_ختم /* !__U_BOOT__ */
+#ورنہ
+# error Simple رمز مقصد only allow ${var} is not implemented
+#اگر_ختم
+				اگر (as_string) {
+					o_addstr(as_string, dest->ڈیٹا + pos);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+					o_addchr(as_string, آخری_ch);
+#اگر_ختم /* !__U_BOOT__ */
 				}
 
-#ifndef __U_BOOT__
-				if ((BASH_SUBSTR || BASH_PATTERN_SUBST)
-					 && (end_ch & 0xff00)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+				اگر ((BASH_SUBSTR || BASH_نمونہ_SUBST)
+					 && (انتہا_ch & 0xff00)
 				) {
 					/* close the first block: */
-					o_addchr(dest, SPECIAL_VAR_SYMBOL);
+					o_addchr(dest, SPECIAL_VAR_علامت);
 					/* while parsing N from ${var:N[:M]}
 					 * or pattern from ${var/[/]pattern[/repl]} */
-					if ((end_ch & 0xff) == last_ch) {
+					اگر ((انتہا_ch & 0xff) == آخری_ch) {
 						/* got ':' or '/'- parse the rest */
-						end_ch = '}';
-						goto again;
+						انتہا_ch = '}';
+						جاؤ again;
 					}
 					/* got '}' */
-					if (BASH_SUBSTR && end_ch == '}' * 0x100 + ':') {
+					اگر (BASH_SUBSTR && انتہا_ch == '}' * 0x100 + ':') {
 						/* it's ${var:N} - emulate :999999999 */
 						o_addstr(dest, "999999999");
 					} /* else: it's ${var/[/]pattern} */
 				}
-#endif /* !__U_BOOT__ */
-				break;
+#اگر_ختم /* !__U_BOOT__ */
+				توڑو;
 			}
 			len_single_ch = 0; /* it can't be ${#C} op */
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		break;
+		o_addchr(dest, SPECIAL_VAR_علامت);
+		توڑو;
 	}
-#if ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_TICK
-	case '(': {
-		unsigned pos;
+#اگر ENABLE_FEATURE_SH_MATH || ENABLE_HUSH_TICK
+	حالت '(': {
+		غیرعلامتی pos;
 
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-# if ENABLE_FEATURE_SH_MATH
-		if (i_peek_and_eat_bkslash_nl(input) == '(') {
-			ch = i_getch(input);
+# اگر ENABLE_FEATURE_SH_MATH
+		اگر (i_peek_and_eat_bkslash_nl(داخلہ) == '(') {
+			ch = i_getch(داخلہ);
 			nommu_addchr(as_string, ch);
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
-			o_addchr(dest, quote_mask | '+');
-			if (!BB_MMU)
-				pos = dest->length;
-			if (!add_till_closing_bracket(dest, input, ')' | DOUBLE_CLOSE_CHAR_FLAG))
-				return 0; /* error */
-			if (as_string) {
-				o_addstr(as_string, dest->data + pos);
+			o_addchr(dest, SPECIAL_VAR_علامت);
+			o_addchr(dest, quote_نقاب | '+');
+			اگر (!BB_MMU)
+				pos = dest->لمبائی;
+			اگر (!جوڑو_till_closing_bracket(dest, داخلہ, ')' | DOUBLE_CLOSE_CHAR_FLAG))
+				واپس 0; /* error */
+			اگر (as_string) {
+				o_addstr(as_string, dest->ڈیٹا + pos);
 				o_addchr(as_string, ')');
 				o_addchr(as_string, ')');
 			}
-			o_addchr(dest, SPECIAL_VAR_SYMBOL);
-			break;
+			o_addchr(dest, SPECIAL_VAR_علامت);
+			توڑو;
 		}
 # endif
-# if ENABLE_HUSH_TICK
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
-		o_addchr(dest, quote_mask | '`');
-		if (!BB_MMU)
-			pos = dest->length;
-		if (!add_till_closing_bracket(dest, input, ')'))
-			return 0; /* error */
-		if (as_string) {
-			o_addstr(as_string, dest->data + pos);
+# اگر ENABLE_HUSH_TICK
+		o_addchr(dest, SPECIAL_VAR_علامت);
+		o_addchr(dest, quote_نقاب | '`');
+		اگر (!BB_MMU)
+			pos = dest->لمبائی;
+		اگر (!جوڑو_till_closing_bracket(dest, داخلہ, ')'))
+			واپس 0; /* error */
+		اگر (as_string) {
+			o_addstr(as_string, dest->ڈیٹا + pos);
 			o_addchr(as_string, ')');
 		}
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 # endif
-		break;
+		توڑو;
 	}
-#endif
-	case '_':
-		goto make_var;
-#if 0
+#اگر_ختم
+	حالت '_':
+		جاؤ make_var;
+#اگر 0
 	/* TODO: $_: */
 	/* $_ Shell or shell script name; or last argument of last command
 	 * (if last command wasn't a pipe; if it was, bash sets $_ to "");
 	 * but in command's env, set to full pathname used to invoke it */
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		nommu_addchr(as_string, ch);
-		ch = i_peek_and_eat_bkslash_nl(input);
-		if (isalnum(ch)) { /* it's $_name or $_123 */
+		ch = i_peek_and_eat_bkslash_nl(داخلہ);
+		اگر (حرف_یا_ہندسہ(ch)) { /* it's $_name or $_123 */
 			ch = '_';
-			goto make_var1;
+			جاؤ make_var1;
 		}
 		/* else: it's $_ */
-#endif
-	default:
-		o_addQchr(dest, '$');
+#اگر_ختم
+	طےشدہ:
+		o_جوڑو_Qchr(dest, '$');
 	}
 	debug_printf_parse("parse_dollar return 1 (ok)\n");
-	return 1;
-#undef as_string
+	واپس 1;
+#تعریف_منسوخ as_string
 }
 
-#if BB_MMU
-#define encode_string(as_string, dest, input, dquote_end) \
-	encode_string(dest, input, dquote_end)
-#define as_string NULL
-#endif
-static int encode_string(o_string *as_string,
+#اگر BB_MMU
+#تعریف_کرو encode_string(as_string, dest, داخلہ, dquote_انتہا) \
+	encode_string(dest, داخلہ, dquote_انتہا)
+#تعریف_کرو as_string تہی
+#اگر_ختم
+ساکن صحیح encode_string(o_string *as_string,
 		o_string *dest,
-		struct in_str *input,
-		int dquote_end)
+		ساخت اندر_str *داخلہ,
+		صحیح dquote_انتہا)
 {
-	int ch;
-	int next;
+	صحیح ch;
+	صحیح اگلا;
 
  again:
-	ch = i_getch(input);
-	if (ch != EOF)
+	ch = i_getch(داخلہ);
+	اگر (ch != EOF)
 		nommu_addchr(as_string, ch);
-	if (ch == dquote_end) { /* may be only '"' or EOF */
+	اگر (ch == dquote_انتہا) { /* may be only '"' or EOF */
 		debug_printf_parse("encode_string return 1 (ok)\n");
-		return 1;
+		واپس 1;
 	}
 	/* note: can't move it above ch == dquote_end check! */
-	if (ch == EOF) {
+	اگر (ch == EOF) {
 		syntax_error_unterm_ch('"');
-		return 0; /* error */
+		واپس 0; /* error */
 	}
-	next = '\0';
-	if (ch != '\n') {
-		next = i_peek(input);
+	اگلا = '\0';
+	اگر (ch != '\n') {
+		اگلا = i_peek(داخلہ);
 	}
 	debug_printf_parse("\" ch=%c (%d) escape=%d\n",
 			ch, ch, !!(dest->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-	if (ch == '\\') {
-		if (next == EOF) {
+	اگر (ch == '\\') {
+		اگر (اگلا == EOF) {
 			/* Testcase: in interactive shell a file with
 			 *  echo "unterminated string\<eof>
 			 * is sourced.
 			 */
 			syntax_error_unterm_ch('"');
-			return 0; /* error */
+			واپس 0; /* error */
 		}
 		/* bash:
 		 * "The backslash retains its special meaning [in "..."]
@@ -5752,45 +5752,45 @@ static int encode_string(o_string *as_string,
 		 * NB: in (unquoted) heredoc, above does not apply to ",
 		 * therefore we check for it by "next == dquote_end" cond.
 		 */
-		if (next == dquote_end || strchr("$`\\\n", next)) {
-			ch = i_getch(input); /* eat next */
-			if (ch == '\n')
-				goto again; /* skip \<newline> */
+		اگر (اگلا == dquote_انتہا || strchr("$`\\\n", اگلا)) {
+			ch = i_getch(داخلہ); /* eat next */
+			اگر (ch == '\n')
+				جاؤ again; /* skip \<newline> */
 		} /* else: ch remains == '\\', and we double it below: */
 		o_addqchr(dest, ch); /* \c if c is a glob char, else just c */
 		nommu_addchr(as_string, ch);
-		goto again;
+		جاؤ again;
 	}
-	if (ch == '$') {
+	اگر (ch == '$') {
 		//if (parse_dollar_squote(as_string, dest, input))
 		//	goto again;
-		if (!parse_dollar(as_string, dest, input, /*quote_mask:*/ 0x80)) {
+		اگر (!parse_dollar(as_string, dest, داخلہ, /*quote_mask:*/ 0x80)) {
 			debug_printf_parse("encode_string return 0: "
 					"parse_dollar returned 0 (error)\n");
-			return 0;
+			واپس 0;
 		}
-		goto again;
+		جاؤ again;
 	}
-#if ENABLE_HUSH_TICK
-	if (ch == '`') {
+#اگر ENABLE_HUSH_TICK
+	اگر (ch == '`') {
 		//unsigned pos = dest->length;
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 		o_addchr(dest, 0x80 | '`');
-		if (!add_till_backquote(dest, input, /*in_dquote:*/ dquote_end == '"'))
-			return 0; /* error */
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		اگر (!جوڑو_till_backquote(dest, داخلہ, /*in_dquote:*/ dquote_انتہا == '"'))
+			واپس 0; /* error */
+		o_addchr(dest, SPECIAL_VAR_علامت);
 		//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-		goto again;
+		جاؤ again;
 	}
-#endif
-	o_addQchr(dest, ch);
-	if (ch == SPECIAL_VAR_SYMBOL) {
+#اگر_ختم
+	o_جوڑو_Qchr(dest, ch);
+	اگر (ch == SPECIAL_VAR_علامت) {
 		/* Convert "^C" to corresponding special variable reference */
 		o_addchr(dest, SPECIAL_VAR_QUOTED_SVS);
-		o_addchr(dest, SPECIAL_VAR_SYMBOL);
+		o_addchr(dest, SPECIAL_VAR_علامت);
 	}
-	goto again;
-#undef as_string
+	جاؤ again;
+#تعریف_منسوخ as_string
 }
 
 /*
@@ -5801,19 +5801,19 @@ static int encode_string(o_string *as_string,
  * reset parsing machinery and start parsing anew,
  * or return ERR_PTR.
  */
-static struct pipe *parse_stream(char **pstring,
-		int *heredoc_cnt_ptr,
-		struct in_str *input,
-		int end_trigger)
+ساکن ساخت pipe *parse_دھارا(حرف **pstring,
+		صحیح *heredoc_cnt_ptr,
+		ساخت اندر_str *داخلہ,
+		صحیح انتہا_trigger)
 {
-	struct parse_context ctx;
-	int heredoc_cnt;
+	ساخت parse_context ctx;
+	صحیح heredoc_cnt;
 
 	/* Single-quote triggers a bypass of the main loop until its mate is
 	 * found.  When recursing, quote state is passed in via ctx.word.o_expflags.
 	 */
 	debug_printf_parse("parse_stream entered, end_trigger='%c'\n",
-			end_trigger ? end_trigger : 'X');
+			انتہا_trigger ? انتہا_trigger : 'X');
 	debug_enter();
 
 	initialize_context(&ctx);
@@ -5821,7 +5821,7 @@ static struct pipe *parse_stream(char **pstring,
 	/* If very first arg is "" or '', ctx.word.data may end up NULL.
 	 * Preventing this:
 	 */
-	ctx.word.data = xzalloc(1); /* start as "", not as NULL */
+	ctx.لفظ.ڈیٹا = xzalloc(1); /* start as "", not as NULL */
 
 	/* We used to separate words on $IFS here. This was wrong.
 	 * $IFS is used only for word splitting when $var is expanded,
@@ -5829,73 +5829,73 @@ static struct pipe *parse_stream(char **pstring,
 	 */
 
 	heredoc_cnt = 0;
-	while (1) {
-		const char *is_blank;
-		const char *is_special;
-		int ch;
-		int next;
-#ifndef __U_BOOT__
-		int redir_fd;
+	جب (1) {
+		ثابت حرف *is_blank;
+		ثابت حرف *is_special;
+		صحیح ch;
+		صحیح اگلا;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		صحیح redir_fd;
 		redir_type redir_style;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-		ch = i_getch(input);
+		ch = i_getch(داخلہ);
 		debug_printf_parse(": ch=%c (%d) escape=%d\n",
-				ch, ch, !!(ctx.word.o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (ch == EOF) {
-			struct pipe *pi;
+				ch, ch, !!(ctx.لفظ.o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
+		اگر (ch == EOF) {
+			ساخت pipe *pi;
 
-			if (heredoc_cnt) {
+			اگر (heredoc_cnt) {
 				syntax_error_unterm_str("here document");
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
-			if (end_trigger == ')') {
+			اگر (انتہا_trigger == ')') {
 				syntax_error_unterm_ch('(');
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
-			if (end_trigger == '}') {
+			اگر (انتہا_trigger == '}') {
 				syntax_error_unterm_ch('{');
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
 
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			o_free_and_set_NULL(&ctx.word);
-			done_pipe(&ctx, PIPE_SEQ);
+			o_free_and_سیٹ_NULL(&ctx.لفظ);
+			مکمل_pipe(&ctx, PIPE_SEQ);
 
 			/* Do we sit inside of any if's, loops or case's? */
-			if (HAS_KEYWORDS
+			اگر (HAS_KEYWORDS
 			IF_HAS_KEYWORDS(&& (ctx.ctx_res_w != RES_NONE || ctx.old_flag != 0))
 			) {
 				syntax_error_unterm_str("compound statement");
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
 
-			pi = ctx.list_head;
+			pi = ctx.list_سر;
 			/* If we got nothing... */
 			/* (this makes bare "&" cmd a no-op.
 			 * bash says: "syntax error near unexpected token '&'") */
-			if (pi->num_cmds == 0
-			IF_HAS_KEYWORDS(&& pi->res_word == RES_NONE)
+			اگر (pi->عدد_cmds == 0
+			IF_HAS_KEYWORDS(&& pi->res_لفظ == RES_NONE)
 			) {
 				free_pipe_list(pi);
-				pi = NULL;
+				pi = تہی;
 			}
-#if !BB_MMU
-			debug_printf_parse("as_string1 '%s'\n", ctx.as_string.data);
-			if (pstring)
-				*pstring = ctx.as_string.data;
-			else
+#اگر !BB_MMU
+			debug_printf_parse("as_string1 '%s'\n", ctx.as_string.ڈیٹا);
+			اگر (pstring)
+				*pstring = ctx.as_string.ڈیٹا;
+			ورنہ
 				o_free(&ctx.as_string);
-#endif
+#اگر_ختم
 			// heredoc_cnt must be 0 here anyway
 			//if (heredoc_cnt_ptr)
 			//	*heredoc_cnt_ptr = heredoc_cnt;
 			debug_leave();
 			debug_printf_heredoc("parse_stream return heredoc_cnt:%d\n", heredoc_cnt);
 			debug_printf_parse("parse_stream return %p: EOF\n", pi);
-			return pi;
+			واپس pi;
 		}
 
 		/* Handle "'" and "\" first, as they won't play nice with
@@ -5906,88 +5906,88 @@ static struct pipe *parse_stream(char **pstring,
 		 *   '
 		 * would break.
 		 */
-		if (ch == '\\') {
-			ch = i_getch(input);
-			if (ch == '\n')
-				continue; /* drop \<newline>, get next char */
+		اگر (ch == '\\') {
+			ch = i_getch(داخلہ);
+			اگر (ch == '\n')
+				جاری; /* drop \<newline>, get next char */
 			nommu_addchr(&ctx.as_string, '\\');
-			if (ch == SPECIAL_VAR_SYMBOL) {
+			اگر (ch == SPECIAL_VAR_علامت) {
 				nommu_addchr(&ctx.as_string, ch);
 				/* Convert \^C to corresponding special variable reference */
-				goto case_SPECIAL_VAR_SYMBOL;
+				جاؤ case_SPECIAL_VAR_علامت;
 			}
-			o_addchr(&ctx.word, '\\');
-			if (ch == EOF) {
+			o_addchr(&ctx.لفظ, '\\');
+			اگر (ch == EOF) {
 				/* Testcase: eval 'echo Ok\' */
 				/* bash-4.3.43 was removing backslash,
 				 * but 4.4.19 retains it, most other shells too
 				 */
-				continue; /* get next char */
+				جاری; /* get next char */
 			}
 			/* Example: echo Hello \2>file
 			 * we need to know that word 2 is quoted
 			 */
-			ctx.word.has_quoted_part = 1;
+			ctx.لفظ.has_quoted_part = 1;
 			nommu_addchr(&ctx.as_string, ch);
-			o_addchr(&ctx.word, ch);
-			continue; /* get next char */
+			o_addchr(&ctx.لفظ, ch);
+			جاری; /* get next char */
 		}
 		nommu_addchr(&ctx.as_string, ch);
-		if (ch == '\'') {
-			ctx.word.has_quoted_part = 1;
-			next = i_getch(input);
-#ifndef __U_BOOT__
-			if (next == '\'' && !ctx.pending_redirect)
-				goto insert_empty_quoted_str_marker;
-#endif /* !__U_BOOT__ */
+		اگر (ch == '\'') {
+			ctx.لفظ.has_quoted_part = 1;
+			اگلا = i_getch(داخلہ);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (اگلا == '\'' && !ctx.pending_redirect)
+				جاؤ داخل_کرو_خالی_خانے_quoted_str_marker;
+#اگر_ختم /* !__U_BOOT__ */
 
-			ch = next;
-			while (1) {
-				if (ch == EOF) {
+			ch = اگلا;
+			جب (1) {
+				اگر (ch == EOF) {
 					syntax_error_unterm_ch('\'');
-					goto parse_error_exitcode1;
+					جاؤ parse_error_exitcode1;
 				}
 				nommu_addchr(&ctx.as_string, ch);
-				if (ch == '\'')
-					break;
-				if (ch == SPECIAL_VAR_SYMBOL) {
+				اگر (ch == '\'')
+					توڑو;
+				اگر (ch == SPECIAL_VAR_علامت) {
 					/* Convert raw ^C to corresponding special variable reference */
-					o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-					o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
+					o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
+					o_addchr(&ctx.لفظ, SPECIAL_VAR_QUOTED_SVS);
 				}
-				o_addqchr(&ctx.word, ch);
-				ch = i_getch(input);
+				o_addqchr(&ctx.لفظ, ch);
+				ch = i_getch(داخلہ);
 			}
-			continue; /* get next char */
+			جاری; /* get next char */
 		}
 
-		next = '\0';
-		if (ch != '\n')
-			next = i_peek_and_eat_bkslash_nl(input);
+		اگلا = '\0';
+		اگر (ch != '\n')
+			اگلا = i_peek_and_eat_bkslash_nl(داخلہ);
 
 		is_special = "{}<>&|();#" /* special outside of "str" */
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 				"$\"" IF_HUSH_TICK("`") /* always special */
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 				"$\""
-#endif /* __U_BOOT__ */
-				SPECIAL_VAR_SYMBOL_STR;
-#if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (ctx.command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB) {
+#اگر_ختم /* __U_BOOT__ */
+				SPECIAL_VAR_علامت_STR;
+#اگر defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		اگر (ctx.command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB) {
 			/* In [[ ]], {}<>&|() are not special */
 			is_special += 8;
-		} else
-#endif
+		} ورنہ
+#اگر_ختم
 		/* Are { and } special here? */
-		if (ctx.command->argv /* word [word]{... - non-special */
-		 || ctx.word.length       /* word{... - non-special */
-		 || ctx.word.has_quoted_part     /* ""{... - non-special */
-		 || (next != ';'             /* }; - special */
-		    && next != ')'           /* }) - special */
-		    && next != '('           /* {( - special */
-		    && next != '&'           /* }& and }&& ... - special */
-		    && next != '|'           /* }|| ... - special */
-		    && !strchr(defifs, next) /* {word - non-special */
+		اگر (ctx.command->argv /* word [word]{... - non-special */
+		 || ctx.لفظ.لمبائی       /* word{... - non-special */
+		 || ctx.لفظ.has_quoted_part     /* ""{... - non-special */
+		 || (اگلا != ';'             /* }; - special */
+		    && اگلا != ')'           /* }) - special */
+		    && اگلا != '('           /* {( - special */
+		    && اگلا != '&'           /* }& and }&& ... - special */
+		    && اگلا != '|'           /* }|| ... - special */
+		    && !strchr(defifs, اگلا) /* {word - non-special */
 		    )
 		) {
 			/* They are not special, skip "{}" */
@@ -5996,22 +5996,22 @@ static struct pipe *parse_stream(char **pstring,
 		is_special = strchr(is_special, ch);
 		is_blank = strchr(defifs, ch);
 
-		if (!is_special && !is_blank) { /* ordinary char */
+		اگر (!is_special && !is_blank) { /* ordinary char */
  ordinary_char:
-			o_addQchr(&ctx.word, ch);
-			if ((ctx.is_assignment == MAYBE_ASSIGNMENT
-			    || ctx.is_assignment == WORD_IS_KEYWORD)
+			o_جوڑو_Qchr(&ctx.لفظ, ch);
+			اگر ((ctx.is_assignment == MAYBE_ASSIGNMENT
+			    || ctx.is_assignment == لفظ_IS_KEYWORD)
 			 && ch == '='
-			 && endofname(ctx.word.data)[0] == '='
+			 && endofname(ctx.لفظ.ڈیٹا)[0] == '='
 			) {
 				ctx.is_assignment = DEFINITELY_ASSIGNMENT;
 				debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
 			}
-			continue;
+			جاری;
 		}
 
-		if (is_blank) {
-#if ENABLE_HUSH_LINENO_VAR
+		اگر (is_blank) {
+#اگر ENABLE_HUSH_LINENO_VAR
 /* Case:
  * "while ...; do<whitespace><newline>
  *	cmd ..."
@@ -6019,26 +6019,26 @@ static struct pipe *parse_stream(char **pstring,
  * i.e., at the previous line.
  * We need to skip all whitespace before newlines.
  */
-			while (ch != '\n') {
-				next = i_peek(input);
-				if (next != ' ' && next != '\t' && next != '\n')
-					break; /* next char is not ws */
-				ch = i_getch(input);
+			جب (ch != '\n') {
+				اگلا = i_peek(داخلہ);
+				اگر (اگلا != ' ' && اگلا != '\t' && اگلا != '\n')
+					توڑو; /* next char is not ws */
+				ch = i_getch(داخلہ);
 			}
 			/* ch == last eaten whitespace char */
-#endif
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+#اگر_ختم
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			if (ch == '\n') {
+			اگر (ch == '\n') {
 				/* Is this a case when newline is simply ignored?
 				 * Some examples:
 				 * "cmd | <newline> cmd ..."
 				 * "case ... in <newline> word) ..."
 				 */
-				if (IS_NULL_CMD(ctx.command)
-				 && ctx.word.length == 0
-				 && !ctx.word.has_quoted_part
+				اگر (IS_NULL_CMD(ctx.command)
+				 && ctx.لفظ.لمبائی == 0
+				 && !ctx.لفظ.has_quoted_part
 				 && heredoc_cnt == 0
 				) {
 					/* This newline can be ignored. But...
@@ -6058,20 +6058,20 @@ static struct pipe *parse_stream(char **pstring,
 					 * a "cmd1 && <nl> cmd2 &" construct,
 					 * cmd1 may need to run in BG).
 					 */
-					struct pipe *pi = ctx.list_head;
-					if (pi->num_cmds != 0       /* check #1 */
+					ساخت pipe *pi = ctx.list_سر;
+					اگر (pi->عدد_cmds != 0       /* check #1 */
 					 && pi->followup != PIPE_BG /* check #2 */
 					) {
-						continue;
+						جاری;
 					}
 				}
 				/* Treat newline as a command separator. */
-				done_pipe(&ctx, PIPE_SEQ);
+				مکمل_pipe(&ctx, PIPE_SEQ);
 				debug_printf_heredoc("heredoc_cnt:%d\n", heredoc_cnt);
-				if (heredoc_cnt) {
-					heredoc_cnt = fetch_heredocs(&ctx.as_string, ctx.list_head, heredoc_cnt, input);
-					if (heredoc_cnt != 0)
-						goto parse_error_exitcode1;
+				اگر (heredoc_cnt) {
+					heredoc_cnt = fetch_heredocs(&ctx.as_string, ctx.list_سر, heredoc_cnt, داخلہ);
+					اگر (heredoc_cnt != 0)
+						جاؤ parse_error_exitcode1;
 				}
 				ctx.is_assignment = MAYBE_ASSIGNMENT;
 				debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
@@ -6085,17 +6085,17 @@ static struct pipe *parse_stream(char **pstring,
 		 * } is an ordinary char in this case, even inside { cmd; }
 		 * Pathological example: { ""}; } should exec "}" cmd
 		 */
-#ifndef __U_BOOT__
-		if (ch == '}') {
-#else /* __U_BOOT__ */
-		if (ch == '}' || ch == ')') {
-#endif /* __U_BOOT__ */
-			if (ctx.word.length != 0 /* word} */
-			 || ctx.word.has_quoted_part    /* ""} */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		اگر (ch == '}') {
+#ورنہ /* __U_BOOT__ */
+		اگر (ch == '}' || ch == ')') {
+#اگر_ختم /* __U_BOOT__ */
+			اگر (ctx.لفظ.لمبائی != 0 /* word} */
+			 || ctx.لفظ.has_quoted_part    /* ""} */
 			) {
-				goto ordinary_char;
+				جاؤ ordinary_char;
 			}
-			if (!IS_NULL_CMD(ctx.command)) { /* cmd } */
+			اگر (!IS_NULL_CMD(ctx.command)) { /* cmd } */
 				/* Generally, there should be semicolon: "cmd; }"
 				 * However, bash allows to omit it if "cmd" is
 				 * a group. Examples:
@@ -6105,114 +6105,114 @@ static struct pipe *parse_stream(char **pstring,
 				 * { while false; do :; done }
 				 * { case a in b) ;; esac }
 				 */
-				if (ctx.command->group)
-					goto term_group;
-				goto ordinary_char;
+				اگر (ctx.command->گروہ)
+					جاؤ رکن_گروہ;
+				جاؤ ordinary_char;
 			}
-			if (!IS_NULL_PIPE(ctx.pipe)) /* cmd | } */
+			اگر (!IS_NULL_PIPE(ctx.pipe)) /* cmd | } */
 				/* Can't be an end of {cmd}, skip the check */
-				goto skip_end_trigger;
+				جاؤ skip_انتہا_trigger;
 			/* else: } does terminate a group */
 		}
- term_group:
-		if (end_trigger && end_trigger == ch
+ رکن_گروہ:
+		اگر (انتہا_trigger && انتہا_trigger == ch
 		 && (ch != ';' || heredoc_cnt == 0)
-#if ENABLE_HUSH_CASE
+#اگر ENABLE_HUSH_CASE
 		 && (ch != ')'
-		    || ctx.ctx_res_w != RES_MATCH
-		    || (!ctx.word.has_quoted_part && strcmp(ctx.word.data, "esac") == 0)
+		    || ctx.ctx_res_w != RES_مطابقت
+		    || (!ctx.لفظ.has_quoted_part && strcmp(ctx.لفظ.ڈیٹا, "esac") == 0)
 		    )
-#endif
+#اگر_ختم
 		) {
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			done_pipe(&ctx, PIPE_SEQ);
+			مکمل_pipe(&ctx, PIPE_SEQ);
 			ctx.is_assignment = MAYBE_ASSIGNMENT;
 			debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
 			/* Do we sit outside of any if's, loops or case's? */
-			if (!HAS_KEYWORDS
+			اگر (!HAS_KEYWORDS
 			IF_HAS_KEYWORDS(|| (ctx.ctx_res_w == RES_NONE && ctx.old_flag == 0))
 			) {
-				o_free_and_set_NULL(&ctx.word);
-#if !BB_MMU
-				debug_printf_parse("as_string2 '%s'\n", ctx.as_string.data);
-				if (pstring)
-					*pstring = ctx.as_string.data;
-				else
+				o_free_and_سیٹ_NULL(&ctx.لفظ);
+#اگر !BB_MMU
+				debug_printf_parse("as_string2 '%s'\n", ctx.as_string.ڈیٹا);
+				اگر (pstring)
+					*pstring = ctx.as_string.ڈیٹا;
+				ورنہ
 					o_free(&ctx.as_string);
-#endif
-				if (ch != ';' && IS_NULL_PIPE(ctx.list_head)) {
+#اگر_ختم
+				اگر (ch != ';' && IS_NULL_PIPE(ctx.list_سر)) {
 					/* Example: bare "{ }", "()" */
-					G.last_exitcode = 2; /* bash compat */
+					G.آخری_exitcode = 2; /* bash compat */
 					syntax_error_unexpected_ch(ch);
-					goto parse_error;
+					جاؤ parse_error;
 				}
-				if (heredoc_cnt_ptr)
+				اگر (heredoc_cnt_ptr)
 					*heredoc_cnt_ptr = heredoc_cnt;
 				debug_printf_heredoc("parse_stream return heredoc_cnt:%d\n", heredoc_cnt);
 				debug_printf_parse("parse_stream return %p: "
 						"end_trigger char found\n",
-						ctx.list_head);
+						ctx.list_سر);
 				debug_leave();
-				return ctx.list_head;
+				واپس ctx.list_سر;
 			}
 		}
 
-		if (is_blank)
-			continue;
+		اگر (is_blank)
+			جاری;
 
 		/* Catch <, > before deciding whether this word is
 		 * an assignment. a=1 2>z b=2: b=2 is still assignment */
-		switch (ch) {
-#ifndef __U_BOOT__
-		case '>':
-			redir_fd = redirect_opt_num(&ctx.word);
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+		انتخاب (ch) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		حالت '>':
+			redir_fd = redirect_opt_عدد(&ctx.لفظ);
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
 			redir_style = REDIRECT_OVERWRITE;
-			if (next == '>') {
+			اگر (اگلا == '>') {
 				redir_style = REDIRECT_APPEND;
-				ch = i_getch(input);
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
 			}
-#if 0
-			else if (next == '(') {
+#اگر 0
+			ورنہ اگر (اگلا == '(') {
 				syntax_error(">(process) not supported");
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
-#endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
-				goto parse_error_exitcode1;
-			continue; /* get next char */
-		case '<':
-			redir_fd = redirect_opt_num(&ctx.word);
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+#اگر_ختم
+			اگر (parse_redirect(&ctx, redir_fd, redir_style, داخلہ))
+				جاؤ parse_error_exitcode1;
+			جاری; /* get next char */
+		حالت '<':
+			redir_fd = redirect_opt_عدد(&ctx.لفظ);
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			redir_style = REDIRECT_INPUT;
-			if (next == '<') {
+			redir_style = REDIRECT_داخلہ;
+			اگر (اگلا == '<') {
 				redir_style = REDIRECT_HEREDOC;
 				heredoc_cnt++;
 				debug_printf_heredoc("++heredoc_cnt=%d\n", heredoc_cnt);
-				ch = i_getch(input);
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
-			} else if (next == '>') {
+			} ورنہ اگر (اگلا == '>') {
 				redir_style = REDIRECT_IO;
-				ch = i_getch(input);
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
 			}
-#if 0
-			else if (next == '(') {
+#اگر 0
+			ورنہ اگر (اگلا == '(') {
 				syntax_error("<(process) not supported");
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
-#endif
-			if (parse_redirect(&ctx, redir_fd, redir_style, input))
-				goto parse_error_exitcode1;
-			continue; /* get next char */
-#else /* __U_BOOT__ */
+#اگر_ختم
+			اگر (parse_redirect(&ctx, redir_fd, redir_style, داخلہ))
+				جاؤ parse_error_exitcode1;
+			جاری; /* get next char */
+#ورنہ /* __U_BOOT__ */
 			/*
 			 * In U-Boot, '<' and '>' can be used in test command to test if
 			 * a string is, alphabetically, before or after another.
@@ -6228,14 +6228,14 @@ static struct pipe *parse_stream(char **pstring,
 			 * escape these will make you should check your code (sh syntax
 			 * at this level is, for me, error prone).
 			 */
-			case '>':
+			حالت '>':
 				fallthrough;
-			case '<':
-				o_addQchr(&ctx.word, ch);
-				continue;
-#endif /* __U_BOOT__ */
-		case '#':
-			if (ctx.word.length == 0 && !ctx.word.has_quoted_part) {
+			حالت '<':
+				o_جوڑو_Qchr(&ctx.لفظ, ch);
+				جاری;
+#اگر_ختم /* __U_BOOT__ */
+		حالت '#':
+			اگر (ctx.لفظ.لمبائی == 0 && !ctx.لفظ.has_quoted_part) {
 				/* skip "#comment" */
 				/* note: we do not add it to &ctx.as_string */
 /* TODO: in bash:
@@ -6244,27 +6244,27 @@ static struct pipe *parse_stream(char **pstring,
  * cmd "`cmd2 #comment`" - ok
  * We accept both (comment ends where command subst ends, in both cases).
  */
-				while (1) {
-					ch = i_peek(input);
-					if (ch == '\n') {
+				جب (1) {
+					ch = i_peek(داخلہ);
+					اگر (ch == '\n') {
 						nommu_addchr(&ctx.as_string, '\n');
-						break;
+						توڑو;
 					}
-					ch = i_getch(input);
-					if (ch == EOF)
-						break;
+					ch = i_getch(داخلہ);
+					اگر (ch == EOF)
+						توڑو;
 				}
-				continue; /* get next char */
+				جاری; /* get next char */
 			}
-			break;
+			توڑو;
 		}
- skip_end_trigger:
+ skip_انتہا_trigger:
 
-		if (ctx.is_assignment == MAYBE_ASSIGNMENT
-#ifndef __U_BOOT__
+		اگر (ctx.is_assignment == MAYBE_ASSIGNMENT
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		 /* check that we are not in word in "a=1 2>word b=1": */
 		 && !ctx.pending_redirect
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 		) {
 			/* ch is a special char and thus this word
 			 * cannot be an assignment */
@@ -6274,174 +6274,174 @@ static struct pipe *parse_stream(char **pstring,
 
 		/* Note: nommu_addchr(&ctx.as_string, ch) is already done */
 
-		switch (ch) {
-		case_SPECIAL_VAR_SYMBOL:
-		case SPECIAL_VAR_SYMBOL:
+		انتخاب (ch) {
+		case_SPECIAL_VAR_علامت:
+		حالت SPECIAL_VAR_علامت:
 			/* Convert raw ^C to corresponding special variable reference */
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-			o_addchr(&ctx.word, SPECIAL_VAR_QUOTED_SVS);
+			o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
+			o_addchr(&ctx.لفظ, SPECIAL_VAR_QUOTED_SVS);
 			/* fall through */
-		case '#':
+		حالت '#':
 			/* non-comment #: "echo a#b" etc */
-			o_addchr(&ctx.word, ch);
-			continue; /* get next char */
-		case '$':
-#ifndef __U_BOOT__
-			if (parse_dollar_squote(&ctx.as_string, &ctx.word, input))
-				continue; /* get next char */
-#endif /* !__U_BOOT__ */
-			if (!parse_dollar(&ctx.as_string, &ctx.word, input, /*quote_mask:*/ 0)) {
+			o_addchr(&ctx.لفظ, ch);
+			جاری; /* get next char */
+		حالت '$':
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (parse_dollar_squote(&ctx.as_string, &ctx.لفظ, داخلہ))
+				جاری; /* get next char */
+#اگر_ختم /* !__U_BOOT__ */
+			اگر (!parse_dollar(&ctx.as_string, &ctx.لفظ, داخلہ, /*quote_mask:*/ 0)) {
 				debug_printf_parse("parse_stream parse error: "
 					"parse_dollar returned 0 (error)\n");
-				goto parse_error_exitcode1;
+				جاؤ parse_error_exitcode1;
 			}
-			continue; /* get next char */
-		case '"':
-			ctx.word.has_quoted_part = 1;
-#ifndef __U_BOOT__
-			if (next == '"' && !ctx.pending_redirect) {
-#else /* __U_BOOT__ */
-			if (next == '"') {
-#endif /* __U_BOOT__ */
-				i_getch(input); /* eat second " */
-#ifndef __U_BOOT__
- insert_empty_quoted_str_marker:
-#endif /* !__U_BOOT__ */
-				nommu_addchr(&ctx.as_string, next);
-				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-				o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-				continue; /* get next char */
+			جاری; /* get next char */
+		حالت '"':
+			ctx.لفظ.has_quoted_part = 1;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (اگلا == '"' && !ctx.pending_redirect) {
+#ورنہ /* __U_BOOT__ */
+			اگر (اگلا == '"') {
+#اگر_ختم /* __U_BOOT__ */
+				i_getch(داخلہ); /* eat second " */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ داخل_کرو_خالی_خانے_quoted_str_marker:
+#اگر_ختم /* !__U_BOOT__ */
+				nommu_addchr(&ctx.as_string, اگلا);
+				o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
+				o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
+				جاری; /* get next char */
 			}
-			if (ctx.is_assignment == NOT_ASSIGNMENT)
-				ctx.word.o_expflags |= EXP_FLAG_ESC_GLOB_CHARS;
-			if (!encode_string(&ctx.as_string, &ctx.word, input, '"'))
-				goto parse_error_exitcode1;
-			ctx.word.o_expflags &= ~EXP_FLAG_ESC_GLOB_CHARS;
-			continue; /* get next char */
-#if ENABLE_HUSH_TICK
-		case '`': {
-			USE_FOR_NOMMU(unsigned pos;)
+			اگر (ctx.is_assignment == NOT_ASSIGNMENT)
+				ctx.لفظ.o_expflags |= EXP_FLAG_ESC_GLOB_CHARS;
+			اگر (!encode_string(&ctx.as_string, &ctx.لفظ, داخلہ, '"'))
+				جاؤ parse_error_exitcode1;
+			ctx.لفظ.o_expflags &= ~EXP_FLAG_ESC_GLOB_CHARS;
+			جاری; /* get next char */
+#اگر ENABLE_HUSH_TICK
+		حالت '`': {
+			USE_FOR_NOMMU(غیرعلامتی pos;)
 
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
-			o_addchr(&ctx.word, '`');
-			USE_FOR_NOMMU(pos = ctx.word.length;)
-			if (!add_till_backquote(&ctx.word, input, /*in_dquote:*/ 0))
-				goto parse_error_exitcode1;
-# if !BB_MMU
-			o_addstr(&ctx.as_string, ctx.word.data + pos);
+			o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
+			o_addchr(&ctx.لفظ, '`');
+			USE_FOR_NOMMU(pos = ctx.لفظ.لمبائی;)
+			اگر (!جوڑو_till_backquote(&ctx.لفظ, داخلہ, /*in_dquote:*/ 0))
+				جاؤ parse_error_exitcode1;
+# اگر !BB_MMU
+			o_addstr(&ctx.as_string, ctx.لفظ.ڈیٹا + pos);
 			o_addchr(&ctx.as_string, '`');
 # endif
-			o_addchr(&ctx.word, SPECIAL_VAR_SYMBOL);
+			o_addchr(&ctx.لفظ, SPECIAL_VAR_علامت);
 			//debug_printf_subst("SUBST RES3 '%s'\n", ctx.word.data + pos);
-			continue; /* get next char */
+			جاری; /* get next char */
 		}
-#endif
-		case ';':
-#if ENABLE_HUSH_CASE
+#اگر_ختم
+		حالت ';':
+#اگر ENABLE_HUSH_CASE
  case_semi:
-#endif
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+#اگر_ختم
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			done_pipe(&ctx, PIPE_SEQ);
-#if ENABLE_HUSH_CASE
+			مکمل_pipe(&ctx, PIPE_SEQ);
+#اگر ENABLE_HUSH_CASE
 			/* Eat multiple semicolons, detect
 			 * whether it means something special */
-			while (1) {
-				ch = i_peek_and_eat_bkslash_nl(input);
-				if (ch != ';')
-					break;
-				ch = i_getch(input);
+			جب (1) {
+				ch = i_peek_and_eat_bkslash_nl(داخلہ);
+				اگر (ch != ';')
+					توڑو;
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
-				if (ctx.ctx_res_w == RES_CASE_BODY) {
+				اگر (ctx.ctx_res_w == RES_CASE_BODY) {
 					ctx.ctx_dsemicolon = 1;
-					ctx.ctx_res_w = RES_MATCH;
-					break;
+					ctx.ctx_res_w = RES_مطابقت;
+					توڑو;
 				}
 			}
-#endif
+#اگر_ختم
  new_cmd:
 			/* We just finished a cmd. New one may start
 			 * with an assignment */
 			ctx.is_assignment = MAYBE_ASSIGNMENT;
 			debug_printf_parse("ctx.is_assignment='%s'\n", assignment_flag[ctx.is_assignment]);
-			continue; /* get next char */
-		case '&':
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			جاری; /* get next char */
+		حالت '&':
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-			if (next == '&') {
-				ch = i_getch(input);
+			اگر (اگلا == '&') {
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
-				done_pipe(&ctx, PIPE_AND);
-			} else {
-				done_pipe(&ctx, PIPE_BG);
+				مکمل_pipe(&ctx, PIPE_AND);
+			} ورنہ {
+				مکمل_pipe(&ctx, PIPE_BG);
 			}
-			goto new_cmd;
-		case '|':
-			if (done_word(&ctx)) {
-				goto parse_error_exitcode1;
+			جاؤ new_cmd;
+		حالت '|':
+			اگر (مکمل_لفظ(&ctx)) {
+				جاؤ parse_error_exitcode1;
 			}
-#if ENABLE_HUSH_CASE
-			if (ctx.ctx_res_w == RES_MATCH)
-				break; /* we are in case's "word | word)" */
-#endif
-			if (next == '|') { /* || */
-				ch = i_getch(input);
+#اگر ENABLE_HUSH_CASE
+			اگر (ctx.ctx_res_w == RES_مطابقت)
+				توڑو; /* we are in case's "word | word)" */
+#اگر_ختم
+			اگر (اگلا == '|') { /* || */
+				ch = i_getch(داخلہ);
 				nommu_addchr(&ctx.as_string, ch);
-				done_pipe(&ctx, PIPE_OR);
-			} else {
+				مکمل_pipe(&ctx, PIPE_OR);
+			} ورنہ {
 				/* we could pick up a file descriptor choice here
 				 * with redirect_opt_num(), but bash doesn't do it.
 				 * "echo foo 2| cat" yields "foo 2". */
-				done_command(&ctx);
+				مکمل_command(&ctx);
 			}
-			goto new_cmd;
-		case '(':
-#if ENABLE_HUSH_CASE
+			جاؤ new_cmd;
+		حالت '(':
+#اگر ENABLE_HUSH_CASE
 			/* "case... in [(]word)..." - skip '(' */
-			if (ctx.ctx_res_w == RES_MATCH
-			 && ctx.command->argv == NULL /* not (word|(... */
-			 && ctx.word.length == 0 /* not word(... */
-			 && ctx.word.has_quoted_part == 0 /* not ""(... */
+			اگر (ctx.ctx_res_w == RES_مطابقت
+			 && ctx.command->argv == تہی /* not (word|(... */
+			 && ctx.لفظ.لمبائی == 0 /* not word(... */
+			 && ctx.لفظ.has_quoted_part == 0 /* not ""(... */
 			) {
-				continue; /* get next char */
+				جاری; /* get next char */
 			}
-#endif
+#اگر_ختم
 			/* fall through */
-		case '{': {
-			int n = parse_group(&ctx, input, ch);
-			if (n < 0) {
-				goto parse_error_exitcode1;
+		حالت '{': {
+			صحیح n = parse_گروہ(&ctx, داخلہ, ch);
+			اگر (n < 0) {
+				جاؤ parse_error_exitcode1;
 			}
 			debug_printf_heredoc("parse_group done, needs heredocs:%d\n", n);
 			heredoc_cnt += n;
-			goto new_cmd;
+			جاؤ new_cmd;
 		}
-		case ')':
-#if ENABLE_HUSH_CASE
-			if (ctx.ctx_res_w == RES_MATCH)
-				goto case_semi;
-#endif
-		case '}':
+		حالت ')':
+#اگر ENABLE_HUSH_CASE
+			اگر (ctx.ctx_res_w == RES_مطابقت)
+				جاؤ case_semi;
+#اگر_ختم
+		حالت '}':
 			/* proper use of this character is caught by end_trigger:
 			 * if we see {, we call parse_group(..., end_trigger='}')
 			 * and it will match } earlier (not here). */
-			G.last_exitcode = 2;
+			G.آخری_exitcode = 2;
 			syntax_error_unexpected_ch(ch);
-			goto parse_error;
-		default:
-			if (HUSH_DEBUG)
-				bb_error_msg_and_die("BUG: unexpected %c", ch);
+			جاؤ parse_error;
+		طےشدہ:
+			اگر (HUSH_DEBUG)
+				bb_error_پیغام_and_die("BUG: unexpected %c", ch);
 		}
 	} /* while (1) */
 
  parse_error_exitcode1:
-	G.last_exitcode = 1;
+	G.آخری_exitcode = 1;
  parse_error:
 	{
-		struct parse_context *pctx;
-		IF_HAS_KEYWORDS(struct parse_context *p2;)
+		ساخت parse_context *pctx;
+		IF_HAS_KEYWORDS(ساخت parse_context *p2;)
 
 		/* Clean up allocated tree.
 		 * Sample for finding leaks on syntax error recovery path.
@@ -6452,47 +6452,47 @@ static struct pipe *parse_stream(char **pstring,
 		 * while if (true | { true;}); then echo ok; fi; do (if echo ok; break; then :; fi) | cat; break; done
 		 */
 		pctx = &ctx;
-		do {
+		کرو {
 			/* Update pipe/command counts,
 			 * otherwise freeing may miss some */
-			done_pipe(pctx, PIPE_SEQ);
+			مکمل_pipe(pctx, PIPE_SEQ);
 			debug_printf_clean("freeing list %p from ctx %p\n",
-					pctx->list_head, pctx);
-			debug_print_tree(pctx->list_head, 0);
-			free_pipe_list(pctx->list_head);
-			debug_printf_clean("freed list %p\n", pctx->list_head);
-#if !BB_MMU
+					pctx->list_سر, pctx);
+			debug_print_درخت(pctx->list_سر, 0);
+			free_pipe_list(pctx->list_سر);
+			debug_printf_clean("freed list %p\n", pctx->list_سر);
+#اگر !BB_MMU
 			o_free(&pctx->as_string);
-#endif
-			IF_HAS_KEYWORDS(p2 = pctx->stack;)
-			if (pctx != &ctx) {
-				free(pctx);
+#اگر_ختم
+			IF_HAS_KEYWORDS(p2 = pctx->ڈھیر;)
+			اگر (pctx != &ctx) {
+				آزاد(pctx);
 			}
 			IF_HAS_KEYWORDS(pctx = p2;)
-		} while (HAS_KEYWORDS && pctx);
+		} جب (HAS_KEYWORDS && pctx);
 
-		o_free(&ctx.word);
-#if !BB_MMU
-		if (pstring)
-			*pstring = NULL;
-#endif
+		o_free(&ctx.لفظ);
+#اگر !BB_MMU
+		اگر (pstring)
+			*pstring = تہی;
+#اگر_ختم
 		debug_leave();
-		return ERR_PTR;
+		واپس ERR_PTR;
 	}
 }
 
 /*** Execution routines ***/
 
 /* Expansion can recurse, need forward decls: */
-#if !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
-#define expand_string_to_string(str, EXP_flags, do_unbackslash) \
-	expand_string_to_string(str)
-#endif
-static char *expand_string_to_string(const char *str, int EXP_flags, int do_unbackslash);
-#if ENABLE_HUSH_TICK
-static int process_command_subs(o_string *dest, const char *s);
-#endif
-static int expand_vars_to_list(o_string *output, int n, char *arg);
+#اگر !BASH_نمونہ_SUBST && !ENABLE_HUSH_CASE
+#تعریف_کرو expand_string_مقصد_string(str, EXP_flags, do_unbackslash) \
+	expand_string_مقصد_string(str)
+#اگر_ختم
+ساکن حرف *expand_string_مقصد_string(ثابت حرف *str, صحیح EXP_flags, صحیح do_unbackslash);
+#اگر ENABLE_HUSH_TICK
+ساکن صحیح process_command_subs(o_string *dest, ثابت حرف *s);
+#اگر_ختم
+ساکن صحیح expand_vars_مقصد_list(o_string *output, صحیح n, حرف *arg);
 
 /* expand_strvec_to_strvec() takes a list of strings, expands
  * all variable references within and returns a pointer to
@@ -6505,13 +6505,13 @@ static int expand_vars_to_list(o_string *output, int n, char *arg);
 
 /* A horde of its helpers come first: */
 
-static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len)
+ساکن خالی o_addblock_duplicate_backslash(o_string *o, ثابت حرف *str, صحیح len)
 {
-	while (--len >= 0) {
-		char c = *str++;
+	جب (--len >= 0) {
+		حرف c = *str++;
 
-#if ENABLE_HUSH_BRACE_EXPANSION
-		if (c == '{' || c == '}') {
+#اگر ENABLE_HUSH_BRACE_EXPANSION
+		اگر (c == '{' || c == '}') {
 			/* { -> \{, } -> \} */
 			o_addchr(o, '\\');
 			/* And now we want to add { or } and continue:
@@ -6520,12 +6520,12 @@ static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len
 			 * luckily, just falling through achieves this.
 			 */
 		}
-#endif
+#اگر_ختم
 		o_addchr(o, c);
-		if (c == '\\') {
+		اگر (c == '\\') {
 			/* \z -> \\\z; \<eol> -> \\<eol> */
 			o_addchr(o, '\\');
-			if (len) {
+			اگر (len) {
 				len--;
 				o_addchr(o, '\\');
 				o_addchr(o, *str++);
@@ -6540,55 +6540,55 @@ static void o_addblock_duplicate_backslash(o_string *o, const char *str, int len
  * Return in output->ended_in_ifs:
  * 1 - ended with IFS char, else 0 (this includes case of empty str).
  */
-static int expand_on_ifs(o_string *output, int n, const char *str)
+ساکن صحیح expand_on_ifs(o_string *output, صحیح n, ثابت حرف *str)
 {
-	int last_is_ifs = 0;
+	صحیح آخری_is_ifs = 0;
 
-	while (1) {
-		int word_len;
+	جب (1) {
+		صحیح لفظ_len;
 
-		if (!*str)  /* EOL - do not finalize word */
-			break;
-		word_len = strcspn(str, G.ifs);
-		if (word_len) {
+		اگر (!*str)  /* EOL - do not finalize word */
+			توڑو;
+		لفظ_len = strcspn(str, G.ifs);
+		اگر (لفظ_len) {
 			/* We have WORD_LEN leading non-IFS chars */
-			if (!(output->o_expflags & EXP_FLAG_GLOB)) {
-				o_addblock(output, str, word_len);
-			} else {
+			اگر (!(output->o_expflags & EXP_FLAG_GLOB)) {
+				o_addblock(output, str, لفظ_len);
+			} ورنہ {
 				/* Protect backslashes against globbing up :)
 				 * Example: "v='\*'; echo b$v" prints "b\*"
 				 * (and does not try to glob on "*")
 				 */
-				o_addblock_duplicate_backslash(output, str, word_len);
+				o_addblock_duplicate_backslash(output, str, لفظ_len);
 				/*/ Why can't we do it easier? */
 				/*o_addblock(output, str, word_len); - WRONG: "v='\*'; echo Z$v" prints "Z*" instead of "Z\*" */
 				/*o_addqblock(output, str, word_len); - WRONG: "v='*'; echo Z$v" prints "Z*" instead of Z* files */
 			}
-			last_is_ifs = 0;
-			str += word_len;
-			if (!*str)  /* EOL - do not finalize word */
-				break;
+			آخری_is_ifs = 0;
+			str += لفظ_len;
+			اگر (!*str)  /* EOL - do not finalize word */
+				توڑو;
 		}
 
 		/* We know str here points to at least one IFS char */
-		last_is_ifs = 1;
+		آخری_is_ifs = 1;
 		str += strspn(str, G.ifs_whitespace); /* skip IFS whitespace chars */
-		if (!*str)  /* EOL - do not finalize word */
-			break;
+		اگر (!*str)  /* EOL - do not finalize word */
+			توڑو;
 
-		if (G.ifs_whitespace != G.ifs /* usually false ($IFS is usually all whitespace), */
+		اگر (G.ifs_whitespace != G.ifs /* usually false ($IFS is usually all whitespace), */
 		 && strchr(G.ifs, *str)       /* the second check would fail */
 		) {
 			/* This is a non-whitespace $IFS char */
 			/* Skip it and IFS whitespace chars, start new word */
 			str++;
 			str += strspn(str, G.ifs_whitespace);
-			goto new_word;
+			جاؤ new_لفظ;
 		}
 
 		/* Start new word... but not always! */
 		/* Case "v=' a'; echo ''$v": we do need to finalize empty word: */
-		if (output->has_quoted_part
+		اگر (output->has_quoted_part
 		/*
 		 * Case "v=' a'; echo $v":
 		 * here nothing precedes the space in $v expansion,
@@ -6598,21 +6598,21 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
 		 * past call to o_save_ptr() cleared it to zero byte
 		 * (grep for -prev-ifs-check-).
 		 */
-		 || output->data[output->length - 1]
+		 || output->ڈیٹا[output->لمبائی - 1]
 		) {
- new_word:
+ new_لفظ:
 			o_addchr(output, '\0');
 			debug_print_list("expand_on_ifs", output, n);
 			n = o_save_ptr(output, n);
 		}
 	}
 
-	output->ended_in_ifs = last_is_ifs;
+	output->ended_اندر_ifs = آخری_is_ifs;
 	debug_print_list("expand_on_ifs[1]", output, n);
-	return n;
+	واپس n;
 }
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Helper to expand $((...)) and heredoc body. These act as if
  * they are in double quotes, with the exception that they are not :).
  * Just the rules are similar: "expand only $var and `cmd`"
@@ -6620,56 +6620,56 @@ static int expand_on_ifs(o_string *output, int n, const char *str)
  * Returns malloced string.
  * As an optimization, we return NULL if expansion is not needed.
  */
-static char *encode_then_expand_string(const char *str)
+ساکن حرف *encode_then_expand_string(ثابت حرف *str)
 {
-	char *exp_str;
-	struct in_str input;
+	حرف *exp_str;
+	ساخت اندر_str داخلہ;
 	o_string dest = NULL_O_STRING;
-	const char *cp;
+	ثابت حرف *cp;
 
 	cp = str;
-	for (;;) {
-		if (!*cp) return NULL; /* string has no special chars */
-		if (*cp == '$') break;
-		if (*cp == '\\') break;
-#if ENABLE_HUSH_TICK
-		if (*cp == '`') break;
-#endif
+	برائے (;;) {
+		اگر (!*cp) واپس تہی; /* string has no special chars */
+		اگر (*cp == '$') توڑو;
+		اگر (*cp == '\\') توڑو;
+#اگر ENABLE_HUSH_TICK
+		اگر (*cp == '`') توڑو;
+#اگر_ختم
 		cp++;
 	}
 
 	/* We need to expand. Example:
 	 * echo $(($a + `echo 1`)) $((1 + $((2)) ))
 	 */
-	setup_string_in_str(&input, str);
-	encode_string(NULL, &dest, &input, EOF);
+	تیاری_string_اندر_str(&داخلہ, str);
+	encode_string(تہی, &dest, &داخلہ, EOF);
 //TODO: error check (encode_string returns 0 on error)?
 	//bb_error_msg("'%s' -> '%s'", str, dest.data);
-	exp_str = expand_string_to_string(dest.data,
+	exp_str = expand_string_مقصد_string(dest.ڈیٹا,
 			EXP_FLAG_ESC_GLOB_CHARS,
 			/*unbackslash:*/ 1
 	);
 	//bb_error_msg("'%s' -> '%s'", dest.data, exp_str);
 	o_free(&dest);
-	return exp_str;
+	واپس exp_str;
 }
 
-static const char *first_special_char_in_vararg(const char *cp)
+ساکن ثابت حرف *پہلا_special_char_اندر_vararg(ثابت حرف *cp)
 {
-	for (;;) {
-		if (!*cp) return NULL; /* string has no special chars */
-		if (*cp == '$') return cp;
-		if (*cp == '\\') return cp;
-		if (*cp == '\'') return cp;
-		if (*cp == '"') return cp;
-#if ENABLE_HUSH_TICK
-		if (*cp == '`') return cp;
-#endif
+	برائے (;;) {
+		اگر (!*cp) واپس تہی; /* string has no special chars */
+		اگر (*cp == '$') واپس cp;
+		اگر (*cp == '\\') واپس cp;
+		اگر (*cp == '\'') واپس cp;
+		اگر (*cp == '"') واپس cp;
+#اگر ENABLE_HUSH_TICK
+		اگر (*cp == '`') واپس cp;
+#اگر_ختم
 		/* dquoted "${x:+ARG}" should not glob, therefore
 		 * '*' et al require some non-literal processing: */
-		if (*cp == '*') return cp;
-		if (*cp == '?') return cp;
-		if (*cp == '[') return cp;
+		اگر (*cp == '*') واپس cp;
+		اگر (*cp == '?') واپس cp;
+		اگر (*cp == '[') واپس cp;
 		cp++;
 	}
 }
@@ -6681,147 +6681,147 @@ static const char *first_special_char_in_vararg(const char *cp)
  * a dquoted string: "${var#"zz"}"), the difference only comes later
  * (word splitting and globbing of the ${var...} result).
  */
-#if !BASH_PATTERN_SUBST
-#define encode_then_expand_vararg(str, handle_squotes, do_unbackslash) \
+#اگر !BASH_نمونہ_SUBST
+#تعریف_کرو encode_then_expand_vararg(str, handle_squotes, do_unbackslash) \
 	encode_then_expand_vararg(str, handle_squotes)
-#endif
-static char *encode_then_expand_vararg(const char *str, int handle_squotes, int do_unbackslash)
+#اگر_ختم
+ساکن حرف *encode_then_expand_vararg(ثابت حرف *str, صحیح handle_squotes, صحیح do_unbackslash)
 {
-#if !BASH_PATTERN_SUBST && ENABLE_HUSH_CASE
-	const int do_unbackslash = 0;
-#endif
-	char *exp_str;
-	struct in_str input;
+#اگر !BASH_نمونہ_SUBST && ENABLE_HUSH_CASE
+	ثابت صحیح do_unbackslash = 0;
+#اگر_ختم
+	حرف *exp_str;
+	ساخت اندر_str داخلہ;
 	o_string dest = NULL_O_STRING;
 
-	if (!first_special_char_in_vararg(str)) {
+	اگر (!پہلا_special_char_اندر_vararg(str)) {
 		/* string has no special chars */
-		return NULL;
+		واپس تہی;
 	}
 
-	setup_string_in_str(&input, str);
-	dest.data = xzalloc(1); /* start as "", not as NULL */
-	exp_str = NULL;
+	تیاری_string_اندر_str(&داخلہ, str);
+	dest.ڈیٹا = xzalloc(1); /* start as "", not as NULL */
+	exp_str = تہی;
 
-	for (;;) {
-		int ch;
+	برائے (;;) {
+		صحیح ch;
 
-		ch = i_getch(&input);
+		ch = i_getch(&داخلہ);
 		debug_printf_parse("%s: ch=%c (%d) escape=%d\n",
 				__func__, ch, ch, !!dest.o_expflags);
 
-		if (!dest.o_expflags) {
-			if (ch == EOF)
-				break;
-			if (handle_squotes && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
-					goto ret; /* error */
-				continue;
+		اگر (!dest.o_expflags) {
+			اگر (ch == EOF)
+				توڑو;
+			اگر (handle_squotes && ch == '\'') {
+				اگر (!جوڑو_till_single_quote_dquoted(&dest, &داخلہ))
+					جاؤ ret; /* error */
+				جاری;
 			}
 		}
-		if (ch == EOF) {
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			goto ret; /* error */
+			جاؤ ret; /* error */
 		}
-		if (ch == '"') {
+		اگر (ch == '"') {
 			dest.o_expflags ^= EXP_FLAG_ESC_GLOB_CHARS;
-			continue;
+			جاری;
 		}
-		if (ch == '\\') {
-			ch = i_getch(&input);
-			if (ch == EOF) {
+		اگر (ch == '\\') {
+			ch = i_getch(&داخلہ);
+			اگر (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
-				goto ret;
+				جاؤ ret;
 			}
 			o_addqchr(&dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '$') {
-			if (parse_dollar_squote(NULL, &dest, &input))
-				continue;
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ 0x80)) {
+		اگر (ch == '$') {
+			اگر (parse_dollar_squote(تہی, &dest, &داخلہ))
+				جاری;
+			اگر (!parse_dollar(تہی, &dest, &داخلہ, /*quote_mask:*/ 0x80)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
-				goto ret;
+				جاؤ ret;
 			}
-			continue;
+			جاری;
 		}
-#if ENABLE_HUSH_TICK
-		if (ch == '`') {
+#اگر ENABLE_HUSH_TICK
+		اگر (ch == '`') {
 			//unsigned pos = dest->length;
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_علامت);
 			o_addchr(&dest, 0x80 | '`');
-			if (!add_till_backquote(&dest, &input,
+			اگر (!جوڑو_till_backquote(&dest, &داخلہ,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
-				goto ret; /* error */
+				جاؤ ret; /* error */
 			}
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_علامت);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-			continue;
+			جاری;
 		}
-#endif
-		o_addQchr(&dest, ch);
+#اگر_ختم
+		o_جوڑو_Qchr(&dest, ch);
 	} /* for (;;) */
 
-	debug_printf_parse("encode: '%s' -> '%s'\n", str, dest.data);
-	exp_str = expand_string_to_string(dest.data,
+	debug_printf_parse("encode: '%s' -> '%s'\n", str, dest.ڈیٹا);
+	exp_str = expand_string_مقصد_string(dest.ڈیٹا,
 			do_unbackslash ? EXP_FLAG_ESC_GLOB_CHARS : 0,
 			do_unbackslash
 	);
  ret:
-	debug_printf_parse("expand: '%s' -> '%s'\n", dest.data, exp_str);
+	debug_printf_parse("expand: '%s' -> '%s'\n", dest.ڈیٹا, exp_str);
 	o_free(&dest);
-	return exp_str;
+	واپس exp_str;
 }
 
 /* Expanding ARG in ${var+ARG}, ${var-ARG}
  */
-static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
-		char *str, int dquoted)
+ساکن NOINLINE صحیح encode_then_append_var_plusminus(o_string *output, صحیح n,
+		حرف *str, صحیح dquoted)
 {
-	struct in_str input;
+	ساخت اندر_str داخلہ;
 	o_string dest = NULL_O_STRING;
 
-	if (!first_special_char_in_vararg(str)
+	اگر (!پہلا_special_char_اندر_vararg(str)
 	 && '\0' == str[strcspn(str, G.ifs)]
 	) {
 		/* string has no special chars
 		 * && string has no $IFS chars
 		 */
-		if (dquoted) {
+		اگر (dquoted) {
 			/* Prints 1 (quoted expansion is a "" word, not nothing):
 			 * set -- "${notexist-}"; echo $#
 			 */
 			output->has_quoted_part = 1;
 		}
-		return expand_vars_to_list(output, n, str);
+		واپس expand_vars_مقصد_list(output, n, str);
 	}
 
-	setup_string_in_str(&input, str);
+	تیاری_string_اندر_str(&داخلہ, str);
 
-	for (;;) {
-		int ch;
+	برائے (;;) {
+		صحیح ch;
 
-		ch = i_getch(&input);
+		ch = i_getch(&داخلہ);
 		debug_printf_parse("%s: ch=%c (%d) escape=%x\n",
 				__func__, ch, ch, dest.o_expflags);
 
-		if (!dest.o_expflags) {
-			if (ch == EOF)
-				break;
-			if (!dquoted && !(output->o_expflags & EXP_FLAG_SINGLEWORD) && strchr(G.ifs, ch)) {
+		اگر (!dest.o_expflags) {
+			اگر (ch == EOF)
+				توڑو;
+			اگر (!dquoted && !(output->o_expflags & EXP_FLAG_SINGLEWORD) && strchr(G.ifs, ch)) {
 				/* PREFIX${x:d${e}f ...} and we met space: expand "d${e}f" and start new word.
 				 * do not assume we are at the start of the word (PREFIX above).
 				 */
-				if (dest.data) {
-					n = expand_vars_to_list(output, n, dest.data);
-					o_free_and_set_NULL(&dest);
+				اگر (dest.ڈیٹا) {
+					n = expand_vars_مقصد_list(output, n, dest.ڈیٹا);
+					o_free_and_سیٹ_NULL(&dest);
 					o_addchr(output, '\0');
 					n = o_save_ptr(output, n); /* create next word */
-				} else
-				if (output->length != o_get_last_ptr(output, n)
+				} ورنہ
+				اگر (output->لمبائی != o_get_آخری_ptr(output, n)
 				 || output->has_quoted_part
 				) {
 					/* For these cases:
@@ -6836,227 +6836,227 @@ static NOINLINE int encode_then_append_var_plusminus(o_string *output, int n,
 					o_addchr(output, '\0');
 					n = o_save_ptr(output, n); /* create next word */
 				}
-				continue;
+				جاری;
 			}
-			if (!dquoted && ch == '\'') {
-				if (!add_till_single_quote_dquoted(&dest, &input))
-					goto ret; /* error */
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				continue;
+			اگر (!dquoted && ch == '\'') {
+				اگر (!جوڑو_till_single_quote_dquoted(&dest, &داخلہ))
+					جاؤ ret; /* error */
+				o_addchr(&dest, SPECIAL_VAR_علامت);
+				o_addchr(&dest, SPECIAL_VAR_علامت);
+				جاری;
 			}
 		}
-		if (ch == EOF) {
+		اگر (ch == EOF) {
 			syntax_error_unterm_ch('"');
-			goto ret; /* error */
+			جاؤ ret; /* error */
 		}
-		if (ch == '"') {
+		اگر (ch == '"') {
 			dest.o_expflags ^= EXP_FLAG_ESC_GLOB_CHARS;
-			if (dest.o_expflags) {
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
-				o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			اگر (dest.o_expflags) {
+				o_addchr(&dest, SPECIAL_VAR_علامت);
+				o_addchr(&dest, SPECIAL_VAR_علامت);
 			}
-			continue;
+			جاری;
 		}
-		if (ch == '\\') {
-			ch = i_getch(&input);
-			if (ch == EOF) {
+		اگر (ch == '\\') {
+			ch = i_getch(&داخلہ);
+			اگر (ch == EOF) {
 //example? error message?	syntax_error_unterm_ch('"');
 				debug_printf_parse("%s: error: \\<eof>\n", __func__);
-				goto ret;
+				جاؤ ret;
 			}
 			o_addqchr(&dest, ch);
-			continue;
+			جاری;
 		}
-		if (ch == '$') {
-			if (!parse_dollar(NULL, &dest, &input, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
+		اگر (ch == '$') {
+			اگر (!parse_dollar(تہی, &dest, &داخلہ, /*quote_mask:*/ (dest.o_expflags || dquoted) ? 0x80 : 0)) {
 				debug_printf_parse("%s: error: parse_dollar returned 0 (error)\n", __func__);
-				goto ret;
+				جاؤ ret;
 			}
-			continue;
+			جاری;
 		}
-#if ENABLE_HUSH_TICK
-		if (ch == '`') {
+#اگر ENABLE_HUSH_TICK
+		اگر (ch == '`') {
 			//unsigned pos = dest->length;
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_علامت);
 			o_addchr(&dest, (dest.o_expflags || dquoted) ? 0x80 | '`' : '`');
-			if (!add_till_backquote(&dest, &input,
+			اگر (!جوڑو_till_backquote(&dest, &داخلہ,
 					/*in_dquote:*/ dest.o_expflags /* nonzero if EXP_FLAG_ESC_GLOB_CHARS set */
 				)
 			) {
-				goto ret; /* error */
+				جاؤ ret; /* error */
 			}
-			o_addchr(&dest, SPECIAL_VAR_SYMBOL);
+			o_addchr(&dest, SPECIAL_VAR_علامت);
 			//debug_printf_subst("SUBST RES3 '%s'\n", dest->data + pos);
-			continue;
+			جاری;
 		}
-#endif
-		if (dquoted) {
+#اگر_ختم
+		اگر (dquoted) {
 			/* Always glob-protect if in dquotes:
 			 * x=x; echo "${x:+/bin/c*}" - prints: /bin/c*
 			 * x=x; echo "${x:+"/bin/c*"}" - prints: /bin/c*
 			 */
 			o_addqchr(&dest, ch);
-		} else {
+		} ورنہ {
 			/* Glob-protect only if char is quoted:
 			 * x=x; echo ${x:+/bin/c*} - prints many filenames
 			 * x=x; echo ${x:+"/bin/c*"} - prints: /bin/c*
 			 */
-			o_addQchr(&dest, ch);
+			o_جوڑو_Qchr(&dest, ch);
 		}
 	} /* for (;;) */
 
-	if (dest.data) {
-		n = expand_vars_to_list(output, n, dest.data);
+	اگر (dest.ڈیٹا) {
+		n = expand_vars_مقصد_list(output, n, dest.ڈیٹا);
 	}
  ret:
 	o_free(&dest);
-	return n;
+	واپس n;
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-#if ENABLE_FEATURE_SH_MATH
-static arith_t expand_and_evaluate_arith(const char *arg, const char **errmsg_p)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_FEATURE_SH_MATH
+ساکن arith_t expand_and_evaluate_arith(ثابت حرف *arg, ثابت حرف **errmsg_p)
 {
 	arith_state_t math_state;
 	arith_t res;
-	char *exp_str;
+	حرف *exp_str;
 
-	math_state.lookupvar = get_local_var_value;
-	math_state.setvar = set_local_var_from_halves;
+	math_state.lookupvar = get_local_var_قدر;
+	math_state.setvar = سیٹ_local_var_from_halves;
 	//math_state.endofname = endofname;
 	exp_str = encode_then_expand_string(arg);
 	res = arith(&math_state, exp_str ? exp_str : arg);
-	free(exp_str);
-	if (errmsg_p)
+	آزاد(exp_str);
+	اگر (errmsg_p)
 		*errmsg_p = math_state.errmsg;
-	if (math_state.errmsg)
-		msg_and_die_if_script(math_state.errmsg);
-	return res;
+	اگر (math_state.errmsg)
+		پیغام_and_die_if_script(math_state.errmsg);
+	واپس res;
 }
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-#if BASH_PATTERN_SUBST
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر BASH_نمونہ_SUBST
 /* ${var/[/]pattern[/repl]} helpers */
-static char *strstr_pattern(char *val, const char *pattern, int *size)
+ساکن حرف *strstr_نمونہ(حرف *val, ثابت حرف *نمونہ, صحیح *سائز)
 {
-	int first_escaped = (pattern[0] == '\\' && pattern[1]);
+	صحیح پہلا_escaped = (نمونہ[0] == '\\' && نمونہ[1]);
 	/* "first_escaped" trick allows to treat e.g. "\*no_glob_chars"
 	 * as literal too (as it is semi-common, and easy to accomodate
 	 * by just using str + 1).
 	 */
-	int sz = strcspn(pattern + first_escaped * 2, "*?[\\");
-	if ((pattern + first_escaped * 2)[sz] == '\0') {
+	صحیح sz = strcspn(نمونہ + پہلا_escaped * 2, "*?[\\");
+	اگر ((نمونہ + پہلا_escaped * 2)[sz] == '\0') {
 		/* Optimization for trivial patterns.
 		 * Testcase for very slow replace (performs about 22k replaces):
 		 * x=::::::::::::::::::::::
 		 * x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;x=$x$x;echo ${#x}
 		 * echo "${x//:/|}"
 		 */
-		*size = sz + first_escaped;
-		return strstr(val, pattern + first_escaped);
+		*سائز = sz + پہلا_escaped;
+		واپس لڑی_تلاش(val, نمونہ + پہلا_escaped);
 	}
 
-	while (1) {
-		char *end = scan_and_match(val, pattern, SCAN_MOVE_FROM_RIGHT + SCAN_MATCH_LEFT_HALF);
-		debug_printf_varexp("val:'%s' pattern:'%s' end:'%s'\n", val, pattern, end);
-		if (end) {
-			*size = end - val;
-			return val;
+	جب (1) {
+		حرف *انتہا_2 = جائزہ_and_مطابقت(val, نمونہ, جائزہ_MOVE_FROM_دایاں + جائزہ_مطابقت_بایاں_HALF);
+		debug_printf_varexp("val:'%s' pattern:'%s' end:'%s'\n", val, نمونہ, انتہا_2);
+		اگر (انتہا_2) {
+			*سائز = انتہا_2 - val;
+			واپس val;
 		}
-		if (*val == '\0')
-			return NULL;
+		اگر (*val == '\0')
+			واپس تہی;
 		/* Optimization: if "*pat" did not match the start of "string",
 		 * we know that "tring", "ring" etc will not match too:
 		 */
-		if (pattern[0] == '*')
-			return NULL;
+		اگر (نمونہ[0] == '*')
+			واپس تہی;
 		val++;
 	}
 }
-static char *replace_pattern(char *val, const char *pattern, const char *repl, char exp_op)
+ساکن حرف *replace_نمونہ(حرف *val, ثابت حرف *نمونہ, ثابت حرف *repl, حرف exp_op)
 {
-	char *result = NULL;
-	unsigned res_len = 0;
-	unsigned repl_len = strlen(repl);
+	حرف *نتیجہ = تہی;
+	غیرعلامتی res_len = 0;
+	غیرعلامتی repl_len = لڑی_لمبائی(repl);
 
 	/* Null pattern never matches, including if "var" is empty */
-	if (!pattern[0])
-		return result; /* NULL, no replaces happened */
+	اگر (!نمونہ[0])
+		واپس نتیجہ; /* NULL, no replaces happened */
 
-	while (1) {
-		int size;
-		char *s = strstr_pattern(val, pattern, &size);
-		if (!s)
-			break;
+	جب (1) {
+		صحیح سائز;
+		حرف *s = strstr_نمونہ(val, نمونہ, &سائز);
+		اگر (!s)
+			توڑو;
 
-		result = xrealloc(result, res_len + (s - val) + repl_len + 1);
-		strcpy(mempcpy(result + res_len, val, s - val), repl);
+		نتیجہ = xrealloc(نتیجہ, res_len + (s - val) + repl_len + 1);
+		strcpy(mempcpy(نتیجہ + res_len, val, s - val), repl);
 		res_len += (s - val) + repl_len;
-		debug_printf_varexp("val:'%s' s:'%s' result:'%s'\n", val, s, result);
+		debug_printf_varexp("val:'%s' s:'%s' result:'%s'\n", val, s, نتیجہ);
 
-		val = s + size;
-		if (exp_op == '/')
-			break;
+		val = s + سائز;
+		اگر (exp_op == '/')
+			توڑو;
 	}
-	if (*val && result) {
-		result = xrealloc(result, res_len + strlen(val) + 1);
-		strcpy(result + res_len, val);
-		debug_printf_varexp("val:'%s' result:'%s'\n", val, result);
+	اگر (*val && نتیجہ) {
+		نتیجہ = xrealloc(نتیجہ, res_len + لڑی_لمبائی(val) + 1);
+		strcpy(نتیجہ + res_len, val);
+		debug_printf_varexp("val:'%s' result:'%s'\n", val, نتیجہ);
 	}
-	debug_printf_varexp("result:'%s'\n", result);
-	return result;
+	debug_printf_varexp("result:'%s'\n", نتیجہ);
+	واپس نتیجہ;
 }
-#endif /* BASH_PATTERN_SUBST */
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* BASH_PATTERN_SUBST */
+#اگر_ختم /* !__U_BOOT__ */
 
-static int append_str_maybe_ifs_split(o_string *output, int n,
-		int first_ch, const char *val)
+ساکن صحیح append_str_maybe_ifs_بانٹو(o_string *output, صحیح n,
+		صحیح پہلا_ch, ثابت حرف *val)
 {
-	if (!(first_ch & 0x80)) { /* unquoted $VAR */
+	اگر (!(پہلا_ch & 0x80)) { /* unquoted $VAR */
 		debug_printf_expand("unquoted '%s', output->o_escape:%d\n", val,
 				!!(output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (val && val[0])
+		اگر (val && val[0])
 			n = expand_on_ifs(output, n, val);
-	} else { /* quoted "$VAR" */
+	} ورنہ { /* quoted "$VAR" */
 		output->has_quoted_part = 1;
 		debug_printf_expand("quoted '%s', output->o_escape:%d\n", val,
 				!!(output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS));
-		if (val && val[0])
-			o_addQstr(output, val);
+		اگر (val && val[0])
+			o_جوڑو_Qstr(output, val);
 	}
-	return n;
+	واپس n;
 }
 
 /* Handle <SPECIAL_VAR_SYMBOL>varname...<SPECIAL_VAR_SYMBOL> construct.
  */
-static NOINLINE int expand_one_var(o_string *output, int n,
-		int first_ch, char *arg, char **pp)
+ساکن NOINLINE صحیح expand_one_var(o_string *output, صحیح n,
+		صحیح پہلا_ch, حرف *arg, حرف **pp)
 {
-	const char *val;
-	char *to_be_freed;
-	char *p;
-	char *var;
-	char exp_op;
-	char exp_save = exp_save; /* for compiler */
-	char *exp_saveptr; /* points to expansion operator */
-	char *exp_word = exp_word; /* for compiler */
-	char arg0;
+	ثابت حرف *val;
+	حرف *مقصد_be_freed;
+	حرف *p;
+	حرف *var;
+	حرف exp_op;
+	حرف exp_save = exp_save; /* for compiler */
+	حرف *exp_saveptr; /* points to expansion operator */
+	حرف *exp_لفظ = exp_لفظ; /* for compiler */
+	حرف arg0;
 
-	val = NULL;
-	to_be_freed = NULL;
+	val = تہی;
+	مقصد_be_freed = تہی;
 	p = *pp;
 	*p = '\0'; /* replace trailing SPECIAL_VAR_SYMBOL */
 	var = arg;
-	exp_saveptr = arg[1] ? strchr(VAR_ENCODED_SUBST_OPS, arg[1]) : NULL;
+	exp_saveptr = arg[1] ? strchr(VAR_ENCODED_SUBST_OPS, arg[1]) : تہی;
 	arg0 = arg[0];
 	arg[0] = (arg0 & 0x7f);
 	exp_op = 0;
 
-	if (arg[0] == '#' && arg[1] /* ${#...} but not ${#} */
+	اگر (arg[0] == '#' && arg[1] /* ${#...} but not ${#} */
 	 && (!exp_saveptr               /* and ( not(${#<op_char>...}) */
 	    || (arg[2] == '\0' && strchr(SPECIAL_VARS_STR, arg[1])) /* or ${#C} "len of $C" ) */
 	    )		/* NB: skipping ^^^specvar check mishandles ${#::2} */
@@ -7064,91 +7064,91 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 		/* It must be length operator: ${#var} */
 		var++;
 		exp_op = 'L';
-	} else {
+	} ورنہ {
 		/* Maybe handle parameter expansion */
-		if (exp_saveptr /* if 2nd char is one of expansion operators */
+		اگر (exp_saveptr /* if 2nd char is one of expansion operators */
 		 && strchr(NUMERIC_SPECVARS_STR, arg[0]) /* 1st char is special variable */
 		) {
 			/* ${?:0}, ${#[:]%0} etc */
 			exp_saveptr = var + 1;
-		} else {
+		} ورنہ {
 			/* ${?}, ${var}, ${var:0}, ${var[:]%0} etc */
 			exp_saveptr = var+1 + strcspn(var+1, VAR_ENCODED_SUBST_OPS);
 		}
 		exp_op = exp_save = *exp_saveptr;
-#ifndef __U_BOOT__
-		if (exp_op) {
-			exp_word = exp_saveptr + 1;
-			if (exp_op == ':') {
-				exp_op = *exp_word++;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		اگر (exp_op) {
+			exp_لفظ = exp_saveptr + 1;
+			اگر (exp_op == ':') {
+				exp_op = *exp_لفظ++;
 //TODO: try ${var:} and ${var:bogus} in non-bash config
-				if (BASH_SUBSTR
+				اگر (BASH_SUBSTR
 				 && (!exp_op || !strchr(MINUS_PLUS_EQUAL_QUESTION, exp_op))
 				) {
 					/* oops... it's ${var:N[:M]}, not ${var:?xxx} or some such */
 					exp_op = ':';
-					exp_word--;
+					exp_لفظ--;
 				}
 			}
 			*exp_saveptr = '\0';
 		} /* else: it's not an expansion op, but bare ${var} */
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	}
 
 	/* Look up the variable in question */
-	if (isdigit(var[0])) {
+	اگر (ہندسہ_ہے(var[0])) {
 		/* parse_dollar should have vetted var for us */
-#ifndef __U_BOOT__
-		int nn = xatoi_positive(var);
-#else /* __U_BOOT__ */
-		int nn = simple_strtoul(var, NULL, 10);
-#endif /* __U_BOOT__ */
-		if (nn < G.global_argc)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		صحیح nn = xatoi_مثبت(var);
+#ورنہ /* __U_BOOT__ */
+		صحیح nn = simple_strtoul(var, تہی, 10);
+#اگر_ختم /* __U_BOOT__ */
+		اگر (nn < G.global_argc)
 			val = G.global_argv[nn];
 		/* else val remains NULL: $N with too big N */
-	} else {
-		switch (var[0]) {
-#ifndef __U_BOOT__
-		case '$': /* pid */
-			val = utoa(G.root_pid);
-			break;
-		case '!': /* bg pid */
-			val = G.last_bg_pid ? utoa(G.last_bg_pid) : "";
-			break;
-#endif /* !__U_BOOT__ */
-		case '?': /* exitcode */
-			val = utoa(G.last_exitcode);
-			break;
-		case '#': /* argc */
+	} ورنہ {
+		انتخاب (var[0]) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		حالت '$': /* pid */
+			val = utoa(G.جڑ_pid);
+			توڑو;
+		حالت '!': /* bg pid */
+			val = G.آخری_bg_pid ? utoa(G.آخری_bg_pid) : "";
+			توڑو;
+#اگر_ختم /* !__U_BOOT__ */
+		حالت '?': /* exitcode */
+			val = utoa(G.آخری_exitcode);
+			توڑو;
+		حالت '#': /* argc */
 			val = utoa(G.global_argc ? G.global_argc-1 : 0);
-			break;
-#ifndef __U_BOOT__
-		case '-': { /* active options */
+			توڑو;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		حالت '-': { /* active options */
 			/* Check set_mode() to see what option chars we support */
-			char *cp;
+			حرف *cp;
 			val = cp = G.optstring_buf;
-			if (G.o_opt[OPT_O_ERREXIT])
+			اگر (G.o_opt[OPT_O_ERREXIT])
 				*cp++ = 'e';
-			if (G_interactive_fd)
+			اگر (G_interactive_fd)
 				*cp++ = 'i';
-			if (G_x_mode)
+			اگر (G_x_منوال)
 				*cp++ = 'x';
 			/* If G.o_opt[OPT_O_NOEXEC] is true,
 			 * commands read but are not executed,
 			 * so $- can not execute too, 'n' is never seen in $-.
 			 */
-			if (G.opt_c)
+			اگر (G.opt_c)
 				*cp++ = 'c';
-			if (G.opt_s)
+			اگر (G.opt_s)
 				*cp++ = 's';
 			*cp = '\0';
-			break;
+			توڑو;
 		}
-#endif /* !__U_BOOT__ */
-		default:
-#ifndef __U_BOOT__
-			val = get_local_var_value(var);
-#else /* __U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
+		طےشدہ:
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			val = get_local_var_قدر(var);
+#ورنہ /* __U_BOOT__ */
 			/*
 			 * Environment variable set with setenv* have to be
 			 * expanded.
@@ -7157,21 +7157,21 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * local value.
 			 */
 			val = env_get(var);
-			if (!val)
-				val = get_local_var_value(var);
-#endif /* __U_BOOT__ */
+			اگر (!val)
+				val = get_local_var_قدر(var);
+#اگر_ختم /* __U_BOOT__ */
 		}
 	}
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* Handle any expansions */
-	if (exp_op == 'L') {
+	اگر (exp_op == 'L') {
 		reinit_unicode_for_hush();
 		debug_printf_expand("expand: length(%s)=", val);
 		val = utoa(val ? unicode_strlen(val) : 0);
 		debug_printf_expand("%s\n", val);
-	} else if (exp_op) {
-		if (exp_op == '%' || exp_op == '#') {
+	} ورنہ اگر (exp_op) {
+		اگر (exp_op == '%' || exp_op == '#') {
 			/* Standard-mandated substring removal ops:
 			 * ${parameter%word} - remove smallest suffix pattern
 			 * ${parameter%%word} - remove largest suffix pattern
@@ -7186,38 +7186,38 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 *  unset b; : ${a%${b=B}}; echo $b
 			 * assignment b=B only happens if $a is not "".
 			 */
-			if (val && val[0]) {
-				char *t;
-				char *exp_exp_word;
-				char *loc;
-				unsigned scan_flags = pick_scan(exp_op, *exp_word);
-				if (exp_op == *exp_word)  /* ## or %% */
-					exp_word++;
-				debug_printf_expand("expand: exp_word:'%s'\n", exp_word);
-				exp_exp_word = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
-				if (exp_exp_word)
-					exp_word = exp_exp_word;
-				debug_printf_expand("expand: exp_word:'%s'\n", exp_word);
+			اگر (val && val[0]) {
+				حرف *t;
+				حرف *exp_exp_لفظ;
+				حرف *loc;
+				غیرعلامتی جائزہ_flags = pick_جائزہ(exp_op, *exp_لفظ);
+				اگر (exp_op == *exp_لفظ)  /* ## or %% */
+					exp_لفظ++;
+				debug_printf_expand("expand: exp_word:'%s'\n", exp_لفظ);
+				exp_exp_لفظ = encode_then_expand_vararg(exp_لفظ, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
+				اگر (exp_exp_لفظ)
+					exp_لفظ = exp_exp_لفظ;
+				debug_printf_expand("expand: exp_word:'%s'\n", exp_لفظ);
 				/*
 				 * HACK ALERT. We depend here on the fact that
 				 * G.global_argv and results of utoa and get_local_var_value
 				 * are actually in writable memory:
 				 * scan_and_match momentarily stores NULs there.
 				 */
-				t = (char*)val;
-				loc = scan_and_match(t, exp_word, scan_flags);
-				debug_printf_expand("op:%c str:'%s' pat:'%s' res:'%s'\n", exp_op, t, exp_word, loc);
-				free(exp_exp_word);
-				if (loc) { /* match was found */
-					if (scan_flags & SCAN_MATCH_LEFT_HALF) /* #[#] */
+				t = (حرف*)val;
+				loc = جائزہ_and_مطابقت(t, exp_لفظ, جائزہ_flags);
+				debug_printf_expand("op:%c str:'%s' pat:'%s' res:'%s'\n", exp_op, t, exp_لفظ, loc);
+				آزاد(exp_exp_لفظ);
+				اگر (loc) { /* match was found */
+					اگر (جائزہ_flags & جائزہ_مطابقت_بایاں_HALF) /* #[#] */
 						val = loc; /* take right part */
-					else /* %[%] */
-						val = to_be_freed = xstrndup(val, loc - val); /* left */
+					ورنہ /* %[%] */
+						val = مقصد_be_freed = xstrndup(val, loc - val); /*بایاں*/
 				}
 			}
 		}
-#if BASH_PATTERN_SUBST
-		else if (exp_op == '/' || exp_op == '\\') {
+#اگر BASH_نمونہ_SUBST
+		ورنہ اگر (exp_op == '/' || exp_op == '\\') {
 			/* It's ${var/[/]pattern[/repl]} thing.
 			 * Note that in encoded form it has TWO parts:
 			 * var/pattern<SPECIAL_VAR_SYMBOL>repl<SPECIAL_VAR_SYMBOL>
@@ -7229,7 +7229,7 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * unset b; a=; : ${a/z/${b=3}}; echo $b      # b=3
 			 * unset b; unset a; : ${a/z/${b=3}}; echo $b # b not set
 			 */
-			if (val /*&& val[0]*/) {
+			اگر (val /*&& val[0]*/) {
 				/* pattern uses non-standard expansion.
 				 * repl should be unbackslashed and globbed
 				 * by the usual expansion rules:
@@ -7240,99 +7240,99 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 				 *  v='a bz'; echo ${v/a*z/\z}    #prints "z"
 				 * (note that a*z _pattern_ is never globbed!)
 				 */
-				char *pattern, *repl, *t;
-				pattern = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
-				if (!pattern)
-					pattern = xstrdup(exp_word);
-				debug_printf_varexp("pattern:'%s'->'%s'\n", exp_word, pattern);
-				*p++ = SPECIAL_VAR_SYMBOL;
-				exp_word = p;
-				p = strchr(p, SPECIAL_VAR_SYMBOL);
+				حرف *نمونہ, *repl, *t;
+				نمونہ = encode_then_expand_vararg(exp_لفظ, /*handle_squotes:*/ 1, /*unbackslash:*/ 0);
+				اگر (!نمونہ)
+					نمونہ = xstrdup(exp_لفظ);
+				debug_printf_varexp("pattern:'%s'->'%s'\n", exp_لفظ, نمونہ);
+				*p++ = SPECIAL_VAR_علامت;
+				exp_لفظ = p;
+				p = strchr(p, SPECIAL_VAR_علامت);
 				*p = '\0';
-				repl = encode_then_expand_vararg(exp_word, /*handle_squotes:*/ 1, /*unbackslash:*/ 1);
-				debug_printf_varexp("repl:'%s'->'%s'\n", exp_word, repl);
+				repl = encode_then_expand_vararg(exp_لفظ, /*handle_squotes:*/ 1, /*unbackslash:*/ 1);
+				debug_printf_varexp("repl:'%s'->'%s'\n", exp_لفظ, repl);
 				/* HACK ALERT. We depend here on the fact that
 				 * G.global_argv and results of utoa and get_local_var_value
 				 * are actually in writable memory:
 				 * replace_pattern momentarily stores NULs there. */
-				t = (char*)val;
-				to_be_freed = replace_pattern(t,
-						pattern,
-						(repl ? repl : exp_word),
+				t = (حرف*)val;
+				مقصد_be_freed = replace_نمونہ(t,
+						نمونہ,
+						(repl ? repl : exp_لفظ),
 						exp_op);
-				if (to_be_freed) /* at least one replace happened */
-					val = to_be_freed;
-				free(pattern);
-				free(repl);
-			} else {
+				اگر (مقصد_be_freed) /* at least one replace happened */
+					val = مقصد_be_freed;
+				آزاد(نمونہ);
+				آزاد(repl);
+			} ورنہ {
 				/* Unset variable always gives nothing */
 				//  a=; echo ${a/*/w}      # "w"
 				//  unset a; echo ${a/*/w} # ""
 				/* Just skip "replace" part */
-				*p++ = SPECIAL_VAR_SYMBOL;
-				p = strchr(p, SPECIAL_VAR_SYMBOL);
+				*p++ = SPECIAL_VAR_علامت;
+				p = strchr(p, SPECIAL_VAR_علامت);
 				*p = '\0';
 			}
 		}
-#endif /* BASH_PATTERN_SUBST */
-		else if (exp_op == ':') {
-#if BASH_SUBSTR && ENABLE_FEATURE_SH_MATH
+#اگر_ختم /* BASH_PATTERN_SUBST */
+		ورنہ اگر (exp_op == ':') {
+#اگر BASH_SUBSTR && ENABLE_FEATURE_SH_MATH
 			/* It's ${var:N[:M]} bashism.
 			 * Note that in encoded form it has TWO parts:
 			 * var:N<SPECIAL_VAR_SYMBOL>M<SPECIAL_VAR_SYMBOL>
 			 */
 			arith_t beg, len;
-			unsigned vallen;
-			const char *errmsg;
+			غیرعلامتی vallen;
+			ثابت حرف *errmsg;
 
-			beg = expand_and_evaluate_arith(exp_word, &errmsg);
-			if (errmsg)
-				goto empty_result;
-			debug_printf_varexp("beg:'%s'=%lld\n", exp_word, (long long)beg);
-			*p++ = SPECIAL_VAR_SYMBOL;
-			exp_word = p;
-			p = strchr(p, SPECIAL_VAR_SYMBOL);
+			beg = expand_and_evaluate_arith(exp_لفظ, &errmsg);
+			اگر (errmsg)
+				جاؤ خالی_خانے_نتیجہ;
+			debug_printf_varexp("beg:'%s'=%lld\n", exp_لفظ, (طویل طویل)beg);
+			*p++ = SPECIAL_VAR_علامت;
+			exp_لفظ = p;
+			p = strchr(p, SPECIAL_VAR_علامت);
 			*p = '\0';
-			vallen = val ? strlen(val) : 0;
-			if (beg < 0) {
+			vallen = val ? لڑی_لمبائی(val) : 0;
+			اگر (beg < 0) {
 				/* negative beg counts from the end */
 				beg = (arith_t)vallen + beg;
 			}
 			/* If expansion will be empty, do not even evaluate len */
-			if (!val || beg < 0 || beg > vallen) {
+			اگر (!val || beg < 0 || beg > vallen) {
 				/* Why > vallen, not >=? bash:
 				 * unset b; a=ab; : ${a:2:${b=3}}; echo $b  # "", b=3 (!!!)
 				 * unset b; a=a; : ${a:2:${b=3}}; echo $b   # "", b not set
 				 */
-				goto empty_result;
+				جاؤ خالی_خانے_نتیجہ;
 			}
-			len = expand_and_evaluate_arith(exp_word, &errmsg);
-			if (errmsg)
-				goto empty_result;
-			debug_printf_varexp("len:'%s'=%lld\n", exp_word, (long long)len);
+			len = expand_and_evaluate_arith(exp_لفظ, &errmsg);
+			اگر (errmsg)
+				جاؤ خالی_خانے_نتیجہ;
+			debug_printf_varexp("len:'%s'=%lld\n", exp_لفظ, (طویل طویل)len);
 			debug_printf_varexp("from val:'%s'\n", val);
-			if (len < 0) {
+			اگر (len < 0) {
 				/* in bash, len=-n means strlen()-n */
 				len = (arith_t)vallen - beg + len;
-				if (len < 0) /* bash compat */
-					msg_and_die_if_script("%s: substring expression < 0", var);
+				اگر (len < 0) /* bash compat */
+					پیغام_and_die_if_script("%s: substring expression < 0", var);
 			}
-			if (len <= 0 || !val /*|| beg >= vallen*/) {
- empty_result:
-				val = NULL;
-			} else {
+			اگر (len <= 0 || !val /*|| beg >= vallen*/) {
+ خالی_خانے_نتیجہ:
+				val = تہی;
+			} ورنہ {
 				/* Paranoia. What if user entered 9999999999999
 				 * which fits in arith_t but not int? */
-				if (len > INT_MAX)
-					len = INT_MAX;
-				val = to_be_freed = xstrndup(val + beg, len);
+				اگر (len > زیادہ_سے_زیادہ_عدد)
+					len = زیادہ_سے_زیادہ_عدد;
+				val = مقصد_be_freed = xstrndup(val + beg, len);
 			}
 			debug_printf_varexp("val:'%s'\n", val);
-#else /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
-			msg_and_die_if_script("malformed ${%s:...}", var);
-			val = NULL;
-#endif
-		} else { /* one of "-=+?" */
+#ورنہ /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
+			پیغام_and_die_if_script("malformed ${%s:...}", var);
+			val = تہی;
+#اگر_ختم
+		} ورنہ { /* one of "-=+?" */
 			/* Standard-mandated substitution ops:
 			 * ${var?word} - indicate error if unset
 			 *      If var is unset, word (or a message indicating it is unset
@@ -7384,34 +7384,34 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 			 * $ x=; f "${x:-'x y' z}"
 			 * |'x y' z|
 			 */
-			int use_word = (!val || ((exp_save == ':') && !val[0]));
-			if (exp_op == '+')
-				use_word = !use_word;
+			صحیح use_لفظ = (!val || ((exp_save == ':') && !val[0]));
+			اگر (exp_op == '+')
+				use_لفظ = !use_لفظ;
 			debug_printf_expand("expand: op:%c (null:%s) test:%i\n", exp_op,
-					(exp_save == ':') ? "true" : "false", use_word);
-			if (use_word) {
-				if (exp_op == '+' || exp_op == '-') {
+					(exp_save == ':') ? "true" : "false", use_لفظ);
+			اگر (use_لفظ) {
+				اگر (exp_op == '+' || exp_op == '-') {
 					/* ${var+word} - use alternative value */
 					/* ${var-word} - use default value */
-					n = encode_then_append_var_plusminus(output, n, exp_word,
+					n = encode_then_append_var_plusminus(output, n, exp_لفظ,
 							/*dquoted:*/ (arg0 & 0x80)
 					);
-					val = NULL;
-				} else {
+					val = تہی;
+				} ورنہ {
 					/* ${var?word} - indicate error if unset */
 					/* ${var=word} - assign and use default value */
-					to_be_freed = encode_then_expand_vararg(exp_word,
+					مقصد_be_freed = encode_then_expand_vararg(exp_لفظ,
 							/*handle_squotes:*/ !(arg0 & 0x80),
 							/*unbackslash:*/ 0
 					);
-					if (to_be_freed)
-						exp_word = to_be_freed;
-					if (exp_op == '?') {
+					اگر (مقصد_be_freed)
+						exp_لفظ = مقصد_be_freed;
+					اگر (exp_op == '?') {
 						/* mimic bash message */
-						msg_and_die_if_script("%s: %s",
+						پیغام_and_die_if_script("%s: %s",
 							var,
-							exp_word[0]
-							? exp_word
+							exp_لفظ[0]
+							? exp_لفظ
 							: "parameter null or not set"
 							/* ash has more specific messages, a-la: */
 							/*: (exp_save == ':' ? "parameter null or not set" : "parameter not set")*/
@@ -7422,18 +7422,18 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 // bash: x: x y z
 // $
 // ("echo YO" is not executed, neither the f function call)
-					} else {
-						val = exp_word;
+					} ورنہ {
+						val = exp_لفظ;
 					}
-					if (exp_op == '=') {
+					اگر (exp_op == '=') {
 						/* ${var=[word]} or ${var:=[word]} */
-						if (isdigit(var[0]) || var[0] == '#') {
+						اگر (ہندسہ_ہے(var[0]) || var[0] == '#') {
 							/* mimic bash message */
-							msg_and_die_if_script("$%s: cannot assign in this way", var);
-							val = NULL;
-						} else {
-							char *new_var = xasprintf("%s=%s", var, val);
-							set_local_var0(new_var);
+							پیغام_and_die_if_script("$%s: cannot assign in this way", var);
+							val = تہی;
+						} ورنہ {
+							حرف *new_var = xasprintf("%s=%s", var, val);
+							سیٹ_local_var0(new_var);
 						}
 					}
 				}
@@ -7443,14 +7443,14 @@ static NOINLINE int expand_one_var(o_string *output, int n,
 		*exp_saveptr = exp_save;
 	} /* if (exp_op) */
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	arg[0] = arg0;
 	*pp = p;
 
-	n = append_str_maybe_ifs_split(output, n, first_ch, val);
+	n = append_str_maybe_ifs_بانٹو(output, n, پہلا_ch, val);
 
-	free(to_be_freed);
-	return n;
+	آزاد(مقصد_be_freed);
+	واپس n;
 }
 
 /* Expand all variable references in given string, adding words to list[]
@@ -7458,65 +7458,65 @@ static NOINLINE int expand_one_var(o_string *output, int n,
  * to be filled). This routine is extremely tricky: has to deal with
  * variables/parameters with whitespace, $* and $@, and constructs like
  * 'echo -$*-'. If you play here, you must run testsuite afterwards! */
-static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
+ساکن NOINLINE صحیح expand_vars_مقصد_list(o_string *output, صحیح n, حرف *arg)
 {
 	/* output->o_expflags & EXP_FLAG_SINGLEWORD (0x80) if we are in
 	 * expansion of right-hand side of assignment == 1-element expand.
 	 */
-	char cant_be_null = 0; /* only bit 0x80 matters */
-	char *p;
+	حرف cant_be_null = 0; /* only bit 0x80 matters */
+	حرف *p;
 
 	debug_printf_expand("expand_vars_to_list: arg:'%s' singleword:%x\n", arg,
 			!!(output->o_expflags & EXP_FLAG_SINGLEWORD));
 	debug_print_list("expand_vars_to_list[0]", output, n);
 
-	while ((p = strchr(arg, SPECIAL_VAR_SYMBOL)) != NULL) {
-		char first_ch;
-#if ENABLE_FEATURE_SH_MATH
-		char arith_buf[sizeof(arith_t)*3 + 2];
-#endif
+	جب ((p = strchr(arg, SPECIAL_VAR_علامت)) != تہی) {
+		حرف پہلا_ch;
+#اگر ENABLE_FEATURE_SH_MATH
+		حرف arith_buf[حجم(arith_t)*3 + 2];
+#اگر_ختم
 
-		if (output->ended_in_ifs) {
+		اگر (output->ended_اندر_ifs) {
 			o_addchr(output, '\0');
 			n = o_save_ptr(output, n);
-			output->ended_in_ifs = 0;
+			output->ended_اندر_ifs = 0;
 		}
 
 		o_addblock(output, arg, p - arg);
 		debug_print_list("expand_vars_to_list[1]", output, n);
 		arg = ++p;
-		p = strchr(p, SPECIAL_VAR_SYMBOL);
+		p = strchr(p, SPECIAL_VAR_علامت);
 
 		/* Fetch special var name (if it is indeed one of them)
 		 * and quote bit, force the bit on if singleword expansion -
 		 * important for not getting v=$@ expand to many words. */
-		first_ch = arg[0] | (output->o_expflags & EXP_FLAG_SINGLEWORD);
+		پہلا_ch = arg[0] | (output->o_expflags & EXP_FLAG_SINGLEWORD);
 
 		/* Is this variable quoted and thus expansion can't be null?
 		 * "$@" is special. Even if quoted, it can still
 		 * expand to nothing (not even an empty string),
 		 * thus it is excluded. */
-		if ((first_ch & 0x7f) != '@')
-			cant_be_null |= first_ch;
+		اگر ((پہلا_ch & 0x7f) != '@')
+			cant_be_null |= پہلا_ch;
 
-		switch (first_ch & 0x7f) {
+		انتخاب (پہلا_ch & 0x7f) {
 		/* Highest bit in first_ch indicates that var is double-quoted */
-		case '*':
-		case '@': {
-			int i;
-#ifndef __U_BOOT__
-			if (!G.global_argv[1])
-#else /* __U_BOOT__ */
-			if (!G.global_argv || !G.global_argv[1])
-#endif /* __U_BOOT__ */
-				break;
+		حالت '*':
+		حالت '@': {
+			صحیح i;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (!G.global_argv[1])
+#ورنہ /* __U_BOOT__ */
+			اگر (!G.global_argv || !G.global_argv[1])
+#اگر_ختم /* __U_BOOT__ */
+				توڑو;
 			i = 1;
-			cant_be_null |= first_ch; /* do it for "$@" _now_, when we know it's not empty */
-			if (!(first_ch & 0x80)) { /* unquoted $* or $@ */
-				while (G.global_argv[i]) {
+			cant_be_null |= پہلا_ch; /* do it for "$@" _now_, when we know it's not empty */
+			اگر (!(پہلا_ch & 0x80)) { /* unquoted $* or $@ */
+				جب (G.global_argv[i]) {
 					n = expand_on_ifs(output, n, G.global_argv[i]);
 					debug_printf_expand("expand_vars_to_list: argv %d (last %d)\n", i, G.global_argc - 1);
-					if (G.global_argv[i++][0] && G.global_argv[i]) {
+					اگر (G.global_argv[i++][0] && G.global_argv[i]) {
 						/* this argv[] is not empty and not last:
 						 * put terminating NUL, start new word */
 						o_addchr(output, '\0');
@@ -7525,78 +7525,78 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 						debug_print_list("expand_vars_to_list[3]", output, n);
 					}
 				}
-			} else
+			} ورنہ
 			/* If EXP_FLAG_SINGLEWORD, we handle assignment 'a=....$@.....'
 			 * and in this case should treat it like '$*' - see 'else...' below */
-			if (first_ch == (char)('@'|0x80)  /* quoted $@ */
+			اگر (پہلا_ch == (حرف)('@'|0x80)  /* quoted $@ */
 			 && !(output->o_expflags & EXP_FLAG_SINGLEWORD) /* not v="$@" case */
 			) {
-				while (1) {
-					o_addQstr(output, G.global_argv[i]);
-					if (++i >= G.global_argc)
-						break;
+				جب (1) {
+					o_جوڑو_Qstr(output, G.global_argv[i]);
+					اگر (++i >= G.global_argc)
+						توڑو;
 					o_addchr(output, '\0');
 					debug_print_list("expand_vars_to_list[4]", output, n);
 					n = o_save_ptr(output, n);
 				}
-			} else { /* quoted $* (or v="$@" case): add as one word */
-				while (1) {
-					o_addQstr(output, G.global_argv[i]);
-					if (!G.global_argv[++i])
-						break;
-					if (G.ifs[0])
+			} ورنہ { /* quoted $* (or v="$@" case): add as one word */
+				جب (1) {
+					o_جوڑو_Qstr(output, G.global_argv[i]);
+					اگر (!G.global_argv[++i])
+						توڑو;
+					اگر (G.ifs[0])
 						o_addchr(output, G.ifs[0]);
 				}
 				output->has_quoted_part = 1;
 			}
-			break;
+			توڑو;
 		}
-		case SPECIAL_VAR_SYMBOL: {
+		حالت SPECIAL_VAR_علامت: {
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_SYMBOL> */
 			/* "Empty variable", used to make "" etc to not disappear */
 			output->has_quoted_part = 1;
 			cant_be_null = 0x80;
 			arg++;
-			break;
+			توڑو;
 		}
-		case SPECIAL_VAR_QUOTED_SVS:
+		حالت SPECIAL_VAR_QUOTED_SVS:
 			/* <SPECIAL_VAR_SYMBOL><SPECIAL_VAR_QUOTED_SVS><SPECIAL_VAR_SYMBOL> */
 			/* "^C variable", represents literal ^C char (possible in scripts) */
-			o_addchr(output, SPECIAL_VAR_SYMBOL);
+			o_addchr(output, SPECIAL_VAR_علامت);
 			arg++;
-			break;
-#if ENABLE_HUSH_TICK
-		case '`': {
+			توڑو;
+#اگر ENABLE_HUSH_TICK
+		حالت '`': {
 			/* <SPECIAL_VAR_SYMBOL>`cmd<SPECIAL_VAR_SYMBOL> */
-			o_string subst_result = NULL_O_STRING;
+			o_string subst_نتیجہ = NULL_O_STRING;
 
 			*p = '\0'; /* replace trailing <SPECIAL_VAR_SYMBOL> */
 			arg++;
 			/* Can't just stuff it into output o_string,
 			 * expanded result may need to be globbed
 			 * and $IFS-split */
-			debug_printf_subst("SUBST '%s' first_ch %x\n", arg, first_ch);
-			G.last_exitcode = process_command_subs(&subst_result, arg);
-			G.expand_exitcode = G.last_exitcode;
-			debug_printf_subst("SUBST RES:%d '%s'\n", G.last_exitcode, subst_result.data);
-			n = append_str_maybe_ifs_split(output, n, first_ch, subst_result.data);
-			o_free(&subst_result);
-			break;
+			debug_printf_subst("SUBST '%s' first_ch %x\n", arg, پہلا_ch);
+			G.آخری_exitcode = process_command_subs(&subst_نتیجہ, arg);
+			G.expand_exitcode = G.آخری_exitcode;
+			debug_printf_subst("SUBST RES:%d '%s'\n", G.آخری_exitcode, subst_نتیجہ.ڈیٹا);
+			n = append_str_maybe_ifs_بانٹو(output, n, پہلا_ch, subst_نتیجہ.ڈیٹا);
+			o_free(&subst_نتیجہ);
+			توڑو;
 		}
-#endif
-#if ENABLE_FEATURE_SH_MATH
-		case '+': {
+#اگر_ختم
+#اگر ENABLE_FEATURE_SH_MATH
+		حالت '+': {
 			/* <SPECIAL_VAR_SYMBOL>+arith<SPECIAL_VAR_SYMBOL> */
 			arith_t res;
 
 			arg++; /* skip '+' */
 			*p = '\0'; /* replace trailing <SPECIAL_VAR_SYMBOL> */
-			debug_printf_subst("ARITH '%s' first_ch %x\n", arg, first_ch);
-			res = expand_and_evaluate_arith(arg, NULL);
+			debug_printf_subst("ARITH '%s' first_ch %x\n", arg, پہلا_ch);
+			res = expand_and_evaluate_arith(arg, تہی);
 			debug_printf_subst("ARITH RES '"ARITH_FMT"'\n", res);
 			sprintf(arith_buf, ARITH_FMT, res);
-			if (res < 0
-			 && first_ch == (char)('+'|0x80)
+			اگر (res < 0
+			 && پہلا_ch == (حرف)('+'|0x80)
 			/* && (output->o_expflags & EXP_FLAG_ESC_GLOB_CHARS) */
 			) {
 				/* Quoted negative ariths, like filename[0"$((-9))"],
@@ -7604,28 +7604,28 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 				 * Convert leading '-' to '\-':
 				 */
 				o_grow_by(output, 1);
-				output->data[output->length++] = '\\';
+				output->ڈیٹا[output->لمبائی++] = '\\';
 			}
 			o_addstr(output, arith_buf);
-			break;
+			توڑو;
 		}
-#endif
-		default:
+#اگر_ختم
+		طےشدہ:
 			/* <SPECIAL_VAR_SYMBOL>varname[ops]<SPECIAL_VAR_SYMBOL> */
-			n = expand_one_var(output, n, first_ch, arg, &p);
-			break;
+			n = expand_one_var(output, n, پہلا_ch, arg, &p);
+			توڑو;
 		} /* switch (char after <SPECIAL_VAR_SYMBOL>) */
 
 		/* Restore NULL'ed SPECIAL_VAR_SYMBOL.
 		 * Do the check to avoid writing to a const string. */
-		if (*p != SPECIAL_VAR_SYMBOL)
-			*p = SPECIAL_VAR_SYMBOL;
+		اگر (*p != SPECIAL_VAR_علامت)
+			*p = SPECIAL_VAR_علامت;
 		arg = ++p;
 	} /* end of "while (SPECIAL_VAR_SYMBOL is found) ..." */
 
-	if (*arg) {
+	اگر (*arg) {
 		/* handle trailing string */
-		if (output->ended_in_ifs) {
+		اگر (output->ended_اندر_ifs) {
 			o_addchr(output, '\0');
 			n = o_save_ptr(output, n);
 		}
@@ -7635,38 +7635,38 @@ static NOINLINE int expand_vars_to_list(o_string *output, int n, char *arg)
 		 */
 		o_addstr(output, arg);
 		debug_print_list("expand_vars_to_list[b]", output, n);
-	} else
-	if (output->length == o_get_last_ptr(output, n) /* expansion is empty */
+	} ورنہ
+	اگر (output->لمبائی == o_get_آخری_ptr(output, n) /* expansion is empty */
 	 && !(cant_be_null & 0x80)   /* and all vars were not quoted */
 	 && !output->has_quoted_part
 	) {
 		n--;
 		/* allow to reuse list[n] later without re-growth */
-		output->has_empty_slot = 1;
+		output->has_خالی_خانے_خانہ = 1;
 	}
 
-	return n;
+	واپس n;
 }
 
-static char **expand_variables(char **argv, unsigned expflags)
+ساکن حرف **expand_variables(حرف **argv, غیرعلامتی expflags)
 {
-	int n;
-	char **list;
+	صحیح n;
+	حرف **list;
 	o_string output = NULL_O_STRING;
 
 	output.o_expflags = expflags;
 
 	n = 0;
-	for (;;) {
+	برائے (;;) {
 		/* go to next list[n] */
-		output.ended_in_ifs = 0;
+		output.ended_اندر_ifs = 0;
 		n = o_save_ptr(&output, n);
 
-		if (!*argv)
-			break;
+		اگر (!*argv)
+			توڑو;
 
 		/* expand argv[i] */
-		n = expand_vars_to_list(&output, n, *argv++);
+		n = expand_vars_مقصد_list(&output, n, *argv++);
 		/* if (!output->has_empty_slot) -- need this?? */
 			o_addchr(&output, '\0');
 	}
@@ -7674,21 +7674,21 @@ static char **expand_variables(char **argv, unsigned expflags)
 
 	/* output.data (malloced in one block) gets returned in "list" */
 	list = o_finalize_list(&output, n);
-	debug_print_strings("expand_variables[1]", list);
-	return list;
+	debug_print_لڑیاں("expand_variables[1]", list);
+	واپس list;
 }
 
-static char **expand_strvec_to_strvec(char **argv)
+ساکن حرف **expand_strvec_مقصد_strvec(حرف **argv)
 {
-	return expand_variables(argv, EXP_FLAG_GLOB | EXP_FLAG_ESC_GLOB_CHARS);
+	واپس expand_variables(argv, EXP_FLAG_GLOB | EXP_FLAG_ESC_GLOB_CHARS);
 }
 
-#if defined(CMD_SINGLEWORD_NOGLOB) || defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-static char **expand_strvec_to_strvec_singleword_noglob(char **argv)
+#اگر defined(CMD_SINGLEWORD_NOGLOB) || defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+ساکن حرف **expand_strvec_مقصد_strvec_singleword_noglob(حرف **argv)
 {
-	return expand_variables(argv, EXP_FLAG_SINGLEWORD);
+	واپس expand_variables(argv, EXP_FLAG_SINGLEWORD);
 }
-#endif
+#اگر_ختم
 
 /* Used for expansion of right hand of assignments,
  * $((...)), heredocs, variable expansion parts.
@@ -7696,261 +7696,261 @@ static char **expand_strvec_to_strvec_singleword_noglob(char **argv)
  * NB: should NOT do globbing!
  * "export v=/bin/c*; env | grep ^v=" outputs "v=/bin/c*"
  */
-static char *expand_string_to_string(const char *str, int EXP_flags, int do_unbackslash)
+ساکن حرف *expand_string_مقصد_string(ثابت حرف *str, صحیح EXP_flags, صحیح do_unbackslash)
 {
-#if !BASH_PATTERN_SUBST && !ENABLE_HUSH_CASE
-	const int do_unbackslash = 1;
-	const int EXP_flags = EXP_FLAG_ESC_GLOB_CHARS;
-#endif
-	char *argv[2], **list;
+#اگر !BASH_نمونہ_SUBST && !ENABLE_HUSH_CASE
+	ثابت صحیح do_unbackslash = 1;
+	ثابت صحیح EXP_flags = EXP_FLAG_ESC_GLOB_CHARS;
+#اگر_ختم
+	حرف *argv[2], **list;
 
 	debug_printf_expand("string_to_string<='%s'\n", str);
 	/* This is generally an optimization, but it also
 	 * handles "", which otherwise trips over !list[0] check below.
 	 * (is this ever happens that we actually get str="" here?)
 	 */
-	if (!strchr(str, SPECIAL_VAR_SYMBOL) && !strchr(str, '\\')) {
+	اگر (!strchr(str, SPECIAL_VAR_علامت) && !strchr(str, '\\')) {
 		//TODO: Can use on strings with \ too, just unbackslash() them?
 		debug_printf_expand("string_to_string(fast)=>'%s'\n", str);
-		return xstrdup(str);
+		واپس xstrdup(str);
 	}
 
-	argv[0] = (char*)str;
-	argv[1] = NULL;
+	argv[0] = (حرف*)str;
+	argv[1] = تہی;
 	list = expand_variables(argv, EXP_flags | EXP_FLAG_SINGLEWORD);
-	if (!list[0]) {
+	اگر (!list[0]) {
 		/* Example where it happens:
 		 * x=; echo ${x:-"$@"}
 		 */
-		((char*)list)[0] = '\0';
-	} else {
-		if (HUSH_DEBUG)
-			if (list[1])
-				bb_simple_error_msg_and_die("BUG in varexp2");
+		((حرف*)list)[0] = '\0';
+	} ورنہ {
+		اگر (HUSH_DEBUG)
+			اگر (list[1])
+				bb_simple_error_پیغام_and_die("BUG in varexp2");
 		/* actually, just move string 2*sizeof(char*) bytes back */
-		overlapping_strcpy((char*)list, list[0]);
-		if (do_unbackslash)
-			unbackslash((char*)list);
+		overlapping_strcpy((حرف*)list, list[0]);
+		اگر (do_unbackslash)
+			unbackslash((حرف*)list);
 	}
-	debug_printf_expand("string_to_string=>'%s'\n", (char*)list);
-	return (char*)list;
+	debug_printf_expand("string_to_string=>'%s'\n", (حرف*)list);
+	واپس (حرف*)list;
 }
 
-#if 0
-static char* expand_strvec_to_string(char **argv)
+#اگر 0
+ساکن حرف* expand_strvec_مقصد_string(حرف **argv)
 {
-	char **list;
+	حرف **list;
 
 	list = expand_variables(argv, EXP_FLAG_SINGLEWORD);
 	/* Convert all NULs to spaces */
-	if (list[0]) {
-		int n = 1;
-		while (list[n]) {
-			if (HUSH_DEBUG)
-				if (list[n-1] + strlen(list[n-1]) + 1 != list[n])
-					bb_error_msg_and_die("BUG in varexp3");
+	اگر (list[0]) {
+		صحیح n = 1;
+		جب (list[n]) {
+			اگر (HUSH_DEBUG)
+				اگر (list[n-1] + لڑی_لمبائی(list[n-1]) + 1 != list[n])
+					bb_error_پیغام_and_die("BUG in varexp3");
 			/* bash uses ' ' regardless of $IFS contents */
 			list[n][-1] = ' ';
 			n++;
 		}
 	}
-	overlapping_strcpy((char*)list, list[0] ? list[0] : "");
-	debug_printf_expand("strvec_to_string='%s'\n", (char*)list);
-	return (char*)list;
+	overlapping_strcpy((حرف*)list, list[0] ? list[0] : "");
+	debug_printf_expand("strvec_to_string='%s'\n", (حرف*)list);
+	واپس (حرف*)list;
 }
-#endif
+#اگر_ختم
 
-#ifndef __U_BOOT__
-static char **expand_assignments(char **argv, int count)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن حرف **expand_assignments(حرف **argv, صحیح گنتی)
 {
-	int i;
-	char **p;
+	صحیح i;
+	حرف **p;
 
-	G.expanded_assignments = p = NULL;
+	G.expanded_assignments = p = تہی;
 	/* Expand assignments into one string each */
-	for (i = 0; i < count; i++) {
-		p = add_string_to_strings(p,
-			expand_string_to_string(argv[i],
+	برائے (i = 0; i < گنتی; i++) {
+		p = جوڑو_string_مقصد_لڑیاں(p,
+			expand_string_مقصد_string(argv[i],
 				EXP_FLAG_ESC_GLOB_CHARS,
 				/*unbackslash:*/ 1
 			)
 		);
 		G.expanded_assignments = p;
 	}
-	G.expanded_assignments = NULL;
-	return p;
+	G.expanded_assignments = تہی;
+	واپس p;
 }
 
-static void switch_off_special_sigs(unsigned mask)
+ساکن خالی switch_off_special_sigs(غیرعلامتی نقاب)
 {
-	unsigned sig = 0;
-	while ((mask >>= 1) != 0) {
+	غیرعلامتی sig = 0;
+	جب ((نقاب >>= 1) != 0) {
 		sig++;
-		if (!(mask & 1))
-			continue;
-#if ENABLE_HUSH_TRAP
-		if (G_traps) {
-			if (G_traps[sig] && !G_traps[sig][0])
+		اگر (!(نقاب & 1))
+			جاری;
+#اگر ENABLE_HUSH_TRAP
+		اگر (G_traps) {
+			اگر (G_traps[sig] && !G_traps[sig][0])
 				/* trap is '', has to remain SIG_IGN */
-				continue;
-			free(G_traps[sig]);
-			G_traps[sig] = NULL;
+				جاری;
+			آزاد(G_traps[sig]);
+			G_traps[sig] = تہی;
 		}
-#endif
+#اگر_ختم
 		/* We are here only if no trap or trap was not '' */
 		install_sighandler(sig, SIG_DFL);
 	}
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-#if BB_MMU
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر BB_MMU
 /* never called */
-void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv) NORETURN;
+خالی re_execute_shell(حرف ***مقصد_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv) NORETURN;
 
-static void reset_traps_to_defaults(void)
+ساکن خالی reset_traps_مقصد_defaults(خالی)
 {
 	/* This function is always called in a child shell
 	 * after fork (not vfork, NOMMU doesn't use this function).
 	 */
-	IF_HUSH_TRAP(unsigned sig;)
-	unsigned mask;
+	IF_HUSH_TRAP(غیرعلامتی sig;)
+	غیرعلامتی نقاب;
 
 	/* Child shells are not interactive.
 	 * SIGTTIN/SIGTTOU/SIGTSTP should not have special handling.
 	 * Testcase: (while :; do :; done) + ^Z should background.
 	 * Same goes for SIGTERM, SIGHUP, SIGINT.
 	 */
-	mask = (G.special_sig_mask & SPECIAL_INTERACTIVE_SIGS) | G_fatal_sig_mask;
-	if (!G_traps && !mask)
-		return; /* already no traps and no special sigs */
+	نقاب = (G.special_sig_نقاب & SPECIAL_INTERACTIVE_SIGS) | G_fatal_sig_نقاب;
+	اگر (!G_traps && !نقاب)
+		واپس; /* already no traps and no special sigs */
 
 	/* Switch off special sigs */
-	switch_off_special_sigs(mask);
-# if ENABLE_HUSH_JOB
-	G_fatal_sig_mask = 0;
+	switch_off_special_sigs(نقاب);
+# اگر ENABLE_HUSH_کام
+	G_fatal_sig_نقاب = 0;
 # endif
-	G.special_sig_mask &= ~SPECIAL_INTERACTIVE_SIGS;
+	G.special_sig_نقاب &= ~SPECIAL_INTERACTIVE_SIGS;
 	/* SIGQUIT,SIGCHLD and maybe SPECIAL_JOBSTOP_SIGS
 	 * remain set in G.special_sig_mask */
 
-# if ENABLE_HUSH_TRAP
-	if (!G_traps)
-		return;
+# اگر ENABLE_HUSH_TRAP
+	اگر (!G_traps)
+		واپس;
 
 	/* Reset all sigs to default except ones with empty traps */
-	for (sig = 0; sig < NSIG; sig++) {
-		if (!G_traps[sig])
-			continue; /* no trap: nothing to do */
-		if (!G_traps[sig][0])
-			continue; /* empty trap: has to remain SIG_IGN */
+	برائے (sig = 0; sig < NSIG; sig++) {
+		اگر (!G_traps[sig])
+			جاری; /* no trap: nothing to do */
+		اگر (!G_traps[sig][0])
+			جاری; /* empty trap: has to remain SIG_IGN */
 		/* sig has non-empty trap, reset it: */
-		free(G_traps[sig]);
-		G_traps[sig] = NULL;
+		آزاد(G_traps[sig]);
+		G_traps[sig] = تہی;
 		/* There is no signal for trap 0 (EXIT) */
-		if (sig == 0)
-			continue;
+		اگر (sig == 0)
+			جاری;
 		install_sighandler(sig, pick_sighandler(sig));
 	}
 # endif
 }
 
-#else /* !BB_MMU */
+#ورنہ /* !BB_MMU */
 
-static void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv) NORETURN;
-static void re_execute_shell(char ***to_free, const char *s,
-		char *g_argv0, char **g_argv,
-		char **builtin_argv)
+ساکن خالی re_execute_shell(حرف ***مقصد_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv) NORETURN;
+ساکن خالی re_execute_shell(حرف ***مقصد_free, ثابت حرف *s,
+		حرف *g_argv0, حرف **g_argv,
+		حرف **builtin_argv)
 {
 # define NOMMU_HACK_FMT ("-$%x:%x:%x:%x:%x:%llx" IF_HUSH_LOOPS(":%x"))
 	/* delims + 2 * (number of bytes in printed hex numbers) */
-	char param_buf[sizeof(NOMMU_HACK_FMT) + 2 * (sizeof(int)*6 + sizeof(long long)*1)];
-	char *heredoc_argv[4];
-	struct variable *cur;
-# if ENABLE_HUSH_FUNCTIONS
-	struct function *funcp;
+	حرف param_buf[حجم(NOMMU_HACK_FMT) + 2 * (حجم(صحیح)*6 + حجم(طویل طویل)*1)];
+	حرف *heredoc_argv[4];
+	ساخت variable *cur;
+# اگر ENABLE_HUSH_FUNCTIONS
+	ساخت function *funcp;
 # endif
-	char **argv, **pp;
-	unsigned cnt;
-	unsigned long long empty_trap_mask;
+	حرف **argv, **pp;
+	غیرعلامتی cnt;
+	غیرعلامتی طویل طویل خالی_خانے_trap_نقاب;
 
-	if (!g_argv0) { /* heredoc */
+	اگر (!g_argv0) { /* heredoc */
 		argv = heredoc_argv;
-		argv[0] = (char *) G.argv0_for_re_execing;
-		argv[1] = (char *) "-<";
-		argv[2] = (char *) s;
-		argv[3] = NULL;
+		argv[0] = (حرف *) G.argv0_for_re_execing;
+		argv[1] = (حرف *) "-<";
+		argv[2] = (حرف *) s;
+		argv[3] = تہی;
 		pp = &argv[3]; /* used as pointer to empty environment */
-		goto do_exec;
+		جاؤ do_exec;
 	}
 
 	cnt = 0;
 	pp = builtin_argv;
-	if (pp) while (*pp++)
+	اگر (pp) جب (*pp++)
 		cnt++;
 
-	empty_trap_mask = 0;
-	if (G_traps) {
-		int sig;
-		for (sig = 1; sig < NSIG; sig++) {
-			if (G_traps[sig] && !G_traps[sig][0])
-				empty_trap_mask |= 1LL << sig;
+	خالی_خانے_trap_نقاب = 0;
+	اگر (G_traps) {
+		صحیح sig;
+		برائے (sig = 1; sig < NSIG; sig++) {
+			اگر (G_traps[sig] && !G_traps[sig][0])
+				خالی_خانے_trap_نقاب |= 1LL << sig;
 		}
 	}
 
 	sprintf(param_buf, NOMMU_HACK_FMT
-			, (unsigned) G.root_pid
-			, (unsigned) G.root_ppid
-			, (unsigned) G.last_bg_pid
-			, (unsigned) G.last_exitcode
+			, (غیرعلامتی) G.جڑ_pid
+			, (غیرعلامتی) G.جڑ_ppid
+			, (غیرعلامتی) G.آخری_bg_pid
+			, (غیرعلامتی) G.آخری_exitcode
 			, cnt
-			, empty_trap_mask
-			IF_HUSH_LOOPS(, G.depth_of_loop)
+			, خالی_خانے_trap_نقاب
+			IF_HUSH_LOOPS(, G.گہرائی_کا_loop)
 			);
 # undef NOMMU_HACK_FMT
 	/* 1:hush 2:-$<pid>:<pid>:<exitcode>:<etc...> <vars...> <funcs...>
 	 * 3:-c 4:<cmd> 5:<arg0> <argN...> 6:NULL
 	 */
 	cnt += 6;
-	for (cur = G.top_var; cur; cur = cur->next) {
-		if (!cur->flg_export || cur->flg_read_only)
+	برائے (cur = G.چوٹی_var; cur; cur = cur->اگلا) {
+		اگر (!cur->flg_export || cur->flg_read_only)
 			cnt += 2;
 	}
-# if ENABLE_HUSH_LINENO_VAR
+# اگر ENABLE_HUSH_LINENO_VAR
 	cnt += 2;
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next)
+# اگر ENABLE_HUSH_FUNCTIONS
+	برائے (funcp = G.چوٹی_func; funcp; funcp = funcp->اگلا)
 		cnt += 3;
 # endif
 	pp = g_argv;
-	while (*pp++)
+	جب (*pp++)
 		cnt++;
-	*to_free = argv = pp = xzalloc(sizeof(argv[0]) * cnt);
-	*pp++ = (char *) G.argv0_for_re_execing;
+	*مقصد_free = argv = pp = xzalloc(حجم(argv[0]) * cnt);
+	*pp++ = (حرف *) G.argv0_for_re_execing;
 	*pp++ = param_buf;
-	for (cur = G.top_var; cur; cur = cur->next) {
-		if (strcmp(cur->varstr, hush_version_str) == 0)
-			continue;
-		if (cur->flg_read_only) {
-			*pp++ = (char *) "-R";
+	برائے (cur = G.چوٹی_var; cur; cur = cur->اگلا) {
+		اگر (strcmp(cur->varstr, hush_نسخہ_str) == 0)
+			جاری;
+		اگر (cur->flg_read_only) {
+			*pp++ = (حرف *) "-R";
 			*pp++ = cur->varstr;
-		} else if (!cur->flg_export) {
-			*pp++ = (char *) "-V";
+		} ورنہ اگر (!cur->flg_export) {
+			*pp++ = (حرف *) "-V";
 			*pp++ = cur->varstr;
 		}
 	}
-# if ENABLE_HUSH_LINENO_VAR
-	*pp++ = (char *) "-L";
+# اگر ENABLE_HUSH_LINENO_VAR
+	*pp++ = (حرف *) "-L";
 	*pp++ = utoa(G.execute_lineno);
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-	for (funcp = G.top_func; funcp; funcp = funcp->next) {
-		*pp++ = (char *) "-F";
+# اگر ENABLE_HUSH_FUNCTIONS
+	برائے (funcp = G.چوٹی_func; funcp; funcp = funcp->اگلا) {
+		*pp++ = (حرف *) "-F";
 		*pp++ = funcp->name;
 		*pp++ = funcp->body_as_string;
 	}
@@ -7973,15 +7973,15 @@ static void re_execute_shell(char ***to_free, const char *s,
 	 *
 	 * I conclude it means we don't need to pass active traps here.
 	 */
-	*pp++ = (char *) "-c";
-	*pp++ = (char *) s;
-	if (builtin_argv) {
-		while (*++builtin_argv)
+	*pp++ = (حرف *) "-c";
+	*pp++ = (حرف *) s;
+	اگر (builtin_argv) {
+		جب (*++builtin_argv)
 			*pp++ = *builtin_argv;
-		*pp++ = (char *) "";
+		*pp++ = (حرف *) "";
 	}
 	*pp++ = g_argv0;
-	while (*g_argv)
+	جب (*g_argv)
 		*pp++ = *g_argv++;
 	/* *pp = NULL; - is already there */
 	pp = environ;
@@ -7989,20 +7989,20 @@ static void re_execute_shell(char ***to_free, const char *s,
  do_exec:
 	debug_printf_exec("re_execute_shell pid:%d cmd:'%s'\n", getpid(), s);
 	/* Don't propagate SIG_IGN to the child */
-	if (SPECIAL_JOBSTOP_SIGS != 0)
-		switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
-	execve(bb_busybox_exec_path, argv, pp);
+	اگر (SPECIAL_JOBSTOP_SIGS != 0)
+		switch_off_special_sigs(G.special_sig_نقاب & SPECIAL_JOBSTOP_SIGS);
+	execve(bb_busybox_exec_راستہ, argv, pp);
 	/* Fallback. Useful for init=/bin/hush usage etc */
-	if (argv[0][0] == '/')
+	اگر (argv[0][0] == '/')
 		execve(argv[0], argv, pp);
 	xfunc_error_retval = 127;
-	bb_simple_error_msg_and_die("can't re-execute the shell");
+	bb_simple_error_پیغام_and_die("can't re-execute the shell");
 }
-#endif  /* !BB_MMU */
+#اگر_ختم  /* !BB_MMU */
 
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-static int run_and_free_list(struct pipe *pi);
+ساکن صحیح تسلسل_and_free_list(ساخت pipe *pi);
 
 /* Executing from string: eval, sh -c '...'
  *          or from file: /etc/profile, . file, sh <script>, sh (intereactive)
@@ -8010,11 +8010,11 @@ static int run_and_free_list(struct pipe *pi);
  * NUL: parse all, execute, return
  * ';': parse till ';' or newline, execute, repeat till EOF
  */
-#ifndef __U_BOOT__
-static void parse_and_run_stream(struct in_str *inp, int end_trigger)
-#else /* __U_BOOT__ */
-static int parse_and_run_stream(struct in_str *inp, int end_trigger)
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی parse_and_تسلسل_دھارا(ساخت اندر_str *inp, صحیح انتہا_trigger)
+#ورنہ /* __U_BOOT__ */
+ساکن صحیح parse_and_تسلسل_دھارا(ساخت اندر_str *inp, صحیح انتہا_trigger)
+#اگر_ختم /* __U_BOOT__ */
 {
 	/* Why we need empty flag?
 	 * An obscure corner case "false; ``; echo $?":
@@ -8022,164 +8022,164 @@ static int parse_and_run_stream(struct in_str *inp, int end_trigger)
 	 * But we can't just set $? to 0 at the start,
 	 * this breaks "false; echo `echo $?`" case.
 	 */
-	bool empty = 1;
-#ifndef __U_BOOT__
-	while (1) {
-#else /* __U_BOOT__ */
-	do {
-#endif /* __U_BOOT__ */
-		struct pipe *pipe_list;
+	bool خالی_خانے = 1;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	جب (1) {
+#ورنہ /* __U_BOOT__ */
+	کرو {
+#اگر_ختم /* __U_BOOT__ */
+		ساخت pipe *pipe_list;
 
-#if ENABLE_HUSH_INTERACTIVE
-		if (end_trigger == ';') {
+#اگر ENABLE_HUSH_INTERACTIVE
+		اگر (انتہا_trigger == ';') {
 			G.promptmode = 0; /* PS1 */
 			debug_printf_prompt("%s promptmode=%d\n", __func__, G.promptmode);
 		}
-#endif
-		pipe_list = parse_stream(NULL, NULL, inp, end_trigger);
-		if (!pipe_list || pipe_list == ERR_PTR) { /* EOF/error */
+#اگر_ختم
+		pipe_list = parse_دھارا(تہی, تہی, inp, انتہا_trigger);
+		اگر (!pipe_list || pipe_list == ERR_PTR) { /* EOF/error */
 			/* If we are in "big" script
 			 * (not in `cmd` or something similar)...
 			 */
-			if (pipe_list == ERR_PTR && end_trigger == ';') {
+			اگر (pipe_list == ERR_PTR && انتہا_trigger == ';') {
 				/* Discard cached input (rest of line) */
-				int ch = inp->last_char;
-				while (ch != EOF && ch != '\n') {
+				صحیح ch = inp->آخری_char;
+				جب (ch != EOF && ch != '\n') {
 					//bb_error_msg("Discarded:'%c'", ch);
 					ch = i_getch(inp);
 				}
 				/* Force prompt */
-				inp->p = NULL;
+				inp->p = تہی;
 				/* This stream isn't empty */
-				empty = 0;
-				continue;
+				خالی_خانے = 0;
+				جاری;
 			}
-			if (!pipe_list && empty)
-				G.last_exitcode = 0;
-			break;
+			اگر (!pipe_list && خالی_خانے)
+				G.آخری_exitcode = 0;
+			توڑو;
 		}
-		debug_print_tree(pipe_list, 0);
+		debug_print_درخت(pipe_list, 0);
 		debug_printf_exec("parse_and_run_stream: run_and_free_list\n");
-#ifndef __U_BOOT__
-		run_and_free_list(pipe_list);
-#else /* __U_BOOT__ */
-		int rcode = run_and_free_list(pipe_list);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		تسلسل_and_free_list(pipe_list);
+#ورنہ /* __U_BOOT__ */
+		صحیح rcode = تسلسل_and_free_list(pipe_list);
 		/*
 		 * We reset input string to not run the following command, so running
 		 * 'exit; echo foo' does not print foo.
 		 */
-		if (rcode <= EXIT_RET_CODE)
-			setup_file_in_str(inp);
-#endif /* __U_BOOT__ */
-		empty = 0;
-		if (G_flag_return_in_progress == 1)
-			break;
-#ifndef __U_BOOT__
+		اگر (rcode <= EXIT_RET_رمز)
+			تیاری_file_اندر_str(inp);
+#اگر_ختم /* __U_BOOT__ */
+		خالی_خانے = 0;
+		اگر (G_flag_return_اندر_پیش_رفت == 1)
+			توڑو;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	}
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 	/*
 	 * This do/while is needed by run_command to avoid looping on a command
 	 * with syntax error.
 	 */
-	} while (!(G.run_command_flags & FLAG_EXIT_FROM_LOOP));
+	} جب (!(G.تسلسل_command_flags & FLAG_EXIT_FROM_LOOP));
 
-	return G.last_exitcode;
-#endif /* __U_BOOT__ */
+	واپس G.آخری_exitcode;
+#اگر_ختم /* __U_BOOT__ */
 }
 
-#ifndef __U_BOOT__
-static void parse_and_run_string(const char *s)
-#else /* __U_BOOT__ */
-static int parse_and_run_string(const char *s)
-#endif /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی parse_and_تسلسل_string(ثابت حرف *s)
+#ورنہ /* __U_BOOT__ */
+ساکن صحیح parse_and_تسلسل_string(ثابت حرف *s)
+#اگر_ختم /* __U_BOOT__ */
 {
-	struct in_str input;
-#ifndef __U_BOOT__
-	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#else /* __U_BOOT__ */
+	ساخت اندر_str داخلہ;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	IF_HUSH_LINENO_VAR(غیرعلامتی sv = G.parse_lineno;)
+#ورنہ /* __U_BOOT__ */
 	//IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 
-	setup_string_in_str(&input, s);
-#ifndef __U_BOOT__
-	parse_and_run_stream(&input, '\0');
-#else /* __U_BOOT__ */
-	return parse_and_run_stream(&input, '\0');
-#endif /* __U_BOOT__ */
-#ifndef __U_BOOT__
-	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#else /* __U_BOOT__ */
+	تیاری_string_اندر_str(&داخلہ, s);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	parse_and_تسلسل_دھارا(&داخلہ, '\0');
+#ورنہ /* __U_BOOT__ */
+	واپس parse_and_تسلسل_دھارا(&داخلہ, '\0');
+#اگر_ختم /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	IF_HUSH_LINENO_VAR(غیرعلامتی sv = G.parse_lineno;)
+#ورنہ /* __U_BOOT__ */
 	//IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 }
 
-#ifdef __U_BOOT__
-int parse_string_outer_modern(const char *cmd, int flags)
+#اگر_تعریف_شدہ __U_BOOT__
+صحیح parse_string_outer_modern(ثابت حرف *cmd, صحیح flags)
 {
-	int ret;
-	int old_flags;
+	صحیح ret;
+	صحیح old_flags;
 
 	/*
 	 * Keep old values of run_command to be able to restore them once
 	 * command was executed.
 	 */
-	old_flags = G.run_command_flags;
-	G.run_command_flags = flags;
+	old_flags = G.تسلسل_command_flags;
+	G.تسلسل_command_flags = flags;
 
-	ret = parse_and_run_string(cmd);
+	ret = parse_and_تسلسل_string(cmd);
 
-	G.run_command_flags = old_flags;
+	G.تسلسل_command_flags = old_flags;
 
-	return ret;
+	واپس ret;
 }
-#endif /* __U_BOOT__ */
-#ifndef __U_BOOT__
-static void parse_and_run_file(HFILE *fp)
-#else /* __U_BOOT__ */
-void parse_and_run_file(void)
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی parse_and_تسلسل_file(HFILE *fp)
+#ورنہ /* __U_BOOT__ */
+خالی parse_and_تسلسل_file(خالی)
+#اگر_ختم /* __U_BOOT__ */
 {
-	struct in_str input;
-#ifndef __U_BOOT__
-	IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
+	ساخت اندر_str داخلہ;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	IF_HUSH_LINENO_VAR(غیرعلامتی sv = G.parse_lineno;)
 
 	IF_HUSH_LINENO_VAR(G.parse_lineno = 1;)
-	setup_file_in_str(&input, fp);
-#else /* __U_BOOT__ */
-	setup_file_in_str(&input);
-#endif /* __U_BOOT__ */
-	parse_and_run_stream(&input, ';');
-#ifndef __U_BOOT__
+	تیاری_file_اندر_str(&داخلہ, fp);
+#ورنہ /* __U_BOOT__ */
+	تیاری_file_اندر_str(&داخلہ);
+#اگر_ختم /* __U_BOOT__ */
+	parse_and_تسلسل_دھارا(&داخلہ, ';');
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	IF_HUSH_LINENO_VAR(G.parse_lineno = sv;)
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 }
 
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_TICK
-static int generate_stream_from_string(const char *s, pid_t *pid_p)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_TICK
+ساکن صحیح generate_دھارا_from_string(ثابت حرف *s, pid_t *pid_p)
 {
 	pid_t pid;
-	int channel[2];
-# if !BB_MMU
-	char **to_free = NULL;
+	صحیح channel[2];
+# اگر !BB_MMU
+	حرف **مقصد_free = تہی;
 # endif
 
 	xpipe(channel);
 	pid = BB_MMU ? xfork() : xvfork();
-	if (pid == 0) { /* child */
+	اگر (pid == 0) { /*بچہ*/
 		disable_restore_tty_pgrp_on_exit();
 		/* Process substitution is not considered to be usual
 		 * 'command execution'.
 		 * SUSv3 says ctrl-Z should be ignored, ctrl-C should not.
 		 */
-		bb_signals(0
+		bb_اشارات(0
 			+ (1 << SIGTSTP)
 			+ (1 << SIGTTIN)
 			+ (1 << SIGTTOU)
 			, SIG_IGN);
 		close(channel[0]); /* NB: close _first_, then move fd! */
 		xmove_fd(channel[1], 1);
-# if ENABLE_HUSH_TRAP
+# اگر ENABLE_HUSH_TRAP
 		/* Awful hack for `trap` or $(trap).
 		 *
 		 * http://www.opengroup.org/onlinepubs/009695399/utilities/trap.html
@@ -8215,77 +8215,77 @@ static int generate_stream_from_string(const char *s, pid_t *pid_p)
 		 * Our solution: ONLY bare $(trap) or `trap` is special.
 		 */
 		s = skip_whitespace(s);
-		if (is_prefixed_with(s, "trap")
+		اگر (is_prefixed_with(s, "trap")
 		 && skip_whitespace(s + 4)[0] == '\0'
 		) {
-			static const char *const argv[] ALIGN_PTR = { NULL, NULL };
-			builtin_trap((char**)argv);
+			ساکن ثابت حرف *ثابت argv[] ALIGN_PTR = { تہی, تہی };
+			builtin_trap((حرف**)argv);
 			fflush_all(); /* important */
 			_exit(0);
 		}
 # endif
-# if BB_MMU
+# اگر BB_MMU
 		/* Prevent it from trying to handle ctrl-z etc */
-		IF_HUSH_JOB(G.run_list_level = 1;)
+		IF_HUSH_کام(G.تسلسل_list_level = 1;)
 		CLEAR_RANDOM_T(&G.random_gen); /* or else $RANDOM repeats in child */
-		reset_traps_to_defaults();
-		IF_HUSH_MODE_X(G.x_mode_depth++;)
+		reset_traps_مقصد_defaults();
+		IF_HUSH_منوال_X(G.x_منوال_گہرائی++;)
 		//bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
-		parse_and_run_string(s);
-		_exit(G.last_exitcode);
-# else
+		parse_and_تسلسل_string(s);
+		_exit(G.آخری_exitcode);
+# ورنہ
 	/* We re-execute after vfork on NOMMU. This makes this script safe:
 	 * yes "0123456789012345678901234567890" | dd bs=32 count=64k >BIG
 	 * huge=`cat BIG` # was blocking here forever
 	 * echo OK
 	 */
-		re_execute_shell(&to_free,
+		re_execute_shell(&مقصد_free,
 				s,
 				G.global_argv[0],
 				G.global_argv + 1,
-				NULL);
+				تہی);
 # endif
 	}
 
-	/* parent */
+	/*والد*/
 	*pid_p = pid;
-# if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++;
+# اگر ENABLE_HUSH_FAST
+	G.گنتی_SIGCHLD++;
 //bb_error_msg("[%d] fork in generate_stream_from_string:"
 //		" G.count_SIGCHLD:%d G.handled_SIGCHLD:%d",
 //		getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 # endif
 	enable_restore_tty_pgrp_on_exit();
-# if !BB_MMU
-	free(to_free);
+# اگر !BB_MMU
+	آزاد(مقصد_free);
 # endif
 	close(channel[1]);
-	return channel[0];
+	واپس channel[0];
 }
 
 /* Return code is exit status of the process that is run. */
-static int process_command_subs(o_string *dest, const char *s)
+ساکن صحیح process_command_subs(o_string *dest, ثابت حرف *s)
 {
 	FILE *fp;
 	pid_t pid;
-	int status, ch, eol_cnt;
+	صحیح حالت_2, ch, eol_cnt;
 
-	fp = xfdopen_for_read(generate_stream_from_string(s, &pid));
+	fp = xfdopen_for_read(generate_دھارا_from_string(s, &pid));
 
 	/* Now send results of command back into original context */
 	eol_cnt = 0;
-	while ((ch = getc(fp)) != EOF) {
-		if (ch == '\0')
-			continue;
-		if (ch == '\n') {
+	جب ((ch = getc(fp)) != EOF) {
+		اگر (ch == '\0')
+			جاری;
+		اگر (ch == '\n') {
 			eol_cnt++;
-			continue;
+			جاری;
 		}
-		while (eol_cnt) {
+		جب (eol_cnt) {
 			o_addchr(dest, '\n');
 			eol_cnt--;
 		}
-		o_addQchr(dest, ch);
+		o_جوڑو_Qchr(dest, ch);
 	}
 
 	debug_printf("done reading from `cmd` pipe, closing it\n");
@@ -8293,31 +8293,31 @@ static int process_command_subs(o_string *dest, const char *s)
 	/* We need to extract exitcode. Test case
 	 * "true; echo `sleep 1; false` $?"
 	 * should print 1 */
-	safe_waitpid(pid, &status, 0);
-	debug_printf("child exited. returning its exitcode:%d\n", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	محفوظ_waitpid(pid, &حالت_2, 0);
+	debug_printf("child exited. returning its exitcode:%d\n", WEXITSTATUS(حالت_2));
+	واپس WEXITSTATUS(حالت_2);
 }
-#endif /* ENABLE_HUSH_TICK */
+#اگر_ختم /* ENABLE_HUSH_TICK */
 
-static void setup_heredoc(struct redir_struct *redir)
+ساکن خالی تیاری_heredoc(ساخت redir_struct *redir)
 {
-	struct fd_pair pair;
+	ساخت fd_pair pair;
 	pid_t pid;
-	int len, written;
+	صحیح len, written;
 	/* the _body_ of heredoc (misleading field name) */
-	const char *heredoc = redir->rd_filename;
-	char *expanded;
-#if !BB_MMU
-	char **to_free;
-#endif
+	ثابت حرف *heredoc = redir->rd_filename;
+	حرف *expanded;
+#اگر !BB_MMU
+	حرف **مقصد_free;
+#اگر_ختم
 
-	expanded = NULL;
-	if (!(redir->rd_dup & HEREDOC_QUOTED)) {
+	expanded = تہی;
+	اگر (!(redir->rd_dup & HEREDOC_QUOTED)) {
 		expanded = encode_then_expand_string(heredoc);
-		if (expanded)
+		اگر (expanded)
 			heredoc = expanded;
 	}
-	len = strlen(heredoc);
+	len = لڑی_لمبائی(heredoc);
 
 	close(redir->rd_fd); /* often saves dup2+close in xmove_fd */
 	xpiped_pair(pair);
@@ -8326,15 +8326,15 @@ static void setup_heredoc(struct redir_struct *redir)
 	/* Try writing without forking. Newer kernels have
 	 * dynamically growing pipes. Must use non-blocking write! */
 	ndelay_on(pair.wr);
-	while (1) {
-		written = write(pair.wr, heredoc, len);
-		if (written <= 0)
-			break;
+	جب (1) {
+		written = اكتب(pair.wr, heredoc, len);
+		اگر (written <= 0)
+			توڑو;
 		len -= written;
-		if (len == 0) {
+		اگر (len == 0) {
 			close(pair.wr);
-			free(expanded);
-			return;
+			آزاد(expanded);
+			واپس;
 		}
 		heredoc += written;
 	}
@@ -8345,101 +8345,101 @@ static void setup_heredoc(struct redir_struct *redir)
 	 * for the unsuspecting parent process. Child creates a grandchild
 	 * and exits before parent execs the process which consumes heredoc
 	 * (that exec happens after we return from this function) */
-#if !BB_MMU
-	to_free = NULL;
-#endif
+#اگر !BB_MMU
+	مقصد_free = تہی;
+#اگر_ختم
 	pid = xvfork();
-	if (pid == 0) {
-		/* child */
+	اگر (pid == 0) {
+		/*بچہ*/
 		disable_restore_tty_pgrp_on_exit();
 		pid = BB_MMU ? xfork() : xvfork();
-		if (pid != 0)
+		اگر (pid != 0)
 			_exit(0);
 		/* grandchild */
 		close(redir->rd_fd); /* read side of the pipe */
-#if BB_MMU
-		full_write(pair.wr, heredoc, len); /* may loop or block */
+#اگر BB_MMU
+		بھرا_write(pair.wr, heredoc, len); /* may loop or block */
 		_exit(0);
-#else
+#ورنہ
 		/* Delegate blocking writes to another process */
 		xmove_fd(pair.wr, STDOUT_FILENO);
-		re_execute_shell(&to_free, heredoc, NULL, NULL, NULL);
-#endif
+		re_execute_shell(&مقصد_free, heredoc, تہی, تہی, تہی);
+#اگر_ختم
 	}
-	/* parent */
-#if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++;
+	/*والد*/
+#اگر ENABLE_HUSH_FAST
+	G.گنتی_SIGCHLD++;
 //bb_error_msg("[%d] fork in setup_heredoc: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
-#endif
+#اگر_ختم
 	enable_restore_tty_pgrp_on_exit();
-#if !BB_MMU
-	free(to_free);
-#endif
+#اگر !BB_MMU
+	آزاد(مقصد_free);
+#اگر_ختم
 	close(pair.wr);
-	free(expanded);
-	wait(NULL); /* wait till child has died */
+	آزاد(expanded);
+	wait(تہی); /* wait till child has died */
 }
 
-struct squirrel {
-	int orig_fd;
-	int moved_to;
+ساخت squirrel {
+	صحیح orig_fd;
+	صحیح moved_مقصد;
 	/* moved_to = n: fd was moved to n; restore back to orig_fd after redir */
 	/* moved_to = -1: fd was opened by redirect; close orig_fd after redir */
 };
 
-static struct squirrel *append_squirrel(struct squirrel *sq, int i, int orig, int moved)
+ساکن ساخت squirrel *append_squirrel(ساخت squirrel *sq, صحیح i, صحیح orig, صحیح moved)
 {
-	sq = xrealloc(sq, (i + 2) * sizeof(sq[0]));
+	sq = xrealloc(sq, (i + 2) * حجم(sq[0]));
 	sq[i].orig_fd = orig;
-	sq[i].moved_to = moved;
+	sq[i].moved_مقصد = moved;
 	sq[i+1].orig_fd = -1; /* end marker */
-	return sq;
+	واپس sq;
 }
 
-static struct squirrel *add_squirrel(struct squirrel *sq, int fd, int avoid_fd)
+ساکن ساخت squirrel *جوڑو_squirrel(ساخت squirrel *sq, صحیح fd, صحیح avoid_fd)
 {
-	int moved_to;
-	int i;
+	صحیح moved_مقصد;
+	صحیح i;
 
 	i = 0;
-	if (sq) for (; sq[i].orig_fd >= 0; i++) {
+	اگر (sq) برائے (; sq[i].orig_fd >= 0; i++) {
 		/* If we collide with an already moved fd... */
-		if (fd == sq[i].moved_to) {
-			moved_to = dup_CLOEXEC(sq[i].moved_to, avoid_fd);
-			debug_printf_redir("redirect_fd %d: already busy, moving to %d\n", fd, moved_to);
-			if (moved_to < 0) {
+		اگر (fd == sq[i].moved_مقصد) {
+			moved_مقصد = dup_CLOEXEC(sq[i].moved_مقصد, avoid_fd);
+			debug_printf_redir("redirect_fd %d: already busy, moving to %d\n", fd, moved_مقصد);
+			اگر (moved_مقصد < 0) {
 				/* "echo 2>/dev/tty 10>&9999" testcase:
 				 * We move fd 2 to 10, then discover we need to move fd 10
 				 * (and not hit 9999) and the latter fails.
 				 */
-				return NULL; /* fcntl failed */
+				واپس تہی; /* fcntl failed */
 			}
-			sq[i].moved_to = moved_to;
-			return sq;
+			sq[i].moved_مقصد = moved_مقصد;
+			واپس sq;
 		}
-		if (fd == sq[i].orig_fd) {
+		اگر (fd == sq[i].orig_fd) {
 			/* Example: echo Hello >/dev/null 1>&2 */
 			debug_printf_redir("redirect_fd %d: already moved\n", fd);
-			return sq;
+			واپس sq;
 		}
 	}
 
 	/* If this fd is open, we move and remember it; if it's closed, moved_to = -1 */
-	moved_to = dup_CLOEXEC(fd, avoid_fd);
-	debug_printf_redir("redirect_fd %d: previous fd is moved to %d (-1 if it was closed)\n", fd, moved_to);
-	if (moved_to < 0 && errno != EBADF)
-		return NULL; /* fcntl failed (not because fd is closed) */
-	return append_squirrel(sq, i, fd, moved_to);
+	moved_مقصد = dup_CLOEXEC(fd, avoid_fd);
+	debug_printf_redir("redirect_fd %d: previous fd is moved to %d (-1 if it was closed)\n", fd, moved_مقصد);
+	اگر (moved_مقصد < 0 && errno != EBADF)
+		واپس تہی; /* fcntl failed (not because fd is closed) */
+	واپس append_squirrel(sq, i, fd, moved_مقصد);
 }
 
-static struct squirrel *add_squirrel_closed(struct squirrel *sq, int fd)
+ساکن ساخت squirrel *جوڑو_squirrel_closed(ساخت squirrel *sq, صحیح fd)
 {
-	int i;
+	صحیح i;
 
 	i = 0;
-	if (sq) for (; sq[i].orig_fd >= 0; i++) {
+	اگر (sq) برائے (; sq[i].orig_fd >= 0; i++) {
 		/* If we collide with an already moved fd... */
-		if (fd == sq[i].orig_fd) {
+		اگر (fd == sq[i].orig_fd) {
 			/* Examples:
 			 * "echo 3>FILE 3>&- 3>FILE"
 			 * "echo 3>&- 3>FILE"
@@ -8447,39 +8447,39 @@ static struct squirrel *add_squirrel_closed(struct squirrel *sq, int fd)
 			 * another "need to close 3" indicator.
 			 */
 			debug_printf_redir("redirect_fd %d: already moved or closed\n", fd);
-			return sq;
+			واپس sq;
 		}
 	}
 
 	debug_printf_redir("redirect_fd %d: previous fd was closed\n", fd);
-	return append_squirrel(sq, i, fd, -1);
+	واپس append_squirrel(sq, i, fd, -1);
 }
 
 /* fd: redirect wants this fd to be used (e.g. 3>file).
  * Move all conflicting internally used fds,
  * and remember them so that we can restore them later.
  */
-static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
+ساکن صحیح save_fd_on_redirect(صحیح fd, صحیح avoid_fd, ساخت squirrel **sqp)
 {
-	struct squirrel *new_squirrel;
+	ساخت squirrel *new_squirrel;
 
-	if (avoid_fd < 9) /* the important case here is that it can be -1 */
+	اگر (avoid_fd < 9) /* the important case here is that it can be -1 */
 		avoid_fd = 9;
 
-#if ENABLE_HUSH_INTERACTIVE
-	if (fd != 0 /* don't trigger for G_interactive_fd == 0 (that's "not interactive" flag) */
+#اگر ENABLE_HUSH_INTERACTIVE
+	اگر (fd != 0 /* don't trigger for G_interactive_fd == 0 (that's "not interactive" flag) */
 	 && fd == G_interactive_fd
 	) {
 		/* Testcase: "ls -l /proc/$$/fd 255>&-" should work */
 		G_interactive_fd = xdup_CLOEXEC_and_close(G_interactive_fd, avoid_fd);
 		debug_printf_redir("redirect_fd %d: matches interactive_fd, moving it to %d\n", fd, G_interactive_fd);
-		return 1; /* "we closed fd" */
+		واپس 1; /* "we closed fd" */
 	}
-#endif
+#اگر_ختم
 	/* Are we called from setup_redirects(squirrel==NULL)
 	 * in redirect in a [v]forked child?
 	 */
-	if (sqp == NULL) {
+	اگر (sqp == تہی) {
 		/* No need to move script fds.
 		 * For NOMMU case, it's actively wrong: we'd change ->fd
 		 * fields in memory for the parent, but parent's fds
@@ -8491,12 +8491,12 @@ static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
 		 * and change ->fd to 10 if fd#3 is a script fd. WRONG.
 		 */
 		//bb_error_msg("sqp == NULL: [v]forked child");
-		return 0;
+		واپس 0;
 	}
 
 	/* If this one of script's fds? */
-	if (move_HFILEs_on_redirect(fd, avoid_fd))
-		return 1; /* yes. "we closed fd" (actually moved it) */
+	اگر (move_HFILEs_on_redirect(fd, avoid_fd))
+		واپس 1; /* yes. "we closed fd" (actually moved it) */
 
 	/* Are we called for "exec 3>FILE"? Came through
 	 * redirect_and_varexp_helper(squirrel=ERR_PTR) -> setup_redirects(ERR_PTR)
@@ -8519,38 +8519,38 @@ static int save_fd_on_redirect(int fd, int avoid_fd, struct squirrel **sqp)
 	 * With this case separate from sqp == NULL and *after* move_HFILEs,
 	 * it now works:
 	 */
-	if (sqp == ERR_PTR) {
+	اگر (sqp == ERR_PTR) {
 		/* Don't preserve redirected fds: exec is _meant_ to change these */
 		//bb_error_msg("sqp == ERR_PTR: exec >FILE");
-		return 0;
+		واپس 0;
 	}
 
 	/* Check whether it collides with any open fds (e.g. stdio), save fds as needed */
-	new_squirrel = add_squirrel(*sqp, fd, avoid_fd);
-	if (!new_squirrel)
-		return -1; /* redirect error */
+	new_squirrel = جوڑو_squirrel(*sqp, fd, avoid_fd);
+	اگر (!new_squirrel)
+		واپس -1; /* redirect error */
 	*sqp = new_squirrel;
-	return 0; /* "we did not close fd" */
+	واپس 0; /* "we did not close fd" */
 }
 
-static void restore_redirects(struct squirrel *sq)
+ساکن خالی restore_redirects(ساخت squirrel *sq)
 {
-	if (sq) {
-		int i;
-		for (i = 0; sq[i].orig_fd >= 0; i++) {
-			if (sq[i].moved_to >= 0) {
+	اگر (sq) {
+		صحیح i;
+		برائے (i = 0; sq[i].orig_fd >= 0; i++) {
+			اگر (sq[i].moved_مقصد >= 0) {
 				/* We simply die on error */
-				debug_printf_redir("restoring redirected fd from %d to %d\n", sq[i].moved_to, sq[i].orig_fd);
-				xmove_fd(sq[i].moved_to, sq[i].orig_fd);
-			} else {
+				debug_printf_redir("restoring redirected fd from %d to %d\n", sq[i].moved_مقصد, sq[i].orig_fd);
+				xmove_fd(sq[i].moved_مقصد, sq[i].orig_fd);
+			} ورنہ {
 				/* cmd1 9>FILE; cmd2_should_see_fd9_closed */
 				debug_printf_redir("restoring redirected fd %d: closing it\n", sq[i].orig_fd);
 				close(sq[i].orig_fd);
 			}
 		}
-		free(sq);
+		آزاد(sq);
 	}
-	if (G.HFILE_stdin
+	اگر (G.HFILE_stdin
 	 && G.HFILE_stdin->fd > STDIN_FILENO
 	/* we compare > STDIN, not == STDIN, since hfgetc()
 	 * closes fd and sets ->fd to -1 if EOF is reached.
@@ -8572,32 +8572,32 @@ static void restore_redirects(struct squirrel *sq)
 	/* If moved, G_interactive_fd stays on new fd, not restoring it */
 }
 
-#if ENABLE_FEATURE_SH_STANDALONE && BB_MMU
-static void close_saved_fds_and_FILE_fds(void)
+#اگر ENABLE_FEATURE_SH_STANDALONE && BB_MMU
+ساکن خالی close_saved_fds_and_FILE_fds(خالی)
 {
-	if (G_interactive_fd)
+	اگر (G_interactive_fd)
 		close(G_interactive_fd);
 	close_all_HFILE_list();
 }
-#endif
+#اگر_ختم
 
-static int internally_opened_fd(int fd, struct squirrel *sq)
+ساکن صحیح internally_opened_fd(صحیح fd, ساخت squirrel *sq)
 {
-	int i;
+	صحیح i;
 
-#if ENABLE_HUSH_INTERACTIVE
-	if (fd == G_interactive_fd)
-		return 1;
-#endif
+#اگر ENABLE_HUSH_INTERACTIVE
+	اگر (fd == G_interactive_fd)
+		واپس 1;
+#اگر_ختم
 	/* If this one of script's fds? */
-	if (fd_in_HFILEs(fd))
-		return 1;
+	اگر (fd_اندر_HFILEs(fd))
+		واپس 1;
 
-	if (sq) for (i = 0; sq[i].orig_fd >= 0; i++) {
-		if (fd == sq[i].moved_to)
-			return 1;
+	اگر (sq) برائے (i = 0; sq[i].orig_fd >= 0; i++) {
+		اگر (fd == sq[i].moved_مقصد)
+			واپس 1;
 	}
-	return 0;
+	واپس 0;
 }
 
 /* sqp != NULL means we squirrel away copies of stdin, stdout,
@@ -8605,53 +8605,53 @@ static int internally_opened_fd(int fd, struct squirrel *sq)
  * If redirection fails, return 1. This will make caller
  * skip command execution and restore already created redirect fds.
  */
-static int setup_redirects(struct command *prog, struct squirrel **sqp)
+ساکن صحیح تیاری_redirects(ساخت command *prog, ساخت squirrel **sqp)
 {
-	struct redir_struct *redir;
+	ساخت redir_struct *redir;
 
-	for (redir = prog->redirects; redir; redir = redir->next) {
-		int newfd;
-		int closed;
+	برائے (redir = prog->redirects; redir; redir = redir->اگلا) {
+		صحیح newfd;
+		صحیح closed;
 
-		if (redir->rd_type == REDIRECT_HEREDOC2) {
+		اگر (redir->rd_type == REDIRECT_HEREDOC2) {
 			/* "rd_fd<<HERE" case */
-			if (save_fd_on_redirect(redir->rd_fd, /*avoid:*/ 0, sqp) < 0)
-				return 1;
+			اگر (save_fd_on_redirect(redir->rd_fd, /*avoid:*/ 0, sqp) < 0)
+				واپس 1;
 			/* for REDIRECT_HEREDOC2, rd_filename holds _contents_
 			 * of the heredoc */
 			debug_printf_redir("set heredoc '%s'\n",
 					redir->rd_filename);
-			setup_heredoc(redir);
-			continue;
+			تیاری_heredoc(redir);
+			جاری;
 		}
 
-		if (redir->rd_dup == REDIRFD_TO_FILE) {
+		اگر (redir->rd_dup == REDIRFD_مقصد_FILE) {
 			/* "rd_fd<*>file" case (<*> is <,>,>>,<>) */
-			char *p;
-			int mode;
+			حرف *p;
+			صحیح منوال;
 
-			if (redir->rd_filename == NULL) {
+			اگر (redir->rd_filename == تہی) {
 				/* Examples:
 				 * "cmd >" (no filename)
 				 * "cmd > <file" (2nd redirect starts too early)
 				 */
 				syntax_error("invalid redirect");
-				return 1;
+				واپس 1;
 			}
-			mode = redir_table[redir->rd_type].mode;
-			p = expand_string_to_string(redir->rd_filename,
+			منوال = redir_جدول[redir->rd_type].منوال;
+			p = expand_string_مقصد_string(redir->rd_filename,
 				EXP_FLAG_ESC_GLOB_CHARS, /*unbackslash:*/ 1);
-			newfd = open_or_warn(p, mode);
-			free(p);
-			if (newfd < 0) {
+			newfd = open_or_warn(p, منوال);
+			آزاد(p);
+			اگر (newfd < 0) {
 				/* Error message from open_or_warn can be lost
 				 * if stderr has been redirected, but bash
 				 * and ash both lose it as well
 				 * (though zsh doesn't!)
 				 */
-				return 1;
+				واپس 1;
 			}
-			if (newfd == redir->rd_fd && sqp
+			اگر (newfd == redir->rd_fd && sqp
 			 && sqp != ERR_PTR /* not a redirect in "exec" */
 			) {
 				/* open() gave us precisely the fd we wanted.
@@ -8659,27 +8659,27 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 				 * (not opened to anywhere).
 				 * Remember to close it on restore:
 				 */
-				*sqp = add_squirrel_closed(*sqp, newfd);
+				*sqp = جوڑو_squirrel_closed(*sqp, newfd);
 				debug_printf_redir("redir to previously closed fd %d\n", newfd);
 			}
-		} else {
+		} ورنہ {
 			/* "rd_fd>&rd_dup" or "rd_fd>&-" case */
 			newfd = redir->rd_dup;
 		}
 
-		if (newfd == redir->rd_fd)
-			continue;
+		اگر (newfd == redir->rd_fd)
+			جاری;
 
 		/* if "N>FILE": move newfd to redir->rd_fd */
 		/* if "N>&M": dup newfd to redir->rd_fd */
 		/* if "N>&-": close redir->rd_fd (newfd is REDIRFD_CLOSE) */
 
 		closed = save_fd_on_redirect(redir->rd_fd, /*avoid:*/ newfd, sqp);
-		if (closed < 0)
-			return 1; /* error */
-		if (newfd == REDIRFD_CLOSE) {
+		اگر (closed < 0)
+			واپس 1; /* error */
+		اگر (newfd == REDIRFD_CLOSE) {
 			/* "N>&-" means "close me" */
-			if (!closed) {
+			اگر (!closed) {
 				/* ^^^ optimization: saving may already
 				 * have closed it. If not... */
 				close(redir->rd_fd);
@@ -8689,139 +8689,139 @@ static int setup_redirects(struct command *prog, struct squirrel **sqp)
 			 * first redirect remembers "need to close 3",
 			 * and second redirect closes 3! Restore code then closes 3 again.
 			 */
-		} else {
+		} ورنہ {
 			/* if newfd is a script fd or saved fd, do not allow to use it */
-			if (internally_opened_fd(newfd, sqp && sqp != ERR_PTR ? *sqp : NULL)) {
-				bb_error_msg("fd#%d is not open", newfd);
-				return 1;
+			اگر (internally_opened_fd(newfd, sqp && sqp != ERR_PTR ? *sqp : تہی)) {
+				bb_error_پیغام("fd#%d is not open", newfd);
+				واپس 1;
 			}
-			if (dup2(newfd, redir->rd_fd) < 0) {
+			اگر (dup2(newfd, redir->rd_fd) < 0) {
 				/* "echo >&99" testcase */
-				bb_perror_msg("dup2(%d,%d)", newfd, redir->rd_fd);
-				return 1;
+				bb_perror_پیغام("dup2(%d,%d)", newfd, redir->rd_fd);
+				واپس 1;
 			}
-			if (redir->rd_dup == REDIRFD_TO_FILE)
+			اگر (redir->rd_dup == REDIRFD_مقصد_FILE)
 				/* "rd_fd > FILE" */
 				close(newfd);
 			/* else: "rd_fd > rd_dup" */
 		}
 	}
-	return 0;
+	واپس 0;
 }
 
-static char *find_in_path(const char *arg)
+ساکن حرف *ڈھونڈو_اندر_راستہ(ثابت حرف *arg)
 {
-	char *ret = NULL;
-	const char *PATH = get_local_var_value("PATH");
+	حرف *ret = تہی;
+	ثابت حرف *راستہ = get_local_var_قدر("PATH");
 
-	if (!PATH)
-		return NULL;
+	اگر (!راستہ)
+		واپس تہی;
 
-	while (1) {
-		const char *end = strchrnul(PATH, ':');
-		int sz = end - PATH; /* must be int! */
+	جب (1) {
+		ثابت حرف *انتہا_2 = strchrnul(راستہ, ':');
+		صحیح sz = انتہا_2 - راستہ; /* must be int! */
 
-		free(ret);
-		if (sz != 0) {
-			ret = xasprintf("%.*s/%s", sz, PATH, arg);
-		} else {
+		آزاد(ret);
+		اگر (sz != 0) {
+			ret = xasprintf("%.*s/%s", sz, راستہ, arg);
+		} ورنہ {
 			/* We have xxx::yyyy in $PATH,
 			 * it means "use current dir" */
 			ret = xstrdup(arg);
 		}
-		if (access(ret, F_OK) == 0)
-			break;
+		اگر (access(ret, F_OK) == 0)
+			توڑو;
 
-		if (*end == '\0') {
-			free(ret);
-			return NULL;
+		اگر (*انتہا_2 == '\0') {
+			آزاد(ret);
+			واپس تہی;
 		}
-		PATH = end + 1;
+		راستہ = انتہا_2 + 1;
 	}
 
-	return ret;
+	واپس ret;
 }
 
-static const struct built_in_command *find_builtin_helper(const char *name,
-		const struct built_in_command *x,
-		const struct built_in_command *end)
+ساکن ثابت ساخت built_اندر_command *ڈھونڈو_builtin_helper(ثابت حرف *name,
+		ثابت ساخت built_اندر_command *x,
+		ثابت ساخت built_اندر_command *انتہا_2)
 {
-	while (x != end) {
-		if (strcmp(name, x->b_cmd) != 0) {
+	جب (x != انتہا_2) {
+		اگر (strcmp(name, x->b_cmd) != 0) {
 			x++;
-			continue;
+			جاری;
 		}
 		debug_printf_exec("found builtin '%s'\n", name);
-		return x;
+		واپس x;
 	}
-	return NULL;
+	واپس تہی;
 }
-static const struct built_in_command *find_builtin1(const char *name)
+ساکن ثابت ساخت built_اندر_command *ڈھونڈو_builtin1(ثابت حرف *name)
 {
-	return find_builtin_helper(name, bltins1, &bltins1[ARRAY_SIZE(bltins1)]);
+	واپس ڈھونڈو_builtin_helper(name, bltins1, &bltins1[ARRAY_سائز(bltins1)]);
 }
-static const struct built_in_command *find_builtin(const char *name)
+ساکن ثابت ساخت built_اندر_command *ڈھونڈو_builtin(ثابت حرف *name)
 {
-	const struct built_in_command *x = find_builtin1(name);
-	if (x)
-		return x;
-	return find_builtin_helper(name, bltins2, &bltins2[ARRAY_SIZE(bltins2)]);
+	ثابت ساخت built_اندر_command *x = ڈھونڈو_builtin1(name);
+	اگر (x)
+		واپس x;
+	واپس ڈھونڈو_builtin_helper(name, bltins2, &bltins2[ARRAY_سائز(bltins2)]);
 }
 
-#if ENABLE_HUSH_JOB && ENABLE_FEATURE_TAB_COMPLETION
-static const char * FAST_FUNC hush_command_name(int i)
+#اگر ENABLE_HUSH_کام && ENABLE_FEATURE_TAB_COMPLETION
+ساکن ثابت حرف * FAST_FUNC hush_command_name(صحیح i)
 {
-	if (/*i >= 0 && */ i < ARRAY_SIZE(bltins1)) {
-		return bltins1[i].b_cmd;
+	اگر (/*i >= 0 && */ i < ARRAY_سائز(bltins1)) {
+		واپس bltins1[i].b_cmd;
 	}
-	i -= ARRAY_SIZE(bltins1);
-	if (i < ARRAY_SIZE(bltins2)) {
-		return bltins2[i].b_cmd;
+	i -= ARRAY_سائز(bltins1);
+	اگر (i < ARRAY_سائز(bltins2)) {
+		واپس bltins2[i].b_cmd;
 	}
-# if ENABLE_HUSH_FUNCTIONS
+# اگر ENABLE_HUSH_FUNCTIONS
 	{
-		struct function *funcp;
-		i -= ARRAY_SIZE(bltins2);
-		for (funcp = G.top_func; funcp; funcp = funcp->next) {
-			if (--i < 0)
-				return funcp->name;
+		ساخت function *funcp;
+		i -= ARRAY_سائز(bltins2);
+		برائے (funcp = G.چوٹی_func; funcp; funcp = funcp->اگلا) {
+			اگر (--i < 0)
+				واپس funcp->name;
 		}
 	}
 # endif
-	return NULL;
+	واپس تہی;
 }
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-static void remove_nested_vars(void)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی remove_nested_vars(خالی)
 {
-	struct variable *cur;
-	struct variable **cur_pp;
+	ساخت variable *cur;
+	ساخت variable **cur_pp;
 
-	cur_pp = &G.top_var;
-	while ((cur = *cur_pp) != NULL) {
-		if (cur->var_nest_level <= G.var_nest_level) {
-			cur_pp = &cur->next;
-			continue;
+	cur_pp = &G.چوٹی_var;
+	جب ((cur = *cur_pp) != تہی) {
+		اگر (cur->var_nest_level <= G.var_nest_level) {
+			cur_pp = &cur->اگلا;
+			جاری;
 		}
 		/* Unexport */
-		if (cur->flg_export) {
+		اگر (cur->flg_export) {
 			debug_printf_env("unexporting nested '%s'/%u\n", cur->varstr, cur->var_nest_level);
 			bb_unsetenv(cur->varstr);
 		}
 		/* Remove from global list */
-		*cur_pp = cur->next;
+		*cur_pp = cur->اگلا;
 		/* Free */
-		if (!cur->max_len) {
+		اگر (!cur->max_len) {
 			debug_printf_env("freeing nested '%s'/%u\n", cur->varstr, cur->var_nest_level);
-			free(cur->varstr);
+			آزاد(cur->varstr);
 		}
-		free(cur);
+		آزاد(cur);
 	}
 }
 
-static void enter_var_nest_level(void)
+ساکن خالی enter_var_nest_level(خالی)
 {
 	G.var_nest_level++;
 	debug_printf_env("var_nest_level++ %u\n", G.var_nest_level);
@@ -8832,120 +8832,120 @@ static void enter_var_nest_level(void)
 	 * In any case, with 8 Mbyte stack SEGV happens
 	 * not too long after 2^16 recursions anyway.
 	 */
-	if (G.var_nest_level > 0xff00)
-		bb_error_msg_and_die("fatal recursion (depth %u)", G.var_nest_level);
+	اگر (G.var_nest_level > 0xff00)
+		bb_error_پیغام_and_die("fatal recursion (depth %u)", G.var_nest_level);
 }
 
-static void leave_var_nest_level(void)
+ساکن خالی leave_var_nest_level(خالی)
 {
 	G.var_nest_level--;
 	debug_printf_env("var_nest_level-- %u\n", G.var_nest_level);
-	if (HUSH_DEBUG && (int)G.var_nest_level < 0)
-		bb_simple_error_msg_and_die("BUG: nesting underflow");
+	اگر (HUSH_DEBUG && (صحیح)G.var_nest_level < 0)
+		bb_simple_error_پیغام_and_die("BUG: nesting underflow");
 
 	remove_nested_vars();
 }
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 
-#if ENABLE_HUSH_FUNCTIONS
-static struct function **find_function_slot(const char *name)
+#اگر ENABLE_HUSH_FUNCTIONS
+ساکن ساخت function **ڈھونڈو_function_خانہ(ثابت حرف *name)
 {
-	struct function *funcp;
-	struct function **funcpp = &G.top_func;
+	ساخت function *funcp;
+	ساخت function **funcpp = &G.چوٹی_func;
 
-	while ((funcp = *funcpp) != NULL) {
-		if (strcmp(name, funcp->name) == 0) {
+	جب ((funcp = *funcpp) != تہی) {
+		اگر (strcmp(name, funcp->name) == 0) {
 			debug_printf_exec("found function '%s'\n", name);
-			break;
+			توڑو;
 		}
-		funcpp = &funcp->next;
+		funcpp = &funcp->اگلا;
 	}
-	return funcpp;
+	واپس funcpp;
 }
 
-static ALWAYS_INLINE const struct function *find_function(const char *name)
+ساکن ALWAYS_INLINE ثابت ساخت function *ڈھونڈو_function(ثابت حرف *name)
 {
-	const struct function *funcp = *find_function_slot(name);
-	return funcp;
+	ثابت ساخت function *funcp = *ڈھونڈو_function_خانہ(name);
+	واپس funcp;
 }
 
 /* Note: takes ownership on name ptr */
-static struct function *new_function(char *name)
+ساکن ساخت function *new_function(حرف *name)
 {
-	struct function **funcpp = find_function_slot(name);
-	struct function *funcp = *funcpp;
+	ساخت function **funcpp = ڈھونڈو_function_خانہ(name);
+	ساخت function *funcp = *funcpp;
 
-	if (funcp != NULL) {
-		struct command *cmd = funcp->parent_cmd;
+	اگر (funcp != تہی) {
+		ساخت command *cmd = funcp->والد_cmd;
 		debug_printf_exec("func %p parent_cmd %p\n", funcp, cmd);
-		if (!cmd) {
+		اگر (!cmd) {
 			debug_printf_exec("freeing & replacing function '%s'\n", funcp->name);
-			free(funcp->name);
+			آزاد(funcp->name);
 			/* Note: if !funcp->body, do not free body_as_string!
 			 * This is a special case of "-F name body" function:
 			 * body_as_string was not malloced! */
-			if (funcp->body) {
+			اگر (funcp->body) {
 				free_pipe_list(funcp->body);
-# if !BB_MMU
-				free(funcp->body_as_string);
+# اگر !BB_MMU
+				آزاد(funcp->body_as_string);
 # endif
 			}
-		} else {
+		} ورنہ {
 			debug_printf_exec("reinserting in tree & replacing function '%s'\n", funcp->name);
 			cmd->argv[0] = funcp->name;
-			cmd->group = funcp->body;
-# if !BB_MMU
-			cmd->group_as_string = funcp->body_as_string;
+			cmd->گروہ = funcp->body;
+# اگر !BB_MMU
+			cmd->گروہ_as_string = funcp->body_as_string;
 # endif
 		}
-	} else {
+	} ورنہ {
 		debug_printf_exec("remembering new function '%s'\n", name);
-		funcp = *funcpp = xzalloc(sizeof(*funcp));
+		funcp = *funcpp = xzalloc(حجم(*funcp));
 		/*funcp->next = NULL;*/
 	}
 
 	funcp->name = name;
-	return funcp;
+	واپس funcp;
 }
 
-# if ENABLE_HUSH_UNSET
-static void unset_func(const char *name)
+# اگر ENABLE_HUSH_UNSET
+ساکن خالی unset_func(ثابت حرف *name)
 {
-	struct function **funcpp = find_function_slot(name);
-	struct function *funcp = *funcpp;
+	ساخت function **funcpp = ڈھونڈو_function_خانہ(name);
+	ساخت function *funcp = *funcpp;
 
-	if (funcp != NULL) {
+	اگر (funcp != تہی) {
 		debug_printf_exec("freeing function '%s'\n", funcp->name);
-		*funcpp = funcp->next;
+		*funcpp = funcp->اگلا;
 		/* funcp is unlinked now, deleting it.
 		 * Note: if !funcp->body, the function was created by
 		 * "-F name body", do not free ->body_as_string
 		 * and ->name as they were not malloced. */
-		if (funcp->body) {
+		اگر (funcp->body) {
 			free_pipe_list(funcp->body);
-			free(funcp->name);
-#  if !BB_MMU
-			free(funcp->body_as_string);
+			آزاد(funcp->name);
+#  اگر !BB_MMU
+			آزاد(funcp->body_as_string);
 #  endif
 		}
-		free(funcp);
+		آزاد(funcp);
 	}
 }
 # endif
 
-# if BB_MMU
-#define exec_function(to_free, funcp, argv) \
+# اگر BB_MMU
+#تعریف_کرو exec_function(مقصد_free, funcp, argv) \
 	exec_function(funcp, argv)
 # endif
-static void exec_function(char ***to_free,
-		const struct function *funcp,
-		char **argv) NORETURN;
-static void exec_function(char ***to_free,
-		const struct function *funcp,
-		char **argv)
+ساکن خالی exec_function(حرف ***مقصد_free,
+		ثابت ساخت function *funcp,
+		حرف **argv) NORETURN;
+ساکن خالی exec_function(حرف ***مقصد_free,
+		ثابت ساخت function *funcp,
+		حرف **argv)
 {
-# if BB_MMU
-	int n;
+# اگر BB_MMU
+	صحیح n;
 
 	argv[0] = G.global_argv[0];
 	G.global_argv = argv;
@@ -8966,132 +8966,132 @@ static void exec_function(char ***to_free,
 //?	close_saved_fds_and_FILE_fds();
 
 	/* "we are in a function, ok to use return" */
-	G_flag_return_in_progress = -1;
+	G_flag_return_اندر_پیش_رفت = -1;
 	enter_var_nest_level();
 	IF_HUSH_LOCAL(G.func_nest_level++;)
 
 	/* On MMU, funcp->body is always non-NULL */
-	n = run_list(funcp->body);
+	n = تسلسل_list(funcp->body);
 	_exit(n);
-# else
+# ورنہ
 //?	close_saved_fds_and_FILE_fds();
 
 //TODO: check whether "true | func_with_return" works
 
-	re_execute_shell(to_free,
+	re_execute_shell(مقصد_free,
 			funcp->body_as_string,
 			G.global_argv[0],
 			argv + 1,
-			NULL);
+			تہی);
 # endif
 }
 
-static int run_function(const struct function *funcp, char **argv)
+ساکن صحیح تسلسل_function(ثابت ساخت function *funcp, حرف **argv)
 {
-	int rc;
+	صحیح rc;
 	save_arg_t sv;
 	smallint sv_flg;
 
-	save_and_replace_G_args(&sv, argv);
+	save_and_replace_G_دلائل(&sv, argv);
 
 	/* "We are in function, ok to use return" */
-	sv_flg = G_flag_return_in_progress;
-	G_flag_return_in_progress = -1;
+	sv_flg = G_flag_return_اندر_پیش_رفت;
+	G_flag_return_اندر_پیش_رفت = -1;
 
 	/* Make "local" variables properly shadow previous ones */
 	IF_HUSH_LOCAL(enter_var_nest_level();)
 	IF_HUSH_LOCAL(G.func_nest_level++;)
 
 	/* On MMU, funcp->body is always non-NULL */
-# if !BB_MMU
-	if (!funcp->body) {
+# اگر !BB_MMU
+	اگر (!funcp->body) {
 		/* Function defined by -F */
-		parse_and_run_string(funcp->body_as_string);
-		rc = G.last_exitcode;
-	} else
+		parse_and_تسلسل_string(funcp->body_as_string);
+		rc = G.آخری_exitcode;
+	} ورنہ
 # endif
 	{
-		rc = run_list(funcp->body);
+		rc = تسلسل_list(funcp->body);
 	}
 
 	IF_HUSH_LOCAL(G.func_nest_level--;)
 	IF_HUSH_LOCAL(leave_var_nest_level();)
 
-	G_flag_return_in_progress = sv_flg;
-# if ENABLE_HUSH_TRAP
+	G_flag_return_اندر_پیش_رفت = sv_flg;
+# اگر ENABLE_HUSH_TRAP
 	debug_printf_exec("G.return_exitcode=-1\n");
 	G.return_exitcode = -1; /* invalidate stashed return value */
 # endif
 
-	restore_G_args(&sv, argv);
+	restore_G_دلائل(&sv, argv);
 
-	return rc;
+	واپس rc;
 }
-#endif /* ENABLE_HUSH_FUNCTIONS */
+#اگر_ختم /* ENABLE_HUSH_FUNCTIONS */
 
-#ifndef __U_BOOT__
-#if BB_MMU
-#define exec_builtin(to_free, x, argv) \
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر BB_MMU
+#تعریف_کرو exec_builtin(مقصد_free, x, argv) \
 	exec_builtin(x, argv)
-#else
-#define exec_builtin(to_free, x, argv) \
-	exec_builtin(to_free, argv)
-#endif
-static void exec_builtin(char ***to_free,
-		const struct built_in_command *x,
-		char **argv) NORETURN;
-static void exec_builtin(char ***to_free,
-		const struct built_in_command *x,
-		char **argv)
+#ورنہ
+#تعریف_کرو exec_builtin(مقصد_free, x, argv) \
+	exec_builtin(مقصد_free, argv)
+#اگر_ختم
+ساکن خالی exec_builtin(حرف ***مقصد_free,
+		ثابت ساخت built_اندر_command *x,
+		حرف **argv) NORETURN;
+ساکن خالی exec_builtin(حرف ***مقصد_free,
+		ثابت ساخت built_اندر_command *x,
+		حرف **argv)
 {
-#if BB_MMU
-	int rcode;
+#اگر BB_MMU
+	صحیح rcode;
 //?	close_saved_fds_and_FILE_fds();
 	rcode = x->b_function(argv);
 	fflush_all();
 	_exit(rcode);
-#else
+#ورنہ
 	fflush_all();
 	/* On NOMMU, we must never block!
 	 * Example: { sleep 99 | read line; } & echo Ok
 	 */
-	re_execute_shell(to_free,
+	re_execute_shell(مقصد_free,
 			argv[0],
 			G.global_argv[0],
 			G.global_argv + 1,
 			argv);
-#endif
+#اگر_ختم
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-static void execvp_or_die(char **argv) NORETURN;
-static void execvp_or_die(char **argv)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی execvp_or_die(حرف **argv) NORETURN;
+ساکن خالی execvp_or_die(حرف **argv)
 {
-	int e;
+	صحیح e;
 	debug_printf_exec("execing '%s'\n", argv[0]);
 	/* Don't propagate SIG_IGN to the child */
-	if (SPECIAL_JOBSTOP_SIGS != 0)
-		switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
+	اگر (SPECIAL_JOBSTOP_SIGS != 0)
+		switch_off_special_sigs(G.special_sig_نقاب & SPECIAL_JOBSTOP_SIGS);
 	execvp(argv[0], argv);
 	e = 2;
-	if (errno == EACCES) e = 126;
-	if (errno == ENOENT) e = 127;
-	bb_perror_msg("can't execute '%s'", argv[0]);
+	اگر (errno == EACCES) e = 126;
+	اگر (errno == ENOENT) e = 127;
+	bb_perror_پیغام("can't execute '%s'", argv[0]);
 	_exit(e);
 }
 
-#if ENABLE_HUSH_MODE_X
-static void x_mode_print_optionally_squoted(const char *str)
+#اگر ENABLE_HUSH_منوال_X
+ساکن خالی x_منوال_print_optionally_squoted(ثابت حرف *str)
 {
-	unsigned len;
-	const char *cp;
+	غیرعلامتی len;
+	ثابت حرف *cp;
 
 	cp = str;
 
 	/* the set of chars which-cause-string-to-be-squoted mimics bash */
 	/* test a char with: bash -c 'set -x; echo "CH"' */
-	if (str[strcspn(str, "\\\"'`$(){}[]<>;#&|~*?!^"
+	اگر (str[strcspn(str, "\\\"'`$(){}[]<>;#&|~*?!^"
 			" " "\001\002\003\004\005\006\007"
 			"\010\011\012\013\014\015\016\017"
 			"\020\021\022\023\024\025\026\027"
@@ -9100,190 +9100,190 @@ static void x_mode_print_optionally_squoted(const char *str)
 		] == '\0'
 	) {
 		/* string has no special chars */
-		x_mode_addstr(str);
-		return;
+		x_منوال_addstr(str);
+		واپس;
 	}
 
 	cp = str;
-	for (;;) {
+	برائے (;;) {
 		/* print '....' up to EOL or first squote */
-		len = (int)(strchrnul(cp, '\'') - cp);
-		if (len != 0) {
-			x_mode_addchr('\'');
-			x_mode_addblock(cp, len);
-			x_mode_addchr('\'');
+		len = (صحیح)(strchrnul(cp, '\'') - cp);
+		اگر (len != 0) {
+			x_منوال_addchr('\'');
+			x_منوال_addblock(cp, len);
+			x_منوال_addchr('\'');
 			cp += len;
 		}
-		if (*cp == '\0')
-			break;
+		اگر (*cp == '\0')
+			توڑو;
 		/* string contains squote(s), print them as \' */
-		x_mode_addchr('\\');
-		x_mode_addchr('\'');
+		x_منوال_addchr('\\');
+		x_منوال_addchr('\'');
 		cp++;
 	}
 }
-static void dump_cmd_in_x_mode(char **argv)
+ساکن خالی dump_cmd_اندر_x_منوال(حرف **argv)
 {
-	if (G_x_mode && argv) {
-		unsigned n;
+	اگر (G_x_منوال && argv) {
+		غیرعلامتی n;
 
 		/* "+[+++...][ cmd...]\n\0" */
-		x_mode_prefix();
+		x_منوال_سابقہ();
 		n = 0;
-		while (argv[n]) {
-			x_mode_addchr(' ');
-			if (argv[n][0] == '\0') {
-				x_mode_addchr('\'');
-				x_mode_addchr('\'');
-			} else {
-				x_mode_print_optionally_squoted(argv[n]);
+		جب (argv[n]) {
+			x_منوال_addchr(' ');
+			اگر (argv[n][0] == '\0') {
+				x_منوال_addchr('\'');
+				x_منوال_addchr('\'');
+			} ورنہ {
+				x_منوال_print_optionally_squoted(argv[n]);
 			}
 			n++;
 		}
-		x_mode_flush();
+		x_منوال_flush();
 	}
 }
-#else
-# define dump_cmd_in_x_mode(argv) ((void)0)
-#endif
-#endif /* !__U_BOOT__ */
+#ورنہ
+# define dump_cmd_اندر_x_منوال(argv) ((خالی)0)
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_COMMAND
-static void if_command_vV_print_and_exit(char opt_vV, char *cmd, const char *explanation)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_COMMAND
+ساکن خالی if_command_vV_print_and_exit(حرف opt_vV, حرف *cmd, ثابت حرف *explanation)
 {
-	char *to_free;
+	حرف *مقصد_free;
 
-	if (!opt_vV)
-		return;
+	اگر (!opt_vV)
+		واپس;
 
-	to_free = NULL;
-	if (!explanation) {
-		char *path = getenv("PATH");
-		explanation = to_free = find_executable(cmd, &path); /* path == NULL is ok */
-		if (!explanation)
+	مقصد_free = تہی;
+	اگر (!explanation) {
+		حرف *راستہ_2 = getenv("PATH");
+		explanation = مقصد_free = ڈھونڈو_executable(cmd, &راستہ_2); /* path == NULL is ok */
+		اگر (!explanation)
 			_exit(1); /* PROG was not found */
-		if (opt_vV != 'V')
-			cmd = to_free; /* -v PROG prints "/path/to/PROG" */
+		اگر (opt_vV != 'V')
+			cmd = مقصد_free; /* -v PROG prints "/path/to/PROG" */
 	}
-	printf((opt_vV == 'V') ? "%s is %s\n" : "%s\n", cmd, explanation);
-	free(to_free);
+	لکھو((opt_vV == 'V') ? "%s is %s\n" : "%s\n", cmd, explanation);
+	آزاد(مقصد_free);
 	fflush_all();
 	_exit(0);
 }
-#else
-# define if_command_vV_print_and_exit(a,b,c) ((void)0)
-#endif
-#endif /* !__U_BOOT__ */
+#ورنہ
+# define if_command_vV_print_and_exit(a,b,c) ((خالی)0)
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
-#if BB_MMU
-#define pseudo_exec_argv(nommu_save, argv, assignment_cnt, argv_expanded) \
+#اگر BB_MMU
+#تعریف_کرو pseudo_exec_argv(nommu_save, argv, assignment_cnt, argv_expanded) \
 	pseudo_exec_argv(argv, assignment_cnt, argv_expanded)
-#define pseudo_exec(nommu_save, command, argv_expanded) \
+#تعریف_کرو pseudo_exec(nommu_save, command, argv_expanded) \
 	pseudo_exec(command, argv_expanded)
-#endif
+#اگر_ختم
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 /* Called after [v]fork() in run_pipe, or from builtin_exec.
  * Never returns.
  * Don't exit() here.  If you don't exec, use _exit instead.
  * The at_exit handlers apparently confuse the calling process,
  * in particular stdin handling. Not sure why? -- because of vfork! (vda)
  */
-static void pseudo_exec_argv(nommu_save_t *nommu_save,
-		char **argv, int assignment_cnt,
-		char **argv_expanded) NORETURN;
-static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
-		char **argv, int assignment_cnt,
-		char **argv_expanded)
+ساکن خالی pseudo_exec_argv(nommu_save_t *nommu_save,
+		حرف **argv, صحیح assignment_cnt,
+		حرف **argv_expanded) NORETURN;
+ساکن NOINLINE خالی pseudo_exec_argv(nommu_save_t *nommu_save,
+		حرف **argv, صحیح assignment_cnt,
+		حرف **argv_expanded)
 {
-	const struct built_in_command *x;
-	struct variable **sv_shadowed;
-	char **new_env;
-	IF_HUSH_COMMAND(char opt_vV = 0;)
-	IF_HUSH_FUNCTIONS(const struct function *funcp;)
+	ثابت ساخت built_اندر_command *x;
+	ساخت variable **sv_shadowed;
+	حرف **new_env;
+	IF_HUSH_COMMAND(حرف opt_vV = 0;)
+	IF_HUSH_FUNCTIONS(ثابت ساخت function *funcp;)
 
 	new_env = expand_assignments(argv, assignment_cnt);
-	dump_cmd_in_x_mode(new_env);
+	dump_cmd_اندر_x_منوال(new_env);
 
-	if (!argv[assignment_cnt]) {
+	اگر (!argv[assignment_cnt]) {
 		/* Case when we are here: ... | var=val | ...
 		 * (note that we do not exit early, i.e., do not optimize out
 		 * expand_assignments(): think about ... | var=`sleep 1` | ...
 		 */
-		free_strings(new_env);
+		free_لڑیاں(new_env);
 		_exit_SUCCESS();
 	}
 
 	sv_shadowed = G.shadowed_vars_pp;
-#if BB_MMU
-	G.shadowed_vars_pp = NULL; /* "don't save, free them instead" */
-#else
+#اگر BB_MMU
+	G.shadowed_vars_pp = تہی; /* "don't save, free them instead" */
+#ورنہ
 	G.shadowed_vars_pp = &nommu_save->old_vars;
 	G.var_nest_level++;
-#endif
-	set_vars_and_save_old(new_env);
+#اگر_ختم
+	سیٹ_vars_and_save_old(new_env);
 	G.shadowed_vars_pp = sv_shadowed;
 
-	if (argv_expanded) {
+	اگر (argv_expanded) {
 		argv = argv_expanded;
-	} else {
-		argv = expand_strvec_to_strvec(argv + assignment_cnt);
-#if !BB_MMU
+	} ورنہ {
+		argv = expand_strvec_مقصد_strvec(argv + assignment_cnt);
+#اگر !BB_MMU
 		nommu_save->argv = argv;
-#endif
+#اگر_ختم
 	}
-	dump_cmd_in_x_mode(argv);
+	dump_cmd_اندر_x_منوال(argv);
 
-#if ENABLE_FEATURE_SH_STANDALONE || BB_MMU
-	if (strchr(argv[0], '/') != NULL)
-		goto skip;
-#endif
+#اگر ENABLE_FEATURE_SH_STANDALONE || BB_MMU
+	اگر (strchr(argv[0], '/') != تہی)
+		جاؤ skip;
+#اگر_ختم
 
-#if ENABLE_HUSH_FUNCTIONS
+#اگر ENABLE_HUSH_FUNCTIONS
 	/* Check if the command matches any functions (this goes before bltins) */
-	funcp = find_function(argv[0]);
-	if (funcp)
+	funcp = ڈھونڈو_function(argv[0]);
+	اگر (funcp)
 		exec_function(&nommu_save->argv_from_re_execing, funcp, argv);
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_COMMAND
+#اگر ENABLE_HUSH_COMMAND
 	/* "command BAR": run BAR without looking it up among functions
 	 * "command -v BAR": print "BAR" or "/path/to/BAR"; or exit 1
 	 * "command -V BAR": print "BAR is {a function,a shell builtin,/path/to/BAR}"
 	 */
-	while (strcmp(argv[0], "command") == 0 && argv[1]) {
-		char *p;
+	جب (strcmp(argv[0], "command") == 0 && argv[1]) {
+		حرف *p;
 
 		argv++;
 		p = *argv;
-		if (p[0] != '-' || !p[1])
-			continue; /* bash allows "command command command [-OPT] BAR" */
+		اگر (p[0] != '-' || !p[1])
+			جاری; /* bash allows "command command command [-OPT] BAR" */
 
-		for (;;) {
+		برائے (;;) {
 			p++;
-			switch (*p) {
-			case '\0':
+			انتخاب (*p) {
+			حالت '\0':
 				argv++;
 				p = *argv;
-				if (p[0] != '-' || !p[1])
-					goto after_opts;
-				continue; /* next arg is also -opts, process it too */
-			case 'v':
-			case 'V':
+				اگر (p[0] != '-' || !p[1])
+					جاؤ after_opts;
+				جاری; /* next arg is also -opts, process it too */
+			حالت 'v':
+			حالت 'V':
 				opt_vV = *p;
-				continue;
-			default:
-				bb_error_msg_and_die("%s: %s: invalid option", "command", argv[0]);
+				جاری;
+			طےشدہ:
+				bb_error_پیغام_and_die("%s: %s: invalid option", "command", argv[0]);
 			}
 		}
 	}
  after_opts:
-# if ENABLE_HUSH_FUNCTIONS
-	if (opt_vV && find_function(argv[0]))
+# اگر ENABLE_HUSH_FUNCTIONS
+	اگر (opt_vV && ڈھونڈو_function(argv[0]))
 		if_command_vV_print_and_exit(opt_vV, argv[0], "a function");
 # endif
-#endif
+#اگر_ختم
 
 	/* Check if the command matches any of the builtins.
 	 * Depending on context, this might be redundant.  But it's
@@ -9295,20 +9295,20 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 	 * just in order to run echo or test builtin.
 	 * It's better to skip it here and run corresponding
 	 * non-builtin later. */
-	x = BB_MMU ? find_builtin(argv[0]) : find_builtin1(argv[0]);
-	if (x) {
+	x = BB_MMU ? ڈھونڈو_builtin(argv[0]) : ڈھونڈو_builtin1(argv[0]);
+	اگر (x) {
 		if_command_vV_print_and_exit(opt_vV, argv[0], "a shell builtin");
 		exec_builtin(&nommu_save->argv_from_re_execing, x, argv);
 	}
 
-#if ENABLE_FEATURE_SH_STANDALONE
+#اگر ENABLE_FEATURE_SH_STANDALONE
 	/* Check if the command matches any busybox applets */
 	{
-		int a = find_applet_by_name(argv[0]);
-		if (a >= 0) {
+		صحیح a = ڈھونڈو_applet_by_name(argv[0]);
+		اگر (a >= 0) {
 			if_command_vV_print_and_exit(opt_vV, argv[0], "an applet");
-# if BB_MMU /* see above why on NOMMU it is not allowed */
-			if (APPLET_IS_NOEXEC(a)) {
+# اگر BB_MMU /* see above why on NOMMU it is not allowed */
+			اگر (APPLET_IS_NOEXEC(a)) {
 				/* Do not leak open fds from opened script files etc.
 				 * Testcase: interactive "ls -l /proc/self/fd"
 				 * should not show tty fd open.
@@ -9320,75 +9320,75 @@ static NOINLINE void pseudo_exec_argv(nommu_save_t *nommu_save,
 //redir_children_should_not_see_saved_fd_3.tests
 //if you replace "busybox find" with just "find" in them
 				/* Without this, "rm -i FILE" can't be ^C'ed: */
-				switch_off_special_sigs(G.special_sig_mask);
+				switch_off_special_sigs(G.special_sig_نقاب);
 				debug_printf_exec("running applet '%s'\n", argv[0]);
-				run_noexec_applet_and_exit(a, argv[0], argv);
+				تسلسل_noexec_applet_and_exit(a, argv[0], argv);
 			}
 # endif
 			/* Re-exec ourselves */
 			debug_printf_exec("re-execing applet '%s'\n", argv[0]);
 			/* Don't propagate SIG_IGN to the child */
-			if (SPECIAL_JOBSTOP_SIGS != 0)
-				switch_off_special_sigs(G.special_sig_mask & SPECIAL_JOBSTOP_SIGS);
-			execv(bb_busybox_exec_path, argv);
+			اگر (SPECIAL_JOBSTOP_SIGS != 0)
+				switch_off_special_sigs(G.special_sig_نقاب & SPECIAL_JOBSTOP_SIGS);
+			execv(bb_busybox_exec_راستہ, argv);
 			/* If they called chroot or otherwise made the binary no longer
 			 * executable, fall through */
 		}
 	}
-#endif
+#اگر_ختم
 
-#if ENABLE_FEATURE_SH_STANDALONE || BB_MMU
+#اگر ENABLE_FEATURE_SH_STANDALONE || BB_MMU
  skip:
-#endif
-	if_command_vV_print_and_exit(opt_vV, argv[0], NULL);
+#اگر_ختم
+	if_command_vV_print_and_exit(opt_vV, argv[0], تہی);
 	execvp_or_die(argv);
 }
 
 /* Called after [v]fork() in run_pipe
  */
-static void pseudo_exec(nommu_save_t *nommu_save,
-		struct command *command,
-		char **argv_expanded) NORETURN;
-static void pseudo_exec(nommu_save_t *nommu_save,
-		struct command *command,
-		char **argv_expanded)
+ساکن خالی pseudo_exec(nommu_save_t *nommu_save,
+		ساخت command *command,
+		حرف **argv_expanded) NORETURN;
+ساکن خالی pseudo_exec(nommu_save_t *nommu_save,
+		ساخت command *command,
+		حرف **argv_expanded)
 {
-#if ENABLE_HUSH_FUNCTIONS
-	if (command->cmd_type == CMD_FUNCDEF) {
+#اگر ENABLE_HUSH_FUNCTIONS
+	اگر (command->cmd_type == CMD_FUNCDEF) {
 		/* Ignore funcdefs in pipes:
 		 * true | f() { cmd }
 		 */
 		_exit(0);
 	}
-#endif
+#اگر_ختم
 
-	if (command->argv) {
+	اگر (command->argv) {
 		pseudo_exec_argv(nommu_save, command->argv,
 				command->assignment_cnt, argv_expanded);
 	}
 
-	if (command->group) {
+	اگر (command->گروہ) {
 		/* Cases when we are here:
 		 * ( list )
 		 * { list } &
 		 * ... | ( list ) | ...
 		 * ... | { list } | ...
 		 */
-#if BB_MMU
-		int rcode;
+#اگر BB_MMU
+		صحیح rcode;
 		debug_printf_exec("pseudo_exec: run_list\n");
-		reset_traps_to_defaults();
-		rcode = run_list(command->group);
+		reset_traps_مقصد_defaults();
+		rcode = تسلسل_list(command->گروہ);
 		/* OK to leak memory by not calling free_pipe_list,
 		 * since this process is about to exit */
 		_exit(rcode);
-#else
+#ورنہ
 		re_execute_shell(&nommu_save->argv_from_re_execing,
-				command->group_as_string,
+				command->گروہ_as_string,
 				G.global_argv[0],
 				G.global_argv + 1,
-				NULL);
-#endif
+				تہی);
+#اگر_ختم
 	}
 
 	/* Case when we are here: ... | >file */
@@ -9396,175 +9396,175 @@ static void pseudo_exec(nommu_save_t *nommu_save,
 	_exit_SUCCESS();
 }
 
-#if ENABLE_HUSH_JOB
-static const char *get_cmdtext(struct pipe *pi)
+#اگر ENABLE_HUSH_کام
+ساکن ثابت حرف *get_cmdtext(ساخت pipe *pi)
 {
-	char **argv;
-	char *p;
-	int len;
+	حرف **argv;
+	حرف *p;
+	صحیح len;
 
 	/* This is subtle. ->cmdtext is created only on first backgrounding.
 	 * (Think "cat, <ctrl-z>, fg, <ctrl-z>, fg, <ctrl-z>...." here...)
 	 * On subsequent bg argv is trashed, but we won't use it */
-	if (pi->cmdtext)
-		return pi->cmdtext;
+	اگر (pi->cmdtext)
+		واپس pi->cmdtext;
 
 	argv = pi->cmds[0].argv;
-	if (!argv) {
+	اگر (!argv) {
 		pi->cmdtext = xzalloc(1);
-		return pi->cmdtext;
+		واپس pi->cmdtext;
 	}
 	len = 0;
-	do {
-		len += strlen(*argv) + 1;
-	} while (*++argv);
+	کرو {
+		len += لڑی_لمبائی(*argv) + 1;
+	} جب (*++argv);
 	p = xmalloc(len);
 	pi->cmdtext = p;
 	argv = pi->cmds[0].argv;
-	do {
+	کرو {
 		p = stpcpy(p, *argv);
 		*p++ = ' ';
-	} while (*++argv);
+	} جب (*++argv);
 	p[-1] = '\0';
-	return pi->cmdtext;
+	واپس pi->cmdtext;
 }
 
-static void remove_job_from_table(struct pipe *pi)
+ساکن خالی remove_کام_from_جدول(ساخت pipe *pi)
 {
-	struct pipe *prev_pipe;
+	ساخت pipe *پچھلا_pipe;
 
-	if (pi == G.job_list) {
-		G.job_list = pi->next;
-	} else {
-		prev_pipe = G.job_list;
-		while (prev_pipe->next != pi)
-			prev_pipe = prev_pipe->next;
-		prev_pipe->next = pi->next;
+	اگر (pi == G.کام_list) {
+		G.کام_list = pi->اگلا;
+	} ورنہ {
+		پچھلا_pipe = G.کام_list;
+		جب (پچھلا_pipe->اگلا != pi)
+			پچھلا_pipe = پچھلا_pipe->اگلا;
+		پچھلا_pipe->اگلا = pi->اگلا;
 	}
-	G.last_jobid = 0;
-	if (G.job_list)
-		G.last_jobid = G.job_list->jobid;
+	G.آخری_jobid = 0;
+	اگر (G.کام_list)
+		G.آخری_jobid = G.کام_list->jobid;
 }
 
-static void delete_finished_job(struct pipe *pi)
+ساکن خالی delete_ختم_شدہ_کام(ساخت pipe *pi)
 {
-	remove_job_from_table(pi);
+	remove_کام_from_جدول(pi);
 	free_pipe(pi);
 }
 
-static void clean_up_last_dead_job(void)
+ساکن خالی clean_اوپر_آخری_dead_کام(خالی)
 {
-	if (G.job_list && !G.job_list->alive_cmds)
-		delete_finished_job(G.job_list);
+	اگر (G.کام_list && !G.کام_list->alive_cmds)
+		delete_ختم_شدہ_کام(G.کام_list);
 }
 
-static void insert_job_into_table(struct pipe *pi)
+ساکن خالی داخل_کرو_کام_into_جدول(ساخت pipe *pi)
 {
-	struct pipe *job, **jobp;
-	int i;
+	ساخت pipe *کام, **jobp;
+	صحیح i;
 
-	clean_up_last_dead_job();
+	clean_اوپر_آخری_dead_کام();
 
 	/* Find the end of the list, and find next job ID to use */
 	i = 0;
-	jobp = &G.job_list;
-	while ((job = *jobp) != NULL) {
-		if (job->jobid > i)
-			i = job->jobid;
-		jobp = &job->next;
+	jobp = &G.کام_list;
+	جب ((کام = *jobp) != تہی) {
+		اگر (کام->jobid > i)
+			i = کام->jobid;
+		jobp = &کام->اگلا;
 	}
 	pi->jobid = i + 1;
 
 	/* Create a new job struct at the end */
-	job = *jobp = xmemdup(pi, sizeof(*pi));
-	job->next = NULL;
-	job->cmds = xzalloc(sizeof(pi->cmds[0]) * pi->num_cmds);
+	کام = *jobp = xmemdup(pi, حجم(*pi));
+	کام->اگلا = تہی;
+	کام->cmds = xzalloc(حجم(pi->cmds[0]) * pi->عدد_cmds);
 	/* Cannot copy entire pi->cmds[] vector! This causes double frees */
-	for (i = 0; i < pi->num_cmds; i++) {
-		job->cmds[i].pid = pi->cmds[i].pid;
+	برائے (i = 0; i < pi->عدد_cmds; i++) {
+		کام->cmds[i].pid = pi->cmds[i].pid;
 		/* all other fields are not used and stay zero */
 	}
-	job->cmdtext = xstrdup(get_cmdtext(pi));
+	کام->cmdtext = xstrdup(get_cmdtext(pi));
 
-	if (G_interactive_fd)
-		printf("[%u] %u %s\n", job->jobid, (unsigned)job->cmds[0].pid, job->cmdtext);
-	G.last_jobid = job->jobid;
+	اگر (G_interactive_fd)
+		لکھو("[%u] %u %s\n", کام->jobid, (غیرعلامتی)کام->cmds[0].pid, کام->cmdtext);
+	G.آخری_jobid = کام->jobid;
 }
-#endif /* JOB */
+#اگر_ختم /*کام*/
 
-static int job_exited_or_stopped(struct pipe *pi)
+ساکن صحیح کام_exited_or_stopped(ساخت pipe *pi)
 {
-	int rcode, i;
+	صحیح rcode, i;
 
-	if (pi->alive_cmds != pi->stopped_cmds)
-		return -1;
+	اگر (pi->alive_cmds != pi->stopped_cmds)
+		واپس -1;
 
 	/* All processes in fg pipe have exited or stopped */
 	rcode = 0;
-	i = pi->num_cmds;
-	while (--i >= 0) {
+	i = pi->عدد_cmds;
+	جب (--i >= 0) {
 		rcode = pi->cmds[i].cmd_exitcode;
 		/* usually last process gives overall exitstatus,
 		 * but with "set -o pipefail", last *failed* process does */
-		if (G.o_opt[OPT_O_PIPEFAIL] == 0 || rcode != 0)
-			break;
+		اگر (G.o_opt[OPT_O_PIPEFAIL] == 0 || rcode != 0)
+			توڑو;
 	}
-	IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
-	return rcode;
+	IF_HAS_KEYWORDS(اگر (pi->pi_inverted) rcode = !rcode;)
+	واپس rcode;
 }
 
-static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
+ساکن صحیح process_wait_نتیجہ(ساخت pipe *fg_pipe, pid_t childpid, صحیح حالت_2)
 {
-#if ENABLE_HUSH_JOB
-	struct pipe *pi;
-#endif
-	int i, dead;
+#اگر ENABLE_HUSH_کام
+	ساخت pipe *pi;
+#اگر_ختم
+	صحیح i, dead;
 
-	dead = WIFEXITED(status) || WIFSIGNALED(status);
+	dead = WIFEXITED(حالت_2) || WIFSIGNALED(حالت_2);
 
-#if DEBUG_JOBS
-	if (WIFSTOPPED(status))
+#اگر DEBUG_JOBS
+	اگر (WIFSTOPPED(حالت_2))
 		debug_printf_jobs("pid %d stopped by sig %d (exitcode %d)\n",
-				childpid, WSTOPSIG(status), WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
+				childpid, WSTOPSIG(حالت_2), WEXITSTATUS(حالت_2));
+	اگر (WIFSIGNALED(حالت_2))
 		debug_printf_jobs("pid %d killed by sig %d (exitcode %d)\n",
-				childpid, WTERMSIG(status), WEXITSTATUS(status));
-	if (WIFEXITED(status))
+				childpid, WTERMSIG(حالت_2), WEXITSTATUS(حالت_2));
+	اگر (WIFEXITED(حالت_2))
 		debug_printf_jobs("pid %d exited, exitcode %d\n",
-				childpid, WEXITSTATUS(status));
-#endif
+				childpid, WEXITSTATUS(حالت_2));
+#اگر_ختم
 	/* Were we asked to wait for a fg pipe? */
-	if (fg_pipe) {
-		i = fg_pipe->num_cmds;
+	اگر (fg_pipe) {
+		i = fg_pipe->عدد_cmds;
 
-		while (--i >= 0) {
-			int rcode;
+		جب (--i >= 0) {
+			صحیح rcode;
 
 			debug_printf_jobs("check pid %d\n", fg_pipe->cmds[i].pid);
-			if (fg_pipe->cmds[i].pid != childpid)
-				continue;
-			if (dead) {
-				int ex;
+			اگر (fg_pipe->cmds[i].pid != childpid)
+				جاری;
+			اگر (dead) {
+				صحیح ex;
 				fg_pipe->cmds[i].pid = 0;
 				fg_pipe->alive_cmds--;
-				ex = WEXITSTATUS(status);
+				ex = WEXITSTATUS(حالت_2);
 				/* bash prints killer signal's name for *last*
 				 * process in pipe (prints just newline for SIGINT/SIGPIPE).
 				 * Mimic this. Example: "sleep 5" + (^\ or kill -QUIT)
 				 */
-				if (WIFSIGNALED(status)) {
-					int sig = WTERMSIG(status);
-#if ENABLE_HUSH_JOB
-					if (G.run_list_level == 1
+				اگر (WIFSIGNALED(حالت_2)) {
+					صحیح sig = WTERMSIG(حالت_2);
+#اگر ENABLE_HUSH_کام
+					اگر (G.تسلسل_list_level == 1
 					/* ^^^^^ Do not print in nested contexts, example:
 					 * echo `sleep 1; sh -c 'kill -9 $$'` - prints "137", NOT "Killed 137"
 					 */
-					 && i == fg_pipe->num_cmds-1
+					 && i == fg_pipe->عدد_cmds-1
 					) {
 						/* strsignal() is for bash compat. ~600 bloat versus bbox's get_signame() */
 						puts(sig == SIGINT || sig == SIGPIPE ? "" : strsignal(sig));
 					}
-#endif
+#اگر_ختم
 					/* TODO: if (WCOREDUMP(status)) + " (core dumped)"; */
 					/* MIPS has 128 sigs (1..128), if sig==128,
 					 * 128 + sig would result in exitcode 256 -> 0!
@@ -9572,66 +9572,66 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
 					ex = 128 | sig;
 				}
 				fg_pipe->cmds[i].cmd_exitcode = ex;
-			} else {
+			} ورنہ {
 				fg_pipe->stopped_cmds++;
 			}
 			debug_printf_jobs("fg_pipe: alive_cmds %d stopped_cmds %d\n",
 					fg_pipe->alive_cmds, fg_pipe->stopped_cmds);
-			rcode = job_exited_or_stopped(fg_pipe);
-			if (rcode >= 0) {
+			rcode = کام_exited_or_stopped(fg_pipe);
+			اگر (rcode >= 0) {
 /* Note: *non-interactive* bash does not continue if all processes in fg pipe
  * are stopped. Testcase: "cat | cat" in a script (not on command line!)
  * and "killall -STOP cat" */
-				if (G_interactive_fd) {
-#if ENABLE_HUSH_JOB
-					if (fg_pipe->alive_cmds != 0)
-						insert_job_into_table(fg_pipe);
-#endif
-					return rcode;
+				اگر (G_interactive_fd) {
+#اگر ENABLE_HUSH_کام
+					اگر (fg_pipe->alive_cmds != 0)
+						داخل_کرو_کام_into_جدول(fg_pipe);
+#اگر_ختم
+					واپس rcode;
 				}
-				if (fg_pipe->alive_cmds == 0)
-					return rcode;
+				اگر (fg_pipe->alive_cmds == 0)
+					واپس rcode;
 			}
 			/* There are still running processes in the fg_pipe */
-			return -1;
+			واپس -1;
 		}
 		/* It wasn't in fg_pipe, look for process in bg pipes */
 	}
 
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 	/* We were asked to wait for bg or orphaned children */
 	/* No need to remember exitcode in this case */
-	for (pi = G.job_list; pi; pi = pi->next) {
-		for (i = 0; i < pi->num_cmds; i++) {
-			if (pi->cmds[i].pid == childpid)
-				goto found_pi_and_prognum;
+	برائے (pi = G.کام_list; pi; pi = pi->اگلا) {
+		برائے (i = 0; i < pi->عدد_cmds; i++) {
+			اگر (pi->cmds[i].pid == childpid)
+				جاؤ ملا_pi_and_prognum;
 		}
 	}
 	/* Happens when shell is used as init process (init=/bin/sh) */
 	debug_printf("checkjobs: pid %d was not in our list!\n", childpid);
-	return -1; /* this wasn't a process from fg_pipe */
+	واپس -1; /* this wasn't a process from fg_pipe */
 
- found_pi_and_prognum:
-	if (dead) {
+ ملا_pi_and_prognum:
+	اگر (dead) {
 		/* child exited */
-		int rcode = WEXITSTATUS(status);
-		if (WIFSIGNALED(status))
+		صحیح rcode = WEXITSTATUS(حالت_2);
+		اگر (WIFSIGNALED(حالت_2))
 			/* NB: not 128 + sig, MIPS has sig 128 */
-			rcode = 128 | WTERMSIG(status);
+			rcode = 128 | WTERMSIG(حالت_2);
 		pi->cmds[i].cmd_exitcode = rcode;
-		if (G.last_bg_pid == pi->cmds[i].pid)
-			G.last_bg_pid_exitcode = rcode;
+		اگر (G.آخری_bg_pid == pi->cmds[i].pid)
+			G.آخری_bg_pid_exitcode = rcode;
 		pi->cmds[i].pid = 0;
 		pi->alive_cmds--;
-		if (!pi->alive_cmds) {
-# if ENABLE_HUSH_BASH_COMPAT
-			G.dead_job_exitcode = job_exited_or_stopped(pi);
+		اگر (!pi->alive_cmds) {
+# اگر ENABLE_HUSH_BASH_COMPAT
+			G.dead_کام_exitcode = کام_exited_or_stopped(pi);
 # endif
-			if (G_interactive_fd) {
-				printf(JOB_STATUS_FORMAT, pi->jobid,
+			اگر (G_interactive_fd) {
+				لکھو(کام_حالت_FORMAT, pi->jobid,
 						"Done", pi->cmdtext);
-				delete_finished_job(pi);
-			} else {
+				delete_ختم_شدہ_کام(pi);
+			} ورنہ {
 /*
  * bash deletes finished jobs from job table only in interactive mode,
  * after "jobs" cmd, or if pid of a new process matches one of the old ones
@@ -9640,16 +9640,16 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
  * We only retain one "dead" job, if it's the single job on the list.
  * This covers most of real-world scenarios where this is useful.
  */
-				if (pi != G.job_list)
-					delete_finished_job(pi);
+				اگر (pi != G.کام_list)
+					delete_ختم_شدہ_کام(pi);
 			}
 		}
-	} else {
+	} ورنہ {
 		/* child stopped */
 		pi->stopped_cmds++;
 	}
-#endif
-	return -1; /* this wasn't a process from fg_pipe */
+#اگر_ختم
+	واپس -1; /* this wasn't a process from fg_pipe */
 }
 
 /* Check to see if any processes have exited -- if they have,
@@ -9667,37 +9667,37 @@ static int process_wait_result(struct pipe *fg_pipe, pid_t childpid, int status)
  * return <0 if waitpid errors out (e.g. ECHILD: nothing to wait for)
  * or 0 if no children changed status.
  */
-static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
+ساکن صحیح checkjobs(ساخت pipe *fg_pipe, pid_t waitfor_pid)
 {
-	int attributes;
-	int status;
-	int rcode = 0;
+	صحیح اوصاف;
+	صحیح حالت_2;
+	صحیح rcode = 0;
 
 	debug_printf_jobs("checkjobs %p\n", fg_pipe);
 
-	attributes = WUNTRACED;
-	if (fg_pipe == NULL)
-		attributes |= WNOHANG;
+	اوصاف = WUNTRACED;
+	اگر (fg_pipe == تہی)
+		اوصاف |= WNOHANG;
 
 	errno = 0;
-#if ENABLE_HUSH_FAST
-	if (G.handled_SIGCHLD == G.count_SIGCHLD) {
+#اگر ENABLE_HUSH_FAST
+	اگر (G.handled_SIGCHLD == G.گنتی_SIGCHLD) {
 //bb_error_msg("[%d] checkjobs: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d children?:%d fg_pipe:%p",
 //getpid(), G.count_SIGCHLD, G.handled_SIGCHLD, G.we_have_children, fg_pipe);
 		/* There was neither fork nor SIGCHLD since last waitpid */
 		/* Avoid doing waitpid syscall if possible */
-		if (!G.we_have_children) {
+		اگر (!G.we_have_children) {
 			errno = ECHILD;
-			return -1;
+			واپس -1;
 		}
-		if (fg_pipe == NULL) { /* is WNOHANG set? */
+		اگر (fg_pipe == تہی) { /* is WNOHANG set? */
 			/* We have children, but they did not exit
 			 * or stop yet (we saw no SIGCHLD) */
-			return 0;
+			واپس 0;
 		}
 		/* else: !WNOHANG, waitpid will block, can't short-circuit */
 	}
-#endif
+#اگر_ختم
 
 /* Do we do this right?
  * bash-3.00# sleep 20 | false
@@ -9707,74 +9707,74 @@ static int checkjobs(struct pipe *fg_pipe, pid_t waitfor_pid)
  * 1   <========== bg pipe is not fully done, but exitcode is already known!
  * [hush 1.14.0: yes we do it right]
  */
-	while (1) {
+	جب (1) {
 		pid_t childpid;
-#if ENABLE_HUSH_FAST
-		int i;
-		i = G.count_SIGCHLD;
-#endif
-		childpid = waitpid(-1, &status, attributes);
-		if (childpid <= 0) {
-			if (childpid && errno != ECHILD)
-				bb_simple_perror_msg("waitpid");
-#if ENABLE_HUSH_FAST
-			else { /* Until next SIGCHLD, waitpid's are useless */
+#اگر ENABLE_HUSH_FAST
+		صحیح i;
+		i = G.گنتی_SIGCHLD;
+#اگر_ختم
+		childpid = waitpid(-1, &حالت_2, اوصاف);
+		اگر (childpid <= 0) {
+			اگر (childpid && errno != ECHILD)
+				bb_simple_perror_پیغام("waitpid");
+#اگر ENABLE_HUSH_FAST
+			ورنہ { /* Until next SIGCHLD, waitpid's are useless */
 				G.we_have_children = (childpid == 0);
 				G.handled_SIGCHLD = i;
 //bb_error_msg("[%d] checkjobs: waitpid returned <= 0, G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
 			}
-#endif
+#اگر_ختم
 			/* ECHILD (no children), or 0 (no change in children status) */
 			rcode = childpid;
-			break;
+			توڑو;
 		}
-		rcode = process_wait_result(fg_pipe, childpid, status);
-		if (rcode >= 0) {
+		rcode = process_wait_نتیجہ(fg_pipe, childpid, حالت_2);
+		اگر (rcode >= 0) {
 			/* fg_pipe exited or stopped */
-			break;
+			توڑو;
 		}
-		if (childpid == waitfor_pid) { /* "wait PID" */
-			debug_printf_exec("childpid==waitfor_pid:%d status:0x%08x\n", childpid, status);
-			rcode = WEXITSTATUS(status);
-			if (WIFSIGNALED(status))
-				rcode = 128 | WTERMSIG(status);
-			if (WIFSTOPPED(status))
+		اگر (childpid == waitfor_pid) { /* "wait PID" */
+			debug_printf_exec("childpid==waitfor_pid:%d status:0x%08x\n", childpid, حالت_2);
+			rcode = WEXITSTATUS(حالت_2);
+			اگر (WIFSIGNALED(حالت_2))
+				rcode = 128 | WTERMSIG(حالت_2);
+			اگر (WIFSTOPPED(حالت_2))
 				/* bash: "cmd & wait $!" and cmd stops: $? = 128 | stopsig */
-				rcode = 128 | WSTOPSIG(status);
+				rcode = 128 | WSTOPSIG(حالت_2);
 			rcode++;
-			break; /* "wait PID" called us, give it exitcode+1 */
+			توڑو; /* "wait PID" called us, give it exitcode+1 */
 		}
-#if ENABLE_HUSH_BASH_COMPAT
-		if (-1 == waitfor_pid /* "wait -n" (wait for any one job) */
-		 && G.dead_job_exitcode >= 0 /* some job did finish */
+#اگر ENABLE_HUSH_BASH_COMPAT
+		اگر (-1 == waitfor_pid /* "wait -n" (wait for any one job) */
+		 && G.dead_کام_exitcode >= 0 /* some job did finish */
 		) {
 			debug_printf_exec("waitfor_pid:-1\n");
-			rcode = G.dead_job_exitcode + 1;
-			break;
+			rcode = G.dead_کام_exitcode + 1;
+			توڑو;
 		}
-#endif
+#اگر_ختم
 		/* This wasn't one of our processes, or */
 		/* fg_pipe still has running processes, do waitpid again */
 	} /* while (waitpid succeeds)... */
 
-	return rcode;
+	واپس rcode;
 }
 
-#if ENABLE_HUSH_JOB
-static int checkjobs_and_fg_shell(struct pipe *fg_pipe)
+#اگر ENABLE_HUSH_کام
+ساکن صحیح checkjobs_and_fg_shell(ساخت pipe *fg_pipe)
 {
 	pid_t p;
-	int rcode = checkjobs(fg_pipe, 0 /*(no pid to wait for)*/);
-	if (G_saved_tty_pgrp) {
+	صحیح rcode = checkjobs(fg_pipe, 0 /*(no pid to wait for)*/);
+	اگر (G_saved_tty_pgrp) {
 		/* Job finished, move the shell to the foreground */
 		p = getpgrp(); /* our process group id */
-		debug_printf_jobs("fg'ing ourself: getpgrp()=%d\n", (int)p);
+		debug_printf_jobs("fg'ing ourself: getpgrp()=%d\n", (صحیح)p);
 		tcsetpgrp(G_interactive_fd, p);
 	}
-	return rcode;
+	واپس rcode;
 }
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 
 /* Start all the jobs, but don't wait for anything to finish.
  * See checkjobs().
@@ -9802,78 +9802,78 @@ static int checkjobs_and_fg_shell(struct pipe *fg_pipe)
  * backgrounded: cmd &     { list } &
  * subshell:     ( list ) [&]
  */
-static void set_G_ifs(void)
+ساکن خالی سیٹ_G_ifs(خالی)
 {
 	/* Testcase: set -- q w e; (IFS='' echo "$*"; IFS=''; echo "$*"); echo "$*"
 	 * Result should be 3 lines: q w e, qwe, q w e
 	 */
-	if (G.ifs_whitespace != G.ifs)
-		free(G.ifs_whitespace);
-	G.ifs = get_local_var_value("IFS");
-	if (G.ifs) {
-		char *p;
-		G.ifs_whitespace = (char*)G.ifs;
+	اگر (G.ifs_whitespace != G.ifs)
+		آزاد(G.ifs_whitespace);
+	G.ifs = get_local_var_قدر("IFS");
+	اگر (G.ifs) {
+		حرف *p;
+		G.ifs_whitespace = (حرف*)G.ifs;
 		p = skip_whitespace(G.ifs);
-		if (*p) {
+		اگر (*p) {
 			/* Not all $IFS is whitespace */
-			char *d;
-			int len = p - G.ifs;
+			حرف *d;
+			صحیح len = p - G.ifs;
 			p = skip_non_whitespace(p);
-			G.ifs_whitespace = xmalloc(len + strlen(p) + 1); /* can overestimate */
+			G.ifs_whitespace = xmalloc(len + لڑی_لمبائی(p) + 1); /* can overestimate */
 			d = mempcpy(G.ifs_whitespace, G.ifs, len);
-			while (*p) {
-				if (isspace(*p))
+			جب (*p) {
+				اگر (خلا_ہے(*p))
 					*d++ = *p;
 				p++;
 			}
 			*d = '\0';
 		}
-	} else {
+	} ورنہ {
 		G.ifs = defifs;
-		G.ifs_whitespace = (char*)G.ifs;
+		G.ifs_whitespace = (حرف*)G.ifs;
 	}
 }
-#ifndef __U_BOOT__
-#if !ENABLE_HUSH_MODE_X
-#define redirect_and_varexp_helper(command, sqp, argv_expanded) \
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر !ENABLE_HUSH_منوال_X
+#تعریف_کرو redirect_and_varexp_helper(command, sqp, argv_expanded) \
 	redirect_and_varexp_helper(command, sqp)
-#endif
-static int redirect_and_varexp_helper(
-		struct command *command,
-		struct squirrel **sqp,
-		char **argv_expanded)
+#اگر_ختم
+ساکن صحیح redirect_and_varexp_helper(
+		ساخت command *command,
+		ساخت squirrel **sqp,
+		حرف **argv_expanded)
 {
 	/* Assignments occur before redirects. Try:
 	 * a=`sleep 1` sleep 2 3>/qwe/rty
 	 */
 
-	char **new_env = expand_assignments(command->argv, command->assignment_cnt);
-	dump_cmd_in_x_mode(new_env);
-	dump_cmd_in_x_mode(argv_expanded);
+	حرف **new_env = expand_assignments(command->argv, command->assignment_cnt);
+	dump_cmd_اندر_x_منوال(new_env);
+	dump_cmd_اندر_x_منوال(argv_expanded);
 	/* this takes ownership of new_env[i] elements, and frees new_env: */
-	set_vars_and_save_old(new_env);
+	سیٹ_vars_and_save_old(new_env);
 
-	return setup_redirects(command, sqp);
+	واپس تیاری_redirects(command, sqp);
 }
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-static NOINLINE int run_pipe(struct pipe *pi)
+ساکن NOINLINE صحیح تسلسل_pipe(ساخت pipe *pi)
 {
-	static const char *const null_ptr = NULL;
+	ساکن ثابت حرف *ثابت null_ptr = تہی;
 
-	int cmd_no;
-#ifndef __U_BOOT__
-	int next_infd;
-#endif /* !__U_BOOT__ */
-	struct command *command;
-	char **argv_expanded;
-	char **argv;
-#ifndef __U_BOOT__
-	struct squirrel *squirrel = NULL;
-#endif /* !__U_BOOT__ */
-	int rcode;
+	صحیح cmd_no;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	صحیح اگلا_infd;
+#اگر_ختم /* !__U_BOOT__ */
+	ساخت command *command;
+	حرف **argv_expanded;
+	حرف **argv;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	ساخت squirrel *squirrel = تہی;
+#اگر_ختم /* !__U_BOOT__ */
+	صحیح rcode;
 
-#ifdef __U_BOOT__
+#اگر_تعریف_شدہ __U_BOOT__
 	/*
 	 * Set rcode here to avoid returning a garbage value in the middle of
 	 * the function.
@@ -9881,64 +9881,64 @@ static NOINLINE int run_pipe(struct pipe *pi)
 	 * return will signal the error.
 	 */
 	rcode = 0;
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 
-	debug_printf_exec("run_pipe start: members:%d\n", pi->num_cmds);
+	debug_printf_exec("run_pipe start: members:%d\n", pi->عدد_cmds);
 	debug_enter();
 
-	set_G_ifs();
+	سیٹ_G_ifs();
 
-#ifndef __U_BOOT__
-	IF_HUSH_JOB(pi->pgrp = -1;)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	IF_HUSH_کام(pi->pgrp = -1;)
 	pi->stopped_cmds = 0;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	command = &pi->cmds[0];
-	argv_expanded = NULL;
+	argv_expanded = تہی;
 
-#ifndef __U_BOOT__
-	if (pi->num_cmds != 1
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (pi->عدد_cmds != 1
 	 || pi->followup == PIPE_BG
 	 || command->cmd_type == CMD_SUBSHELL
 	) {
-		goto must_fork;
+		جاؤ must_fork;
 	}
 
 	pi->alive_cmds = 1;
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 	debug_printf_exec(": group:%p argv:'%s'\n",
-		command->group, command->argv ? command->argv[0] : "NONE");
+		command->گروہ, command->argv ? command->argv[0] : "NONE");
 
-	if (command->group) {
-#if ENABLE_HUSH_FUNCTIONS
-		if (command->cmd_type == CMD_FUNCDEF) {
+	اگر (command->گروہ) {
+#اگر ENABLE_HUSH_FUNCTIONS
+		اگر (command->cmd_type == CMD_FUNCDEF) {
 			/* "executing" func () { list } */
-			struct function *funcp;
+			ساخت function *funcp;
 
 			funcp = new_function(command->argv[0]);
 			/* funcp->name is already set to argv[0] */
-			funcp->body = command->group;
-# if !BB_MMU
-			funcp->body_as_string = command->group_as_string;
-			command->group_as_string = NULL;
+			funcp->body = command->گروہ;
+# اگر !BB_MMU
+			funcp->body_as_string = command->گروہ_as_string;
+			command->گروہ_as_string = تہی;
 # endif
-			command->group = NULL;
-			command->argv[0] = NULL;
+			command->گروہ = تہی;
+			command->argv[0] = تہی;
 			debug_printf_exec("cmd %p has child func at %p\n", command, funcp);
-			funcp->parent_cmd = command;
-			command->child_func = funcp;
+			funcp->والد_cmd = command;
+			command->بچہ_func = funcp;
 
 			debug_printf_exec("run_pipe: return EXIT_SUCCESS\n");
 			debug_leave();
-			return EXIT_SUCCESS;
+			واپس EXIT_SUCCESS;
 		}
-#endif
+#اگر_ختم
 		/* { list } */
 		debug_printf_exec("non-subshell group\n");
 		rcode = 1; /* exitcode if redir failed */
-#ifndef __U_BOOT__
-		if (setup_redirects(command, &squirrel) == 0) {
-#endif /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		اگر (تیاری_redirects(command, &squirrel) == 0) {
+#اگر_ختم /* !__U_BOOT__ */
 			debug_printf_exec(": run_list\n");
 //FIXME: we need to pass squirrel down into run_list()
 //for SH_STANDALONE case, or else this construct:
@@ -9946,70 +9946,70 @@ static NOINLINE int run_pipe(struct pipe *pi)
 //has no way of closing saved fd#1 for "find",
 //and in SH_STANDALONE mode, "find" is not execed,
 //therefore CLOEXEC on saved fd does not help.
-			rcode = run_list(command->group) & 0xff;
-#ifndef __U_BOOT__
+			rcode = تسلسل_list(command->گروہ) & 0xff;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		}
 		restore_redirects(squirrel);
-#endif /* !__U_BOOT__ */
-		IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+#اگر_ختم /* !__U_BOOT__ */
+		IF_HAS_KEYWORDS(اگر (pi->pi_inverted) rcode = !rcode;)
 		debug_leave();
 		debug_printf_exec("run_pipe: return %d\n", rcode);
-		return rcode;
+		واپس rcode;
 	}
 
-	argv = command->argv ? command->argv : (char **) &null_ptr;
+	argv = command->argv ? command->argv : (حرف **) &null_ptr;
 	{
-#ifndef __U_BOOT__
-		const struct built_in_command *x;
-		IF_HUSH_FUNCTIONS(const struct function *funcp;)
-		IF_NOT_HUSH_FUNCTIONS(enum { funcp = 0 };)
-		struct variable **sv_shadowed;
-#endif /* !__U_BOOT__ */
-		struct variable *old_vars;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		ثابت ساخت built_اندر_command *x;
+		IF_HUSH_FUNCTIONS(ثابت ساخت function *funcp;)
+		IF_NOT_HUSH_FUNCTIONS(شمار { funcp = 0 };)
+		ساخت variable **sv_shadowed;
+#اگر_ختم /* !__U_BOOT__ */
+		ساخت variable *old_vars;
 
-#if ENABLE_HUSH_LINENO_VAR
+#اگر ENABLE_HUSH_LINENO_VAR
 		G.execute_lineno = command->lineno;
-#endif
+#اگر_ختم
 
-		if (argv[command->assignment_cnt] == NULL) {
+		اگر (argv[command->assignment_cnt] == تہی) {
 			/* Assignments, but no command.
 			 * Ensure redirects take effect (that is, create files).
 			 * Try "a=t >file"
 			 */
-			unsigned i;
+			غیرعلامتی i;
 			G.expand_exitcode = 0;
  only_assignments:
-#ifndef __U_BOOT__
-			rcode = setup_redirects(command, &squirrel);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			rcode = تیاری_redirects(command, &squirrel);
 			restore_redirects(squirrel);
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
 			/* Set shell variables */
 			i = 0;
-			while (i < command->assignment_cnt) {
-				char *p = expand_string_to_string(argv[i],
+			جب (i < command->assignment_cnt) {
+				حرف *p = expand_string_مقصد_string(argv[i],
 						EXP_FLAG_ESC_GLOB_CHARS,
 						/*unbackslash:*/ 1
 				);
-#if ENABLE_HUSH_MODE_X
-				if (G_x_mode) {
-					char *eq;
-					if (i == 0)
-						x_mode_prefix();
-					x_mode_addchr(' ');
+#اگر ENABLE_HUSH_منوال_X
+				اگر (G_x_منوال) {
+					حرف *eq;
+					اگر (i == 0)
+						x_منوال_سابقہ();
+					x_منوال_addchr(' ');
 					eq = strchrnul(p, '=');
-					if (*eq) eq++;
-					x_mode_addblock(p, (eq - p));
-					x_mode_print_optionally_squoted(eq);
-					x_mode_flush();
+					اگر (*eq) eq++;
+					x_منوال_addblock(p, (eq - p));
+					x_منوال_print_optionally_squoted(eq);
+					x_منوال_flush();
 				}
-#endif
+#اگر_ختم
 				debug_printf_env("set shell var:'%s'->'%s'\n", *argv, p);
-#ifndef __U_BOOT__
-				if (set_local_var0(p)) {
-#else /* __U_BOOT__ */
-				if (set_local_var_modern(p, /*flag:*/ 0)) {
-#endif
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+				اگر (سیٹ_local_var0(p)) {
+#ورنہ /* __U_BOOT__ */
+				اگر (سیٹ_local_var_modern(p, /*flag:*/ 0)) {
+#اگر_ختم
 					/* assignment to readonly var / putenv error? */
 					rcode = 1;
 				}
@@ -10022,46 +10022,46 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 *  false; x=1; echo $? - should print 0
 			 * Because of the 2nd case, we can't just use G.last_exitcode.
 			 */
-			if (rcode == 0)
+			اگر (rcode == 0)
 				rcode = G.expand_exitcode;
-			IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+			IF_HAS_KEYWORDS(اگر (pi->pi_inverted) rcode = !rcode;)
 			debug_leave();
 			debug_printf_exec("run_pipe: return %d\n", rcode);
-			return rcode;
+			واپس rcode;
 		}
 
 		/* Expand the rest into (possibly) many strings each */
-#if defined(CMD_TEST2_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB)
-			argv_expanded = expand_strvec_to_strvec_singleword_noglob(argv + command->assignment_cnt);
-		else
-#endif
-#if defined(CMD_SINGLEWORD_NOGLOB)
-		if (command->cmd_type == CMD_SINGLEWORD_NOGLOB)
-			argv_expanded = expand_strvec_to_strvec_singleword_noglob(argv + command->assignment_cnt);
-		else
-#endif
-			argv_expanded = expand_strvec_to_strvec(argv + command->assignment_cnt);
+#اگر defined(CMD_TEST2_SINGLEWORD_NOGLOB)
+		اگر (command->cmd_type == CMD_TEST2_SINGLEWORD_NOGLOB)
+			argv_expanded = expand_strvec_مقصد_strvec_singleword_noglob(argv + command->assignment_cnt);
+		ورنہ
+#اگر_ختم
+#اگر defined(CMD_SINGLEWORD_NOGLOB)
+		اگر (command->cmd_type == CMD_SINGLEWORD_NOGLOB)
+			argv_expanded = expand_strvec_مقصد_strvec_singleword_noglob(argv + command->assignment_cnt);
+		ورنہ
+#اگر_ختم
+			argv_expanded = expand_strvec_مقصد_strvec(argv + command->assignment_cnt);
 
 		/* If someone gives us an empty string: `cmd with empty output` */
-		if (!argv_expanded[0]) {
-			free(argv_expanded);
+		اگر (!argv_expanded[0]) {
+			آزاد(argv_expanded);
 			/* `false` still has to set exitcode 1 */
-			G.expand_exitcode = G.last_exitcode;
-			goto only_assignments;
+			G.expand_exitcode = G.آخری_exitcode;
+			جاؤ only_assignments;
 		}
 
-		old_vars = NULL;
-#ifndef __U_BOOT__
+		old_vars = تہی;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		sv_shadowed = G.shadowed_vars_pp;
 
 		/* Check if argv[0] matches any functions (this goes before bltins) */
-		IF_HUSH_FUNCTIONS(funcp = find_function(argv_expanded[0]);)
-		IF_HUSH_FUNCTIONS(x = NULL;)
-		IF_HUSH_FUNCTIONS(if (!funcp))
-			x = find_builtin(argv_expanded[0]);
-		if (x || funcp) {
-			if (x && x->b_function == builtin_exec && argv_expanded[1] == NULL) {
+		IF_HUSH_FUNCTIONS(funcp = ڈھونڈو_function(argv_expanded[0]);)
+		IF_HUSH_FUNCTIONS(x = تہی;)
+		IF_HUSH_FUNCTIONS(اگر (!funcp))
+			x = ڈھونڈو_builtin(argv_expanded[0]);
+		اگر (x || funcp) {
+			اگر (x && x->b_function == builtin_exec && argv_expanded[1] == تہی) {
 				debug_printf("exec with redirects only\n");
 				/*
 				 * Variable assignments are executed, but then "forgotten":
@@ -10077,7 +10077,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				G.shadowed_vars_pp = sv_shadowed;
 				/* rcode=1 can be if redir file can't be opened */
 
-				goto clean_up_and_ret1;
+				جاؤ clean_اوپر_and_ret1;
 			}
 
 			/* Bump var nesting, or this will leak exported $a:
@@ -10090,8 +10090,8 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 */
 			G.shadowed_vars_pp = &old_vars;
 			rcode = redirect_and_varexp_helper(command, &squirrel, argv_expanded);
-			if (rcode == 0) {
-				if (!funcp) {
+			اگر (rcode == 0) {
+				اگر (!funcp) {
 					/* Do not collect *to old_vars list* vars shadowed
 					 * by e.g. "local VAR" builtin (collect them
 					 * in the previously nested list instead):
@@ -10106,11 +10106,11 @@ static NOINLINE int run_pipe(struct pipe *pi)
 					rcode = x->b_function(argv_expanded) & 0xff;
 					fflush_all();
 				}
-#if ENABLE_HUSH_FUNCTIONS
-				else {
+#اگر ENABLE_HUSH_FUNCTIONS
+				ورنہ {
 					debug_printf_exec(": function '%s' '%s'...\n",
 						funcp->name, argv_expanded[1]);
-					rcode = run_function(funcp, argv_expanded) & 0xff;
+					rcode = تسلسل_function(funcp, argv_expanded) & 0xff;
 					/*
 					 * But do collect *to old_vars list* vars shadowed
 					 * within function execution. To that end, restore
@@ -10118,13 +10118,13 @@ static NOINLINE int run_pipe(struct pipe *pi)
 					 */
 					G.shadowed_vars_pp = sv_shadowed;
 				}
-#endif
+#اگر_ختم
 			}
-		} else
-		if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
-			int n = find_applet_by_name(argv_expanded[0]);
-			if (n < 0 || !APPLET_IS_NOFORK(n))
-				goto must_fork;
+		} ورنہ
+		اگر (ENABLE_FEATURE_SH_NOFORK && عدد_APPLETS > 1) {
+			صحیح n = ڈھونڈو_applet_by_name(argv_expanded[0]);
+			اگر (n < 0 || !APPLET_IS_NOFORK(n))
+				جاؤ must_fork;
 
 			enter_var_nest_level();
 			/* Collect all variables "shadowed" by helper into old_vars list */
@@ -10132,7 +10132,7 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			rcode = redirect_and_varexp_helper(command, &squirrel, argv_expanded);
 			G.shadowed_vars_pp = sv_shadowed;
 
-			if (rcode == 0) {
+			اگر (rcode == 0) {
 				debug_printf_exec(": run_nofork_applet '%s' '%s'...\n",
 					argv_expanded[0], argv_expanded[1]);
 				/*
@@ -10143,21 +10143,21 @@ static NOINLINE int run_pipe(struct pipe *pi)
 				 * and/or wait for user input ineligible for NOFORK:
 				 * for example, "yes" or "rm" (rm -i waits for input).
 				 */
-				rcode = run_nofork_applet(n, argv_expanded);
+				rcode = تسلسل_nofork_applet(n, argv_expanded);
 			}
-		} else
-			goto must_fork;
+		} ورنہ
+			جاؤ must_fork;
 
 		restore_redirects(squirrel);
- clean_up_and_ret1:
+ clean_اوپر_and_ret1:
 		leave_var_nest_level();
-		add_vars(old_vars);
+		جوڑو_vars(old_vars);
 
 		/*
 		 * Try "usleep 99999999" + ^C + "echo $?"
 		 * with FEATURE_SH_NOFORK=y.
 		 */
-		if (!funcp) {
+		اگر (!funcp) {
 			/* It was builtin or nofork.
 			 * if this would be a real fork/execed program,
 			 * it should have died if a fatal sig was received.
@@ -10168,18 +10168,18 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 * we aren't ok with exitcode 0 when ^C was pressed
 			 * during builtin/nofork.
 			 */
-			if (sigismember(&G.pending_set, SIGINT))
+			اگر (sigismember(&G.pending_سیٹ, SIGINT))
 				rcode = 128 | SIGINT;
 		}
-		free(argv_expanded);
-		IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+		آزاد(argv_expanded);
+		IF_HAS_KEYWORDS(اگر (pi->pi_inverted) rcode = !rcode;)
 		debug_leave();
 		debug_printf_exec("run_pipe return %d\n", rcode);
-		return rcode;
-#endif /* !__U_BOOT__ */
+		واپس rcode;
+#اگر_ختم /* !__U_BOOT__ */
 	}
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
  must_fork:
 	/* NB: argv_expanded may already be created, and that
 	 * might include `cmd` runs! Do not rerun it! We *must*
@@ -10187,27 +10187,27 @@ static NOINLINE int run_pipe(struct pipe *pi)
 
 	/* Going to fork a child per each pipe member */
 	pi->alive_cmds = 0;
-	next_infd = 0;
-#endif /* !__U_BOOT__ */
+	اگلا_infd = 0;
+#اگر_ختم /* !__U_BOOT__ */
 
 	cmd_no = 0;
-	while (cmd_no < pi->num_cmds) {
-#ifndef __U_BOOT__
-		struct fd_pair pipefds;
-#if !BB_MMU
-		int sv_var_nest_level = G.var_nest_level;
-		volatile nommu_save_t nommu_save;
-		nommu_save.old_vars = NULL;
-		nommu_save.argv = NULL;
-		nommu_save.argv_from_re_execing = NULL;
-#endif
-#endif /* !__U_BOOT__ */
+	جب (cmd_no < pi->عدد_cmds) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		ساخت fd_pair pipefds;
+#اگر !BB_MMU
+		صحیح sv_var_nest_level = G.var_nest_level;
+		متلون nommu_save_t nommu_save;
+		nommu_save.old_vars = تہی;
+		nommu_save.argv = تہی;
+		nommu_save.argv_from_re_execing = تہی;
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
 		command = &pi->cmds[cmd_no];
 		cmd_no++;
 
-#ifdef __U_BOOT__
+#اگر_تعریف_شدہ __U_BOOT__
 		/* Replace argv and argc by expanded if it exists. */
-		if (argv_expanded) {
+		اگر (argv_expanded) {
 			/*
 			 * We need to save a pointer to argv, we will restore it
 			 * later, so it will be freed when pipe is freed.
@@ -10223,42 +10223,42 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 * - Less arguments:
 			 *   echo $foo (if foo was never set)
 			 */
-			command->argc = list_size(argv_expanded);
+			command->argc = list_سائز(argv_expanded);
 			command->argv = argv_expanded;
 		}
-#endif /* __U_BOOT__ */
-			if (command->argv) {
+#اگر_ختم /* __U_BOOT__ */
+			اگر (command->argv) {
 			debug_printf_exec(": pipe member '%s' '%s'...\n",
 					command->argv[0], command->argv[1]);
-		} else {
+		} ورنہ {
 			debug_printf_exec(": pipe member with no argv\n");
 		}
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		/* pipes are inserted between pairs of commands */
 		pipefds.rd = 0;
 		pipefds.wr = 1;
-		if (cmd_no < pi->num_cmds)
+		اگر (cmd_no < pi->عدد_cmds)
 			xpiped_pair(pipefds);
 
-#if ENABLE_HUSH_LINENO_VAR
+#اگر ENABLE_HUSH_LINENO_VAR
 		G.execute_lineno = command->lineno;
-#endif
+#اگر_ختم
 
 		command->pid = BB_MMU ? fork() : vfork();
-		if (!command->pid) { /* child */
-#if ENABLE_HUSH_JOB
+		اگر (!command->pid) { /*بچہ*/
+#اگر ENABLE_HUSH_کام
 			disable_restore_tty_pgrp_on_exit();
 			CLEAR_RANDOM_T(&G.random_gen); /* or else $RANDOM repeats in child */
 
 			/* Every child adds itself to new process group
 			 * with pgid == pid_of_first_child_in_pipe */
-			if (G.run_list_level == 1 && G_interactive_fd) {
+			اگر (G.تسلسل_list_level == 1 && G_interactive_fd) {
 				pid_t pgrp;
 				pgrp = pi->pgrp;
-				if (pgrp < 0) /* true for 1st process only */
+				اگر (pgrp < 0) /* true for 1st process only */
 					pgrp = getpid();
-				if (setpgid(0, pgrp) == 0
+				اگر (setpgid(0, pgrp) == 0
 				 && pi->followup != PIPE_BG
 				 && G_saved_tty_pgrp /* we have ctty */
 				) {
@@ -10267,25 +10267,25 @@ static NOINLINE int run_pipe(struct pipe *pi)
 					tcsetpgrp(G_interactive_fd, pgrp);
 				}
 			}
-#endif
-			if (pi->alive_cmds == 0 && pi->followup == PIPE_BG) {
+#اگر_ختم
+			اگر (pi->alive_cmds == 0 && pi->followup == PIPE_BG) {
 				/* 1st cmd in backgrounded pipe
 				 * should have its stdin /dev/null'ed */
 				close(0);
-				if (open(bb_dev_null, O_RDONLY))
+				اگر (open(bb_dev_null, O_RDONLY))
 					xopen("/", O_RDONLY);
-			} else {
-				xmove_fd(next_infd, 0);
+			} ورنہ {
+				xmove_fd(اگلا_infd, 0);
 			}
 			xmove_fd(pipefds.wr, 1);
-			if (pipefds.rd > 1)
+			اگر (pipefds.rd > 1)
 				close(pipefds.rd);
 			/* Like bash, explicit redirects override pipes,
 			 * and the pipe fd (fd#1) is available for dup'ing:
 			 * "cmd1 2>&1 | cmd2": fd#1 is duped to fd#2, thus stderr
 			 * of cmd1 goes into pipe.
 			 */
-			if (setup_redirects(command, NULL)) {
+			اگر (تیاری_redirects(command, تہی)) {
 				/* Happens when redir file can't be opened:
 				 * $ hush -c 'echo FOO >&2 | echo BAR 3>/qwe/rty; echo BAZ'
 				 * FOO
@@ -10304,51 +10304,51 @@ static NOINLINE int run_pipe(struct pipe *pi)
 		}
 
 		/* parent or error */
-#if ENABLE_HUSH_FAST
-		G.count_SIGCHLD++;
+#اگر ENABLE_HUSH_FAST
+		G.گنتی_SIGCHLD++;
 //bb_error_msg("[%d] fork in run_pipe: G.count_SIGCHLD:%d G.handled_SIGCHLD:%d", getpid(), G.count_SIGCHLD, G.handled_SIGCHLD);
-#endif
+#اگر_ختم
 		enable_restore_tty_pgrp_on_exit();
-#if !BB_MMU
+#اگر !BB_MMU
 		/* Clean up after vforked child */
-		free(nommu_save.argv);
-		free(nommu_save.argv_from_re_execing);
+		آزاد(nommu_save.argv);
+		آزاد(nommu_save.argv_from_re_execing);
 		G.var_nest_level = sv_var_nest_level;
 		remove_nested_vars();
-		add_vars(nommu_save.old_vars);
-#endif
-		free(argv_expanded);
-		argv_expanded = NULL;
-		if (command->pid < 0) { /* [v]fork failed */
+		جوڑو_vars(nommu_save.old_vars);
+#اگر_ختم
+		آزاد(argv_expanded);
+		argv_expanded = تہی;
+		اگر (command->pid < 0) { /* [v]fork failed */
 			/* Clearly indicate, was it fork or vfork */
-			bb_simple_perror_msg(BB_MMU ? "vfork"+1 : "vfork");
-		} else {
+			bb_simple_perror_پیغام(BB_MMU ? "vfork"+1 : "vfork");
+		} ورنہ {
 			pi->alive_cmds++;
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 			/* Second and next children need to know pid of first one */
-			if (pi->pgrp < 0)
+			اگر (pi->pgrp < 0)
 				pi->pgrp = command->pid;
-#endif
+#اگر_ختم
 		}
 
-		if (cmd_no > 1)
-			close(next_infd);
-		if (cmd_no < pi->num_cmds)
+		اگر (cmd_no > 1)
+			close(اگلا_infd);
+		اگر (cmd_no < pi->عدد_cmds)
 			close(pipefds.wr);
 		/* Pass read (output) pipe end to next iteration */
-		next_infd = pipefds.rd;
-#else /* __U_BOOT__ */
+		اگلا_infd = pipefds.rd;
+#ورنہ /* __U_BOOT__ */
 		/* Process the command */
 		rcode = cmd_process(G.do_repeat ? CMD_FLAG_REPEAT : 0,
 				    command->argc, command->argv,
-				    &(G.flag_repeat), NULL);
+				    &(G.flag_repeat), تہی);
 
-		if (argv_expanded) {
+		اگر (argv_expanded) {
 			/*
 			 * expand_strvec_to_strvec() allocates memory to expand
 			 * argv, we need to free it.
 			 */
-			free(argv_expanded);
+			آزاد(argv_expanded);
 
 			/*
 			 * We also restore command->argv to its original value
@@ -10361,326 +10361,326 @@ static NOINLINE int run_pipe(struct pipe *pi)
 			 * not rely on it as this code exists in BusyBox.
 			 */
 		}
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 	}
 
-#ifndef __U_BOOT__
-	if (!pi->alive_cmds) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (!pi->alive_cmds) {
 		debug_leave();
 		debug_printf_exec("run_pipe return 1 (all forks failed, no children)\n");
-		return 1;
+		واپس 1;
 	}
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 
 	debug_leave();
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	debug_printf_exec("run_pipe return -1 (%u children started)\n", pi->alive_cmds);
-	return -1;
-#else /* __U_BOOT__ */
-	IF_HAS_KEYWORDS(if (pi->pi_inverted) rcode = !rcode;)
+	واپس -1;
+#ورنہ /* __U_BOOT__ */
+	IF_HAS_KEYWORDS(اگر (pi->pi_inverted) rcode = !rcode;)
 	debug_printf_exec("run_pipe return %d\n", rcode);
-	return rcode;
-#endif /* __U_BOOT__ */
+	واپس rcode;
+#اگر_ختم /* __U_BOOT__ */
 }
 
 /* NB: called by pseudo_exec, and therefore must not modify any
  * global data until exec/_exit (we can be a child after vfork!) */
-static int run_list(struct pipe *pi)
+ساکن صحیح تسلسل_list(ساخت pipe *pi)
 {
-#if ENABLE_HUSH_CASE
-	char *case_word = NULL;
-#endif
-#if ENABLE_HUSH_LOOPS
-	struct pipe *loop_top = NULL;
-	char **for_lcur = NULL;
-	char **for_list = NULL;
-#endif
-	smallint last_followup;
+#اگر ENABLE_HUSH_CASE
+	حرف *case_لفظ = تہی;
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
+	ساخت pipe *loop_چوٹی = تہی;
+	حرف **for_lcur = تہی;
+	حرف **for_list = تہی;
+#اگر_ختم
+	smallint آخری_followup;
 	smalluint rcode;
-#if ENABLE_HUSH_IF || ENABLE_HUSH_CASE
-	smalluint cond_code = 0;
-#else
-	enum { cond_code = 0 };
-#endif
-#if HAS_KEYWORDS
+#اگر ENABLE_HUSH_IF || ENABLE_HUSH_CASE
+	smalluint cond_رمز = 0;
+#ورنہ
+	شمار { cond_رمز = 0 };
+#اگر_ختم
+#اگر HAS_KEYWORDS
 	smallint rword;      /* RES_foo */
-	smallint last_rword; /* ditto */
-#endif
+	smallint آخری_rword; /* ditto */
+#اگر_ختم
 
-#ifndef __U_BOOT__
-	debug_printf_exec("run_list lvl %d start\n", G.run_list_level);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	debug_printf_exec("run_list lvl %d start\n", G.تسلسل_list_level);
 	debug_enter();
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-	set_G_ifs();
+	سیٹ_G_ifs();
 
-#if ENABLE_HUSH_LOOPS
+#اگر ENABLE_HUSH_LOOPS
 	/* Check syntax for "for" */
 	{
-		struct pipe *cpipe;
-		for (cpipe = pi; cpipe; cpipe = cpipe->next) {
-			if (cpipe->res_word != RES_FOR && cpipe->res_word != RES_IN)
-				continue;
+		ساخت pipe *cpipe;
+		برائے (cpipe = pi; cpipe; cpipe = cpipe->اگلا) {
+			اگر (cpipe->res_لفظ != RES_FOR && cpipe->res_لفظ != RES_اندر)
+				جاری;
 			/* current word is FOR or IN (BOLD in comments below) */
-			if (cpipe->next == NULL) {
+			اگر (cpipe->اگلا == تہی) {
 				syntax_error("malformed for");
 				debug_leave();
-				debug_printf_exec("run_list lvl %d return 1\n", G.run_list_level);
-				return 1;
+				debug_printf_exec("run_list lvl %d return 1\n", G.تسلسل_list_level);
+				واپس 1;
 			}
 			/* "FOR v; do ..." and "for v IN a b; do..." are ok */
-			if (cpipe->next->res_word == RES_DO)
-				continue;
+			اگر (cpipe->اگلا->res_لفظ == RES_DO)
+				جاری;
 			/* next word is not "do". It must be "in" then ("FOR v in ...") */
-			if (cpipe->res_word == RES_IN /* "for v IN a b; not_do..."? */
-			 || cpipe->next->res_word != RES_IN /* FOR v not_do_and_not_in..."? */
+			اگر (cpipe->res_لفظ == RES_اندر /* "for v IN a b; not_do..."? */
+			 || cpipe->اگلا->res_لفظ != RES_اندر /* FOR v not_do_and_not_in..."? */
 			) {
 				syntax_error("malformed for");
 				debug_leave();
-				debug_printf_exec("run_list lvl %d return 1\n", G.run_list_level);
-				return 1;
+				debug_printf_exec("run_list lvl %d return 1\n", G.تسلسل_list_level);
+				واپس 1;
 			}
 		}
 	}
-#endif
+#اگر_ختم
 
 	/* Past this point, all code paths should jump to ret: label
 	 * in order to return, no direct "return" statements please.
 	 * This helps to ensure that no memory is leaked. */
 
-#if ENABLE_HUSH_JOB
-	G.run_list_level++;
-#endif
+#اگر ENABLE_HUSH_کام
+	G.تسلسل_list_level++;
+#اگر_ختم
 
-#if HAS_KEYWORDS
+#اگر HAS_KEYWORDS
 	rword = RES_NONE;
-	last_rword = RES_XXXX;
-#endif
-	last_followup = PIPE_SEQ;
-	rcode = G.last_exitcode;
+	آخری_rword = RES_XXXX;
+#اگر_ختم
+	آخری_followup = PIPE_SEQ;
+	rcode = G.آخری_exitcode;
 
 	/* Go through list of pipes, (maybe) executing them. */
-#ifndef __U_BOOT__
-	for (; pi; pi = IF_HUSH_LOOPS(rword == RES_DONE ? loop_top : ) pi->next) {
-#else /* __U_BOOT__ */
-	for (; pi; pi = rword == RES_DONE ? loop_top : pi->next) {
-#endif /* __U_BOOT__ */
-		int r;
-		int sv_errexit_depth;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	برائے (; pi; pi = IF_HUSH_LOOPS(rword == RES_مکمل ? loop_چوٹی : ) pi->اگلا) {
+#ورنہ /* __U_BOOT__ */
+	برائے (; pi; pi = rword == RES_مکمل ? loop_چوٹی : pi->اگلا) {
+#اگر_ختم /* __U_BOOT__ */
+		صحیح r;
+		صحیح sv_errexit_گہرائی;
 
-#ifndef __U_BOOT__
-		if (G.flag_SIGINT)
-			break;
-		if (G_flag_return_in_progress == 1)
-			break;
-#endif /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		اگر (G.flag_SIGINT)
+			توڑو;
+		اگر (G_flag_return_اندر_پیش_رفت == 1)
+			توڑو;
+#اگر_ختم /* !__U_BOOT__ */
 
-		IF_HAS_KEYWORDS(rword = pi->res_word;)
+		IF_HAS_KEYWORDS(rword = pi->res_لفظ;)
 		debug_printf_exec(": rword:%d cond_code:%d last_rword:%d\n",
-				rword, cond_code, last_rword);
+				rword, cond_رمز, آخری_rword);
 
-		sv_errexit_depth = G.errexit_depth;
-		if (
-#if ENABLE_HUSH_IF
+		sv_errexit_گہرائی = G.errexit_گہرائی;
+		اگر (
+#اگر ENABLE_HUSH_IF
 		    rword == RES_IF || rword == RES_ELIF ||
-#endif
+#اگر_ختم
 		    pi->followup != PIPE_SEQ
 		) {
-			G.errexit_depth++;
+			G.errexit_گہرائی++;
 		}
-#if ENABLE_HUSH_LOOPS
-		if ((rword == RES_WHILE || rword == RES_UNTIL || rword == RES_FOR)
-		 && loop_top == NULL /* avoid bumping G.depth_of_loop twice */
+#اگر ENABLE_HUSH_LOOPS
+		اگر ((rword == RES_WHILE || rword == RES_UNTIL || rword == RES_FOR)
+		 && loop_چوٹی == تہی /* avoid bumping G.depth_of_loop twice */
 		) {
 			/* start of a loop: remember where loop starts */
-			loop_top = pi;
-			G.depth_of_loop++;
+			loop_چوٹی = pi;
+			G.گہرائی_کا_loop++;
 		}
-#endif
+#اگر_ختم
 		/* Still in the same "if...", "then..." or "do..." branch? */
-		if (IF_HAS_KEYWORDS(rword == last_rword &&) 1) {
-			if ((rcode == 0 && last_followup == PIPE_OR)
-			 || (rcode != 0 && last_followup == PIPE_AND)
+		اگر (IF_HAS_KEYWORDS(rword == آخری_rword &&) 1) {
+			اگر ((rcode == 0 && آخری_followup == PIPE_OR)
+			 || (rcode != 0 && آخری_followup == PIPE_AND)
 			) {
 				/* It is "<true> || CMD" or "<false> && CMD"
 				 * and we should not execute CMD */
 				debug_printf_exec("skipped cmd because of || or &&\n");
-				last_followup = pi->followup;
-				goto dont_check_jobs_but_continue;
+				آخری_followup = pi->followup;
+				جاؤ dont_check_jobs_but_continue;
 			}
 		}
-		last_followup = pi->followup;
-#if ENABLE_HUSH_IF
-		if (cond_code != 0) {
-			if (rword == RES_THEN) {
+		آخری_followup = pi->followup;
+#اگر ENABLE_HUSH_IF
+		اگر (cond_رمز != 0) {
+			اگر (rword == RES_THEN) {
 				/* if false; then ... fi has exitcode 0! */
-				G.last_exitcode = rcode = EXIT_SUCCESS;
+				G.آخری_exitcode = rcode = EXIT_SUCCESS;
 				/* "if <false> THEN cmd": skip cmd */
 				debug_printf_exec("skipped THEN cmd because IF condition was false\n");
-				last_rword = rword;
-				continue;
+				آخری_rword = rword;
+				جاری;
 			}
-		} else {
-			if (rword == RES_ELSE
-			 || (rword == RES_ELIF && last_rword != RES_ELIF)
+		} ورنہ {
+			اگر (rword == RES_ELSE
+			 || (rword == RES_ELIF && آخری_rword != RES_ELIF)
 			) {
 				/* "if <true> then ... ELSE/ELIF cmd":
 				 * skip cmd and all following ones */
 				debug_printf_exec("skipped ELSE/ELIF branch because IF condition was true\n");
-				break;
+				توڑو;
 			}
 			//if (rword == RES_THEN): "if <true> THEN cmd", run cmd (fall through)
 		}
-#endif
-		IF_HAS_KEYWORDS(last_rword = rword;)
-#if ENABLE_HUSH_LOOPS
-		if (rword == RES_FOR) { /* && pi->num_cmds - always == 1 */
-			if (!for_lcur) {
+#اگر_ختم
+		IF_HAS_KEYWORDS(آخری_rword = rword;)
+#اگر ENABLE_HUSH_LOOPS
+		اگر (rword == RES_FOR) { /* && pi->num_cmds - always == 1 */
+			اگر (!for_lcur) {
 				/* first loop through for */
 
-				static const char encoded_dollar_at[] ALIGN1 = {
-					SPECIAL_VAR_SYMBOL, '@' | 0x80, SPECIAL_VAR_SYMBOL, '\0'
+				ساکن ثابت حرف encoded_dollar_at[] ALIGN1 = {
+					SPECIAL_VAR_علامت, '@' | 0x80, SPECIAL_VAR_علامت, '\0'
 				}; /* encoded representation of "$@" */
-				static const char *const encoded_dollar_at_argv[] ALIGN_PTR = {
-					encoded_dollar_at, NULL
+				ساکن ثابت حرف *ثابت encoded_dollar_at_argv[] ALIGN_PTR = {
+					encoded_dollar_at, تہی
 				}; /* argv list with one element: "$@" */
-				char **vals;
+				حرف **vals;
 
-				G.last_exitcode = rcode = EXIT_SUCCESS;
-				vals = (char**)encoded_dollar_at_argv;
-				if (pi->next->res_word == RES_IN) {
+				G.آخری_exitcode = rcode = EXIT_SUCCESS;
+				vals = (حرف**)encoded_dollar_at_argv;
+				اگر (pi->اگلا->res_لفظ == RES_اندر) {
 					/* if no variable values after "in" we skip "for" */
-					if (!pi->next->cmds[0].argv) {
+					اگر (!pi->اگلا->cmds[0].argv) {
 						debug_printf_exec(": null FOR: exitcode EXIT_SUCCESS\n");
-						break;
+						توڑو;
 					}
-					vals = pi->next->cmds[0].argv;
+					vals = pi->اگلا->cmds[0].argv;
 				} /* else: "for var; do..." -> assume "$@" list */
 				/* create list of variable values */
-				debug_print_strings("for_list made from", vals);
-				for_list = expand_strvec_to_strvec(vals);
+				debug_print_لڑیاں("for_list made from", vals);
+				for_list = expand_strvec_مقصد_strvec(vals);
 				for_lcur = for_list;
-				debug_print_strings("for_list", for_list);
+				debug_print_لڑیاں("for_list", for_list);
 			}
-			if (!*for_lcur) {
+			اگر (!*for_lcur) {
 				/* "for" loop is over, clean up */
-				free(for_list);
-				for_list = NULL;
-				for_lcur = NULL;
-				break;
+				آزاد(for_list);
+				for_list = تہی;
+				for_lcur = تہی;
+				توڑو;
 			}
 			/* Insert next value from for_lcur */
 			/* note: *for_lcur already has quotes removed, $var expanded, etc */
-#ifndef __U_BOOT__
-			set_local_var_from_halves(pi->cmds[0].argv[0], *for_lcur++);
-#else /* __U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			سیٹ_local_var_from_halves(pi->cmds[0].argv[0], *for_lcur++);
+#ورنہ /* __U_BOOT__ */
 			/* We cannot use xasprintf, so we emulate it. */
-			char *full_var;
-			char *var = pi->cmds[0].argv[0];
-			char *val = *for_lcur++;
+			حرف *بھرا_var;
+			حرف *var = pi->cmds[0].argv[0];
+			حرف *val = *for_lcur++;
 
 			/* + 1 to take into account =. */
-			full_var = xmalloc(strlen(var) + strlen(val) + 1);
-			sprintf(full_var, "%s=%s", var, val);
+			بھرا_var = xmalloc(لڑی_لمبائی(var) + لڑی_لمبائی(val) + 1);
+			sprintf(بھرا_var, "%s=%s", var, val);
 
-			set_local_var_modern(full_var, /*flag:*/ 0);
-#endif /* __U_BOOT__ */
-			continue;
+			سیٹ_local_var_modern(بھرا_var, /*flag:*/ 0);
+#اگر_ختم /* __U_BOOT__ */
+			جاری;
 		}
-		if (rword == RES_IN) {
-			continue; /* "for v IN list;..." - "in" has no cmds anyway */
+		اگر (rword == RES_اندر) {
+			جاری; /* "for v IN list;..." - "in" has no cmds anyway */
 		}
-		if (rword == RES_DONE) {
-			continue; /* "done" has no cmds too */
+		اگر (rword == RES_مکمل) {
+			جاری; /* "done" has no cmds too */
 		}
-#endif
-#if ENABLE_HUSH_CASE
-		if (rword == RES_CASE) {
-			debug_printf_exec("CASE cond_code:%d\n", cond_code);
-			case_word = expand_string_to_string(pi->cmds->argv[0],
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
+		اگر (rword == RES_CASE) {
+			debug_printf_exec("CASE cond_code:%d\n", cond_رمز);
+			case_لفظ = expand_string_مقصد_string(pi->cmds->argv[0],
 				EXP_FLAG_ESC_GLOB_CHARS, /*unbackslash:*/ 1);
-			debug_printf_exec("CASE word1:'%s'\n", case_word);
+			debug_printf_exec("CASE word1:'%s'\n", case_لفظ);
 			//unbackslash(case_word);
 			//debug_printf_exec("CASE word2:'%s'\n", case_word);
-			continue;
+			جاری;
 		}
-		if (rword == RES_MATCH) {
-			char **argv;
+		اگر (rword == RES_مطابقت) {
+			حرف **argv;
 
-			debug_printf_exec("MATCH cond_code:%d\n", cond_code);
-			if (!case_word) /* "case ... matched_word) ... WORD)": we executed selected branch, stop */
-				break;
+			debug_printf_exec("MATCH cond_code:%d\n", cond_رمز);
+			اگر (!case_لفظ) /* "case ... matched_word) ... WORD)": we executed selected branch, stop */
+				توڑو;
 			/* all prev words didn't match, does this one match? */
 			argv = pi->cmds->argv;
-			while (*argv) {
-				char *pattern;
+			جب (*argv) {
+				حرف *نمونہ;
 				debug_printf_exec("expand_string_to_string('%s')\n", *argv);
-				pattern = expand_string_to_string(*argv,
+				نمونہ = expand_string_مقصد_string(*argv,
 						EXP_FLAG_ESC_GLOB_CHARS,
 						/*unbackslash:*/ 0
 				);
 				/* TODO: which FNM_xxx flags to use? */
-				cond_code = (fnmatch(pattern, case_word, /*flags:*/ 0) != 0);
+				cond_رمز = (fnmatch(نمونہ, case_لفظ, /*flags:*/ 0) != 0);
 				debug_printf_exec("cond_code=fnmatch(pattern:'%s',str:'%s'):%d\n",
-						pattern, case_word, cond_code);
-				free(pattern);
-				if (cond_code == 0) {
+						نمونہ, case_لفظ, cond_رمز);
+				آزاد(نمونہ);
+				اگر (cond_رمز == 0) {
 					/* match! we will execute this branch */
-					free(case_word);
-					case_word = NULL; /* make future "word)" stop */
-					break;
+					آزاد(case_لفظ);
+					case_لفظ = تہی; /* make future "word)" stop */
+					توڑو;
 				}
 				argv++;
 			}
-			continue;
+			جاری;
 		}
-		if (rword == RES_CASE_BODY) { /* inside of a case branch */
-			debug_printf_exec("CASE_BODY cond_code:%d\n", cond_code);
-			if (cond_code != 0)
-				continue; /* not matched yet, skip this pipe */
+		اگر (rword == RES_CASE_BODY) { /* inside of a case branch */
+			debug_printf_exec("CASE_BODY cond_code:%d\n", cond_رمز);
+			اگر (cond_رمز != 0)
+				جاری; /* not matched yet, skip this pipe */
 		}
-		if (rword == RES_ESAC) {
-			debug_printf_exec("ESAC cond_code:%d\n", cond_code);
-			if (case_word) {
+		اگر (rword == RES_ESAC) {
+			debug_printf_exec("ESAC cond_code:%d\n", cond_رمز);
+			اگر (case_لفظ) {
 				/* "case" did not match anything: still set $? (to 0) */
-				G.last_exitcode = rcode = EXIT_SUCCESS;
+				G.آخری_exitcode = rcode = EXIT_SUCCESS;
 			}
 		}
-#endif
+#اگر_ختم
 		/* Just pressing <enter> in shell should check for jobs.
 		 * OTOH, in non-interactive shell this is useless
 		 * and only leads to extra job checks */
-		if (pi->num_cmds == 0) {
-#ifndef __U_BOOT__
-			if (G_interactive_fd)
-				goto check_jobs_and_continue;
-#endif /* !__U_BOOT__ */
-			continue;
+		اگر (pi->عدد_cmds == 0) {
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			اگر (G_interactive_fd)
+				جاؤ check_jobs_and_continue;
+#اگر_ختم /* !__U_BOOT__ */
+			جاری;
 		}
 
 		/* After analyzing all keywords and conditions, we decided
 		 * to execute this pipe. NB: have to do checkjobs(NULL)
 		 * after run_pipe to collect any background children,
 		 * even if list execution is to be stopped. */
-		debug_printf_exec(": run_pipe with %d members\n", pi->num_cmds);
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+		debug_printf_exec(": run_pipe with %d members\n", pi->عدد_cmds);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_LOOPS
 		G.flag_break_continue = 0;
-#endif
-#endif /* !__U_BOOT__ */
-#ifndef __U_BOOT__
-		rcode = r = G.o_opt[OPT_O_NOEXEC] ? 0 : run_pipe(pi);
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+		rcode = r = G.o_opt[OPT_O_NOEXEC] ? 0 : تسلسل_pipe(pi);
 		/* NB: rcode is a smalluint, r is int */
-#else /* __U_BOOT__ */
-		rcode = r = run_pipe(pi); /* NB: rcode is a smalluint, r is int */
-		if (r <= EXIT_RET_CODE) {
-			int previous_rcode = G.last_exitcode;
+#ورنہ /* __U_BOOT__ */
+		rcode = r = تسلسل_pipe(pi); /* NB: rcode is a smalluint, r is int */
+		اگر (r <= EXIT_RET_رمز) {
+			صحیح پچھلا_rcode = G.آخری_exitcode;
 			/*
 			 * This magic is to get the exit code given by the user.
 			 * Contrary to old shell code, we use + EXIT_RET_CODE as EXIT_RET_CODE
 			 * equals -2.
 			 */
-			G.last_exitcode = -r + EXIT_RET_CODE;
+			G.آخری_exitcode = -r + EXIT_RET_رمز;
 
 			/*
 			 * This case deals with the following:
@@ -10693,248 +10693,248 @@ static int run_list(struct pipe *pi)
 			 * As return code are propagated, we use the previous value to check if
 			 * exit was just called or was propagated.
 			 */
-			if (previous_rcode != r) {
+			اگر (پچھلا_rcode != r) {
 				/*
 				 * If run from run_command, run_command_flags will be set, so we check
 				 * this to know if we are in main input shell.
 				 */
-				if (!G.run_command_flags)
-					printf("exit not allowed from main input shell.\n");
+				اگر (!G.تسلسل_command_flags)
+					لکھو("exit not allowed from main input shell.\n");
 
-				break;
+				توڑو;
 			}
-			continue;
+			جاری;
 		}
-#endif /* __U_BOOT__ */
-		if (r != -1) {
+#اگر_ختم /* __U_BOOT__ */
+		اگر (r != -1) {
 			/* We ran a builtin, function, or group.
 			 * rcode is already known
 			 * and we don't need to wait for anything. */
 			debug_printf_exec(": builtin/func exitcode %d\n", rcode);
-			G.last_exitcode = rcode;
-#ifndef __U_BOOT__
-			check_and_run_traps();
-#endif /* !__U_BOOT__ */
-#if ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
-			rcode = G.last_exitcode; /* "return" in trap can change it, read back */
-#endif
-#ifndef __U_BOOT__
-#if ENABLE_HUSH_LOOPS
+			G.آخری_exitcode = rcode;
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+			check_and_تسلسل_traps();
+#اگر_ختم /* !__U_BOOT__ */
+#اگر ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
+			rcode = G.آخری_exitcode; /* "return" in trap can change it, read back */
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+#اگر ENABLE_HUSH_LOOPS
 			/* Was it "break" or "continue"? */
-			if (G.flag_break_continue) {
+			اگر (G.flag_break_continue) {
 				smallint fbc = G.flag_break_continue;
 				/* We might fall into outer *loop*,
 				 * don't want to break it too */
-				if (loop_top) {
-					G.depth_break_continue--;
-					if (G.depth_break_continue == 0)
+				اگر (loop_چوٹی) {
+					G.گہرائی_break_continue--;
+					اگر (G.گہرائی_break_continue == 0)
 						G.flag_break_continue = 0;
 					/* else: e.g. "continue 2" should *break* once, *then* continue */
 				} /* else: "while... do... { we are here (innermost list is not a loop!) };...done" */
-				if (G.depth_break_continue != 0 || fbc == BC_BREAK) {
-					checkjobs(NULL, 0 /*(no pid to wait for)*/);
-					break;
+				اگر (G.گہرائی_break_continue != 0 || fbc == BC_BREAK) {
+					checkjobs(تہی, 0 /*(no pid to wait for)*/);
+					توڑو;
 				}
 				/* "continue": simulate end of loop */
-				rword = RES_DONE;
-				continue;
+				rword = RES_مکمل;
+				جاری;
 			}
-#endif
-			if (G_flag_return_in_progress == 1) {
-				checkjobs(NULL, 0 /*(no pid to wait for)*/);
-				break;
+#اگر_ختم
+			اگر (G_flag_return_اندر_پیش_رفت == 1) {
+				checkjobs(تہی, 0 /*(no pid to wait for)*/);
+				توڑو;
 			}
 
-		} else if (pi->followup == PIPE_BG) {
+		} ورنہ اگر (pi->followup == PIPE_BG) {
 			/* What does bash do with attempts to background builtins? */
 			/* even bash 3.2 doesn't do that well with nested bg:
 			 * try "{ { sleep 10; echo DEEP; } & echo HERE; } &".
 			 * I'm NOT treating inner &'s as jobs */
-#if ENABLE_HUSH_JOB
-			if (G.run_list_level == 1)
-				insert_job_into_table(pi);
-#endif
+#اگر ENABLE_HUSH_کام
+			اگر (G.تسلسل_list_level == 1)
+				داخل_کرو_کام_into_جدول(pi);
+#اگر_ختم
 			/* Last command's pid goes to $! */
-			G.last_bg_pid = pi->cmds[pi->num_cmds - 1].pid;
-			G.last_bg_pid_exitcode = 0;
+			G.آخری_bg_pid = pi->cmds[pi->عدد_cmds - 1].pid;
+			G.آخری_bg_pid_exitcode = 0;
 			debug_printf_exec(": cmd&: exitcode EXIT_SUCCESS\n");
 /* Check pi->pi_inverted? "! sleep 1 & echo $?": bash says 1. dash and ash say 0 */
 			rcode = EXIT_SUCCESS;
-			goto check_traps;
-		} else {
-#if ENABLE_HUSH_JOB
-			if (G.run_list_level == 1 && G_interactive_fd) {
+			جاؤ check_traps;
+		} ورنہ {
+#اگر ENABLE_HUSH_کام
+			اگر (G.تسلسل_list_level == 1 && G_interactive_fd) {
 				/* Waits for completion, then fg's main shell */
 				rcode = checkjobs_and_fg_shell(pi);
 				debug_printf_exec(": checkjobs_and_fg_shell exitcode %d\n", rcode);
-				goto check_traps;
+				جاؤ check_traps;
 			}
-#endif
+#اگر_ختم
 			/* This one just waits for completion */
 			rcode = checkjobs(pi, 0 /*(no pid to wait for)*/);
 			debug_printf_exec(": checkjobs exitcode %d\n", rcode);
  check_traps:
-			G.last_exitcode = rcode;
-			check_and_run_traps();
-#if ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
-			rcode = G.last_exitcode; /* "return" in trap can change it, read back */
-#endif
+			G.آخری_exitcode = rcode;
+			check_and_تسلسل_traps();
+#اگر ENABLE_HUSH_TRAP && ENABLE_HUSH_FUNCTIONS
+			rcode = G.آخری_exitcode; /* "return" in trap can change it, read back */
+#اگر_ختم
 		}
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 		/* Handle "set -e" */
-		if (rcode != 0 && G.o_opt[OPT_O_ERREXIT]) {
-			debug_printf_exec("ERREXIT:1 errexit_depth:%d\n", G.errexit_depth);
-			if (G.errexit_depth == 0)
+		اگر (rcode != 0 && G.o_opt[OPT_O_ERREXIT]) {
+			debug_printf_exec("ERREXIT:1 errexit_depth:%d\n", G.errexit_گہرائی);
+			اگر (G.errexit_گہرائی == 0)
 				hush_exit(rcode);
 		}
-#else /* __U_BOOT__ */
+#ورنہ /* __U_BOOT__ */
 		} /* if (r != -1) */
-#endif /* __U_BOOT__ */
-		G.errexit_depth = sv_errexit_depth;
+#اگر_ختم /* __U_BOOT__ */
+		G.errexit_گہرائی = sv_errexit_گہرائی;
 
 		/* Analyze how result affects subsequent commands */
-#if ENABLE_HUSH_IF
-		if (rword == RES_IF || rword == RES_ELIF) {
+#اگر ENABLE_HUSH_IF
+		اگر (rword == RES_IF || rword == RES_ELIF) {
 			debug_printf_exec("cond_code=rcode:%d\n", rcode);
-			cond_code = rcode;
+			cond_رمز = rcode;
 		}
-#endif
-#ifndef __U_BOOT__
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
  check_jobs_and_continue:
-		checkjobs(NULL, 0 /*(no pid to wait for)*/);
-#endif /* !__U_BOOT__ */
+		checkjobs(تہی, 0 /*(no pid to wait for)*/);
+#اگر_ختم /* !__U_BOOT__ */
  dont_check_jobs_but_continue: ;
-#if ENABLE_HUSH_LOOPS
+#اگر ENABLE_HUSH_LOOPS
 		/* Beware of "while false; true; do ..."! */
-		if (pi->next
-		 && (pi->next->res_word == RES_DO || pi->next->res_word == RES_DONE)
+		اگر (pi->اگلا
+		 && (pi->اگلا->res_لفظ == RES_DO || pi->اگلا->res_لفظ == RES_مکمل)
 		 /* check for RES_DONE is needed for "while ...; do \n done" case */
 		) {
-			if (rword == RES_WHILE) {
-				if (rcode) {
+			اگر (rword == RES_WHILE) {
+				اگر (rcode) {
 					/* "while false; do...done" - exitcode 0 */
-					G.last_exitcode = rcode = EXIT_SUCCESS;
+					G.آخری_exitcode = rcode = EXIT_SUCCESS;
 					debug_printf_exec(": while expr is false: breaking (exitcode:EXIT_SUCCESS)\n");
-					break;
+					توڑو;
 				}
 			}
-			if (rword == RES_UNTIL) {
-				if (!rcode) {
+			اگر (rword == RES_UNTIL) {
+				اگر (!rcode) {
 					debug_printf_exec(": until expr is true: breaking\n");
-					break;
+					توڑو;
 				}
 			}
 		}
-#endif
+#اگر_ختم
 	} /* for (pi) */
 
-#if ENABLE_HUSH_JOB
-	G.run_list_level--;
-#endif
-#if ENABLE_HUSH_LOOPS
-	if (loop_top)
-		G.depth_of_loop--;
-	free(for_list);
-#endif
-#if ENABLE_HUSH_CASE
-	free(case_word);
-#endif
-#ifndef __U_BOOT__
+#اگر ENABLE_HUSH_کام
+	G.تسلسل_list_level--;
+#اگر_ختم
+#اگر ENABLE_HUSH_LOOPS
+	اگر (loop_چوٹی)
+		G.گہرائی_کا_loop--;
+	آزاد(for_list);
+#اگر_ختم
+#اگر ENABLE_HUSH_CASE
+	آزاد(case_لفظ);
+#اگر_ختم
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	debug_leave();
-	debug_printf_exec("run_list lvl %d return %d\n", G.run_list_level, rcode);
-#endif /* !__U_BOOT__ */
-	return rcode;
+	debug_printf_exec("run_list lvl %d return %d\n", G.تسلسل_list_level, rcode);
+#اگر_ختم /* !__U_BOOT__ */
+	واپس rcode;
 }
 
 /* Select which version we will use */
-static int run_and_free_list(struct pipe *pi)
+ساکن صحیح تسلسل_and_free_list(ساخت pipe *pi)
 {
-	int rcode = 0;
+	صحیح rcode = 0;
 	debug_printf_exec("run_and_free_list entered\n");
-#ifndef __U_BOOT__
-	if (!G.o_opt[OPT_O_NOEXEC]) {
-#endif /* !__U_BOOT__ */
-		debug_printf_exec(": run_list: 1st pipe with %d cmds\n", pi->num_cmds);
-		rcode = run_list(pi);
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+	اگر (!G.o_opt[OPT_O_NOEXEC]) {
+#اگر_ختم /* !__U_BOOT__ */
+		debug_printf_exec(": run_list: 1st pipe with %d cmds\n", pi->عدد_cmds);
+		rcode = تسلسل_list(pi);
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	}
-#endif /* !__U_BOOT__ */
+#اگر_ختم /* !__U_BOOT__ */
 	/* free_pipe_list has the side effect of clearing memory.
 	 * In the long run that function can be merged with run_list,
 	 * but doing that now would hobble the debugging effort. */
 	free_pipe_list(pi);
 	debug_printf_exec("run_and_free_list return %d\n", rcode);
-	return rcode;
+	واپس rcode;
 }
 
-#ifndef __U_BOOT__
-static void install_sighandlers(unsigned mask)
+#اگر_غیر_تعریف_شدہ __U_BOOT__
+ساکن خالی install_sighandlers(غیرعلامتی نقاب)
 {
 	sighandler_t old_handler;
-	unsigned sig = 0;
-	while ((mask >>= 1) != 0) {
+	غیرعلامتی sig = 0;
+	جب ((نقاب >>= 1) != 0) {
 		sig++;
-		if (!(mask & 1))
-			continue;
+		اگر (!(نقاب & 1))
+			جاری;
 		old_handler = install_sighandler(sig, pick_sighandler(sig));
 		/* POSIX allows shell to re-enable SIGCHLD
 		 * even if it was SIG_IGN on entry.
 		 * Therefore we skip IGN check for it:
 		 */
-		if (sig == SIGCHLD)
-			continue;
+		اگر (sig == SIGCHLD)
+			جاری;
 		/* Interactive bash re-enables SIGHUP which is SIG_IGNed on entry.
 		 * Try:
 		 * trap '' hup; bash; echo RET  # type "kill -hup $$", see SIGHUP having effect
 		 * trap '' hup; bash -c 'kill -hup $$; echo ALIVE'  # here SIGHUP is SIG_IGNed
 		 */
-		if (sig == SIGHUP && G_interactive_fd)
-			continue;
+		اگر (sig == SIGHUP && G_interactive_fd)
+			جاری;
 		/* Unless one of the above signals, is it SIG_IGN? */
-		if (old_handler == SIG_IGN) {
+		اگر (old_handler == SIG_IGN) {
 			/* oops... restore back to IGN, and record this fact */
 			install_sighandler(sig, old_handler);
-#if ENABLE_HUSH_TRAP
-			if (!G_traps)
-				G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
-			free(G_traps[sig]);
+#اگر ENABLE_HUSH_TRAP
+			اگر (!G_traps)
+				G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
+			آزاد(G_traps[sig]);
 			G_traps[sig] = xzalloc(1); /* == xstrdup(""); */
-#endif
+#اگر_ختم
 		}
 	}
 }
 
 /* Called a few times only (or even once if "sh -c") */
-static void install_special_sighandlers(void)
+ساکن خالی install_special_sighandlers(خالی)
 {
-	unsigned mask;
+	غیرعلامتی نقاب;
 
 	/* Which signals are shell-special? */
-	mask = (1 << SIGQUIT) | (1 << SIGCHLD);
-	if (G_interactive_fd) {
-		mask |= SPECIAL_INTERACTIVE_SIGS;
-		if (G_saved_tty_pgrp) /* we have ctty, job control sigs work */
-			mask |= SPECIAL_JOBSTOP_SIGS;
+	نقاب = (1 << SIGQUIT) | (1 << SIGCHLD);
+	اگر (G_interactive_fd) {
+		نقاب |= SPECIAL_INTERACTIVE_SIGS;
+		اگر (G_saved_tty_pgrp) /* we have ctty, job control sigs work */
+			نقاب |= SPECIAL_JOBSTOP_SIGS;
 	}
 	/* Careful, do not re-install handlers we already installed */
-	if (G.special_sig_mask != mask) {
-		unsigned diff = mask & ~G.special_sig_mask;
-		G.special_sig_mask = mask;
+	اگر (G.special_sig_نقاب != نقاب) {
+		غیرعلامتی diff = نقاب & ~G.special_sig_نقاب;
+		G.special_sig_نقاب = نقاب;
 		install_sighandlers(diff);
 	}
 }
 
-#if ENABLE_HUSH_JOB
+#اگر ENABLE_HUSH_کام
 /* helper */
 /* Set handlers to restore tty pgrp and exit */
-static void install_fatal_sighandlers(void)
+ساکن خالی install_fatal_sighandlers(خالی)
 {
-	unsigned mask;
+	غیرعلامتی نقاب;
 
 	/* We will restore tty pgrp on these signals */
-	mask = 0
+	نقاب = 0
 		/*+ (1 << SIGILL ) * HUSH_DEBUG*/
 		/*+ (1 << SIGFPE ) * HUSH_DEBUG*/
 		+ (1 << SIGBUS ) * HUSH_DEBUG
@@ -10952,31 +10952,31 @@ static void install_fatal_sighandlers(void)
 		/*+ (1 << SIGTERM)*/
 		/*+ (1 << SIGINT )*/
 	;
-	G_fatal_sig_mask = mask;
+	G_fatal_sig_نقاب = نقاب;
 
-	install_sighandlers(mask);
+	install_sighandlers(نقاب);
 }
-#endif
+#اگر_ختم
 
-static int set_mode(int state, char mode, const char *o_opt)
+ساکن صحیح سیٹ_منوال(صحیح state, حرف منوال, ثابت حرف *o_opt)
 {
-	int idx;
-	switch (mode) {
-	case 'n':
+	صحیح idx;
+	انتخاب (منوال) {
+	حالت 'n':
 		/* set -n has no effect in interactive shell */
 		/* Try: while set -n; do echo $-; done */
-		if (!G_interactive_fd)
+		اگر (!G_interactive_fd)
 			G.o_opt[OPT_O_NOEXEC] = state;
-		break;
-	case 'x':
-		IF_HUSH_MODE_X(G_x_mode = state;)
-		IF_HUSH_MODE_X(if (G.x_mode_fd <= 0) G.x_mode_fd = dup_CLOEXEC(2, 10);)
-		break;
-	case 'e':
+		توڑو;
+	حالت 'x':
+		IF_HUSH_منوال_X(G_x_منوال = state;)
+		IF_HUSH_منوال_X(اگر (G.x_منوال_fd <= 0) G.x_منوال_fd = dup_CLOEXEC(2, 10);)
+		توڑو;
+	حالت 'e':
 		G.o_opt[OPT_O_ERREXIT] = state;
-		break;
-	case 'o':
-		if (!o_opt) {
+		توڑو;
+	حالت 'o':
+		اگر (!o_opt) {
 			/* "set -o" or "set +o" without parameter.
 			 * in bash, set -o produces this output:
 			 *  pipefail        off
@@ -10984,96 +10984,96 @@ static int set_mode(int state, char mode, const char *o_opt)
 			 *  set +o pipefail
 			 * We always use the second form.
 			 */
-			const char *p = o_opt_strings;
+			ثابت حرف *p = o_opt_لڑیاں;
 			idx = 0;
-			while (*p) {
-				printf("set %co %s\n", (G.o_opt[idx] ? '-' : '+'), p);
+			جب (*p) {
+				لکھو("set %co %s\n", (G.o_opt[idx] ? '-' : '+'), p);
 				idx++;
-				p += strlen(p) + 1;
+				p += لڑی_لمبائی(p) + 1;
 			}
-			break;
+			توڑو;
 		}
-		idx = index_in_strings(o_opt_strings, o_opt);
-		if (idx >= 0) {
+		idx = اشاریہ_اندر_لڑیاں(o_opt_لڑیاں, o_opt);
+		اگر (idx >= 0) {
 			G.o_opt[idx] = state;
-			break;
+			توڑو;
 		}
 		/* fall through to error */
-	default:
-		return EXIT_FAILURE;
+	طےشدہ:
+		واپس EXIT_FAILURE;
 	}
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
 
-int hush_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int hush_main(int argc, char **argv)
+صحیح hush_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح hush_main(صحیح argc, حرف **argv)
 {
 	pid_t cached_getpid;
-	enum {
+	شمار {
 		OPT_login = (1 << 0),
 	};
-	unsigned flags;
-#if !BB_MMU
-	unsigned builtin_argc = 0;
-#endif
-	char **e;
-	struct variable *cur_var;
-	struct variable *shell_ver;
+	غیرعلامتی flags;
+#اگر !BB_MMU
+	غیرعلامتی builtin_argc = 0;
+#اگر_ختم
+	حرف **e;
+	ساخت variable *cur_var;
+	ساخت variable *shell_ver;
 
 	INIT_G();
-	if (EXIT_SUCCESS != 0) /* if EXIT_SUCCESS == 0, it is already done */
-		G.last_exitcode = EXIT_SUCCESS;
-#if !BB_MMU
+	اگر (EXIT_SUCCESS != 0) /* if EXIT_SUCCESS == 0, it is already done */
+		G.آخری_exitcode = EXIT_SUCCESS;
+#اگر !BB_MMU
 	/* "Big heredoc" support via "sh -< STRING" invocation.
 	 * Check it first (do not bother to run the usual init code,
 	 * it is not needed for this case).
 	 */
-	if (argv[1]
+	اگر (argv[1]
 	 && argv[1][0] == '-' && argv[1][1] == '<' /*&& !argv[1][2]*/
 	 /*&& argv[2] && !argv[3] - we don't check some conditions */
 	) {
-		full_write1_str(argv[2]);
+		بھرا_write1_str(argv[2]);
 		_exit(0);
 	}
 	G.argv0_for_re_execing = argv[0];
-#endif
-#if ENABLE_HUSH_TRAP
-# if ENABLE_HUSH_FUNCTIONS
+#اگر_ختم
+#اگر ENABLE_HUSH_TRAP
+# اگر ENABLE_HUSH_FUNCTIONS
 	G.return_exitcode = -1;
 # endif
 	G.pre_trap_exitcode = -1;
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_FAST
-	G.count_SIGCHLD++; /* ensure it is != G.handled_SIGCHLD */
-#endif
+#اگر ENABLE_HUSH_FAST
+	G.گنتی_SIGCHLD++; /* ensure it is != G.handled_SIGCHLD */
+#اگر_ختم
 
 	cached_getpid = getpid();   /* for tcsetpgrp() during init */
-	G.root_pid = cached_getpid; /* for $PID  (NOMMU can override via -$HEXPID:HEXPPID:...) */
-	G.root_ppid = getppid();    /* for $PPID (NOMMU can override) */
+	G.جڑ_pid = cached_getpid; /* for $PID  (NOMMU can override via -$HEXPID:HEXPPID:...) */
+	G.جڑ_ppid = getppid();    /* for $PPID (NOMMU can override) */
 
 	/* Deal with HUSH_VERSION */
 	debug_printf_env("unsetenv '%s'\n", "HUSH_VERSION");
 	unsetenv("HUSH_VERSION"); /* in case it exists in initial env */
-	shell_ver = xzalloc(sizeof(*shell_ver));
+	shell_ver = xzalloc(حجم(*shell_ver));
 	shell_ver->flg_export = 1;
 	shell_ver->flg_read_only = 1;
 	/* Code which handles ${var<op>...} needs writable values for all variables,
 	 * therefore we xstrdup: */
-	shell_ver->varstr = xstrdup(hush_version_str);
+	shell_ver->varstr = xstrdup(hush_نسخہ_str);
 
 	/* Create shell local variables from the values
 	 * currently living in the environment */
-	G.top_var = shell_ver;
-	cur_var = G.top_var;
+	G.چوٹی_var = shell_ver;
+	cur_var = G.چوٹی_var;
 	e = environ;
-	if (e) while (*e) {
-		char *value = strchr(*e, '=');
-		if (value) { /* paranoia */
-			cur_var->next = xzalloc(sizeof(*cur_var));
-			cur_var = cur_var->next;
+	اگر (e) جب (*e) {
+		حرف *قدر = strchr(*e, '=');
+		اگر (قدر) { /* paranoia */
+			cur_var->اگلا = xzalloc(حجم(*cur_var));
+			cur_var = cur_var->اگلا;
 			cur_var->varstr = *e;
-			cur_var->max_len = strlen(*e);
+			cur_var->max_len = لڑی_لمبائی(*e);
 			cur_var->flg_export = 1;
 		}
 		e++;
@@ -11083,21 +11083,21 @@ int hush_main(int argc, char **argv)
 	putenv(shell_ver->varstr);
 
 	/* Export PWD */
-	set_pwd_var(SETFLAG_EXPORT);
+	سیٹ_pwd_var(SETFLAG_EXPORT);
 
-#if BASH_HOSTNAME_VAR
+#اگر BASH_HOSTNAME_VAR
 	/* Set (but not export) HOSTNAME unless already set */
-	if (!get_local_var_value("HOSTNAME")) {
-		struct utsname uts;
+	اگر (!get_local_var_قدر("HOSTNAME")) {
+		ساخت utsname uts;
 		uname(&uts);
-		set_local_var_from_halves("HOSTNAME", uts.nodename);
+		سیٹ_local_var_from_halves("HOSTNAME", uts.nodename);
 	}
-#endif
+#اگر_ختم
 	/* IFS is not inherited from the parent environment */
-	set_local_var_from_halves("IFS", defifs);
+	سیٹ_local_var_from_halves("IFS", defifs);
 
-	if (!get_local_var_value("PATH"))
-		set_local_var_from_halves("PATH", bb_default_root_path);
+	اگر (!get_local_var_قدر("PATH"))
+		سیٹ_local_var_from_halves("PATH", bb_default_جڑ_راستہ);
 
 	/* PS1/PS2 are set later, if we determine that we are interactive */
 
@@ -11134,16 +11134,16 @@ int hush_main(int argc, char **argv)
 	 * PS4='+ '
 	 */
 
-#if NUM_SCRIPTS > 0
-	if (argc < 0) {
-		char *script = get_script_content(-argc - 1);
+#اگر عدد_SCRIPTS > 0
+	اگر (argc < 0) {
+		حرف *script = get_script_content(-argc - 1);
 		G.global_argv = argv;
 		G.global_argc = string_array_len(argv);
 		//install_special_sighandlers(); - needed?
-		parse_and_run_string(script);
-		goto final_return;
+		parse_and_تسلسل_string(script);
+		جاؤ final_return;
 	}
-#endif
+#اگر_ختم
 
 	/* Initialize some more globals to non-zero values */
 	die_func = restore_ttypgrp_and__exit;
@@ -11158,29 +11158,29 @@ int hush_main(int argc, char **argv)
 	/* Parse options */
 	/* http://www.opengroup.org/onlinepubs/9699919799/utilities/sh.html */
 	flags = (argv[0] && argv[0][0] == '-') ? OPT_login : 0;
-	while (1) {
-		int opt = getopt(argc, argv, "+" /* stop at 1st non-option */
+	جب (1) {
+		صحیح opt = getopt(argc, argv, "+" /* stop at 1st non-option */
 				"cexinsl"
-#if !BB_MMU
+#اگر !BB_MMU
 				"$:R:V:"
-# if ENABLE_HUSH_LINENO_VAR
+# اگر ENABLE_HUSH_LINENO_VAR
 				"L:"
 # endif
-# if ENABLE_HUSH_FUNCTIONS
+# اگر ENABLE_HUSH_FUNCTIONS
 				"F:"
 # endif
-#endif
+#اگر_ختم
 		);
-		if (opt <= 0)
-			break;
-		switch (opt) {
-		case 'c':
+		اگر (opt <= 0)
+			توڑو;
+		انتخاب (opt) {
+		حالت 'c':
 			/* Note: -c is not an option with param!
 			 * "hush -c -l SCRIPT" is valid. "hush -cSCRIPT" is not.
 			 */
 			G.opt_c = 1;
-			break;
-		case 'i':
+			توڑو;
+		حالت 'i':
 			/* Well, we cannot just declare interactiveness,
 			 * we have to have some stuff (ctty, etc) */
 			/* G_interactive_fd++; */
@@ -11199,7 +11199,7 @@ int hush_main(int argc, char **argv)
 //includes $ENV file (only if run as "sh"):
 //	echo last >/tmp/ENV; ENV=/tmp/ENV sh -i -c 'echo HERE'
 //	last: cannot open /var/log/wtmp: No such file or directory
-//	HERE
+//یہاں
 //(under "bash", it's the opposite: it runs $BASH_ENV file only *without* -i).
 //
 //ash -i -c 'sleep 3; sleep 3', on ^C, drops into a prompt instead of exiting
@@ -11207,86 +11207,86 @@ int hush_main(int argc, char **argv)
 //(ash -i -c 'sleep 3' won't show this, the last command gets auto-"exec"ed)
 //
 //None of the above feel like useful features people would rely on.
-			break;
-		case 's':
+			توڑو;
+		حالت 's':
 			G.opt_s = 1;
-			break;
-		case 'l':
+			توڑو;
+		حالت 'l':
 			flags |= OPT_login;
-			break;
-#if !BB_MMU
-		case '$': {
-			unsigned long long empty_trap_mask;
+			توڑو;
+#اگر !BB_MMU
+		حالت '$': {
+			غیرعلامتی طویل طویل خالی_خانے_trap_نقاب;
 
-			G.root_pid = bb_strtou(optarg, &optarg, 16);
+			G.جڑ_pid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
-			G.root_ppid = bb_strtou(optarg, &optarg, 16);
+			G.جڑ_ppid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
-			G.last_bg_pid = bb_strtou(optarg, &optarg, 16);
+			G.آخری_bg_pid = bb_strtou(optarg, &optarg, 16);
 			optarg++;
-			G.last_exitcode = bb_strtou(optarg, &optarg, 16);
+			G.آخری_exitcode = bb_strtou(optarg, &optarg, 16);
 			optarg++;
 			builtin_argc = bb_strtou(optarg, &optarg, 16);
 			optarg++;
-			empty_trap_mask = bb_strtoull(optarg, &optarg, 16);
-			if (empty_trap_mask != 0) {
-				IF_HUSH_TRAP(int sig;)
+			خالی_خانے_trap_نقاب = bb_strtoull(optarg, &optarg, 16);
+			اگر (خالی_خانے_trap_نقاب != 0) {
+				IF_HUSH_TRAP(صحیح sig;)
 				install_special_sighandlers();
-# if ENABLE_HUSH_TRAP
-				G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
-				for (sig = 1; sig < NSIG; sig++) {
-					if (empty_trap_mask & (1LL << sig)) {
+# اگر ENABLE_HUSH_TRAP
+				G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
+				برائے (sig = 1; sig < NSIG; sig++) {
+					اگر (خالی_خانے_trap_نقاب & (1LL << sig)) {
 						G_traps[sig] = xzalloc(1); /* == xstrdup(""); */
 						install_sighandler(sig, SIG_IGN);
 					}
 				}
 # endif
 			}
-# if ENABLE_HUSH_LOOPS
+# اگر ENABLE_HUSH_LOOPS
 			optarg++;
-			G.depth_of_loop = bb_strtou(optarg, &optarg, 16);
+			G.گہرائی_کا_loop = bb_strtou(optarg, &optarg, 16);
 # endif
 			/* Suppress "killed by signal" message, -$ hack is used
 			 * for subshells: echo `sh -c 'kill -9 $$'`
 			 * should be silent.
 			 */
-			IF_HUSH_JOB(G.run_list_level = 1;)
-# if ENABLE_HUSH_FUNCTIONS
+			IF_HUSH_کام(G.تسلسل_list_level = 1;)
+# اگر ENABLE_HUSH_FUNCTIONS
 			/* nommu uses re-exec trick for "... | func | ...",
 			 * should allow "return".
 			 * This accidentally allows returns in subshells.
 			 */
-			G_flag_return_in_progress = -1;
+			G_flag_return_اندر_پیش_رفت = -1;
 # endif
-			break;
+			توڑو;
 		}
-		case 'R':
-		case 'V':
-			set_local_var(xstrdup(optarg), opt == 'R' ? SETFLAG_MAKE_RO : 0);
-			break;
-# if ENABLE_HUSH_LINENO_VAR
-		case 'L':
+		حالت 'R':
+		حالت 'V':
+			سیٹ_local_var(xstrdup(optarg), opt == 'R' ? SETFLAG_MAKE_RO : 0);
+			توڑو;
+# اگر ENABLE_HUSH_LINENO_VAR
+		حالت 'L':
 			G.parse_lineno = xatou(optarg);
-			break;
+			توڑو;
 # endif
-# if ENABLE_HUSH_FUNCTIONS
-		case 'F': {
-			struct function *funcp = new_function(optarg);
+# اگر ENABLE_HUSH_FUNCTIONS
+		حالت 'F': {
+			ساخت function *funcp = new_function(optarg);
 			/* funcp->name is already set to optarg */
 			/* funcp->body is set to NULL. It's a special case. */
 			funcp->body_as_string = argv[optind];
 			optind++;
-			break;
+			توڑو;
 		}
 # endif
-#endif
+#اگر_ختم
 		/*case '?': invalid option encountered (set_mode('?') will fail) */
 		/*case 'n':*/
 		/*case 'x':*/
 		/*case 'e':*/
-		default:
-			if (set_mode(1, opt, NULL) == 0) /* no error */
-				break;
+		طےشدہ:
+			اگر (سیٹ_منوال(1, opt, تہی) == 0) /* no error */
+				توڑو;
 			bb_show_usage();
 		}
 	} /* option parsing loop */
@@ -11297,17 +11297,17 @@ int hush_main(int argc, char **argv)
 	G.global_argv[0] = argv[0];
 
 	/* If we are login shell... */
-	if (flags & OPT_login) {
-		const char *hp = NULL;
-		HFILE *input;
+	اگر (flags & OPT_login) {
+		ثابت حرف *hp = تہی;
+		HFILE *داخلہ;
 
 		debug_printf("sourcing /etc/profile\n");
-		input = hfopen("/etc/profile");
- run_profile:
-		if (input != NULL) {
+		داخلہ = hfopen("/etc/profile");
+ تسلسل_profile:
+		اگر (داخلہ != تہی) {
 			install_special_sighandlers();
-			parse_and_run_file(input);
-			hfclose(input);
+			parse_and_تسلسل_file(داخلہ);
+			hfclose(داخلہ);
 		}
 		/* bash: after sourcing /etc/profile,
 		 * tries to source (in the given order):
@@ -11316,21 +11316,21 @@ int hush_main(int argc, char **argv)
 		 * bash also sources ~/.bash_logout on exit.
 		 * If called as sh, skips .bash_XXX files.
 		 */
-		if (!hp) { /* unless we looped on the "goto" already */
-			hp = get_local_var_value("HOME");
-			if (hp && hp[0]) {
+		اگر (!hp) { /* unless we looped on the "goto" already */
+			hp = get_local_var_قدر("HOME");
+			اگر (hp && hp[0]) {
 				debug_printf("sourcing ~/.profile\n");
-				hp = concat_path_file(hp, ".profile");
-				input = hfopen(hp);
-				free((char*)hp);
-				goto run_profile;
+				hp = concat_راستہ_file(hp, ".profile");
+				داخلہ = hfopen(hp);
+				آزاد((حرف*)hp);
+				جاؤ تسلسل_profile;
 			}
 		}
 	}
 
-#ifndef __U_BOOT__
+#اگر_غیر_تعریف_شدہ __U_BOOT__
 	/* -c takes effect *after* -l */
-	if (G.opt_c) {
+	اگر (G.opt_c) {
 		/* Possibilities:
 		 * sh ... -c 'script'
 		 * sh ... -c 'script' ARG0 [ARG1...]
@@ -11341,45 +11341,45 @@ int hush_main(int argc, char **argv)
 		 * Note: the form without ARG0 never happens:
 		 * sh ... -c 'builtin' BARGV... ""
 		 */
-		char *script;
+		حرف *script;
 
 		install_special_sighandlers();
 
 		G.global_argc--;
 		G.global_argv++;
-#if !BB_MMU
-		if (builtin_argc) {
+#اگر !BB_MMU
+		اگر (builtin_argc) {
 			/* -c 'builtin' [BARGV...] "" ARG0 [ARG1...] */
-			const struct built_in_command *x;
-			x = find_builtin(G.global_argv[0]);
-			if (x) { /* paranoia */
+			ثابت ساخت built_اندر_command *x;
+			x = ڈھونڈو_builtin(G.global_argv[0]);
+			اگر (x) { /* paranoia */
 				argv = G.global_argv;
 				G.global_argc -= builtin_argc + 1; /* skip [BARGV...] "" */
 				G.global_argv += builtin_argc + 1;
-				G.global_argv[-1] = NULL; /* replace "" */
-				G.last_exitcode = x->b_function(argv);
+				G.global_argv[-1] = تہی; /* replace "" */
+				G.آخری_exitcode = x->b_function(argv);
 			}
-			goto final_return;
+			جاؤ final_return;
 		}
-#endif
+#اگر_ختم
 
 		script = G.global_argv[0];
-		if (!script)
-			bb_error_msg_and_die(bb_msg_requires_arg, "-c");
-		if (!G.global_argv[1]) {
+		اگر (!script)
+			bb_error_پیغام_and_die(bb_پیغام_requires_arg, "-c");
+		اگر (!G.global_argv[1]) {
 			/* -c 'script' (no params): prevent empty $0 */
 			G.global_argv[0] = argv[0];
-		} else { /* else -c 'script' ARG0 [ARG1...]: $0 is ARG0 */
+		} ورنہ { /* else -c 'script' ARG0 [ARG1...]: $0 is ARG0 */
 			G.global_argc--;
 			G.global_argv++;
 		}
-		parse_and_run_string(script);
-		goto final_return;
+		parse_and_تسلسل_string(script);
+		جاؤ final_return;
 	}
 
 	/* -s is: hush -s ARGV1 ARGV2 (no SCRIPT) */
-	if (!G.opt_s && G.global_argv[1]) {
-		HFILE *input;
+	اگر (!G.opt_s && G.global_argv[1]) {
+		HFILE *داخلہ;
 		/*
 		 * "bash <script>" (which is never interactive (unless -i?))
 		 * sources $BASH_ENV here (without scanning $PATH).
@@ -11390,22 +11390,22 @@ int hush_main(int argc, char **argv)
 		G.global_argv++;
 		debug_printf("running script '%s'\n", G.global_argv[0]);
 		xfunc_error_retval = 127; /* for "hush /does/not/exist" case */
-		input = hfopen(G.global_argv[0]);
-		if (!input) {
-			bb_simple_perror_msg_and_die(G.global_argv[0]);
+		داخلہ = hfopen(G.global_argv[0]);
+		اگر (!داخلہ) {
+			bb_simple_perror_پیغام_and_die(G.global_argv[0]);
 		}
 		xfunc_error_retval = 1;
 		install_special_sighandlers();
-		parse_and_run_file(input);
-#if ENABLE_FEATURE_CLEAN_UP
-		hfclose(input);
-#endif
-		goto final_return;
+		parse_and_تسلسل_file(داخلہ);
+#اگر ENABLE_FEATURE_CLEAN_اوپر
+		hfclose(داخلہ);
+#اگر_ختم
+		جاؤ final_return;
 	}
 	/* "implicit" -s: bare interactive hush shows 's' in $- */
 	G.opt_s = 1;
 
-#endif /* __U_BOOT__ */
+#اگر_ختم /* __U_BOOT__ */
 	/* Up to here, shell was non-interactive. Now it may become one.
 	 * NB: don't forget to (re)run install_special_sighandlers() as needed.
 	 */
@@ -11418,19 +11418,19 @@ int hush_main(int argc, char **argv)
 	 *    standard output is a terminal
 	 * Refer to Posix.2, the description of the 'sh' utility.
 	 */
-#if ENABLE_HUSH_JOB
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
+#اگر ENABLE_HUSH_کام
+	اگر (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
 		G_saved_tty_pgrp = tcgetpgrp(STDIN_FILENO);
 		debug_printf("saved_tty_pgrp:%d\n", G_saved_tty_pgrp);
-		if (G_saved_tty_pgrp < 0)
+		اگر (G_saved_tty_pgrp < 0)
 			G_saved_tty_pgrp = 0;
 
 		/* try to dup stdin to high fd#, >= 255 */
 		G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, 254);
-		if (G_interactive_fd < 0) {
+		اگر (G_interactive_fd < 0) {
 			/* try to dup to any fd */
 			G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, -1);
-			if (G_interactive_fd < 0) {
+			اگر (G_interactive_fd < 0) {
 				/* give up */
 				G_interactive_fd = 0;
 				G_saved_tty_pgrp = 0;
@@ -11438,18 +11438,18 @@ int hush_main(int argc, char **argv)
 		}
 	}
 	debug_printf("interactive_fd:%d\n", G_interactive_fd);
-	if (G_interactive_fd) {
-		if (G_saved_tty_pgrp) {
+	اگر (G_interactive_fd) {
+		اگر (G_saved_tty_pgrp) {
 			/* If we were run as 'hush &', sleep until we are
 			 * in the foreground (tty pgrp == our pgrp).
 			 * If we get started under a job aware app (like bash),
 			 * make sure we are now in charge so we don't fight over
 			 * who gets the foreground */
-			while (1) {
+			جب (1) {
 				pid_t shell_pgrp = getpgrp();
 				G_saved_tty_pgrp = tcgetpgrp(G_interactive_fd);
-				if (G_saved_tty_pgrp == shell_pgrp)
-					break;
+				اگر (G_saved_tty_pgrp == shell_pgrp)
+					توڑو;
 				/* send TTIN to ourself (should stop us) */
 				kill(- shell_pgrp, SIGTTIN);
 			}
@@ -11458,7 +11458,7 @@ int hush_main(int argc, char **argv)
 		/* Install more signal handlers */
 		install_special_sighandlers();
 
-		if (G_saved_tty_pgrp) {
+		اگر (G_saved_tty_pgrp) {
 			/* Set other signals to restore saved_tty_pgrp */
 			install_fatal_sighandlers();
 			/* Put ourselves in our own process group
@@ -11469,71 +11469,71 @@ int hush_main(int argc, char **argv)
 		}
 		enable_restore_tty_pgrp_on_exit();
 
-# if ENABLE_FEATURE_EDITING
-		G.line_input_state = new_line_input_t(FOR_SHELL);
-#  if ENABLE_FEATURE_TAB_COMPLETION
-		G.line_input_state->get_exe_name = hush_command_name;
+# اگر ENABLE_FEATURE_EDITING
+		G.سطر_داخلہ_state = new_سطر_داخلہ_t(FOR_SHELL);
+#  اگر ENABLE_FEATURE_TAB_COMPLETION
+		G.سطر_داخلہ_state->get_exe_name = hush_command_name;
 #  endif
-#  if EDITING_HAS_sh_get_var
-		G.line_input_state->sh_get_var = get_local_var_value;
+#  اگر EDITING_HAS_sh_get_var
+		G.سطر_داخلہ_state->sh_get_var = get_local_var_قدر;
 #  endif
 # endif
-# if ENABLE_HUSH_SAVEHISTORY && MAX_HISTORY > 0
+# اگر ENABLE_HUSH_SAVEHISTORY && MAX_HISTORY > 0
 		{
-			const char *hp = get_local_var_value("HISTFILE");
-			if (!hp) {
-				hp = get_local_var_value("HOME");
-				if (hp)
-					hp = concat_path_file(hp, ".hush_history");
-			} else {
+			ثابت حرف *hp = get_local_var_قدر("HISTFILE");
+			اگر (!hp) {
+				hp = get_local_var_قدر("HOME");
+				اگر (hp)
+					hp = concat_راستہ_file(hp, ".hush_history");
+			} ورنہ {
 				hp = xstrdup(hp);
 			}
-			if (hp) {
-				G.line_input_state->hist_file = hp;
+			اگر (hp) {
+				G.سطر_داخلہ_state->hist_file = hp;
 				//set_local_var(xasprintf("HISTFILE=%s", ...));
 			}
-#  if ENABLE_FEATURE_SH_HISTFILESIZE
-			hp = get_local_var_value("HISTFILESIZE");
-			G.line_input_state->max_history = size_from_HISTFILESIZE(hp);
+#  اگر ENABLE_FEATURE_SH_HISTFILESIZE
+			hp = get_local_var_قدر("HISTFILESIZE");
+			G.سطر_داخلہ_state->max_history = سائز_from_HISTFILESIZE(hp);
 #  endif
 		}
 # endif
-	} else {
+	} ورنہ {
 		install_special_sighandlers();
 	}
-#elif ENABLE_HUSH_INTERACTIVE
+#وگرنہ_اگر ENABLE_HUSH_INTERACTIVE
 	/* No job control compiled in, only prompt/line editing */
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
+	اگر (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)) {
 		G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, 254);
-		if (G_interactive_fd < 0) {
+		اگر (G_interactive_fd < 0) {
 			/* try to dup to any fd */
 			G_interactive_fd = dup_CLOEXEC(STDIN_FILENO, -1);
-			if (G_interactive_fd < 0)
+			اگر (G_interactive_fd < 0)
 				/* give up */
 				G_interactive_fd = 0;
 		}
 	}
 	install_special_sighandlers();
-#else
+#ورنہ
 	/* We have interactiveness code disabled */
 	install_special_sighandlers();
-#endif
+#اگر_ختم
 	/* bash:
 	 * if interactive but not a login shell, sources ~/.bashrc
 	 * (--norc turns this off, --rcfile <file> overrides)
 	 */
 
-	if (G_interactive_fd) {
-#if ENABLE_HUSH_INTERACTIVE && ENABLE_FEATURE_EDITING_FANCY_PROMPT
+	اگر (G_interactive_fd) {
+#اگر ENABLE_HUSH_INTERACTIVE && ENABLE_FEATURE_EDITING_FANCY_PROMPT
 		/* Set (but not export) PS1/2 unless already set */
-		if (!get_local_var_value("PS1"))
-			set_local_var_from_halves("PS1", "\\w \\$ ");
-		if (!get_local_var_value("PS2"))
-			set_local_var_from_halves("PS2", "> ");
-#endif
-		if (!ENABLE_FEATURE_SH_EXTRA_QUIET) {
+		اگر (!get_local_var_قدر("PS1"))
+			سیٹ_local_var_from_halves("PS1", "\\w \\$ ");
+		اگر (!get_local_var_قدر("PS2"))
+			سیٹ_local_var_from_halves("PS2", "> ");
+#اگر_ختم
+		اگر (!ENABLE_FEATURE_SH_EXTRA_QUIET) {
 			/* note: ash and hush share this string */
-			printf("\n\n%s %s\n"
+			لکھو("\n\n%s %s\n"
 				IF_HUSH_HELP("Enter 'help' for a list of built-in commands.\n")
 				"\n",
 				bb_banner,
@@ -11542,160 +11542,160 @@ int hush_main(int argc, char **argv)
 		}
 	}
 
-	parse_and_run_file(hfopen(NULL)); /* stdin */
+	parse_and_تسلسل_file(hfopen(تہی)); /* stdin */
 
  final_return:
-	hush_exit(G.last_exitcode);
+	hush_exit(G.آخری_exitcode);
 }
 
 /*
  * Built-ins
  */
-static int FAST_FUNC builtin_true(char **argv UNUSED_PARAM)
+ساکن صحیح FAST_FUNC builtin_true(حرف **argv غیر_مستعمل_PARAM)
 {
-	return 0;
+	واپس 0;
 }
 
-static int FAST_FUNC builtin_false(char **argv UNUSED_PARAM)
+ساکن صحیح FAST_FUNC builtin_false(حرف **argv غیر_مستعمل_PARAM)
 {
-	return 1;
+	واپس 1;
 }
 
-#if ENABLE_HUSH_TEST || ENABLE_HUSH_ECHO || ENABLE_HUSH_PRINTF || ENABLE_HUSH_KILL
-static NOINLINE int run_applet_main(char **argv, int (*applet_main_func)(int argc, char **argv))
+#اگر ENABLE_HUSH_TEST || ENABLE_HUSH_ECHO || ENABLE_HUSH_PRINTF || ENABLE_HUSH_KILL
+ساکن NOINLINE صحیح تسلسل_applet_main(حرف **argv, صحیح (*applet_main_func)(صحیح argc, حرف **argv))
 {
-	int argc = string_array_len(argv);
-	return applet_main_func(argc, argv);
+	صحیح argc = string_array_len(argv);
+	واپس applet_main_func(argc, argv);
 }
-#endif
-#if ENABLE_HUSH_TEST || BASH_TEST2
-static int FAST_FUNC builtin_test(char **argv)
+#اگر_ختم
+#اگر ENABLE_HUSH_TEST || BASH_TEST2
+ساکن صحیح FAST_FUNC builtin_test(حرف **argv)
 {
-	return run_applet_main(argv, test_main);
+	واپس تسلسل_applet_main(argv, test_main);
 }
-#endif
-#if ENABLE_HUSH_ECHO
-static int FAST_FUNC builtin_echo(char **argv)
+#اگر_ختم
+#اگر ENABLE_HUSH_ECHO
+ساکن صحیح FAST_FUNC builtin_echo(حرف **argv)
 {
-	return run_applet_main(argv, echo_main);
+	واپس تسلسل_applet_main(argv, echo_main);
 }
-#endif
-#if ENABLE_HUSH_PRINTF
-static int FAST_FUNC builtin_printf(char **argv)
+#اگر_ختم
+#اگر ENABLE_HUSH_PRINTF
+ساکن صحیح FAST_FUNC builtin_printf(حرف **argv)
 {
-	return run_applet_main(argv, printf_main);
+	واپس تسلسل_applet_main(argv, printf_main);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_HELP
-static int FAST_FUNC builtin_help(char **argv UNUSED_PARAM)
+#اگر ENABLE_HUSH_HELP
+ساکن صحیح FAST_FUNC builtin_help(حرف **argv غیر_مستعمل_PARAM)
 {
-	const struct built_in_command *x;
+	ثابت ساخت built_اندر_command *x;
 
-	printf(
+	لکھو(
 		"Built-in commands:\n"
 		"------------------\n");
-	for (x = bltins1; x != &bltins1[ARRAY_SIZE(bltins1)]; x++) {
-		if (x->b_descr)
-			printf("%-10s%s\n", x->b_cmd, x->b_descr);
+	برائے (x = bltins1; x != &bltins1[ARRAY_سائز(bltins1)]; x++) {
+		اگر (x->b_descr)
+			لکھو("%-10s%s\n", x->b_cmd, x->b_descr);
 	}
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-#if MAX_HISTORY && ENABLE_FEATURE_EDITING
-static int FAST_FUNC builtin_history(char **argv UNUSED_PARAM)
+#اگر MAX_HISTORY && ENABLE_FEATURE_EDITING
+ساکن صحیح FAST_FUNC builtin_history(حرف **argv غیر_مستعمل_PARAM)
 {
-	show_history(G.line_input_state);
-	return EXIT_SUCCESS;
+	show_history(G.سطر_داخلہ_state);
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-static int FAST_FUNC builtin_cd(char **argv)
+ساکن صحیح FAST_FUNC builtin_cd(حرف **argv)
 {
-	const char *newdir;
+	ثابت حرف *newdir;
 
 	argv = skip_dash_dash(argv);
 	newdir = argv[0];
-	if (newdir == NULL) {
+	اگر (newdir == تہی) {
 		/* bash does nothing (exitcode 0) if HOME is ""; if it's unset,
 		 * bash says "bash: cd: HOME not set" and does nothing
 		 * (exitcode 1)
 		 */
-		const char *home = get_local_var_value("HOME");
+		ثابت حرف *home = get_local_var_قدر("HOME");
 		newdir = home ? home : "/";
 	}
-	if (chdir(newdir)) {
+	اگر (chdir(newdir)) {
 		/* Mimic bash message exactly */
-		bb_perror_msg("cd: %s", newdir);
-		return EXIT_FAILURE;
+		bb_perror_پیغام("cd: %s", newdir);
+		واپس EXIT_FAILURE;
 	}
 	/* Read current dir (get_cwd(1) is inside) and set PWD.
 	 * Note: do not enforce exporting. If PWD was unset or unexported,
 	 * set it again, but do not export. bash does the same.
 	 */
-	set_pwd_var(/*flag:*/ 0);
-	return EXIT_SUCCESS;
+	سیٹ_pwd_var(/*flag:*/ 0);
+	واپس EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_pwd(char **argv UNUSED_PARAM)
+ساکن صحیح FAST_FUNC builtin_pwd(حرف **argv غیر_مستعمل_PARAM)
 {
 	puts(get_cwd(0));
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_eval(char **argv)
+ساکن صحیح FAST_FUNC builtin_eval(حرف **argv)
 {
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0])
-		return EXIT_SUCCESS;
+	اگر (!argv[0])
+		واپس EXIT_SUCCESS;
 
-	IF_HUSH_MODE_X(G.x_mode_depth++;)
+	IF_HUSH_منوال_X(G.x_منوال_گہرائی++;)
 	//bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
-	if (!argv[1]) {
+	اگر (!argv[1]) {
 		/* bash:
 		 * eval "echo Hi; done" ("done" is syntax error):
 		 * "echo Hi" will not execute too.
 		 */
-		parse_and_run_string(argv[0]);
-	} else {
+		parse_and_تسلسل_string(argv[0]);
+	} ورنہ {
 		/* "The eval utility shall construct a command by
 		 * concatenating arguments together, separating
 		 * each with a <space> character."
 		 */
-		char *str, *p;
-		unsigned len = 0;
-		char **pp = argv;
-		do
-			len += strlen(*pp) + 1;
-		while (*++pp);
+		حرف *str, *p;
+		غیرعلامتی len = 0;
+		حرف **pp = argv;
+		کرو
+			len += لڑی_لمبائی(*pp) + 1;
+		جب (*++pp);
 		str = p = xmalloc(len);
 		pp = argv;
-		for (;;) {
+		برائے (;;) {
 			p = stpcpy(p, *pp);
 			pp++;
-			if (!*pp)
-				break;
+			اگر (!*pp)
+				توڑو;
 			*p++ = ' ';
 		}
-		parse_and_run_string(str);
-		free(str);
+		parse_and_تسلسل_string(str);
+		آزاد(str);
 	}
-	IF_HUSH_MODE_X(G.x_mode_depth--;)
+	IF_HUSH_منوال_X(G.x_منوال_گہرائی--;)
 	//bb_error_msg("%s: --x_mode_depth=%d", __func__, G.x_mode_depth);
-	return G.last_exitcode;
+	واپس G.آخری_exitcode;
 }
 
-static int FAST_FUNC builtin_exec(char **argv)
+ساکن صحیح FAST_FUNC builtin_exec(حرف **argv)
 {
 	argv = skip_dash_dash(argv);
-	if (argv[0] == NULL)
-		return EXIT_SUCCESS; /* bash does this */
+	اگر (argv[0] == تہی)
+		واپس EXIT_SUCCESS; /* bash does this */
 
 	/* Careful: we can end up here after [v]fork. Do not restore
 	 * tty pgrp then, only top-level shell process does that */
-	if (G_saved_tty_pgrp && getpid() == G.root_pid)
+	اگر (G_saved_tty_pgrp && getpid() == G.جڑ_pid)
 		tcsetpgrp(G_interactive_fd, G_saved_tty_pgrp);
 
 	/* Saved-redirect fds, script fds and G_interactive_fd are still
@@ -11713,7 +11713,7 @@ static int FAST_FUNC builtin_exec(char **argv)
 	execvp_or_die(argv);
 }
 
-static int FAST_FUNC builtin_exit(char **argv)
+ساکن صحیح FAST_FUNC builtin_exit(حرف **argv)
 {
 	debug_printf_exec("%s()\n", __func__);
 
@@ -11732,12 +11732,12 @@ static int FAST_FUNC builtin_exit(char **argv)
 
 	/* note: EXIT trap is run by hush_exit */
 	argv = skip_dash_dash(argv);
-	if (argv[0] == NULL) {
-#if ENABLE_HUSH_TRAP
-		if (G.pre_trap_exitcode >= 0) /* "exit" in trap uses $? from before the trap */
+	اگر (argv[0] == تہی) {
+#اگر ENABLE_HUSH_TRAP
+		اگر (G.pre_trap_exitcode >= 0) /* "exit" in trap uses $? from before the trap */
 			hush_exit(G.pre_trap_exitcode);
-#endif
-		hush_exit(G.last_exitcode);
+#اگر_ختم
+		hush_exit(G.آخری_exitcode);
 	}
 	/* mimic bash: exit 123abc == exit 255 + error msg */
 	xfunc_error_retval = 255;
@@ -11745,42 +11745,42 @@ static int FAST_FUNC builtin_exit(char **argv)
 	hush_exit(xatoi(argv[0]) & 0xff);
 }
 
-#if ENABLE_HUSH_TYPE
+#اگر ENABLE_HUSH_TYPE
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/type.html */
-static int FAST_FUNC builtin_type(char **argv)
+ساکن صحیح FAST_FUNC builtin_type(حرف **argv)
 {
-	int ret = EXIT_SUCCESS;
+	صحیح ret = EXIT_SUCCESS;
 
-	while (*++argv) {
-		const char *type;
-		char *path = NULL;
+	جب (*++argv) {
+		ثابت حرف *type;
+		حرف *راستہ_2 = تہی;
 
-		if (0) {} /* make conditional compile easier below */
+		اگر (0) {} /* make conditional compile easier below */
 		/*else if (find_alias(*argv))
 			type = "an alias";*/
-# if ENABLE_HUSH_FUNCTIONS
-		else if (find_function(*argv))
+# اگر ENABLE_HUSH_FUNCTIONS
+		ورنہ اگر (ڈھونڈو_function(*argv))
 			type = "a function";
 # endif
-		else if (find_builtin(*argv))
+		ورنہ اگر (ڈھونڈو_builtin(*argv))
 			type = "a shell builtin";
-		else if ((path = find_in_path(*argv)) != NULL)
-			type = path;
-		else {
-			bb_error_msg("type: %s: not found", *argv);
+		ورنہ اگر ((راستہ_2 = ڈھونڈو_اندر_راستہ(*argv)) != تہی)
+			type = راستہ_2;
+		ورنہ {
+			bb_error_پیغام("type: %s: not found", *argv);
 			ret = EXIT_FAILURE;
-			continue;
+			جاری;
 		}
 
-		printf("%s is %s\n", *argv, type);
-		free(path);
+		لکھو("%s is %s\n", *argv, type);
+		آزاد(راستہ_2);
 	}
 
-	return ret;
+	واپس ret;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_READ
+#اگر ENABLE_HUSH_READ
 /* Interruptibility of read builtin in bash
  * (tested on bash-4.2.8 by sending signals (not by ^C)):
  *
@@ -11805,22 +11805,22 @@ static int FAST_FUNC builtin_type(char **argv)
  * - does not interrupt read regardless of interactivity:
  *   try: sleep 1 & read x; echo $x
  */
-static int FAST_FUNC builtin_read(char **argv)
+ساکن صحیح FAST_FUNC builtin_read(حرف **argv)
 {
-	const char *r;
-	struct builtin_read_params params;
+	ثابت حرف *r;
+	ساخت builtin_read_params params;
 
-	memset(&params, 0, sizeof(params));
+	memset(&params, 0, حجم(params));
 
 	/* "!": do not abort on errors.
 	 * Option string must start with "sr" to match BUILTIN_READ_xxx
 	 */
 	params.read_flags = getopt32(argv,
-# if BASH_READ_D
+# اگر BASH_READ_D
 		IF_NOT_HUSH_BASH_COMPAT("^")
 		"!srn:p:t:u:d:" IF_NOT_HUSH_BASH_COMPAT("\0" "-1"/*min 1 arg*/),
 		&params.opt_n, &params.opt_p, &params.opt_t, &params.opt_u, &params.opt_d
-# else
+# ورنہ
 		IF_NOT_HUSH_BASH_COMPAT("^")
 		"!srn:p:t:u:" IF_NOT_HUSH_BASH_COMPAT("\0" "-1"/*min 1 arg*/),
 		&params.opt_n, &params.opt_p, &params.opt_t, &params.opt_u
@@ -11829,72 +11829,72 @@ static int FAST_FUNC builtin_read(char **argv)
 //for the case of !BASH "read" with no args (now it fails silently)
 //(or maybe extend getopt32() to emit a message if "-1" fails)
 	);
-	if ((uint32_t)params.read_flags == (uint32_t)-1)
-		return EXIT_FAILURE;
+	اگر ((uint32_t)params.read_flags == (uint32_t)-1)
+		واپس EXIT_FAILURE;
 	argv += optind;
 	params.argv = argv;
-	params.setvar = set_local_var_from_halves;
-	params.ifs = get_local_var_value("IFS"); /* can be NULL */
+	params.setvar = سیٹ_local_var_from_halves;
+	params.ifs = get_local_var_قدر("IFS"); /* can be NULL */
 
  again:
 	r = shell_builtin_read(&params);
 
-	if ((uintptr_t)r == 1 && errno == EINTR) {
-		unsigned sig = check_and_run_traps();
-		if (sig != SIGINT)
-			goto again;
+	اگر ((uintptr_t)r == 1 && errno == EINTR) {
+		غیرعلامتی sig = check_and_تسلسل_traps();
+		اگر (sig != SIGINT)
+			جاؤ again;
 	}
 
-	if ((uintptr_t)r > 1) {
-		bb_simple_error_msg(r);
-		r = (char*)(uintptr_t)1;
+	اگر ((uintptr_t)r > 1) {
+		bb_simple_error_پیغام(r);
+		r = (حرف*)(uintptr_t)1;
 	}
 
-	return (uintptr_t)r;
+	واپس (uintptr_t)r;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_UMASK
-static int FAST_FUNC builtin_umask(char **argv)
+#اگر ENABLE_HUSH_UMASK
+ساکن صحیح FAST_FUNC builtin_umask(حرف **argv)
 {
-	int rc;
-	mode_t mask;
+	صحیح rc;
+	mode_t نقاب;
 
 	rc = 1;
-	mask = umask(0);
+	نقاب = umask(0);
 	argv = skip_dash_dash(argv);
-	if (argv[0]) {
-		mode_t old_mask = mask;
+	اگر (argv[0]) {
+		mode_t old_نقاب = نقاب;
 
 		/* numeric umasks are taken as-is */
 		/* symbolic umasks are inverted: "umask a=rx" calls umask(222) */
-		if (!isdigit(argv[0][0]))
-			mask ^= 0777;
-		mask = bb_parse_mode(argv[0], mask);
-		if (!isdigit(argv[0][0]))
-			mask ^= 0777;
-		if ((unsigned)mask > 0777) {
-			mask = old_mask;
+		اگر (!ہندسہ_ہے(argv[0][0]))
+			نقاب ^= 0777;
+		نقاب = bb_parse_منوال(argv[0], نقاب);
+		اگر (!ہندسہ_ہے(argv[0][0]))
+			نقاب ^= 0777;
+		اگر ((غیرعلامتی)نقاب > 0777) {
+			نقاب = old_نقاب;
 			/* bash messages:
 			 * bash: umask: 'q': invalid symbolic mode operator
 			 * bash: umask: 999: octal number out of range
 			 */
-			bb_error_msg("%s: invalid mode '%s'", "umask", argv[0]);
+			bb_error_پیغام("%s: invalid mode '%s'", "umask", argv[0]);
 			rc = 0;
 		}
-	} else {
+	} ورنہ {
 		/* Mimic bash */
-		printf("%04o\n", (unsigned) mask);
+		لکھو("%04o\n", (غیرعلامتی) نقاب);
 		/* fall through and restore mask which we set to 0 */
 	}
-	umask(mask);
+	umask(نقاب);
 
-	return !rc; /* rc != 0 - success */
+	واپس !rc; /* rc != 0 - success */
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY || ENABLE_HUSH_SET || ENABLE_HUSH_TRAP
-static void print_escaped(const char *s)
+#اگر ENABLE_HUSH_EXPORT || ENABLE_HUSH_READONLY || ENABLE_HUSH_سیٹ || ENABLE_HUSH_TRAP
+ساکن خالی print_escaped(ثابت حرف *s)
 {
 //TODO? bash "set" does not quote variables which contain only alnums and "%+,-./:=@_~",
 // (but "export" quotes all variables, even with only these chars).
@@ -11902,69 +11902,69 @@ static void print_escaped(const char *s)
 // (example: "set" printing var== instead of var='=' looks strange)
 // IOW: do not quote "-./:@_": / is used in pathnames, : in PATH, -._ often in file names, @ in emails
 
-	if (*s == '\'')
-		goto squote;
-	do {
-		const char *p = strchrnul(s, '\'');
+	اگر (*s == '\'')
+		جاؤ squote;
+	کرو {
+		ثابت حرف *p = strchrnul(s, '\'');
 		/* print 'xxxx', possibly just '' */
-		printf("'%.*s'", (int)(p - s), s);
-		if (*p == '\0')
-			break;
+		لکھو("'%.*s'", (صحیح)(p - s), s);
+		اگر (*p == '\0')
+			توڑو;
 		s = p;
  squote:
 		/* s points to '; print "'''...'''" */
-		putchar('"');
-		do putchar('\''); while (*++s == '\'');
-		putchar('"');
-	} while (*s);
+		حرف_لکھو('"');
+		کرو حرف_لکھو('\''); جب (*++s == '\'');
+		حرف_لکھو('"');
+	} جب (*s);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_EXPORT || ENABLE_HUSH_LOCAL || ENABLE_HUSH_READONLY
-static int helper_export_local(char **argv, unsigned flags)
+#اگر ENABLE_HUSH_EXPORT || ENABLE_HUSH_LOCAL || ENABLE_HUSH_READONLY
+ساکن صحیح helper_export_local(حرف **argv, غیرعلامتی flags)
 {
-	do {
-		char *name = *argv;
-		const char *name_end = endofname(name);
+	کرو {
+		حرف *name = *argv;
+		ثابت حرف *name_انتہا = endofname(name);
 
-		if (*name_end == '\0') {
-			struct variable *var, **vpp;
+		اگر (*name_انتہا == '\0') {
+			ساخت variable *var, **vpp;
 
-			vpp = get_ptr_to_local_var(name);
-			var = vpp ? *vpp : NULL;
+			vpp = get_ptr_مقصد_local_var(name);
+			var = vpp ? *vpp : تہی;
 
-			if (flags & SETFLAG_UNEXPORT) {
+			اگر (flags & SETFLAG_UNEXPORT) {
 				/* export -n NAME (without =VALUE) */
-				if (var) {
+				اگر (var) {
 					var->flg_export = 0;
 					debug_printf_env("%s: unsetenv '%s'\n", __func__, name);
 					unsetenv(name);
 				} /* else: export -n NOT_EXISTING_VAR: no-op */
-				continue;
+				جاری;
 			}
-			if (flags & SETFLAG_EXPORT) {
+			اگر (flags & SETFLAG_EXPORT) {
 				/* export NAME (without =VALUE) */
-				if (var) {
+				اگر (var) {
 					var->flg_export = 1;
 					debug_printf_env("%s: putenv '%s'\n", __func__, var->varstr);
 					putenv(var->varstr);
-					continue;
+					جاری;
 				}
 			}
-			if (flags & SETFLAG_MAKE_RO) {
+			اگر (flags & SETFLAG_MAKE_RO) {
 				/* readonly NAME (without =VALUE) */
-				if (var) {
+				اگر (var) {
 					var->flg_read_only = 1;
-					continue;
+					جاری;
 				}
 			}
-# if ENABLE_HUSH_LOCAL
+# اگر ENABLE_HUSH_LOCAL
 			/* Is this "local" bltin? */
-			if (!(flags & (SETFLAG_EXPORT|SETFLAG_UNEXPORT|SETFLAG_MAKE_RO))) {
-				unsigned lvl = flags >> SETFLAG_VARLVL_SHIFT;
-				if (var && var->var_nest_level == lvl) {
+			اگر (!(flags & (SETFLAG_EXPORT|SETFLAG_UNEXPORT|SETFLAG_MAKE_RO))) {
+				غیرعلامتی lvl = flags >> SETFLAG_VARLVL_سرکاؤ;
+				اگر (var && var->var_nest_level == lvl) {
 					/* "local x=abc; ...; local x" - ignore second local decl */
-					continue;
+					جاری;
 				}
 			}
 # endif
@@ -11982,11 +11982,11 @@ static int helper_export_local(char **argv, unsigned flags)
 			 * in the future.
 			 */
 			name = xasprintf("%s=", name);
-		} else {
-			if (*name_end != '=') {
-				bb_error_msg("'%s': bad variable name", name);
+		} ورنہ {
+			اگر (*name_انتہا != '=') {
+				bb_error_پیغام("'%s': bad variable name", name);
 				/* do not parse following argv[]s: */
-				return 1;
+				واپس 1;
 			}
 			/* (Un)exporting/making local NAME=VALUE */
 			name = xstrdup(name);
@@ -11994,65 +11994,65 @@ static int helper_export_local(char **argv, unsigned flags)
 			unbackslash(name);
 		}
 		debug_printf_env("%s: set_local_var('%s')\n", __func__, name);
-		if (set_local_var(name, flags))
-			return EXIT_FAILURE;
-	} while (*++argv);
-	return EXIT_SUCCESS;
+		اگر (سیٹ_local_var(name, flags))
+			واپس EXIT_FAILURE;
+	} جب (*++argv);
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_EXPORT
-static int FAST_FUNC builtin_export(char **argv)
+#اگر ENABLE_HUSH_EXPORT
+ساکن صحیح FAST_FUNC builtin_export(حرف **argv)
 {
-	unsigned opt_unexport;
+	غیرعلامتی opt_unexport;
 
-# if ENABLE_HUSH_EXPORT_N
+# اگر ENABLE_HUSH_EXPORT_N
 	/* "!": do not abort on errors */
 	opt_unexport = getopt32(argv, "!n");
-	if (opt_unexport == (uint32_t)-1)
-		return EXIT_FAILURE;
+	اگر (opt_unexport == (uint32_t)-1)
+		واپس EXIT_FAILURE;
 	argv += optind;
-# else
+# ورنہ
 	opt_unexport = 0;
 	argv++;
 # endif
 
-	if (argv[0] == NULL) {
-		char **e = environ;
-		if (e) {
-			while (*e) {
-# if 0
+	اگر (argv[0] == تہی) {
+		حرف **e = environ;
+		اگر (e) {
+			جب (*e) {
+# اگر 0
 				puts(*e++);
-# else
+# ورنہ
 				/* ash emits: export VAR='VAL'
 				 * bash: declare -x VAR="VAL"
 				 * we follow ash example */
-				const char *s = *e++;
-				const char *p = strchr(s, '=');
+				ثابت حرف *s = *e++;
+				ثابت حرف *p = strchr(s, '=');
 
-				if (!p) /* wtf? take next variable */
-					continue;
+				اگر (!p) /* wtf? take next variable */
+					جاری;
 				/* "export VAR=" */
-				printf("%s %.*s", "export", (int)(p - s) + 1, s);
+				لکھو("%s %.*s", "export", (صحیح)(p - s) + 1, s);
 				print_escaped(p + 1);
-				putchar('\n');
+				حرف_لکھو('\n');
 # endif
 			}
 			/*fflush_all(); - done after each builtin anyway */
 		}
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
 
-	return helper_export_local(argv, opt_unexport ? SETFLAG_UNEXPORT : SETFLAG_EXPORT);
+	واپس helper_export_local(argv, opt_unexport ? SETFLAG_UNEXPORT : SETFLAG_EXPORT);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_LOCAL
-static int FAST_FUNC builtin_local(char **argv)
+#اگر ENABLE_HUSH_LOCAL
+ساکن صحیح FAST_FUNC builtin_local(حرف **argv)
 {
-	if (G.func_nest_level == 0) {
-		bb_error_msg("%s: not in a function", argv[0]);
-		return EXIT_FAILURE; /* bash compat */
+	اگر (G.func_nest_level == 0) {
+		bb_error_پیغام("%s: not in a function", argv[0]);
+		واپس EXIT_FAILURE; /* bash compat */
 	}
 //TODO? ash and bash support "local -" special form,
 //which saves/restores $- around function call (including async returns, such as ^C)
@@ -12062,78 +12062,78 @@ static int FAST_FUNC builtin_local(char **argv)
 	 * need to use level - 1 here. Or else the variable will be removed at once
 	 * after builtin returns.
 	 */
-	return helper_export_local(argv, (G.var_nest_level - 1) << SETFLAG_VARLVL_SHIFT);
+	واپس helper_export_local(argv, (G.var_nest_level - 1) << SETFLAG_VARLVL_سرکاؤ);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_READONLY
-static int FAST_FUNC builtin_readonly(char **argv)
+#اگر ENABLE_HUSH_READONLY
+ساکن صحیح FAST_FUNC builtin_readonly(حرف **argv)
 {
 	argv++;
-	if (*argv == NULL) {
+	اگر (*argv == تہی) {
 		/* bash: readonly [-p]: list all readonly VARs
 		 * (-p has no effect in bash)
 		 */
-		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
-			if (e->flg_read_only) {
-				const char *s = e->varstr;
-				const char *p = strchr(s, '=');
+		ساخت variable *e;
+		برائے (e = G.چوٹی_var; e; e = e->اگلا) {
+			اگر (e->flg_read_only) {
+				ثابت حرف *s = e->varstr;
+				ثابت حرف *p = strchr(s, '=');
 
-				if (!p) /* wtf? take next variable */
-					continue;
+				اگر (!p) /* wtf? take next variable */
+					جاری;
 				/* "readonly VAR=" */
-				printf("%s %.*s", "readonly", (int)(p - s) + 1, s);
+				لکھو("%s %.*s", "readonly", (صحیح)(p - s) + 1, s);
 				print_escaped(p + 1);
-				putchar('\n');
+				حرف_لکھو('\n');
 			}
 		}
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
-	return helper_export_local(argv, SETFLAG_MAKE_RO);
+	واپس helper_export_local(argv, SETFLAG_MAKE_RO);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_UNSET
+#اگر ENABLE_HUSH_UNSET
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#unset */
-static int FAST_FUNC builtin_unset(char **argv)
+ساکن صحیح FAST_FUNC builtin_unset(حرف **argv)
 {
-	int ret;
-	unsigned opts;
+	صحیح ret;
+	غیرعلامتی opts;
 
 	/* "!": do not abort on errors */
 	/* "+": stop at 1st non-option */
 	opts = getopt32(argv, "!+vf");
-	if (opts == (unsigned)-1)
-		return EXIT_FAILURE;
-	if (opts == 3) {
-		bb_simple_error_msg("unset: -v and -f are exclusive");
-		return EXIT_FAILURE;
+	اگر (opts == (غیرعلامتی)-1)
+		واپس EXIT_FAILURE;
+	اگر (opts == 3) {
+		bb_simple_error_پیغام("unset: -v and -f are exclusive");
+		واپس EXIT_FAILURE;
 	}
 	argv += optind;
 
 	ret = EXIT_SUCCESS;
-	while (*argv) {
-		if (!(opts & 2)) { /* not -f */
-			if (unset_local_var(*argv)) {
+	جب (*argv) {
+		اگر (!(opts & 2)) { /* not -f */
+			اگر (unset_local_var(*argv)) {
 				/* unset <nonexistent_var> doesn't fail.
 				 * Error is when one tries to unset RO var.
 				 * Message was printed by unset_local_var. */
 				ret = EXIT_FAILURE;
 			}
 		}
-# if ENABLE_HUSH_FUNCTIONS
-		else {
+# اگر ENABLE_HUSH_FUNCTIONS
+		ورنہ {
 			unset_func(*argv);
 		}
 # endif
 		argv++;
 	}
-	return ret;
+	واپس ret;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_SET
+#اگر ENABLE_HUSH_سیٹ
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#set
  * built-in 'set' handler
  * SUSv3 says:
@@ -12155,81 +12155,81 @@ static int FAST_FUNC builtin_unset(char **argv)
  *
  * So far, we only support "set -- [argument...]" and some of the short names.
  */
-static int FAST_FUNC builtin_set(char **argv)
+ساکن صحیح FAST_FUNC builtin_سیٹ(حرف **argv)
 {
-	int n;
-	char **pp, **g_argv;
-	char *arg = *++argv;
+	صحیح n;
+	حرف **pp, **g_argv;
+	حرف *arg = *++argv;
 
-	if (arg == NULL) {
-		struct variable *e;
-		for (e = G.top_var; e; e = e->next) {
-			const char *s = e->varstr;
-			const char *p = strchr(s, '=');
+	اگر (arg == تہی) {
+		ساخت variable *e;
+		برائے (e = G.چوٹی_var; e; e = e->اگلا) {
+			ثابت حرف *s = e->varstr;
+			ثابت حرف *p = strchr(s, '=');
 
-			if (!p) /* wtf? take next variable */
-				continue;
+			اگر (!p) /* wtf? take next variable */
+				جاری;
 			/* var= */
-			printf("%.*s", (int)(p - s) + 1, s);
+			لکھو("%.*s", (صحیح)(p - s) + 1, s);
 			print_escaped(p + 1);
-			putchar('\n');
+			حرف_لکھو('\n');
 		}
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
 
-	do {
-		if (strcmp(arg, "--") == 0) {
+	کرو {
+		اگر (strcmp(arg, "--") == 0) {
 			++argv;
-			goto set_argv;
+			جاؤ سیٹ_argv;
 		}
-		if (arg[0] != '+' && arg[0] != '-')
-			break;
-		for (n = 1; arg[n]; ++n) {
-			if (set_mode((arg[0] == '-'), arg[n], argv[1])) {
-				bb_error_msg("%s: %s: invalid option", "set", arg);
-				return EXIT_FAILURE;
+		اگر (arg[0] != '+' && arg[0] != '-')
+			توڑو;
+		برائے (n = 1; arg[n]; ++n) {
+			اگر (سیٹ_منوال((arg[0] == '-'), arg[n], argv[1])) {
+				bb_error_پیغام("%s: %s: invalid option", "set", arg);
+				واپس EXIT_FAILURE;
 			}
-			if (arg[n] == 'o' && argv[1])
+			اگر (arg[n] == 'o' && argv[1])
 				argv++;
 		}
-	} while ((arg = *++argv) != NULL);
+	} جب ((arg = *++argv) != تہی);
 	/* Now argv[0] is 1st argument */
 
-	if (arg == NULL)
-		return EXIT_SUCCESS;
- set_argv:
+	اگر (arg == تہی)
+		واپس EXIT_SUCCESS;
+ سیٹ_argv:
 
 	/* NB: G.global_argv[0] ($0) is never freed/changed */
 	g_argv = G.global_argv;
-	if (G.global_args_malloced) {
+	اگر (G.global_دلائل_malloced) {
 		pp = g_argv;
-		while (*++pp)
-			free(*pp);
-		g_argv[1] = NULL;
-	} else {
-		G.global_args_malloced = 1;
-		pp = xzalloc(sizeof(pp[0]) * 2);
+		جب (*++pp)
+			آزاد(*pp);
+		g_argv[1] = تہی;
+	} ورنہ {
+		G.global_دلائل_malloced = 1;
+		pp = xzalloc(حجم(pp[0]) * 2);
 		pp[0] = g_argv[0]; /* retain $0 */
 		g_argv = pp;
 	}
 	/* This realloc's G.global_argv */
-	G.global_argv = pp = add_strings_to_strings(g_argv, argv, /*dup:*/ 1);
+	G.global_argv = pp = جوڑو_لڑیاں_مقصد_لڑیاں(g_argv, argv, /*dup:*/ 1);
 
 	G.global_argc = 1 + string_array_len(pp + 1);
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-static int FAST_FUNC builtin_shift(char **argv)
+ساکن صحیح FAST_FUNC builtin_سرکاؤ(حرف **argv)
 {
-	int n = 1;
+	صحیح n = 1;
 	argv = skip_dash_dash(argv);
-	if (argv[0]) {
-		n = bb_strtou(argv[0], NULL, 10);
-		if (errno || n < 0) {
+	اگر (argv[0]) {
+		n = bb_strtou(argv[0], تہی, 10);
+		اگر (errno || n < 0) {
 			/* shared string with ash.c */
-			bb_error_msg("Illegal number: %s", argv[0]);
+			bb_error_پیغام("Illegal number: %s", argv[0]);
 			/*
 			 * ash aborts in this case.
 			 * bash prints error message and set $? to 1.
@@ -12239,22 +12239,22 @@ static int FAST_FUNC builtin_shift(char **argv)
 			 */
 		}
 	}
-	if (n >= 0 && n < G.global_argc) {
-		if (G_global_args_malloced) {
-			int m = 1;
-			while (m <= n)
-				free(G.global_argv[m++]);
+	اگر (n >= 0 && n < G.global_argc) {
+		اگر (G_global_دلائل_malloced) {
+			صحیح m = 1;
+			جب (m <= n)
+				آزاد(G.global_argv[m++]);
 		}
 		G.global_argc -= n;
 		memmove(&G.global_argv[1], &G.global_argv[n+1],
-				G.global_argc * sizeof(G.global_argv[0]));
-		return EXIT_SUCCESS;
+				G.global_argc * حجم(G.global_argv[0]));
+		واپس EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	واپس EXIT_FAILURE;
 }
 
-#if ENABLE_HUSH_GETOPTS
-static int FAST_FUNC builtin_getopts(char **argv)
+#اگر ENABLE_HUSH_GETOPTS
+ساکن صحیح FAST_FUNC builtin_getopts(حرف **argv)
 {
 /* http://pubs.opengroup.org/onlinepubs/9699919799/utilities/getopts.html
 
@@ -12269,33 +12269,33 @@ Test that VAR is a valid variable name?
 
 "Whenever the shell is invoked, OPTIND shall be initialized to 1"
 */
-	char cbuf[2];
-	const char *cp, *optstring, *var;
-	int c, n, exitcode, my_opterr;
-	unsigned count;
+	حرف cbuf[2];
+	ثابت حرف *cp, *optstring, *var;
+	صحیح c, n, exitcode, my_opterr;
+	غیرعلامتی گنتی;
 
 	optstring = *++argv;
-	if (!optstring || !(var = *++argv)) {
-		bb_simple_error_msg("usage: getopts OPTSTRING VAR [ARGS]");
-		return EXIT_FAILURE;
+	اگر (!optstring || !(var = *++argv)) {
+		bb_simple_error_پیغام("usage: getopts OPTSTRING VAR [ARGS]");
+		واپس EXIT_FAILURE;
 	}
 
-	if (argv[1])
+	اگر (argv[1])
 		argv[0] = G.global_argv[0]; /* for error messages in getopt() */
-	else
+	ورنہ
 		argv = G.global_argv;
 	cbuf[1] = '\0';
 
 	my_opterr = 0;
-	if (optstring[0] != ':') {
-		cp = get_local_var_value("OPTERR");
+	اگر (optstring[0] != ':') {
+		cp = get_local_var_قدر("OPTERR");
 		/* 0 if "OPTERR=0", 1 otherwise */
 		my_opterr = (!cp || NOT_LONE_CHAR(cp, '0'));
 	}
 
 	/* getopts stops on first non-option. Add "+" to force that */
 	/*if (optstring[0] != '+')*/ {
-		char *s = alloca(strlen(optstring) + 2);
+		حرف *s = alloca(لڑی_لمبائی(optstring) + 2);
 		sprintf(s, "+%s", optstring);
 		optstring = s;
 	}
@@ -12327,20 +12327,20 @@ Test that VAR is a valid variable name?
 	 * (N == G.getopt_count is reset to 0 whenever OPTIND is [un]set).
 	 */
 	GETOPT_RESET();
-	count = 0;
+	گنتی = 0;
 	n = string_array_len(argv);
-	do {
-		optarg = NULL;
-		opterr = (count < G.getopt_count) ? 0 : my_opterr;
+	کرو {
+		optarg = تہی;
+		opterr = (گنتی < G.getopt_گنتی) ? 0 : my_opterr;
 		c = getopt(n, argv, optstring);
-		if (c < 0)
-			break;
-		count++;
-	} while (count <= G.getopt_count);
+		اگر (c < 0)
+			توڑو;
+		گنتی++;
+	} جب (گنتی <= G.getopt_گنتی);
 
 	/* Set OPTIND. Prevent resetting of the magic counter! */
-	set_local_var_from_halves("OPTIND", utoa(optind));
-	G.getopt_count = count; /* "next time, give me N+1'th result" */
+	سیٹ_local_var_from_halves("OPTIND", utoa(optind));
+	G.getopt_گنتی = گنتی; /* "next time, give me N+1'th result" */
 	GETOPT_RESET(); /* just in case */
 
 	/* Set OPTARG */
@@ -12349,176 +12349,176 @@ Test that VAR is a valid variable name?
 	 * does not have an option-argument, OPTARG shall be unset."
 	 */
 	cp = optarg;
-	if (c == '?') {
+	اگر (c == '?') {
 		/* If ":optstring" and unknown option is seen,
 		 * it is stored to OPTARG.
 		 */
-		if (optstring[1] == ':') {
+		اگر (optstring[1] == ':') {
 			cbuf[0] = optopt;
 			cp = cbuf;
 		}
 	}
-	if (cp)
-		set_local_var_from_halves("OPTARG", cp);
-	else
+	اگر (cp)
+		سیٹ_local_var_from_halves("OPTARG", cp);
+	ورنہ
 		unset_local_var("OPTARG");
 
 	/* Convert -1 to "?" */
 	exitcode = EXIT_SUCCESS;
-	if (c < 0) { /* -1: end of options */
+	اگر (c < 0) { /* -1: end of options */
 		exitcode = EXIT_FAILURE;
 		c = '?';
 	}
 
 	/* Set VAR */
 	cbuf[0] = c;
-	set_local_var_from_halves(var, cbuf);
+	سیٹ_local_var_from_halves(var, cbuf);
 
-	return exitcode;
+	واپس exitcode;
 }
-#endif
+#اگر_ختم
 
-static int FAST_FUNC builtin_source(char **argv)
+ساکن صحیح FAST_FUNC builtin_ماخذ(حرف **argv)
 {
-	char *arg_path, *filename;
-	HFILE *input;
+	حرف *arg_راستہ, *filename;
+	HFILE *داخلہ;
 	save_arg_t sv;
-	char *args_need_save;
-#if ENABLE_HUSH_FUNCTIONS
+	حرف *دلائل_need_save;
+#اگر ENABLE_HUSH_FUNCTIONS
 	smallint sv_flg;
-#endif
+#اگر_ختم
 
 	argv = skip_dash_dash(argv);
 	filename = argv[0];
-	if (!filename) {
+	اگر (!filename) {
 		/* bash says: "bash: .: filename argument required" */
-		return 2; /* bash compat */
+		واپس 2; /* bash compat */
 	}
-	arg_path = NULL;
-	if (!strchr(filename, '/')) {
-		arg_path = find_in_path(filename);
-		if (arg_path)
-			filename = arg_path;
-		else if (!ENABLE_HUSH_BASH_SOURCE_CURDIR) {
+	arg_راستہ = تہی;
+	اگر (!strchr(filename, '/')) {
+		arg_راستہ = ڈھونڈو_اندر_راستہ(filename);
+		اگر (arg_راستہ)
+			filename = arg_راستہ;
+		ورنہ اگر (!ENABLE_HUSH_BASH_ماخذ_CURDIR) {
 			errno = ENOENT;
-			bb_simple_perror_msg(filename);
-			return EXIT_FAILURE;
+			bb_simple_perror_پیغام(filename);
+			واپس EXIT_FAILURE;
 		}
 	}
-	input = hfopen(filename);
-	free(arg_path);
-	if (!input) {
-		bb_perror_msg("%s", filename);
+	داخلہ = hfopen(filename);
+	آزاد(arg_راستہ);
+	اگر (!داخلہ) {
+		bb_perror_پیغام("%s", filename);
 		/* POSIX: non-interactive shell should abort here,
 		 * not merely fail. So far no one complained :)
 		 */
-		return EXIT_FAILURE;
+		واپس EXIT_FAILURE;
 	}
 
-#if ENABLE_HUSH_FUNCTIONS
-	sv_flg = G_flag_return_in_progress;
+#اگر ENABLE_HUSH_FUNCTIONS
+	sv_flg = G_flag_return_اندر_پیش_رفت;
 	/* "we are inside sourced file, ok to use return" */
-	G_flag_return_in_progress = -1;
-#endif
-	args_need_save = argv[1]; /* used as a boolean variable */
-	if (args_need_save)
-		save_and_replace_G_args(&sv, argv);
+	G_flag_return_اندر_پیش_رفت = -1;
+#اگر_ختم
+	دلائل_need_save = argv[1]; /* used as a boolean variable */
+	اگر (دلائل_need_save)
+		save_and_replace_G_دلائل(&sv, argv);
 
 	/* "false; . ./empty_line; echo Zero:$?" should print 0 */
-	G.last_exitcode = 0;
-	parse_and_run_file(input);
-	hfclose(input);
+	G.آخری_exitcode = 0;
+	parse_and_تسلسل_file(داخلہ);
+	hfclose(داخلہ);
 
-	if (args_need_save) /* can't use argv[1] instead: "shift" can mangle it */
-		restore_G_args(&sv, argv);
-#if ENABLE_HUSH_FUNCTIONS
-	G_flag_return_in_progress = sv_flg;
-#endif
+	اگر (دلائل_need_save) /* can't use argv[1] instead: "shift" can mangle it */
+		restore_G_دلائل(&sv, argv);
+#اگر ENABLE_HUSH_FUNCTIONS
+	G_flag_return_اندر_پیش_رفت = sv_flg;
+#اگر_ختم
 
-	return G.last_exitcode;
+	واپس G.آخری_exitcode;
 }
 
-#if ENABLE_HUSH_TRAP
-static int FAST_FUNC builtin_trap(char **argv)
+#اگر ENABLE_HUSH_TRAP
+ساکن صحیح FAST_FUNC builtin_trap(حرف **argv)
 {
-	int sig;
-	char *new_cmd;
+	صحیح sig;
+	حرف *new_cmd;
 
-	if (!G_traps)
-		G_traps = xzalloc(sizeof(G_traps[0]) * NSIG);
+	اگر (!G_traps)
+		G_traps = xzalloc(حجم(G_traps[0]) * NSIG);
 
 	argv++;
-	if (!*argv) {
-		int i;
+	اگر (!*argv) {
+		صحیح i;
 		/* No args: print all trapped */
-		for (i = 0; i < NSIG; ++i) {
-			if (G_traps[i]) {
-				printf("trap -- ");
+		برائے (i = 0; i < NSIG; ++i) {
+			اگر (G_traps[i]) {
+				لکھو("trap -- ");
 				print_escaped(G_traps[i]);
 				/* note: bash adds "SIG", but only if invoked
 				 * as "bash". If called as "sh", or if set -o posix,
 				 * then it prints short signal names.
 				 * We are printing short names: */
-				printf(" %s\n", get_signame(i));
+				لکھو(" %s\n", get_signame(i));
 			}
 		}
 		/*fflush_all(); - done after each builtin anyway */
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
 
-	new_cmd = NULL;
+	new_cmd = تہی;
 	/* If first arg is a number: reset all specified signals */
-	sig = bb_strtou(*argv, NULL, 10);
-	if (errno == 0) {
-		int ret;
+	sig = bb_strtou(*argv, تہی, 10);
+	اگر (errno == 0) {
+		صحیح ret;
  process_sig_list:
 		ret = EXIT_SUCCESS;
-		while (*argv) {
+		جب (*argv) {
 			sighandler_t handler;
 
 			sig = get_signum(*argv++);
-			if (sig < 0) {
+			اگر (sig < 0) {
 				ret = EXIT_FAILURE;
 				/* Mimic bash message exactly */
-				bb_error_msg("trap: %s: invalid signal specification", argv[-1]);
-				continue;
+				bb_error_پیغام("trap: %s: invalid signal specification", argv[-1]);
+				جاری;
 			}
 
-			free(G_traps[sig]);
+			آزاد(G_traps[sig]);
 			G_traps[sig] = xstrdup(new_cmd);
 
 			debug_printf("trap: setting SIG%s (%i) to '%s'\n",
 				get_signame(sig), sig, G_traps[sig]);
 
 			/* There is no signal for 0 (EXIT) */
-			if (sig == 0)
-				continue;
+			اگر (sig == 0)
+				جاری;
 
-			if (new_cmd)
-				handler = (new_cmd[0] ? record_pending_signo : SIG_IGN);
-			else
+			اگر (new_cmd)
+				handler = (new_cmd[0] ? ریکارڈ_pending_signo : SIG_IGN);
+			ورنہ
 				/* We are removing trap handler */
 				handler = pick_sighandler(sig);
 			install_sighandler(sig, handler);
 		}
-		return ret;
+		واپس ret;
 	}
 
-	if (!argv[1]) { /* no second arg */
-		bb_simple_error_msg("trap: invalid arguments");
-		return EXIT_FAILURE;
+	اگر (!argv[1]) { /* no second arg */
+		bb_simple_error_پیغام("trap: invalid arguments");
+		واپس EXIT_FAILURE;
 	}
 
 	/* First arg is "-": reset all specified to default */
 	/* First arg is "--": skip it, the rest is "handler SIGs..." */
 	/* Everything else: set arg as signal handler
 	 * (includes "" case, which ignores signal) */
-	if (argv[0][0] == '-') {
-		if (argv[0][1] == '\0') { /* "-" */
+	اگر (argv[0][0] == '-') {
+		اگر (argv[0][1] == '\0') { /* "-" */
 			/* new_cmd remains NULL: "reset these sigs" */
-			goto reset_traps;
+			جاؤ reset_traps;
 		}
-		if (argv[0][1] == '-' && argv[0][2] == '\0') { /* "--" */
+		اگر (argv[0][1] == '-' && argv[0][2] == '\0') { /* "--" */
 			argv++;
 		}
 		/* else: "-something", no special meaning */
@@ -12526,145 +12526,145 @@ static int FAST_FUNC builtin_trap(char **argv)
 	new_cmd = *argv;
  reset_traps:
 	argv++;
-	goto process_sig_list;
+	جاؤ process_sig_list;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_JOB
-static struct pipe *parse_jobspec(const char *str)
+#اگر ENABLE_HUSH_کام
+ساکن ساخت pipe *parse_jobspec(ثابت حرف *str)
 {
-	struct pipe *pi;
-	unsigned jobnum;
+	ساخت pipe *pi;
+	غیرعلامتی jobnum;
 
-	if (sscanf(str, "%%%u", &jobnum) != 1) {
-		if (str[0] != '%'
+	اگر (لڑی_سے_پڑھو(str, "%%%u", &jobnum) != 1) {
+		اگر (str[0] != '%'
 		 || (str[1] != '%' && str[1] != '+' && str[1] != '\0')
 		) {
-			bb_error_msg("bad argument '%s'", str);
-			return NULL;
+			bb_error_پیغام("bad argument '%s'", str);
+			واپس تہی;
 		}
 		/* It is "%%", "%+" or "%" - current job */
-		jobnum = G.last_jobid;
-		if (jobnum == 0) {
-			bb_simple_error_msg("no current job");
-			return NULL;
+		jobnum = G.آخری_jobid;
+		اگر (jobnum == 0) {
+			bb_simple_error_پیغام("no current job");
+			واپس تہی;
 		}
 	}
-	for (pi = G.job_list; pi; pi = pi->next) {
-		if (pi->jobid == jobnum) {
-			return pi;
+	برائے (pi = G.کام_list; pi; pi = pi->اگلا) {
+		اگر (pi->jobid == jobnum) {
+			واپس pi;
 		}
 	}
-	bb_error_msg("%u: no such job", jobnum);
-	return NULL;
+	bb_error_پیغام("%u: no such job", jobnum);
+	واپس تہی;
 }
 
-static int FAST_FUNC builtin_jobs(char **argv UNUSED_PARAM)
+ساکن صحیح FAST_FUNC builtin_jobs(حرف **argv غیر_مستعمل_PARAM)
 {
-	struct pipe *job;
-	const char *status_string;
+	ساخت pipe *کام;
+	ثابت حرف *حالت_string;
 
-	checkjobs(NULL, 0 /*(no pid to wait for)*/);
-	for (job = G.job_list; job; job = job->next) {
-		if (job->alive_cmds == job->stopped_cmds)
-			status_string = "Stopped";
-		else
-			status_string = "Running";
+	checkjobs(تہی, 0 /*(no pid to wait for)*/);
+	برائے (کام = G.کام_list; کام; کام = کام->اگلا) {
+		اگر (کام->alive_cmds == کام->stopped_cmds)
+			حالت_string = "Stopped";
+		ورنہ
+			حالت_string = "Running";
 
-		printf(JOB_STATUS_FORMAT, job->jobid, status_string, job->cmdtext);
+		لکھو(کام_حالت_FORMAT, کام->jobid, حالت_string, کام->cmdtext);
 	}
 
-	clean_up_last_dead_job();
+	clean_اوپر_آخری_dead_کام();
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
 
 /* built-in 'fg' and 'bg' handler */
-static int FAST_FUNC builtin_fg_bg(char **argv)
+ساکن صحیح FAST_FUNC builtin_fg_bg(حرف **argv)
 {
-	int i;
-	struct pipe *pi;
+	صحیح i;
+	ساخت pipe *pi;
 
-	if (!G_interactive_fd)
-		return EXIT_FAILURE;
+	اگر (!G_interactive_fd)
+		واپس EXIT_FAILURE;
 
 	/* If they gave us no args, assume they want the last backgrounded task */
-	if (!argv[1]) {
-		for (pi = G.job_list; pi; pi = pi->next) {
-			if (pi->jobid == G.last_jobid) {
-				goto found;
+	اگر (!argv[1]) {
+		برائے (pi = G.کام_list; pi; pi = pi->اگلا) {
+			اگر (pi->jobid == G.آخری_jobid) {
+				جاؤ ملا;
 			}
 		}
-		bb_error_msg("%s: no current job", argv[0]);
-		return EXIT_FAILURE;
+		bb_error_پیغام("%s: no current job", argv[0]);
+		واپس EXIT_FAILURE;
 	}
 
 	pi = parse_jobspec(argv[1]);
-	if (!pi)
-		return EXIT_FAILURE;
- found:
+	اگر (!pi)
+		واپس EXIT_FAILURE;
+ ملا:
 	/* TODO: bash prints a string representation
 	 * of job being foregrounded (like "sleep 1 | cat") */
-	if (argv[0][0] == 'f' && G_saved_tty_pgrp) {
+	اگر (argv[0][0] == 'f' && G_saved_tty_pgrp) {
 		/* Put the job into the foreground. */
 		tcsetpgrp(G_interactive_fd, pi->pgrp);
 	}
 
 	/* Restart the processes in the job */
-	debug_printf_jobs("reviving %d procs, pgrp %d\n", pi->num_cmds, pi->pgrp);
-	for (i = 0; i < pi->num_cmds; i++) {
+	debug_printf_jobs("reviving %d procs, pgrp %d\n", pi->عدد_cmds, pi->pgrp);
+	برائے (i = 0; i < pi->عدد_cmds; i++) {
 		debug_printf_jobs("reviving pid %d\n", pi->cmds[i].pid);
 	}
 	pi->stopped_cmds = 0;
 
 	i = kill(- pi->pgrp, SIGCONT);
-	if (i < 0) {
-		if (errno == ESRCH) {
-			delete_finished_job(pi);
-			return EXIT_SUCCESS;
+	اگر (i < 0) {
+		اگر (errno == ESRCH) {
+			delete_ختم_شدہ_کام(pi);
+			واپس EXIT_SUCCESS;
 		}
-		bb_simple_perror_msg("kill (SIGCONT)");
+		bb_simple_perror_پیغام("kill (SIGCONT)");
 	}
 
-	if (argv[0][0] == 'f') {
-		remove_job_from_table(pi); /* FG job shouldn't be in job table */
-		return checkjobs_and_fg_shell(pi);
+	اگر (argv[0][0] == 'f') {
+		remove_کام_from_جدول(pi); /* FG job shouldn't be in job table */
+		واپس checkjobs_and_fg_shell(pi);
 	}
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_KILL
-static int FAST_FUNC builtin_kill(char **argv)
+#اگر ENABLE_HUSH_KILL
+ساکن صحیح FAST_FUNC builtin_kill(حرف **argv)
 {
-	int ret = 0;
+	صحیح ret = 0;
 
-# if ENABLE_HUSH_JOB
-	if (argv[1] && strcmp(argv[1], "-l") != 0) {
-		int i = 1;
+# اگر ENABLE_HUSH_کام
+	اگر (argv[1] && strcmp(argv[1], "-l") != 0) {
+		صحیح i = 1;
 
-		do {
-			struct pipe *pi;
-			char *dst;
-			int j, n;
+		کرو {
+			ساخت pipe *pi;
+			حرف *dst;
+			صحیح j, n;
 
-			if (argv[i][0] != '%')
-				continue;
+			اگر (argv[i][0] != '%')
+				جاری;
 			/*
 			 * "kill %N" - job kill
 			 * Converting to pgrp / pid kill
 			 */
 			pi = parse_jobspec(argv[i]);
-			if (!pi) {
+			اگر (!pi) {
 				/* Eat bad jobspec */
 				j = i;
-				do {
+				کرو {
 					j++;
 					argv[j - 1] = argv[j];
-				} while (argv[j]);
+				} جب (argv[j]);
 				ret = 1;
 				i--;
-				continue;
+				جاری;
 			}
 			/*
 			 * In jobs started under job control, we signal
@@ -12678,50 +12678,50 @@ static int FAST_FUNC builtin_kill(char **argv)
 			 * sh -c 'true|sleep 2 & sleep 1; kill %1'
 			 * sh -c 'true|sleep 1 & sleep 2; kill %1'
 			 */
-			n = G_interactive_fd ? 1 : pi->num_cmds;
-			dst = alloca(n * sizeof(int)*4);
+			n = G_interactive_fd ? 1 : pi->عدد_cmds;
+			dst = alloca(n * حجم(صحیح)*4);
 			argv[i] = dst;
-			if (G_interactive_fd)
-				dst += sprintf(dst, " -%u", (int)pi->pgrp);
-			else for (j = 0; j < n; j++) {
-				struct command *cmd = &pi->cmds[j];
+			اگر (G_interactive_fd)
+				dst += sprintf(dst, " -%u", (صحیح)pi->pgrp);
+			ورنہ برائے (j = 0; j < n; j++) {
+				ساخت command *cmd = &pi->cmds[j];
 				/* Skip exited members of the job */
-				if (cmd->pid == 0)
-					continue;
+				اگر (cmd->pid == 0)
+					جاری;
 				/*
 				 * kill_main has matching code to expect
 				 * leading space. Needed to not confuse
 				 * negative pids with "kill -SIGNAL_NO" syntax
 				 */
-				dst += sprintf(dst, " %u", (int)cmd->pid);
+				dst += sprintf(dst, " %u", (صحیح)cmd->pid);
 			}
 			*dst = '\0';
-		} while (argv[++i]);
+		} جب (argv[++i]);
 	}
 # endif
 
-	if (argv[1] || ret == 0) {
-		ret = run_applet_main(argv, kill_main);
+	اگر (argv[1] || ret == 0) {
+		ret = تسلسل_applet_main(argv, kill_main);
 	}
 	/* else: ret = 1, "kill %bad_jobspec" case */
-	return ret;
+	واپس ret;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_WAIT
+#اگر ENABLE_HUSH_WAIT
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/wait.html */
-# if !ENABLE_HUSH_JOB
-#  define wait_for_child_or_signal(pipe,pid) wait_for_child_or_signal(pid)
+# اگر !ENABLE_HUSH_کام
+#  define wait_for_بچہ_or_signal(pipe,pid) wait_for_بچہ_or_signal(pid)
 # endif
-static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid)
+ساکن صحیح wait_for_بچہ_or_signal(ساخت pipe *waitfor_pipe, pid_t waitfor_pid)
 {
-	int ret = 0;
-	for (;;) {
-		int sig;
+	صحیح ret = 0;
+	برائے (;;) {
+		صحیح sig;
 		sigset_t oldset;
 
-		if (!sigisemptyset(&G.pending_set))
-			goto check_sig;
+		اگر (!sigisemptyset(&G.pending_سیٹ))
+			جاؤ check_sig;
 
 		/* waitpid is not interruptible by SA_RESTARTed
 		 * signals which we use. Thus, this ugly dance:
@@ -12735,41 +12735,41 @@ static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid
 		sigfillset(&oldset); /* block all signals, remember old set */
 		sigprocmask2(SIG_SETMASK, &oldset);
 
-		if (!sigisemptyset(&G.pending_set)) {
+		اگر (!sigisemptyset(&G.pending_سیٹ)) {
 			/* Crap! we raced with some signal! */
-			goto restore;
+			جاؤ restore;
 		}
 
 		/*errno = 0; - checkjobs does this */
 /* Can't pass waitfor_pipe into checkjobs(): it won't be interruptible */
-		ret = checkjobs(NULL, waitfor_pid); /* waitpid(WNOHANG) inside */
+		ret = checkjobs(تہی, waitfor_pid); /* waitpid(WNOHANG) inside */
 		debug_printf_exec("checkjobs:%d\n", ret);
-# if ENABLE_HUSH_JOB
-		if (waitfor_pipe) {
-			int rcode = job_exited_or_stopped(waitfor_pipe);
+# اگر ENABLE_HUSH_کام
+		اگر (waitfor_pipe) {
+			صحیح rcode = کام_exited_or_stopped(waitfor_pipe);
 			debug_printf_exec("job_exited_or_stopped:%d\n", rcode);
-			if (rcode >= 0) {
+			اگر (rcode >= 0) {
 				ret = rcode;
-				sigprocmask(SIG_SETMASK, &oldset, NULL);
-				break;
+				sigprocmask(SIG_SETMASK, &oldset, تہی);
+				توڑو;
 			}
 		}
 # endif
 		/* if ECHILD, there are no children (ret is -1 or 0) */
 		/* if ret == 0, no children changed state */
 		/* if ret != 0, it's exitcode+1 of exited waitfor_pid child */
-		if (errno == ECHILD || ret) {
+		اگر (errno == ECHILD || ret) {
 			ret--;
-			if (ret < 0) /* if ECHILD, may need to fix "ret" */
+			اگر (ret < 0) /* if ECHILD, may need to fix "ret" */
 				ret = 0;
-# if ENABLE_HUSH_BASH_COMPAT
-			if (waitfor_pid == -1 && errno == ECHILD) {
+# اگر ENABLE_HUSH_BASH_COMPAT
+			اگر (waitfor_pid == -1 && errno == ECHILD) {
 				/* exitcode of "wait -n" with no children is 127, not 0 */
 				ret = 127;
 			}
 # endif
-			sigprocmask(SIG_SETMASK, &oldset, NULL);
-			break;
+			sigprocmask(SIG_SETMASK, &oldset, تہی);
+			توڑو;
 		}
 		/* Wait for SIGCHLD or any other signal */
 		/* It is vitally important for sigsuspend that SIGCHLD has non-DFL handler! */
@@ -12786,35 +12786,35 @@ static int wait_for_child_or_signal(struct pipe *waitfor_pipe, pid_t waitfor_pid
 		 * making "wait" commands in SCRIPT block forever.
 		 */
  restore:
-		sigprocmask(SIG_SETMASK, &oldset, NULL);
+		sigprocmask(SIG_SETMASK, &oldset, تہی);
  check_sig:
 		/* So, did we get a signal? */
-		sig = check_and_run_traps();
-		if (sig /*&& sig != SIGCHLD - always true */) {
+		sig = check_and_تسلسل_traps();
+		اگر (sig /*&& sig != SIGCHLD - always true */) {
 			/* Do this for any (non-ignored) signal, not only for ^C */
 			ret = 128 | sig;
-			break;
+			توڑو;
 		}
 		/* SIGCHLD, or no signal, or ignored one, such as SIGQUIT. Repeat */
 	}
-	return ret;
+	واپس ret;
 }
 
-static int FAST_FUNC builtin_wait(char **argv)
+ساکن صحیح FAST_FUNC builtin_wait(حرف **argv)
 {
-	int ret;
-	int status;
+	صحیح ret;
+	صحیح حالت_2;
 
 	argv = skip_dash_dash(argv);
-# if ENABLE_HUSH_BASH_COMPAT
-	if (argv[0] && strcmp(argv[0], "-n") == 0) {
+# اگر ENABLE_HUSH_BASH_COMPAT
+	اگر (argv[0] && strcmp(argv[0], "-n") == 0) {
 		/* wait -n */
 		/* (bash accepts "wait -n PID" too and ignores PID) */
-		G.dead_job_exitcode = -1;
-		return wait_for_child_or_signal(NULL, -1 /*no job, wait for one job*/);
+		G.dead_کام_exitcode = -1;
+		واپس wait_for_بچہ_or_signal(تہی, -1 /*no job, wait for one job*/);
 	}
 # endif
-	if (argv[0] == NULL) {
+	اگر (argv[0] == تہی) {
 		/* Don't care about wait results */
 		/* Note 1: must wait until there are no more children */
 		/* Note 2: must be interruptible */
@@ -12831,128 +12831,128 @@ static int FAST_FUNC builtin_wait(char **argv)
 		 * ^C <-- after ~4 sec from keyboard
 		 * $
 		 */
-		return wait_for_child_or_signal(NULL, 0 /*no job and no pid to wait for*/);
+		واپس wait_for_بچہ_or_signal(تہی, 0 /*no job and no pid to wait for*/);
 	}
 
-	do {
-		pid_t pid = bb_strtou(*argv, NULL, 10);
-		if (errno || pid <= 0) {
-# if ENABLE_HUSH_JOB
-			if (argv[0][0] == '%') {
-				struct pipe *wait_pipe;
+	کرو {
+		pid_t pid = bb_strtou(*argv, تہی, 10);
+		اگر (errno || pid <= 0) {
+# اگر ENABLE_HUSH_کام
+			اگر (argv[0][0] == '%') {
+				ساخت pipe *wait_pipe;
 				ret = 127; /* bash compat for bad jobspecs */
 				wait_pipe = parse_jobspec(*argv);
-				if (wait_pipe) {
-					ret = job_exited_or_stopped(wait_pipe);
-					if (ret < 0) {
-						ret = wait_for_child_or_signal(wait_pipe, 0);
-					} else {
+				اگر (wait_pipe) {
+					ret = کام_exited_or_stopped(wait_pipe);
+					اگر (ret < 0) {
+						ret = wait_for_بچہ_or_signal(wait_pipe, 0);
+					} ورنہ {
 						/* waiting on "last dead job" removes it */
-						clean_up_last_dead_job();
+						clean_اوپر_آخری_dead_کام();
 					}
 				}
 				/* else: parse_jobspec() already emitted error msg */
-				continue;
+				جاری;
 			}
 # endif
 			/* mimic bash message */
-			bb_error_msg("wait: '%s': not a pid or valid job spec", *argv);
+			bb_error_پیغام("wait: '%s': not a pid or valid job spec", *argv);
 			ret = EXIT_FAILURE;
-			continue; /* bash checks all argv[] */
+			جاری; /* bash checks all argv[] */
 		}
 
 		/* Do we have such child? */
-		ret = waitpid(pid, &status, WNOHANG);
-		if (ret < 0) {
+		ret = waitpid(pid, &حالت_2, WNOHANG);
+		اگر (ret < 0) {
 			/* No */
 			ret = 127;
-			if (errno == ECHILD) {
-				if (pid == G.last_bg_pid) {
+			اگر (errno == ECHILD) {
+				اگر (pid == G.آخری_bg_pid) {
 					/* "wait $!" but last bg task has already exited. Try:
 					 * (sleep 1; exit 3) & sleep 2; echo $?; wait $!; echo $?
 					 * In bash it prints exitcode 0, then 3.
 					 * In dash, it is 127.
 					 */
-					ret = G.last_bg_pid_exitcode;
-				} else {
+					ret = G.آخری_bg_pid_exitcode;
+				} ورنہ {
 					/* Example: "wait 1". mimic bash message */
-					bb_error_msg("wait: pid %u is not a child of this shell", (unsigned)pid);
+					bb_error_پیغام("wait: pid %u is not a child of this shell", (غیرعلامتی)pid);
 				}
-			} else {
+			} ورنہ {
 				/* ??? */
-				bb_perror_msg("wait %s", *argv);
+				bb_perror_پیغام("wait %s", *argv);
 			}
-			continue; /* bash checks all argv[] */
+			جاری; /* bash checks all argv[] */
 		}
-		if (ret == 0) {
+		اگر (ret == 0) {
 			/* Yes, and it still runs */
-			ret = wait_for_child_or_signal(NULL, pid);
-		} else {
+			ret = wait_for_بچہ_or_signal(تہی, pid);
+		} ورنہ {
 			/* Yes, and it just exited */
-			process_wait_result(NULL, pid, status);
-			ret = WEXITSTATUS(status);
-			if (WIFSIGNALED(status))
-				ret = 128 | WTERMSIG(status);
+			process_wait_نتیجہ(تہی, pid, حالت_2);
+			ret = WEXITSTATUS(حالت_2);
+			اگر (WIFSIGNALED(حالت_2))
+				ret = 128 | WTERMSIG(حالت_2);
 		}
-	} while (*++argv);
+	} جب (*++argv);
 
-	return ret;
+	واپس ret;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_LOOPS || ENABLE_HUSH_FUNCTIONS
-static unsigned parse_numeric_argv1(char **argv, unsigned def, unsigned def_min)
+#اگر ENABLE_HUSH_LOOPS || ENABLE_HUSH_FUNCTIONS
+ساکن غیرعلامتی parse_numeric_argv1(حرف **argv, غیرعلامتی def, غیرعلامتی def_min)
 {
-	if (argv[1]) {
-		def = bb_strtou(argv[1], NULL, 10);
-		if (errno || def < def_min || argv[2]) {
-			bb_error_msg("%s: bad arguments", argv[0]);
+	اگر (argv[1]) {
+		def = bb_strtou(argv[1], تہی, 10);
+		اگر (errno || def < def_min || argv[2]) {
+			bb_error_پیغام("%s: bad arguments", argv[0]);
 			def = UINT_MAX;
 		}
 	}
-	return def;
+	واپس def;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_LOOPS
-static int FAST_FUNC builtin_break(char **argv)
+#اگر ENABLE_HUSH_LOOPS
+ساکن صحیح FAST_FUNC builtin_break(حرف **argv)
 {
-	unsigned depth;
-	if (G.depth_of_loop == 0) {
-		bb_error_msg("%s: only meaningful in a loop", argv[0]);
+	غیرعلامتی گہرائی;
+	اگر (G.گہرائی_کا_loop == 0) {
+		bb_error_پیغام("%s: only meaningful in a loop", argv[0]);
 		/* if we came from builtin_continue(), need to undo "= 1" */
 		G.flag_break_continue = 0;
-		return EXIT_SUCCESS; /* bash compat */
+		واپس EXIT_SUCCESS; /* bash compat */
 	}
 	G.flag_break_continue++; /* BC_BREAK = 1, or BC_CONTINUE = 2 */
 
-	G.depth_break_continue = depth = parse_numeric_argv1(argv, 1, 1);
-	if (depth == UINT_MAX)
+	G.گہرائی_break_continue = گہرائی = parse_numeric_argv1(argv, 1, 1);
+	اگر (گہرائی == UINT_MAX)
 		G.flag_break_continue = BC_BREAK;
-	if (G.depth_of_loop < depth)
-		G.depth_break_continue = G.depth_of_loop;
+	اگر (G.گہرائی_کا_loop < گہرائی)
+		G.گہرائی_break_continue = G.گہرائی_کا_loop;
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
 
-static int FAST_FUNC builtin_continue(char **argv)
+ساکن صحیح FAST_FUNC builtin_continue(حرف **argv)
 {
 	G.flag_break_continue = 1; /* BC_CONTINUE = 2 = 1+1 */
-	return builtin_break(argv);
+	واپس builtin_break(argv);
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_FUNCTIONS
-static int FAST_FUNC builtin_return(char **argv)
+#اگر ENABLE_HUSH_FUNCTIONS
+ساکن صحیح FAST_FUNC builtin_return(حرف **argv)
 {
-	int rc;
+	صحیح rc;
 
-	if (G_flag_return_in_progress != -1) {
-		bb_error_msg("%s: not in a function or sourced script", argv[0]);
-		return EXIT_FAILURE; /* bash compat */
+	اگر (G_flag_return_اندر_پیش_رفت != -1) {
+		bb_error_پیغام("%s: not in a function or sourced script", argv[0]);
+		واپس EXIT_FAILURE; /* bash compat */
 	}
 
-	G_flag_return_in_progress = 1;
+	G_flag_return_اندر_پیش_رفت = 1;
 
 	/* bash:
 	 * out of range: wraps around at 256, does not error out
@@ -12961,57 +12961,57 @@ static int FAST_FUNC builtin_return(char **argv)
 	 * bash: return: qwe: numeric argument required  <== we do this
 	 * 255  <== we also do this
 	 */
-	rc = parse_numeric_argv1(argv, G.last_exitcode, 0);
-# if ENABLE_HUSH_TRAP
-	if (argv[1]) { /* "return ARG" inside a running trap sets $? */
+	rc = parse_numeric_argv1(argv, G.آخری_exitcode, 0);
+# اگر ENABLE_HUSH_TRAP
+	اگر (argv[1]) { /* "return ARG" inside a running trap sets $? */
 		debug_printf_exec("G.return_exitcode=%d\n", rc);
 		G.return_exitcode = rc;
 	}
 # endif
-	return rc;
+	واپس rc;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_TIMES
-static int FAST_FUNC builtin_times(char **argv UNUSED_PARAM)
+#اگر ENABLE_HUSH_TIMES
+ساکن صحیح FAST_FUNC builtin_times(حرف **argv غیر_مستعمل_PARAM)
 {
-	static const uint8_t times_tbl[] ALIGN1 = {
-		' ',  offsetof(struct tms, tms_utime),
-		'\n', offsetof(struct tms, tms_stime),
-		' ',  offsetof(struct tms, tms_cutime),
-		'\n', offsetof(struct tms, tms_cstime),
+	ساکن ثابت uint8_t times_tbl[] ALIGN1 = {
+		' ',  offsetof(ساخت tms, tms_utime),
+		'\n', offsetof(ساخت tms, tms_stime),
+		' ',  offsetof(ساخت tms, tms_cutime),
+		'\n', offsetof(ساخت tms, tms_cstime),
 		0
 	};
-	const uint8_t *p;
-	unsigned clk_tck;
-	struct tms buf;
+	ثابت uint8_t *p;
+	غیرعلامتی clk_tck;
+	ساخت tms buf;
 
 	clk_tck = bb_clk_tck();
 
 	times(&buf);
 	p = times_tbl;
-	do {
-		unsigned sec, frac;
-		unsigned long t;
-		t = *(clock_t *)(((char *) &buf) + p[1]);
+	کرو {
+		غیرعلامتی sec, frac;
+		غیرعلامتی طویل t;
+		t = *(clock_t *)(((حرف *) &buf) + p[1]);
 		sec = t / clk_tck;
 		frac = t % clk_tck;
-		printf("%um%u.%03us%c",
+		لکھو("%um%u.%03us%c",
 			sec / 60, sec % 60,
 			(frac * 1000) / clk_tck,
 			p[0]);
 		p += 2;
-	} while (*p);
+	} جب (*p);
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }
-#endif
+#اگر_ختم
 
-#if ENABLE_HUSH_MEMLEAK
-static int FAST_FUNC builtin_memleak(char **argv UNUSED_PARAM)
+#اگر ENABLE_HUSH_MEMLEAK
+ساکن صحیح FAST_FUNC builtin_memleak(حرف **argv غیر_مستعمل_PARAM)
 {
-	void *p;
-	unsigned long l;
+	خالی *p;
+	غیرعلامتی طویل l;
 
 # ifdef M_TRIM_THRESHOLD
 	/* Optional. Reduces probability of false positives */
@@ -13019,33 +13019,33 @@ static int FAST_FUNC builtin_memleak(char **argv UNUSED_PARAM)
 # endif
 	/* Crude attempt to find where "free memory" starts,
 	 * sans fragmentation. */
-	p = malloc(240);
-	l = (unsigned long)p;
-	free(p);
-	p = malloc(3400);
-	if (l < (unsigned long)p) l = (unsigned long)p;
-	free(p);
+	p = حافظہ_دو(240);
+	l = (غیرعلامتی طویل)p;
+	آزاد(p);
+	p = حافظہ_دو(3400);
+	اگر (l < (غیرعلامتی طویل)p) l = (غیرعلامتی طویل)p;
+	آزاد(p);
 
-# if 0  /* debug */
+# اگر 0  /* debug */
 	{
-		struct mallinfo mi = mallinfo();
-		printf("top alloc:0x%lx malloced:%d+%d=%d\n", l,
+		ساخت mallinfo mi = mallinfo();
+		لکھو("top alloc:0x%lx malloced:%d+%d=%d\n", l,
 			mi.arena, mi.hblkhd, mi.arena + mi.hblkhd);
 	}
 # endif
 
-	if (!G.memleak_value)
-		G.memleak_value = l;
+	اگر (!G.memleak_قدر)
+		G.memleak_قدر = l;
 
-	l -= G.memleak_value;
-	if ((long)l < 0)
+	l -= G.memleak_قدر;
+	اگر ((طویل)l < 0)
 		l = 0;
 	l /= 1024;
-	if (l > 127)
+	اگر (l > 127)
 		l = 127;
 
 	/* Exitcode is "how many kilobytes we leaked since 1st call" */
-	return l;
+	واپس l;
 }
-#endif
-#endif /* !__U_BOOT__ */
+#اگر_ختم
+#اگر_ختم /* !__U_BOOT__ */

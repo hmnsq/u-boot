@@ -8,84 +8,84 @@
  * Derived work from spl_usb.c
  */
 
-#include <spl.h>
-#include <sata.h>
-#include <scsi.h>
-#include <errno.h>
-#include <fat.h>
-#include <image.h>
-#include <linux/compiler.h>
+#شامل <spl.h>
+#شامل <sata.h>
+#شامل <scsi.h>
+#شامل <errno.h>
+#شامل <fat.h>
+#شامل <image.h>
+#شامل <linux/compiler.h>
 
-static int __maybe_unused spl_sata_load_image_raw(struct spl_image_info *spl_image,
-						  struct spl_boot_device *bootdev,
-						  struct blk_desc *stor_dev,
-						  unsigned long sector)
+ساکن صحیح __maybe_unused spl_sata_بھرو_image_raw(ساخت spl_image_info *spl_image,
+						  ساخت spl_boot_device *bootdev,
+						  ساخت blk_desc *stor_dev,
+						  غیرعلامتی طویل sector)
 {
-	struct legacy_img_hdr *header;
-	unsigned long count;
-	u32 image_size_sectors;
-	u32 image_offset_sectors;
-	u32 image_offset;
-	int ret;
+	ساخت legacy_img_hdr *سرخی;
+	غیرعلامتی طویل گنتی;
+	u32 image_سائز_sectors;
+	u32 image_انحراف_sectors;
+	u32 image_انحراف;
+	صحیح ret;
 
-	header = spl_get_load_buffer(-sizeof(*header), stor_dev->blksz);
-	count = blk_dread(stor_dev, sector, 1, header);
-	if (count == 0)
-		return -EIO;
+	سرخی = spl_get_بھرو_بفر(-حجم(*سرخی), stor_dev->blksz);
+	گنتی = blk_dread(stor_dev, sector, 1, سرخی);
+	اگر (گنتی == 0)
+		واپس -EIO;
 
-	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ret = spl_parse_image_سرخی(spl_image, bootdev, سرخی);
+	اگر (ret)
+		واپس ret;
 
-	image_size_sectors = DIV_ROUND_UP(spl_image->size, stor_dev->blksz);
-	image_offset_sectors = spl_image->offset / stor_dev->blksz;
-	image_offset = spl_image->offset % stor_dev->blksz;
-	count = blk_dread(stor_dev, sector + image_offset_sectors,
-			image_size_sectors,
-			(void *)spl_image->load_addr);
-	if (count != image_size_sectors)
-		return -EIO;
+	image_سائز_sectors = DIV_باری_اوپر(spl_image->سائز, stor_dev->blksz);
+	image_انحراف_sectors = spl_image->انحراف / stor_dev->blksz;
+	image_انحراف = spl_image->انحراف % stor_dev->blksz;
+	گنتی = blk_dread(stor_dev, sector + image_انحراف_sectors,
+			image_سائز_sectors,
+			(خالی *)spl_image->بھرو_addr);
+	اگر (گنتی != image_سائز_sectors)
+		واپس -EIO;
 
-	if (image_offset)
-		memmove((void *)spl_image->load_addr,
-			(void *)spl_image->load_addr + image_offset,
-			spl_image->size);
+	اگر (image_انحراف)
+		memmove((خالی *)spl_image->بھرو_addr,
+			(خالی *)spl_image->بھرو_addr + image_انحراف,
+			spl_image->سائز);
 
-	return 0;
+	واپس 0;
 }
 
-static int spl_sata_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+ساکن صحیح spl_sata_بھرو_image(ساخت spl_image_info *spl_image,
+			       ساخت spl_boot_device *bootdev)
 {
-	int err = -ENOSYS;
-	struct blk_desc *stor_dev;
+	صحیح err = -ENOSYS;
+	ساخت blk_desc *stor_dev;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_جائزہ(false);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_SCSI, 0);
-	if (!stor_dev)
-		return -ENODEV;
+	اگر (!stor_dev)
+		واپس -ENODEV;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
-	    spl_load_image_fat_os(spl_image, bootdev, stor_dev,
-				  CONFIG_SYS_SATA_FAT_BOOT_PARTITION))
-#endif
+#اگر CONFIG_IS_ENABLED(OS_BOOT)
+	اگر (spl_آغاز_uboot() ||
+	    spl_بھرو_image_fat_os(spl_image, bootdev, stor_dev,
+				  CONFIG_SYS_SATA_FAT_BOOT_تقسیم))
+#اگر_ختم
 	{
-#ifdef CONFIG_SPL_FS_FAT
-		err = spl_load_image_fat(spl_image, bootdev, stor_dev,
-				CONFIG_SYS_SATA_FAT_BOOT_PARTITION,
-				CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
-#elif defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
-		err = spl_sata_load_image_raw(spl_image, bootdev, stor_dev,
+#اگر_تعریف_شدہ CONFIG_SPL_FS_FAT
+		err = spl_بھرو_image_fat(spl_image, bootdev, stor_dev,
+				CONFIG_SYS_SATA_FAT_BOOT_تقسیم,
+				CONFIG_SPL_FS_بھرو_PAYLOAD_NAME);
+#وگرنہ_اگر defined(CONFIG_SPL_SATA_RAW_U_BOOT_USE_SECTOR)
+		err = spl_sata_بھرو_image_raw(spl_image, bootdev, stor_dev,
 			CONFIG_SPL_SATA_RAW_U_BOOT_SECTOR);
-#endif
+#اگر_ختم
 	}
-	if (err) {
+	اگر (err) {
 		puts("Error loading sata device\n");
-		return err;
+		واپس err;
 	}
 
-	return 0;
+	واپس 0;
 }
-SPL_LOAD_IMAGE_METHOD("SATA", 0, BOOT_DEVICE_SATA, spl_sata_load_image);
+SPL_بھرو_IMAGE_طریقہ("SATA", 0, BOOT_DEVICE_SATA, spl_sata_بھرو_image);

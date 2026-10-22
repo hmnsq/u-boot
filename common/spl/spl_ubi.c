@@ -4,110 +4,110 @@
  * Ladislav Michl <ladis@linux-mips.org>
  */
 
-#include <config.h>
-#include <image.h>
-#include <nand.h>
-#include <onenand_uboot.h>
-#include <ubispl.h>
-#include <spl.h>
+#شامل <config.h>
+#شامل <image.h>
+#شامل <nand.h>
+#شامل <onenand_uboot.h>
+#شامل <ubispl.h>
+#شامل <spl.h>
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-int spl_ubi_load_image_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct ubispl_info *info)
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT)
+صحیح spl_ubi_بھرو_image_os(ساخت spl_image_info *spl_image,
+			  ساخت spl_boot_device *bootdev,
+			  ساخت ubispl_info *info)
 {
-	struct legacy_img_hdr *header;
-	struct ubispl_load volumes[2];
-	int err;
+	ساخت legacy_img_hdr *سرخی;
+	ساخت ubispl_بھرو volumes[2];
+	صحیح err;
 
-	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_KERNEL_ID;
-	volumes[0].load_addr = (void *)CONFIG_SYS_LOAD_ADDR;
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	volumes[1].vol_id = CONFIG_SPL_UBI_LOAD_ARGS_ID;
-	volumes[1].load_addr = (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR;
+	volumes[0].vol_id = CONFIG_SPL_UBI_بھرو_KERNEL_ID;
+	volumes[0].بھرو_addr = (خالی *)CONFIG_SYS_بھرو_ADDR;
+#اگر IS_ENABLED(CONFIG_SPL_OS_BOOT_دلائل)
+	volumes[1].vol_id = CONFIG_SPL_UBI_بھرو_دلائل_ID;
+	volumes[1].بھرو_addr = (خالی *)CONFIG_SPL_PAYLOAD_دلائل_ADDR;
 
-	err = ubispl_load_volumes(info, volumes, 2);
-#else
-	err = ubispl_load_volumes(info, volumes, 1);
-#endif
-	if (err)
-		return err;
+	err = ubispl_بھرو_volumes(info, volumes, 2);
+#ورنہ
+	err = ubispl_بھرو_volumes(info, volumes, 1);
+#اگر_ختم
+	اگر (err)
+		واپس err;
 
-	header = (struct legacy_img_hdr *)volumes[0].load_addr;
-	spl_parse_image_header(spl_image, bootdev, header);
+	سرخی = (ساخت legacy_img_hdr *)volumes[0].بھرو_addr;
+	spl_parse_image_سرخی(spl_image, bootdev, سرخی);
 	puts("Linux loaded.\n");
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-int spl_ubi_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev)
+صحیح spl_ubi_بھرو_image(ساخت spl_image_info *spl_image,
+		       ساخت spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
-	struct ubispl_info info;
-	struct ubispl_load volumes[2];
-	int ret = 1;
+	ساخت legacy_img_hdr *سرخی;
+	ساخت ubispl_info info;
+	ساخت ubispl_بھرو volumes[2];
+	صحیح ret = 1;
 
-	switch (bootdev->boot_device) {
-#ifdef CONFIG_SPL_NAND_SUPPORT
-	case BOOT_DEVICE_NAND:
+	انتخاب (bootdev->boot_device) {
+#اگر_تعریف_شدہ CONFIG_SPL_NAND_SUPPORT
+	حالت BOOT_DEVICE_NAND:
 		nand_init();
-		info.read = nand_spl_read_block;
-		info.peb_size = CONFIG_SYS_NAND_BLOCK_SIZE;
-		break;
-#endif
-#ifdef CONFIG_SPL_ONENAND_SUPPORT
-	case BOOT_DEVICE_ONENAND:
-		info.read = onenand_spl_read_block;
-		info.peb_size = CFG_SYS_ONENAND_BLOCK_SIZE;
-		break;
-#endif
-	default:
-		goto out;
+		info.اقرأ = nand_spl_read_بلاک;
+		info.peb_سائز = CONFIG_SYS_NAND_بلاک_سائز;
+		توڑو;
+#اگر_ختم
+#اگر_تعریف_شدہ CONFIG_SPL_ONENAND_SUPPORT
+	حالت BOOT_DEVICE_ONENAND:
+		info.اقرأ = onenand_spl_read_بلاک;
+		info.peb_سائز = CFG_SYS_ONENAND_بلاک_سائز;
+		توڑو;
+#اگر_ختم
+	طےشدہ:
+		جاؤ برآمد;
 	}
-	info.ubi = (struct ubi_scan_info *)CONFIG_SPL_UBI_INFO_ADDR;
+	info.ubi = (ساخت ubi_جائزہ_info *)CONFIG_SPL_UBI_INFO_ADDR;
 	info.fastmap = IS_ENABLED(CONFIG_MTD_UBI_FASTMAP);
 
-	info.peb_offset = CONFIG_SPL_UBI_PEB_OFFSET;
-	info.vid_offset = CONFIG_SPL_UBI_VID_OFFSET;
-	info.leb_start = CONFIG_SPL_UBI_LEB_START;
-	info.peb_count = CONFIG_SPL_UBI_MAX_PEBS - info.peb_offset;
+	info.peb_انحراف = CONFIG_SPL_UBI_PEB_انحراف;
+	info.vid_انحراف = CONFIG_SPL_UBI_VID_انحراف;
+	info.leb_آغاز = CONFIG_SPL_UBI_LEB_آغاز;
+	info.peb_گنتی = CONFIG_SPL_UBI_MAX_PEBS - info.peb_انحراف;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		ret = spl_ubi_load_image_os(spl_image, bootdev, &info);
-		if (!ret)
-			return 0;
+#اگر CONFIG_IS_ENABLED(OS_BOOT)
+	اگر (!spl_آغاز_uboot()) {
+		ret = spl_ubi_بھرو_image_os(spl_image, bootdev, &info);
+		اگر (!ret)
+			واپس 0;
 
-		printf("%s: Failed in falcon boot: %d", __func__, ret);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return ret;
-		printf("Fallback to U-Boot\n");
+		لکھو("%s: Failed in falcon boot: %d", __func__, ret);
+		اگر (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			واپس ret;
+		لکھو("Fallback to U-Boot\n");
 	}
-#endif
+#اگر_ختم
 
-	header = spl_get_load_buffer(-sizeof(*header), sizeof(header));
-#ifdef CONFIG_SPL_UBI_LOAD_BY_VOLNAME
+	سرخی = spl_get_بھرو_بفر(-حجم(*سرخی), حجم(سرخی));
+#اگر_تعریف_شدہ CONFIG_SPL_UBI_بھرو_BY_VOLNAME
 	volumes[0].vol_id = -1;
 	strncpy(volumes[0].name,
-		CONFIG_SPL_UBI_LOAD_MONITOR_VOLNAME,
+		CONFIG_SPL_UBI_بھرو_MONITOR_VOLNAME,
 		UBI_VOL_NAME_MAX + 1);
-#else
-	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_MONITOR_ID;
-#endif
-	volumes[0].load_addr = (void *)header;
+#ورنہ
+	volumes[0].vol_id = CONFIG_SPL_UBI_بھرو_MONITOR_ID;
+#اگر_ختم
+	volumes[0].بھرو_addr = (خالی *)سرخی;
 
-	ret = ubispl_load_volumes(&info, volumes, 1);
-	if (!ret)
-		spl_parse_image_header(spl_image, bootdev, header);
-out:
-#ifdef CONFIG_SPL_NAND_SUPPORT
-	if (bootdev->boot_device == BOOT_DEVICE_NAND)
+	ret = ubispl_بھرو_volumes(&info, volumes, 1);
+	اگر (!ret)
+		spl_parse_image_سرخی(spl_image, bootdev, سرخی);
+برآمد:
+#اگر_تعریف_شدہ CONFIG_SPL_NAND_SUPPORT
+	اگر (bootdev->boot_device == BOOT_DEVICE_NAND)
 		nand_deselect();
-#endif
-	return ret;
+#اگر_ختم
+	واپس ret;
 }
 /* Use priorty 0 so that Ubi will override NAND and ONENAND methods */
-SPL_LOAD_IMAGE_METHOD("NAND", 0, BOOT_DEVICE_NAND, spl_ubi_load_image);
-SPL_LOAD_IMAGE_METHOD("OneNAND", 0, BOOT_DEVICE_ONENAND, spl_ubi_load_image);
+SPL_بھرو_IMAGE_طریقہ("NAND", 0, BOOT_DEVICE_NAND, spl_ubi_بھرو_image);
+SPL_بھرو_IMAGE_طریقہ("OneNAND", 0, BOOT_DEVICE_ONENAND, spl_ubi_بھرو_image);

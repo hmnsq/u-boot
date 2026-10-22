@@ -6,12 +6,12 @@
 
 /* #define DEBUG */
 
-#include <flash.h>
-#include <log.h>
-#include <u-boot/uuid.h>
-#include <linux/string.h>
+#شامل <flash.h>
+#شامل <log.h>
+#شامل <u-boot/uuid.h>
+#شامل <linux/string.h>
 
-#include <mtd/cfi_flash.h>
+#شامل <mtd/cfi_flash.h>
 
 /*-----------------------------------------------------------------------
  * Functions
@@ -23,57 +23,57 @@
  * The monitor is always located in the _first_ Flash bank.
  * If necessary you have to map the second bank at lower addresses.
  */
-void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+خالی
+flash_protect(صحیح flag, ulong from, ulong مقصد, flash_info_t *info)
 {
-	ulong b_end;
-	short s_end;
-	int i;
+	ulong b_انتہا;
+	مختصر s_انتہا;
+	صحیح i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	اگر (!info || info->sector_گنتی == 0 || info->سائز == 0 || مقصد < from) {
+		واپس;
 	}
 
-	s_end = info->sector_count - 1;	/* index of last sector */
-	b_end = info->start[0] + info->size - 1;	/* bank end address */
+	s_انتہا = info->sector_گنتی - 1;	/* index of last sector */
+	b_انتہا = info->آغاز[0] + info->سائز - 1;	/* bank end address */
 
 	debug("%s %s: from 0x%08lX to 0x%08lX\n", __func__,
-	      (flag & FLAG_PROTECT_SET) ? "ON" :
+	      (flag & FLAG_PROTECT_سیٹ) ? "ON" :
 	      (flag & FLAG_PROTECT_CLEAR) ? "OFF" : "???",
-	      from, to);
+	      from, مقصد);
 
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
-	    to < info->start[0] || from > b_end) {
-		return;
+	اگر (info->flash_id == FLASH_UNKNOWN ||
+	    مقصد < info->آغاز[0] || from > b_انتہا) {
+		واپس;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
-		ulong end;		/* last address in current sect	*/
+	برائے (i=0; i<info->sector_گنتی; ++i) {
+		ulong انتہا_2;		/* last address in current sect	*/
 
-		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
+		انتہا_2 = (i == s_انتہا) ? b_انتہا : info->آغاز[i + 1] - 1;
 
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		اگر (from <= انتہا_2 && مقصد >= info->آغاز[i]) {
+			اگر (flag & FLAG_PROTECT_CLEAR) {
+#اگر defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#ورنہ
 				info->protect[i] = 0;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#اگر_ختم	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			ورنہ اگر (flag & FLAG_PROTECT_سیٹ) {
+#اگر defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#ورنہ
 				info->protect[i] = 1;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#اگر_ختم	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
 			}
 		}
@@ -87,22 +87,22 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	صحیح i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
-		    addr >= info->start[0] &&
+	برائے (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		اگر (info->flash_id != FLASH_UNKNOWN &&
+		    addr >= info->آغاز[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
 		     * info->start[0] + info->size wraps back to 0.
 		     * Please don't change this unless you understand this.
 		     */
-		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+		    addr <= info->آغاز[0] + info->سائز - 1) {
+			واپس (info);
 		}
 	}
 
-	return (NULL);
+	واپس (تہی);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,101 +118,101 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
-flash_write(char *src, ulong addr, ulong cnt)
+صحیح
+flash_write(حرف *src, ulong addr, ulong cnt)
 {
-	int i;
-	ulong         end        = addr + cnt - 1;
-	flash_info_t *info_first = addr2info(addr);
-	flash_info_t *info_last  = addr2info(end);
+	صحیح i;
+	ulong         انتہا_2        = addr + cnt - 1;
+	flash_info_t *info_پہلا = addr2info(addr);
+	flash_info_t *info_آخری  = addr2info(انتہا_2);
 	flash_info_t *info;
-	__maybe_unused char *src_orig = src;
-	__maybe_unused char *addr_orig = (char *)addr;
+	__maybe_unused حرف *src_orig = src;
+	__maybe_unused حرف *addr_orig = (حرف *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	اگر (cnt == 0) {
+		واپس (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	اگر (!info_پہلا || !info_آخری) {
+		واپس (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
-		ulong b_end = info->start[0] + info->size;	/* bank end addr */
-		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
-			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
+	برائے (info = info_پہلا; info <= info_آخری; ++info) {
+		ulong b_انتہا = info->آغاز[0] + info->سائز;	/* bank end addr */
+		مختصر s_انتہا = info->sector_گنتی - 1;
+		برائے (i=0; i<info->sector_گنتی; ++i) {
+			ulong e_addr = (i == s_انتہا) ? b_انتہا : info->آغاز[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			اگر ((انتہا_2 >= info->آغاز[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				واپس (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	برائے (info = info_پہلا; info <= info_آخری && cnt>0; ++info) {
 		ulong len;
 
-		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		len = info->آغاز[0] + info->سائز - addr;
+		اگر (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		اگر ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			واپس (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
-		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+#اگر defined(CONFIG_FLASH_VERIFY)
+	اگر (memcmp(src_orig, addr_orig, cnt_orig)) {
+		لکھو("\nVerify failed!\n");
+		واپس FL_ERR_PROG_ERROR;
 	}
-#endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
+#اگر_ختم /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	واپس (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+خالی flash_perror(صحیح err)
 {
-	switch (err) {
-	case FL_ERR_OK:
-		break;
-	case FL_ERR_TIMEOUT:
+	انتخاب (err) {
+	حالت FL_ERR_OK:
+		توڑو;
+	حالت FL_ERR_TIMEOUT:
 		puts ("Timeout writing to Flash\n");
-		break;
-	case FL_ERR_NOT_ERASED:
+		توڑو;
+	حالت FL_ERR_NOT_ERASED:
 		puts ("Flash not Erased\n");
-		break;
-	case FL_ERR_PROTECTED:
+		توڑو;
+	حالت FL_ERR_PROTECTED:
 		puts ("Can't write to protected Flash sectors\n");
-		break;
-	case FL_ERR_INVAL:
+		توڑو;
+	حالت FL_ERR_INVAL:
 		puts ("Outside available Flash\n");
-		break;
-	case FL_ERR_ALIGN:
+		توڑو;
+	حالت FL_ERR_ALIGN:
 		puts ("Start and/or end address not on sector boundary\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_VENDOR:
+		توڑو;
+	حالت FL_ERR_UNKNOWN_FLASH_VENDOR:
 		puts ("Unknown Vendor of Flash\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_TYPE:
+		توڑو;
+	حالت FL_ERR_UNKNOWN_FLASH_TYPE:
 		puts ("Unknown Type of Flash\n");
-		break;
-	case FL_ERR_PROG_ERROR:
+		توڑو;
+	حالت FL_ERR_PROG_ERROR:
 		puts ("General Flash Programming Error\n");
-		break;
-	case FL_ERR_ABORTED:
+		توڑو;
+	حالت FL_ERR_ABORTED:
 		puts("Flash Programming Aborted\n");
-		break;
-	default:
-		printf ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
-		break;
+		توڑو;
+	طےشدہ:
+		لکھو ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
+		توڑو;
 	}
 }

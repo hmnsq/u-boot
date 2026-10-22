@@ -3,117 +3,117 @@
  * Copyright (C) 2020 Stefan Roese <sr@denx.de>
  */
 
-#include <image.h>
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/sections.h>
-#include <spl.h>
+#شامل <image.h>
+#شامل <log.h>
+#شامل <malloc.h>
+#شامل <mapmem.h>
+#شامل <asm/sections.h>
+#شامل <spl.h>
 
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
+#شامل <lzma/LzmaTypes.h>
+#شامل <lzma/LzmaDec.h>
+#شامل <lzma/LzmaTools.h>
 
-#define LZMA_LEN	(1 << 20)
+#تعریف_کرو LZMA_LEN	(1 << 20)
 
-static void spl_parse_legacy_validate(ulong start, ulong size)
+ساکن خالی spl_parse_legacy_validate(ulong آغاز, ulong سائز)
 {
-	ulong spl_start = (ulong)_start;
-	ulong spl_end = (ulong)&_image_binary_end;
-	ulong end = start + size;
+	ulong spl_آغاز = (ulong)آغاز_2;
+	ulong spl_انتہا = (ulong)&image_ثنائی_انتہا;
+	ulong انتہا_2 = آغاز + سائز;
 
-	if ((start >= spl_start && start < spl_end) ||
-	    (end > spl_start && end <= spl_end) ||
-	    (start < spl_start && end >= spl_end) ||
-	    (start > end && end > spl_start))
+	اگر ((آغاز >= spl_آغاز && آغاز < spl_انتہا) ||
+	    (انتہا_2 > spl_آغاز && انتہا_2 <= spl_انتہا) ||
+	    (آغاز < spl_آغاز && انتہا_2 >= spl_انتہا) ||
+	    (آغاز > انتہا_2 && انتہا_2 > spl_آغاز))
 		panic("SPL: Image overlaps SPL\n");
 
-	if (size > CONFIG_SYS_BOOTM_LEN)
+	اگر (سائز > CONFIG_SYS_BOOTM_LEN)
 		panic("SPL: Image too large\n");
 }
 
-int spl_parse_legacy_header(struct spl_image_info *spl_image,
-			    const struct legacy_img_hdr *header)
+صحیح spl_parse_legacy_سرخی(ساخت spl_image_info *spl_image,
+			    ثابت ساخت legacy_img_hdr *سرخی)
 {
-	u32 header_size = sizeof(struct legacy_img_hdr);
+	u32 سرخی_سائز = حجم(ساخت legacy_img_hdr);
 
 	/* check uImage header CRC */
-	if (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK) &&
-	    !image_check_hcrc(header)) {
+	اگر (IS_ENABLED(CONFIG_SPL_LEGACY_IMAGE_چکری_جانچ_CHECK) &&
+	    !image_check_hcrc(سرخی)) {
 		puts("SPL: Image header CRC check failed!\n");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	if (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
+	اگر (spl_image->flags & SPL_COPY_PAYLOAD_ONLY) {
 		/*
 		 * On some system (e.g. powerpc), the load-address and
 		 * entry-point is located at address 0. We can't load
 		 * to 0-0x40. So skip header in this case.
 		 */
-		spl_image->load_addr = image_get_load(header);
-		spl_image->entry_point = image_get_ep(header);
-		spl_image->size = image_get_data_size(header);
-	} else {
-		spl_image->entry_point = image_get_ep(header);
+		spl_image->بھرو_addr = image_get_بھرو(سرخی);
+		spl_image->اندراج_نقطہ = image_get_ep(سرخی);
+		spl_image->سائز = image_get_ڈیٹا_سائز(سرخی);
+	} ورنہ {
+		spl_image->اندراج_نقطہ = image_get_ep(سرخی);
 		/* Load including the header */
-		spl_image->load_addr = image_get_load(header) -
-			header_size;
-		spl_image->size = image_get_data_size(header) +
-			header_size;
+		spl_image->بھرو_addr = image_get_بھرو(سرخی) -
+			سرخی_سائز;
+		spl_image->سائز = image_get_ڈیٹا_سائز(سرخی) +
+			سرخی_سائز;
 	}
 
-#ifdef CONFIG_SPL_LEGACY_IMAGE_CRC_CHECK
+#اگر_تعریف_شدہ CONFIG_SPL_LEGACY_IMAGE_چکری_جانچ_CHECK
 	/* store uImage data length and CRC to check later */
-	spl_image->dcrc_data = image_get_load(header);
-	spl_image->dcrc_length = image_get_data_size(header);
-	spl_image->dcrc = image_get_dcrc(header);
-#endif
+	spl_image->dcrc_ڈیٹا = image_get_بھرو(سرخی);
+	spl_image->dcrc_لمبائی = image_get_ڈیٹا_سائز(سرخی);
+	spl_image->dcrc = image_get_dcrc(سرخی);
+#اگر_ختم
 
-	spl_image->os = image_get_os(header);
-	spl_image->name = image_get_name(header);
+	spl_image->os = image_get_os(سرخی);
+	spl_image->name = image_get_name(سرخی);
 	debug(PHASE_PROMPT
 	      "payload image: %32s load addr: 0x%lx size: %d\n",
-	      spl_image->name, spl_image->load_addr, spl_image->size);
+	      spl_image->name, spl_image->بھرو_addr, spl_image->سائز);
 
-	spl_parse_legacy_validate(spl_image->load_addr, spl_image->size);
-	spl_parse_legacy_validate(spl_image->entry_point, 0);
+	spl_parse_legacy_validate(spl_image->بھرو_addr, spl_image->سائز);
+	spl_parse_legacy_validate(spl_image->اندراج_نقطہ, 0);
 
-	return 0;
+	واپس 0;
 }
 
-int spl_load_legacy_lzma(struct spl_image_info *spl_image,
-			 struct spl_load_info *load, ulong offset)
+صحیح spl_بھرو_legacy_lzma(ساخت spl_image_info *spl_image,
+			 ساخت spl_بھرو_info *بھرو, ulong انحراف)
 {
-	SizeT lzma_len = LZMA_LEN;
-	void *src;
-	ulong dataptr, overhead, size;
-	int ret;
+	سائز_T lzma_len = LZMA_LEN;
+	خالی *src;
+	ulong dataptr, overhead, سائز;
+	صحیح ret;
 
 	/* dataptr points to compressed payload  */
-	dataptr = ALIGN_DOWN(sizeof(struct legacy_img_hdr),
-			     spl_get_bl_len(load));
-	overhead = sizeof(struct legacy_img_hdr) - dataptr;
-	size = ALIGN(spl_image->size + overhead, spl_get_bl_len(load));
-	dataptr += offset;
+	dataptr = ALIGN_نیچے_کو(حجم(ساخت legacy_img_hdr),
+			     spl_get_bl_len(بھرو));
+	overhead = حجم(ساخت legacy_img_hdr) - dataptr;
+	سائز = ALIGN(spl_image->سائز + overhead, spl_get_bl_len(بھرو));
+	dataptr += انحراف;
 
 	debug("LZMA: Decompressing %08lx to %08lx\n",
-	      dataptr, spl_image->load_addr);
-	src = malloc(size);
-	if (!src) {
-		printf("Unable to allocate %d bytes for LZMA\n",
-		       spl_image->size);
-		return -ENOMEM;
+	      dataptr, spl_image->بھرو_addr);
+	src = حافظہ_دو(سائز);
+	اگر (!src) {
+		لکھو("Unable to allocate %d bytes for LZMA\n",
+		       spl_image->سائز);
+		واپس -ENOMEM;
 	}
 
-	load->read(load, dataptr, size, src);
-	ret = lzmaBuffToBuffDecompress(map_sysmem(spl_image->load_addr,
-						  spl_image->size), &lzma_len,
-				       src + overhead, spl_image->size);
-	if (ret) {
-		printf("LZMA decompression error: %d\n", ret);
-		return ret;
+	بھرو->اقرأ(بھرو, dataptr, سائز, src);
+	ret = lzma_Buff_مقصد_Buff_Decompress(map_sysmem(spl_image->بھرو_addr,
+						  spl_image->سائز), &lzma_len,
+				       src + overhead, spl_image->سائز);
+	اگر (ret) {
+		لکھو("LZMA decompression error: %d\n", ret);
+		واپس ret;
 	}
 
-	spl_image->size = lzma_len;
-	return 0;
+	spl_image->سائز = lzma_len;
+	واپس 0;
 }

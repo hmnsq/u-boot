@@ -5,143 +5,143 @@
  *
  * Ravi B <ravibabu@ti.com>
  */
-#include <env.h>
-#include <spl.h>
-#include <linux/compiler.h>
-#include <errno.h>
-#include <watchdog.h>
-#include <console.h>
-#include <g_dnl.h>
-#include <usb.h>
-#include <dfu.h>
-#include <linux/printk.h>
-#include <pci_ep.h>
-#include <dm/uclass.h>
-#include <cpu_func.h>
-#include <linux/io.h>
+#شامل <env.h>
+#شامل <spl.h>
+#شامل <linux/compiler.h>
+#شامل <errno.h>
+#شامل <watchdog.h>
+#شامل <console.h>
+#شامل <g_dnl.h>
+#شامل <usb.h>
+#شامل <dfu.h>
+#شامل <linux/printk.h>
+#شامل <pci_ep.h>
+#شامل <dm/uclass.h>
+#شامل <cpu_func.h>
+#شامل <linux/io.h>
 
 /*
  * Macros define size of magic word and boot phase string
  * in bytes.
  */
-#define MAGIC_WORD_SIZE 4
-#define BOOT_PHASE_STRING_SIZE 63
+#تعریف_کرو MAGIC_لفظ_سائز 4
+#تعریف_کرو BOOT_PHASE_STRING_سائز 63
 
-static int run_dfu(int usb_index, char *interface, char *devstring)
+ساکن صحیح تسلسل_dfu(صحیح usb_اشاریہ, حرف *interface, حرف *devstring)
 {
-	int ret;
+	صحیح ret;
 
 	ret = dfu_init_env_entities(interface, devstring);
-	if (ret) {
+	اگر (ret) {
 		dfu_free_entities();
-		goto exit;
+		جاؤ باہر_نکلو;
 	}
 
-	run_usb_dnl_gadget(usb_index, "usb_dnl_dfu");
-exit:
+	تسلسل_usb_dnl_gadget(usb_اشاریہ, "usb_dnl_dfu");
+باہر_نکلو:
 	dfu_free_entities();
-	return ret;
+	واپس ret;
 }
 
-#ifdef CONFIG_SPL_PCI_DFU
-static int dfu_over_pcie(void)
+#اگر_تعریف_شدہ CONFIG_SPL_PCI_DFU
+ساکن صحیح dfu_over_pcie(خالی)
 {
-	u32 offset, magic_word;
-	volatile void *addr;
-	struct udevice *dev;
-	struct pci_bar bar;
-	struct pci_ep_header hdr;
+	u32 انحراف, magic_لفظ;
+	متلون خالی *addr;
+	ساخت udevice *dev;
+	ساخت pci_bar bar;
+	ساخت pci_ep_سرخی hdr;
 	uint fn = 0;
-	int ret;
-	char *bootphase;
+	صحیح ret;
+	حرف *bootphase;
 
 	uclass_get_device_by_seq(UCLASS_PCI_EP, 0, &dev);
-	if (!dev) {
+	اگر (!dev) {
 		pr_err("Failed to get pci ep device\n");
-		return -ENODEV;
+		واپس -ENODEV;
 	}
 
 	hdr.deviceid = CONFIG_SPL_PCI_DFU_DEVICE_ID;
 	hdr.vendorid = CONFIG_SPL_PCI_DFU_VENDOR_ID;
-	hdr.baseclass_code = PCI_BASE_CLASS_MEMORY;
-	hdr.subclass_code = PCI_CLASS_MEMORY_RAM & 0xff;
+	hdr.baseclass_رمز = PCI_بنیاد_CLASS_حافظہ;
+	hdr.subclass_رمز = PCI_CLASS_حافظہ_RAM & 0xff;
 
-	ret = pci_ep_write_header(dev, fn, &hdr);
-	if (ret) {
+	ret = pci_ep_write_سرخی(dev, fn, &hdr);
+	اگر (ret) {
 		pr_err("Failed to write header: %d\n", ret);
-		return ret;
+		واپس ret;
 	}
 
 	bar.barno = BAR_0;
-	bar.phys_addr = (dma_addr_t)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-	bar.flags = PCI_BASE_ADDRESS_SPACE_MEMORY |
-			  PCI_BASE_ADDRESS_MEM_TYPE_32 |
-			  PCI_BASE_ADDRESS_MEM_PREFETCH;
+	bar.phys_addr = (dma_addr_t)CONFIG_SPL_PCI_DFU_SPL_بھرو_FIT_پتہ;
+	bar.flags = PCI_بنیاد_پتہ_SPACE_حافظہ |
+			  PCI_بنیاد_پتہ_MEM_TYPE_32 |
+			  PCI_بنیاد_پتہ_MEM_PREFETCH;
 
-	bar.size = CONFIG_SPL_PCI_DFU_BAR_SIZE;
+	bar.سائز = CONFIG_SPL_PCI_DFU_BAR_سائز;
 
-	ret = pci_ep_set_bar(dev, fn, &bar);
-	if (ret) {
+	ret = pci_ep_سیٹ_bar(dev, fn, &bar);
+	اگر (ret) {
 		pr_err("Failed to set bar: %d\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = pci_ep_start(dev);
-	if (ret) {
+	ret = pci_ep_آغاز(dev);
+	اگر (ret) {
 		pr_err("Failed to start ep: %d\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	addr = (void *)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-	offset = CONFIG_SPL_PCI_DFU_BAR_SIZE - MAGIC_WORD_SIZE;
+	addr = (خالی *)CONFIG_SPL_PCI_DFU_SPL_بھرو_FIT_پتہ;
+	انحراف = CONFIG_SPL_PCI_DFU_BAR_سائز - MAGIC_لفظ_سائز;
 
-	if (sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
+	اگر (حجم(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_سائز) {
 		pr_err("Not copying boot phase. String too long\n");
-	} else {
-		bootphase = (char *)(addr + CONFIG_SPL_PCI_DFU_BAR_SIZE -
-				  (BOOT_PHASE_STRING_SIZE + MAGIC_WORD_SIZE + 1));
+	} ورنہ {
+		bootphase = (حرف *)(addr + CONFIG_SPL_PCI_DFU_BAR_سائز -
+				  (BOOT_PHASE_STRING_سائز + MAGIC_لفظ_سائز + 1));
 		strlcpy(bootphase, CONFIG_SPL_PCI_DFU_BOOT_PHASE,
-			sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
+			حجم(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
 	}
 
-	addr = addr + offset;
-	magic_word = CONFIG_SPL_PCI_DFU_MAGIC_WORD;
-	(*(int *)addr) = 0;
+	addr = addr + انحراف;
+	magic_لفظ = CONFIG_SPL_PCI_DFU_MAGIC_لفظ;
+	(*(صحیح *)addr) = 0;
 	flush_dcache_all();
-	for (;;) {
-		if (*(int *)addr == magic_word)
-			break;
+	برائے (;;) {
+		اگر (*(صحیح *)addr == magic_لفظ)
+			توڑو;
 		invalidate_dcache_all();
 	}
 
-	return 0;
+	واپس 0;
 }
-#endif
+#اگر_ختم
 
-int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
+صحیح spl_dfu_cmd(صحیح usbctrl, حرف *dfu_alt_info, حرف *interface, حرف *devstr)
 {
-	char *str_env;
-	int ret;
+	حرف *str_env;
+	صحیح ret;
 
-#ifdef CONFIG_SPL_PCI_DFU
-	if (spl_boot_device() == BOOT_DEVICE_PCIE)
-		return dfu_over_pcie();
-#endif
+#اگر_تعریف_شدہ CONFIG_SPL_PCI_DFU
+	اگر (spl_boot_device() == BOOT_DEVICE_PCIE)
+		واپس dfu_over_pcie();
+#اگر_ختم
 
 	/* set default environment */
-	env_set_default(NULL, 0);
+	env_سیٹ_default(تہی, 0);
 	str_env = env_get(dfu_alt_info);
-	if (!str_env) {
+	اگر (!str_env) {
 		pr_err("\"%s\" env variable not defined!\n", dfu_alt_info);
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	ret = env_set("dfu_alt_info", str_env);
-	if (ret) {
+	ret = env_سیٹ("dfu_alt_info", str_env);
+	اگر (ret) {
 		pr_err("unable to set env variable \"dfu_alt_info\"!\n");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
 	/* invoke dfu command */
-	return run_dfu(usbctrl, interface, devstr);
+	واپس تسلسل_dfu(usbctrl, interface, devstr);
 }

@@ -3,93 +3,93 @@
  * Copyright 2008-2014 Freescale Semiconductor, Inc.
  */
 
-#include <ddr_spd.h>
-#include <stdio.h>
+#شامل <ddr_spd.h>
+#شامل <stdio.h>
 
 /* used for ddr1 and ddr2 spd */
-static int
-spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
+ساکن صحیح
+spd_check(ثابت u8 *buf, u8 spd_rev, u8 spd_cksum)
 {
-	unsigned int cksum = 0;
-	unsigned int i;
+	غیرعلامتی صحیح cksum = 0;
+	غیرعلامتی صحیح i;
 
 	/*
 	 * Check SPD revision supported
 	 * Rev 1.X or less supported by this code
 	 */
-	if (spd_rev >= 0x20) {
-		printf("SPD revision %02X not supported by this code\n",
+	اگر (spd_rev >= 0x20) {
+		لکھو("SPD revision %02X not supported by this code\n",
 		       spd_rev);
-		return 1;
+		واپس 1;
 	}
-	if (spd_rev > 0x13) {
-		printf("SPD revision %02X not verified by this code\n",
+	اگر (spd_rev > 0x13) {
+		لکھو("SPD revision %02X not verified by this code\n",
 		       spd_rev);
 	}
 
 	/*
 	 * Calculate checksum
 	 */
-	for (i = 0; i < 63; i++) {
+	برائے (i = 0; i < 63; i++) {
 		cksum += *buf++;
 	}
 	cksum &= 0xFF;
 
-	if (cksum != spd_cksum) {
-		printf("SPD checksum unexpected. "
+	اگر (cksum != spd_cksum) {
+		لکھو("SPD checksum unexpected. "
 			"Checksum in SPD = %02X, computed SPD = %02X\n",
 			spd_cksum, cksum);
-		return 1;
+		واپس 1;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-unsigned int
-ddr1_spd_check(const ddr1_spd_eeprom_t *spd)
+غیرعلامتی صحیح
+ddr1_spd_check(ثابت ddr1_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	ثابت u8 *p = (ثابت u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	واپس spd_check(p, spd->spd_rev, spd->cksum);
 }
 
-unsigned int
-ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
+غیرعلامتی صحیح
+ddr2_spd_check(ثابت ddr2_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	ثابت u8 *p = (ثابت u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	واپس spd_check(p, spd->spd_rev, spd->cksum);
 }
 
 /*
  * CRC16 compute for DDR3 SPD
  * Copied from DDR3 SPD spec.
  */
-static int
-crc16(char *ptr, int count)
+ساکن صحیح
+crc16(حرف *ptr, صحیح گنتی)
 {
-	int crc, i;
+	صحیح چکری_جانچ, i;
 
-	crc = 0;
-	while (--count >= 0) {
-		crc = crc ^ (int)*ptr++ << 8;
-		for (i = 0; i < 8; ++i)
-			if (crc & 0x8000)
-				crc = crc << 1 ^ 0x1021;
-			else
-				crc = crc << 1;
+	چکری_جانچ = 0;
+	جب (--گنتی >= 0) {
+		چکری_جانچ = چکری_جانچ ^ (صحیح)*ptr++ << 8;
+		برائے (i = 0; i < 8; ++i)
+			اگر (چکری_جانچ & 0x8000)
+				چکری_جانچ = چکری_جانچ << 1 ^ 0x1021;
+			ورنہ
+				چکری_جانچ = چکری_جانچ << 1;
 	}
-	return crc & 0xffff;
+	واپس چکری_جانچ & 0xffff;
 }
 
-unsigned int
-ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
+غیرعلامتی صحیح
+ddr3_spd_check(ثابت ddr3_spd_eeprom_t *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	حرف *p = (حرف *)spd;
+	صحیح csum16;
+	صحیح len;
+	حرف چکری_جانچ_lsb;	/* byte 126 */
+	حرف چکری_جانچ_msb;	/* byte 127 */
 
 	/*
 	 * SPD byte0[7] - CRC coverage
@@ -97,62 +97,62 @@ ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 	 * 1 = CRC covers bytes 0~116
 	 */
 
-	len = !(spd->info_size_crc & 0x80) ? 126 : 117;
+	len = !(spd->info_سائز_چکری_جانچ & 0x80) ? 126 : 117;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	چکری_جانچ_lsb = (حرف) (csum16 & 0xff);
+	چکری_جانچ_msb = (حرف) (csum16 >> 8);
 
-	if (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
-		return 0;
-	} else {
-		printf("SPD checksum unexpected.\n"
+	اگر (spd->چکری_جانچ[0] == چکری_جانچ_lsb && spd->چکری_جانچ[1] == چکری_جانچ_msb) {
+		واپس 0;
+	} ورنہ {
+		لکھو("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->چکری_جانچ[0], چکری_جانچ_lsb, spd->چکری_جانچ[1], چکری_جانچ_msb);
+		واپس 1;
 	}
 }
 
-unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
+غیرعلامتی صحیح ddr4_spd_check(ثابت ساخت ddr4_spd_eeprom_s *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	حرف *p = (حرف *)spd;
+	صحیح csum16;
+	صحیح len;
+	حرف چکری_جانچ_lsb;	/* byte 126 */
+	حرف چکری_جانچ_msb;	/* byte 127 */
 
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	چکری_جانچ_lsb = (حرف) (csum16 & 0xff);
+	چکری_جانچ_msb = (حرف) (csum16 >> 8);
 
-	if (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	اگر (spd->چکری_جانچ[0] != چکری_جانچ_lsb || spd->چکری_جانچ[1] != چکری_جانچ_msb) {
+		لکھو("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->چکری_جانچ[0], چکری_جانچ_lsb, spd->چکری_جانچ[1], چکری_جانچ_msb);
+		واپس 1;
 	}
 
-	p = (char *)((ulong)spd + 128);
+	p = (حرف *)((ulong)spd + 128);
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	چکری_جانچ_lsb = (حرف) (csum16 & 0xff);
+	چکری_جانچ_msb = (حرف) (csum16 >> 8);
 
-	if (spd->mod_section.uc[126] != crc_lsb ||
-	    spd->mod_section.uc[127] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	اگر (spd->mod_section.uc[126] != چکری_جانچ_lsb ||
+	    spd->mod_section.uc[127] != چکری_جانچ_msb) {
+		لکھو("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->mod_section.uc[126],
-			crc_lsb, spd->mod_section.uc[127],
-			crc_msb);
-		return 1;
+			چکری_جانچ_lsb, spd->mod_section.uc[127],
+			چکری_جانچ_msb);
+		واپس 1;
 	}
 
-	return 0;
+	واپس 0;
 }

@@ -6,98 +6,98 @@
  *	    Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <stdio.h>
-#include <vsprintf.h>
-#include <linux/string.h>
-#include <eeprom_field.h>
+#شامل <stdio.h>
+#شامل <vsprintf.h>
+#شامل <linux/string.h>
+#شامل <eeprom_field.h>
 
-static void __eeprom_field_print_bin(const struct eeprom_field *field,
-				     char *delimiter, bool reverse)
+ساکن خالی __eeprom_field_print_bin(ثابت ساخت eeprom_میدان *میدان,
+				     حرف *delimiter, bool الٹ)
 {
-	int i;
-	int from = reverse ? field->size - 1 : 0;
-	int to = reverse ? 0 : field->size - 1;
+	صحیح i;
+	صحیح from = الٹ ? میدان->سائز - 1 : 0;
+	صحیح مقصد = الٹ ? 0 : میدان->سائز - 1;
 
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	for (i = from; i != to; reverse ? i-- : i++)
-		printf("%02x%s", field->buf[i], delimiter);
+	لکھو(PRINT_میدان_SEGMENT, میدان->name);
+	برائے (i = from; i != مقصد; الٹ ? i-- : i++)
+		لکھو("%02x%s", میدان->buf[i], delimiter);
 
-	printf("%02x\n", field->buf[i]);
+	لکھو("%02x\n", میدان->buf[i]);
 }
 
-static int __eeprom_field_update_bin(struct eeprom_field *field,
-				     const char *value, bool reverse)
+ساکن صحیح __eeprom_field_update_bin(ساخت eeprom_میدان *میدان,
+				     ثابت حرف *قدر, bool الٹ)
 {
-	int len = strlen(value);
-	int k, j, i = reverse ? len - 1 : 0;
-	unsigned char byte;
-	char *endptr;
+	صحیح len = لڑی_لمبائی(قدر);
+	صحیح k, j, i = الٹ ? len - 1 : 0;
+	غیرعلامتی حرف byte;
+	حرف *endptr;
 
 	/* each two characters in the string fit in one byte */
-	if (len > field->size * 2)
-		return -1;
+	اگر (len > میدان->سائز * 2)
+		واپس -1;
 
-	memset(field->buf, 0, field->size);
+	memset(میدان->buf, 0, میدان->سائز);
 
 	/* i - string iterator, j - buf iterator */
-	for (j = 0; j < field->size; j++) {
+	برائے (j = 0; j < میدان->سائز; j++) {
 		byte = 0;
-		char tmp[3] = { 0, 0, 0 };
+		حرف tmp[3] = { 0, 0, 0 };
 
-		if ((reverse && i < 0) || (!reverse && i >= len))
-			break;
+		اگر ((الٹ && i < 0) || (!الٹ && i >= len))
+			توڑو;
 
-		for (k = 0; k < 2; k++) {
-			if (reverse && i == 0) {
-				tmp[k] = value[i];
-				break;
+		برائے (k = 0; k < 2; k++) {
+			اگر (الٹ && i == 0) {
+				tmp[k] = قدر[i];
+				توڑو;
 			}
 
-			tmp[k] = value[reverse ? i - 1 + k : i + k];
+			tmp[k] = قدر[الٹ ? i - 1 + k : i + k];
 		}
 
 		byte = simple_strtoul(tmp, &endptr, 16);
-		if (*endptr != '\0')
-			return -1;
+		اگر (*endptr != '\0')
+			واپس -1;
 
-		field->buf[j] = byte;
-		i = reverse ? i - 2 : i + 2;
+		میدان->buf[j] = byte;
+		i = الٹ ? i - 2 : i + 2;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
-					   char *value, char *delimiter)
+ساکن صحیح __eeprom_field_update_bin_delim(ساخت eeprom_میدان *میدان,
+					   حرف *قدر, حرف *delimiter)
 {
-	int count = 0;
-	int i, val;
-	const char *tmp = value;
-	char *tok;
-	char *endptr;
+	صحیح گنتی = 0;
+	صحیح i, val;
+	ثابت حرف *tmp = قدر;
+	حرف *tok;
+	حرف *endptr;
 
-	tmp = strstr(tmp, delimiter);
-	while (tmp != NULL) {
-		count++;
+	tmp = لڑی_تلاش(tmp, delimiter);
+	جب (tmp != تہی) {
+		گنتی++;
 		tmp++;
-		tmp = strstr(tmp, delimiter);
+		tmp = لڑی_تلاش(tmp, delimiter);
 	}
 
-	if (count > field->size)
-		return -1;
+	اگر (گنتی > میدان->سائز)
+		واپس -1;
 
-	tok = strtok(value, delimiter);
-	for (i = 0; tok && i < field->size; i++) {
+	tok = strtok(قدر, delimiter);
+	برائے (i = 0; tok && i < میدان->سائز; i++) {
 		val = simple_strtoul(tok, &endptr, 0);
-		if (*endptr != '\0')
-			return -1;
+		اگر (*endptr != '\0')
+			واپس -1;
 
 		/* here we assume that each tok is no more than byte long */
-		field->buf[i] = (unsigned char)val;
-		tok = strtok(NULL, delimiter);
+		میدان->buf[i] = (غیرعلامتی حرف)val;
+		tok = strtok(تہی, delimiter);
 	}
 
-	return 0;
+	واپس 0;
 }
 
 /**
@@ -110,9 +110,9 @@ static int __eeprom_field_update_bin_delim(struct eeprom_field *field,
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin(const struct eeprom_field *field)
+خالی eeprom_میدان_print_bin(ثابت ساخت eeprom_میدان *میدان)
 {
-	__eeprom_field_print_bin(field, "", false);
+	__eeprom_field_print_bin(میدان, "", false);
 }
 
 /**
@@ -121,9 +121,9 @@ void eeprom_field_print_bin(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of values (i.e. "10b234a")
  */
-int eeprom_field_update_bin(struct eeprom_field *field, char *value)
+صحیح eeprom_میدان_update_bin(ساخت eeprom_میدان *میدان, حرف *قدر)
 {
-	return __eeprom_field_update_bin(field, value, false);
+	واپس __eeprom_field_update_bin(میدان, قدر, false);
 }
 
 /**
@@ -133,9 +133,9 @@ int eeprom_field_update_bin(struct eeprom_field *field, char *value)
  * @field:	an initialized field
  * @value:	a space delimited string of byte values (i.e. "1 02 3 0x4")
  */
-int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
+صحیح eeprom_میدان_update_reserved(ساخت eeprom_میدان *میدان, حرف *قدر)
 {
-	return __eeprom_field_update_bin_delim(field, value, " ");
+	واپس __eeprom_field_update_bin_delim(میدان, قدر, " ");
 }
 
 /**
@@ -152,9 +152,9 @@ int eeprom_field_update_reserved(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_bin_rev(const struct eeprom_field *field)
+خالی eeprom_میدان_print_bin_rev(ثابت ساخت eeprom_میدان *میدان)
 {
-	__eeprom_field_print_bin(field, "", true);
+	__eeprom_field_print_bin(میدان, "", true);
 }
 
 /**
@@ -168,9 +168,9 @@ void eeprom_field_print_bin_rev(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a string of byte values
  */
-int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
+صحیح eeprom_میدان_update_bin_rev(ساخت eeprom_میدان *میدان, حرف *قدر)
 {
-	return __eeprom_field_update_bin(field, value, true);
+	واپس __eeprom_field_update_bin(میدان, قدر, true);
 }
 
 /**
@@ -183,9 +183,9 @@ int eeprom_field_update_bin_rev(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_mac(const struct eeprom_field *field)
+خالی eeprom_میدان_print_mac(ثابت ساخت eeprom_میدان *میدان)
 {
-	__eeprom_field_print_bin(field, ":", false);
+	__eeprom_field_print_bin(میدان, ":", false);
 }
 
 /**
@@ -195,22 +195,22 @@ void eeprom_field_print_mac(const struct eeprom_field *field)
  * @field:	an initialized field
  * @value:	a colon delimited string of byte values (i.e. "1:02:3:ff")
  */
-int eeprom_field_update_mac(struct eeprom_field *field, char *value)
+صحیح eeprom_میدان_update_mac(ساخت eeprom_میدان *میدان, حرف *قدر)
 {
-	return __eeprom_field_update_bin_delim(field, value, ":");
+	واپس __eeprom_field_update_bin_delim(میدان, قدر, ":");
 }
 
 /**
  * eeprom_field_print_ascii() - print a field which contains ASCII data
  * @field:	an initialized field to print
  */
-void eeprom_field_print_ascii(const struct eeprom_field *field)
+خالی eeprom_میدان_print_ascii(ثابت ساخت eeprom_میدان *میدان)
 {
-	char format[8];
+	حرف format[8];
 
-	sprintf(format, "%%.%ds\n", field->size);
-	printf(PRINT_FIELD_SEGMENT, field->name);
-	printf(format, field->buf);
+	sprintf(format, "%%.%ds\n", میدان->سائز);
+	لکھو(PRINT_میدان_SEGMENT, میدان->name);
+	لکھو(format, میدان->buf);
 }
 
 /**
@@ -220,17 +220,17 @@ void eeprom_field_print_ascii(const struct eeprom_field *field)
  *
  * Returns 0 on success, -1 of failure (new string too long).
  */
-int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
+صحیح eeprom_میدان_update_ascii(ساخت eeprom_میدان *میدان, حرف *قدر)
 {
-	if (strlen(value) >= field->size) {
-		printf("%s: new data too long\n", field->name);
-		return -1;
+	اگر (لڑی_لمبائی(قدر) >= میدان->سائز) {
+		لکھو("%s: new data too long\n", میدان->name);
+		واپس -1;
 	}
 
-	strncpy((char *)field->buf, value, field->size - 1);
-	field->buf[field->size - 1] = '\0';
+	strncpy((حرف *)میدان->buf, قدر, میدان->سائز - 1);
+	میدان->buf[میدان->سائز - 1] = '\0';
 
-	return 0;
+	واپس 0;
 }
 
 /**
@@ -243,8 +243,8 @@ int eeprom_field_update_ascii(struct eeprom_field *field, char *value)
  *
  * @field:	an initialized field to print
  */
-void eeprom_field_print_reserved(const struct eeprom_field *field)
+خالی eeprom_میدان_print_reserved(ثابت ساخت eeprom_میدان *میدان)
 {
-	printf(PRINT_FIELD_SEGMENT, "Reserved fields\t");
-	printf("(%d bytes)\n", field->size);
+	لکھو(PRINT_میدان_SEGMENT, "Reserved fields\t");
+	لکھو("(%d bytes)\n", میدان->سائز);
 }
