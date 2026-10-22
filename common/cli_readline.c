@@ -20,39 +20,39 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char erase_seq[] = "\b \b";	/* erase sequence */
-static const char   tab_seq[] = "        ";	/* used to expand TABs */
+static const var_na erase_seq[] = "\b \b";	/* erase sequence */
+static const var_na   tab_seq[] = "        ";	/* used to expand TABs */
 
-char console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
+var_na console_buffer[CONFIG_SYS_CBSIZE + 1];	/* console I/O buffer	*/
 
-static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
+static var_na *delete_char (var_na *buffer, var_na *p, පූර්ණ_සංඛ්‍යා *colp, පූර්ණ_සංඛ්‍යා *np, පූර්ණ_සංඛ්‍යා plen)
 {
-	char *s;
+	var_na *s;
 
-	if (*np == 0)
-		return p;
+	නම් (*np == 0)
+		ආපසු p;
 
-	if (*(--p) == '\t') {		/* will retype the whole line */
-		while (*colp > plen) {
+	නම් (*(--p) == '\t') {		/* will retype the whole line */
+		අතරතුර (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for (s = buffer; s < p; ++s) {
-			if (*s == '\t') {
+		සඳහා (s = buffer; s < p; ++s) {
+			නම් (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
-			} else {
+			} නැතහොත් {
 				++(*colp);
 				putc(*s);
 			}
 		}
-	} else {
+	} නැතහොත් {
 		puts(erase_seq);
 		(*colp)--;
 	}
 	(*np)--;
 
-	return p;
+	ආපසු p;
 }
 
 #ifdef CONFIG_CMDLINE_EDITING
@@ -62,11 +62,11 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
  * Author: Janghoon Lyu <nandy@mizi.com>
  */
 
-#define putnstr(str, n)	printf("%.*s", (int)n, str)
+#define putnstr(str, n)	printf("%.*s", (පූර්ණ_සංඛ්‍යා)n, str)
 
 #define CTL_BACKSPACE		('\b')
-#define DEL			((char)255)
-#define DEL7			((char)127)
+#define DEL			((var_na)255)
+#define DEL7			((var_na)127)
 #define CREAD_HIST_CHAR		('!')
 
 #define getcmd_putch(ch)	putc(ch)
@@ -76,46 +76,46 @@ static char *delete_char (char *buffer, char *p, int *colp, int *np, int plen)
 #ifdef CONFIG_XPL_BUILD
 #define HIST_MAX		3
 #define HIST_SIZE		32
-#else
+#නැතහොත්
 #define HIST_MAX		20
 #define HIST_SIZE		CONFIG_SYS_CBSIZE
 #endif
 
-static int hist_max;
-static int hist_add_idx;
-static int hist_cur = -1;
+static පූර්ණ_සංඛ්‍යා hist_max;
+static පූර්ණ_සංඛ්‍යා hist_add_idx;
+static පූර්ණ_සංඛ්‍යා hist_cur = -1;
 static unsigned hist_num;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-static char hist_data[HIST_MAX][HIST_SIZE + 1];
+static var_na hist_data[HIST_MAX][HIST_SIZE + 1];
 #endif
-static char *hist_list[HIST_MAX];
+static var_na *hist_list[HIST_MAX];
 
 #define add_idx_minus_one() ((hist_add_idx == 0) ? hist_max : hist_add_idx-1)
 
-static void getcmd_putchars(int count, int ch)
+static void getcmd_putchars(පූර්ණ_සංඛ්‍යා count, පූර්ණ_සංඛ්‍යා ch)
 {
-	int i;
+	පූර්ණ_සංඛ්‍යා i;
 
-	for (i = 0; i < count; i++)
+	සඳහා (i = 0; i < count; i++)
 		getcmd_putch(ch);
 }
 
-static int hist_init(void)
+static පූර්ණ_සංඛ්‍යා hist_init(void)
 {
-	int i;
+	පූර්ණ_සංඛ්‍යා i;
 
 #ifndef CONFIG_CMD_HISTORY_USE_CALLOC
-	for (i = 0; i < HIST_MAX; i++) {
+	සඳහා (i = 0; i < HIST_MAX; i++) {
 		hist_list[i] = hist_data[i];
 		hist_list[i][0] = '\0';
 	}
-#else
-	unsigned char *hist = calloc(HIST_MAX, HIST_SIZE + 1);
-	if (!hist)
+#නැතහොත්
+	unsigned var_na *hist = calloc(HIST_MAX, HIST_SIZE + 1);
+	නම් (!hist)
 		panic("%s: calloc: out of memory!\n", __func__);
 
-	for (i = 0; i < HIST_MAX; i++)
+	සඳහා (i = 0; i < HIST_MAX; i++)
 		hist_list[i] = hist + (i * (HIST_SIZE + 1));
 #endif
 
@@ -124,78 +124,78 @@ static int hist_init(void)
 	hist_cur = -1;
 	hist_num = 0;
 
-	return 0;
+	ආපසු 0;
 }
 
-static void cread_add_to_hist(char *line)
+static void cread_add_to_hist(var_na *line)
 {
 	strcpy(hist_list[hist_add_idx], line);
 
-	if (++hist_add_idx >= HIST_MAX)
+	නම් (++hist_add_idx >= HIST_MAX)
 		hist_add_idx = 0;
 
-	if (hist_add_idx > hist_max)
+	නම් (hist_add_idx > hist_max)
 		hist_max = hist_add_idx;
 
 	hist_num++;
 }
 
-static char *hist_prev(void)
+static var_na *hist_prev(void)
 {
-	char *ret;
-	int old_cur;
+	var_na *ret;
+	පූර්ණ_සංඛ්‍යා old_cur;
 
-	if (hist_cur < 0)
-		return NULL;
+	නම් (hist_cur < 0)
+		ආපසු NULL;
 
 	old_cur = hist_cur;
-	if (--hist_cur < 0)
+	නම් (--hist_cur < 0)
 		hist_cur = hist_max;
 
-	if (hist_cur == hist_add_idx) {
+	නම් (hist_cur == hist_add_idx) {
 		hist_cur = old_cur;
 		ret = NULL;
-	} else {
+	} නැතහොත් {
 		ret = hist_list[hist_cur];
 	}
 
-	return ret;
+	ආපසු ret;
 }
 
-static char *hist_next(void)
+static var_na *hist_next(void)
 {
-	char *ret;
+	var_na *ret;
 
-	if (hist_cur < 0)
-		return NULL;
+	නම් (hist_cur < 0)
+		ආපසු NULL;
 
-	if (hist_cur == hist_add_idx)
-		return NULL;
+	නම් (hist_cur == hist_add_idx)
+		ආපසු NULL;
 
-	if (++hist_cur > hist_max)
+	නම් (++hist_cur > hist_max)
 		hist_cur = 0;
 
-	if (hist_cur == hist_add_idx)
+	නම් (hist_cur == hist_add_idx)
 		ret = "";
-	else
+	නැතහොත්
 		ret = hist_list[hist_cur];
 
-	return ret;
+	ආපසු ret;
 }
 
 void cread_print_hist_list(void)
 {
-	int i;
+	පූර්ණ_සංඛ්‍යා i;
 	uint n;
 
 	n = hist_num - hist_max;
 
 	i = hist_add_idx + 1;
-	while (1) {
-		if (i > hist_max)
+	අතරතුර (1) {
+		නම් (i > hist_max)
 			i = 0;
-		if (i == hist_add_idx)
-			break;
+		නම් (i == hist_add_idx)
+			bha_nga;
 		printf("%s\n", hist_list[i]);
 		n++;
 		i++;
@@ -203,54 +203,54 @@ void cread_print_hist_list(void)
 }
 
 #define BEGINNING_OF_LINE() {			\
-	while (cls->num) {			\
+	අතරතුර (cls->num) {			\
 		getcmd_putch(CTL_BACKSPACE);	\
 		cls->num--;			\
 	}					\
 }
 
 #define ERASE_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {		\
-		printf("%*s", (int)(cls->eol_num - cls->num), ""); \
+	නම් (cls->num < cls->eol_num) {		\
+		printf("%*s", (පූර්ණ_සංඛ්‍යා)(cls->eol_num - cls->num), ""); \
 		do {					\
 			getcmd_putch(CTL_BACKSPACE);	\
-		} while (--cls->eol_num > cls->num);	\
+		} අතරතුර (--cls->eol_num > cls->num);	\
 	}						\
 }
 
 #define REFRESH_TO_EOL() {				\
-	if (cls->num < cls->eol_num) {			\
+	නම් (cls->num < cls->eol_num) {			\
 		uint wlen = cls->eol_num - cls->num;	\
 		putnstr(buf + cls->num, wlen);		\
 		cls->num = cls->eol_num;		\
 	}						\
 }
 
-static void cread_add_char(char ichar, int insert, uint *num,
-			   uint *eol_num, char *buf, uint len)
+static void cread_add_char(var_na ichar, පූර්ණ_සංඛ්‍යා insert, uint *num,
+			   uint *eol_num, var_na *buf, uint len)
 {
 	uint wlen;
 
 	/* room ??? */
-	if (insert || *num == *eol_num) {
-		if (*eol_num > len - 1) {
+	නම් (insert || *num == *eol_num) {
+		නම් (*eol_num > len - 1) {
 			getcmd_cbeep();
-			return;
+			ආපසු;
 		}
 		(*eol_num)++;
 	}
 
-	if (insert) {
+	නම් (insert) {
 		wlen = *eol_num - *num;
-		if (wlen > 1)
+		නම් (wlen > 1)
 			memmove(&buf[*num+1], &buf[*num], wlen-1);
 
 		buf[*num] = ichar;
 		putnstr(buf + *num, wlen);
 		(*num)++;
-		while (--wlen)
+		අතරතුර (--wlen)
 			getcmd_putch(CTL_BACKSPACE);
-	} else {
+	} නැතහොත් {
 		/* echo the character */
 		wlen = 1;
 		buf[*num] = ichar;
@@ -259,54 +259,54 @@ static void cread_add_char(char ichar, int insert, uint *num,
 	}
 }
 
-static void cread_add_str(char *str, int strsize, int insert,
-			  uint *num, uint *eol_num, char *buf, uint len)
+static void cread_add_str(var_na *str, පූර්ණ_සංඛ්‍යා strsize, පූර්ණ_සංඛ්‍යා insert,
+			  uint *num, uint *eol_num, var_na *buf, uint len)
 {
-	while (strsize--) {
+	අතරතුර (strsize--) {
 		cread_add_char(*str, insert, num, eol_num, buf, len);
 		str++;
 	}
 }
 
-int cread_line_process_ch(struct cli_line_state *cls, char ichar)
+පූර්ණ_සංඛ්‍යා cread_line_process_ch(sa_nracanaa cli_line_state *cls, var_na ichar)
 {
-	char *buf = cls->buf;
+	var_na *buf = cls->buf;
 
 	/* ichar=0x0 when error occurs in U-Boot getc */
-	if (!ichar)
-		return -EAGAIN;
+	නම් (!ichar)
+		ආපසු -EAGAIN;
 
-	if (ichar == '\n') {
+	නම් (ichar == '\n') {
 		putc('\n');
 		buf[cls->eol_num] = '\0';	/* terminate the string */
-		return 0;
+		ආපසු 0;
 	}
 
 	switch (ichar) {
-	case CTL_CH('a'):
+	pak_sa CTL_CH('a'):
 		BEGINNING_OF_LINE();
-		break;
-	case CTL_CH('c'):	/* ^C - break */
+		bha_nga;
+	pak_sa CTL_CH('c'):	/* ^C - break */
 		*buf = '\0';	/* discard input */
-		return -EINTR;
-	case CTL_CH('f'):
-		if (cls->num < cls->eol_num) {
+		ආපසු -EINTR;
+	pak_sa CTL_CH('f'):
+		නම් (cls->num < cls->eol_num) {
 			getcmd_putch(buf[cls->num]);
 			cls->num++;
 		}
-		break;
-	case CTL_CH('b'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('b'):
+		නම් (cls->num) {
 			getcmd_putch(CTL_BACKSPACE);
 			cls->num--;
 		}
-		break;
-	case CTL_CH('d'):
-		if (cls->num < cls->eol_num) {
+		bha_nga;
+	pak_sa CTL_CH('d'):
+		නම් (cls->num < cls->eol_num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num - 1;
-			if (wlen) {
+			නම් (wlen) {
 				memmove(&buf[cls->num], &buf[cls->num + 1],
 					wlen);
 				putnstr(buf + cls->num, wlen);
@@ -315,27 +315,27 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} අතරතුර (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('k'):
+		bha_nga;
+	pak_sa CTL_CH('k'):
 		ERASE_TO_EOL();
-		break;
-	case CTL_CH('e'):
+		bha_nga;
+	pak_sa CTL_CH('e'):
 		REFRESH_TO_EOL();
-		break;
-	case CTL_CH('o'):
+		bha_nga;
+	pak_sa CTL_CH('o'):
 		cls->insert = !cls->insert;
-		break;
-	case CTL_CH('w'):
-		if (cls->num) {
+		bha_nga;
+	pak_sa CTL_CH('w'):
+		නම් (cls->num) {
 			uint base, wlen;
 
-			for (base = cls->num;
+			සඳහා (base = cls->num;
 			     base > 0 && buf[base - 1] == ' ';)
 				base--;
-			for (; base > 0 && buf[base - 1] != ' ';)
+			සඳහා (; base > 0 && buf[base - 1] != ' ';)
 				base--;
 
 			/* now delete chars from base to cls->num */
@@ -350,16 +350,16 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putchars(wlen + cls->eol_num - cls->num,
 					CTL_BACKSPACE);
 		}
-		break;
-	case CTL_CH('x'):
-	case CTL_CH('u'):
+		bha_nga;
+	pak_sa CTL_CH('x'):
+	pak_sa CTL_CH('u'):
 		BEGINNING_OF_LINE();
 		ERASE_TO_EOL();
-		break;
-	case DEL:
-	case DEL7:
-	case 8:
-		if (cls->num) {
+		bha_nga;
+	pak_sa DEL:
+	pak_sa DEL7:
+	pak_sa 8:
+		නම් (cls->num) {
 			uint wlen;
 
 			wlen = cls->eol_num - cls->num;
@@ -370,23 +370,23 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			getcmd_putch(' ');
 			do {
 				getcmd_putch(CTL_BACKSPACE);
-			} while (wlen--);
+			} අතරතුර (wlen--);
 			cls->eol_num--;
 		}
-		break;
-	case CTL_CH('p'):
-	case CTL_CH('n'):
-		if (cls->history) {
-			char *hline;
+		bha_nga;
+	pak_sa CTL_CH('p'):
+	pak_sa CTL_CH('n'):
+		නම් (cls->history) {
+			var_na *hline;
 
-			if (ichar == CTL_CH('p'))
+			නම් (ichar == CTL_CH('p'))
 				hline = hist_prev();
-			else
+			නැතහොත්
 				hline = hist_next();
 
-			if (!hline) {
+			නම් (!hline) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			/* nuke the current line */
@@ -400,34 +400,34 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 			strcpy(buf, hline);
 			cls->eol_num = strlen(buf);
 			REFRESH_TO_EOL();
-			break;
+			bha_nga;
 		}
-		break;
-	case '\t':
-		if (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
-			int num2, col;
+		bha_nga;
+	pak_sa '\t':
+		නම් (IS_ENABLED(CONFIG_AUTO_COMPLETE) && cls->cmd_complete) {
+			පූර්ණ_සංඛ්‍යා num2, col;
 
 			/* do not autocomplete when in the middle */
-			if (cls->num < cls->eol_num) {
+			නම් (cls->num < cls->eol_num) {
 				getcmd_cbeep();
-				break;
+				bha_nga;
 			}
 
 			buf[cls->num] = '\0';
 			col = strlen(cls->prompt) + cls->eol_num;
 			num2 = cls->num;
-			if (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
+			නම් (cmd_auto_complete(cls->prompt, buf, &num2, &col)) {
 				col = num2 - cls->num;
 				cls->num += col;
 				cls->eol_num += col;
 			}
-			break;
+			bha_nga;
 		}
 		fallthrough;
 	default:
 		cread_add_char(ichar, cls->insert, &cls->num, &cls->eol_num,
 			       buf, cls->len);
-		break;
+		bha_nga;
 	}
 
 	/*
@@ -436,30 +436,30 @@ int cread_line_process_ch(struct cli_line_state *cls, char ichar)
 	 */
 	buf[cls->eol_num] = '\0';
 
-	return -EAGAIN;
+	ආපසු -EAGAIN;
 }
 
-void cli_cread_init(struct cli_line_state *cls, char *buf, uint buf_size)
+void cli_cread_init(sa_nracanaa cli_line_state *cls, var_na *buf, uint buf_size)
 {
-	int init_len = strlen(buf);
+	පූර්ණ_සංඛ්‍යා init_len = strlen(buf);
 
-	memset(cls, '\0', sizeof(struct cli_line_state));
+	memset(cls, '\0', parimaa_na(sa_nracanaa cli_line_state));
 	cls->insert = true;
 	cls->buf = buf;
 	cls->len = buf_size;
 
-	if (init_len)
+	නම් (init_len)
 		cread_add_str(buf, init_len, 0, &cls->num, &cls->eol_num, buf,
 			      buf_size);
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static පූර්ණ_සංඛ්‍යා cread_line(const var_na *const prompt, var_na *buf, unsigned පූර්ණ_සංඛ්‍යා *len,
+		      පූර්ණ_සංඛ්‍යා timeout)
 {
-	struct cli_ch_state s_cch, *cch = &s_cch;
-	struct cli_line_state s_cls, *cls = &s_cls;
-	char ichar;
-	int first = 1;
+	sa_nracanaa cli_ch_state s_cch, *cch = &s_cch;
+	sa_nracanaa cli_line_state s_cls, *cls = &s_cls;
+	var_na ichar;
+	පූර්ණ_සංඛ්‍යා first = 1;
 
 	cli_ch_init(cch);
 	cli_cread_init(cls, buf, *len);
@@ -467,21 +467,21 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 	cls->history = true;
 	cls->cmd_complete = true;
 
-	while (1) {
-		int ret;
+	අතරතුර (1) {
+		පූර්ණ_සංඛ්‍යා ret;
 
 		/* Check for saved characters */
 		ichar = cli_ch_process(cch, 0);
 
-		if (!ichar) {
-			if (bootretry_tstc_timeout())
-				return -2;	/* timed out */
-			if (first && timeout) {
+		නම් (!ichar) {
+			නම් (bootretry_tstc_timeout())
+				ආපසු -2;	/* timed out */
+			නම් (first && timeout) {
 				u64 etime = endtick(timeout);
 
-				while (!tstc()) {	/* while no incoming data */
-					if (get_ticks() >= etime)
-						return -2;	/* timed out */
+				අතරතුර (!tstc()) {	/* while no incoming data */
+					නම් (get_ticks() >= etime)
+						ආපසු -2;	/* timed out */
 					schedule();
 				}
 				first = 0;
@@ -492,38 +492,38 @@ static int cread_line(const char *const prompt, char *buf, unsigned int *len,
 		}
 
 		ret = cread_line_process_ch(cls, ichar);
-		if (ret == -EINTR)
-			return -1;
-		else if (!ret)
-			break;
+		නම් (ret == -EINTR)
+			ආපසු -1;
+		නැතහොත් නම් (!ret)
+			bha_nga;
 	}
 	*len = cls->eol_num;
 
-	if (buf[0] && buf[0] != CREAD_HIST_CHAR)
+	නම් (buf[0] && buf[0] != CREAD_HIST_CHAR)
 		cread_add_to_hist(buf);
 	hist_cur = hist_add_idx;
 
-	return 0;
+	ආපසු 0;
 }
 
-#else /* !CONFIG_CMDLINE_EDITING */
+#නැතහොත් /* !CONFIG_CMDLINE_EDITING */
 
-static inline int hist_init(void)
+static anta_hstha පූර්ණ_සංඛ්‍යා hist_init(void)
 {
-	return 0;
+	ආපසු 0;
 }
 
-static int cread_line(const char *const prompt, char *buf, unsigned int *len,
-		      int timeout)
+static පූර්ණ_සංඛ්‍යා cread_line(const var_na *const prompt, var_na *buf, unsigned පූර්ණ_සංඛ්‍යා *len,
+		      පූර්ණ_සංඛ්‍යා timeout)
 {
-	return 0;
+	ආපසු 0;
 }
 
 #endif /* CONFIG_CMDLINE_EDITING */
 
 /****************************************************************************/
 
-int cli_readline(const char *const prompt)
+පූර්ණ_සංඛ්‍යා cli_readline(const var_na *const prompt)
 {
 	/*
 	 * If console_buffer isn't 0-length the user will be prompted to modify
@@ -531,7 +531,7 @@ int cli_readline(const char *const prompt)
 	 */
 	console_buffer[0] = '\0';
 
-	return cli_readline_into_buffer(prompt, console_buffer, 0);
+	ආපසු cli_readline_into_buffer(prompt, console_buffer, 0);
 }
 
 /**
@@ -543,24 +543,24 @@ int cli_readline(const char *const prompt)
  * @p: Text buffer to edit
  * Return: length of text buffer, or -1 if input was cannncelled (Ctrl-C)
  */
-static int cread_line_simple(const char *const prompt, char *p)
+static පූර්ණ_සංඛ්‍යා cread_line_simple(const var_na *const prompt, var_na *p)
 {
-	char *p_buf = p;
-	int n = 0;		/* buffer index */
-	int plen = 0;		/* prompt length */
-	int col;		/* output column cnt */
-	int c;
+	var_na *p_buf = p;
+	පූර්ණ_සංඛ්‍යා n = 0;		/* buffer index */
+	පූර්ණ_සංඛ්‍යා plen = 0;		/* prompt length */
+	පූර්ණ_සංඛ්‍යා col;		/* output column cnt */
+	පූර්ණ_සංඛ්‍යා c;
 
 	/* print prompt */
-	if (prompt) {
+	නම් (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for (;;) {
-		if (bootretry_tstc_timeout())
-			return -2;	/* timed out */
+	සඳහා (;;) {
+		නම් (bootretry_tstc_timeout())
+			ආපසු -2;	/* timed out */
 		schedule();	/* Trigger watchdog, if needed */
 
 		c = getchar();
@@ -569,21 +569,21 @@ static int cread_line_simple(const char *const prompt, char *p)
 		 * Special character handling
 		 */
 		switch (c) {
-		case '\r':			/* Enter		*/
-		case '\n':
+		pak_sa '\r':			/* Enter		*/
+		pak_sa '\n':
 			*p = '\0';
 			puts("\r\n");
-			return p - p_buf;
+			ආපසු p - p_buf;
 
-		case '\0':			/* nul			*/
+		pak_sa '\0':			/* nul			*/
 			continue;
 
-		case 0x03:			/* ^C - break		*/
+		pak_sa 0x03:			/* ^C - break		*/
 			p_buf[0] = '\0';	/* discard input */
-			return -1;
+			ආපසු -1;
 
-		case 0x15:			/* ^U - erase line	*/
-			while (col > plen) {
+		pak_sa 0x15:			/* ^U - erase line	*/
+			අතරතුර (col > plen) {
 				puts(erase_seq);
 				--col;
 			}
@@ -591,31 +591,31 @@ static int cread_line_simple(const char *const prompt, char *p)
 			n = 0;
 			continue;
 
-		case 0x17:			/* ^W - erase word	*/
+		pak_sa 0x17:			/* ^W - erase word	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
-			while ((n > 0) && (*p != ' '))
+			අතරතුර ((n > 0) && (*p != ' '))
 				p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
-		case 0x08:			/* ^H  - backspace	*/
-		case 0x7F:			/* DEL - backspace	*/
+		pak_sa 0x08:			/* ^H  - backspace	*/
+		pak_sa 0x7F:			/* DEL - backspace	*/
 			p = delete_char(p_buf, p, &col, &n, plen);
 			continue;
 
 		default:
 			/* Must be a normal character then */
-			if (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
+			නම් (n >= CONFIG_SYS_CBSIZE - 2) { /* Buffer full */
 				putc('\a');
-				break;
+				bha_nga;
 			}
-			if (c == '\t') {	/* expand TABs */
-				if (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
+			නම් (c == '\t') {	/* expand TABs */
+				නම් (IS_ENABLED(CONFIG_AUTO_COMPLETE)) {
 					/*
 					 * if auto-completion triggered just
 					 * continue
 					 */
 					*p = '\0';
-					if (cmd_auto_complete(prompt,
+					නම් (cmd_auto_complete(prompt,
 							      console_buffer,
 							      &n, &col)) {
 						p = p_buf + n;	/* reset */
@@ -624,8 +624,8 @@ static int cread_line_simple(const char *const prompt, char *p)
 				}
 				puts(tab_seq + (col & 07));
 				col += 8 - (col & 07);
-			} else {
-				char __maybe_unused buf[2];
+			} නැතහොත් {
+				var_na __maybe_unused buf[2];
 
 				/*
 				 * Echo input using puts() to force an LCD
@@ -638,18 +638,18 @@ static int cread_line_simple(const char *const prompt, char *p)
 			}
 			*p++ = c;
 			++n;
-			break;
+			bha_nga;
 		}
 	}
 }
 
-int cli_readline_into_buffer(const char *const prompt, char *buffer,
-			     int timeout)
+පූර්ණ_සංඛ්‍යා cli_readline_into_buffer(const var_na *const prompt, var_na *buffer,
+			     පූර්ණ_සංඛ්‍යා timeout)
 {
-	char *p = buffer;
+	var_na *p = buffer;
 	uint len = CONFIG_SYS_CBSIZE;
-	int rc;
-	static int initted;
+	පූර්ණ_සංඛ්‍යා rc;
+	static පූර්ණ_සංඛ්‍යා initted;
 
 	/*
 	 * Say N to CMD_HISTORY_USE_CALLOC will skip runtime
@@ -662,20 +662,20 @@ int cli_readline_into_buffer(const char *const prompt, char *buffer,
 	 * all the time, consider say Y to CMD_HISTORY_USE_CALLOC
 	 * or disable CMD_HISTORY.
 	 */
-	if (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
-		if (!initted) {
+	නම් (IS_ENABLED(CONFIG_CMDLINE_EDITING) && (gd->flags & GD_FLG_RELOC)) {
+		නම් (!initted) {
 			rc = hist_init();
-			if (rc == 0)
+			නම් (rc == 0)
 				initted = 1;
 		}
 
-		if (prompt)
+		නම් (prompt)
 			puts(prompt);
 
 		rc = cread_line(prompt, p, &len, timeout);
-		return rc < 0 ? rc : len;
+		ආපසු rc < 0 ? rc : len;
 
-	} else {
-		return cread_line_simple(prompt, p);
+	} නැතහොත් {
+		ආපසු cread_line_simple(prompt, p);
 	}
 }
