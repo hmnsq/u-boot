@@ -3,16 +3,16 @@
  * Copyright (C) 2017 Theobroma Systems Design und Consulting GmH
  */
 
-#include <spl.h>
+#ضمن <spl.h>
 
-__weak int board_return_to_bootrom(struct spl_image_info *spl_image,
-				   struct spl_boot_device *bootdev)
+__weak صحيح board_return_to_bootrom(بنية spl_image_info *spl_image,
+				   بنية spl_boot_device *bootdev)
 {
-	return 0;
+	أرجع 0;
 }
 
-static int spl_return_to_bootrom(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev)
+ساكن صحيح spl_return_to_bootrom(بنية spl_image_info *spl_image,
+				 بنية spl_boot_device *bootdev)
 {
 	/*
 	 * If the board implements a way to return to its ROM (with
@@ -20,7 +20,7 @@ static int spl_return_to_bootrom(struct spl_image_info *spl_image,
 	 * the ROM), it will implement board_return_to_bootrom() and
 	 * should not return from it.
 	 */
-	return board_return_to_bootrom(spl_image, bootdev);
+	أرجع board_return_to_bootrom(spl_image, bootdev);
 }
 
 SPL_LOAD_IMAGE_METHOD("BOOTROM", 0, BOOT_DEVICE_BOOTROM, spl_return_to_bootrom);
