@@ -12,7 +12,7 @@
 #include <serial.h>
 #include <asm/ptrace.h>
 
-int (*debugger_exception_handler)(struct pt_regs *);
+ཧྲིལ (*debugger_exception_handler)(sa_nracanaa pt_regs *);
 
 __attribute__((weak))
 void kgdb_serial_init(void)
@@ -21,13 +21,13 @@ void kgdb_serial_init(void)
 }
 
 __attribute__((weak))
-void putDebugChar(int c)
+void putDebugChar(ཧྲིལ c)
 {
 	serial_putc(c);
 }
 
 __attribute__((weak))
-void putDebugStr(const char *str)
+void putDebugStr(const var_na *str)
 {
 #ifdef DEBUG
 	serial_puts(str);
@@ -35,15 +35,15 @@ void putDebugStr(const char *str)
 }
 
 __attribute__((weak))
-int getDebugChar(void)
+ཧྲིལ getDebugChar(void)
 {
-	return serial_getc();
+	ཕྱིར serial_getc();
 }
 
 __attribute__((weak))
-void kgdb_interruptible(int yes)
+void kgdb_interruptible(ཧྲིལ yes)
 {
-	return;
+	ཕྱིར;
 }
 
 __attribute__((weak))
@@ -55,11 +55,11 @@ void kgdb_flush_cache_range(void *from, void *to)
 __attribute__((weak))
 void kgdb_flush_cache_all(void)
 {
-	if (dcache_status()) {
+	གལ་ཏེ (dcache_status()) {
 		dcache_disable();
 		dcache_enable();
 	}
-	if (icache_status()) {
+	གལ་ཏེ (icache_status()) {
 		icache_disable();
 		icache_enable();
 	}

@@ -20,20 +20,20 @@
 #include <net.h>
 #include <linux/printk.h>
 
-int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+ཧྲིལ run_usb_dnl_gadget(ཧྲིལ usbctrl_index, var_na *usb_dnl_gadget)
 {
 	bool dfu_reset = false;
-	struct udevice *udc;
-	int ret, i = 0;
+	sa_nracanaa udevice *udc;
+	ཧྲིལ ret, i = 0;
 
 	ret = udc_device_get_by_index(usbctrl_index, &udc);
-	if (ret) {
+	གལ་ཏེ (ret) {
 		pr_err("udc_device_get_by_index failed\n");
-		return CMD_RET_FAILURE;
+		ཕྱིར CMD_RET_FAILURE;
 	}
 	g_dnl_clear_detach();
 	ret = g_dnl_register(usb_dnl_gadget);
-	if (ret) {
+	གལ་ཏེ (ret) {
 		pr_err("g_dnl_register failed");
 		ret = CMD_RET_FAILURE;
 		goto err_detach;
@@ -43,14 +43,14 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 	unsigned long start_time = get_timer(0);
 #endif
 
-	while (1) {
-		if (g_dnl_detach()) {
+	སྐབས (1) {
+		གལ་ཏེ (g_dnl_detach()) {
 			/*
 			 * Check if USB bus reset is performed after detach,
 			 * which indicates that -R switch has been passed to
 			 * dfu-util. In this case reboot the device
 			 */
-			if (dfu_usb_get_reset()) {
+			གལ་ཏེ (dfu_usb_get_reset()) {
 				dfu_reset = true;
 				goto exit;
 			}
@@ -60,14 +60,14 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			 * calls is necessary to assure correct transmission
 			 * completion with dfu-util
 			 */
-			if (++i == 10000)
+			གལ་ཏེ (++i == 10000)
 				goto exit;
 		}
 
-		if (ctrlc())
+		གལ་ཏེ (ctrlc())
 			goto exit;
 
-		if (dfu_get_defer_flush()) {
+		གལ་ཏེ (dfu_get_defer_flush()) {
 			/*
 			 * Call to dm_usb_gadget_handle_interrupts() is necessary
 			 * to act on ZLP OUT transaction from HOST PC after
@@ -81,7 +81,7 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			dm_usb_gadget_handle_interrupts(udc);
 			ret = dfu_flush(dfu_get_defer_flush(), NULL, 0, 0);
 			dfu_set_defer_flush(NULL);
-			if (ret) {
+			གལ་ཏེ (ret) {
 				pr_err("Deferred dfu_flush() failed!");
 				goto exit;
 			}
@@ -90,17 +90,17 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 #ifdef CONFIG_DFU_TIMEOUT
 		unsigned long wait_time = dfu_get_timeout();
 
-		if (wait_time) {
+		གལ་ཏེ (wait_time) {
 			unsigned long current_time = get_timer(start_time);
 
-			if (current_time > wait_time) {
+			གལ་ཏེ (current_time > wait_time) {
 				debug("Inactivity timeout, abort DFU\n");
 				goto exit;
 			}
 		}
 #endif
 
-		if (dfu_reinit_needed)
+		གལ་ཏེ (dfu_reinit_needed)
 			goto exit;
 
 		schedule();
@@ -111,10 +111,10 @@ exit:
 err_detach:
 	udc_device_put(udc);
 
-	if (dfu_reset)
+	གལ་ཏེ (dfu_reset)
 		do_reset(NULL, 0, 0, NULL);
 
 	g_dnl_clear_detach();
 
-	return ret;
+	ཕྱིར ret;
 }

@@ -26,7 +26,7 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
+static sa_nracanaa iotrace {
 	ulong start;
 	ulong size;
 	ulong needed_size;
@@ -37,9 +37,9 @@ static struct iotrace {
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+static void add_record(ཧྲིལ flags, const void *ptr, ulong value)
 {
-	struct iotrace_record srec, *rec = &srec;
+	sa_nracanaa iotrace_record srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,23 +47,23 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	གལ་ཏེ (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		ཕྱིར;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
+	གལ་ཏེ (iotrace.region_size)
+		གལ་ཏེ ((ulong)ptr < iotrace.region_start ||
 		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+			ཕྱིར;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
+	གལ་ཏེ (iotrace.offset + parimaa_na(*rec) < iotrace.size) {
+		rec = (sa_nracanaa iotrace_record *)map_sysmem(
 					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+					parimaa_na(value));
+	} དེ་མིན {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_size += parimaa_na(sa_nracanaa iotrace_record);
+		ཕྱིར;
 	}
 
 	rec->timestamp = timer_get_us();
@@ -72,11 +72,11 @@ static void add_record(int flags, const void *ptr, ulong value)
 	rec->value = value;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.crc32 = crc32(iotrace.crc32, (unsigned var_na *)rec,
+			      parimaa_na(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_size += parimaa_na(sa_nracanaa iotrace_record);
+	iotrace.offset += parimaa_na(sa_nracanaa iotrace_record);
 }
 
 u32 iotrace_readl(const void *ptr)
@@ -86,7 +86,7 @@ u32 iotrace_readl(const void *ptr)
 	v = readl(ptr);
 	add_record(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	ཕྱིར v;
 }
 
 void iotrace_writel(ulong value, void *ptr)
@@ -102,7 +102,7 @@ u16 iotrace_readw(const void *ptr)
 	v = readw(ptr);
 	add_record(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	ཕྱིར v;
 }
 
 void iotrace_writew(ulong value, void *ptr)
@@ -118,7 +118,7 @@ u8 iotrace_readb(const void *ptr)
 	v = readb(ptr);
 	add_record(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	ཕྱིར v;
 }
 
 void iotrace_writeb(ulong value, void *ptr)
@@ -134,7 +134,7 @@ void iotrace_reset_checksum(void)
 
 u32 iotrace_get_checksum(void)
 {
-	return iotrace.crc32;
+	ཕྱིར iotrace.crc32;
 }
 
 void iotrace_set_region(ulong start, ulong size)
@@ -155,14 +155,14 @@ void iotrace_get_region(ulong *start, ulong *size)
 	*size = iotrace.region_size;
 }
 
-void iotrace_set_enabled(int enable)
+void iotrace_set_enabled(ཧྲིལ enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+ཧྲིལ iotrace_get_enabled(void)
 {
-	return iotrace.enabled;
+	ཕྱིར iotrace.enabled;
 }
 
 void iotrace_set_buffer(ulong start, ulong size)
@@ -179,5 +179,5 @@ void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *of
 	*size = iotrace.size;
 	*needed_size = iotrace.needed_size;
 	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*count = iotrace.offset / parimaa_na(sa_nracanaa iotrace_record);
 }

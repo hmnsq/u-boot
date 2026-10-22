@@ -5,14 +5,14 @@
 
 #include <spl.h>
 
-__weak int board_return_to_bootrom(struct spl_image_info *spl_image,
-				   struct spl_boot_device *bootdev)
+__weak ཧྲིལ board_return_to_bootrom(sa_nracanaa spl_image_info *spl_image,
+				   sa_nracanaa spl_boot_device *bootdev)
 {
-	return 0;
+	ཕྱིར 0;
 }
 
-static int spl_return_to_bootrom(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev)
+static ཧྲིལ spl_return_to_bootrom(sa_nracanaa spl_image_info *spl_image,
+				 sa_nracanaa spl_boot_device *bootdev)
 {
 	/*
 	 * If the board implements a way to return to its ROM (with
@@ -20,7 +20,7 @@ static int spl_return_to_bootrom(struct spl_image_info *spl_image,
 	 * the ROM), it will implement board_return_to_bootrom() and
 	 * should not return from it.
 	 */
-	return board_return_to_bootrom(spl_image, bootdev);
+	ཕྱིར board_return_to_bootrom(spl_image, bootdev);
 }
 
 SPL_LOAD_IMAGE_METHOD("BOOTROM", 0, BOOT_DEVICE_BOOTROM, spl_return_to_bootrom);
