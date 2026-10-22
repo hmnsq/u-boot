@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <config.h>
-#include <init.h>
-#include <asm/global_data.h>
-#include <cpu_func.h>
-#include <stdint.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <init.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <cpu_func.h>
+#अन्तर्भाव <stdint.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef CONFIG_SYS_CACHELINE_SIZE
 # define MEMSIZE_CACHELINE_SIZE CONFIG_SYS_CACHELINE_SIZE
-#else
+#अन्यथा
 /* Just use the greatest cache flush alignment requirement I'm aware of */
 # define MEMSIZE_CACHELINE_SIZE 128
 #endif
@@ -25,11 +25,11 @@ DECLARE_GLOBAL_DATA_PTR;
  * memory must be synchronized.
  */
 # include <asm/io.h>	/* for sync() */
-#else
+#अन्यथा
 # define sync()		/* nothing */
 #endif
 
-static void dcache_flush_invalidate(volatile long *p)
+स्थिर शून्य dcache_flush_invalidate(चञ्चल long *p)
 {
 	uintptr_t start, stop;
 	start = ALIGN_DOWN((uintptr_t)p, MEMSIZE_CACHELINE_SIZE);
@@ -45,25 +45,25 @@ static void dcache_flush_invalidate(volatile long *p)
  */
 long get_ram_size(long *base, long maxsize)
 {
-	volatile long *addr;
+	चञ्चल long *addr;
 	long           save[BITS_PER_LONG - 1];
 	long           save_base;
 	long           cnt;
 	long           val;
 	long           size;
-	int            i = 0;
-	int            dcache_en = 0;
+	पूर्णाङ्क            i = 0;
+	पूर्णाङ्क            dcache_en = 0;
 
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+	यदि (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
 		dcache_en = dcache_status();
 
-	for (cnt = (maxsize / sizeof(long)) >> 1; cnt > 0; cnt >>= 1) {
+	प्रति (cnt = (maxsize / परिमाण(long)) >> 1; cnt > 0; cnt >>= 1) {
 		addr = base + cnt;	/* pointer arith! */
 		sync();
 		save[i++] = *addr;
 		sync();
 		*addr = ~cnt;
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(addr);
 	}
 
@@ -74,41 +74,41 @@ long get_ram_size(long *base, long maxsize)
 	*addr = 0;
 
 	sync();
-	if (dcache_en)
+	यदि (dcache_en)
 		dcache_flush_invalidate(addr);
 
-	if ((val = *addr) != 0) {
+	यदि ((val = *addr) != 0) {
 		/* Restore the original data before leaving the function. */
 		sync();
 		*base = save_base;
-		for (cnt = 1; cnt < maxsize / sizeof(long); cnt <<= 1) {
+		प्रति (cnt = 1; cnt < maxsize / परिमाण(long); cnt <<= 1) {
 			addr  = base + cnt;
 			sync();
 			*addr = save[--i];
-			if (dcache_en)
+			यदि (dcache_en)
 				dcache_flush_invalidate(addr);
 		}
-		return (0);
+		प्रत्यागम (0);
 	}
 
-	for (cnt = 1; cnt < maxsize / sizeof(long); cnt <<= 1) {
+	प्रति (cnt = 1; cnt < maxsize / परिमाण(long); cnt <<= 1) {
 		addr = base + cnt;	/* pointer arith! */
 		val = *addr;
 		*addr = save[--i];
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(addr);
-		if (val != ~cnt) {
-			size = cnt * sizeof(long);
+		यदि (val != ~cnt) {
+			size = cnt * परिमाण(long);
 			/*
 			 * Restore the original data
 			 * before leaving the function.
 			 */
-			for (cnt <<= 1;
-			     cnt < maxsize / sizeof(long);
+			प्रति (cnt <<= 1;
+			     cnt < maxsize / परिमाण(long);
 			     cnt <<= 1) {
 				addr  = base + cnt;
 				*addr = save[--i];
-				if (dcache_en)
+				यदि (dcache_en)
 					dcache_flush_invalidate(addr);
 			}
 			/* warning: don't restore save_base in this case,
@@ -117,14 +117,14 @@ long get_ram_size(long *base, long maxsize)
 			 * and *base is saved after *(base+size) modification
 			 * in first loop
 			 */
-			return (size);
+			प्रत्यागम (size);
 		}
 	}
 	*base = save_base;
-	if (dcache_en)
+	यदि (dcache_en)
 		dcache_flush_invalidate(base);
 
-	return (maxsize);
+	प्रत्यागम (maxsize);
 }
 
 /**
@@ -142,30 +142,30 @@ long get_ram_size(long *base, long maxsize)
  * Return: The size associated with the first matching entry, or 0 if no match
  * is found.
  */
-long probe_ram_size_by_alias(const struct ram_alias_check *checks)
+long probe_ram_size_by_alias(ध्रुव संरचना ram_alias_check *checks)
 {
 	long save[2];
 	long pat;
-	int dcache_en = 0;
+	पूर्णाङ्क dcache_en = 0;
 	long ret = 0;
 
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+	यदि (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
 		dcache_en = dcache_status();
 
-	while (checks->probe_addr && !ret) {
-		volatile long *d = checks->probe_addr;
-		volatile long *s = checks->alias_addr;
+	यावत् (checks->probe_addr && !ret) {
+		चञ्चल long *d = checks->probe_addr;
+		चञ्चल long *s = checks->alias_addr;
 
 		save[0] = *s;
 		save[1] = *d;
 		/* Ensure s is written and not cached */
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(s);
 
 		pat = ~save[0];
 		*d = pat;
 		sync();
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(d);
 
 		/*
@@ -173,36 +173,36 @@ long probe_ram_size_by_alias(const struct ram_alias_check *checks)
 		 * address before checking whether it is also visible through
 		 * the alias address.
 		 */
-		if (*d != pat) {
+		यदि (*d != pat) {
 			*d = save[1];
 			sync();
-			if (dcache_en)
+			यदि (dcache_en)
 				dcache_flush_invalidate(d);
 			checks++;
-			continue;
+			अनुवर्त;
 		}
 
-		if (*s != pat)
+		यदि (*s != pat)
 			ret = checks->size;
 
 		/* Restore content */
 		*d = save[1];
 		sync();
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(d);
 
 		*s = save[0];
 		sync();
-		if (dcache_en)
+		यदि (dcache_en)
 			dcache_flush_invalidate(s);
 
 		checks++;
 	}
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-phys_size_t __weak get_effective_memsize(void)
+phys_size_t __weak get_effective_memsize(शून्य)
 {
 	phys_size_t ram_size = gd->ram_size;
 
@@ -214,15 +214,15 @@ phys_size_t __weak get_effective_memsize(void)
 	 * calculate it from last 4kB sector which should work as alignment
 	 * on any platform.
 	 */
-	if (gd->ram_base + ram_size < gd->ram_base)
+	यदि (gd->ram_base + ram_size < gd->ram_base)
 		ram_size = ((phys_size_t)~0xfffULL) - gd->ram_base;
 #endif
 
 #ifndef CFG_MAX_MEM_MAPPED
-	return ram_size;
-#else
+	प्रत्यागम ram_size;
+#अन्यथा
 	/* limit stack to what we can reasonable map */
-	return ((ram_size > CFG_MAX_MEM_MAPPED) ?
+	प्रत्यागम ((ram_size > CFG_MAX_MEM_MAPPED) ?
 		CFG_MAX_MEM_MAPPED : ram_size);
 #endif
 }

@@ -9,103 +9,103 @@
  */
 
 #ifndef HWCONFIG_TEST
-#include <config.h>
-#include <env.h>
-#include <exports.h>
-#include <hwconfig.h>
-#include <log.h>
-#include <asm/global_data.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#अन्तर्भाव <config.h>
+#अन्तर्भाव <env.h>
+#अन्तर्भाव <exports.h>
+#अन्तर्भाव <hwconfig.h>
+#अन्तर्भाव <log.h>
+#अन्तर्भाव <asm/global_data.h>
+#अन्तर्भाव <linux/types.h>
+#अन्तर्भाव <linux/string.h>
+#अन्यथा
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <assert.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif /* HWCONFIG_TEST */
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static const char *hwconfig_parse(const char *opts, size_t maxlen,
-				  const char *opt, char *stopchs, char eqch,
+स्थिर ध्रुव वर्ण *hwconfig_parse(ध्रुव वर्ण *opts, size_t maxlen,
+				  ध्रुव वर्ण *opt, वर्ण *stopchs, वर्ण eqch,
 				  size_t *arglen)
 {
 	size_t optlen = strlen(opt);
-	char *str;
-	const char *start = opts;
-	const char *end;
+	वर्ण *str;
+	ध्रुव वर्ण *start = opts;
+	ध्रुव वर्ण *end;
 
 next:
 	str = strstr(opts, opt);
 	end = str + optlen;
-	if (end - start > maxlen)
-		return NULL;
+	यदि (end - start > maxlen)
+		प्रत्यागम रिक्त;
 
-	if (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
+	यदि (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
 			(strpbrk(end, stopchs) == end || *end == eqch ||
 			 *end == '\0')) {
-		const char *arg_end;
+		ध्रुव वर्ण *arg_end;
 
-		if (!arglen)
-			return str;
+		यदि (!arglen)
+			प्रत्यागम str;
 
-		if (*end != eqch)
-			return NULL;
+		यदि (*end != eqch)
+			प्रत्यागम रिक्त;
 
 		arg_end = strpbrk(str, stopchs);
-		if (!arg_end)
+		यदि (!arg_end)
 			*arglen = min(maxlen, strlen(str)) - optlen - 1;
-		else
+		अन्यथा
 			*arglen = arg_end - end - 1;
 
-		return end + 1;
-	} else if (str) {
+		प्रत्यागम end + 1;
+	} अन्यथा यदि (str) {
 		opts = end;
-		goto next;
+		गच्छ next;
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-const char cpu_hwconfig[] __attribute__((weak)) = "";
-const char board_hwconfig[] __attribute__((weak)) = "";
+ध्रुव वर्ण cpu_hwconfig[] __attribute__((weak)) = "";
+ध्रुव वर्ण board_hwconfig[] __attribute__((weak)) = "";
 
-static const char *__hwconfig(const char *opt, size_t *arglen,
-			      const char *env_hwconfig)
+स्थिर ध्रुव वर्ण *__hwconfig(ध्रुव वर्ण *opt, size_t *arglen,
+			      ध्रुव वर्ण *env_hwconfig)
 {
-	const char *ret;
+	ध्रुव वर्ण *ret;
 
 	/* if we are passed a buffer use it, otherwise try the environment */
-	if (!env_hwconfig) {
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-		if (!(gd->flags & GD_FLG_ENV_READY) &&
+	यदि (!env_hwconfig) {
+#यदि CONFIG_IS_ENABLED(ENV_SUPPORT)
+		यदि (!(gd->flags & GD_FLG_ENV_READY) &&
 		    gd->env_valid != ENV_VALID)
-#else
-		if (true)
+#अन्यथा
+		यदि (true)
 #endif
 		{
 			printf("WARNING: Calling __hwconfig without a buffer "
 					"and before environment is ready\n");
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#यदि CONFIG_IS_ENABLED(ENV_SUPPORT)
 		env_hwconfig = env_get("hwconfig");
 #endif
 	}
 
-	if (env_hwconfig) {
+	यदि (env_hwconfig) {
 		ret = hwconfig_parse(env_hwconfig, strlen(env_hwconfig),
 				      opt, ";", ':', arglen);
-		if (ret)
-			return ret;
+		यदि (ret)
+			प्रत्यागम ret;
 	}
 
 	ret = hwconfig_parse(board_hwconfig, strlen(board_hwconfig),
 			opt, ";", ':', arglen);
-	if (ret)
-		return ret;
+	यदि (ret)
+		प्रत्यागम ret;
 
-	return hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
+	प्रत्यागम hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
 			opt, ";", ':', arglen);
 }
 
@@ -129,9 +129,9 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
  * that the board file only calls things that are actually used, so
  * hwconfig() will always return true result.
  */
-int hwconfig_f(const char *opt, char *buf)
+पूर्णाङ्क hwconfig_f(ध्रुव वर्ण *opt, वर्ण *buf)
 {
-	return !!__hwconfig(opt, NULL, buf);
+	प्रत्यागम !!__hwconfig(opt, रिक्त, buf);
 }
 
 /*
@@ -147,9 +147,9 @@ int hwconfig_f(const char *opt, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns "", and
  * arglen is set to 0.
  */
-const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
+ध्रुव वर्ण *hwconfig_arg_f(ध्रुव वर्ण *opt, size_t *arglen, वर्ण *buf)
 {
-	return __hwconfig(opt, arglen, buf);
+	प्रत्यागम __hwconfig(opt, arglen, buf);
 }
 
 /*
@@ -166,16 +166,16 @@ const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns a non-zero
  * value, i.e. the argument matches.
  */
-int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
+पूर्णाङ्क hwconfig_arg_cmp_f(ध्रुव वर्ण *opt, ध्रुव वर्ण *arg, वर्ण *buf)
 {
-	const char *argstr;
+	ध्रुव वर्ण *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_arg_f(opt, &arglen, buf);
-	if (!argstr || arglen != strlen(arg))
-		return 0;
+	यदि (!argstr || arglen != strlen(arg))
+		प्रत्यागम 0;
 
-	return !strncmp(argstr, arg, arglen);
+	प्रत्यागम !strncmp(argstr, arg, arglen);
 }
 
 /*
@@ -190,15 +190,15 @@ int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
  * "dr_usb" is an option, "mode" is a sub-option, and "peripheral" is its
  * argument.
  */
-int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
+पूर्णाङ्क hwconfig_sub_f(ध्रुव वर्ण *opt, ध्रुव वर्ण *subopt, वर्ण *buf)
 {
 	size_t arglen;
-	const char *arg;
+	ध्रुव वर्ण *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return 0;
-	return !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
+	यदि (!arg)
+		प्रत्यागम 0;
+	प्रत्यागम !!hwconfig_parse(arg, arglen, subopt, ",;", '=', रिक्त);
 }
 
 /*
@@ -211,16 +211,16 @@ int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
  * This call is similar to hwconfig_arg_f(), except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-const char *hwconfig_subarg_f(const char *opt, const char *subopt,
-			      size_t *subarglen, char *buf)
+ध्रुव वर्ण *hwconfig_subarg_f(ध्रुव वर्ण *opt, ध्रुव वर्ण *subopt,
+			      size_t *subarglen, वर्ण *buf)
 {
 	size_t arglen;
-	const char *arg;
+	ध्रुव वर्ण *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return NULL;
-	return hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
+	यदि (!arg)
+		प्रत्यागम रिक्त;
+	प्रत्यागम hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
 }
 
 /*
@@ -233,62 +233,62 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
  * This call is similar to hwconfig_arg_cmp_f, except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-int hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
-			  const char *subarg, char *buf)
+पूर्णाङ्क hwconfig_subarg_cmp_f(ध्रुव वर्ण *opt, ध्रुव वर्ण *subopt,
+			  ध्रुव वर्ण *subarg, वर्ण *buf)
 {
-	const char *argstr;
+	ध्रुव वर्ण *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_subarg_f(opt, subopt, &arglen, buf);
-	if (!argstr || arglen != strlen(subarg))
-		return 0;
+	यदि (!argstr || arglen != strlen(subarg))
+		प्रत्यागम 0;
 
-	return !strncmp(argstr, subarg, arglen);
+	प्रत्यागम !strncmp(argstr, subarg, arglen);
 }
 
 #ifdef HWCONFIG_TEST
-int main()
+पूर्णाङ्क main()
 {
-	const char *ret;
+	ध्रुव वर्ण *ret;
 	size_t len;
 
 	env_set("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
 			   "key3;:,:=;key4", 1);
 
 	ret = hwconfig_arg("key1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 29);
-	assert(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
-	assert(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
+	printf("%zd %.*s\n", len, (पूर्णाङ्क)len, ret);
+	प्रतिज्ञा(len == 29);
+	प्रतिज्ञा(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
+	प्रतिज्ञा(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
 
 	ret = hwconfig_subarg("key1", "subkey1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
-	assert(!strncmp(ret, "value1", len));
+	printf("%zd %.*s\n", len, (पूर्णाङ्क)len, ret);
+	प्रतिज्ञा(len == 6);
+	प्रतिज्ञा(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
+	प्रतिज्ञा(!strncmp(ret, "value1", len));
 
 	ret = hwconfig_subarg("key1", "subkey2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
-	assert(!strncmp(ret, "value2", len));
+	printf("%zd %.*s\n", len, (पूर्णाङ्क)len, ret);
+	प्रतिज्ञा(len == 6);
+	प्रतिज्ञा(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
+	प्रतिज्ञा(!strncmp(ret, "value2", len));
 
 	ret = hwconfig_arg("key2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_arg_cmp("key2", "value3"));
-	assert(!strncmp(ret, "value3", len));
+	printf("%zd %.*s\n", len, (पूर्णाङ्क)len, ret);
+	प्रतिज्ञा(len == 6);
+	प्रतिज्ञा(hwconfig_arg_cmp("key2", "value3"));
+	प्रतिज्ञा(!strncmp(ret, "value3", len));
 
-	assert(hwconfig("key3"));
-	assert(hwconfig_arg("key4", &len) == NULL);
-	assert(hwconfig_arg("bogus", &len) == NULL);
+	प्रतिज्ञा(hwconfig("key3"));
+	प्रतिज्ञा(hwconfig_arg("key4", &len) == रिक्त);
+	प्रतिज्ञा(hwconfig_arg("bogus", &len) == रिक्त);
 
 	unenv_set("hwconfig");
 
-	assert(hwconfig(NULL) == 0);
-	assert(hwconfig("") == 0);
-	assert(hwconfig("key3") == 0);
+	प्रतिज्ञा(hwconfig(रिक्त) == 0);
+	प्रतिज्ञा(hwconfig("") == 0);
+	प्रतिज्ञा(hwconfig("key3") == 0);
 
-	return 0;
+	प्रत्यागम 0;
 }
 #endif /* HWCONFIG_TEST */
