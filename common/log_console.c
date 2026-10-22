@@ -11,9 +11,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+static ຈຳນວນເຕັມ log_console_emit(sa_nracanaa log_device *ldev, sa_nracanaa log_rec *rec)
 {
-	int fmt = gd->log_fmt;
+	ຈຳນວນເຕັມ fmt = gd->log_fmt;
 	bool add_space = false;
 
 	/*
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
+	ຖ້າ (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
 		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
+		ຖ້າ (fmt & BIT(LOGF_LEVEL))
 			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
+		ຖ້າ (fmt & BIT(LOGF_CAT))
 			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
+		ຖ້າ (fmt & BIT(LOGF_FILE))
 			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
+		ຖ້າ (fmt & BIT(LOGF_LINE))
 			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+		ຖ້າ (fmt & BIT(LOGF_FUNC)) {
+			ຖ້າ (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
 				printf("%s()", rec->func ?: "?");
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
+	ຖ້າ (fmt & BIT(LOGF_MSG))
 		printf("%s%s", add_space ? " " : "", rec->msg);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 LOG_DRIVER(console) = {

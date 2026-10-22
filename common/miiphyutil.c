@@ -26,195 +26,195 @@
 #undef debug
 #ifdef MII_DEBUG
 #define debug(fmt, args...)	printf(fmt, ##args)
-#else
+#ບໍ່ດັ່ງນັ້ນ
 #define debug(fmt, args...)
 #endif /* MII_DEBUG */
 
 static LIST_HEAD(mii_devs);
-static struct mii_dev *current_mii;
+static sa_nracanaa mii_dev *current_mii;
 
 /*
  * Lookup the mii_dev struct by the registered device name.
  */
-struct mii_dev *miiphy_get_dev_by_name(const char *devname)
+sa_nracanaa mii_dev *miiphy_get_dev_by_name(const var_na *devname)
 {
-	struct list_head *entry;
-	struct mii_dev *dev;
+	sa_nracanaa list_head *entry;
+	sa_nracanaa mii_dev *dev;
 
-	if (!devname) {
+	ຖ້າ (!devname) {
 		printf("NULL device name!\n");
-		return NULL;
+		ສົ່ງຄືນ NULL;
 	}
 
 	list_for_each(entry, &mii_devs) {
-		dev = list_entry(entry, struct mii_dev, link);
-		if (strcmp(dev->name, devname) == 0)
-			return dev;
+		dev = list_entry(entry, sa_nracanaa mii_dev, link);
+		ຖ້າ (strcmp(dev->name, devname) == 0)
+			ສົ່ງຄືນ dev;
 	}
 
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-struct mii_dev *mdio_alloc(void)
+sa_nracanaa mii_dev *mdio_alloc(void)
 {
-	struct mii_dev *bus;
+	sa_nracanaa mii_dev *bus;
 
-	bus = malloc(sizeof(*bus));
-	if (!bus)
-		return bus;
+	bus = malloc(parimaa_na(*bus));
+	ຖ້າ (!bus)
+		ສົ່ງຄືນ bus;
 
-	memset(bus, 0, sizeof(*bus));
+	memset(bus, 0, parimaa_na(*bus));
 
 	/* initialize mii_dev struct fields */
 	INIT_LIST_HEAD(&bus->link);
 
-	return bus;
+	ສົ່ງຄືນ bus;
 }
 
-void mdio_free(struct mii_dev *bus)
+void mdio_free(sa_nracanaa mii_dev *bus)
 {
 	free(bus);
 }
 
-int mdio_register(struct mii_dev *bus)
+ຈຳນວນເຕັມ mdio_register(sa_nracanaa mii_dev *bus)
 {
-	if (!bus || !bus->read || !bus->write)
-		return -1;
+	ຖ້າ (!bus || !bus->read || !bus->write)
+		ສົ່ງຄືນ -1;
 
 	/* check if we have unique name */
-	if (miiphy_get_dev_by_name(bus->name)) {
+	ຖ້າ (miiphy_get_dev_by_name(bus->name)) {
 		printf("mdio_register: non unique device name '%s'\n",
 			bus->name);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	/* add it to the list */
 	list_add_tail(&bus->link, &mii_devs);
 
-	if (!current_mii)
+	ຖ້າ (!current_mii)
 		current_mii = bus;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int mdio_register_seq(struct mii_dev *bus, int seq)
+ຈຳນວນເຕັມ mdio_register_seq(sa_nracanaa mii_dev *bus, ຈຳນວນເຕັມ seq)
 {
-	int ret;
+	ຈຳນວນເຕັມ ret;
 
 	/* Setup a unique name for each mdio bus */
 	ret = snprintf(bus->name, MDIO_NAME_LEN, "eth%d", seq);
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
-	return mdio_register(bus);
+	ສົ່ງຄືນ mdio_register(bus);
 }
 
-int mdio_unregister(struct mii_dev *bus)
+ຈຳນວນເຕັມ mdio_unregister(sa_nracanaa mii_dev *bus)
 {
-	if (!bus)
-		return 0;
+	ຖ້າ (!bus)
+		ສົ່ງຄືນ 0;
 
 	/* delete it from the list */
 	list_del(&bus->link);
 
-	if (current_mii == bus)
+	ຖ້າ (current_mii == bus)
 		current_mii = NULL;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 void mdio_list_devices(void)
 {
-	struct list_head *entry;
+	sa_nracanaa list_head *entry;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
-		struct mii_dev *bus = list_entry(entry, struct mii_dev, link);
+		ຈຳນວນເຕັມ i;
+		sa_nracanaa mii_dev *bus = list_entry(entry, sa_nracanaa mii_dev, link);
 
 		printf("%s:\n", bus->name);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
-			struct phy_device *phydev = bus->phymap[i];
+		ສຳລັບ (i = 0; i < PHY_MAX_ADDR; i++) {
+			sa_nracanaa phy_device *phydev = bus->phymap[i];
 
-			if (phydev) {
+			ຖ້າ (phydev) {
 				printf("%x - %s", i, phydev->drv->name);
 
-				if (phydev->dev)
+				ຖ້າ (phydev->dev)
 					printf(" <--> %s\n", phydev->dev->name);
-				else
+				ບໍ່ດັ່ງນັ້ນ
 					printf("\n");
 			}
 		}
 	}
 }
 
-int miiphy_set_current_dev(const char *devname)
+ຈຳນວນເຕັມ miiphy_set_current_dev(const var_na *devname)
 {
-	struct mii_dev *dev;
+	sa_nracanaa mii_dev *dev;
 
 	dev = miiphy_get_dev_by_name(devname);
-	if (dev) {
+	ຖ້າ (dev) {
 		current_mii = dev;
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
 
 	printf("No such device: %s\n", devname);
 
-	return 1;
+	ສົ່ງຄືນ 1;
 }
 
-struct mii_dev *mdio_get_current_dev(void)
+sa_nracanaa mii_dev *mdio_get_current_dev(void)
 {
-	return current_mii;
+	ສົ່ງຄືນ current_mii;
 }
 
-struct list_head *mdio_get_list_head(void)
+sa_nracanaa list_head *mdio_get_list_head(void)
 {
-	return &mii_devs;
+	ສົ່ງຄືນ &mii_devs;
 }
 
-struct phy_device *mdio_phydev_for_ethname(const char *ethname)
+sa_nracanaa phy_device *mdio_phydev_for_ethname(const var_na *ethname)
 {
-	struct list_head *entry;
-	struct mii_dev *bus;
+	sa_nracanaa list_head *entry;
+	sa_nracanaa mii_dev *bus;
 
 	list_for_each(entry, &mii_devs) {
-		int i;
-		bus = list_entry(entry, struct mii_dev, link);
+		ຈຳນວນເຕັມ i;
+		bus = list_entry(entry, sa_nracanaa mii_dev, link);
 
-		for (i = 0; i < PHY_MAX_ADDR; i++) {
-			if (!bus->phymap[i] || !bus->phymap[i]->dev)
+		ສຳລັບ (i = 0; i < PHY_MAX_ADDR; i++) {
+			ຖ້າ (!bus->phymap[i] || !bus->phymap[i]->dev)
 				continue;
 
-			if (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
-				return bus->phymap[i];
+			ຖ້າ (strcmp(bus->phymap[i]->dev->name, ethname) == 0)
+				ສົ່ງຄືນ bus->phymap[i];
 		}
 	}
 
 	printf("%s is not a known ethernet\n", ethname);
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-const char *miiphy_get_current_dev(void)
+const var_na *miiphy_get_current_dev(void)
 {
-	if (current_mii)
-		return current_mii->name;
+	ຖ້າ (current_mii)
+		ສົ່ງຄືນ current_mii->name;
 
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-static struct mii_dev *miiphy_get_active_dev(const char *devname)
+static sa_nracanaa mii_dev *miiphy_get_active_dev(const var_na *devname)
 {
 	/* If the current mii is the one we want, return it */
-	if (current_mii)
-		if (strcmp(current_mii->name, devname) == 0)
-			return current_mii;
+	ຖ້າ (current_mii)
+		ຖ້າ (strcmp(current_mii->name, devname) == 0)
+			ສົ່ງຄືນ current_mii;
 
 	/* Otherwise, set the active one to the one we want */
-	if (miiphy_set_current_dev(devname))
-		return NULL;
-	else
-		return current_mii;
+	ຖ້າ (miiphy_set_current_dev(devname))
+		ສົ່ງຄືນ NULL;
+	ບໍ່ດັ່ງນັ້ນ
+		ສົ່ງຄືນ current_mii;
 }
 
 /*****************************************************************************
@@ -227,22 +227,22 @@ static struct mii_dev *miiphy_get_active_dev(const char *devname)
  * Returns:
  *   0 on success
  */
-int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
+ຈຳນວນເຕັມ miiphy_read(const var_na *devname, unsigned var_na addr, unsigned var_na reg,
 		 unsigned short *value)
 {
-	struct mii_dev *bus;
-	int ret;
+	sa_nracanaa mii_dev *bus;
+	ຈຳນວນເຕັມ ret;
 
 	bus = miiphy_get_active_dev(devname);
-	if (!bus)
-		return 1;
+	ຖ້າ (!bus)
+		ສົ່ງຄືນ 1;
 
 	ret = bus->read(bus, addr, MDIO_DEVAD_NONE, reg);
-	if (ret < 0)
-		return 1;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ 1;
 
 	*value = (unsigned short)ret;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /*****************************************************************************
@@ -255,16 +255,16 @@ int miiphy_read(const char *devname, unsigned char addr, unsigned char reg,
  * Returns:
  *   0 on success
  */
-int miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
+ຈຳນວນເຕັມ miiphy_write(const var_na *devname, unsigned var_na addr, unsigned var_na reg,
 		  unsigned short value)
 {
-	struct mii_dev *bus;
+	sa_nracanaa mii_dev *bus;
 
 	bus = miiphy_get_active_dev(devname);
-	if (bus)
-		return bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
+	ຖ້າ (bus)
+		ສົ່ງຄືນ bus->write(bus, addr, MDIO_DEVAD_NONE, reg, value);
 
-	return 1;
+	ສົ່ງຄືນ 1;
 }
 
 /*****************************************************************************
@@ -273,17 +273,17 @@ int miiphy_write(const char *devname, unsigned char addr, unsigned char reg,
  */
 void miiphy_listdev(void)
 {
-	struct list_head *entry;
-	struct mii_dev *dev;
+	sa_nracanaa list_head *entry;
+	sa_nracanaa mii_dev *dev;
 
 	puts("MII devices: ");
 	list_for_each(entry, &mii_devs) {
-		dev = list_entry(entry, struct mii_dev, link);
+		dev = list_entry(entry, sa_nracanaa mii_dev, link);
 		printf("'%s' ", dev->name);
 	}
 	puts("\n");
 
-	if (current_mii)
+	ຖ້າ (current_mii)
 		printf("Current device: '%s'\n", current_mii->name);
 }
 
@@ -300,36 +300,36 @@ void miiphy_listdev(void)
  * Returns:
  *   0 on success
  */
-int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
-		 unsigned char *model, unsigned char *rev)
+ຈຳນວນເຕັມ miiphy_info(const var_na *devname, unsigned var_na addr, unsigned ຈຳນວນເຕັມ *oui,
+		 unsigned var_na *model, unsigned var_na *rev)
 {
-	unsigned int reg = 0;
+	unsigned ຈຳນວນເຕັມ reg = 0;
 	unsigned short tmp;
 
-	if (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
+	ຖ້າ (miiphy_read(devname, addr, MII_PHYSID2, &tmp) != 0) {
 		debug("PHY ID register 2 read failed\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 	reg = tmp;
 
 	debug("MII_PHYSID2 @ 0x%x = 0x%04x\n", addr, reg);
 
-	if (reg == 0xFFFF) {
+	ຖ້າ (reg == 0xFFFF) {
 		/* No physical device present at this address */
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
-	if (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
+	ຖ້າ (miiphy_read(devname, addr, MII_PHYSID1, &tmp) != 0) {
 		debug("PHY ID register 1 read failed\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 	reg |= tmp << 16;
 	debug("PHY_PHYIDR[1,2] @ 0x%x = 0x%08x\n", addr, reg);
 
 	*oui = (reg >> 10);
-	*model = (unsigned char)((reg >> 4) & 0x0000003F);
-	*rev = (unsigned char)(reg & 0x0000000F);
-	return 0;
+	*model = (unsigned var_na)((reg >> 4) & 0x0000003F);
+	*rev = (unsigned var_na)(reg & 0x0000000F);
+	ສົ່ງຄືນ 0;
 }
 
 #ifndef CONFIG_PHYLIB
@@ -342,20 +342,20 @@ int miiphy_info(const char *devname, unsigned char addr, unsigned int *oui,
  * Returns:
  *   0 on success
  */
-int miiphy_reset(const char *devname, unsigned char addr)
+ຈຳນວນເຕັມ miiphy_reset(const var_na *devname, unsigned var_na addr)
 {
 	unsigned short reg;
-	int timeout = 500;
+	ຈຳນວນເຕັມ timeout = 500;
 
-	if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	ຖ້າ (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 		debug("PHY status read failed\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	if (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
+	ຖ້າ (miiphy_write(devname, addr, MII_BMCR, reg | BMCR_RESET) != 0) {
 		debug("PHY reset failed\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-#if CONFIG_PHY_RESET_DELAY > 0
+#ຖ້າ CONFIG_PHY_RESET_DELAY > 0
 	udelay(CONFIG_PHY_RESET_DELAY);	/* Intel LXT971A needs this */
 #endif
 	/*
@@ -364,20 +364,20 @@ int miiphy_reset(const char *devname, unsigned char addr)
 	 * IEEE spec.
 	 */
 	reg = 0x8000;
-	while (((reg & 0x8000) != 0) && timeout--) {
-		if (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
+	ໃນຂະນະທີ່ (((reg & 0x8000) != 0) && timeout--) {
+		ຖ້າ (miiphy_read(devname, addr, MII_BMCR, &reg) != 0) {
 			debug("PHY status read failed\n");
-			return -1;
+			ສົ່ງຄືນ -1;
 		}
 		udelay(1000);
 	}
-	if ((reg & 0x8000) == 0) {
-		return 0;
-	} else {
+	ຖ້າ ((reg & 0x8000) == 0) {
+		ສົ່ງຄືນ 0;
+	} ບໍ່ດັ່ງນັ້ນ {
 		puts("PHY reset timed out\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 #endif /* !PHYLIB */
 
@@ -385,75 +385,75 @@ int miiphy_reset(const char *devname, unsigned char addr)
  *
  * Determine the ethernet speed (10/100/1000).  Return 10 on error.
  */
-int miiphy_speed(const char *devname, unsigned char addr)
+ຈຳນວນເຕັມ miiphy_speed(const var_na *devname, unsigned var_na addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#ຖ້າ defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/*
 	 * Check for 1000BASE-X.  If it is supported, then assume that the speed
 	 * is 1000.
 	 */
-	if (miiphy_is_1000base_x(devname, addr))
-		return _1000BASET;
+	ຖ້າ (miiphy_is_1000base_x(devname, addr))
+		ສົ່ງຄືນ _1000BASET;
 
 	/*
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	ຖ້າ (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
 		goto miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF &&
+	ຖ້າ (btsr != 0xFFFF &&
 			(btsr & (PHY_1000BTSR_1000FD | PHY_1000BTSR_1000HD)))
-		return _1000BASET;
+		ສົ່ງຄືນ _1000BASET;
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	ຖ້າ (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		printf("PHY speed");
 		goto miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	ຖ້າ (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		ຖ້າ (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("PHY AN speed");
 			goto miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		ຖ້າ (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv speed");
 			goto miiphy_read_failed;
 		}
-		return ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
+		ສົ່ງຄືນ ((anlpar & adv) & LPA_100) ? _100BASET : _10BASET;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
+	ສົ່ງຄືນ (bmcr & BMCR_SPEED100) ? _100BASET : _10BASET;
 
 miiphy_read_failed:
 	printf(" read failed, assuming 10BASE-T\n");
-	return _10BASET;
+	ສົ່ງຄືນ _10BASET;
 }
 
 /*****************************************************************************
  *
  * Determine full/half duplex.  Return half on error.
  */
-int miiphy_duplex(const char *devname, unsigned char addr)
+ຈຳນວນເຕັມ miiphy_duplex(const var_na *devname, unsigned var_na addr)
 {
 	u16 bmcr, anlpar, adv;
 
-#if defined(CONFIG_PHY_GIGE)
+#ຖ້າ defined(CONFIG_PHY_GIGE)
 	u16 btsr;
 
 	/* Check for 1000BASE-X. */
-	if (miiphy_is_1000base_x(devname, addr)) {
+	ຖ້າ (miiphy_is_1000base_x(devname, addr)) {
 		/* 1000BASE-X */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		ຖ້າ (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			printf("1000BASE-X PHY AN duplex");
 			goto miiphy_read_failed;
 		}
@@ -462,45 +462,45 @@ int miiphy_duplex(const char *devname, unsigned char addr)
 	 * No 1000BASE-X, so assume 1000BASE-T/100BASE-TX/10BASE-T register set.
 	 */
 	/* Check for 1000BASE-T. */
-	if (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
+	ຖ້າ (miiphy_read(devname, addr, MII_STAT1000, &btsr)) {
 		printf("PHY 1000BT status");
 		goto miiphy_read_failed;
 	}
-	if (btsr != 0xFFFF) {
-		if (btsr & PHY_1000BTSR_1000FD) {
-			return FULL;
-		} else if (btsr & PHY_1000BTSR_1000HD) {
-			return HALF;
+	ຖ້າ (btsr != 0xFFFF) {
+		ຖ້າ (btsr & PHY_1000BTSR_1000FD) {
+			ສົ່ງຄືນ FULL;
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (btsr & PHY_1000BTSR_1000HD) {
+			ສົ່ງຄືນ HALF;
 		}
 	}
 #endif /* CONFIG_PHY_GIGE */
 
 	/* Check Basic Management Control Register first. */
-	if (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
+	ຖ້າ (miiphy_read(devname, addr, MII_BMCR, &bmcr)) {
 		puts("PHY duplex");
 		goto miiphy_read_failed;
 	}
 	/* Check if auto-negotiation is on. */
-	if (bmcr & BMCR_ANENABLE) {
+	ຖ້າ (bmcr & BMCR_ANENABLE) {
 		/* Get auto-negotiation results. */
-		if (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
+		ຖ້າ (miiphy_read(devname, addr, MII_LPA, &anlpar)) {
 			puts("PHY AN duplex");
 			goto miiphy_read_failed;
 		}
 
-		if (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
+		ຖ້າ (miiphy_read(devname, addr, MII_ADVERTISE, &adv)) {
 			puts("PHY AN adv duplex");
 			goto miiphy_read_failed;
 		}
-		return ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
+		ສົ່ງຄືນ ((anlpar & adv) & (LPA_10FULL | LPA_100FULL)) ?
 		    FULL : HALF;
 	}
 	/* Get speed from basic control settings. */
-	return (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
+	ສົ່ງຄືນ (bmcr & BMCR_FULLDPLX) ? FULL : HALF;
 
 miiphy_read_failed:
 	printf(" read failed, assuming half duplex\n");
-	return HALF;
+	ສົ່ງຄືນ HALF;
 }
 
 /*****************************************************************************
@@ -508,18 +508,18 @@ miiphy_read_failed:
  * Return 1 if PHY supports 1000BASE-X, 0 if PHY supports 10BASE-T/100BASE-TX/
  * 1000BASE-T, or on error.
  */
-int miiphy_is_1000base_x(const char *devname, unsigned char addr)
+ຈຳນວນເຕັມ miiphy_is_1000base_x(const var_na *devname, unsigned var_na addr)
 {
-#if defined(CONFIG_PHY_GIGE)
+#ຖ້າ defined(CONFIG_PHY_GIGE)
 	u16 exsr;
 
-	if (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
+	ຖ້າ (miiphy_read(devname, addr, MII_ESTATUS, &exsr)) {
 		printf("PHY extended status read failed, assuming no "
 			"1000BASE-X\n");
-		return 0;
+		ສົ່ງຄືນ 0;
 	}
-	return 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
-#else
-	return 0;
+	ສົ່ງຄືນ 0 != (exsr & (ESTATUS_1000XF | ESTATUS_1000XH));
+#ບໍ່ດັ່ງນັ້ນ
+	ສົ່ງຄືນ 0;
 #endif
 }

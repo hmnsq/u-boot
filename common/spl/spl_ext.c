@@ -8,51 +8,51 @@
 #include <errno.h>
 #include <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
+static ulong spl_fit_read(sa_nracanaa spl_load_info *load, ulong file_offset,
 			  ulong size, void *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	sa_nracanaa legacy_img_hdr *header;
+	ຈຳນວນເຕັມ ret;
 	loff_t actlen;
 
 	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	ຖ້າ (ret)
+		ສົ່ງຄືນ ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	ຖ້າ (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (sa_nracanaa legacy_img_hdr *)buf;
+		ຖ້າ (image_get_magic(header) != FDT_MAGIC)
+			ສົ່ງຄືນ size;
 	}
 
-	return actlen;
+	ສົ່ງຄືນ actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+ຈຳນວນເຕັມ spl_load_image_ext(sa_nracanaa spl_image_info *spl_image,
+		       sa_nracanaa spl_boot_device *bootdev,
+		       sa_nracanaa blk_desc *block_dev, ຈຳນວນເຕັມ partition,
+		       const var_na *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	sa_nracanaa disk_partition part_info = {};
+	sa_nracanaa spl_load_info load;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	ຖ້າ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	ຖ້າ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	ຖ້າ (err < 0) {
 		puts("spl: ext4fs_open failed\n");
 		goto end;
 	}
@@ -61,71 +61,71 @@ int spl_load_image_ext(struct spl_image_info *spl_image,
 	err = spl_load(spl_image, bootdev, &load, filelen, 0);
 
 end:
-	if (err < 0)
+	ຖ້າ (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	ສົ່ງຄືນ err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ຖ້າ CONFIG_IS_ENABLED(OS_BOOT)
+ຈຳນວນເຕັມ spl_load_image_ext_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, ຈຳນວນເຕັມ partition)
 {
-	int err;
+	ຈຳນວນເຕັມ err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	sa_nracanaa disk_partition part_info = {};
+	__maybe_unused var_na *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	ຖ້າ (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	ຖ້າ (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+	ຖ້າ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
 		goto defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	ຖ້າ (file) {
 		err = spl_load_image_ext(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		ຖ້າ (err != 0) {
 			puts("spl: falling back to default\n");
 			goto defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ຖ້າ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		ext4fs_set_blk_dev(block_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		ຖ້າ (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			ຖ້າ (err < 0) {
 				puts("spl: ext4fs_open failed\n");
 				goto defaults;
 			}
 			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
+			ຖ້າ (err < 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
 				goto defaults;
 			}
-			return 0;
-		} else {
+			ສົ່ງຄືນ 0;
+		} ບໍ່ດັ່ງນັ້ນ {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
 #endif
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
@@ -134,31 +134,31 @@ defaults:
 	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	ຖ້າ (err)
+		ສົ່ງຄືນ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ຖ້າ IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	ext4fs_set_blk_dev(block_dev, &part_info);
 	ext4fs_mount();
 	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	ຖ້າ (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
 	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
+	ຖ້າ (err < 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 #endif
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#ບໍ່ດັ່ງນັ້ນ
+ຈຳນວນເຕັມ spl_load_image_ext_os(sa_nracanaa spl_image_info *spl_image,
+			  sa_nracanaa spl_boot_device *bootdev,
+			  sa_nracanaa blk_desc *block_dev, ຈຳນວນເຕັມ partition)
 {
-	return -ENOSYS;
+	ສົ່ງຄືນ -ENOSYS;
 }
 #endif

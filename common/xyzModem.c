@@ -43,16 +43,16 @@
 #define EOF 0x1A		/* ^Z for DOS officionados */
 
 /* Data & state local to the protocol */
-static struct
+static sa_nracanaa
 {
-  int *__chan;
-  unsigned char pkt[1024], *bufp;
-  int pad_pending;	/* trailing ^Z run withheld from the previous block */
-  int pad_deliver;	/* ^Z bytes to emit before the next data */
-  unsigned char blk, cblk, crc1, crc2;
-  unsigned char next_blk;	/* Expected block */
-  int len, mode, total_retries;
-  int total_SOH, total_STX, total_CAN;
+  ຈຳນວນເຕັມ *__chan;
+  unsigned var_na pkt[1024], *bufp;
+  ຈຳນວນເຕັມ pad_pending;	/* trailing ^Z run withheld from the previous block */
+  ຈຳນວນເຕັມ pad_deliver;	/* ^Z bytes to emit before the next data */
+  unsigned var_na blk, cblk, crc1, crc2;
+  unsigned var_na next_blk;	/* Expected block */
+  ຈຳນວນເຕັມ len, mode, total_retries;
+  ຈຳນວນເຕັມ total_SOH, total_STX, total_CAN;
   bool crc_mode, at_eof, tx_ack;
   bool first_xmodem_packet;
   ulong initial_time, timeout;
@@ -64,139 +64,139 @@ static struct
 #define xyzModem_MAX_RETRIES_WITH_CRC    10
 #define xyzModem_CAN_COUNT                3	/* Wait for 3 CAN before quitting */
 
-typedef int cyg_int32;
-static int
-CYGACC_COMM_IF_GETC_TIMEOUT (char chan, char *c)
+typedef ຈຳນວນເຕັມ cyg_int32;
+static ຈຳນວນເຕັມ
+CYGACC_COMM_IF_GETC_TIMEOUT (var_na chan, var_na *c)
 {
 
   ulong now = get_timer(0);
   schedule();
-  while (!tstc ())
+  ໃນຂະນະທີ່ (!tstc ())
     {
-      if (get_timer(now) > xyzModem_CHAR_TIMEOUT)
-        break;
+      ຖ້າ (get_timer(now) > xyzModem_CHAR_TIMEOUT)
+        bha_nga;
     }
-  if (tstc ())
+  ຖ້າ (tstc ())
     {
       *c = getchar();
-      return 1;
+      ສົ່ງຄືນ 1;
     }
-  return 0;
+  ສົ່ງຄືນ 0;
 }
 
 static void
-CYGACC_COMM_IF_PUTC (char x, char y)
+CYGACC_COMM_IF_PUTC (var_na x, var_na y)
 {
   putc (y);
 }
 
 /* Validate a hex character */
 __inline__ static bool
-_is_hex (char c)
+_is_hex (var_na c)
 {
-  return (((c >= '0') && (c <= '9')) ||
+  ສົ່ງຄືນ (((c >= '0') && (c <= '9')) ||
 	  ((c >= 'A') && (c <= 'F')) || ((c >= 'a') && (c <= 'f')));
 }
 
 /* Convert a single hex nibble */
-__inline__ static int
-_from_hex (char c)
+__inline__ static ຈຳນວນເຕັມ
+_from_hex (var_na c)
 {
-  int ret = 0;
+  ຈຳນວນເຕັມ ret = 0;
 
-  if ((c >= '0') && (c <= '9'))
+  ຖ້າ ((c >= '0') && (c <= '9'))
     {
       ret = (c - '0');
     }
-  else if ((c >= 'a') && (c <= 'f'))
+  ບໍ່ດັ່ງນັ້ນ ຖ້າ ((c >= 'a') && (c <= 'f'))
     {
       ret = (c - 'a' + 0x0a);
     }
-  else if ((c >= 'A') && (c <= 'F'))
+  ບໍ່ດັ່ງນັ້ນ ຖ້າ ((c >= 'A') && (c <= 'F'))
     {
       ret = (c - 'A' + 0x0A);
     }
-  return ret;
+  ສົ່ງຄືນ ret;
 }
 
 /* Convert a character to lower case */
-__inline__ static char
-_tolower (char c)
+__inline__ static var_na
+_tolower (var_na c)
 {
-  if ((c >= 'A') && (c <= 'Z'))
+  ຖ້າ ((c >= 'A') && (c <= 'Z'))
     {
       c = (c - 'A') + 'a';
     }
-  return c;
+  ສົ່ງຄືນ c;
 }
 
 /* Parse (scan) a number */
 static bool
-parse_num (char *s, unsigned long *val, char **es, char *delim)
+parse_num (var_na *s, unsigned long *val, var_na **es, var_na *delim)
 {
   bool first = true;
-  int radix = 10;
-  char c;
+  ຈຳນວນເຕັມ radix = 10;
+  var_na c;
   unsigned long result = 0;
-  int digit;
+  ຈຳນວນເຕັມ digit;
 
-  while (*s == ' ')
+  ໃນຂະນະທີ່ (*s == ' ')
     s++;
-  while (*s)
+  ໃນຂະນະທີ່ (*s)
     {
-      if (first && (s[0] == '0') && (_tolower (s[1]) == 'x'))
+      ຖ້າ (first && (s[0] == '0') && (_tolower (s[1]) == 'x'))
 	{
 	  radix = 16;
 	  s += 2;
 	}
       first = false;
       c = *s++;
-      if (_is_hex (c) && ((digit = _from_hex (c)) < radix))
+      ຖ້າ (_is_hex (c) && ((digit = _from_hex (c)) < radix))
 	{
 	  /* Valid digit */
 	  result = (result * radix) + digit;
 	}
-      else
+      ບໍ່ດັ່ງນັ້ນ
 	{
-	  if (delim != (char *) 0)
+	  ຖ້າ (delim != (var_na *) 0)
 	    {
 	      /* See if this character is one of the delimiters */
-	      char *dp = delim;
-	      while (*dp && (c != *dp))
+	      var_na *dp = delim;
+	      ໃນຂະນະທີ່ (*dp && (c != *dp))
 		dp++;
-	      if (*dp)
-		break;		/* Found a good delimiter */
+	      ຖ້າ (*dp)
+		bha_nga;		/* Found a good delimiter */
 	    }
-	  return false;		/* Malformatted number */
+	  ສົ່ງຄືນ false;		/* Malformatted number */
 	}
     }
   *val = result;
-  if (es != (char **) 0)
+  ຖ້າ (es != (var_na **) 0)
     {
       *es = s;
     }
-  return true;
+  ສົ່ງຄືນ true;
 }
 
-#if defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
+#ຖ້າ defined(DEBUG) && !CONFIG_IS_ENABLED(USE_TINY_PRINTF)
 /*
  * Note: this debug setup works by storing the strings in a fixed buffer
  */
-static char zm_debug_buf[8192];
-static char *zm_out = zm_debug_buf;
-static char *zm_out_start = zm_debug_buf;
+static var_na zm_debug_buf[8192];
+static var_na *zm_out = zm_debug_buf;
+static var_na *zm_out_start = zm_debug_buf;
 
-static int
-zm_dprintf(char *fmt, ...)
+static ຈຳນວນເຕັມ
+zm_dprintf(var_na *fmt, ...)
 {
-	int len;
+	ຈຳນວນເຕັມ len;
 	va_list args;
 
 	va_start(args, fmt);
 	len = diag_vsprintf(zm_out, fmt, args);
 	va_end(args);
 	zm_out += len;
-	return len;
+	ສົ່ງຄືນ len;
 }
 
 static void
@@ -206,13 +206,13 @@ zm_flush (void)
 }
 
 static void
-zm_dump_buf (void *buf, int len)
+zm_dump_buf (void *buf, ຈຳນວນເຕັມ len)
 {
 
 }
 
-static unsigned char zm_buf[2048];
-static unsigned char *zm_bp;
+static unsigned var_na zm_buf[2048];
+static unsigned var_na *zm_bp;
 
 static void
 zm_new (void)
@@ -221,20 +221,20 @@ zm_new (void)
 }
 
 static void
-zm_save (unsigned char c)
+zm_save (unsigned var_na c)
 {
   *zm_bp++ = c;
 }
 
 static void
-zm_dump (int line)
+zm_dump (ຈຳນວນເຕັມ line)
 {
   zm_dprintf ("Packet at line: %d\n", line);
   zm_dump_buf (zm_buf, zm_bp - zm_buf);
 }
 
 #define ZM_DEBUG(x) x
-#else
+#ບໍ່ດັ່ງນັ້ນ
 #define ZM_DEBUG(x)
 #endif
 
@@ -242,23 +242,23 @@ zm_dump (int line)
 static void
 xyzModem_flush (void)
 {
-  int res;
-  char c;
-  while (true)
+  ຈຳນວນເຕັມ res;
+  var_na c;
+  ໃນຂະນະທີ່ (true)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
-      if (!res)
-	return;
+      ຖ້າ (!res)
+	ສົ່ງຄືນ;
     }
 }
 
-static int
+static ຈຳນວນເຕັມ
 xyzModem_get_hdr (void)
 {
-  char c;
-  int res;
+  var_na c;
+  ຈຳນວນເຕັມ res;
   bool hdr_found = false;
-  int i, can_total, hdr_chars;
+  ຈຳນວນເຕັມ i, can_total, hdr_chars;
   unsigned short cksum;
 
   ZM_DEBUG (zm_new ());
@@ -266,152 +266,152 @@ xyzModem_get_hdr (void)
   can_total = 0;
   hdr_chars = 0;
 
-  if (xyz.tx_ack)
+  ຖ້າ (xyz.tx_ack)
     {
       CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
       xyz.tx_ack = false;
     }
-  while (!hdr_found)
+  ໃນຂະນະທີ່ (!hdr_found)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      ຖ້າ (res)
 	{
 	  hdr_chars++;
 	  switch (c)
 	    {
-	    case SOH:
+	    pak_sa SOH:
 	      xyz.total_SOH++;
 	      fallthrough;
-	    case STX:
-	      if (c == STX)
+	    pak_sa STX:
+	      ຖ້າ (c == STX)
 		xyz.total_STX++;
 	      hdr_found = true;
-	      break;
-	    case CAN:
-	    case ETX:
+	      bha_nga;
+	    pak_sa CAN:
+	    pak_sa ETX:
 	      xyz.total_CAN++;
 	      ZM_DEBUG (zm_dump (__LINE__));
-	      if (++can_total == xyzModem_CAN_COUNT)
+	      ຖ້າ (++can_total == xyzModem_CAN_COUNT)
 		{
-		  return xyzModem_cancel;
+		  ສົ່ງຄືນ xyzModem_cancel;
 		}
-	      else
+	      ບໍ່ດັ່ງນັ້ນ
 		{
 		  /* Wait for multiple CAN to avoid early quits */
-		  break;
+		  bha_nga;
 		}
-	    case EOT:
+	    pak_sa EOT:
 	      /* EOT only supported if no noise */
-	      if (hdr_chars == 1)
+	      ຖ້າ (hdr_chars == 1)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK on EOT #%d\n", __LINE__));
 		  ZM_DEBUG (zm_dump (__LINE__));
-		  return xyzModem_eof;
+		  ສົ່ງຄືນ xyzModem_eof;
 		}
 	    default:
 	      /* Ignore, waiting for start of header */
 	      ;
 	    }
 	}
-      else
+      ບໍ່ດັ່ງນັ້ນ
 	{
 	  /* Data stream timed out */
 	  xyzModem_flush ();	/* Toss any current input */
 	  ZM_DEBUG (zm_dump (__LINE__));
 	  CYGACC_CALL_IF_DELAY_US ((cyg_int32) 250000);
-	  return xyzModem_timeout;
+	  ສົ່ງຄືນ xyzModem_timeout;
 	}
     }
 
   /* Header found, now read the data */
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.blk);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (var_na *) &xyz.blk);
   ZM_DEBUG (zm_save (xyz.blk));
-  if (!res)
+  ຖ້າ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ສົ່ງຄືນ xyzModem_timeout;
     }
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.cblk);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (var_na *) &xyz.cblk);
   ZM_DEBUG (zm_save (xyz.cblk));
-  if (!res)
+  ຖ້າ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ສົ່ງຄືນ xyzModem_timeout;
     }
   xyz.len = (c == SOH) ? 128 : 1024;
   xyz.bufp = xyz.pkt;
-  for (i = 0; i < xyz.len; i++)
+  ສຳລັບ (i = 0; i < xyz.len; i++)
     {
       res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, &c);
       ZM_DEBUG (zm_save (c));
-      if (res)
+      ຖ້າ (res)
 	{
 	  xyz.pkt[i] = c;
 	}
-      else
+      ບໍ່ດັ່ງນັ້ນ
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  ສົ່ງຄືນ xyzModem_timeout;
 	}
     }
-  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc1);
+  res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (var_na *) &xyz.crc1);
   ZM_DEBUG (zm_save (xyz.crc1));
-  if (!res)
+  ຖ້າ (!res)
     {
       ZM_DEBUG (zm_dump (__LINE__));
-      return xyzModem_timeout;
+      ສົ່ງຄືນ xyzModem_timeout;
     }
-  if (xyz.crc_mode)
+  ຖ້າ (xyz.crc_mode)
     {
-      res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (char *) &xyz.crc2);
+      res = CYGACC_COMM_IF_GETC_TIMEOUT (*xyz.__chan, (var_na *) &xyz.crc2);
       ZM_DEBUG (zm_save (xyz.crc2));
-      if (!res)
+      ຖ້າ (!res)
 	{
 	  ZM_DEBUG (zm_dump (__LINE__));
-	  return xyzModem_timeout;
+	  ສົ່ງຄືນ xyzModem_timeout;
 	}
     }
   ZM_DEBUG (zm_dump (__LINE__));
   /* Validate the message */
-  if ((xyz.blk ^ xyz.cblk) != (unsigned char) 0xFF)
+  ຖ້າ ((xyz.blk ^ xyz.cblk) != (unsigned var_na) 0xFF)
     {
       ZM_DEBUG (zm_dprintf
 		("Framing error - blk: %x/%x/%x\n", xyz.blk, xyz.cblk,
 		 (xyz.blk ^ xyz.cblk)));
       ZM_DEBUG (zm_dump_buf (xyz.pkt, xyz.len));
       xyzModem_flush ();
-      return xyzModem_frame;
+      ສົ່ງຄືນ xyzModem_frame;
     }
   /* Verify checksum/CRC */
-  if (xyz.crc_mode)
+  ຖ້າ (xyz.crc_mode)
     {
       cksum = crc16_ccitt(0, xyz.pkt, xyz.len);
-      if (cksum != ((xyz.crc1 << 8) | xyz.crc2))
+      ຖ້າ (cksum != ((xyz.crc1 << 8) | xyz.crc2))
 	{
 	  ZM_DEBUG (zm_dprintf ("CRC error - recvd: %02x%02x, computed: %x\n",
 				xyz.crc1, xyz.crc2, cksum & 0xFFFF));
-	  return xyzModem_cksum;
+	  ສົ່ງຄືນ xyzModem_cksum;
 	}
     }
-  else
+  ບໍ່ດັ່ງນັ້ນ
     {
       cksum = 0;
-      for (i = 0; i < xyz.len; i++)
+      ສຳລັບ (i = 0; i < xyz.len; i++)
 	{
 	  cksum += xyz.pkt[i];
 	}
-      if (xyz.crc1 != (cksum & 0xFF))
+      ຖ້າ (xyz.crc1 != (cksum & 0xFF))
 	{
 	  ZM_DEBUG (zm_dprintf
 		    ("Checksum error - recvd: %x, computed: %x\n", xyz.crc1,
 		     cksum & 0xFF));
-	  return xyzModem_cksum;
+	  ສົ່ງຄືນ xyzModem_cksum;
 	}
     }
   /* If we get here, the message passes [structural] muster */
-  return 0;
+  ສົ່ງຄືນ 0;
 }
 
 static
@@ -419,32 +419,32 @@ ulong
 xyzModem_get_initial_timeout (void)
 {
   /* timeout is in seconds, non-positive timeout value is infinity */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-  const char *timeout_str = env_get("loadxy_timeout");
-  if (timeout_str)
-    return 1000 * simple_strtol(timeout_str, NULL, 10);
+#ຖ້າ CONFIG_IS_ENABLED(ENV_SUPPORT)
+  const var_na *timeout_str = env_get("loadxy_timeout");
+  ຖ້າ (timeout_str)
+    ສົ່ງຄືນ 1000 * simple_strtol(timeout_str, NULL, 10);
 #endif
-  return 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
+  ສົ່ງຄືນ 1000 * CONFIG_CMD_LOADXY_TIMEOUT;
 }
 
-int
-xyzModem_stream_open (connection_info_t * info, int *err)
+ຈຳນວນເຕັມ
+xyzModem_stream_open (connection_info_t * info, ຈຳນວນເຕັມ *err)
 {
-  int stat = 0;
-  int retries = xyzModem_MAX_RETRIES;
-  int crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
+  ຈຳນວນເຕັມ stat = 0;
+  ຈຳນວນເຕັມ retries = xyzModem_MAX_RETRIES;
+  ຈຳນວນເຕັມ crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
 
 /*    ZM_DEBUG(zm_out = zm_out_start); */
 #ifdef xyzModem_zmodem
-  if (info->mode == xyzModem_zmodem)
+  ຖ້າ (info->mode == xyzModem_zmodem)
     {
       *err = xyzModem_noZmodem;
-      return -1;
+      ສົ່ງຄືນ -1;
     }
 #endif
 
 /* TODO: CHECK ! */
-  int dummy = 0;
+  ຈຳນວນເຕັມ dummy = 0;
   xyz.__chan = &dummy;
   xyz.len = 0;
   xyz.pad_pending = 0;
@@ -465,95 +465,95 @@ xyzModem_stream_open (connection_info_t * info, int *err)
 
   CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
 
-  if (xyz.mode == xyzModem_xmodem)
+  ຖ້າ (xyz.mode == xyzModem_xmodem)
     {
       /* X-modem doesn't have an information header - exit here */
       xyz.first_xmodem_packet = true;
       xyz.next_blk = 1;
-      return 0;
+      ສົ່ງຄືນ 0;
     }
 
-  while (!(xyz.timeout && get_timer(xyz.initial_time) > xyz.timeout))
+  ໃນຂະນະທີ່ (!(xyz.timeout && get_timer(xyz.initial_time) > xyz.timeout))
     {
-      if (--retries <= 0)
+      ຖ້າ (--retries <= 0)
         {
           retries = xyzModem_MAX_RETRIES;
           crc_retries = xyzModem_MAX_RETRIES_WITH_CRC;
           xyz.crc_mode = true;
         }
       stat = xyzModem_get_hdr ();
-      if (stat == 0)
+      ຖ້າ (stat == 0)
 	{
 	  /* Y-modem file information header */
-	  if (xyz.blk == 0)
+	  ຖ້າ (xyz.blk == 0)
 	    {
 	      /* skip filename */
-	      while (*xyz.bufp++);
+	      ໃນຂະນະທີ່ (*xyz.bufp++);
 	      /* get the length */
-	      parse_num ((char *) xyz.bufp, &xyz.file_length, NULL, " ");
+	      parse_num ((var_na *) xyz.bufp, &xyz.file_length, NULL, " ");
 	      /* The rest of the file name data block quietly discarded */
 	      xyz.tx_ack = true;
 	    }
 	  xyz.next_blk = 1;
 	  xyz.len = 0;
-	  return 0;
+	  ສົ່ງຄືນ 0;
 	}
-      else if (stat == xyzModem_timeout)
+      ບໍ່ດັ່ງນັ້ນ ຖ້າ (stat == xyzModem_timeout)
 	{
-	  if (--crc_retries <= 0)
+	  ຖ້າ (--crc_retries <= 0)
 	    xyz.crc_mode = false;
 	  CYGACC_CALL_IF_DELAY_US (5 * 100000);	/* Extra delay for startup */
 	  CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
 	  xyz.total_retries++;
 	  ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	}
-      if (stat == xyzModem_cancel)
+      ຖ້າ (stat == xyzModem_cancel)
 	{
-	  break;
+	  bha_nga;
 	}
     }
   *err = stat;
   ZM_DEBUG (zm_flush ());
-  return -1;
+  ສົ່ງຄືນ -1;
 }
 
-int
-xyzModem_stream_read (char *buf, int size, int *err)
+ຈຳນວນເຕັມ
+xyzModem_stream_read (var_na *buf, ຈຳນວນເຕັມ size, ຈຳນວນເຕັມ *err)
 {
-  int stat, total, len;
-  int retries;
+  ຈຳນວນເຕັມ stat, total, len;
+  ຈຳນວນເຕັມ retries;
 
   total = 0;
   stat = xyzModem_cancel;
   /* Try and get 'size' bytes into the buffer */
-  while (!xyz.at_eof && xyz.len >= 0 && (size > 0))
+  ໃນຂະນະທີ່ (!xyz.at_eof && xyz.len >= 0 && (size > 0))
     {
-      if (xyz.len == 0 && xyz.pad_deliver == 0)
+      ຖ້າ (xyz.len == 0 && xyz.pad_deliver == 0)
 	{
 	  retries = xyzModem_MAX_RETRIES;
-	  while (retries-- > 0)
+	  ໃນຂະນະທີ່ (retries-- > 0)
 	    {
-	      if (xyz.first_xmodem_packet && xyz.timeout &&
+	      ຖ້າ (xyz.first_xmodem_packet && xyz.timeout &&
 		  get_timer(xyz.initial_time) > xyz.timeout)
 		{
 		  *err = xyzModem_timeout;
 		  xyz.len = -1;
-		  return total;
+		  ສົ່ງຄືນ total;
 		}
 
 	      stat = xyzModem_get_hdr ();
-	      if (stat == 0)
+	      ຖ້າ (stat == 0)
 		{
-		  if (xyz.mode == xyzModem_xmodem && xyz.first_xmodem_packet)
+		  ຖ້າ (xyz.mode == xyzModem_xmodem && xyz.first_xmodem_packet)
 		    xyz.first_xmodem_packet = false;
-		  if (xyz.blk == xyz.next_blk)
+		  ຖ້າ (xyz.blk == xyz.next_blk)
 		    {
 		      xyz.tx_ack = true;
 		      ZM_DEBUG (zm_dprintf
 				("ACK block %d (%d)\n", xyz.blk, __LINE__));
 		      xyz.next_blk = (xyz.next_blk + 1) & 0xFF;
 
-		      if (xyz.mode == xyzModem_xmodem || xyz.file_length == 0)
+		      ຖ້າ (xyz.mode == xyzModem_xmodem || xyz.file_length == 0)
 			{
 			  /* Without a file length, EOF padding can't be
 			   * distinguished from block data until the next
@@ -561,11 +561,11 @@ xyzModem_stream_read (char *buf, int size, int *err)
 			   */
 			  xyz.pad_deliver = xyz.pad_pending;
 			  xyz.pad_pending = 0;
-			  if ((xyz.bufp[xyz.len - 1] == EOF) &&
+			  ຖ້າ ((xyz.bufp[xyz.len - 1] == EOF) &&
 			      (xyz.bufp[xyz.len - 2] == EOF) &&
 			      (xyz.bufp[xyz.len - 3] == EOF))
 			    {
-			      while (xyz.len
+			      ໃນຂະນະທີ່ (xyz.len
 				     && (xyz.bufp[xyz.len - 1] == EOF))
 				{
 				  xyz.len--;
@@ -580,36 +580,36 @@ xyzModem_stream_read (char *buf, int size, int *err)
 		       * Only do this for Y-modem (and Z-modem should it ever
 		       * be supported since it can fall back to Y-modem mode).
 		       */
-		      if (xyz.mode != xyzModem_xmodem && 0 != xyz.file_length)
+		      ຖ້າ (xyz.mode != xyzModem_xmodem && 0 != xyz.file_length)
 			{
 			  xyz.read_length += xyz.len;
-			  if (xyz.read_length > xyz.file_length)
+			  ຖ້າ (xyz.read_length > xyz.file_length)
 			    {
 			      xyz.len -= (xyz.read_length - xyz.file_length);
 			    }
 			}
-		      break;
+		      bha_nga;
 		    }
-		  else if (xyz.blk == ((xyz.next_blk - 1) & 0xFF))
+		  ບໍ່ດັ່ງນັ້ນ ຖ້າ (xyz.blk == ((xyz.next_blk - 1) & 0xFF))
 		    {
 		      /* Just re-ACK this so sender will get on with it */
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		      continue;	/* Need new header */
 		    }
-		  else
+		  ບໍ່ດັ່ງນັ້ນ
 		    {
 		      stat = xyzModem_sequence;
 		    }
 		}
-	      if (stat == xyzModem_cancel)
+	      ຖ້າ (stat == xyzModem_cancel)
 		{
-		  break;
+		  bha_nga;
 		}
-	      if (stat == xyzModem_eof)
+	      ຖ້າ (stat == xyzModem_eof)
 		{
 		  CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		  ZM_DEBUG (zm_dprintf ("ACK (%d)\n", __LINE__));
-		  if (xyz.mode == xyzModem_ymodem)
+		  ຖ້າ (xyz.mode == xyzModem_ymodem)
 		    {
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan,
 					   (xyz.crc_mode ? 'C' : NAK));
@@ -619,29 +619,29 @@ xyzModem_stream_read (char *buf, int size, int *err)
 		      CYGACC_COMM_IF_PUTC (*xyz.__chan, ACK);
 		      ZM_DEBUG (zm_dprintf ("FINAL ACK (%d)\n", __LINE__));
 		    }
-		  else
+		  ບໍ່ດັ່ງນັ້ນ
 		    stat = 0;
 
 		  xyz.pad_pending = 0;	/* EOT: withheld ^Z run was padding */
 		  xyz.at_eof = true;
-		  break;
+		  bha_nga;
 		}
 	      CYGACC_COMM_IF_PUTC (*xyz.__chan, (xyz.crc_mode ? 'C' : NAK));
 	      xyz.total_retries++;
 	      ZM_DEBUG (zm_dprintf ("NAK (%d)\n", __LINE__));
 	    }
-	  if (stat < 0 && (!xyz.first_xmodem_packet || stat != xyzModem_timeout))
+	  ຖ້າ (stat < 0 && (!xyz.first_xmodem_packet || stat != xyzModem_timeout))
 	    {
 	      *err = stat;
 	      xyz.len = -1;
-	      return total;
+	      ສົ່ງຄືນ total;
 	    }
 	}
       /* A ^Z run withheld from the previous block turned out to be data */
-      if (xyz.pad_deliver > 0)
+      ຖ້າ (xyz.pad_deliver > 0)
 	{
 	  len = xyz.pad_deliver;
-	  if (size < len)
+	  ຖ້າ (size < len)
 	    len = size;
 	  memset (buf, EOF, len);
 	  size -= len;
@@ -650,10 +650,10 @@ xyzModem_stream_read (char *buf, int size, int *err)
 	  xyz.pad_deliver -= len;
 	}
       /* Don't "read" data from the EOF protocol package */
-      if (!xyz.at_eof && xyz.len > 0)
+      ຖ້າ (!xyz.at_eof && xyz.len > 0)
 	{
 	  len = xyz.len;
-	  if (size < len)
+	  ຖ້າ (size < len)
 	    len = size;
 	  memcpy (buf, xyz.bufp, len);
 	  size -= len;
@@ -663,11 +663,11 @@ xyzModem_stream_read (char *buf, int size, int *err)
 	  xyz.bufp += len;
 	}
     }
-  return total;
+  ສົ່ງຄືນ total;
 }
 
 void
-xyzModem_stream_close (int *err)
+xyzModem_stream_close (ຈຳນວນເຕັມ *err)
 {
   ZM_DEBUG (zm_dprintf
     ("xyzModem - %s mode, %d(SOH)/%d(STX)/%d(CAN) packets, %d retries\n",
@@ -679,17 +679,17 @@ xyzModem_stream_close (int *err)
 /* Need to be able to clean out the input buffer, so have to take the */
 /* getc */
 void
-xyzModem_stream_terminate (bool abort, int (*getc) (void))
+xyzModem_stream_terminate (bool abort, ຈຳນວນເຕັມ (*getc) (void))
 {
-  int c;
+  ຈຳນວນເຕັມ c;
 
-  if (abort)
+  ຖ້າ (abort)
     {
       ZM_DEBUG (zm_dprintf ("!!!! TRANSFER ABORT !!!!\n"));
       switch (xyz.mode)
 	{
-	case xyzModem_xmodem:
-	case xyzModem_ymodem:
+	pak_sa xyzModem_xmodem:
+	pak_sa xyzModem_ymodem:
 	  /* The X/YMODEM Spec seems to suggest that multiple CAN followed by an equal */
 	  /* number of Backspaces is a friendly way to get the other end to abort. */
 	  CYGACC_COMM_IF_PUTC (*xyz.__chan, CAN);
@@ -704,15 +704,15 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
 	  ZM_DEBUG (zm_dprintf ("Flushing serial line.\n"));
 	  xyzModem_flush ();
 	  xyz.at_eof = true;
-	  break;
+	  bha_nga;
 #ifdef xyzModem_zmodem
-	case xyzModem_zmodem:
+	pak_sa xyzModem_zmodem:
 	  /* Might support it some day I suppose. */
 #endif
-	  break;
+	  bha_nga;
 	}
     }
-  else
+  ບໍ່ດັ່ງນັ້ນ
     {
       ZM_DEBUG (zm_dprintf ("Engaging cleanup mode...\n"));
       /*
@@ -722,7 +722,7 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
        * If we don't eat it now, RedBoot will think the user typed it.
        */
       ZM_DEBUG (zm_dprintf ("Trailing gunk:\n"));
-      while ((c = (*getc) ()) > -1)
+      ໃນຂະນະທີ່ ((c = (*getc) ()) > -1)
         ;
       ZM_DEBUG (zm_dprintf ("\n"));
       /*
@@ -734,38 +734,38 @@ xyzModem_stream_terminate (bool abort, int (*getc) (void))
     }
 }
 
-char *
-xyzModem_error (int err)
+var_na *
+xyzModem_error (ຈຳນວນເຕັມ err)
 {
   switch (err)
     {
-    case xyzModem_access:
-      return "Can't access file";
-      break;
-    case xyzModem_noZmodem:
-      return "Sorry, zModem not available yet";
-      break;
-    case xyzModem_timeout:
-      return "Timed out";
-      break;
-    case xyzModem_eof:
-      return "End of file";
-      break;
-    case xyzModem_cancel:
-      return "Cancelled";
-      break;
-    case xyzModem_frame:
-      return "Invalid framing";
-      break;
-    case xyzModem_cksum:
-      return "CRC/checksum error";
-      break;
-    case xyzModem_sequence:
-      return "Block sequence error";
-      break;
+    pak_sa xyzModem_access:
+      ສົ່ງຄືນ "Can't access file";
+      bha_nga;
+    pak_sa xyzModem_noZmodem:
+      ສົ່ງຄືນ "Sorry, zModem not available yet";
+      bha_nga;
+    pak_sa xyzModem_timeout:
+      ສົ່ງຄືນ "Timed out";
+      bha_nga;
+    pak_sa xyzModem_eof:
+      ສົ່ງຄືນ "End of file";
+      bha_nga;
+    pak_sa xyzModem_cancel:
+      ສົ່ງຄືນ "Cancelled";
+      bha_nga;
+    pak_sa xyzModem_frame:
+      ສົ່ງຄືນ "Invalid framing";
+      bha_nga;
+    pak_sa xyzModem_cksum:
+      ສົ່ງຄືນ "CRC/checksum error";
+      bha_nga;
+    pak_sa xyzModem_sequence:
+      ສົ່ງຄືນ "Block sequence error";
+      bha_nga;
     default:
-      return "Unknown error";
-      break;
+      ສົ່ງຄືນ "Unknown error";
+      bha_nga;
     }
 }
 

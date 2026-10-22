@@ -21,39 +21,39 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct spl_fit_info {
+sa_nracanaa spl_fit_info {
 	const void *fit;	/* Pointer to a valid FIT blob */
 	size_t ext_data_offset;	/* Offset to FIT external data (end of FIT) */
-	int images_node;	/* FDT offset to "/images" node */
-	int conf_node;		/* FDT offset to selected configuration node */
+	ຈຳນວນເຕັມ images_node;	/* FDT offset to "/images" node */
+	ຈຳນວນເຕັມ conf_node;		/* FDT offset to selected configuration node */
 };
 
 __weak ulong board_spl_fit_size_align(ulong size)
 {
-	return size;
+	ສົ່ງຄືນ size;
 }
 
-static int find_node_from_desc(const void *fit, int node, const char *str)
+static ຈຳນວນເຕັມ find_node_from_desc(const void *fit, ຈຳນວນເຕັມ node, const var_na *str)
 {
-	int child;
+	ຈຳນວນເຕັມ child;
 
-	if (node < 0)
-		return -EINVAL;
+	ຖ້າ (node < 0)
+		ສົ່ງຄືນ -EINVAL;
 
 	/* iterate the FIT nodes and find a matching description */
-	for (child = fdt_first_subnode(fit, node); child >= 0;
+	ສຳລັບ (child = fdt_first_subnode(fit, node); child >= 0;
 	     child = fdt_next_subnode(fit, child)) {
-		int len;
-		const char *desc = fdt_getprop(fit, child, FIT_DESC_PROP, &len);
+		ຈຳນວນເຕັມ len;
+		const var_na *desc = fdt_getprop(fit, child, FIT_DESC_PROP, &len);
 
-		if (!desc)
+		ຖ້າ (!desc)
 			continue;
 
-		if (!strcmp(desc, str))
-			return child;
+		ຖ້າ (!strcmp(desc, str))
+			ສົ່ງຄືນ child;
 	}
 
-	return -ENOENT;
+	ສົ່ງຄືນ -ENOENT;
 }
 
 /**
@@ -68,77 +68,77 @@ static int find_node_from_desc(const void *fit, int node, const char *str)
  *
  * Return:	0 on success, or a negative error number
  */
-static int spl_fit_get_image_name(const struct spl_fit_info *ctx,
-				  const char *type, int index,
-				  const char **outname)
+static ຈຳນວນເຕັມ spl_fit_get_image_name(const sa_nracanaa spl_fit_info *ctx,
+				  const var_na *type, ຈຳນວນເຕັມ index,
+				  const var_na **outname)
 {
-	struct udevice *sysinfo;
-	const char *name, *str, *end;
-	__maybe_unused int node;
-	int len, i;
+	sa_nracanaa udevice *sysinfo;
+	const var_na *name, *str, *end;
+	__maybe_unused ຈຳນວນເຕັມ node;
+	ຈຳນວນເຕັມ len, i;
 	bool found = true;
 
 	name = fdt_getprop(ctx->fit, ctx->conf_node, type, &len);
-	if (!name) {
+	ຖ້າ (!name) {
 		debug("cannot find property '%s': %d\n", type, len);
-		return -EINVAL;
+		ສົ່ງຄືນ -EINVAL;
 	}
 	/* A string property should be NUL terminated */
 	end = name + len - 1;
-	if (!len || *end) {
+	ຖ້າ (!len || *end) {
 		debug("malformed property '%s'\n", type);
-		return -EINVAL;
+		ສົ່ງຄືນ -EINVAL;
 	}
 
 	str = name;
-	for (i = 0; i < index; i++) {
+	ສຳລັບ (i = 0; i < index; i++) {
 		str = strchr(str, '\0') + 1;
-		if (str > end) {
+		ຖ້າ (str > end) {
 			found = false;
-			break;
+			bha_nga;
 		}
 	}
 
-	if (!found && CONFIG_IS_ENABLED(SYSINFO) && !sysinfo_get(&sysinfo)) {
-		int rc;
+	ຖ້າ (!found && CONFIG_IS_ENABLED(SYSINFO) && !sysinfo_get(&sysinfo)) {
+		ຈຳນວນເຕັມ rc;
 		/*
 		 * no string in the property for this index. Check if the
 		 * sysinfo-level code can supply one.
 		 */
 		rc = sysinfo_detect(sysinfo);
-		if (rc)
-			return rc;
+		ຖ້າ (rc)
+			ສົ່ງຄືນ rc;
 
 		rc = sysinfo_get_fit_loadable(sysinfo, index - i - 1, type,
 					      &str);
-		if (rc && rc != -ENOENT)
-			return rc;
+		ຖ້າ (rc && rc != -ENOENT)
+			ສົ່ງຄືນ rc;
 
-		if (!rc) {
+		ຖ້າ (!rc) {
 			/*
 			 * The sysinfo provided a name for a loadable.
 			 * Try to match it against the description properties
 			 * first. If no matching node is found, use it as a
 			 * node name.
 			 */
-			int node;
-			int images = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
+			ຈຳນວນເຕັມ node;
+			ຈຳນວນເຕັມ images = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
 
 			node = find_node_from_desc(ctx->fit, images, str);
-			if (node > 0)
+			ຖ້າ (node > 0)
 				str = fdt_get_name(ctx->fit, node, NULL);
 
 			found = true;
 		}
 	}
 
-	if (!found) {
+	ຖ້າ (!found) {
 		debug("no string for index %d\n", index);
-		return -E2BIG;
+		ສົ່ງຄືນ -E2BIG;
 	}
 
 	*outname = str;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /**
@@ -153,54 +153,54 @@ static int spl_fit_get_image_name(const struct spl_fit_info *ctx,
  * Return:	the node offset of the respective image node or a negative
  *		error number.
  */
-static int spl_fit_get_image_node(const struct spl_fit_info *ctx,
-				  const char *type, int index)
+static ຈຳນວນເຕັມ spl_fit_get_image_node(const sa_nracanaa spl_fit_info *ctx,
+				  const var_na *type, ຈຳນວນເຕັມ index)
 {
-	const char *str;
-	int err;
-	int node;
+	const var_na *str;
+	ຈຳນວນເຕັມ err;
+	ຈຳນວນເຕັມ node;
 
 	err = spl_fit_get_image_name(ctx, type, index, &str);
-	if (err)
-		return err;
+	ຖ້າ (err)
+		ສົ່ງຄືນ err;
 
 	debug("%s: '%s'\n", type, str);
 
 	node = fdt_subnode_offset(ctx->fit, ctx->images_node, str);
-	if (node < 0) {
+	ຖ້າ (node < 0) {
 		pr_err("cannot find image node '%s': %d\n", str, node);
-		return -EINVAL;
+		ສົ່ງຄືນ -EINVAL;
 	}
 
-	return node;
+	ສົ່ງຄືນ node;
 }
 
-static u32 get_aligned_image_offset(struct spl_load_info *info, u32 offset)
+static u32 get_aligned_image_offset(sa_nracanaa spl_load_info *info, u32 offset)
 {
-	return ALIGN_DOWN(offset, spl_get_bl_len(info));
+	ສົ່ງຄືນ ALIGN_DOWN(offset, spl_get_bl_len(info));
 }
 
-static u32 get_aligned_image_overhead(struct spl_load_info *info, u32 offset)
+static u32 get_aligned_image_overhead(sa_nracanaa spl_load_info *info, u32 offset)
 {
-	return offset & (spl_get_bl_len(info) - 1);
+	ສົ່ງຄືນ offset & (spl_get_bl_len(info) - 1);
 }
 
-static int get_aligned_image_size(struct spl_load_info *info, ulong data_size,
+static ຈຳນວນເຕັມ get_aligned_image_size(sa_nracanaa spl_load_info *info, ulong data_size,
 				  u32 offset, ulong *aligned_size)
 {
 	u32 overhead = get_aligned_image_overhead(info, offset);
 
-	if (data_size > ULONG_MAX - overhead)
-		return -EOVERFLOW;
+	ຖ້າ (data_size > ULONG_MAX - overhead)
+		ສົ່ງຄືນ -EOVERFLOW;
 	data_size += overhead;
 
-	if (data_size > ULONG_MAX - (spl_get_bl_len(info) - 1))
-		return -EOVERFLOW;
+	ຖ້າ (data_size > ULONG_MAX - (spl_get_bl_len(info) - 1))
+		ສົ່ງຄືນ -EOVERFLOW;
 	data_size = ALIGN(data_size, spl_get_bl_len(info));
 
 	*aligned_size = data_size;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /**
@@ -212,21 +212,21 @@ static int get_aligned_image_size(struct spl_load_info *info, ulong data_size,
  * @load_addr:	address the image was loaded to
  * @size:	number of bytes loaded, which may be zero
  */
-static void fit_fill_image_info(const void *fit, int node,
-				struct spl_image_info *image_info,
+static void fit_fill_image_info(const void *fit, ຈຳນວນເຕັມ node,
+				sa_nracanaa spl_image_info *image_info,
 				ulong load_addr, ulong size)
 {
 	ulong entry_point;
 
-	if (!image_info)
-		return;
+	ຖ້າ (!image_info)
+		ສົ່ງຄືນ;
 
 	image_info->load_addr = load_addr;
 	image_info->size = size;
 
-	if (!fit_image_get_entry(fit, node, &entry_point))
+	ຖ້າ (!fit_image_get_entry(fit, node, &entry_point))
 		image_info->entry_point = entry_point;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		image_info->entry_point = FDT_ERROR;
 }
 
@@ -249,9 +249,9 @@ static void fit_fill_image_info(const void *fit, int node,
  * (for CONFIG_BOOTMETH_VBE_SIMPLE_FW), or another negative error number on
  * other error.
  */
-static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
-			   const struct spl_fit_info *ctx, int node,
-			   struct spl_image_info *image_info, ulong max_size)
+static ຈຳນວນເຕັມ load_simple_fit(sa_nracanaa spl_load_info *info, ulong fit_offset,
+			   const sa_nracanaa spl_fit_info *ctx, ຈຳນວນເຕັມ node,
+			   sa_nracanaa spl_image_info *image_info, ulong max_size)
 {
 	u32 offset;
 	u32 len;
@@ -264,55 +264,55 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 	const void *data;
 	const void *fit = ctx->fit;
 	bool external_data = false;
-	int ret;
+	ຈຳນວນເຕັມ ret;
 
 	log_debug("starting\n");
-	if (CONFIG_IS_ENABLED(BOOTMETH_VBE) &&
+	ຖ້າ (CONFIG_IS_ENABLED(BOOTMETH_VBE) &&
 	    xpl_get_phase(info) != IH_PHASE_NONE) {
-		enum image_phase_t phase;
+		ga_nanaa image_phase_t phase;
 
 		ret = fit_image_get_phase(fit, node, &phase);
 		/* if the image is for any phase, let's use it */
-		if (ret == -ENOENT || phase == xpl_get_phase(info)) {
+		ຖ້າ (ret == -ENOENT || phase == xpl_get_phase(info)) {
 			log_debug("found\n");
-		} else if (ret < 0) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret < 0) {
 			log_debug("err=%d\n", ret);
-			return ret;
-		} else {
+			ສົ່ງຄືນ ret;
+		} ບໍ່ດັ່ງນັ້ນ {
 			log_debug("- phase mismatch, skipping this image\n");
-			return -EBADSLT;
+			ສົ່ງຄືນ -EBADSLT;
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_FPGA) ||
+	ຖ້າ (IS_ENABLED(CONFIG_SPL_FPGA) ||
 	    (IS_ENABLED(CONFIG_SPL_OS_BOOT) && spl_decompression_enabled())) {
-		if (fit_image_get_type(fit, node, &type))
+		ຖ້າ (fit_image_get_type(fit, node, &type))
 			puts("Cannot get image type.\n");
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			debug("%s ", genimg_get_type_name(type));
 	}
 
-	if (spl_decompression_enabled()) {
+	ຖ້າ (spl_decompression_enabled()) {
 		fit_image_get_comp(fit, node, &image_comp);
 		debug("%s ", genimg_get_comp_name(image_comp));
 	}
 
-	if (fit_image_get_load(fit, node, &load_addr)) {
-		if (!image_info->load_addr) {
+	ຖ້າ (fit_image_get_load(fit, node, &load_addr)) {
+		ຖ້າ (!image_info->load_addr) {
 			printf("Can't load %s: No load address and no buffer\n",
 			       fit_get_name(fit, node, NULL));
-			return -ENOBUFS;
+			ສົ່ງຄືນ -ENOBUFS;
 		}
 		load_addr = image_info->load_addr;
 	}
 
-	if (!fit_image_get_data_position(fit, node, &offset)) {
+	ຖ້າ (!fit_image_get_data_position(fit, node, &offset)) {
 		external_data = true;
-	} else if (!fit_image_get_data_offset(fit, node, &offset)) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (!fit_image_get_data_offset(fit, node, &offset)) {
 		/* The resulting offset cannot exceed UINT32_MAX */
-		if (ctx->ext_data_offset > UINT32_MAX - offset) {
+		ຖ້າ (ctx->ext_data_offset > UINT32_MAX - offset) {
 			log_debug("Invalid external data offset: %u\n", offset);
-			return -EINVAL;
+			ສົ່ງຄືນ -EINVAL;
 		}
 		log_debug("read offset %x = offset from fit %x\n", offset,
 			  (u32)(offset + ctx->ext_data_offset));
@@ -320,21 +320,21 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		external_data = true;
 	}
 
-	if (external_data) {
+	ຖ້າ (external_data) {
 		u32 aligned_offset;
 		ulong read_offset;
 		void *src_ptr;
 
 		/* External data */
-		if (fit_image_get_data_size(fit, node, &len))
-			return -ENOENT;
+		ຖ້າ (fit_image_get_data_size(fit, node, &len))
+			ສົ່ງຄືນ -ENOENT;
 
 		/* Dont bother to copy 0 byte data, but warn, though */
-		if (!len) {
+		ຖ້າ (!len) {
 			log_warning("%s: Skip load '%s': image size is 0!\n",
 				    __func__, fit_get_name(fit, node, NULL));
 			fit_fill_image_info(fit, node, image_info, load_addr, 0);
-			return 0;
+			ສົ່ງຄືນ 0;
 		}
 
 		/*
@@ -345,29 +345,29 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * an oversized value has to be rejected here.
 		 */
 		ret = get_aligned_image_size(info, len, offset, &size);
-		if (ret) {
+		ຖ້າ (ret) {
 			log_debug("Invalid external data size: %u\n", len);
-			return ret;
+			ສົ່ງຄືນ ret;
 		}
 
-		if (size > max_size) {
+		ຖ້າ (size > max_size) {
 			log_debug("Image too large: aligned size %lu, max %lu (data-size %u)\n",
 				  size, max_size, len);
-			return -EFBIG;
+			ສົ່ງຄືນ -EFBIG;
 		}
 
 		aligned_offset = get_aligned_image_offset(info, offset);
-		if (aligned_offset > ULONG_MAX - fit_offset) {
+		ຖ້າ (aligned_offset > ULONG_MAX - fit_offset) {
 			log_debug("Invalid aligned external data offset: %u\n",
 				  aligned_offset);
-			return -EINVAL;
+			ສົ່ງຄືນ -EINVAL;
 		}
 		read_offset = fit_offset + aligned_offset;
 
-		if (spl_decompression_enabled() &&
+		ຖ້າ (spl_decompression_enabled() &&
 		    (image_comp == IH_COMP_GZIP || image_comp == IH_COMP_LZMA))
 			src_ptr = map_sysmem(ALIGN(CONFIG_SYS_LOAD_ADDR, ARCH_DMA_MINALIGN), len);
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			src_ptr = map_sysmem(ALIGN(load_addr, ARCH_DMA_MINALIGN), len);
 		length = len;
 
@@ -379,7 +379,7 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * (offset + len) doesn't exceed the allowed FIT image
 		 * maximum size.
 		 */
-		if (size > ULONG_MAX - read_offset ||
+		ຖ້າ (size > ULONG_MAX - read_offset ||
 		    size > UINTPTR_MAX - (uintptr_t)src_ptr
 		/*
 		 * #if (not a runtime if) is required: FIT_SIGNATURE_MAX_SIZE
@@ -387,67 +387,67 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * is undefined when signing is disabled and referencing it
 		 * here would fail to compile.
 		 */
-#if CONFIG_IS_ENABLED(FIT_SIGNATURE)
+#ຖ້າ CONFIG_IS_ENABLED(FIT_SIGNATURE)
 		    || offset > CONFIG_VAL(FIT_SIGNATURE_MAX_SIZE) ||
 		    len > CONFIG_VAL(FIT_SIGNATURE_MAX_SIZE) - offset
 #endif
 		) {
 			log_debug("FIT external data is out of bounds (offset=%u, size=%u)\n",
 				  offset, len);
-			return -EINVAL;
+			ສົ່ງຄືນ -EINVAL;
 		}
 
 		log_debug("reading from offset %x / %lx size %lx to %p: ",
 			  offset, read_offset, size, src_ptr);
 
-		if (info->read(info, read_offset, size, src_ptr) < length)
-			return -EIO;
+		ຖ້າ (info->read(info, read_offset, size, src_ptr) < length)
+			ສົ່ງຄືນ -EIO;
 
 		debug("External data: dst=%p, offset=%x, size=%lx\n",
 		      src_ptr, offset, (unsigned long)length);
 		src = src_ptr + get_aligned_image_overhead(info, offset);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Embedded data */
-		if (fit_image_get_emb_data(fit, node, &data, &length)) {
+		ຖ້າ (fit_image_get_emb_data(fit, node, &data, &length)) {
 			puts("Cannot get image data/size\n");
-			return -ENOENT;
+			ສົ່ງຄືນ -ENOENT;
 		}
 		debug("Embedded data: dst=%lx, size=%lx\n", load_addr,
 		      (unsigned long)length);
 		src = (void *)data;	/* cast away const */
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
+	ຖ້າ (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
 		printf("## Checking hash(es) for Image %s ... ",
 		       fit_get_name(fit, node, NULL));
-		if (!fit_image_verify_with_data(fit, node, gd_fdt_blob(), src,
+		ຖ້າ (!fit_image_verify_with_data(fit, node, gd_fdt_blob(), src,
 						length))
-			return -EPERM;
+			ສົ່ງຄືນ -EPERM;
 		puts("OK\n");
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_IMAGE_POST_PROCESS))
+	ຖ້າ (CONFIG_IS_ENABLED(FIT_IMAGE_POST_PROCESS))
 		board_fit_image_post_process(fit, node, &src, &length);
 
 	load_ptr = map_sysmem(load_addr, length);
-	if (IS_ENABLED(CONFIG_SPL_GZIP) && image_comp == IH_COMP_GZIP) {
+	ຖ້າ (IS_ENABLED(CONFIG_SPL_GZIP) && image_comp == IH_COMP_GZIP) {
 		size = length;
-		if (gunzip(load_ptr, CONFIG_SYS_BOOTM_LEN, src, &size)) {
+		ຖ້າ (gunzip(load_ptr, CONFIG_SYS_BOOTM_LEN, src, &size)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			ສົ່ງຄືນ -EIO;
 		}
 		length = size;
-	} else if (IS_ENABLED(CONFIG_SPL_LZMA) && image_comp == IH_COMP_LZMA) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (IS_ENABLED(CONFIG_SPL_LZMA) && image_comp == IH_COMP_LZMA) {
 		size = CONFIG_SYS_BOOTM_LEN;
 		ulong loadEnd;
 
-		if (image_decomp(IH_COMP_LZMA, CONFIG_SYS_LOAD_ADDR, 0, 0,
+		ຖ້າ (image_decomp(IH_COMP_LZMA, CONFIG_SYS_LOAD_ADDR, 0, 0,
 				 load_ptr, src, length, size, &loadEnd)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			ສົ່ງຄືນ -EIO;
 		}
 		length = loadEnd - CONFIG_SYS_LOAD_ADDR;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		memmove(load_ptr, src, length);
 	}
 
@@ -456,33 +456,33 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 
 	upl_add_image(fit, node, load_addr, length);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 static bool os_takes_devicetree(uint8_t os)
 {
 	switch (os) {
-	case IH_OS_U_BOOT:
-		return true;
-	case IH_OS_LINUX:
-		return IS_ENABLED(CONFIG_SPL_OS_BOOT) ||
+	pak_sa IH_OS_U_BOOT:
+		ສົ່ງຄືນ true;
+	pak_sa IH_OS_LINUX:
+		ສົ່ງຄືນ IS_ENABLED(CONFIG_SPL_OS_BOOT) ||
 		       IS_ENABLED(CONFIG_SPL_OPENSBI);
 	default:
-		return false;
+		ສົ່ງຄືນ false;
 	}
 }
 
-__weak int board_spl_fit_append_fdt_skip(const char *name)
+__weak ຈຳນວນເຕັມ board_spl_fit_append_fdt_skip(const var_na *name)
 {
-	return 0;	/* Do not skip */
+	ສົ່ງຄືນ 0;	/* Do not skip */
 }
 
-static int spl_fit_append_fdt(struct spl_image_info *spl_image,
-			      struct spl_load_info *info, ulong offset,
-			      const struct spl_fit_info *ctx)
+static ຈຳນວນເຕັມ spl_fit_append_fdt(sa_nracanaa spl_image_info *spl_image,
+			      sa_nracanaa spl_load_info *info, ulong offset,
+			      const sa_nracanaa spl_fit_info *ctx)
 {
-	struct spl_image_info image_info;
-	int node, ret = 0, index = 0;
+	sa_nracanaa spl_image_info image_info;
+	ຈຳນວນເຕັມ node, ret = 0, index = 0;
 
 	/*
 	 * Use the address following the image as target address for the
@@ -492,7 +492,7 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 
 	/* Figure out which device tree the board wants to use */
 	node = spl_fit_get_image_node(ctx, FIT_FDT_PROP, index++);
-	if (node < 0) {
+	ຖ້າ (node < 0) {
 		size_t size;
 
 		debug("%s: cannot find FDT node\n", __func__);
@@ -501,8 +501,8 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 		 * U-Boot did not find a device tree inside the FIT image. Use
 		 * the U-Boot device tree instead.
 		 */
-		if (!gd->fdt_blob)
-			return node;
+		ຖ້າ (!gd->fdt_blob)
+			ສົ່ງຄືນ node;
 
 		/*
 		 * Make the load-address of the FDT available for the SPL
@@ -511,45 +511,45 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 		size = fdt_totalsize(gd->fdt_blob);
 		spl_image->fdt_addr = map_sysmem(image_info.load_addr, size);
 		memcpy(spl_image->fdt_addr, gd->fdt_blob, size);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		ret = load_simple_fit(info, offset, ctx, node, &image_info,
 				      CONFIG_SYS_BOOTM_LEN);
-		if (ret < 0)
-			return ret;
+		ຖ້າ (ret < 0)
+			ສົ່ງຄືນ ret;
 
 		spl_image->fdt_addr = phys_to_virt(image_info.load_addr);
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_IMAGE_TINY))
-		return 0;
+	ຖ້າ (CONFIG_IS_ENABLED(FIT_IMAGE_TINY))
+		ສົ່ງຄືນ 0;
 
-#if CONFIG_IS_ENABLED(LOAD_FIT_APPLY_OVERLAY)
+#ຖ້າ CONFIG_IS_ENABLED(LOAD_FIT_APPLY_OVERLAY)
 		void *tmpbuffer = NULL;
 
-		for (; ; index++) {
-			const char *str;
+		ສຳລັບ (; ; index++) {
+			const var_na *str;
 
 			ret = spl_fit_get_image_name(ctx, FIT_FDT_PROP, index, &str);
-			if (ret == -E2BIG) {
+			ຖ້າ (ret == -E2BIG) {
 				debug("%s: No additional FDT node\n", __func__);
 				ret = 0;
-				break;
-			} else if (ret) {
-				break;
+				bha_nga;
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret) {
+				bha_nga;
 			}
 
 			ret = board_spl_fit_append_fdt_skip(str);
-			if (ret)
+			ຖ້າ (ret)
 				continue;
 
 			node = fdt_subnode_offset(ctx->fit, ctx->images_node, str);
-			if (node < 0) {
+			ຖ້າ (node < 0) {
 				debug("%s: unable to find FDT node %d\n",
 				      __func__, index);
 				continue;
 			}
 
-			if (!tmpbuffer) {
+			ຖ້າ (!tmpbuffer) {
 				/*
 				 * allocate memory to store the DT overlay
 				 * before it is applied. It may not be used
@@ -559,7 +559,7 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 				size_t size = CONFIG_SPL_LOAD_FIT_APPLY_OVERLAY_BUF_SZ;
 
 				tmpbuffer = malloc_cache_aligned(size);
-				if (!tmpbuffer)
+				ຖ້າ (!tmpbuffer)
 					debug("%s: unable to allocate space for overlays\n",
 					      __func__);
 			}
@@ -567,50 +567,50 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 			ret = load_simple_fit(info, offset, ctx, node,
 					      &image_info,
 					      CONFIG_SPL_LOAD_FIT_APPLY_OVERLAY_BUF_SZ);
-			if (ret == -EBADSLT)
+			ຖ້າ (ret == -EBADSLT)
 				continue;
-			else if (ret < 0)
-				break;
+			ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret < 0)
+				bha_nga;
 
 			/* Make room in FDT for changes from the overlay */
 			ret = fdt_increase_size(spl_image->fdt_addr,
 						image_info.size);
-			if (ret < 0)
-				break;
+			ຖ້າ (ret < 0)
+				bha_nga;
 
 			ret = fdt_overlay_apply_verbose(spl_image->fdt_addr,
 							(void *)image_info.load_addr);
-			if (ret) {
+			ຖ້າ (ret) {
 				pr_err("failed to apply DT overlay %s\n",
 				       fit_get_name(ctx->fit, node, NULL));
-				break;
+				bha_nga;
 			}
 
 			debug("%s: DT overlay %s applied\n", __func__,
 			      fit_get_name(ctx->fit, node, NULL));
 		}
 		free(tmpbuffer);
-		if (ret)
-			return ret;
+		ຖ້າ (ret)
+			ສົ່ງຄືນ ret;
 #endif
 	/* Try to make space, so we can inject details on the loadables */
 	ret = fdt_shrink_to_minimum(spl_image->fdt_addr, 8192);
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-static int spl_fit_record_loadable(const struct spl_fit_info *ctx, int index,
-				   void *blob, struct spl_image_info *image)
+static ຈຳນວນເຕັມ spl_fit_record_loadable(const sa_nracanaa spl_fit_info *ctx, ຈຳນວນເຕັມ index,
+				   void *blob, sa_nracanaa spl_image_info *image)
 {
-	int ret = 0;
-	const char *name;
-	int node;
+	ຈຳນວນເຕັມ ret = 0;
+	const var_na *name;
+	ຈຳນວນເຕັມ node;
 
 	ret = spl_fit_get_image_name(ctx, FIT_LOADABLE_PROP, index, &name);
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
 	node = spl_fit_get_image_node(ctx, FIT_LOADABLE_PROP, index);
 
@@ -620,83 +620,83 @@ static int spl_fit_record_loadable(const struct spl_fit_info *ctx, int index,
 			fdt_getprop(ctx->fit, node, FIT_OS_PROP, NULL),
 			fdt_getprop(ctx->fit, node, FIT_ARCH_PROP, NULL));
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
-static int spl_fit_image_is_fpga(const void *fit, int node)
+static ຈຳນວນເຕັມ spl_fit_image_is_fpga(const void *fit, ຈຳນວນເຕັມ node)
 {
-	const char *type;
+	const var_na *type;
 
-	if (!IS_ENABLED(CONFIG_SPL_FPGA))
-		return 0;
+	ຖ້າ (!IS_ENABLED(CONFIG_SPL_FPGA))
+		ສົ່ງຄືນ 0;
 
 	type = fdt_getprop(fit, node, FIT_TYPE_PROP, NULL);
-	if (!type)
-		return 0;
+	ຖ້າ (!type)
+		ສົ່ງຄືນ 0;
 
-	return !strcmp(type, "fpga");
+	ສົ່ງຄືນ !strcmp(type, "fpga");
 }
 
-static void spl_fit_image_record_arm32_optee(const void *fit, int node,
-					     struct spl_image_info *spl_image,
-					     struct spl_image_info *image_info)
+static void spl_fit_image_record_arm32_optee(const void *fit, ຈຳນວນເຕັມ node,
+					     sa_nracanaa spl_image_info *spl_image,
+					     sa_nracanaa spl_image_info *image_info)
 {
-#if defined(CONFIG_BOOTM_OPTEE) && defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
-	const char *type = fdt_getprop(fit, node, FIT_TYPE_PROP, NULL);
+#ຖ້າ defined(CONFIG_BOOTM_OPTEE) && defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+	const var_na *type = fdt_getprop(fit, node, FIT_TYPE_PROP, NULL);
 
-	if (!type)
-		return;
+	ຖ້າ (!type)
+		ສົ່ງຄືນ;
 
-	if (strcmp(type, "tee"))
-		return;
+	ຖ້າ (strcmp(type, "tee"))
+		ສົ່ງຄືນ;
 
 	spl_image->optee_addr = image_info->load_addr;
 #endif
 }
 
-static int spl_fit_image_get_os(const void *fit, int noffset, uint8_t *os)
+static ຈຳນວນເຕັມ spl_fit_image_get_os(const void *fit, ຈຳນວນເຕັມ noffset, uint8_t *os)
 {
-	if (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) || CONFIG_IS_ENABLED(OS_BOOT))
-		return fit_image_get_os(fit, noffset, os);
+	ຖ້າ (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) || CONFIG_IS_ENABLED(OS_BOOT))
+		ສົ່ງຄືນ fit_image_get_os(fit, noffset, os);
 
-	const char *name = fdt_getprop(fit, noffset, FIT_OS_PROP, NULL);
-	if (!name)
-		return -ENOENT;
+	const var_na *name = fdt_getprop(fit, noffset, FIT_OS_PROP, NULL);
+	ຖ້າ (!name)
+		ສົ່ງຄືນ -ENOENT;
 
 	/*
 	 * We don't care what the type of the image actually is,
 	 * only whether or not it is U-Boot. This saves some
 	 * space by omitting the large table of OS types.
 	 */
-	if (!strcmp(name, "u-boot"))
+	ຖ້າ (!strcmp(name, "u-boot"))
 		*os = IH_OS_U_BOOT;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		*os = IH_OS_INVALID;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /*
  * The purpose of the FIT load buffer is to provide a memory location that is
  * independent of the load address of any FIT component.
  */
-__weak void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
+__weak void *board_spl_fit_buffer_addr(ulong fit_size, ຈຳນວນເຕັມ sectors, ຈຳນວນເຕັມ bl_len)
 {
 	void *buf;
 	size_t size = sectors * bl_len;
 
 	buf = malloc_cache_aligned(size);
-	if (!buf) {
+	ຖ້າ (!buf) {
 		pr_err("Could not get FIT buffer of %lu bytes\n", (ulong)size);
 
-		if (IS_ENABLED(CONFIG_SPL_SYS_MALLOC))
+		ຖ້າ (IS_ENABLED(CONFIG_SPL_SYS_MALLOC))
 			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_SIZE\n");
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_F_LEN\n");
 
 		buf = spl_get_load_buffer(0, size);
 	}
-	return buf;
+	ສົ່ງຄືນ buf;
 }
 
 /*
@@ -706,7 +706,7 @@ __weak void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
  */
 __weak bool spl_load_simple_fit_skip_processing(void)
 {
-	return false;
+	ສົ່ງຄືນ false;
 }
 
 /*
@@ -715,82 +715,82 @@ __weak bool spl_load_simple_fit_skip_processing(void)
  */
 __weak void *spl_load_simple_fit_fix_load(const void *fit)
 {
-	return (void *)fit;
+	ສົ່ງຄືນ (void *)fit;
 }
 
-static void warn_deprecated(const char *msg)
+static void warn_deprecated(const var_na *msg)
 {
 	printf("DEPRECATED: %s\n", msg);
 	printf("\tSee https://fitspec.osfw.foundation/\n");
 }
 
-static int spl_fit_upload_fpga(struct spl_fit_info *ctx, int node,
-			       struct spl_image_info *fpga_image)
+static ຈຳນວນເຕັມ spl_fit_upload_fpga(sa_nracanaa spl_fit_info *ctx, ຈຳນວນເຕັມ node,
+			       sa_nracanaa spl_image_info *fpga_image)
 {
-	const char *compatible;
-	int ret;
-	int devnum = 0;
-	int flags = 0;
+	const var_na *compatible;
+	ຈຳນວນເຕັມ ret;
+	ຈຳນວນເຕັມ devnum = 0;
+	ຈຳນວນເຕັມ flags = 0;
 
 	debug("FPGA bitstream at: %x, size: %x\n",
 	      (u32)fpga_image->load_addr, fpga_image->size);
 
 	compatible = fdt_getprop(ctx->fit, node, FIT_COMPAT_PROP, NULL);
-	if (!compatible) {
+	ຖ້າ (!compatible) {
 		warn_deprecated("'fpga' image without 'compatible' property");
-	} else {
-		if (CONFIG_IS_ENABLED(FPGA_LOAD_SECURE))
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (CONFIG_IS_ENABLED(FPGA_LOAD_SECURE))
 			flags = fpga_compatible2flag(devnum, compatible);
-		if (strcmp(compatible, "u-boot,fpga-legacy"))
+		ຖ້າ (strcmp(compatible, "u-boot,fpga-legacy"))
 			debug("Ignoring compatible = %s property\n",
 			      compatible);
 	}
 
 	ret = fpga_load(devnum, (void *)fpga_image->load_addr,
 			fpga_image->size, BIT_FULL, flags);
-	if (ret) {
+	ຖ້າ (ret) {
 		printf("%s: Cannot load the image to the FPGA\n", __func__);
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 
 	puts("FPGA image loaded from FIT\n");
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int spl_fit_load_fpga(struct spl_fit_info *ctx,
-			     struct spl_load_info *info, ulong offset)
+static ຈຳນວນເຕັມ spl_fit_load_fpga(sa_nracanaa spl_fit_info *ctx,
+			     sa_nracanaa spl_load_info *info, ulong offset)
 {
-	int node, ret;
+	ຈຳນວນເຕັມ node, ret;
 
-	struct spl_image_info fpga_image = {
+	sa_nracanaa spl_image_info fpga_image = {
 		.load_addr = 0,
 	};
 
 	node = spl_fit_get_image_node(ctx, FIT_FPGA_PROP, 0);
-	if (node < 0)
-		return node;
+	ຖ້າ (node < 0)
+		ສົ່ງຄືນ node;
 
 	warn_deprecated("'fpga' property in config node. Use 'loadables'");
 
 	/* Load the image and set up the fpga_image structure */
 	ret = load_simple_fit(info, offset, ctx, node, &fpga_image,
 			      CONFIG_SYS_BOOTM_LEN);
-	if (ret) {
+	ຖ້າ (ret) {
 		printf("%s: Cannot load the FPGA: %i\n", __func__, ret);
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 
-	return spl_fit_upload_fpga(ctx, node, &fpga_image);
+	ສົ່ງຄືນ spl_fit_upload_fpga(ctx, node, &fpga_image);
 }
 
-static int spl_simple_fit_read(struct spl_fit_info *ctx,
-			       struct spl_load_info *info, ulong offset,
+static ຈຳນວນເຕັມ spl_simple_fit_read(sa_nracanaa spl_fit_info *ctx,
+			       sa_nracanaa spl_load_info *info, ulong offset,
 			       const void *fit_header)
 {
 	unsigned long aligned_size, count, size;
 	void *buf;
-	int ret;
+	ຈຳນວນເຕັມ ret;
 
 	/*
 	 * For FIT with external data, figure out where the external images
@@ -809,22 +809,22 @@ static int spl_simple_fit_read(struct spl_fit_info *ctx,
 	 * For FIT with external data, data is not loaded in this step.
 	 */
 	ret = get_aligned_image_size(info, size, 0, &aligned_size);
-	if (ret) {
+	ຖ້າ (ret) {
 		log_debug("Invalid FIT size: %lu\n", size);
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 	buf = board_spl_fit_buffer_addr(aligned_size, aligned_size, 1);
-	if (!buf) {
+	ຖ້າ (!buf) {
 		/*
 		 * We assume that none of the board will ever use 0x0 as a
 		 * valid load address. Theoretically some board could use it,
 		 * but this is extremely unlikely.
 		 */
-		return -EIO;
+		ສົ່ງຄືນ -EIO;
 	}
 
 	count = info->read(info, offset, aligned_size, buf);
-	if (!count) {
+	ຖ້າ (!count) {
 		/*
 		 * FIT could not be read. This means we should free the
 		 * memory allocated by board_spl_fit_buffer_addr().
@@ -851,67 +851,67 @@ static int spl_simple_fit_read(struct spl_fit_info *ctx,
 		 *     structure may cause huge memory leak (up to
 		 *     several megabytes). Do NOT use such images!
 		 */
-		return -EIO;
+		ສົ່ງຄືນ -EIO;
 	}
 
 	ctx->fit = buf;
 	debug("fit read offset %lx, size=%lu, dst=%p, count=%lu\n",
 	      offset, aligned_size, buf, count);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int spl_simple_fit_parse(struct spl_fit_info *ctx)
+static ຈຳນວນເຕັມ spl_simple_fit_parse(sa_nracanaa spl_fit_info *ctx)
 {
 	/* Find the correct subnode under "/configurations" */
 	ctx->conf_node = fit_find_config_node(ctx->fit);
-	if (ctx->conf_node < 0)
-		return -EINVAL;
+	ຖ້າ (ctx->conf_node < 0)
+		ສົ່ງຄືນ -EINVAL;
 
-	if (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
+	ຖ້າ (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
 		printf("## Checking hash(es) for config %s ... ",
 		       fit_get_name(ctx->fit, ctx->conf_node, NULL));
-		if (fit_config_verify(ctx->fit, ctx->conf_node))
-			return -EPERM;
+		ຖ້າ (fit_config_verify(ctx->fit, ctx->conf_node))
+			ສົ່ງຄືນ -EPERM;
 		puts("OK\n");
 	}
 
 	/* find the node holding the images information */
 	ctx->images_node = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
-	if (ctx->images_node < 0) {
+	ຖ້າ (ctx->images_node < 0) {
 		debug("%s: Cannot find /images node: %d\n", __func__,
 		      ctx->images_node);
-		return -EINVAL;
+		ສົ່ງຄືນ -EINVAL;
 	}
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int spl_load_simple_fit(struct spl_image_info *spl_image,
-			struct spl_load_info *info, ulong offset, void *fit)
+ຈຳນວນເຕັມ spl_load_simple_fit(sa_nracanaa spl_image_info *spl_image,
+			sa_nracanaa spl_load_info *info, ulong offset, void *fit)
 {
-	struct spl_image_info image_info;
-	struct spl_fit_info ctx;
-	int node = -1;
-	int ret;
-	int index = 0;
-	int firmware_node;
+	sa_nracanaa spl_image_info image_info;
+	sa_nracanaa spl_fit_info ctx;
+	ຈຳນວນເຕັມ node = -1;
+	ຈຳນວນເຕັມ ret;
+	ຈຳນວນເຕັມ index = 0;
+	ຈຳນວນເຕັມ firmware_node;
 
 	ret = spl_simple_fit_read(&ctx, info, offset, fit);
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
 	/* skip further processing if requested to enable load-only use cases */
-	if (spl_load_simple_fit_skip_processing())
-		return 0;
+	ຖ້າ (spl_load_simple_fit_skip_processing())
+		ສົ່ງຄືນ 0;
 
 	ctx.fit = spl_load_simple_fit_fix_load(ctx.fit);
 
 	ret = spl_simple_fit_parse(&ctx);
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
-	if (IS_ENABLED(CONFIG_SPL_FPGA))
+	ຖ້າ (IS_ENABLED(CONFIG_SPL_FPGA))
 		spl_fit_load_fpga(&ctx, info, offset);
 
 	/*
@@ -920,13 +920,13 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 	 *   - fall back 'kernel' (e.g. a Falcon-mode OS boot
 	 *   - fall back to using the first 'loadables' entry
 	 */
-	if (node < 0)
+	ຖ້າ (node < 0)
 		node = spl_fit_get_image_node(&ctx, FIT_FIRMWARE_PROP, 0);
 
-	if (node < 0 && IS_ENABLED(CONFIG_SPL_OS_BOOT))
+	ຖ້າ (node < 0 && IS_ENABLED(CONFIG_SPL_OS_BOOT))
 		node = spl_fit_get_image_node(&ctx, FIT_KERNEL_PROP, 0);
 
-	if (node < 0) {
+	ຖ້າ (node < 0) {
 		debug("could not find firmware image, trying loadables...\n");
 		node = spl_fit_get_image_node(&ctx, FIT_LOADABLE_PROP, 0);
 		/*
@@ -935,70 +935,70 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 		 */
 		index = 1;
 	}
-	if (node < 0) {
+	ຖ້າ (node < 0) {
 		debug("%s: Cannot find u-boot image node: %d\n",
 		      __func__, node);
-		return -1;
+		ສົ່ງຄືນ -1;
 	}
 
 	/* Load the image and set up the spl_image structure */
 	ret = load_simple_fit(info, offset, &ctx, node, spl_image,
 			      CONFIG_SYS_BOOTM_LEN);
-	if (ret)
-		return ret;
+	ຖ້າ (ret)
+		ສົ່ງຄືນ ret;
 
 	/*
 	 * For backward compatibility, we treat the first node that is
 	 * as a U-Boot image, if no OS-type has been declared.
 	 */
-	if (!spl_fit_image_get_os(ctx.fit, node, &spl_image->os))
+	ຖ້າ (!spl_fit_image_get_os(ctx.fit, node, &spl_image->os))
 		debug("Image OS is %s\n", genimg_get_os_name(spl_image->os));
-	else if (!IS_ENABLED(CONFIG_SPL_OS_BOOT))
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (!IS_ENABLED(CONFIG_SPL_OS_BOOT))
 		spl_image->os = IH_OS_U_BOOT;
 
 	/*
 	 * Booting a next-stage U-Boot may require us to append the FDT.
 	 * We allow this to fail, as the U-Boot image might embed its FDT.
 	 */
-	if (os_takes_devicetree(spl_image->os)) {
+	ຖ້າ (os_takes_devicetree(spl_image->os)) {
 		ret = spl_fit_append_fdt(spl_image, info, offset, &ctx);
-		if (ret < 0 && spl_image->os != IH_OS_U_BOOT)
-			return ret;
+		ຖ້າ (ret < 0 && spl_image->os != IH_OS_U_BOOT)
+			ສົ່ງຄືນ ret;
 	}
 
 	firmware_node = node;
 	/* Now check if there are more images for us to load */
-	for (; ; index++) {
+	ສຳລັບ (; ; index++) {
 		uint8_t os_type = IH_OS_INVALID;
 
 		node = spl_fit_get_image_node(&ctx, FIT_LOADABLE_PROP, index);
-		if (node < 0)
-			break;
+		ຖ້າ (node < 0)
+			bha_nga;
 
 		/*
 		 * if the firmware is also a loadable, skip it because
 		 * it already has been loaded. This is typically the case with
 		 * u-boot.img generated by mkimage.
 		 */
-		if (firmware_node == node)
+		ຖ້າ (firmware_node == node)
 			continue;
 
 		image_info.load_addr = 0;
 		ret = load_simple_fit(info, offset, &ctx, node, &image_info,
 				      CONFIG_SYS_BOOTM_LEN);
-		if (ret < 0 && ret != -EBADSLT) {
+		ຖ້າ (ret < 0 && ret != -EBADSLT) {
 			printf("%s: can't load image loadables index %d (ret = %d)\n",
 			       __func__, index, ret);
-			return ret;
+			ສົ່ງຄືນ ret;
 		}
 
-		if (spl_fit_image_is_fpga(ctx.fit, node))
+		ຖ້າ (spl_fit_image_is_fpga(ctx.fit, node))
 			spl_fit_upload_fpga(&ctx, node, &image_info);
 
-		if (!spl_fit_image_get_os(ctx.fit, node, &os_type))
+		ຖ້າ (!spl_fit_image_get_os(ctx.fit, node, &os_type))
 			debug("Loadable is %s\n", genimg_get_os_name(os_type));
 
-		if (os_takes_devicetree(os_type)) {
+		ຖ້າ (os_takes_devicetree(os_type)) {
 			spl_fit_append_fdt(&image_info, info, offset, &ctx);
 			spl_image->fdt_addr = image_info.fdt_addr;
 		}
@@ -1007,7 +1007,7 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 		 * If the "firmware" image did not provide an entry point,
 		 * use the first valid entry point from the loadables.
 		 */
-		if (spl_image->entry_point == FDT_ERROR &&
+		ຖ້າ (spl_image->entry_point == FDT_ERROR &&
 		    image_info.entry_point != FDT_ERROR)
 			spl_image->entry_point = image_info.entry_point;
 
@@ -1015,7 +1015,7 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 						 &image_info);
 
 		/* Record our loadables into the FDT */
-		if (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) &&
+		ຖ້າ (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) &&
 		    xpl_get_fdt_update(info) && spl_image->fdt_addr)
 			spl_fit_record_loadable(&ctx, index,
 						spl_image->fdt_addr,
@@ -1027,28 +1027,28 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 	 * Makefile will set it to 0 and it will end up as the entry point
 	 * here. What it actually means is: use the load address.
 	 */
-	if (spl_image->entry_point == FDT_ERROR || spl_image->entry_point == 0)
+	ຖ້າ (spl_image->entry_point == FDT_ERROR || spl_image->entry_point == 0)
 		spl_image->entry_point = spl_image->load_addr;
 
 	spl_image->flags |= SPL_FIT_FOUND;
 	upl_set_fit_info(map_to_sysmem(ctx.fit), ctx.conf_node,
 			 spl_image->entry_point);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /* Parse and load full fitImage in SPL */
-int spl_load_fit_image(struct spl_image_info *spl_image,
-		       const struct legacy_img_hdr *header)
+ຈຳນວນເຕັມ spl_load_fit_image(sa_nracanaa spl_image_info *spl_image,
+		       const sa_nracanaa legacy_img_hdr *header)
 {
-	struct bootm_headers images;
-	const char *fit_uname_config = NULL;
+	sa_nracanaa bootm_headers images;
+	const var_na *fit_uname_config = NULL;
 	ulong fdt_hack;
-	const char *uname;
+	const var_na *uname;
 	ulong fw_data = 0, dt_data = 0, img_data = 0;
 	ulong fw_len = 0, dt_len = 0, img_len = 0;
-	int idx, conf_noffset;
-	int ret;
+	ຈຳນວນເຕັມ idx, conf_noffset;
+	ຈຳນວນເຕັມ ret;
 
 	images.verify = CONFIG_IS_ENABLED(FIT_SIGNATURE);
 
@@ -1057,21 +1057,21 @@ int spl_load_fit_image(struct spl_image_info *spl_image,
 			     IH_TYPE_FIRMWARE, -1, FIT_LOAD_OPTIONAL,
 			     &fw_data, &fw_len);
 
-	if (ret < 0) {
+	ຖ້າ (ret < 0) {
 		ret = fit_image_load(&images, virt_to_phys((void *)header),
 				     NULL, &fit_uname_config, IH_ARCH_DEFAULT,
 				     IH_TYPE_KERNEL, -1, FIT_LOAD_OPTIONAL,
 				     &fw_data, &fw_len);
 	}
 
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
 	spl_image->size = fw_len;
 	spl_image->load_addr = fw_data;
-	if (fit_image_get_entry(header, ret, &spl_image->entry_point))
+	ຖ້າ (fit_image_get_entry(header, ret, &spl_image->entry_point))
 		spl_image->entry_point = fw_data;
-	if (fit_image_get_os(header, ret, &spl_image->os))
+	ຖ້າ (fit_image_get_os(header, ret, &spl_image->os))
 		spl_image->os = IH_OS_INVALID;
 	spl_image->name = genimg_get_os_name(spl_image->os);
 
@@ -1083,25 +1083,25 @@ int spl_load_fit_image(struct spl_image_info *spl_image,
 	ret = fit_image_load(&images, virt_to_phys((void *)header), NULL,
 			     &fit_uname_config, IH_ARCH_DEFAULT, IH_TYPE_FLATDT,
 			     -1, FIT_LOAD_OPTIONAL, &dt_data, &dt_len);
-	if (ret >= 0) {
-		if (spl_image->os == IH_OS_U_BOOT) {
+	ຖ້າ (ret >= 0) {
+		ຖ້າ (spl_image->os == IH_OS_U_BOOT) {
 			/* HACK: U-Boot expects FDT at a specific address */
 			fdt_hack = ALIGN(spl_image->load_addr + spl_image->size, 8);
 			debug("Relocating FDT to %p\n", (void *)fdt_hack);
 			memcpy(map_sysmem(fdt_hack, dt_len),
 			       map_sysmem(dt_data, 0), dt_len);
 			spl_image->fdt_addr = (void *)fdt_hack;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			spl_image->fdt_addr = (void *)dt_data;
 		}
 	}
 
 	conf_noffset = fit_conf_get_node((const void *)header,
 					 fit_uname_config);
-	if (conf_noffset < 0)
-		return 0;
+	ຖ້າ (conf_noffset < 0)
+		ສົ່ງຄືນ 0;
 
-	for (idx = 0;
+	ສຳລັບ (idx = 0;
 	     uname = fdt_stringlist_get((const void *)header, conf_noffset,
 					FIT_LOADABLE_PROP, idx,
 				NULL), uname;
@@ -1113,13 +1113,13 @@ int spl_load_fit_image(struct spl_image_info *spl_image,
 				     IH_ARCH_DEFAULT, IH_TYPE_LOADABLE, -1,
 				     FIT_LOAD_OPTIONAL_NON_ZERO,
 				     &img_data, &img_len);
-		if (ret < 0)
-			return ret;
+		ຖ້າ (ret < 0)
+			ສົ່ງຄືນ ret;
 	}
 	spl_image->flags |= SPL_FIT_FOUND;
 
 	upl_set_fit_info(map_to_sysmem(header), conf_noffset,
 			 spl_image->entry_point);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }

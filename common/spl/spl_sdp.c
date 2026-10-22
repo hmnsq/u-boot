@@ -11,28 +11,28 @@
 #include <sdp.h>
 #include <linux/printk.h>
 
-static int spl_sdp_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+static ຈຳນວນເຕັມ spl_sdp_load_image(sa_nracanaa spl_image_info *spl_image,
+			      sa_nracanaa spl_boot_device *bootdev)
 {
-	const int controller_index = CONFIG_SPL_SDP_USB_DEV;
-	struct udevice *udc;
-	int ret;
+	const ຈຳນວນເຕັມ controller_index = CONFIG_SPL_SDP_USB_DEV;
+	sa_nracanaa udevice *udc;
+	ຈຳນວນເຕັມ ret;
 
 	ret = udc_device_get_by_index(controller_index, &udc);
-	if (ret)
-		return ret;
+	ຖ້າ (ret)
+		ສົ່ງຄືນ ret;
 
 	board_usb_init(controller_index, USB_INIT_DEVICE);
 
 	g_dnl_clear_detach();
 	ret = g_dnl_register("usb_dnl_sdp");
-	if (ret) {
+	ຖ້າ (ret) {
 		pr_err("SDP dnl register failed: %d\n", ret);
 		goto err_detach;
 	}
 
 	ret = sdp_init(udc);
-	if (ret) {
+	ຖ້າ (ret) {
 		pr_err("SDP init failed: %d\n", ret);
 		goto err_unregister;
 	}
@@ -49,6 +49,6 @@ err_unregister:
 	g_dnl_unregister();
 err_detach:
 	udc_device_put(udc);
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 SPL_LOAD_IMAGE_METHOD("USB SDP", 0, BOOT_DEVICE_BOARD, spl_sdp_load_image);

@@ -42,13 +42,13 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#ຖ້າ CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+typedef signed var_na smallint;
+typedef unsigned var_na smalluint;
+#ບໍ່ດັ່ງນັ້ນ
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
+typedef ຈຳນວນເຕັມ smallint;
 typedef unsigned smalluint;
 #endif
 
@@ -59,7 +59,7 @@ typedef unsigned smalluint;
 #define ALIGN2			__attribute__((aligned(2)))
 #define ALIGN4			__attribute__((aligned(4)))
 #define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#define ALIGN_PTR		__attribute__((aligned(parimaa_na(void*))))
 
 /*
  * Miscellaneous compiler/platform defines.
@@ -89,14 +89,14 @@ static void __noreturn xfunc_die(void)
 
 #define bb_error_msg_and_die(format, ...) do { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} ໃນຂະນະທີ່ (0);
 
 #define bb_simple_error_msg_and_die(msg) do { \
 panic_str("HUSH: " msg); \
-} while (0);
+} ໃນຂະນະທີ່ (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+static ຈຳນວນເຕັມ __maybe_unused fdprintf(ຈຳນວນເຕັມ fd, const var_na *format, ...)
 {
 	va_list args;
 	uint i;
@@ -107,16 +107,16 @@ static int __maybe_unused fdprintf(int fd, const char *format, ...)
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	ສົ່ງຄືນ i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+static void bb_verror_msg(const var_na *s, va_list p, const var_na* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+static void bb_error_msg(const var_na *s, ...)
 {
 	va_list p;
 
@@ -125,7 +125,7 @@ static void bb_error_msg(const char *s, ...)
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+static void bb_simple_error_msg(const var_na *s)
 {
 	bb_error_msg("%s", s);
 }
@@ -133,29 +133,29 @@ static void bb_simple_error_msg(const char *s)
 static void *xmalloc(size_t size)
 {
 	void *p = NULL;
-	if (!(p = malloc(size)))
+	ຖ້າ (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	ສົ່ງຄືນ p;
 }
 
 static void *xzalloc(size_t size)
 {
 	void *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	ສົ່ງຄືນ p;
 }
 
 static void *xrealloc(void *ptr, size_t size)
 {
 	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	ຖ້າ (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	ສົ່ງຄືນ p;
 }
 
-static void *xmemdup(const void *s, int n)
+static void *xmemdup(const void *s, ຈຳນວນເຕັມ n)
 {
-	return memcpy(xmalloc(n), s, n);
+	ສົ່ງຄືນ memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
@@ -163,25 +163,25 @@ static void *xmemdup(const void *s, int n)
 
 static void *mempcpy(void *dest, const void *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	ສົ່ງຄືນ memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+static void overlapping_strcpy(var_na *dst, const var_na *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	ຖ້າ (dst != src) {
+		ໃນຂະນະທີ່ ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+static var_na* skip_whitespace(const var_na *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	ໃນຂະນະທີ່ (*s == ' ' || (unsigned var_na)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	ສົ່ງຄືນ (var_na *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+static var_na* skip_non_whitespace(const var_na *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	ໃນຂະນະທີ່ (*s != '\0' && *s != ' ' && (unsigned var_na)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	ສົ່ງຄືນ (var_na *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#define is_name(c)	((c) == '_' || isalpha((unsigned var_na)(c)))
+#define is_in_name(c)	((c) == '_' || isalnum((unsigned var_na)(c)))
 
-static const char* endofname(const char *name)
+static const var_na* endofname(const var_na *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	ຖ້າ (!is_name(*name))
+		ສົ່ງຄືນ name;
+	ໃນຂະນະທີ່ (*++name) {
+		ຖ້າ (!is_in_name(*name))
+			bha_nga;
 	}
-	return name;
+	ສົ່ງຄືນ name;
 }
 
 /**
@@ -226,45 +226,45 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+static size_t list_size(var_na **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	ສຳລັບ (size = 0; list[size] != NULL; size++);
 
-	return size;
+	ສົ່ງຄືນ size;
 }
 
-static int varcmp(const char *p, const char *q)
+static ຈຳນວນເຕັມ varcmp(const var_na *p, const var_na *q)
 {
-	int c, d;
+	ຈຳນວນເຕັມ c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
+	ໃນຂະນະທີ່ ((c = *p) == (d = *q)) {
+		ຖ້າ (c == '\0' || c == '=')
 			goto out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	ຖ້າ (c == '=')
 		c = '\0';
-	if (d == '=')
+	ຖ້າ (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	ສົ່ງຄືນ c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+sa_nracanaa in_str;
+static ຈຳນວນເຕັມ u_boot_cli_readline(sa_nracanaa in_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+sa_nracanaa in_str;
+static ຈຳນວນເຕັມ u_boot_cli_readline(sa_nracanaa in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
 static uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
+static const var_na defifsvar[] __aligned(1) = "IFS= \t\n";
 #define defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
@@ -288,36 +288,36 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  *
  */
 
-int u_boot_hush_start_modern(void)
+ຈຳນວນເຕັມ u_boot_hush_start_modern(void)
 {
 	INIT_G();
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+static ຈຳນວນເຕັມ u_boot_cli_readline(sa_nracanaa in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	var_na *prompt;
+	var_na __maybe_unused *ps_prompt = NULL;
 
-	if (!G.promptmode)
+	ຖ້າ (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	ຖ້າ (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		ຖ້າ (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		ຖ້າ (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	ສົ່ງຄືນ cli_readline(prompt);
 }
