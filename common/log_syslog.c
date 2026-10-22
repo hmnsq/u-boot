@@ -5,16 +5,16 @@
  * Copyright (c) 2020, Heinrich Schuchardt <xypron.glpk@gmx.de>
  */
 
-#include <env.h>
-#include <log.h>
-#include <net.h>
-#include <asm/global_data.h>
+#ضمن <env.h>
+#ضمن <log.h>
+#ضمن <net.h>
+#ضمن <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #define BUFFER_SIZE 480
 
-static void append(char **buf, char *buf_end, const char *fmt, ...)
+ساكن فراغ append(حرف **buf, حرف *buf_end, ثابت حرف *fmt, ...)
 {
 	va_list args;
 	size_t size = buf_end - *buf;
@@ -25,33 +25,33 @@ static void append(char **buf, char *buf_end, const char *fmt, ...)
 	*buf += strlen(*buf);
 }
 
-static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
+ساكن صحيح log_syslog_emit(بنية log_device *ldev, بنية log_rec *rec)
 {
-	int ret;
-	int fmt = gd->log_fmt;
-	char msg[BUFFER_SIZE];
-	char *msg_end = msg + BUFFER_SIZE;
-	char *ptr = msg;
-	char *iphdr;
-	char *log_msg;
-	int eth_hdr_size;
-	struct in_addr bcast_ip;
-	unsigned int log_level;
-	char *log_hostname;
+	صحيح ret;
+	صحيح fmt = gd->log_fmt;
+	حرف msg[BUFFER_SIZE];
+	حرف *msg_end = msg + BUFFER_SIZE;
+	حرف *ptr = msg;
+	حرف *iphdr;
+	حرف *log_msg;
+	صحيح eth_hdr_size;
+	بنية in_addr bcast_ip;
+	unsigned صحيح log_level;
+	حرف *log_hostname;
 
 	/* Setup packet buffers */
 	ret = net_init();
-	if (ret)
-		return ret;
+	אם (ret)
+		החזר ret;
 	/* Disable hardware and put it into the reset state */
 	eth_halt();
 	/* Set current device according to environment variables */
 	eth_set_current();
 	/* Get hardware ready for send and receive operations */
 	ret = eth_init();
-	if (ret < 0) {
+	אם (ret < 0) {
 		eth_halt();
-		goto out;
+		اذهب out;
 	}
 
 	memset(msg, 0, BUFFER_SIZE);
@@ -68,29 +68,29 @@ static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
 	 * level 7 (debug).
 	 */
 	log_level = rec->level;
-	if (log_level > 7)
+	אם (log_level > 7)
 		log_level = 7;
 	/* Leave high bits as 0 to write a 'kernel message' */
 
 	/* Write log message to buffer */
 	append(&ptr, msg_end, "<%u>", log_level);
 	log_hostname = env_get("log_hostname");
-	if (log_hostname)
+	אם (log_hostname)
 		append(&ptr, msg_end, "%s ", log_hostname);
 	append(&ptr, msg_end, "uboot: ");
-	if (fmt & BIT(LOGF_LEVEL))
+	אם (fmt & BIT(LOGF_LEVEL))
 		append(&ptr, msg_end, "%s.",
 		       log_get_level_name(rec->level));
-	if (fmt & BIT(LOGF_CAT))
+	אם (fmt & BIT(LOGF_CAT))
 		append(&ptr, msg_end, "%s,",
 		       log_get_cat_name(rec->cat));
-	if (fmt & BIT(LOGF_FILE))
+	אם (fmt & BIT(LOGF_FILE))
 		append(&ptr, msg_end, "%s:", rec->file);
-	if (fmt & BIT(LOGF_LINE))
+	אם (fmt & BIT(LOGF_LINE))
 		append(&ptr, msg_end, "%d-", rec->line);
-	if (fmt & BIT(LOGF_FUNC))
+	אם (fmt & BIT(LOGF_FUNC))
 		append(&ptr, msg_end, "%s()", rec->func ?: "?");
-	if (fmt & BIT(LOGF_MSG))
+	אם (fmt & BIT(LOGF_MSG))
 		append(&ptr, msg_end, "%s%s",
 		       fmt != BIT(LOGF_MSG) ? " " : "", rec->msg);
 	/* Consider trailing 0x00 */
@@ -104,7 +104,7 @@ static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
 	net_send_packet((uchar *)msg, ptr - msg);
 
 out:
-	return ret;
+	החזר ret;
 }
 
 LOG_DRIVER(syslog) = {

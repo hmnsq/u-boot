@@ -4,42 +4,42 @@
  * Gary Jennejohn, DENX Software Engineering GmbH, garyj@denx.de.
  */
 
-#include <console.h>
-#include <serial.h>
-#include <malloc.h>
+#ضمن <console.h>
+#ضمن <serial.h>
+#ضمن <malloc.h>
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-void iomux_printdevs(const int console)
+#אם CONFIG_IS_ENABLED(CONSOLE_MUX)
+فراغ iomux_printdevs(ثابت صحيح console)
 {
-	int i;
-	struct stdio_dev *dev;
+	صحيح i;
+	بنية stdio_dev *dev;
 
 	for_each_console_dev(i, console, dev)
 		printf("%s ", dev->name);
 	printf("\n");
 }
 
-int iomux_match_device(struct stdio_dev **set, const int n, struct stdio_dev *sdev)
+صحيح iomux_match_device(بنية stdio_dev **set, ثابت صحيح n, بنية stdio_dev *sdev)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < n; i++)
-		if (sdev == set[i])
-			return i;
-	return -ENOENT;
+	עבור (i = 0; i < n; i++)
+		אם (sdev == set[i])
+			החזר i;
+	החזר -ENOENT;
 }
 
 /* This tries to preserve the old list if an error occurs. */
-int iomux_doenv(const int console, const char *arg)
+صحيح iomux_doenv(ثابت صحيح console, ثابت حرف *arg)
 {
-	char *console_args, *temp, **start;
-	int i, j, io_flag, cs_idx, repeat;
-	struct stdio_dev **cons_set, **old_set;
-	struct stdio_dev *dev;
+	حرف *console_args, *temp, **start;
+	صحيح i, j, io_flag, cs_idx, repeat;
+	بنية stdio_dev **cons_set, **old_set;
+	بنية stdio_dev *dev;
 
 	console_args = strdup(arg);
-	if (console_args == NULL)
-		return 1;
+	אם (console_args == عدم)
+		החזר 1;
 	/*
 	 * Check whether a comma separated list of devices was
 	 * entered and count how many devices were entered.
@@ -51,75 +51,75 @@ int iomux_doenv(const int console, const char *arg)
 	 */
 	i = 0;
 	temp = console_args;
-	for (;;) {
+	עבור (;;) {
 		/* There's always one entry more than the number of commas. */
 		i++;
 
 		temp = strchr(temp, ',');
-		if (temp == NULL)
-			break;
+		אם (temp == عدم)
+			اكسر;
 
 		temp++;
 	}
-	start = (char **)malloc(i * sizeof(char *));
-	if (start == NULL) {
-		free(console_args);
-		return 1;
+	start = (حرف **)malloc(i * حجم(حرف *));
+	אם (start == عدم) {
+		حرر(console_args);
+		החזר 1;
 	}
 	i = 0;
 	start[0] = console_args;
-	for (;;) {
+	עבור (;;) {
 		temp = strchr(start[i++], ',');
-		if (temp == NULL)
-			break;
+		אם (temp == عدم)
+			اكسر;
 		*temp = '\0';
 		start[i] = temp + 1;
 	}
-	cons_set = (struct stdio_dev **)calloc(i, sizeof(struct stdio_dev *));
-	if (cons_set == NULL) {
-		free(start);
-		free(console_args);
-		return 1;
+	cons_set = (بنية stdio_dev **)calloc(i, حجم(بنية stdio_dev *));
+	אם (cons_set == عدم) {
+		حرر(start);
+		حرر(console_args);
+		החזר 1;
 	}
 
 	io_flag = stdio_file_to_flags(console);
-	if (io_flag < 0) {
-		free(start);
-		free(console_args);
-		free(cons_set);
-		return 1;
+	אם (io_flag < 0) {
+		حرر(start);
+		حرر(console_args);
+		حرر(cons_set);
+		החזר 1;
 	}
 
 	cs_idx = 0;
-	for (j = 0; j < i; j++) {
+	עבור (j = 0; j < i; j++) {
 		/*
 		 * Check whether the device exists and is valid.
 		 * console_assign() also calls console_search_dev(),
 		 * but I need the pointer to the device.
 		 */
 		dev = console_search_dev(io_flag, start[j]);
-		if (dev == NULL)
-			continue;
+		אם (dev == عدم)
+			استمر;
 		/*
 		 * Prevent multiple entries for a device.
 		 */
 		 repeat = iomux_match_device(cons_set, cs_idx, dev);
-		 if (repeat >= 0)
-			continue;
+		 אם (repeat >= 0)
+			استمر;
 		/*
 		 * Try assigning the specified device.
 		 * This could screw up the console settings for apps.
 		 */
-		if (console_assign(console, start[j]) < 0)
-			continue;
+		אם (console_assign(console, start[j]) < 0)
+			استمر;
 		cons_set[cs_idx++] = dev;
 	}
-	free(console_args);
-	free(start);
+	حرر(console_args);
+	حرر(start);
 	/* failed to set any console */
-	if (cs_idx == 0) {
-		free(cons_set);
-		return 1;
+	אם (cs_idx == 0) {
+		حرر(cons_set);
+		החזר 1;
 	}
 
 	old_set = console_devices[console];
@@ -129,39 +129,39 @@ int iomux_doenv(const int console, const char *arg)
 	cd_count[console] = cs_idx;
 
 	/* Stop dropped consoles */
-	for (i = 0; i < repeat; i++) {
+	עבור (i = 0; i < repeat; i++) {
 		j = iomux_match_device(cons_set, cs_idx, old_set[i]);
-		if (j == -ENOENT)
+		אם (j == -ENOENT)
 			console_stop(console, old_set[i]);
 	}
 
-	free(old_set);
-	return 0;
+	حرر(old_set);
+	החזר 0;
 }
 
-int iomux_replace_device(const int console, const char *old, const char *new)
+صحيح iomux_replace_device(ثابت صحيح console, ثابت حرف *old, ثابت حرف *new)
 {
-	struct stdio_dev *dev;
-	char *arg = NULL;	/* Initial empty list */
-	int size = 1;		/* For NUL terminator */
-	int i, ret;
+	بنية stdio_dev *dev;
+	حرف *arg = عدم;	/* Initial empty list */
+	صحيح size = 1;		/* For NUL terminator */
+	صحيح i, ret;
 
 	for_each_console_dev(i, console, dev) {
-		const char *name = strcmp(dev->name, old) ? dev->name : new;
-		char *tmp;
+		ثابت حرف *name = strcmp(dev->name, old) ? dev->name : new;
+		حرف *tmp;
 
 		/* Append name with a ',' (comma) separator */
 		tmp = realloc(arg, size + strlen(name) + 1);
-		if (!tmp) {
-			free(arg);
-			return -ENOMEM;
+		אם (!tmp) {
+			حرر(arg);
+			החזר -ENOMEM;
 		}
 
-		if (arg) {
+		אם (arg) {
 			strcat(tmp, ",");
 			strcat(tmp, name);
 		}
-		else
+		אחרת
 			strcpy(tmp, name);
 
 		arg = tmp;
@@ -169,10 +169,10 @@ int iomux_replace_device(const int console, const char *old, const char *new)
 	}
 
 	ret = iomux_doenv(console, arg);
-	if (ret)
+	אם (ret)
 		ret = -EINVAL;
 
-	free(arg);
-	return ret;
+	حرر(arg);
+	החזר ret;
 }
 #endif /* CONSOLE_MUX */

@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#ضمن <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+ساكن صحيح hex1_bin (حرف  c);
+ساكن صحيح hex2_bin (حرف *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+صحيح srec_decode (حرف *input, صحيح *count, ulong *addr, حرف *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	صحيح	i;
+	صحيح	v;				/* conversion buffer	*/
+	صحيح	srec_type;			/* S-Record type	*/
+	unsigned حرف chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,117 +22,117 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
+	עבור (; *input; ++input) {
+		אם (*input == 'S') {		/* skip 'S' */
 			++input;
-			break;
+			اكسر;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	אם (*input == '\0') {			/* no more data?	*/
+		החזר (SREC_EMPTY);
 	}
 
 	v = *input++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	אם ((*count = hex2_bin(input)) < 0) {
+		החזר (SREC_E_NOSREC);
 	}
 
 	chksum += *count;
 	input  += 2;
 
-	switch (v) {				/* record type		*/
+	بدل (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	حالة '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
 		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		اكسر;
+	حالة '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
 		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		اكسر;
+	حالة '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
 		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		اكسر;
+	حالة '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
 		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		اكسر;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
+	حالة '5':			/* count record, addr field contains */
 		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
 		*count    = 0;			/* no data		*/
-		break;
+		اكسر;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	حالة '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
 		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		اكسر;
+	حالة '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
 		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		اكسر;
+	حالة '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
 		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		اكسر;
+	افتراضي:
+		החזר (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	بدل (v) {
+	حالة '3':				/* 4 byte addr field	*/
+	حالة '7':
+		אם ((v = hex2_bin(input)) < 0) {
+			החזר (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	حالة '2':				/* 3 byte addr field	*/
+	حالة '8':
+		אם ((v = hex2_bin(input)) < 0) {
+			החזר (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	حالة '0':				/* 2 byte addr field	*/
+	حالة '1':
+	حالة '5':
+	حالة '9':
+		אם ((v = hex2_bin(input)) < 0) {
+			החזר (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		אם ((v = hex2_bin(input)) < 0) {
+			החזר (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
 		input  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		اكسر;
+	افتراضي:
+		החזר (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	עבור (i=0; i < *count; ++i) {
+		אם ((v = hex2_bin(input)) < 0) {
+			החזר (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
@@ -140,38 +140,38 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	אם ((v = hex2_bin(input)) < 0) {
+		החזר (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	אם ((unsigned حرف)v != (unsigned حرف)~chksum) {
+		החזר (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	החזר (srec_type);
 }
 
-static int hex1_bin (char c)
+ساكن صحيح hex1_bin (حرف c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	אם (c >= '0' && c <= '9')
+		החזר (c - '0');
+	אם (c >= 'a' && c <= 'f')
+		החזר (c + 10 - 'a');
+	אם (c >= 'A' && c <= 'F')
+		החזר (c + 10 - 'A');
+	החזר (-1);
 }
 
-static int hex2_bin (char *s)
+ساكن صحيح hex2_bin (حرف *s)
 {
-	int i, j;
+	صحيح i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	אם ((i = hex1_bin(*s++)) < 0) {
+		החזר (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	אם ((j = hex1_bin(*s)) < 0) {
+		החזר (-1);
 	}
 
-	return ((i<<4) + j);
+	החזר ((i<<4) + j);
 }
