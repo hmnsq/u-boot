@@ -4,50 +4,50 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <asm/sections.h>
-#include <asm/unaligned.h>
-#include <linux/types.h>
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
-#include <u-boot/crc.h>
-#include <u-boot/lz4.h>
+#ଅନ୍ତର୍ଭାଵ <gzip.h>
+#ଅନ୍ତର୍ଭାଵ <image.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <mapmem.h>
+#ଅନ୍ତର୍ଭାଵ <spl.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <asm/io.h>
+#ଅନ୍ତର୍ଭାଵ <asm/sections.h>
+#ଅନ୍ତର୍ଭାଵ <asm/unaligned.h>
+#ଅନ୍ତର୍ଭାଵ <linux/types.h>
+#ଅନ୍ତର୍ଭାଵ <lzma/LzmaTypes.h>
+#ଅନ୍ତର୍ଭାଵ <lzma/LzmaDec.h>
+#ଅନ୍ତର୍ଭାଵ <lzma/LzmaTools.h>
+#ଅନ୍ତର୍ଭାଵ <u-boot/crc.h>
+#ଅନ୍ତର୍ଭାଵ <u-boot/lz4.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 /* provide a way to jump straight into the relocation code, for debugging */
 #define DEBUG_JUMP	0
 
-enum {
+ଗଣନା {
 	/* margin to allow for stack growth */
-	RELOC_STACK_MARGIN	= 0x800,
+	RELOC_ଗଦା_MARGIN	= 0x800,
 
 	/* align base address for DMA controllers which require it */
 	BASE_ALIGN		= 0x200,
 
-	STACK_PROT_VALUE	= 0x51ce4697,
+	ଗଦା_PROT_ମୂଲ୍ୟ	= 0x51ce4697,
 };
 
-typedef int (*rcode_func)(struct spl_image_info *image);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ପୂର୍ଣ୍ଣସଂଖ୍ୟା (*rcode_func)(ସଂରଚନା spl_image_info *image);
 
-static int setup_layout(struct spl_image_info *image, ulong *addrp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା setup_layout(ସଂରଚନା spl_image_info *image, ulong *addrp)
 {
 	ulong base, fdt_size;
 	ulong limit, rcode_base;
 	uint rcode_size;
-	int buf_size, margin;
-	char *rcode_buf;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା buf_size, margin;
+	ଅକ୍ଷର *rcode_buf;
 
-	limit = ALIGN(map_to_sysmem(&limit) - RELOC_STACK_MARGIN, 8);
-	image->stack_prot = map_sysmem(limit, sizeof(uint));
-	*image->stack_prot = STACK_PROT_VALUE;
+	limit = ALIGN(map_to_sysmem(&limit) - RELOC_ଗଦା_MARGIN, 8);
+	image->ଗଦା_prot = map_sysmem(limit, ଆକାର(uint));
+	*image->ଗଦା_prot = ଗଦା_PROT_ମୂଲ୍ୟ;
 
 	fdt_size = fdt_totalsize(gd->fdt_blob);
 	base = ALIGN(map_to_sysmem(gd->fdt_blob) + fdt_size + BASE_ALIGN - 1,
@@ -62,10 +62,10 @@ static int setup_layout(struct spl_image_info *image, ulong *addrp)
 		  spl_phase_name(spl_phase()), spl_phase_name(spl_phase() + 1),
 		  margin >= 0 ? " " : " -", abs(margin), limit, fdt_size, base,
 		  buf_size, image->size, image->fdt_size, need_size);
-	if (margin < 0) {
+	ଯଦି (margin < 0) {
 		log_err("Image size %x but buffer is only %x\n", need_size,
 			buf_size);
-		return -ENOSPC;
+		ଫେରନ୍ତୁ -ENOSPC;
 	}
 
 	rcode_buf = map_sysmem(rcode_base, rcode_size);
@@ -84,63 +84,63 @@ static int setup_layout(struct spl_image_info *image, ulong *addrp)
 	image->rcode_buf = rcode_buf;
 	*addrp = base;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int spl_reloc_prepare(struct spl_image_info *image, ulong *addrp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_reloc_prepare(ସଂରଚନା spl_image_info *image, ulong *addrp)
 {
-	int ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	ret = setup_layout(image, addrp);
-	if (ret)
-		return ret;
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-typedef void __noreturn (*image_entry_noargs_t)(uint crc, uint unc_len);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ __noreturn (*image_entry_noargs_t)(uint crc, uint unc_len);
 
 /* this is the relocation + jump code that is copied to the top of memory */
-__rcode int rcode_reloc_and_jump(struct spl_image_info *image)
+__rcode ପୂର୍ଣ୍ଣସଂଖ୍ୟା rcode_reloc_and_jump(ସଂରଚନା spl_image_info *image)
 {
 	image_entry_noargs_t entry = (image_entry_noargs_t)image->entry_point;
 	u32 *dst;
 	ulong image_len;
 	size_t unc_len;
-	int ret, crc;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, crc;
 	uint magic;
 
 	dst = map_sysmem(image->load_addr, image->size);
-	unc_len = (void *)image->rcode_buf - (void *)dst;
+	unc_len = (ଶୂନ୍ୟ *)image->rcode_buf - (ଶୂନ୍ୟ *)dst;
 	image_len = image->size;
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	ଯଦି (*image->ଗଦା_prot != ଗଦା_PROT_ମୂଲ୍ୟ)
+		ଫେରନ୍ତୁ -EFAULT;
 	magic = get_unaligned_le32(image->buf);
-	if (CONFIG_IS_ENABLED(LZMA)) {
+	ଯଦି (CONFIG_IS_ENABLED(LZMA)) {
 		SizeT lzma_len = unc_len;
 
 		ret = lzmaBuffToBuffDecompress((u8 *)dst, &lzma_len,
 					       image->buf, image_len);
 		unc_len = lzma_len;
-	} else if (CONFIG_IS_ENABLED(GZIP)) {
+	} ଅନ୍ୟଥା ଯଦି (CONFIG_IS_ENABLED(GZIP)) {
 		ret = gunzip(dst, unc_len, image->buf, &image_len);
-	} else if (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
+	} ଅନ୍ୟଥା ଯଦି (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
 		ret = ulz4fn(image->buf, image_len, dst, &unc_len);
-		if (ret)
-			return ret;
-	} else {
+		ଯଦି (ret)
+			ଫେରନ୍ତୁ ret;
+	} ଅନ୍ୟଥା {
 		u32 *src, *end, *ptr;
 
 		unc_len = image->size;
-		for (src = image->buf, end = (void *)src + image->size,
+		ପାଇଁ (src = image->buf, end = (ଶୂନ୍ୟ *)src + image->size,
 		     ptr = dst; src < end;)
 			*ptr++ = *src++;
 	}
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	ଯଦି (*image->ଗଦା_prot != ଗଦା_PROT_ମୂଲ୍ୟ)
+		ଫେରନ୍ତୁ -EFAULT;
 
 	/* copy in the FDT if needed */
-	if (image->fdt_size)
+	ଯଦି (image->fdt_size)
 		memcpy(image->fdt_start, image->fdt_buf, image->fdt_size);
 
 	crc = crc8(0, (u8 *)dst, unc_len);
@@ -149,27 +149,27 @@ __rcode int rcode_reloc_and_jump(struct spl_image_info *image)
 	entry(crc, unc_len);
 }
 
-int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_reloc_jump(ସଂରଚନା spl_image_info *image, spl_jump_to_image_t jump)
 {
 	rcode_func loader;
-	int ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	log_debug("malloc usage %x bytes (%d KB of %d KB)\n", gd->malloc_ptr,
 		  gd->malloc_ptr / 1024, CONFIG_VAL(SYS_MALLOC_F_LEN) / 1024);
 
-	if (*image->stack_prot != STACK_PROT_VALUE) {
+	ଯଦି (*image->ଗଦା_prot != ଗଦା_PROT_ମୂଲ୍ୟ) {
 		log_err("stack busted, cannot continue\n");
-		return -EFAULT;
+		ଫେରନ୍ତୁ -EFAULT;
 	}
-	loader = (rcode_func)(void *)rcode_reloc_and_jump + image->reloc_offset;
+	loader = (rcode_func)(ଶୂନ୍ୟ *)rcode_reloc_and_jump + image->reloc_offset;
 	log_debug("Jumping via %p to %lx - image %p size %x load %lx\n", loader,
 		  image->entry_point, image, image->size, image->load_addr);
 
 	log_debug("unc_len %lx\n",
 		  image->rcode_buf - map_sysmem(image->load_addr, image->size));
-	if (DEBUG_JUMP) {
+	ଯଦି (DEBUG_JUMP) {
 		rcode_reloc_and_jump(image);
-	} else {
+	} ଅନ୍ୟଥା {
 		/*
 		 * Must disable LOG_DEBUG since the decompressor cannot call
 		 * log functions, printf(), etc.
@@ -179,5 +179,5 @@ int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
 		ret = loader(image);
 	}
 
-	return -EFAULT;
+	ଫେରନ୍ତୁ -EFAULT;
 }

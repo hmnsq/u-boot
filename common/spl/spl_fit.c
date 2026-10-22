@@ -4,56 +4,56 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <errno.h>
-#include <fpga.h>
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <memalign.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <upl.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/libfdt.h>
-#include <linux/printk.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fpga.h>
+#ଅନ୍ତର୍ଭାଵ <gzip.h>
+#ଅନ୍ତର୍ଭାଵ <image.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <memalign.h>
+#ଅନ୍ତର୍ଭାଵ <mapmem.h>
+#ଅନ୍ତର୍ଭାଵ <spl.h>
+#ଅନ୍ତର୍ଭାଵ <upl.h>
+#ଅନ୍ତର୍ଭାଵ <sysinfo.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <asm/io.h>
+#ଅନ୍ତର୍ଭାଵ <linux/libfdt.h>
+#ଅନ୍ତର୍ଭାଵ <linux/printk.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct spl_fit_info {
-	const void *fit;	/* Pointer to a valid FIT blob */
+ସଂରଚନା spl_fit_info {
+	ଅଚଳ ଶୂନ୍ୟ *fit;	/* Pointer to a valid FIT blob */
 	size_t ext_data_offset;	/* Offset to FIT external data (end of FIT) */
-	int images_node;	/* FDT offset to "/images" node */
-	int conf_node;		/* FDT offset to selected configuration node */
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା images_ଗଣ୍ଠି;	/* FDT offset to "/images" node */
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା conf_ଗଣ୍ଠି;		/* FDT offset to selected configuration node */
 };
 
 __weak ulong board_spl_fit_size_align(ulong size)
 {
-	return size;
+	ଫେରନ୍ତୁ size;
 }
 
-static int find_node_from_desc(const void *fit, int node, const char *str)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା find_ଗଣ୍ଠି_from_desc(ଅଚଳ ଶୂନ୍ୟ *fit, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି, ଅଚଳ ଅକ୍ଷର *str)
 {
-	int child;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା child;
 
-	if (node < 0)
-		return -EINVAL;
+	ଯଦି (ଗଣ୍ଠି < 0)
+		ଫେରନ୍ତୁ -EINVAL;
 
 	/* iterate the FIT nodes and find a matching description */
-	for (child = fdt_first_subnode(fit, node); child >= 0;
+	ପାଇଁ (child = fdt_first_subnode(fit, ଗଣ୍ଠି); child >= 0;
 	     child = fdt_next_subnode(fit, child)) {
-		int len;
-		const char *desc = fdt_getprop(fit, child, FIT_DESC_PROP, &len);
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା len;
+		ଅଚଳ ଅକ୍ଷର *desc = fdt_getprop(fit, child, FIT_DESC_PROP, &len);
 
-		if (!desc)
-			continue;
+		ଯଦି (!desc)
+			ଜାରି;
 
-		if (!strcmp(desc, str))
-			return child;
+		ଯଦି (!strcmp(desc, str))
+			ଫେରନ୍ତୁ child;
 	}
 
-	return -ENOENT;
+	ଫେରନ୍ତୁ -ENOENT;
 }
 
 /**
@@ -68,77 +68,77 @@ static int find_node_from_desc(const void *fit, int node, const char *str)
  *
  * Return:	0 on success, or a negative error number
  */
-static int spl_fit_get_image_name(const struct spl_fit_info *ctx,
-				  const char *type, int index,
-				  const char **outname)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_get_image_name(ଅଚଳ ସଂରଚନା spl_fit_info *ctx,
+				  ଅଚଳ ଅକ୍ଷର *type, ପୂର୍ଣ୍ଣସଂଖ୍ୟା index,
+				  ଅଚଳ ଅକ୍ଷର **outname)
 {
-	struct udevice *sysinfo;
-	const char *name, *str, *end;
-	__maybe_unused int node;
-	int len, i;
+	ସଂରଚନା udevice *sysinfo;
+	ଅଚଳ ଅକ୍ଷର *name, *str, *end;
+	__maybe_unused ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା len, i;
 	bool found = true;
 
-	name = fdt_getprop(ctx->fit, ctx->conf_node, type, &len);
-	if (!name) {
+	name = fdt_getprop(ctx->fit, ctx->conf_ଗଣ୍ଠି, type, &len);
+	ଯଦି (!name) {
 		debug("cannot find property '%s': %d\n", type, len);
-		return -EINVAL;
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 	/* A string property should be NUL terminated */
 	end = name + len - 1;
-	if (!len || *end) {
+	ଯଦି (!len || *end) {
 		debug("malformed property '%s'\n", type);
-		return -EINVAL;
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 
 	str = name;
-	for (i = 0; i < index; i++) {
+	ପାଇଁ (i = 0; i < index; i++) {
 		str = strchr(str, '\0') + 1;
-		if (str > end) {
+		ଯଦି (str > end) {
 			found = false;
-			break;
+			ଭାଙ୍ଗ;
 		}
 	}
 
-	if (!found && CONFIG_IS_ENABLED(SYSINFO) && !sysinfo_get(&sysinfo)) {
-		int rc;
+	ଯଦି (!found && CONFIG_IS_ENABLED(SYSINFO) && !sysinfo_get(&sysinfo)) {
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା rc;
 		/*
 		 * no string in the property for this index. Check if the
 		 * sysinfo-level code can supply one.
 		 */
 		rc = sysinfo_detect(sysinfo);
-		if (rc)
-			return rc;
+		ଯଦି (rc)
+			ଫେରନ୍ତୁ rc;
 
 		rc = sysinfo_get_fit_loadable(sysinfo, index - i - 1, type,
 					      &str);
-		if (rc && rc != -ENOENT)
-			return rc;
+		ଯଦି (rc && rc != -ENOENT)
+			ଫେରନ୍ତୁ rc;
 
-		if (!rc) {
+		ଯଦି (!rc) {
 			/*
 			 * The sysinfo provided a name for a loadable.
 			 * Try to match it against the description properties
 			 * first. If no matching node is found, use it as a
 			 * node name.
 			 */
-			int node;
-			int images = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି;
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା images = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
 
-			node = find_node_from_desc(ctx->fit, images, str);
-			if (node > 0)
-				str = fdt_get_name(ctx->fit, node, NULL);
+			ଗଣ୍ଠି = find_ଗଣ୍ଠି_from_desc(ctx->fit, images, str);
+			ଯଦି (ଗଣ୍ଠି > 0)
+				str = fdt_get_name(ctx->fit, ଗଣ୍ଠି, ଖାଲି);
 
 			found = true;
 		}
 	}
 
-	if (!found) {
+	ଯଦି (!found) {
 		debug("no string for index %d\n", index);
-		return -E2BIG;
+		ଫେରନ୍ତୁ -E2BIG;
 	}
 
 	*outname = str;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 /**
@@ -153,54 +153,54 @@ static int spl_fit_get_image_name(const struct spl_fit_info *ctx,
  * Return:	the node offset of the respective image node or a negative
  *		error number.
  */
-static int spl_fit_get_image_node(const struct spl_fit_info *ctx,
-				  const char *type, int index)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_get_image_ଗଣ୍ଠି(ଅଚଳ ସଂରଚନା spl_fit_info *ctx,
+				  ଅଚଳ ଅକ୍ଷର *type, ପୂର୍ଣ୍ଣସଂଖ୍ୟା index)
 {
-	const char *str;
-	int err;
-	int node;
+	ଅଚଳ ଅକ୍ଷର *str;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା err;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି;
 
 	err = spl_fit_get_image_name(ctx, type, index, &str);
-	if (err)
-		return err;
+	ଯଦି (err)
+		ଫେରନ୍ତୁ err;
 
 	debug("%s: '%s'\n", type, str);
 
-	node = fdt_subnode_offset(ctx->fit, ctx->images_node, str);
-	if (node < 0) {
-		pr_err("cannot find image node '%s': %d\n", str, node);
-		return -EINVAL;
+	ଗଣ୍ଠି = fdt_subnode_offset(ctx->fit, ctx->images_ଗଣ୍ଠି, str);
+	ଯଦି (ଗଣ୍ଠି < 0) {
+		pr_err("cannot find image node '%s': %d\n", str, ଗଣ୍ଠି);
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 
-	return node;
+	ଫେରନ୍ତୁ ଗଣ୍ଠି;
 }
 
-static u32 get_aligned_image_offset(struct spl_load_info *info, u32 offset)
+ସ୍ଥିର u32 get_aligned_image_offset(ସଂରଚନା spl_load_info *info, u32 offset)
 {
-	return ALIGN_DOWN(offset, spl_get_bl_len(info));
+	ଫେରନ୍ତୁ ALIGN_DOWN(offset, spl_get_bl_len(info));
 }
 
-static u32 get_aligned_image_overhead(struct spl_load_info *info, u32 offset)
+ସ୍ଥିର u32 get_aligned_image_overhead(ସଂରଚନା spl_load_info *info, u32 offset)
 {
-	return offset & (spl_get_bl_len(info) - 1);
+	ଫେରନ୍ତୁ offset & (spl_get_bl_len(info) - 1);
 }
 
-static int get_aligned_image_size(struct spl_load_info *info, ulong data_size,
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା get_aligned_image_size(ସଂରଚନା spl_load_info *info, ulong data_size,
 				  u32 offset, ulong *aligned_size)
 {
 	u32 overhead = get_aligned_image_overhead(info, offset);
 
-	if (data_size > ULONG_MAX - overhead)
-		return -EOVERFLOW;
+	ଯଦି (data_size > ULONG_MAX - overhead)
+		ଫେରନ୍ତୁ -EOVERFLOW;
 	data_size += overhead;
 
-	if (data_size > ULONG_MAX - (spl_get_bl_len(info) - 1))
-		return -EOVERFLOW;
+	ଯଦି (data_size > ULONG_MAX - (spl_get_bl_len(info) - 1))
+		ଫେରନ୍ତୁ -EOVERFLOW;
 	data_size = ALIGN(data_size, spl_get_bl_len(info));
 
 	*aligned_size = data_size;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 /**
@@ -212,21 +212,21 @@ static int get_aligned_image_size(struct spl_load_info *info, ulong data_size,
  * @load_addr:	address the image was loaded to
  * @size:	number of bytes loaded, which may be zero
  */
-static void fit_fill_image_info(const void *fit, int node,
-				struct spl_image_info *image_info,
+ସ୍ଥିର ଶୂନ୍ୟ fit_fill_image_info(ଅଚଳ ଶୂନ୍ୟ *fit, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି,
+				ସଂରଚନା spl_image_info *image_info,
 				ulong load_addr, ulong size)
 {
 	ulong entry_point;
 
-	if (!image_info)
-		return;
+	ଯଦି (!image_info)
+		ଫେରନ୍ତୁ;
 
 	image_info->load_addr = load_addr;
 	image_info->size = size;
 
-	if (!fit_image_get_entry(fit, node, &entry_point))
+	ଯଦି (!fit_image_get_entry(fit, ଗଣ୍ଠି, &entry_point))
 		image_info->entry_point = entry_point;
-	else
+	ଅନ୍ୟଥା
 		image_info->entry_point = FDT_ERROR;
 }
 
@@ -249,70 +249,70 @@ static void fit_fill_image_info(const void *fit, int node,
  * (for CONFIG_BOOTMETH_VBE_SIMPLE_FW), or another negative error number on
  * other error.
  */
-static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
-			   const struct spl_fit_info *ctx, int node,
-			   struct spl_image_info *image_info, ulong max_size)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା load_simple_fit(ସଂରଚନା spl_load_info *info, ulong fit_offset,
+			   ଅଚଳ ସଂରଚନା spl_fit_info *ctx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି,
+			   ସଂରଚନା spl_image_info *image_info, ulong max_size)
 {
 	u32 offset;
 	u32 len;
 	size_t length;
 	ulong size;
 	ulong load_addr;
-	void *load_ptr;
-	void *src;
+	ଶୂନ୍ୟ *load_ptr;
+	ଶୂନ୍ୟ *src;
 	uint8_t image_comp = -1, type = -1;
-	const void *data;
-	const void *fit = ctx->fit;
+	ଅଚଳ ଶୂନ୍ୟ *data;
+	ଅଚଳ ଶୂନ୍ୟ *fit = ctx->fit;
 	bool external_data = false;
-	int ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	log_debug("starting\n");
-	if (CONFIG_IS_ENABLED(BOOTMETH_VBE) &&
+	ଯଦି (CONFIG_IS_ENABLED(BOOTMETH_VBE) &&
 	    xpl_get_phase(info) != IH_PHASE_NONE) {
-		enum image_phase_t phase;
+		ଗଣନା image_phase_t phase;
 
-		ret = fit_image_get_phase(fit, node, &phase);
+		ret = fit_image_get_phase(fit, ଗଣ୍ଠି, &phase);
 		/* if the image is for any phase, let's use it */
-		if (ret == -ENOENT || phase == xpl_get_phase(info)) {
+		ଯଦି (ret == -ENOENT || phase == xpl_get_phase(info)) {
 			log_debug("found\n");
-		} else if (ret < 0) {
+		} ଅନ୍ୟଥା ଯଦି (ret < 0) {
 			log_debug("err=%d\n", ret);
-			return ret;
-		} else {
+			ଫେରନ୍ତୁ ret;
+		} ଅନ୍ୟଥା {
 			log_debug("- phase mismatch, skipping this image\n");
-			return -EBADSLT;
+			ଫେରନ୍ତୁ -EBADSLT;
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_FPGA) ||
+	ଯଦି (IS_ENABLED(CONFIG_SPL_FPGA) ||
 	    (IS_ENABLED(CONFIG_SPL_OS_BOOT) && spl_decompression_enabled())) {
-		if (fit_image_get_type(fit, node, &type))
+		ଯଦି (fit_image_get_type(fit, ଗଣ୍ଠି, &type))
 			puts("Cannot get image type.\n");
-		else
+		ଅନ୍ୟଥା
 			debug("%s ", genimg_get_type_name(type));
 	}
 
-	if (spl_decompression_enabled()) {
-		fit_image_get_comp(fit, node, &image_comp);
+	ଯଦି (spl_decompression_enabled()) {
+		fit_image_get_comp(fit, ଗଣ୍ଠି, &image_comp);
 		debug("%s ", genimg_get_comp_name(image_comp));
 	}
 
-	if (fit_image_get_load(fit, node, &load_addr)) {
-		if (!image_info->load_addr) {
+	ଯଦି (fit_image_get_load(fit, ଗଣ୍ଠି, &load_addr)) {
+		ଯଦି (!image_info->load_addr) {
 			printf("Can't load %s: No load address and no buffer\n",
-			       fit_get_name(fit, node, NULL));
-			return -ENOBUFS;
+			       fit_get_name(fit, ଗଣ୍ଠି, ଖାଲି));
+			ଫେରନ୍ତୁ -ENOBUFS;
 		}
 		load_addr = image_info->load_addr;
 	}
 
-	if (!fit_image_get_data_position(fit, node, &offset)) {
+	ଯଦି (!fit_image_get_data_position(fit, ଗଣ୍ଠି, &offset)) {
 		external_data = true;
-	} else if (!fit_image_get_data_offset(fit, node, &offset)) {
+	} ଅନ୍ୟଥା ଯଦି (!fit_image_get_data_offset(fit, ଗଣ୍ଠି, &offset)) {
 		/* The resulting offset cannot exceed UINT32_MAX */
-		if (ctx->ext_data_offset > UINT32_MAX - offset) {
+		ଯଦି (ctx->ext_data_offset > UINT32_MAX - offset) {
 			log_debug("Invalid external data offset: %u\n", offset);
-			return -EINVAL;
+			ଫେରନ୍ତୁ -EINVAL;
 		}
 		log_debug("read offset %x = offset from fit %x\n", offset,
 			  (u32)(offset + ctx->ext_data_offset));
@@ -320,21 +320,21 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		external_data = true;
 	}
 
-	if (external_data) {
+	ଯଦି (external_data) {
 		u32 aligned_offset;
 		ulong read_offset;
-		void *src_ptr;
+		ଶୂନ୍ୟ *src_ptr;
 
 		/* External data */
-		if (fit_image_get_data_size(fit, node, &len))
-			return -ENOENT;
+		ଯଦି (fit_image_get_data_size(fit, ଗଣ୍ଠି, &len))
+			ଫେରନ୍ତୁ -ENOENT;
 
 		/* Dont bother to copy 0 byte data, but warn, though */
-		if (!len) {
+		ଯଦି (!len) {
 			log_warning("%s: Skip load '%s': image size is 0!\n",
-				    __func__, fit_get_name(fit, node, NULL));
-			fit_fill_image_info(fit, node, image_info, load_addr, 0);
-			return 0;
+				    __func__, fit_get_name(fit, ଗଣ୍ଠି, ଖାଲି));
+			fit_fill_image_info(fit, ଗଣ୍ଠି, image_info, load_addr, 0);
+			ଫେରନ୍ତୁ 0;
 		}
 
 		/*
@@ -345,29 +345,29 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * an oversized value has to be rejected here.
 		 */
 		ret = get_aligned_image_size(info, len, offset, &size);
-		if (ret) {
+		ଯଦି (ret) {
 			log_debug("Invalid external data size: %u\n", len);
-			return ret;
+			ଫେରନ୍ତୁ ret;
 		}
 
-		if (size > max_size) {
+		ଯଦି (size > max_size) {
 			log_debug("Image too large: aligned size %lu, max %lu (data-size %u)\n",
 				  size, max_size, len);
-			return -EFBIG;
+			ଫେରନ୍ତୁ -EFBIG;
 		}
 
 		aligned_offset = get_aligned_image_offset(info, offset);
-		if (aligned_offset > ULONG_MAX - fit_offset) {
+		ଯଦି (aligned_offset > ULONG_MAX - fit_offset) {
 			log_debug("Invalid aligned external data offset: %u\n",
 				  aligned_offset);
-			return -EINVAL;
+			ଫେରନ୍ତୁ -EINVAL;
 		}
 		read_offset = fit_offset + aligned_offset;
 
-		if (spl_decompression_enabled() &&
+		ଯଦି (spl_decompression_enabled() &&
 		    (image_comp == IH_COMP_GZIP || image_comp == IH_COMP_LZMA))
 			src_ptr = map_sysmem(ALIGN(CONFIG_SYS_LOAD_ADDR, ARCH_DMA_MINALIGN), len);
-		else
+		ଅନ୍ୟଥା
 			src_ptr = map_sysmem(ALIGN(load_addr, ARCH_DMA_MINALIGN), len);
 		length = len;
 
@@ -379,7 +379,7 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * (offset + len) doesn't exceed the allowed FIT image
 		 * maximum size.
 		 */
-		if (size > ULONG_MAX - read_offset ||
+		ଯଦି (size > ULONG_MAX - read_offset ||
 		    size > UINTPTR_MAX - (uintptr_t)src_ptr
 		/*
 		 * #if (not a runtime if) is required: FIT_SIGNATURE_MAX_SIZE
@@ -387,102 +387,102 @@ static int load_simple_fit(struct spl_load_info *info, ulong fit_offset,
 		 * is undefined when signing is disabled and referencing it
 		 * here would fail to compile.
 		 */
-#if CONFIG_IS_ENABLED(FIT_SIGNATURE)
+#ଯଦି CONFIG_IS_ENABLED(FIT_SIGNATURE)
 		    || offset > CONFIG_VAL(FIT_SIGNATURE_MAX_SIZE) ||
 		    len > CONFIG_VAL(FIT_SIGNATURE_MAX_SIZE) - offset
 #endif
 		) {
 			log_debug("FIT external data is out of bounds (offset=%u, size=%u)\n",
 				  offset, len);
-			return -EINVAL;
+			ଫେରନ୍ତୁ -EINVAL;
 		}
 
 		log_debug("reading from offset %x / %lx size %lx to %p: ",
 			  offset, read_offset, size, src_ptr);
 
-		if (info->read(info, read_offset, size, src_ptr) < length)
-			return -EIO;
+		ଯଦି (info->ପଠ(info, read_offset, size, src_ptr) < length)
+			ଫେରନ୍ତୁ -EIO;
 
 		debug("External data: dst=%p, offset=%x, size=%lx\n",
 		      src_ptr, offset, (unsigned long)length);
 		src = src_ptr + get_aligned_image_overhead(info, offset);
-	} else {
+	} ଅନ୍ୟଥା {
 		/* Embedded data */
-		if (fit_image_get_emb_data(fit, node, &data, &length)) {
+		ଯଦି (fit_image_get_emb_data(fit, ଗଣ୍ଠି, &data, &length)) {
 			puts("Cannot get image data/size\n");
-			return -ENOENT;
+			ଫେରନ୍ତୁ -ENOENT;
 		}
 		debug("Embedded data: dst=%lx, size=%lx\n", load_addr,
 		      (unsigned long)length);
-		src = (void *)data;	/* cast away const */
+		src = (ଶୂନ୍ୟ *)data;	/* cast away const */
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
+	ଯଦି (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
 		printf("## Checking hash(es) for Image %s ... ",
-		       fit_get_name(fit, node, NULL));
-		if (!fit_image_verify_with_data(fit, node, gd_fdt_blob(), src,
+		       fit_get_name(fit, ଗଣ୍ଠି, ଖାଲି));
+		ଯଦି (!fit_image_verify_with_data(fit, ଗଣ୍ଠି, gd_fdt_blob(), src,
 						length))
-			return -EPERM;
+			ଫେରନ୍ତୁ -EPERM;
 		puts("OK\n");
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_IMAGE_POST_PROCESS))
-		board_fit_image_post_process(fit, node, &src, &length);
+	ଯଦି (CONFIG_IS_ENABLED(FIT_IMAGE_POST_PROCESS))
+		board_fit_image_post_process(fit, ଗଣ୍ଠି, &src, &length);
 
 	load_ptr = map_sysmem(load_addr, length);
-	if (IS_ENABLED(CONFIG_SPL_GZIP) && image_comp == IH_COMP_GZIP) {
+	ଯଦି (IS_ENABLED(CONFIG_SPL_GZIP) && image_comp == IH_COMP_GZIP) {
 		size = length;
-		if (gunzip(load_ptr, CONFIG_SYS_BOOTM_LEN, src, &size)) {
+		ଯଦି (gunzip(load_ptr, CONFIG_SYS_BOOTM_LEN, src, &size)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			ଫେରନ୍ତୁ -EIO;
 		}
 		length = size;
-	} else if (IS_ENABLED(CONFIG_SPL_LZMA) && image_comp == IH_COMP_LZMA) {
+	} ଅନ୍ୟଥା ଯଦି (IS_ENABLED(CONFIG_SPL_LZMA) && image_comp == IH_COMP_LZMA) {
 		size = CONFIG_SYS_BOOTM_LEN;
 		ulong loadEnd;
 
-		if (image_decomp(IH_COMP_LZMA, CONFIG_SYS_LOAD_ADDR, 0, 0,
+		ଯଦି (image_decomp(IH_COMP_LZMA, CONFIG_SYS_LOAD_ADDR, 0, 0,
 				 load_ptr, src, length, size, &loadEnd)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			ଫେରନ୍ତୁ -EIO;
 		}
 		length = loadEnd - CONFIG_SYS_LOAD_ADDR;
-	} else {
+	} ଅନ୍ୟଥା {
 		memmove(load_ptr, src, length);
 	}
 
-	fit_fill_image_info(fit, node, image_info, load_addr, length);
+	fit_fill_image_info(fit, ଗଣ୍ଠି, image_info, load_addr, length);
 	log_debug("- done loading\n");
 
-	upl_add_image(fit, node, load_addr, length);
+	upl_add_image(fit, ଗଣ୍ଠି, load_addr, length);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static bool os_takes_devicetree(uint8_t os)
+ସ୍ଥିର bool os_takes_devicetree(uint8_t os)
 {
-	switch (os) {
-	case IH_OS_U_BOOT:
-		return true;
-	case IH_OS_LINUX:
-		return IS_ENABLED(CONFIG_SPL_OS_BOOT) ||
+	ବାଛ (os) {
+	ସ୍ଥିତି IH_OS_U_BOOT:
+		ଫେରନ୍ତୁ true;
+	ସ୍ଥିତି IH_OS_LINUX:
+		ଫେରନ୍ତୁ IS_ENABLED(CONFIG_SPL_OS_BOOT) ||
 		       IS_ENABLED(CONFIG_SPL_OPENSBI);
-	default:
-		return false;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଫେରନ୍ତୁ false;
 	}
 }
 
-__weak int board_spl_fit_append_fdt_skip(const char *name)
+__weak ପୂର୍ଣ୍ଣସଂଖ୍ୟା board_spl_fit_append_fdt_skip(ଅଚଳ ଅକ୍ଷର *name)
 {
-	return 0;	/* Do not skip */
+	ଫେରନ୍ତୁ 0;	/* Do not skip */
 }
 
-static int spl_fit_append_fdt(struct spl_image_info *spl_image,
-			      struct spl_load_info *info, ulong offset,
-			      const struct spl_fit_info *ctx)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_append_fdt(ସଂରଚନା spl_image_info *spl_image,
+			      ସଂରଚନା spl_load_info *info, ulong offset,
+			      ଅଚଳ ସଂରଚନା spl_fit_info *ctx)
 {
-	struct spl_image_info image_info;
-	int node, ret = 0, index = 0;
+	ସଂରଚନା spl_image_info image_info;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି, ret = 0, index = 0;
 
 	/*
 	 * Use the address following the image as target address for the
@@ -491,8 +491,8 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 	image_info.load_addr = ALIGN(spl_image->load_addr + spl_image->size, 8);
 
 	/* Figure out which device tree the board wants to use */
-	node = spl_fit_get_image_node(ctx, FIT_FDT_PROP, index++);
-	if (node < 0) {
+	ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(ctx, FIT_FDT_PROP, index++);
+	ଯଦି (ଗଣ୍ଠି < 0) {
 		size_t size;
 
 		debug("%s: cannot find FDT node\n", __func__);
@@ -501,8 +501,8 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 		 * U-Boot did not find a device tree inside the FIT image. Use
 		 * the U-Boot device tree instead.
 		 */
-		if (!gd->fdt_blob)
-			return node;
+		ଯଦି (!gd->fdt_blob)
+			ଫେରନ୍ତୁ ଗଣ୍ଠି;
 
 		/*
 		 * Make the load-address of the FDT available for the SPL
@@ -511,45 +511,45 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 		size = fdt_totalsize(gd->fdt_blob);
 		spl_image->fdt_addr = map_sysmem(image_info.load_addr, size);
 		memcpy(spl_image->fdt_addr, gd->fdt_blob, size);
-	} else {
-		ret = load_simple_fit(info, offset, ctx, node, &image_info,
+	} ଅନ୍ୟଥା {
+		ret = load_simple_fit(info, offset, ctx, ଗଣ୍ଠି, &image_info,
 				      CONFIG_SYS_BOOTM_LEN);
-		if (ret < 0)
-			return ret;
+		ଯଦି (ret < 0)
+			ଫେରନ୍ତୁ ret;
 
 		spl_image->fdt_addr = phys_to_virt(image_info.load_addr);
 	}
 
-	if (CONFIG_IS_ENABLED(FIT_IMAGE_TINY))
-		return 0;
+	ଯଦି (CONFIG_IS_ENABLED(FIT_IMAGE_TINY))
+		ଫେରନ୍ତୁ 0;
 
-#if CONFIG_IS_ENABLED(LOAD_FIT_APPLY_OVERLAY)
-		void *tmpbuffer = NULL;
+#ଯଦି CONFIG_IS_ENABLED(LOAD_FIT_APPLY_OVERLAY)
+		ଶୂନ୍ୟ *tmpbuffer = ଖାଲି;
 
-		for (; ; index++) {
-			const char *str;
+		ପାଇଁ (; ; index++) {
+			ଅଚଳ ଅକ୍ଷର *str;
 
 			ret = spl_fit_get_image_name(ctx, FIT_FDT_PROP, index, &str);
-			if (ret == -E2BIG) {
+			ଯଦି (ret == -E2BIG) {
 				debug("%s: No additional FDT node\n", __func__);
 				ret = 0;
-				break;
-			} else if (ret) {
-				break;
+				ଭାଙ୍ଗ;
+			} ଅନ୍ୟଥା ଯଦି (ret) {
+				ଭାଙ୍ଗ;
 			}
 
 			ret = board_spl_fit_append_fdt_skip(str);
-			if (ret)
-				continue;
+			ଯଦି (ret)
+				ଜାରି;
 
-			node = fdt_subnode_offset(ctx->fit, ctx->images_node, str);
-			if (node < 0) {
+			ଗଣ୍ଠି = fdt_subnode_offset(ctx->fit, ctx->images_ଗଣ୍ଠି, str);
+			ଯଦି (ଗଣ୍ଠି < 0) {
 				debug("%s: unable to find FDT node %d\n",
 				      __func__, index);
-				continue;
+				ଜାରି;
 			}
 
-			if (!tmpbuffer) {
+			ଯଦି (!tmpbuffer) {
 				/*
 				 * allocate memory to store the DT overlay
 				 * before it is applied. It may not be used
@@ -559,144 +559,144 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
 				size_t size = CONFIG_SPL_LOAD_FIT_APPLY_OVERLAY_BUF_SZ;
 
 				tmpbuffer = malloc_cache_aligned(size);
-				if (!tmpbuffer)
+				ଯଦି (!tmpbuffer)
 					debug("%s: unable to allocate space for overlays\n",
 					      __func__);
 			}
 			image_info.load_addr = (ulong)tmpbuffer;
-			ret = load_simple_fit(info, offset, ctx, node,
+			ret = load_simple_fit(info, offset, ctx, ଗଣ୍ଠି,
 					      &image_info,
 					      CONFIG_SPL_LOAD_FIT_APPLY_OVERLAY_BUF_SZ);
-			if (ret == -EBADSLT)
-				continue;
-			else if (ret < 0)
-				break;
+			ଯଦି (ret == -EBADSLT)
+				ଜାରି;
+			ଅନ୍ୟଥା ଯଦି (ret < 0)
+				ଭାଙ୍ଗ;
 
 			/* Make room in FDT for changes from the overlay */
 			ret = fdt_increase_size(spl_image->fdt_addr,
 						image_info.size);
-			if (ret < 0)
-				break;
+			ଯଦି (ret < 0)
+				ଭାଙ୍ଗ;
 
 			ret = fdt_overlay_apply_verbose(spl_image->fdt_addr,
-							(void *)image_info.load_addr);
-			if (ret) {
+							(ଶୂନ୍ୟ *)image_info.load_addr);
+			ଯଦି (ret) {
 				pr_err("failed to apply DT overlay %s\n",
-				       fit_get_name(ctx->fit, node, NULL));
-				break;
+				       fit_get_name(ctx->fit, ଗଣ୍ଠି, ଖାଲି));
+				ଭାଙ୍ଗ;
 			}
 
 			debug("%s: DT overlay %s applied\n", __func__,
-			      fit_get_name(ctx->fit, node, NULL));
+			      fit_get_name(ctx->fit, ଗଣ୍ଠି, ଖାଲି));
 		}
-		free(tmpbuffer);
-		if (ret)
-			return ret;
+		ମୁକ୍ତ(tmpbuffer);
+		ଯଦି (ret)
+			ଫେରନ୍ତୁ ret;
 #endif
 	/* Try to make space, so we can inject details on the loadables */
 	ret = fdt_shrink_to_minimum(spl_image->fdt_addr, 8192);
-	if (ret < 0)
-		return ret;
+	ଯଦି (ret < 0)
+		ଫେରନ୍ତୁ ret;
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-static int spl_fit_record_loadable(const struct spl_fit_info *ctx, int index,
-				   void *blob, struct spl_image_info *image)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_record_loadable(ଅଚଳ ସଂରଚନା spl_fit_info *ctx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା index,
+				   ଶୂନ୍ୟ *blob, ସଂରଚନା spl_image_info *image)
 {
-	int ret = 0;
-	const char *name;
-	int node;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = 0;
+	ଅଚଳ ଅକ୍ଷର *name;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି;
 
 	ret = spl_fit_get_image_name(ctx, FIT_LOADABLE_PROP, index, &name);
-	if (ret < 0)
-		return ret;
+	ଯଦି (ret < 0)
+		ଫେରନ୍ତୁ ret;
 
-	node = spl_fit_get_image_node(ctx, FIT_LOADABLE_PROP, index);
+	ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(ctx, FIT_LOADABLE_PROP, index);
 
 	ret = fdt_record_loadable(blob, index, name, image->load_addr,
 			image->size, image->entry_point,
-			fdt_getprop(ctx->fit, node, FIT_TYPE_PROP, NULL),
-			fdt_getprop(ctx->fit, node, FIT_OS_PROP, NULL),
-			fdt_getprop(ctx->fit, node, FIT_ARCH_PROP, NULL));
+			fdt_getprop(ctx->fit, ଗଣ୍ଠି, FIT_TYPE_PROP, ଖାଲି),
+			fdt_getprop(ctx->fit, ଗଣ୍ଠି, FIT_OS_PROP, ଖାଲି),
+			fdt_getprop(ctx->fit, ଗଣ୍ଠି, FIT_ARCH_PROP, ଖାଲି));
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-static int spl_fit_image_is_fpga(const void *fit, int node)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_image_is_fpga(ଅଚଳ ଶୂନ୍ୟ *fit, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି)
 {
-	const char *type;
+	ଅଚଳ ଅକ୍ଷର *type;
 
-	if (!IS_ENABLED(CONFIG_SPL_FPGA))
-		return 0;
+	ଯଦି (!IS_ENABLED(CONFIG_SPL_FPGA))
+		ଫେରନ୍ତୁ 0;
 
-	type = fdt_getprop(fit, node, FIT_TYPE_PROP, NULL);
-	if (!type)
-		return 0;
+	type = fdt_getprop(fit, ଗଣ୍ଠି, FIT_TYPE_PROP, ଖାଲି);
+	ଯଦି (!type)
+		ଫେରନ୍ତୁ 0;
 
-	return !strcmp(type, "fpga");
+	ଫେରନ୍ତୁ !strcmp(type, "fpga");
 }
 
-static void spl_fit_image_record_arm32_optee(const void *fit, int node,
-					     struct spl_image_info *spl_image,
-					     struct spl_image_info *image_info)
+ସ୍ଥିର ଶୂନ୍ୟ spl_fit_image_record_arm32_optee(ଅଚଳ ଶୂନ୍ୟ *fit, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି,
+					     ସଂରଚନା spl_image_info *spl_image,
+					     ସଂରଚନା spl_image_info *image_info)
 {
-#if defined(CONFIG_BOOTM_OPTEE) && defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
-	const char *type = fdt_getprop(fit, node, FIT_TYPE_PROP, NULL);
+#ଯଦି defined(CONFIG_BOOTM_OPTEE) && defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+	ଅଚଳ ଅକ୍ଷର *type = fdt_getprop(fit, ଗଣ୍ଠି, FIT_TYPE_PROP, ଖାଲି);
 
-	if (!type)
-		return;
+	ଯଦି (!type)
+		ଫେରନ୍ତୁ;
 
-	if (strcmp(type, "tee"))
-		return;
+	ଯଦି (strcmp(type, "tee"))
+		ଫେରନ୍ତୁ;
 
 	spl_image->optee_addr = image_info->load_addr;
 #endif
 }
 
-static int spl_fit_image_get_os(const void *fit, int noffset, uint8_t *os)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_image_get_os(ଅଚଳ ଶୂନ୍ୟ *fit, ପୂର୍ଣ୍ଣସଂଖ୍ୟା noffset, uint8_t *os)
 {
-	if (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) || CONFIG_IS_ENABLED(OS_BOOT))
-		return fit_image_get_os(fit, noffset, os);
+	ଯଦି (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) || CONFIG_IS_ENABLED(OS_BOOT))
+		ଫେରନ୍ତୁ fit_image_get_os(fit, noffset, os);
 
-	const char *name = fdt_getprop(fit, noffset, FIT_OS_PROP, NULL);
-	if (!name)
-		return -ENOENT;
+	ଅଚଳ ଅକ୍ଷର *name = fdt_getprop(fit, noffset, FIT_OS_PROP, ଖାଲି);
+	ଯଦି (!name)
+		ଫେରନ୍ତୁ -ENOENT;
 
 	/*
 	 * We don't care what the type of the image actually is,
 	 * only whether or not it is U-Boot. This saves some
 	 * space by omitting the large table of OS types.
 	 */
-	if (!strcmp(name, "u-boot"))
+	ଯଦି (!strcmp(name, "u-boot"))
 		*os = IH_OS_U_BOOT;
-	else
+	ଅନ୍ୟଥା
 		*os = IH_OS_INVALID;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 /*
  * The purpose of the FIT load buffer is to provide a memory location that is
  * independent of the load address of any FIT component.
  */
-__weak void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
+__weak ଶୂନ୍ୟ *board_spl_fit_buffer_addr(ulong fit_size, ପୂର୍ଣ୍ଣସଂଖ୍ୟା sectors, ପୂର୍ଣ୍ଣସଂଖ୍ୟା bl_len)
 {
-	void *buf;
+	ଶୂନ୍ୟ *buf;
 	size_t size = sectors * bl_len;
 
 	buf = malloc_cache_aligned(size);
-	if (!buf) {
+	ଯଦି (!buf) {
 		pr_err("Could not get FIT buffer of %lu bytes\n", (ulong)size);
 
-		if (IS_ENABLED(CONFIG_SPL_SYS_MALLOC))
+		ଯଦି (IS_ENABLED(CONFIG_SPL_SYS_MALLOC))
 			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_SIZE\n");
-		else
+		ଅନ୍ୟଥା
 			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_F_LEN\n");
 
 		buf = spl_get_load_buffer(0, size);
 	}
-	return buf;
+	ଫେରନ୍ତୁ buf;
 }
 
 /*
@@ -704,93 +704,93 @@ __weak void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
  * use cases by allowing to skip the parsing/processing of the FIT contents
  * (so that this can be done separately in a more customized fashion)
  */
-__weak bool spl_load_simple_fit_skip_processing(void)
+__weak bool spl_load_simple_fit_skip_processing(ଶୂନ୍ୟ)
 {
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 /*
  * Weak default function to allow fixes after fit header
  * is loaded.
  */
-__weak void *spl_load_simple_fit_fix_load(const void *fit)
+__weak ଶୂନ୍ୟ *spl_load_simple_fit_fix_load(ଅଚଳ ଶୂନ୍ୟ *fit)
 {
-	return (void *)fit;
+	ଫେରନ୍ତୁ (ଶୂନ୍ୟ *)fit;
 }
 
-static void warn_deprecated(const char *msg)
+ସ୍ଥିର ଶୂନ୍ୟ warn_deprecated(ଅଚଳ ଅକ୍ଷର *ସନ୍ଦେଶ)
 {
-	printf("DEPRECATED: %s\n", msg);
+	printf("DEPRECATED: %s\n", ସନ୍ଦେଶ);
 	printf("\tSee https://fitspec.osfw.foundation/\n");
 }
 
-static int spl_fit_upload_fpga(struct spl_fit_info *ctx, int node,
-			       struct spl_image_info *fpga_image)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_upload_fpga(ସଂରଚନା spl_fit_info *ctx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି,
+			       ସଂରଚନା spl_image_info *fpga_image)
 {
-	const char *compatible;
-	int ret;
-	int devnum = 0;
-	int flags = 0;
+	ଅଚଳ ଅକ୍ଷର *compatible;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା devnum = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags = 0;
 
 	debug("FPGA bitstream at: %x, size: %x\n",
 	      (u32)fpga_image->load_addr, fpga_image->size);
 
-	compatible = fdt_getprop(ctx->fit, node, FIT_COMPAT_PROP, NULL);
-	if (!compatible) {
+	compatible = fdt_getprop(ctx->fit, ଗଣ୍ଠି, FIT_COMPAT_PROP, ଖାଲି);
+	ଯଦି (!compatible) {
 		warn_deprecated("'fpga' image without 'compatible' property");
-	} else {
-		if (CONFIG_IS_ENABLED(FPGA_LOAD_SECURE))
+	} ଅନ୍ୟଥା {
+		ଯଦି (CONFIG_IS_ENABLED(FPGA_LOAD_SECURE))
 			flags = fpga_compatible2flag(devnum, compatible);
-		if (strcmp(compatible, "u-boot,fpga-legacy"))
+		ଯଦି (strcmp(compatible, "u-boot,fpga-legacy"))
 			debug("Ignoring compatible = %s property\n",
 			      compatible);
 	}
 
-	ret = fpga_load(devnum, (void *)fpga_image->load_addr,
+	ret = fpga_load(devnum, (ଶୂନ୍ୟ *)fpga_image->load_addr,
 			fpga_image->size, BIT_FULL, flags);
-	if (ret) {
+	ଯଦି (ret) {
 		printf("%s: Cannot load the image to the FPGA\n", __func__);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
 	puts("FPGA image loaded from FIT\n");
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int spl_fit_load_fpga(struct spl_fit_info *ctx,
-			     struct spl_load_info *info, ulong offset)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_fit_load_fpga(ସଂରଚନା spl_fit_info *ctx,
+			     ସଂରଚନା spl_load_info *info, ulong offset)
 {
-	int node, ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି, ret;
 
-	struct spl_image_info fpga_image = {
+	ସଂରଚନା spl_image_info fpga_image = {
 		.load_addr = 0,
 	};
 
-	node = spl_fit_get_image_node(ctx, FIT_FPGA_PROP, 0);
-	if (node < 0)
-		return node;
+	ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(ctx, FIT_FPGA_PROP, 0);
+	ଯଦି (ଗଣ୍ଠି < 0)
+		ଫେରନ୍ତୁ ଗଣ୍ଠି;
 
 	warn_deprecated("'fpga' property in config node. Use 'loadables'");
 
 	/* Load the image and set up the fpga_image structure */
-	ret = load_simple_fit(info, offset, ctx, node, &fpga_image,
+	ret = load_simple_fit(info, offset, ctx, ଗଣ୍ଠି, &fpga_image,
 			      CONFIG_SYS_BOOTM_LEN);
-	if (ret) {
+	ଯଦି (ret) {
 		printf("%s: Cannot load the FPGA: %i\n", __func__, ret);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
-	return spl_fit_upload_fpga(ctx, node, &fpga_image);
+	ଫେରନ୍ତୁ spl_fit_upload_fpga(ctx, ଗଣ୍ଠି, &fpga_image);
 }
 
-static int spl_simple_fit_read(struct spl_fit_info *ctx,
-			       struct spl_load_info *info, ulong offset,
-			       const void *fit_header)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_simple_fit_read(ସଂରଚନା spl_fit_info *ctx,
+			       ସଂରଚନା spl_load_info *info, ulong offset,
+			       ଅଚଳ ଶୂନ୍ୟ *fit_header)
 {
-	unsigned long aligned_size, count, size;
-	void *buf;
-	int ret;
+	unsigned long aligned_size, ଗଣନା_2, size;
+	ଶୂନ୍ୟ *buf;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	/*
 	 * For FIT with external data, figure out where the external images
@@ -809,22 +809,22 @@ static int spl_simple_fit_read(struct spl_fit_info *ctx,
 	 * For FIT with external data, data is not loaded in this step.
 	 */
 	ret = get_aligned_image_size(info, size, 0, &aligned_size);
-	if (ret) {
+	ଯଦି (ret) {
 		log_debug("Invalid FIT size: %lu\n", size);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 	buf = board_spl_fit_buffer_addr(aligned_size, aligned_size, 1);
-	if (!buf) {
+	ଯଦି (!buf) {
 		/*
 		 * We assume that none of the board will ever use 0x0 as a
 		 * valid load address. Theoretically some board could use it,
 		 * but this is extremely unlikely.
 		 */
-		return -EIO;
+		ଫେରନ୍ତୁ -EIO;
 	}
 
-	count = info->read(info, offset, aligned_size, buf);
-	if (!count) {
+	ଗଣନା_2 = info->ପଠ(info, offset, aligned_size, buf);
+	ଯଦି (!ଗଣନା_2) {
 		/*
 		 * FIT could not be read. This means we should free the
 		 * memory allocated by board_spl_fit_buffer_addr().
@@ -851,67 +851,67 @@ static int spl_simple_fit_read(struct spl_fit_info *ctx,
 		 *     structure may cause huge memory leak (up to
 		 *     several megabytes). Do NOT use such images!
 		 */
-		return -EIO;
+		ଫେରନ୍ତୁ -EIO;
 	}
 
 	ctx->fit = buf;
 	debug("fit read offset %lx, size=%lu, dst=%p, count=%lu\n",
-	      offset, aligned_size, buf, count);
+	      offset, aligned_size, buf, ଗଣନା_2);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int spl_simple_fit_parse(struct spl_fit_info *ctx)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_simple_fit_parse(ସଂରଚନା spl_fit_info *ctx)
 {
 	/* Find the correct subnode under "/configurations" */
-	ctx->conf_node = fit_find_config_node(ctx->fit);
-	if (ctx->conf_node < 0)
-		return -EINVAL;
+	ctx->conf_ଗଣ୍ଠି = fit_find_config_ଗଣ୍ଠି(ctx->fit);
+	ଯଦି (ctx->conf_ଗଣ୍ଠି < 0)
+		ଫେରନ୍ତୁ -EINVAL;
 
-	if (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
+	ଯଦି (CONFIG_IS_ENABLED(FIT_SIGNATURE)) {
 		printf("## Checking hash(es) for config %s ... ",
-		       fit_get_name(ctx->fit, ctx->conf_node, NULL));
-		if (fit_config_verify(ctx->fit, ctx->conf_node))
-			return -EPERM;
+		       fit_get_name(ctx->fit, ctx->conf_ଗଣ୍ଠି, ଖାଲି));
+		ଯଦି (fit_config_verify(ctx->fit, ctx->conf_ଗଣ୍ଠି))
+			ଫେରନ୍ତୁ -EPERM;
 		puts("OK\n");
 	}
 
 	/* find the node holding the images information */
-	ctx->images_node = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
-	if (ctx->images_node < 0) {
+	ctx->images_ଗଣ୍ଠି = fdt_path_offset(ctx->fit, FIT_IMAGES_PATH);
+	ଯଦି (ctx->images_ଗଣ୍ଠି < 0) {
 		debug("%s: Cannot find /images node: %d\n", __func__,
-		      ctx->images_node);
-		return -EINVAL;
+		      ctx->images_ଗଣ୍ଠି);
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int spl_load_simple_fit(struct spl_image_info *spl_image,
-			struct spl_load_info *info, ulong offset, void *fit)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_load_simple_fit(ସଂରଚନା spl_image_info *spl_image,
+			ସଂରଚନା spl_load_info *info, ulong offset, ଶୂନ୍ୟ *fit)
 {
-	struct spl_image_info image_info;
-	struct spl_fit_info ctx;
-	int node = -1;
-	int ret;
-	int index = 0;
-	int firmware_node;
+	ସଂରଚନା spl_image_info image_info;
+	ସଂରଚନା spl_fit_info ctx;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣ୍ଠି = -1;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା index = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା firmware_ଗଣ୍ଠି;
 
 	ret = spl_simple_fit_read(&ctx, info, offset, fit);
-	if (ret < 0)
-		return ret;
+	ଯଦି (ret < 0)
+		ଫେରନ୍ତୁ ret;
 
 	/* skip further processing if requested to enable load-only use cases */
-	if (spl_load_simple_fit_skip_processing())
-		return 0;
+	ଯଦି (spl_load_simple_fit_skip_processing())
+		ଫେରନ୍ତୁ 0;
 
 	ctx.fit = spl_load_simple_fit_fix_load(ctx.fit);
 
 	ret = spl_simple_fit_parse(&ctx);
-	if (ret < 0)
-		return ret;
+	ଯଦି (ret < 0)
+		ଫେରନ୍ତୁ ret;
 
-	if (IS_ENABLED(CONFIG_SPL_FPGA))
+	ଯଦି (IS_ENABLED(CONFIG_SPL_FPGA))
 		spl_fit_load_fpga(&ctx, info, offset);
 
 	/*
@@ -920,85 +920,85 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 	 *   - fall back 'kernel' (e.g. a Falcon-mode OS boot
 	 *   - fall back to using the first 'loadables' entry
 	 */
-	if (node < 0)
-		node = spl_fit_get_image_node(&ctx, FIT_FIRMWARE_PROP, 0);
+	ଯଦି (ଗଣ୍ଠି < 0)
+		ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(&ctx, FIT_FIRMWARE_PROP, 0);
 
-	if (node < 0 && IS_ENABLED(CONFIG_SPL_OS_BOOT))
-		node = spl_fit_get_image_node(&ctx, FIT_KERNEL_PROP, 0);
+	ଯଦି (ଗଣ୍ଠି < 0 && IS_ENABLED(CONFIG_SPL_OS_BOOT))
+		ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(&ctx, FIT_KERNEL_PROP, 0);
 
-	if (node < 0) {
+	ଯଦି (ଗଣ୍ଠି < 0) {
 		debug("could not find firmware image, trying loadables...\n");
-		node = spl_fit_get_image_node(&ctx, FIT_LOADABLE_PROP, 0);
+		ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(&ctx, FIT_LOADABLE_PROP, 0);
 		/*
 		 * If we pick the U-Boot image from "loadables", start at
 		 * the second image when later loading additional images.
 		 */
 		index = 1;
 	}
-	if (node < 0) {
+	ଯଦି (ଗଣ୍ଠି < 0) {
 		debug("%s: Cannot find u-boot image node: %d\n",
-		      __func__, node);
-		return -1;
+		      __func__, ଗଣ୍ଠି);
+		ଫେରନ୍ତୁ -1;
 	}
 
 	/* Load the image and set up the spl_image structure */
-	ret = load_simple_fit(info, offset, &ctx, node, spl_image,
+	ret = load_simple_fit(info, offset, &ctx, ଗଣ୍ଠି, spl_image,
 			      CONFIG_SYS_BOOTM_LEN);
-	if (ret)
-		return ret;
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
 	/*
 	 * For backward compatibility, we treat the first node that is
 	 * as a U-Boot image, if no OS-type has been declared.
 	 */
-	if (!spl_fit_image_get_os(ctx.fit, node, &spl_image->os))
+	ଯଦି (!spl_fit_image_get_os(ctx.fit, ଗଣ୍ଠି, &spl_image->os))
 		debug("Image OS is %s\n", genimg_get_os_name(spl_image->os));
-	else if (!IS_ENABLED(CONFIG_SPL_OS_BOOT))
+	ଅନ୍ୟଥା ଯଦି (!IS_ENABLED(CONFIG_SPL_OS_BOOT))
 		spl_image->os = IH_OS_U_BOOT;
 
 	/*
 	 * Booting a next-stage U-Boot may require us to append the FDT.
 	 * We allow this to fail, as the U-Boot image might embed its FDT.
 	 */
-	if (os_takes_devicetree(spl_image->os)) {
+	ଯଦି (os_takes_devicetree(spl_image->os)) {
 		ret = spl_fit_append_fdt(spl_image, info, offset, &ctx);
-		if (ret < 0 && spl_image->os != IH_OS_U_BOOT)
-			return ret;
+		ଯଦି (ret < 0 && spl_image->os != IH_OS_U_BOOT)
+			ଫେରନ୍ତୁ ret;
 	}
 
-	firmware_node = node;
+	firmware_ଗଣ୍ଠି = ଗଣ୍ଠି;
 	/* Now check if there are more images for us to load */
-	for (; ; index++) {
+	ପାଇଁ (; ; index++) {
 		uint8_t os_type = IH_OS_INVALID;
 
-		node = spl_fit_get_image_node(&ctx, FIT_LOADABLE_PROP, index);
-		if (node < 0)
-			break;
+		ଗଣ୍ଠି = spl_fit_get_image_ଗଣ୍ଠି(&ctx, FIT_LOADABLE_PROP, index);
+		ଯଦି (ଗଣ୍ଠି < 0)
+			ଭାଙ୍ଗ;
 
 		/*
 		 * if the firmware is also a loadable, skip it because
 		 * it already has been loaded. This is typically the case with
 		 * u-boot.img generated by mkimage.
 		 */
-		if (firmware_node == node)
-			continue;
+		ଯଦି (firmware_ଗଣ୍ଠି == ଗଣ୍ଠି)
+			ଜାରି;
 
 		image_info.load_addr = 0;
-		ret = load_simple_fit(info, offset, &ctx, node, &image_info,
+		ret = load_simple_fit(info, offset, &ctx, ଗଣ୍ଠି, &image_info,
 				      CONFIG_SYS_BOOTM_LEN);
-		if (ret < 0 && ret != -EBADSLT) {
+		ଯଦି (ret < 0 && ret != -EBADSLT) {
 			printf("%s: can't load image loadables index %d (ret = %d)\n",
 			       __func__, index, ret);
-			return ret;
+			ଫେରନ୍ତୁ ret;
 		}
 
-		if (spl_fit_image_is_fpga(ctx.fit, node))
-			spl_fit_upload_fpga(&ctx, node, &image_info);
+		ଯଦି (spl_fit_image_is_fpga(ctx.fit, ଗଣ୍ଠି))
+			spl_fit_upload_fpga(&ctx, ଗଣ୍ଠି, &image_info);
 
-		if (!spl_fit_image_get_os(ctx.fit, node, &os_type))
+		ଯଦି (!spl_fit_image_get_os(ctx.fit, ଗଣ୍ଠି, &os_type))
 			debug("Loadable is %s\n", genimg_get_os_name(os_type));
 
-		if (os_takes_devicetree(os_type)) {
+		ଯଦି (os_takes_devicetree(os_type)) {
 			spl_fit_append_fdt(&image_info, info, offset, &ctx);
 			spl_image->fdt_addr = image_info.fdt_addr;
 		}
@@ -1007,15 +1007,15 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 		 * If the "firmware" image did not provide an entry point,
 		 * use the first valid entry point from the loadables.
 		 */
-		if (spl_image->entry_point == FDT_ERROR &&
+		ଯଦି (spl_image->entry_point == FDT_ERROR &&
 		    image_info.entry_point != FDT_ERROR)
 			spl_image->entry_point = image_info.entry_point;
 
-		spl_fit_image_record_arm32_optee(ctx.fit, node, spl_image,
+		spl_fit_image_record_arm32_optee(ctx.fit, ଗଣ୍ଠି, spl_image,
 						 &image_info);
 
 		/* Record our loadables into the FDT */
-		if (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) &&
+		ଯଦି (!CONFIG_IS_ENABLED(FIT_IMAGE_TINY) &&
 		    xpl_get_fdt_update(info) && spl_image->fdt_addr)
 			spl_fit_record_loadable(&ctx, index,
 						spl_image->fdt_addr,
@@ -1027,51 +1027,51 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 	 * Makefile will set it to 0 and it will end up as the entry point
 	 * here. What it actually means is: use the load address.
 	 */
-	if (spl_image->entry_point == FDT_ERROR || spl_image->entry_point == 0)
+	ଯଦି (spl_image->entry_point == FDT_ERROR || spl_image->entry_point == 0)
 		spl_image->entry_point = spl_image->load_addr;
 
 	spl_image->flags |= SPL_FIT_FOUND;
-	upl_set_fit_info(map_to_sysmem(ctx.fit), ctx.conf_node,
+	upl_set_fit_info(map_to_sysmem(ctx.fit), ctx.conf_ଗଣ୍ଠି,
 			 spl_image->entry_point);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 /* Parse and load full fitImage in SPL */
-int spl_load_fit_image(struct spl_image_info *spl_image,
-		       const struct legacy_img_hdr *header)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_load_fit_image(ସଂରଚନା spl_image_info *spl_image,
+		       ଅଚଳ ସଂରଚନା legacy_img_hdr *header)
 {
-	struct bootm_headers images;
-	const char *fit_uname_config = NULL;
+	ସଂରଚନା bootm_headers images;
+	ଅଚଳ ଅକ୍ଷର *fit_uname_config = ଖାଲି;
 	ulong fdt_hack;
-	const char *uname;
+	ଅଚଳ ଅକ୍ଷର *uname;
 	ulong fw_data = 0, dt_data = 0, img_data = 0;
 	ulong fw_len = 0, dt_len = 0, img_len = 0;
-	int idx, conf_noffset;
-	int ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା idx, conf_noffset;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	images.verify = CONFIG_IS_ENABLED(FIT_SIGNATURE);
 
-	ret = fit_image_load(&images, virt_to_phys((void *)header),
-			     NULL, &fit_uname_config, IH_ARCH_DEFAULT,
+	ret = fit_image_load(&images, virt_to_phys((ଶୂନ୍ୟ *)header),
+			     ଖାଲି, &fit_uname_config, IH_ARCH_DEFAULT,
 			     IH_TYPE_FIRMWARE, -1, FIT_LOAD_OPTIONAL,
 			     &fw_data, &fw_len);
 
-	if (ret < 0) {
-		ret = fit_image_load(&images, virt_to_phys((void *)header),
-				     NULL, &fit_uname_config, IH_ARCH_DEFAULT,
+	ଯଦି (ret < 0) {
+		ret = fit_image_load(&images, virt_to_phys((ଶୂନ୍ୟ *)header),
+				     ଖାଲି, &fit_uname_config, IH_ARCH_DEFAULT,
 				     IH_TYPE_KERNEL, -1, FIT_LOAD_OPTIONAL,
 				     &fw_data, &fw_len);
 	}
 
-	if (ret < 0)
-		return ret;
+	ଯଦି (ret < 0)
+		ଫେରନ୍ତୁ ret;
 
 	spl_image->size = fw_len;
 	spl_image->load_addr = fw_data;
-	if (fit_image_get_entry(header, ret, &spl_image->entry_point))
+	ଯଦି (fit_image_get_entry(header, ret, &spl_image->entry_point))
 		spl_image->entry_point = fw_data;
-	if (fit_image_get_os(header, ret, &spl_image->os))
+	ଯଦି (fit_image_get_os(header, ret, &spl_image->os))
 		spl_image->os = IH_OS_INVALID;
 	spl_image->name = genimg_get_os_name(spl_image->os);
 
@@ -1080,46 +1080,46 @@ int spl_load_fit_image(struct spl_image_info *spl_image,
 
 	images.verify = CONFIG_IS_ENABLED(FIT_SIGNATURE);
 
-	ret = fit_image_load(&images, virt_to_phys((void *)header), NULL,
+	ret = fit_image_load(&images, virt_to_phys((ଶୂନ୍ୟ *)header), ଖାଲି,
 			     &fit_uname_config, IH_ARCH_DEFAULT, IH_TYPE_FLATDT,
 			     -1, FIT_LOAD_OPTIONAL, &dt_data, &dt_len);
-	if (ret >= 0) {
-		if (spl_image->os == IH_OS_U_BOOT) {
+	ଯଦି (ret >= 0) {
+		ଯଦି (spl_image->os == IH_OS_U_BOOT) {
 			/* HACK: U-Boot expects FDT at a specific address */
 			fdt_hack = ALIGN(spl_image->load_addr + spl_image->size, 8);
-			debug("Relocating FDT to %p\n", (void *)fdt_hack);
+			debug("Relocating FDT to %p\n", (ଶୂନ୍ୟ *)fdt_hack);
 			memcpy(map_sysmem(fdt_hack, dt_len),
 			       map_sysmem(dt_data, 0), dt_len);
-			spl_image->fdt_addr = (void *)fdt_hack;
-		} else {
-			spl_image->fdt_addr = (void *)dt_data;
+			spl_image->fdt_addr = (ଶୂନ୍ୟ *)fdt_hack;
+		} ଅନ୍ୟଥା {
+			spl_image->fdt_addr = (ଶୂନ୍ୟ *)dt_data;
 		}
 	}
 
-	conf_noffset = fit_conf_get_node((const void *)header,
+	conf_noffset = fit_conf_get_ଗଣ୍ଠି((ଅଚଳ ଶୂନ୍ୟ *)header,
 					 fit_uname_config);
-	if (conf_noffset < 0)
-		return 0;
+	ଯଦି (conf_noffset < 0)
+		ଫେରନ୍ତୁ 0;
 
-	for (idx = 0;
-	     uname = fdt_stringlist_get((const void *)header, conf_noffset,
+	ପାଇଁ (idx = 0;
+	     uname = fdt_stringlist_get((ଅଚଳ ଶୂନ୍ୟ *)header, conf_noffset,
 					FIT_LOADABLE_PROP, idx,
-				NULL), uname;
+				ଖାଲି), uname;
 	     idx++) {
 		images.verify = CONFIG_IS_ENABLED(FIT_SIGNATURE);
 
-		ret = fit_image_load(&images, virt_to_phys((void *)header),
+		ret = fit_image_load(&images, virt_to_phys((ଶୂନ୍ୟ *)header),
 				     &uname, &fit_uname_config,
 				     IH_ARCH_DEFAULT, IH_TYPE_LOADABLE, -1,
 				     FIT_LOAD_OPTIONAL_NON_ZERO,
 				     &img_data, &img_len);
-		if (ret < 0)
-			return ret;
+		ଯଦି (ret < 0)
+			ଫେରନ୍ତୁ ret;
 	}
 	spl_image->flags |= SPL_FIT_FOUND;
 
 	upl_set_fit_info(map_to_sysmem(header), conf_noffset,
 			 spl_image->entry_point);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }

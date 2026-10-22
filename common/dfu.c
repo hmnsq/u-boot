@@ -10,49 +10,49 @@
  *	    Lukasz Majewski <l.majewski@samsung.com>
  */
 
-#include <command.h>
-#include <log.h>
-#include <watchdog.h>
-#include <dfu.h>
-#include <console.h>
-#include <g_dnl.h>
-#include <usb.h>
-#include <net.h>
-#include <linux/printk.h>
+#ଅନ୍ତର୍ଭାଵ <command.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <watchdog.h>
+#ଅନ୍ତର୍ଭାଵ <dfu.h>
+#ଅନ୍ତର୍ଭାଵ <console.h>
+#ଅନ୍ତର୍ଭାଵ <g_dnl.h>
+#ଅନ୍ତର୍ଭାଵ <usb.h>
+#ଅନ୍ତର୍ଭାଵ <net.h>
+#ଅନ୍ତର୍ଭାଵ <linux/printk.h>
 
-int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା run_usb_dnl_gadget(ପୂର୍ଣ୍ଣସଂଖ୍ୟା usbctrl_index, ଅକ୍ଷର *usb_dnl_gadget)
 {
 	bool dfu_reset = false;
-	struct udevice *udc;
-	int ret, i = 0;
+	ସଂରଚନା udevice *udc;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, i = 0;
 
 	ret = udc_device_get_by_index(usbctrl_index, &udc);
-	if (ret) {
+	ଯଦି (ret) {
 		pr_err("udc_device_get_by_index failed\n");
-		return CMD_RET_FAILURE;
+		ଫେରନ୍ତୁ CMD_RET_FAILURE;
 	}
 	g_dnl_clear_detach();
 	ret = g_dnl_register(usb_dnl_gadget);
-	if (ret) {
+	ଯଦି (ret) {
 		pr_err("g_dnl_register failed");
 		ret = CMD_RET_FAILURE;
-		goto err_detach;
+		ଯାଅ err_detach;
 	}
 
 #ifdef CONFIG_DFU_TIMEOUT
 	unsigned long start_time = get_timer(0);
 #endif
 
-	while (1) {
-		if (g_dnl_detach()) {
+	ଯେତେବେଳେ (1) {
+		ଯଦି (g_dnl_detach()) {
 			/*
 			 * Check if USB bus reset is performed after detach,
 			 * which indicates that -R switch has been passed to
 			 * dfu-util. In this case reboot the device
 			 */
-			if (dfu_usb_get_reset()) {
+			ଯଦି (dfu_usb_get_reset()) {
 				dfu_reset = true;
-				goto exit;
+				ଯାଅ exit;
 			}
 
 			/*
@@ -60,14 +60,14 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			 * calls is necessary to assure correct transmission
 			 * completion with dfu-util
 			 */
-			if (++i == 10000)
-				goto exit;
+			ଯଦି (++i == 10000)
+				ଯାଅ exit;
 		}
 
-		if (ctrlc())
-			goto exit;
+		ଯଦି (ctrlc())
+			ଯାଅ exit;
 
-		if (dfu_get_defer_flush()) {
+		ଯଦି (dfu_get_defer_flush()) {
 			/*
 			 * Call to dm_usb_gadget_handle_interrupts() is necessary
 			 * to act on ZLP OUT transaction from HOST PC after
@@ -79,29 +79,29 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			 * exits with error message.
 			 */
 			dm_usb_gadget_handle_interrupts(udc);
-			ret = dfu_flush(dfu_get_defer_flush(), NULL, 0, 0);
-			dfu_set_defer_flush(NULL);
-			if (ret) {
+			ret = dfu_flush(dfu_get_defer_flush(), ଖାଲି, 0, 0);
+			dfu_set_defer_flush(ଖାଲି);
+			ଯଦି (ret) {
 				pr_err("Deferred dfu_flush() failed!");
-				goto exit;
+				ଯାଅ exit;
 			}
 		}
 
 #ifdef CONFIG_DFU_TIMEOUT
 		unsigned long wait_time = dfu_get_timeout();
 
-		if (wait_time) {
+		ଯଦି (wait_time) {
 			unsigned long current_time = get_timer(start_time);
 
-			if (current_time > wait_time) {
+			ଯଦି (current_time > wait_time) {
 				debug("Inactivity timeout, abort DFU\n");
-				goto exit;
+				ଯାଅ exit;
 			}
 		}
 #endif
 
-		if (dfu_reinit_needed)
-			goto exit;
+		ଯଦି (dfu_reinit_needed)
+			ଯାଅ exit;
 
 		schedule();
 		dm_usb_gadget_handle_interrupts(udc);
@@ -111,10 +111,10 @@ exit:
 err_detach:
 	udc_device_put(udc);
 
-	if (dfu_reset)
-		do_reset(NULL, 0, 0, NULL);
+	ଯଦି (dfu_reset)
+		do_reset(ଖାଲି, 0, 0, ଖାଲି);
 
 	g_dnl_clear_detach();
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }

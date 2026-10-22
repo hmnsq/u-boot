@@ -7,32 +7,32 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <asm/io.h>
-#include <onenand_uboot.h>
+#ଅନ୍ତର୍ଭାଵ <config.h>
+#ଅନ୍ତର୍ଭାଵ <image.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <spl.h>
+#ଅନ୍ତର୍ଭାଵ <asm/io.h>
+#ଅନ୍ତର୍ଭାଵ <onenand_uboot.h>
 
-static int spl_onenand_load_image(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_onenand_load_image(ସଂରଚନା spl_image_info *spl_image,
+				  ସଂରଚନା spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	ସଂରଚନା legacy_img_hdr *header;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	debug("spl: onenand\n");
 
 	header = spl_get_load_buffer(0, CONFIG_SYS_ONENAND_PAGE_SIZE);
 	/* Load u-boot */
 	onenand_spl_load_image(CONFIG_SYS_ONENAND_U_BOOT_OFFS,
-		CONFIG_SYS_ONENAND_PAGE_SIZE, (void *)header);
+		CONFIG_SYS_ONENAND_PAGE_SIZE, (ଶୂନ୍ୟ *)header);
 	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 	onenand_spl_load_image(CONFIG_SYS_ONENAND_U_BOOT_OFFS,
-		spl_image->size, (void *)spl_image->load_addr);
+		spl_image->size, (ଶୂନ୍ୟ *)spl_image->load_addr);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 /* Use priorty 1 so that Ubi can override this */
 SPL_LOAD_IMAGE_METHOD("OneNAND", 1, BOOT_DEVICE_ONENAND,

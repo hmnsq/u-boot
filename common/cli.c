@@ -10,25 +10,25 @@
 
 #define pr_fmt(fmt) "cli: %s: " fmt, __func__
 
-#include <ansi.h>
-#include <bootstage.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <fdtdec.h>
-#include <hang.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <dm/ofnode.h>
-#include <linux/errno.h>
+#ଅନ୍ତର୍ଭାଵ <ansi.h>
+#ଅନ୍ତର୍ଭାଵ <bootstage.h>
+#ଅନ୍ତର୍ଭାଵ <cli.h>
+#ଅନ୍ତର୍ଭାଵ <cli_hush.h>
+#ଅନ୍ତର୍ଭାଵ <command.h>
+#ଅନ୍ତର୍ଭାଵ <console.h>
+#ଅନ୍ତର୍ଭାଵ <env.h>
+#ଅନ୍ତର୍ଭାଵ <fdtdec.h>
+#ଅନ୍ତର୍ଭାଵ <hang.h>
+#ଅନ୍ତର୍ଭାଵ <malloc.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <dm/ofnode.h>
+#ଅନ୍ତର୍ଭାଵ <linux/errno.h>
 
 #ifdef CONFIG_CMDLINE
 
-static inline bool use_hush_old(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool use_hush_old(ଶୂନ୍ୟ)
 {
-	return IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
+	ଫେରନ୍ତୁ IS_ENABLED(CONFIG_HUSH_SELECTABLE) ?
 	gd->flags & GD_FLG_HUSH_OLD_PARSER :
 	IS_ENABLED(CONFIG_HUSH_OLD_PARSER);
 }
@@ -40,24 +40,24 @@ static inline bool use_hush_old(void)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 on success, or != 0 on error.
  */
-int run_command(const char *cmd, int flag)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା run_command(ଅଚଳ ଅକ୍ଷର *cmd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flag)
 {
-#if !IS_ENABLED(CONFIG_HUSH_PARSER)
+#ଯଦି !IS_ENABLED(CONFIG_HUSH_PARSER)
 	/*
 	 * cli_run_command can return 0 or 1 for success, so clean up
 	 * its result.
 	 */
-	if (cli_simple_run_command(cmd, flag) == -1)
-		return 1;
+	ଯଦି (cli_simple_run_command(cmd, flag) == -1)
+		ଫେରନ୍ତୁ 1;
 
-	return 0;
-#else
-	if (use_hush_old()) {
-		int hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
+	ଫେରନ୍ତୁ 0;
+#ଅନ୍ୟଥା
+	ଯଦି (use_hush_old()) {
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା hush_flags = FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP;
 
-		if (flag & CMD_FLAG_ENV)
+		ଯଦି (flag & CMD_FLAG_ENV)
 			hush_flags |= FLAG_CONT_ON_NEWLINE;
-		return parse_string_outer(cmd, hush_flags);
+		ଫେରନ୍ତୁ parse_string_outer(cmd, hush_flags);
 	}
 	/*
 	 * Possible values for flags are the following:
@@ -74,7 +74,7 @@ int run_command(const char *cmd, int flag)
 	 * run_command(). In this case, modern Hush reads until it finds
 	 * '\0'. So, I think we do not need this flag.
 	 */
-	return parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
+	ଫେରନ୍ତୁ parse_string_outer_modern(cmd, FLAG_EXIT_FROM_LOOP);
 #endif
 }
 
@@ -85,18 +85,18 @@ int run_command(const char *cmd, int flag)
  * @param flag	Execution flags (CMD_FLAG_...)
  * Return: 0 (not repeatable) or 1 (repeatable) on success, -1 on error.
  */
-int run_command_repeatable(const char *cmd, int flag)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା run_command_repeatable(ଅଚଳ ଅକ୍ଷର *cmd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flag)
 {
 #ifndef CONFIG_HUSH_PARSER
-	return cli_simple_run_command(cmd, flag);
-#else
-	int ret;
+	ଫେରନ୍ତୁ cli_simple_run_command(cmd, flag);
+#ଅନ୍ୟଥା
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
-	if (use_hush_old()) {
+	ଯଦି (use_hush_old()) {
 		ret = parse_string_outer(cmd,
 					 FLAG_PARSE_SEMICOLON
 					 | FLAG_EXIT_FROM_LOOP);
-	} else {
+	} ଅନ୍ୟଥା {
 		ret = parse_string_outer_modern(cmd,
 					      FLAG_PARSE_SEMICOLON
 					      | FLAG_EXIT_FROM_LOOP);
@@ -106,49 +106,49 @@ int run_command_repeatable(const char *cmd, int flag)
 	 * parse_string_outer() returns 1 for failure, so clean up
 	 * its result.
 	 */
-	if (ret)
-		return -1;
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ -1;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 #endif
 }
-#else
-__weak int board_run_command(const char *cmdline)
+#ଅନ୍ୟଥା
+__weak ପୂର୍ଣ୍ଣସଂଖ୍ୟା board_run_command(ଅଚଳ ଅକ୍ଷର *cmdline)
 {
 	printf("## Commands are disabled. Please enable CONFIG_CMDLINE.\n");
 
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 #endif /* CONFIG_CMDLINE */
 
-int run_command_list(const char *cmd, int len, int flag)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା run_command_list(ଅଚଳ ଅକ୍ଷର *cmd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା len, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flag)
 {
-	int need_buff = 1;
-	char *buff = (char *)cmd;	/* cast away const */
-	int rcode = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା need_buff = 1;
+	ଅକ୍ଷର *buff = (ଅକ୍ଷର *)cmd;	/* cast away const */
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା rcode = 0;
 
-	if (len == -1) {
+	ଯଦି (len == -1) {
 		len = strlen(cmd);
 #ifdef CONFIG_HUSH_PARSER
 		/* hush will never change our string */
 		need_buff = 0;
-#else
+#ଅନ୍ୟଥା
 		/* the built-in parser will change our string if it sees \n */
-		need_buff = strchr(cmd, '\n') != NULL;
+		need_buff = strchr(cmd, '\n') != ଖାଲି;
 #endif
 	}
-	if (need_buff) {
+	ଯଦି (need_buff) {
 		buff = memdup_nul(cmd, len);
-		if (!buff)
-			return 1;
+		ଯଦି (!buff)
+			ଫେରନ୍ତୁ 1;
 	}
 #ifdef CONFIG_HUSH_PARSER
-	if (use_hush_old()) {
+	ଯଦି (use_hush_old()) {
 		rcode = parse_string_outer(buff, FLAG_PARSE_SEMICOLON);
-	} else {
+	} ଅନ୍ୟଥା {
 		rcode = parse_string_outer_modern(buff, FLAG_PARSE_SEMICOLON);
 	}
-#else
+#ଅନ୍ୟଥା
 	/*
 	 * This function will overwrite any \n it sees with a \0, which
 	 * is why it can't work with a const char *. Here we are making
@@ -158,20 +158,20 @@ int run_command_list(const char *cmd, int len, int flag)
 	 */
 #ifdef CONFIG_CMDLINE
 	rcode = cli_simple_run_command_list(buff, flag);
-#else
+#ଅନ୍ୟଥା
 	rcode = board_run_command(buff);
 #endif
 #endif
-	if (need_buff)
-		free(buff);
+	ଯଦି (need_buff)
+		ମୁକ୍ତ(buff);
 
-	return rcode;
+	ଫେରନ୍ତୁ rcode;
 }
 
-int run_commandf(const char *fmt, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା run_commandf(ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
 	va_list args;
-	int nbytes;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା nbytes;
 
 	va_start(args, fmt);
 	/*
@@ -182,57 +182,57 @@ int run_commandf(const char *fmt, ...)
 	nbytes = vsnprintf(console_buffer, CONFIG_SYS_CBSIZE, fmt, args);
 	va_end(args);
 
-	if (nbytes < 0) {
+	ଯଦି (nbytes < 0) {
 		pr_debug("I/O internal error occurred.\n");
-		return -EIO;
-	} else if (nbytes >= CONFIG_SYS_CBSIZE) {
+		ଫେରନ୍ତୁ -EIO;
+	} ଅନ୍ୟଥା ଯଦି (nbytes >= CONFIG_SYS_CBSIZE) {
 		pr_debug("'fmt' size:%d exceeds the limit(%d)\n",
 			 nbytes, CONFIG_SYS_CBSIZE);
-		return -ENOSPC;
+		ଫେରନ୍ତୁ -ENOSPC;
 	}
-	return run_command(console_buffer, 0);
+	ଫେରନ୍ତୁ run_command(console_buffer, 0);
 }
 
 /****************************************************************************/
 
-#if defined(CONFIG_CMD_RUN)
-int do_run(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+#ଯଦି defined(CONFIG_CMD_RUN)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା do_run(ସଂରଚନା cmd_tbl *cmdtp, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flag, ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର *ଅଚଳ argv[])
 {
-	int i, ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, ret;
 
-	if (argc < 2)
-		return CMD_RET_USAGE;
+	ଯଦି (argc < 2)
+		ଫେରନ୍ତୁ CMD_RET_USAGE;
 
-	for (i = 1; i < argc; ++i) {
-		char *arg;
+	ପାଇଁ (i = 1; i < argc; ++i) {
+		ଅକ୍ଷର *arg;
 
 		arg = env_get(argv[i]);
-		if (arg == NULL) {
+		ଯଦି (arg == ଖାଲି) {
 			printf("## Error: \"%s\" not defined\n", argv[i]);
-			return 1;
+			ଫେରନ୍ତୁ 1;
 		}
 
 		ret = run_command(arg, flag | CMD_FLAG_ENV);
-		if (ret)
-			return ret;
+		ଯଦି (ret)
+			ଫେରନ୍ତୁ ret;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(OF_CONTROL)
-bool cli_process_fdt(const char **cmdp)
+#ଯଦି CONFIG_IS_ENABLED(OF_CONTROL)
+bool cli_process_fdt(ଅଚଳ ଅକ୍ଷର **cmdp)
 {
 	/* Allow the fdt to override the boot command */
-	const char *env = ofnode_conf_read_str("bootcmd");
-	if (env)
+	ଅଚଳ ଅକ୍ଷର *env = ofnode_conf_read_str("bootcmd");
+	ଯଦି (env)
 		*cmdp = env;
 	/*
 	 * If the bootsecure option was chosen, use secure_boot_cmd().
 	 * Always use 'env' in this case, since bootsecure requres that the
 	 * bootcmd was specified in the FDT too.
 	 */
-	return ofnode_conf_read_int("bootsecure", 0);
+	ଫେରନ୍ତୁ ofnode_conf_read_int("bootsecure", 0);
 }
 
 /*
@@ -248,16 +248,16 @@ bool cli_process_fdt(const char **cmdp)
  * Upon any failures, this function will drop into an infinite loop after
  * printing the error message to console.
  */
-void cli_secure_boot_cmd(const char *cmd)
+ଶୂନ୍ୟ cli_secure_boot_cmd(ଅଚଳ ଅକ୍ଷର *cmd)
 {
 #ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
+	ସଂରଚନା cmd_tbl *cmdtp;
 #endif
-	int rc;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା rc;
 
-	if (!cmd) {
+	ଯଦି (!cmd) {
 		printf("## Error: Secure boot command not specified\n");
-		goto err;
+		ଯାଅ err;
 	}
 
 	/* Disable Ctrl-C just in case some command is used that checks it. */
@@ -266,15 +266,15 @@ void cli_secure_boot_cmd(const char *cmd)
 	/* Find the command directly. */
 #ifdef CONFIG_CMDLINE
 	cmdtp = find_cmd(cmd);
-	if (!cmdtp) {
+	ଯଦି (!cmdtp) {
 		printf("## Error: \"%s\" not defined\n", cmd);
-		goto err;
+		ଯାଅ err;
 	}
 
 	/* Run the command, forcing no flags and faking argc and argv. */
-	rc = (cmdtp->cmd)(cmdtp, 0, 1, (char **)&cmd);
+	rc = (cmdtp->cmd)(cmdtp, 0, 1, (ଅକ୍ଷର **)&cmd);
 
-#else
+#ଅନ୍ୟଥା
 	rc = board_run_command(cmd);
 #endif
 
@@ -290,55 +290,55 @@ err:
 }
 #endif /* CONFIG_IS_ENABLED(OF_CONTROL) */
 
-void cli_loop(void)
+ଶୂନ୍ୟ cli_loop(ଶୂନ୍ୟ)
 {
 	bootstage_mark(BOOTSTAGE_ID_ENTER_CLI_LOOP);
 
-	if (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
+	ଯଦି (IS_ENABLED(CONFIG_CMDLINE_FLUSH_STDIN))
 		console_flush_stdin();
 
-#if CONFIG_IS_ENABLED(HUSH_PARSER)
-	if (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
+#ଯଦି CONFIG_IS_ENABLED(HUSH_PARSER)
+	ଯଦି (gd->flags & GD_FLG_HUSH_MODERN_PARSER)
 		parse_and_run_file();
-	else if (gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	ଅନ୍ୟଥା ଯଦି (gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		parse_file_outer();
 
 	printf("Problem\n");
 	/* This point is never reached */
-	for (;;);
-#elif defined(CONFIG_CMDLINE)
+	ପାଇଁ (;;);
+#ନଚେତଯଦି defined(CONFIG_CMDLINE)
 	cli_simple_loop();
-#else
+#ଅନ୍ୟଥା
 	printf("## U-Boot command line is disabled. Please enable CONFIG_CMDLINE\n");
 #endif /*CONFIG_HUSH_PARSER*/
 }
 
-void cli_init(void)
+ଶୂନ୍ୟ cli_init(ଶୂନ୍ୟ)
 {
 #ifdef CONFIG_HUSH_PARSER
 	/* This if block is used to initialize hush parser gd flag. */
-	if (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
+	ଯଦି (!(gd->flags & GD_FLG_HUSH_OLD_PARSER)
 		&& !(gd->flags & GD_FLG_HUSH_MODERN_PARSER)) {
-		if (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
+		ଯଦି (CONFIG_IS_ENABLED(HUSH_OLD_PARSER))
 			gd->flags |= GD_FLG_HUSH_OLD_PARSER;
-		else if (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
+		ଅନ୍ୟଥା ଯଦି (CONFIG_IS_ENABLED(HUSH_MODERN_PARSER))
 			gd->flags |= GD_FLG_HUSH_MODERN_PARSER;
 	}
 
-	if (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
+	ଯଦି (gd->flags & GD_FLG_HUSH_OLD_PARSER) {
 		u_boot_hush_start();
-	} else if (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
+	} ଅନ୍ୟଥା ଯଦି (gd->flags & GD_FLG_HUSH_MODERN_PARSER) {
 		u_boot_hush_start_modern();
-	} else {
+	} ଅନ୍ୟଥା {
 		printf("No valid hush parser to use, cli will not initialized!\n");
-		return;
+		ଫେରନ୍ତୁ;
 	}
 #endif
 
-#if defined(CONFIG_HUSH_INIT_VAR)
+#ଯଦି defined(CONFIG_HUSH_INIT_VAR)
 	hush_init_var();
 #endif
 
-	if (CONFIG_IS_ENABLED(VIDEO_ANSI))
+	ଯଦି (CONFIG_IS_ENABLED(VIDEO_ANSI))
 		printf(ANSI_CURSOR_SHOW "\n");
 }

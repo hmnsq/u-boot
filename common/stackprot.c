@@ -3,22 +3,22 @@
  *  Copyright 2021 Broadcom
  */
 
-#include <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 unsigned long __stack_chk_guard = (unsigned long)(0xfeedf00ddeadbeef & ~0UL);
 
-void __stack_chk_fail(void)
+ଶୂନ୍ୟ __stack_chk_fail(ଶୂନ୍ୟ)
 {
-	void *ra;
+	ଶୂନ୍ୟ *ra;
 
 	ra = __builtin_extract_return_addr(__builtin_return_address(0));
 	panic("Stack smashing detected in function:\n%p relocated from %p",
 	      ra, ra - gd->reloc_off);
 }
 
-void __stack_chk_fail_local(void)
+ଶୂନ୍ୟ __stack_chk_fail_local(ଶୂନ୍ୟ)
 {
 	__stack_chk_fail();
 }

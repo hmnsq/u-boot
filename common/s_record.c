@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#ଅନ୍ତର୍ଭାଵ <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex1_bin (ଅକ୍ଷର  c);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex2_bin (ଅକ୍ଷର *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା srec_decode (ଅକ୍ଷର *ନିବେଶ, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *ଗଣନା_2, ulong *addr, ଅକ୍ଷର *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	v;				/* conversion buffer	*/
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	srec_type;			/* S-Record type	*/
+	unsigned ଅକ୍ଷର chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	ପାଇଁ (; *ନିବେଶ; ++ନିବେଶ) {
+		ଯଦି (*ନିବେଶ == 'S') {		/* skip 'S' */
+			++ନିବେଶ;
+			ଭାଙ୍ଗ;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	ଯଦି (*ନିବେଶ == '\0') {			/* no more data?	*/
+		ଫେରନ୍ତୁ (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *ନିବେଶ++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ଯଦି ((*ଗଣନା_2 = hex2_bin(ନିବେଶ)) < 0) {
+		ଫେରନ୍ତୁ (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *ଗଣନା_2;
+	ନିବେଶ  += 2;
 
-	switch (v) {				/* record type		*/
+	ବାଛ (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	ସ୍ଥିତି '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		*ଗଣନା_2   -= 3;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*ଗଣନା_2   -= 3;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*ଗଣନା_2   -= 4;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*ଗଣନା_2   -= 5;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	ସ୍ଥିତି '5':			/* count record, addr field contains */
+		srec_type = SREC_ଗଣନା;	/* a 2 byte record counter	*/
+		*ଗଣନା_2    = 0;			/* no data		*/
+		ଭାଙ୍ଗ;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	ସ୍ଥିତି '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*ଗଣନା_2   -= 5;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*ଗଣନା_2   -= 4;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*ଗଣନା_2   -= 3;			/* - checksum and addr	*/
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଫେରନ୍ତୁ (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ବାଛ (v) {
+	ସ୍ଥିତି '3':				/* 4 byte addr field	*/
+	ସ୍ଥିତି '7':
+		ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+			ଫେରନ୍ତୁ (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ନିବେଶ  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ସ୍ଥିତି '2':				/* 3 byte addr field	*/
+	ସ୍ଥିତି '8':
+		ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+			ଫେରନ୍ତୁ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ନିବେଶ  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ସ୍ଥିତି '0':				/* 2 byte addr field	*/
+	ସ୍ଥିତି '1':
+	ସ୍ଥିତି '5':
+	ସ୍ଥିତି '9':
+		ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+			ଫେରନ୍ତୁ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ନିବେଶ  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+			ଫେରନ୍ତୁ (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ନିବେଶ  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଫେରନ୍ତୁ (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ପାଇଁ (i=0; i < *ଗଣନା_2; ++i) {
+		ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+			ଫେରନ୍ତୁ (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		ନିବେଶ  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ଯଦି ((v = hex2_bin(ନିବେଶ)) < 0) {
+		ଫେରନ୍ତୁ (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	ଯଦି ((unsigned ଅକ୍ଷର)v != (unsigned ଅକ୍ଷର)~chksum) {
+		ଫେରନ୍ତୁ (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	ଫେରନ୍ତୁ (srec_type);
 }
 
-static int hex1_bin (char c)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex1_bin (ଅକ୍ଷର c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	ଯଦି (c >= '0' && c <= '9')
+		ଫେରନ୍ତୁ (c - '0');
+	ଯଦି (c >= 'a' && c <= 'f')
+		ଫେରନ୍ତୁ (c + 10 - 'a');
+	ଯଦି (c >= 'A' && c <= 'F')
+		ଫେରନ୍ତୁ (c + 10 - 'A');
+	ଫେରନ୍ତୁ (-1);
 }
 
-static int hex2_bin (char *s)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex2_bin (ଅକ୍ଷର *s)
 {
-	int i, j;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	ଯଦି ((i = hex1_bin(*s++)) < 0) {
+		ଫେରନ୍ତୁ (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	ଯଦି ((j = hex1_bin(*s)) < 0) {
+		ଫେରନ୍ତୁ (-1);
 	}
 
-	return ((i<<4) + j);
+	ଫେରନ୍ତୁ ((i<<4) + j);
 }

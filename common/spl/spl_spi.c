@@ -8,66 +8,66 @@
  * Heiko Schocher, DENX Software Engineering, hs@denx.de.
  */
 
-#include <config.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <errno.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <dm/ofnode.h>
+#ଅନ୍ତର୍ଭାଵ <config.h>
+#ଅନ୍ତର୍ଭାଵ <image.h>
+#ଅନ୍ତର୍ଭାଵ <imx_container.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <spi.h>
+#ଅନ୍ତର୍ଭାଵ <spi_flash.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <spl.h>
+#ଅନ୍ତର୍ଭାଵ <spl_load.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <asm/io.h>
+#ଅନ୍ତର୍ଭାଵ <dm/ofnode.h>
 
-static ulong spl_spi_fit_read(struct spl_load_info *load, ulong sector,
-			      ulong count, void *buf)
+ସ୍ଥିର ulong spl_spi_fit_read(ସଂରଚନା spl_load_info *load, ulong sector,
+			      ulong ଗଣନା_2, ଶୂନ୍ୟ *buf)
 {
-	struct spi_flash *flash = load->priv;
+	ସଂରଚନା spi_flash *flash = load->priv;
 	ulong ret;
 
-	ret = spi_flash_read(flash, sector, count, buf);
-	if (!ret)
-		return count;
-	else
-		return 0;
+	ret = spi_flash_read(flash, sector, ଗଣନା_2, buf);
+	ଯଦି (!ret)
+		ଫେରନ୍ତୁ ଗଣନା_2;
+	ଅନ୍ୟଥା
+		ଫେରନ୍ତୁ 0;
 }
 
-unsigned int __weak spl_spi_get_uboot_offs(struct spi_flash *flash)
+unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା __weak spl_spi_get_uboot_offs(ସଂରଚନା spi_flash *flash)
 {
-	return CONFIG_SYS_SPI_U_BOOT_OFFS;
+	ଫେରନ୍ତୁ CONFIG_SYS_SPI_U_BOOT_OFFS;
 }
 
-u32 __weak spl_spi_boot_bus(void)
+u32 __weak spl_spi_boot_bus(ଶୂନ୍ୟ)
 {
-	return CONFIG_SF_DEFAULT_BUS;
+	ଫେରନ୍ତୁ CONFIG_SF_DEFAULT_BUS;
 }
 
-u32 __weak spl_spi_boot_cs(void)
+u32 __weak spl_spi_boot_cs(ଶୂନ୍ୟ)
 {
-	return CONFIG_SF_DEFAULT_CS;
+	ଫେରନ୍ତୁ CONFIG_SF_DEFAULT_CS;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_spi_load_image_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev,
-				 struct spi_flash *flash,
-				 struct spl_load_info *load)
+#ଯଦି IS_ENABLED(CONFIG_SPL_OS_BOOT)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_spi_load_image_os(ସଂରଚନା spl_image_info *spl_image,
+				 ସଂରଚନା spl_boot_device *bootdev,
+				 ସଂରଚନା spi_flash *flash,
+				 ସଂରଚନା spl_load_info *load)
 {
-	int err = spl_load(spl_image, bootdev, load, 0,
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା err = spl_load(spl_image, bootdev, load, 0,
 			   CONFIG_SYS_SPI_KERNEL_OFFS);
 
-	if (err)
-		return err;
+	ଯଦି (err)
+		ଫେରନ୍ତୁ err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#ଯଦି IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/* Read device tree. */
-	return spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
+	ଫେରନ୍ତୁ spi_flash_read(flash, CONFIG_SYS_SPI_ARGS_OFFS,
 			      CONFIG_SYS_SPI_ARGS_SIZE,
-			      (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
-#else
-	return 0;
+			      (ଶୂନ୍ୟ *)CONFIG_SPL_PAYLOAD_ARGS_ADDR);
+#ଅନ୍ୟଥା
+	ଫେରନ୍ତୁ 0;
 #endif
 
 }
@@ -78,15 +78,15 @@ static int spl_spi_load_image_os(struct spl_image_info *spl_image,
  * configured and available since this code loads the main U-Boot image
  * from SPI into SDRAM and starts it from there.
  */
-static int spl_spi_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_spi_load_image(ସଂରଚନା spl_image_info *spl_image,
+			      ସଂରଚନା spl_boot_device *bootdev)
 {
-	int err = 0;
-	unsigned int payload_offs;
-	struct spi_flash *flash;
-	unsigned int sf_bus = spl_spi_boot_bus();
-	unsigned int sf_cs = spl_spi_boot_cs();
-	struct spl_load_info load;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା err = 0;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା payload_offs;
+	ସଂରଚନା spi_flash *flash;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା sf_bus = spl_spi_boot_bus();
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା sf_cs = spl_spi_boot_cs();
+	ସଂରଚନା spl_load_info load;
 
 	/*
 	 * Load U-Boot image from SPI flash into RAM
@@ -96,45 +96,45 @@ static int spl_spi_load_image(struct spl_image_info *spl_image,
 	flash = spi_flash_probe(sf_bus, sf_cs,
 				CONFIG_SF_DEFAULT_SPEED,
 				CONFIG_SF_DEFAULT_MODE);
-	if (!flash) {
+	ଯଦି (!flash) {
 		puts("SPI probe failed.\n");
-		return -ENODEV;
+		ଫେରନ୍ତୁ -ENODEV;
 	}
 
 	spl_load_init(&load, spl_spi_fit_read, flash, 1);
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#ଯଦି CONFIG_IS_ENABLED(OS_BOOT)
+	ଯଦି (!spl_start_uboot()) {
 		err = spl_spi_load_image_os(spl_image, bootdev, flash, &load);
 
-		if (!err)
-			return 0;
+		ଯଦି (!err)
+			ଫେରନ୍ତୁ 0;
 
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		ଯଦି (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ଫେରନ୍ତୁ err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
 
 	payload_offs = spl_spi_get_uboot_offs(flash);
-	if (CONFIG_IS_ENABLED(OF_REAL)) {
+	ଯଦି (CONFIG_IS_ENABLED(OF_REAL)) {
 		payload_offs = ofnode_conf_read_int("u-boot,spl-payload-offset",
 						    payload_offs);
 	}
 
 	err = spl_load(spl_image, bootdev, &load, 0, payload_offs);
-	if (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
-		int ret = spi_nor_remove(flash);
+	ଯଦି (IS_ENABLED(CONFIG_SPI_FLASH_SOFT_RESET)) {
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = spi_nor_remove(flash);
 
-		if (ret) {
+		ଯଦି (ret) {
 			printf("%s: Failed to remove SPI NOR flash: %d\n",
 			       __func__, ret);
-			if (!err)
+			ଯଦି (!err)
 				err = ret;
 		}
 	}
-	return err;
+	ଫେରନ୍ତୁ err;
 }
 /* Use priorty 1 so that boards can override this */
 SPL_LOAD_IMAGE_METHOD("SPI", 1, BOOT_DEVICE_SPI, spl_spi_load_image);

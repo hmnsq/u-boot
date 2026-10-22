@@ -4,37 +4,37 @@
  * Author: Stefan Agner <stefan.agner@toradex.com>
  */
 
-#include <log.h>
-#include <spl.h>
-#include <usb.h>
-#include <g_dnl.h>
-#include <sdp.h>
-#include <linux/printk.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <spl.h>
+#ଅନ୍ତର୍ଭାଵ <usb.h>
+#ଅନ୍ତର୍ଭାଵ <g_dnl.h>
+#ଅନ୍ତର୍ଭାଵ <sdp.h>
+#ଅନ୍ତର୍ଭାଵ <linux/printk.h>
 
-static int spl_sdp_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା spl_sdp_load_image(ସଂରଚନା spl_image_info *spl_image,
+			      ସଂରଚନା spl_boot_device *bootdev)
 {
-	const int controller_index = CONFIG_SPL_SDP_USB_DEV;
-	struct udevice *udc;
-	int ret;
+	ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା controller_index = CONFIG_SPL_SDP_USB_DEV;
+	ସଂରଚନା udevice *udc;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	ret = udc_device_get_by_index(controller_index, &udc);
-	if (ret)
-		return ret;
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
 	board_usb_init(controller_index, USB_INIT_DEVICE);
 
 	g_dnl_clear_detach();
 	ret = g_dnl_register("usb_dnl_sdp");
-	if (ret) {
+	ଯଦି (ret) {
 		pr_err("SDP dnl register failed: %d\n", ret);
-		goto err_detach;
+		ଯାଅ err_detach;
 	}
 
 	ret = sdp_init(udc);
-	if (ret) {
+	ଯଦି (ret) {
 		pr_err("SDP init failed: %d\n", ret);
-		goto err_unregister;
+		ଯାଅ err_unregister;
 	}
 
 	/*
@@ -49,6 +49,6 @@ err_unregister:
 	g_dnl_unregister();
 err_detach:
 	udc_device_put(udc);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 SPL_LOAD_IMAGE_METHOD("USB SDP", 0, BOOT_DEVICE_BOARD, spl_sdp_load_image);

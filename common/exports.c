@@ -1,23 +1,23 @@
-#include <command.h>
-#include <exports.h>
-#include <malloc.h>
-#include <spi.h>
-#include <i2c.h>
-#include <asm/global_data.h>
+#ଅନ୍ତର୍ଭାଵ <command.h>
+#ଅନ୍ତର୍ଭାଵ <exports.h>
+#ଅନ୍ତର୍ଭାଵ <malloc.h>
+#ଅନ୍ତର୍ଭାଵ <spi.h>
+#ଅନ୍ତର୍ଭାଵ <i2c.h>
+#ଅନ୍ତର୍ଭାଵ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-unsigned long get_version(void)
+unsigned long get_version(ଶୂନ୍ୟ)
 {
-	return XF_VERSION;
+	ଫେରନ୍ତୁ XF_VERSION;
 }
 
 #define EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
 
-int jumptable_init(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା jumptable_init(ଶୂନ୍ୟ)
 {
-	gd->jt = malloc(sizeof(struct jt_funcs));
-#include <_exports.h>
+	gd->jt = malloc(ଆକାର(ସଂରଚନା jt_funcs));
+#ଅନ୍ତର୍ଭାଵ <_exports.h>
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }

@@ -4,19 +4,19 @@
  *   Author: Casey Connolly <casey.connolly@linaro.org>
  */
 
-#include <button.h>
-#include <command.h>
-#include <env.h>
-#include <log.h>
-#include <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <button.h>
+#ଅନ୍ତର୍ଭାଵ <command.h>
+#ଅନ୍ତର୍ଭାଵ <env.h>
+#ଅନ୍ତର୍ଭାଵ <log.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
 
 /* Some sane limit "just in case" */
 #define MAX_BTN_CMDS 32
 
-struct button_cmd {
+ସଂରଚନା button_cmd {
 	bool pressed;
-	const char *btn_name;
-	const char *cmd;
+	ଅଚଳ ଅକ୍ଷର *btn_name;
+	ଅଚଳ ଅକ୍ଷର *cmd;
 };
 
 /*
@@ -30,54 +30,54 @@ struct button_cmd {
  *
  * Returns 1 if a command was found, 0 otherwise.
  */
-static int get_button_cmd(int n, struct button_cmd *cmd)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା get_button_cmd(ପୂର୍ଣ୍ଣସଂଖ୍ୟା n, ସଂରଚନା button_cmd *cmd)
 {
-	const char *cmd_str;
-	struct udevice *btn = NULL;
-	char buf[24];
+	ଅଚଳ ଅକ୍ଷର *cmd_str;
+	ସଂରଚନା udevice *btn = ଖାଲି;
+	ଅକ୍ଷର buf[24];
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d_name", n);
+	snprintf(buf, ଆକାର(buf), "button_cmd_%d_name", n);
 	cmd->btn_name = env_get(buf);
-	if (!cmd->btn_name)
-		return 0;
+	ଯଦି (!cmd->btn_name)
+		ଫେରନ୍ତୁ 0;
 
 	button_get_by_label(cmd->btn_name, &btn);
-	if (!btn) {
+	ଯଦି (!btn) {
 		log_err("No button labelled '%s'\n", cmd->btn_name);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
 	cmd->pressed = button_get_state(btn) == BUTTON_ON;
 	/* If the button isn't pressed then cmd->cmd will be unused so don't waste
 	 * cycles reading it
 	 */
-	if (!cmd->pressed)
-		return 1;
+	ଯଦି (!cmd->pressed)
+		ଫେରନ୍ତୁ 1;
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d", n);
+	snprintf(buf, ଆକାର(buf), "button_cmd_%d", n);
 	cmd_str = env_get(buf);
-	if (!cmd_str) {
+	ଯଦି (!cmd_str) {
 		log_err("No command set for button '%s'\n", cmd->btn_name);
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
 	cmd->cmd = cmd_str;
 
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 
-void process_button_cmds(void)
+ଶୂନ୍ୟ process_button_cmds(ଶୂନ୍ୟ)
 {
-	struct button_cmd cmd = {0};
-	int i = 0;
+	ସଂରଚନା button_cmd cmd = {0};
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i = 0;
 
-	while (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
-		if (!cmd.pressed)
-			continue;
+	ଯେତେବେଳେ (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
+		ଯଦି (!cmd.pressed)
+			ଜାରି;
 
 		log_info("BTN '%s'> %s\n", cmd.btn_name, cmd.cmd);
 		run_command(cmd.cmd, CMD_FLAG_ENV);
 		/* Don't run commands for multiple buttons */
-		return;
+		ଫେରନ୍ତୁ;
 	}
 }

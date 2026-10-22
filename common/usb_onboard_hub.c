@@ -7,13 +7,13 @@
  * Mostly inspired by Linux kernel v6.1 onboard_usb_hub driver
  */
 
-#include <asm/gpio.h>
-#include <dm.h>
-#include <dm/device_compat.h>
-#include <dm/uclass-internal.h>
-#include <i2c.h>
-#include <linux/delay.h>
-#include <power/regulator.h>
+#ଅନ୍ତର୍ଭାଵ <asm/gpio.h>
+#ଅନ୍ତର୍ଭାଵ <dm.h>
+#ଅନ୍ତର୍ଭାଵ <dm/device_compat.h>
+#ଅନ୍ତର୍ଭାଵ <dm/uclass-internal.h>
+#ଅନ୍ତର୍ଭାଵ <i2c.h>
+#ଅନ୍ତର୍ଭାଵ <linux/delay.h>
+#ଅନ୍ତର୍ଭାଵ <power/regulator.h>
 
 #define USB5744_COMMAND_ATTACH		0x0056
 #define USB5744_COMMAND_ATTACH_LSB	0xAA
@@ -22,20 +22,20 @@
 
 #define MAX_SUPPLIES 2
 
-struct onboard_hub {
-	struct udevice *vdd[MAX_SUPPLIES];
-	struct gpio_desc *reset_gpio;
+ସଂରଚନା onboard_hub {
+	ସଂରଚନା udevice *vdd[MAX_SUPPLIES];
+	ସଂରଚନା gpio_desc *reset_gpio;
 };
 
-struct onboard_hub_data {
+ସଂରଚନା onboard_hub_data {
 	unsigned long reset_us;
 	unsigned long power_on_delay_us;
-	unsigned int num_supplies;
-	const char * const supply_names[MAX_SUPPLIES];
-	int (*init)(struct udevice *dev);
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ_supplies;
+	ଅଚଳ ଅକ୍ଷର * ଅଚଳ supply_names[MAX_SUPPLIES];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା (*init)(ସଂରଚନା udevice *dev);
 };
 
-static int usb5744_i2c_init(struct udevice *dev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb5744_i2c_init(ସଂରଚନା udevice *dev)
 {
 	/*
 	 *  Prevent the MCU from the putting the HUB in suspend mode through register write.
@@ -54,242 +54,242 @@ static int usb5744_i2c_init(struct udevice *dev)
 	 */
 	u8 data_buf[8] = {0x0, 0x5, 0x0, 0x1, 0x41, 0x1D, 0x08};
 	u8 config_reg_access_buf = USB5744_CONFIG_REG_ACCESS;
-	struct udevice *i2c_bus = NULL, *i2c_dev;
-	struct ofnode_phandle_args phandle;
+	ସଂରଚନା udevice *i2c_bus = ଖାଲି, *i2c_dev;
+	ସଂରଚନା ofnode_phandle_args phandle;
 	u8 buf = USB5744_COMMAND_ATTACH;
-	struct dm_i2c_chip *i2c_chip;
-	int ret, slave_addr;
+	ସଂରଚନା dm_i2c_chip *i2c_chip;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, slave_addr;
 
-	ret = dev_read_phandle_with_args(dev, "i2c-bus", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	ret = dev_read_phandle_with_args(dev, "i2c-bus", ଖାଲି, 0, 0, &phandle);
+	ଯଦି (ret == -ENOENT) {
 		dev_dbg(dev, "i2c-bus not specified\n");
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "i2c-bus read failed\n");
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
-	ret = device_get_global_by_ofnode(ofnode_get_parent(phandle.node), &i2c_bus);
-	if (ret) {
+	ret = device_get_global_by_ofnode(ofnode_get_parent(phandle.ଗଣ୍ଠି), &i2c_bus);
+	ଯଦି (ret) {
 		dev_err(dev, "Failed to get i2c node, err: %d\n", ret);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
-	ret = ofnode_read_u32(phandle.node, "reg", &slave_addr);
-	if (ret)
-		return ret;
+	ret = ofnode_read_u32(phandle.ଗଣ୍ଠି, "reg", &slave_addr);
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
 	ret = i2c_get_chip(i2c_bus, slave_addr, 1, &i2c_dev);
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "%s: can't find i2c chip device for addr 0x%x\n", __func__,
 			slave_addr);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
 	i2c_chip = dev_get_parent_plat(i2c_dev);
-	if (!i2c_chip) {
+	ଯଦି (!i2c_chip) {
 		dev_err(dev, "parent platform data not found\n");
-		return -EINVAL;
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 
 	i2c_chip->flags &= ~DM_I2C_CHIP_WR_ADDRESS;
 	/* SMBus write command */
 	ret = dm_i2c_write(i2c_dev, 0, (uint8_t *)&data_buf, 8);
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "data_buf i2c_write failed, err:%d\n", ret);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
 	/* Configuration register access command */
 	ret = dm_i2c_write(i2c_dev, USB5744_CONFIG_REG_ACCESS_LSB,
 			   &config_reg_access_buf, 2);
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "config_reg_access i2c_write failed, err: %d\n", ret);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
 	/* USB Attach with SMBus */
 	ret = dm_i2c_write(i2c_dev, USB5744_COMMAND_ATTACH_LSB, &buf, 2);
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "usb_attach i2c_write failed, err: %d\n", ret);
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int usb_onboard_hub_reset(struct udevice *dev)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb_onboard_hub_reset(ସଂରଚନା udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret;
+	ସଂରଚନା onboard_hub_data *data =
+		(ସଂରଚନା onboard_hub_data *)dev_get_driver_data(dev);
+	ସଂରଚନା onboard_hub *hub = dev_get_priv(dev);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
 	hub->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_IS_OUT);
 
 	/* property is optional, don't return error! */
-	if (!hub->reset_gpio)
-		return 0;
+	ଯଦି (!hub->reset_gpio)
+		ଫେରନ୍ତୁ 0;
 
-	ret = dm_gpio_set_value(hub->reset_gpio, 1);
-	if (ret)
-		return ret;
+	ret = dm_gpio_set_ମୂଲ୍ୟ(hub->reset_gpio, 1);
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
 	udelay(data->reset_us);
 
-	ret = dm_gpio_set_value(hub->reset_gpio, 0);
-	if (ret)
-		return ret;
+	ret = dm_gpio_set_ମୂଲ୍ୟ(hub->reset_gpio, 0);
+	ଯଦି (ret)
+		ଫେରନ୍ତୁ ret;
 
 	udelay(data->power_on_delay_us);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int usb_onboard_hub_power_off(struct udevice *dev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb_onboard_hub_power_off(ସଂରଚନା udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0, ret2;
-	unsigned int i;
+	ସଂରଚନା onboard_hub_data *data =
+		(ସଂରଚନା onboard_hub_data *)dev_get_driver_data(dev);
+	ସଂରଚନା onboard_hub *hub = dev_get_priv(dev);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = 0, ret2;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	for (i = data->num_supplies; i > 0; i--) {
-		if (hub->vdd[i-1]) {
+	ପାଇଁ (i = data->ଅଙ୍କ_supplies; i > 0; i--) {
+		ଯଦି (hub->vdd[i-1]) {
 			ret2 = regulator_set_enable_if_allowed(hub->vdd[i-1], false);
-			if (ret2 && ret2 != -ENOSYS) {
+			ଯଦି (ret2 && ret2 != -ENOSYS) {
 				dev_err(dev, "can't disable %s: %d\n", data->supply_names[i-1], ret2);
 				ret |= ret2;
 			}
 		}
 	}
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-static int usb_onboard_hub_probe(struct udevice *dev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb_onboard_hub_probe(ସଂରଚନା udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	unsigned int i;
-	int ret;
+	ସଂରଚନା onboard_hub_data *data =
+		(ସଂରଚନା onboard_hub_data *)dev_get_driver_data(dev);
+	ସଂରଚନା onboard_hub *hub = dev_get_priv(dev);
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
-	if (data->num_supplies > MAX_SUPPLIES) {
+	ଯଦି (data->ଅଙ୍କ_supplies > MAX_SUPPLIES) {
 		dev_err(dev, "invalid supplies number, max supported: %d\n", MAX_SUPPLIES);
-		return -EINVAL;
+		ଫେରନ୍ତୁ -EINVAL;
 	}
 
-	for (i = 0; i < data->num_supplies; i++) {
+	ପାଇଁ (i = 0; i < data->ଅଙ୍କ_supplies; i++) {
 		ret = device_get_supply_regulator(dev, data->supply_names[i], &hub->vdd[i]);
-		if (ret && ret != -ENOENT && ret != -ENOSYS) {
+		ଯଦି (ret && ret != -ENOENT && ret != -ENOSYS) {
 			dev_err(dev, "can't get %s: %d\n", data->supply_names[i], ret);
-			goto err_supply;
+			ଯାଅ err_supply;
 		}
 
-		if (hub->vdd[i]) {
+		ଯଦି (hub->vdd[i]) {
 			ret = regulator_set_enable_if_allowed(hub->vdd[i], true);
-			if (ret && ret != -ENOSYS) {
+			ଯଦି (ret && ret != -ENOSYS) {
 				dev_err(dev, "can't enable %s: %d\n", data->supply_names[i], ret);
-				goto err_supply;
+				ଯାଅ err_supply;
 			}
 		}
 	}
 
 	ret = usb_onboard_hub_reset(dev);
-	if (ret)
-		goto err_supply;
+	ଯଦି (ret)
+		ଯାଅ err_supply;
 
-	if (data->init) {
+	ଯଦି (data->init) {
 		ret = data->init(dev);
-		if (ret) {
+		ଯଦି (ret) {
 			dev_err(dev, "onboard i2c init failed: %d\n", ret);
-			goto err;
+			ଯାଅ err;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 err:
-	dm_gpio_set_value(hub->reset_gpio, 0);
+	dm_gpio_set_ମୂଲ୍ୟ(hub->reset_gpio, 0);
 err_supply:
 	usb_onboard_hub_power_off(dev);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-static int usb_onboard_hub_bind(struct udevice *dev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb_onboard_hub_bind(ସଂରଚନା udevice *dev)
 {
-	struct ofnode_phandle_args phandle;
-	struct udevice *peerdev;
-	int ret;
+	ସଂରଚନା ofnode_phandle_args phandle;
+	ସଂରଚନା udevice *peerdev;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
-	ret = dev_read_phandle_with_args(dev, "peer-hub", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	ret = dev_read_phandle_with_args(dev, "peer-hub", ଖାଲି, 0, 0, &phandle);
+	ଯଦି (ret == -ENOENT) {
 		dev_dbg(dev, "peer-hub property not present\n");
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
-	if (ret) {
+	ଯଦି (ret) {
 		dev_err(dev, "peer-hub not specified\n");
-		return ret;
+		ଫେରନ୍ତୁ ret;
 	}
 
-	ret = uclass_find_device_by_ofnode(UCLASS_USB_HUB, phandle.node, &peerdev);
-	if (ret) {
+	ret = uclass_find_device_by_ofnode(UCLASS_USB_HUB, phandle.ଗଣ୍ଠି, &peerdev);
+	ଯଦି (ret) {
 		dev_dbg(dev, "binding before peer-hub %s\n",
-			ofnode_get_name(phandle.node));
-		return 0;
+			ofnode_get_name(phandle.ଗଣ୍ଠି));
+		ଫେରନ୍ତୁ 0;
 	}
 
 	dev_dbg(dev, "peer-hub %s has been bound\n", peerdev->name);
 
-	return -ENODEV;
+	ଫେରନ୍ତୁ -ENODEV;
 }
 
-static int usb_onboard_hub_remove(struct udevice *dev)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା usb_onboard_hub_remove(ସଂରଚନା udevice *dev)
 {
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0;
+	ସଂରଚନା onboard_hub *hub = dev_get_priv(dev);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = 0;
 
-	if (hub->reset_gpio) {
-		ret = dm_gpio_set_value(hub->reset_gpio, 1);
-		if (ret)
+	ଯଦି (hub->reset_gpio) {
+		ret = dm_gpio_set_ମୂଲ୍ୟ(hub->reset_gpio, 1);
+		ଯଦି (ret)
 			dev_err(dev, "can't set gpio %s: %d\n", hub->reset_gpio->dev->name,
 				ret);
 	}
 
 	ret |= usb_onboard_hub_power_off(dev);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-static const struct onboard_hub_data corechips_sl6341_data = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା onboard_hub_data corechips_sl6341_data = {
 	.reset_us = 10000,
-	.num_supplies = 2,
+	.ଅଙ୍କ_supplies = 2,
 	.supply_names = { "vdd1v1-supply", "vdd3v3-supply" },
 };
 
-static const struct onboard_hub_data usb2514_data = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା onboard_hub_data usb2514_data = {
 	.power_on_delay_us = 500,
 	.reset_us = 1,
-	.num_supplies = 1,
+	.ଅଙ୍କ_supplies = 1,
 	.supply_names = { "vdd-supply" },
 };
 
-static const struct onboard_hub_data usb5744_data = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା onboard_hub_data usb5744_data = {
 	.init = usb5744_i2c_init,
 	.power_on_delay_us = 1000,
 	.reset_us = 5,
-	.num_supplies = 1,
+	.ଅଙ୍କ_supplies = 1,
 	.supply_names = { "vdd-supply" },
 };
 
-static const struct onboard_hub_data usbhx3_data = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା onboard_hub_data usbhx3_data = {
 	.reset_us = 10000,
-	.num_supplies = 2,
+	.ଅଙ୍କ_supplies = 2,
 	.supply_names = { "vdd-supply", "vdd2-supply" },
 };
 
-static const struct udevice_id usb_onboard_hub_ids[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା udevice_id usb_onboard_hub_ids[] = {
 	/* Use generic usbVID,PID dt-bindings (usb-device.yaml) */
 	{	.compatible = "usb3431,6241",	/* Corechips SL6341 USB 2.0 */
 		.data = (ulong)&corechips_sl6341_data,
@@ -322,5 +322,5 @@ U_BOOT_DRIVER(usb_onboard_hub) = {
 	.probe = usb_onboard_hub_probe,
 	.remove = usb_onboard_hub_remove,
 	.of_match = usb_onboard_hub_ids,
-	.priv_auto = sizeof(struct onboard_hub),
+	.priv_auto = ଆକାର(ସଂରଚନା onboard_hub),
 };

@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#ଅନ୍ତର୍ଭାଵ <scp03.h>
+#ଅନ୍ତର୍ଭାଵ <tee.h>
+#ଅନ୍ତର୍ଭାଵ <tee/optee_ta_scp03.h>
+#ଅନ୍ତର୍ଭାଵ <linux/errno.h>
+#ଅନ୍ତର୍ଭାଵ <linux/string.h>
 
-static int scp03_enable(bool provision)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	ଅଚଳ ସଂରଚନା tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	ସଂରଚନା tee_open_session_arg session;
+	ସଂରଚନା tee_invoke_arg invoke;
+	ସଂରଚନା tee_param param;
+	ସଂରଚନା udevice *tee = ଖାଲି;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_find_device(tee, ଖାଲି, ଖାଲି, ଖାଲି);
+	ଯଦି (!tee)
+		ଫେରନ୍ତୁ -ENODEV;
 
-	memset(&session, 0, sizeof(session));
+	memset(&session, 0, ଆକାର(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	ଯଦି (tee_open_session(tee, &session, 0, ଖାଲି))
+		ଫେରନ୍ତୁ -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, ଆକାର(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_ମୂଲ୍ୟ_ନିବେଶ;
+	param.u.ମୂଲ୍ୟ.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, ଆକାର(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ଯଦି (tee_invoke_func(tee, &invoke, 1, &param))
+		ଫେରନ୍ତୁ -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int tee_enable_scp03(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା tee_enable_scp03(ଶୂନ୍ୟ)
 {
-	return scp03_enable(false);
+	ଫେରନ୍ତୁ scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା tee_provision_scp03(ଶୂନ୍ୟ)
 {
-	return scp03_enable(true);
+	ଫେରନ୍ତୁ scp03_enable(true);
 }
