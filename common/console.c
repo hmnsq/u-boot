@@ -6,187 +6,187 @@
 
 #define LOG_CATEGORY	LOGC_CONSOLE
 
-#include <console.h>
-#include <debug_uart.h>
-#include <display_options.h>
-#include <dm.h>
-#include <env.h>
-#include <stdarg.h>
-#include <iomux.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <os.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <exports.h>
-#include <env_internal.h>
-#include <video_console.h>
-#include <watchdog.h>
-#include <asm/global_data.h>
-#include <linux/delay.h>
+#அந்தர்பாவ <console.h>
+#அந்தர்பாவ <debug_uart.h>
+#அந்தர்பாவ <display_options.h>
+#அந்தர்பாவ <dm.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <iomux.h>
+#அந்தர்பாவ <malloc.h>
+#அந்தர்பாவ <mapmem.h>
+#அந்தர்பாவ <os.h>
+#அந்தர்பாவ <serial.h>
+#அந்தர்பாவ <stdio_dev.h>
+#அந்தர்பாவ <exports.h>
+#அந்தர்பாவ <env_internal.h>
+#அந்தர்பாவ <video_console.h>
+#அந்தர்பாவ <watchdog.h>
+#அந்தர்பாவ <asm/global_data.h>
+#அந்தர்பாவ <linux/delay.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #define CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
-	int flags)
+நிலையான முழு on_console(மாறிலி எழுத்து *name, மாறிலி எழுத்து *மதிப்பு, எண்ணிக்கை env_op op,
+	முழு flags)
 {
-	int console = -1;
+	முழு console = -1;
 
 	/* Check for console redirection */
-	if (strcmp(name, "stdin") == 0)
+	எனில் (strcmp(name, "stdin") == 0)
 		console = stdin;
-	else if (strcmp(name, "stdout") == 0)
+	இல்லையெனில் எனில் (strcmp(name, "stdout") == 0)
 		console = stdout;
-	else if (strcmp(name, "stderr") == 0)
+	இல்லையெனில் எனில் (strcmp(name, "stderr") == 0)
 		console = stderr;
 
 	/* if not actually setting a console variable, we don't care */
-	if (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
-		return 0;
+	எனில் (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
+		திரும்பு 0;
 
-	switch (op) {
-	case env_op_create:
-	case env_op_overwrite:
+	தேர்வு (op) {
+	நிலை env_op_create:
+	நிலை env_op_overwrite:
 
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
-				return 1;
-		} else {
+		எனில் (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			எனில் (iomux_doenv(console, மதிப்பு))
+				திரும்பு 1;
+		} இல்லையெனில் {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
-				return 1;
+			எனில் (console_assign(console, மதிப்பு) < 0)
+				திரும்பு 1;
 		}
 
-		return 0;
+		திரும்பு 0;
 
-	case env_op_delete:
-		if ((flags & H_FORCE) == 0)
+	நிலை env_op_delete:
+		எனில் ((flags & H_FORCE) == 0)
 			printf("Can't delete \"%s\"\n", name);
-		return 1;
+		திரும்பு 1;
 
-	default:
-		return 0;
+	இயல்பு:
+		திரும்பு 0;
 	}
 }
 U_BOOT_ENV_CALLBACK(console, on_console);
 
 #ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
-	int flags)
+நிலையான முழு on_silent(மாறிலி எழுத்து *name, மாறிலி எழுத்து *மதிப்பு, எண்ணிக்கை env_op op,
+	முழு flags)
 {
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
-		if (flags & H_INTERACTIVE)
-			return 0;
+	எனில் (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
+		எனில் (flags & H_INTERACTIVE)
+			திரும்பு 0;
 
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
-		if ((flags & H_INTERACTIVE) == 0)
-			return 0;
+	எனில் (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
+		எனில் ((flags & H_INTERACTIVE) == 0)
+			திரும்பு 0;
 
-	if (value != NULL)
+	எனில் (மதிப்பு != வெற்று)
 		gd->flags |= GD_FLG_SILENT;
-	else
+	இல்லையெனில்
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return 0;
+	திரும்பு 0;
 }
 U_BOOT_ENV_CALLBACK(silent, on_silent);
 #endif
 
 #ifdef CONFIG_CONSOLE_RECORD
 /* helper function: access to gd->console_out and gd->console_in */
-static void console_record_putc(const char c)
+நிலையான வெறுமை console_record_putc(மாறிலி எழுத்து c)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start &&
-	     !membuf_putbyte((struct membuf *)&gd->console_out, c))
+	எனில் (!(gd->flags & GD_FLG_RECORD))
+		திரும்பு;
+	எனில்  (gd->console_out.start &&
+	     !membuf_putbyte((கட்டமைப்பு membuf *)&gd->console_out, c))
 		gd->flags |= GD_FLG_RECORD_OVF;
 }
 
-static void console_record_puts(const char *s)
+நிலையான வெறுமை console_record_puts(மாறிலி எழுத்து *s)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start) {
-		int len = strlen(s);
+	எனில் (!(gd->flags & GD_FLG_RECORD))
+		திரும்பு;
+	எனில்  (gd->console_out.start) {
+		முழு len = strlen(s);
 
-		if (membuf_put((struct membuf *)&gd->console_out, s, len) !=
+		எனில் (membuf_put((கட்டமைப்பு membuf *)&gd->console_out, s, len) !=
 		    len)
 			gd->flags |= GD_FLG_RECORD_OVF;
 	}
 }
 
-static int console_record_getc(void)
+நிலையான முழு console_record_getc(வெறுமை)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return -1;
-	if (!gd->console_in.start)
-		return -1;
+	எனில் (!(gd->flags & GD_FLG_RECORD))
+		திரும்பு -1;
+	எனில் (!gd->console_in.start)
+		திரும்பு -1;
 
-	return membuf_getbyte((struct membuf *)&gd->console_in);
+	திரும்பு membuf_getbyte((கட்டமைப்பு membuf *)&gd->console_in);
 }
 
-static int console_record_tstc(void)
+நிலையான முழு console_record_tstc(வெறுமை)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return 0;
-	if (gd->console_in.start) {
-		if (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
-			return 1;
+	எனில் (!(gd->flags & GD_FLG_RECORD))
+		திரும்பு 0;
+	எனில் (gd->console_in.start) {
+		எனில் (membuf_peekbyte((கட்டமைப்பு membuf *)&gd->console_in) != -1)
+			திரும்பு 1;
 	}
-	return 0;
+	திரும்பு 0;
 }
-#else
-static void console_record_putc(char c)
+#இல்லையெனில்
+நிலையான வெறுமை console_record_putc(எழுத்து c)
 {
 }
 
-static void console_record_puts(const char *s)
+நிலையான வெறுமை console_record_puts(மாறிலி எழுத்து *s)
 {
 }
 
-static int console_record_getc(void)
+நிலையான முழு console_record_getc(வெறுமை)
 {
-	return -1;
+	திரும்பு -1;
 }
 
-static int console_record_tstc(void)
+நிலையான முழு console_record_tstc(வெறுமை)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#எனில் CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /*
  * if overwrite_console returns 1, the stdin, stderr and stdout
  * are switched to the serial port, else the settings in the
  * environment are used
  */
 #ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
+வெளி முழு overwrite_console(வெறுமை);
 #define OVERWRITE_CONSOLE overwrite_console()
-#else
+#இல்லையெனில்
 #define OVERWRITE_CONSOLE 0
 #endif /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-static int console_setfile(int file, struct stdio_dev * dev)
+நிலையான முழு console_setfile(முழு file, கட்டமைப்பு stdio_dev * dev)
 {
-	int error = 0;
+	முழு error = 0;
 
-	if (dev == NULL)
-		return -1;
+	எனில் (dev == வெற்று)
+		திரும்பு -1;
 
-	switch (file) {
-	case stdin:
-	case stdout:
-	case stderr:
+	தேர்வு (file) {
+	நிலை stdin:
+	நிலை stdout:
+	நிலை stderr:
 		error = console_start(file, dev);
-		if (error)
-			break;
+		எனில் (error)
+			நிறுத்து;
 
 		/* Assign the new device (leaving the existing one started) */
 		stdio_devices[file] = dev;
@@ -196,24 +196,24 @@ static int console_setfile(int file, struct stdio_dev * dev)
 		 * Update monitor functions
 		 * (to use the console stuff by other applications)
 		 */
-		switch (file) {
-		case stdin:
+		தேர்வு (file) {
+		நிலை stdin:
 			gd->jt->getc = getchar;
 			gd->jt->tstc = tstc;
-			break;
-		case stdout:
+			நிறுத்து;
+		நிலை stdout:
 			gd->jt->putc  = putc;
 			gd->jt->puts  = puts;
 			STDIO_DEV_ASSIGN_FLUSH(gd->jt, flush);
 			gd->jt->printf = printf;
-			break;
+			நிறுத்து;
 		}
 #endif
-		break;
-	default:		/* Invalid file ID */
+		நிறுத்து;
+	இயல்பு:		/* Invalid file ID */
 		error = -1;
 	}
-	return error;
+	திரும்பு error;
 }
 
 /**
@@ -223,33 +223,33 @@ static int console_setfile(int file, struct stdio_dev * dev)
  * Return: true if this device is in the serial uclass (or for pre-driver-model,
  * whether it is called "serial".
  */
-static bool console_dev_is_serial(struct stdio_dev *sdev)
+நிலையான bool console_dev_is_serial(கட்டமைப்பு stdio_dev *sdev)
 {
 	bool is_serial;
 
-	if (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
-		struct udevice *dev = sdev->priv;
+	எனில் (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
+		கட்டமைப்பு udevice *dev = sdev->priv;
 
 		is_serial = device_get_uclass_id(dev) == UCLASS_SERIAL;
-	} else {
+	} இல்லையெனில் {
 		is_serial = !strcmp(sdev->name, "serial");
 	}
 
-	return is_serial;
+	திரும்பு is_serial;
 }
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
+#எனில் CONFIG_IS_ENABLED(CONSOLE_MUX)
 /** Console I/O multiplexing *******************************************/
 
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
-static struct stdio_dev *tstcdev;
-struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+நிலையான கட்டமைப்பு stdio_dev *tstcdev;
+கட்டமைப்பு stdio_dev **console_devices[MAX_FILES];
+முழு cd_மொத்தம்[MAX_FILES];
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+நிலையான வெறுமை console_devices_set(முழு file, கட்டமைப்பு stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
-	cd_count[file] = 1;
+	cd_மொத்தம்[file] = 1;
 }
 
 /**
@@ -263,18 +263,18 @@ static void console_devices_set(int file, struct stdio_dev *dev)
  * other words, we start console once before first STDIO device wants it and
  * stop after the last is gone.
  */
-static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+நிலையான bool console_needs_start_stop(முழு file, கட்டமைப்பு stdio_dev *sdev)
 {
-	int i;
+	முழு i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
-		if (i == file)
-			continue;
+	க்கு (i = 0; i < ARRAY_SIZE(cd_மொத்தம்); i++) {
+		எனில் (i == file)
+			தொடர்;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
-			return false;
+		எனில் (iomux_match_device(console_devices[i], cd_மொத்தம்[i], sdev) >= 0)
+			திரும்பு false;
 	}
-	return true;
+	திரும்பு true;
 }
 
 /*
@@ -283,51 +283,51 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
  * only from fgetc() which assures it.
  * No attempt is made to demultiplex multiple input sources.
  */
-static int console_getc(int file)
+நிலையான முழு console_getc(முழு file)
 {
-	unsigned char ret;
+	unsigned எழுத்து ret;
 
 	/* This is never called with testcdev == NULL */
 	ret = tstcdev->getc(tstcdev);
-	tstcdev = NULL;
-	return ret;
+	tstcdev = வெற்று;
+	திரும்பு ret;
 }
 
 /*  Upper layer may have already called tstc(): check the saved result */
-static bool console_has_tstc(void)
+நிலையான bool console_has_tstc(வெறுமை)
 {
-	return !!tstcdev;
+	திரும்பு !!tstcdev;
 }
 
-static int console_tstc(int file)
+நிலையான முழு console_tstc(முழு file)
 {
-	int i, ret;
-	struct stdio_dev *dev;
-	int prev;
+	முழு i, ret;
+	கட்டமைப்பு stdio_dev *dev;
+	முழு prev;
 
 	prev = disable_ctrlc(1);
 	for_each_console_dev(i, file, dev) {
-		if (dev->tstc != NULL) {
+		எனில் (dev->tstc != வெற்று) {
 			ret = dev->tstc(dev);
-			if (ret > 0) {
+			எனில் (ret > 0) {
 				tstcdev = dev;
 				disable_ctrlc(prev);
-				return ret;
+				திரும்பு ret;
 			}
 		}
 	}
 	disable_ctrlc(prev);
 
-	return 0;
+	திரும்பு 0;
 }
 
-static void console_putc(int file, const char c)
+நிலையான வெறுமை console_putc(முழு file, மாறிலி எழுத்து c)
 {
-	int i;
-	struct stdio_dev *dev;
+	முழு i;
+	கட்டமைப்பு stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->putc != NULL)
+		எனில் (dev->putc != வெற்று)
 			dev->putc(dev, c);
 	}
 }
@@ -340,330 +340,330 @@ static void console_putc(int file, const char c)
  *	else
  * @s: String to output
  */
-static void console_puts_select(int file, bool serial_only, const char *s)
+நிலையான வெறுமை console_puts_select(முழு file, bool serial_only, மாறிலி எழுத்து *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	முழு i;
+	கட்டமைப்பு stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
 		bool is_serial = console_dev_is_serial(dev);
 
-		if (dev->puts && serial_only == is_serial)
+		எனில் (dev->puts && serial_only == is_serial)
 			dev->puts(dev, s);
 	}
 }
 
-void console_puts_select_stderr(bool serial_only, const char *s)
+வெறுமை console_puts_select_stderr(bool serial_only, மாறிலி எழுத்து *s)
 {
-	if (gd->flags & GD_FLG_DEVINIT)
+	எனில் (gd->flags & GD_FLG_DEVINIT)
 		console_puts_select(stderr, serial_only, s);
 }
 
-int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
+முழு console_printf_select_stderr(bool serial_only, மாறிலி எழுத்து *fmt, ...)
 {
-	char buf[CONFIG_SYS_PBSIZE];
+	எழுத்து buf[CONFIG_SYS_PBSIZE];
 	va_list args;
-	int ret;
+	முழு ret;
 
 	va_start(args, fmt);
 
 	/* For this to work, buf must be larger than anything we ever want to
 	 * print.
 	 */
-	ret = vscnprintf(buf, sizeof(buf), fmt, args);
+	ret = vscnprintf(buf, அளவு(buf), fmt, args);
 	va_end(args);
 	console_puts_select_stderr(serial_only, buf);
 
-	return ret;
+	திரும்பு ret;
 }
 
-static void console_puts(int file, const char *s)
+நிலையான வெறுமை console_puts(முழு file, மாறிலி எழுத்து *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	முழு i;
+	கட்டமைப்பு stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->puts != NULL)
+		எனில் (dev->puts != வெற்று)
 			dev->puts(dev, s);
 	}
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void console_flush(int file)
+நிலையான வெறுமை console_flush(முழு file)
 {
-	int i;
-	struct stdio_dev *dev;
+	முழு i;
+	கட்டமைப்பு stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->flush != NULL)
+		எனில் (dev->flush != வெற்று)
 			dev->flush(dev);
 	}
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#எனில் CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+நிலையான உள்வரி வெறுமை console_doenv(முழு file, கட்டமைப்பு stdio_dev *dev)
 {
 	iomux_doenv(file, dev->name);
 }
 #endif
-#else
+#இல்லையெனில்
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+நிலையான வெறுமை console_devices_set(முழு file, கட்டமைப்பு stdio_dev *dev)
 {
 }
 
-static inline bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+நிலையான உள்வரி bool console_needs_start_stop(முழு file, கட்டமைப்பு stdio_dev *sdev)
 {
-	return true;
+	திரும்பு true;
 }
 
-static inline int console_getc(int file)
+நிலையான உள்வரி முழு console_getc(முழு file)
 {
-	return stdio_devices[file]->getc(stdio_devices[file]);
+	திரும்பு stdio_devices[file]->getc(stdio_devices[file]);
 }
 
-static bool console_has_tstc(void)
+நிலையான bool console_has_tstc(வெறுமை)
 {
-	return false;
+	திரும்பு false;
 }
 
-static inline int console_tstc(int file)
+நிலையான உள்வரி முழு console_tstc(முழு file)
 {
-	return stdio_devices[file]->tstc(stdio_devices[file]);
+	திரும்பு stdio_devices[file]->tstc(stdio_devices[file]);
 }
 
-static inline void console_putc(int file, const char c)
+நிலையான உள்வரி வெறுமை console_putc(முழு file, மாறிலி எழுத்து c)
 {
 	stdio_devices[file]->putc(stdio_devices[file], c);
 }
 
-void console_puts_select(int file, bool serial_only, const char *s)
+வெறுமை console_puts_select(முழு file, bool serial_only, மாறிலி எழுத்து *s)
 {
-	if ((gd->flags & GD_FLG_DEVINIT) &&
+	எனில் ((gd->flags & GD_FLG_DEVINIT) &&
 	    serial_only == console_dev_is_serial(stdio_devices[file]))
 		stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
-static inline void console_puts(int file, const char *s)
+நிலையான உள்வரி வெறுமை console_puts(முழு file, மாறிலி எழுத்து *s)
 {
 	stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static inline void console_flush(int file)
+நிலையான உள்வரி வெறுமை console_flush(முழு file)
 {
-	if (stdio_devices[file]->flush)
+	எனில் (stdio_devices[file]->flush)
 		stdio_devices[file]->flush(stdio_devices[file]);
 }
 #endif
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#எனில் CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+நிலையான உள்வரி வெறுமை console_doenv(முழு file, கட்டமைப்பு stdio_dev *dev)
 {
 	console_setfile(file, dev);
 }
 #endif
 #endif /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
 
-static void __maybe_unused console_setfile_and_devices(int file, struct stdio_dev *dev)
+நிலையான வெறுமை __maybe_unused console_setfile_and_devices(முழு file, கட்டமைப்பு stdio_dev *dev)
 {
 	console_setfile(file, dev);
 	console_devices_set(file, dev);
 }
 
-int console_start(int file, struct stdio_dev *sdev)
+முழு console_start(முழு file, கட்டமைப்பு stdio_dev *sdev)
 {
-	int error;
+	முழு error;
 
-	if (!console_needs_start_stop(file, sdev))
-		return 0;
+	எனில் (!console_needs_start_stop(file, sdev))
+		திரும்பு 0;
 
 	/* Start new device */
-	if (sdev->start) {
+	எனில் (sdev->start) {
 		error = sdev->start(sdev);
 		/* If it's not started don't use it */
-		if (error < 0)
-			return error;
+		எனில் (error < 0)
+			திரும்பு error;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-void console_stop(int file, struct stdio_dev *sdev)
+வெறுமை console_stop(முழு file, கட்டமைப்பு stdio_dev *sdev)
 {
-	if (!console_needs_start_stop(file, sdev))
-		return;
+	எனில் (!console_needs_start_stop(file, sdev))
+		திரும்பு;
 
-	if (sdev->stop)
+	எனில் (sdev->stop)
 		sdev->stop(sdev);
 }
 
 /** U-Boot INITIAL CONSOLE-NOT COMPATIBLE FUNCTIONS *************************/
 
-int serial_printf(const char *fmt, ...)
+முழு serial_printf(மாறிலி எழுத்து *fmt, ...)
 {
 	va_list args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	எழுத்து printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
+	i = vscnprintf(printbuffer, அளவு(printbuffer), fmt, args);
 	va_end(args);
 
 	serial_puts(printbuffer);
-	return i;
+	திரும்பு i;
 }
 
-int fgetc(int file)
+முழு fgetc(முழு file)
 {
-	if ((unsigned int)file < MAX_FILES) {
+	எனில் ((unsigned முழு)file < MAX_FILES) {
 		/*
 		 * Effectively poll for input wherever it may be available.
 		 */
-		for (;;) {
+		க்கு (;;) {
 			schedule();
-			if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			எனில் (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 				/*
 				 * Upper layer may have already called tstc() so
 				 * check for that first.
 				 */
-				if (console_has_tstc())
-					return console_getc(file);
+				எனில் (console_has_tstc())
+					திரும்பு console_getc(file);
 				console_tstc(file);
-			} else {
-				if (console_tstc(file))
-					return console_getc(file);
+			} இல்லையெனில் {
+				எனில் (console_tstc(file))
+					திரும்பு console_getc(file);
 			}
 
 			/*
 			 * If the watchdog must be rate-limited then it should
 			 * already be handled in board-specific code.
 			 */
-			if (IS_ENABLED(CONFIG_WATCHDOG))
+			எனில் (IS_ENABLED(CONFIG_WATCHDOG))
 				udelay(1);
 		}
 	}
 
-	return -1;
+	திரும்பு -1;
 }
 
-int ftstc(int file)
+முழு ftstc(முழு file)
 {
-	if ((unsigned int)file < MAX_FILES)
-		return console_tstc(file);
+	எனில் ((unsigned முழு)file < MAX_FILES)
+		திரும்பு console_tstc(file);
 
-	return -1;
+	திரும்பு -1;
 }
 
-void fputc(int file, const char c)
+வெறுமை fputc(முழு file, மாறிலி எழுத்து c)
 {
-	if ((unsigned int)file < MAX_FILES)
+	எனில் ((unsigned முழு)file < MAX_FILES)
 		console_putc(file, c);
 }
 
-void fputs(int file, const char *s)
+வெறுமை fputs(முழு file, மாறிலி எழுத்து *s)
 {
-	if ((unsigned int)file < MAX_FILES)
+	எனில் ((unsigned முழு)file < MAX_FILES)
 		console_puts(file, s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void fflush(int file)
+வெறுமை fflush(முழு file)
 {
-	if ((unsigned int)file < MAX_FILES)
+	எனில் ((unsigned முழு)file < MAX_FILES)
 		console_flush(file);
 }
 #endif
 
-int fprintf(int file, const char *fmt, ...)
+முழு fprintf(முழு file, மாறிலி எழுத்து *fmt, ...)
 {
 	va_list args;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	எழுத்து printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
+	i = vscnprintf(printbuffer, அளவு(printbuffer), fmt, args);
 	va_end(args);
 
 	/* Send to desired file */
 	fputs(file, printbuffer);
-	return i;
+	திரும்பு i;
 }
 
 /** U-Boot INITIAL CONSOLE-COMPATIBLE FUNCTION *****************************/
 
-int getchar(void)
+முழு getchar(வெறுமை)
 {
-	int ch;
+	முழு ch;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	எனில் (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		திரும்பு 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	எனில் (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		திரும்பு 0;
 
 	ch = console_record_getc();
-	if (ch != -1)
-		return ch;
+	எனில் (ch != -1)
+		திரும்பு ch;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	எனில் (gd->flags & GD_FLG_DEVINIT) {
 		/* Get from the standard input */
-		return fgetc(stdin);
+		திரும்பு fgetc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_getc();
+	திரும்பு serial_getc();
 }
 
-int tstc(void)
+முழு tstc(வெறுமை)
 {
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	எனில் (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		திரும்பு 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	எனில் (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		திரும்பு 0;
 
-	if (console_record_tstc())
-		return 1;
+	எனில் (console_record_tstc())
+		திரும்பு 1;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	எனில் (gd->flags & GD_FLG_DEVINIT) {
 		/* Test the standard input */
-		return ftstc(stdin);
+		திரும்பு ftstc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_tstc();
+	திரும்பு serial_tstc();
 }
 
 /**
  * console_flush_stdin() - drops all pending characters from stdin
  */
-void console_flush_stdin(void)
+வெறுமை console_flush_stdin(வெறுமை)
 {
-	while (tstc())
-		(void)getchar();
+	போது (tstc())
+		(வெறுமை)getchar();
 }
 
 #define PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
 #define PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
 
-#if CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+#எனில் CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
 #define CIRC_BUF_IDX(idx) ((idx) % (unsigned long)CONFIG_VAL(PRE_CON_BUF_SZ))
 
-static void pre_console_putc(const char c)
+நிலையான வெறுமை pre_console_putc(மாறிலி எழுத்து c)
 {
-	char *buffer;
+	எழுத்து *buffer;
 
-	if (gd->precon_buf_idx < 0)
-		return;
+	எனில் (gd->precon_buf_idx < 0)
+		திரும்பு;
 
 	buffer = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
 
@@ -672,126 +672,126 @@ static void pre_console_putc(const char c)
 	unmap_sysmem(buffer);
 }
 
-static void pre_console_puts(const char *s)
+நிலையான வெறுமை pre_console_puts(மாறிலி எழுத்து *s)
 {
-	if (gd->precon_buf_idx < 0)
-		return;
+	எனில் (gd->precon_buf_idx < 0)
+		திரும்பு;
 
-	while (*s)
+	போது (*s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+நிலையான வெறுமை print_pre_console_buffer(முழு flushpoint)
 {
 	long in = 0, out = 0;
-	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
-	char *buf_in;
+	எழுத்து buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
+	எழுத்து *buf_in;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	எனில் (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		திரும்பு;
 
 	buf_in = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
-	if (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
+	எனில் (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
 		in = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
 
-	while (in < gd->precon_buf_idx)
+	போது (in < gd->precon_buf_idx)
 		buf_out[out++] = buf_in[CIRC_BUF_IDX(in++)];
 	unmap_sysmem(buf_in);
 
 	buf_out[out] = 0;
 
 	gd->precon_buf_idx = -1;
-	switch (flushpoint) {
-	case PRE_CONSOLE_FLUSHPOINT1_SERIAL:
+	தேர்வு (flushpoint) {
+	நிலை PRE_CONSOLE_FLUSHPOINT1_SERIAL:
 		puts(buf_out);
-		break;
-	case PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
+		நிறுத்து;
+	நிலை PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
 		console_puts_select(stdout, false, buf_out);
-		break;
+		நிறுத்து;
 	}
 	gd->precon_buf_idx = in;
 }
-#else
-static inline void pre_console_putc(const char c) {}
-static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
+#இல்லையெனில்
+நிலையான உள்வரி வெறுமை pre_console_putc(மாறிலி எழுத்து c) {}
+நிலையான உள்வரி வெறுமை pre_console_puts(மாறிலி எழுத்து *s) {}
+நிலையான உள்வரி வெறுமை print_pre_console_buffer(முழு flushpoint) {}
 #endif
 
-void putc(const char c)
+வெறுமை putc(மாறிலி எழுத்து c)
 {
-	if (!gd)
-		return;
+	எனில் (!gd)
+		திரும்பு;
 
 	console_record_putc(c);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	எனில் (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_putc(c);
-		return;
+		திரும்பு;
 	}
 
 	/* if we don't have a console yet, use the debug UART */
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	எனில் (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printch(c);
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	எனில் (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		எனில் (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_putc(c);
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	எனில் (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		திரும்பு;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_putc(c);
+	எனில் (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		திரும்பு pre_console_putc(c);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	எனில் (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputc(stdout, c);
-	} else {
+	} இல்லையெனில் {
 		/* Send directly to the handler */
 		pre_console_putc(c);
 		serial_putc(c);
 	}
 }
 
-void puts(const char *s)
+வெறுமை puts(மாறிலி எழுத்து *s)
 {
-	if (!gd)
-		return;
+	எனில் (!gd)
+		திரும்பு;
 
 	console_record_puts(s);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	எனில் (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_puts(s);
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	எனில் (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printascii(s);
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	எனில் (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		எனில் (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_puts(s);
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	எனில் (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		திரும்பு;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_puts(s);
+	எனில் (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		திரும்பு pre_console_puts(s);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	எனில் (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputs(stdout, s);
-	} else {
+	} இல்லையெனில் {
 		/* Send directly to the handler */
 		pre_console_puts(s);
 		serial_puts(s);
@@ -799,33 +799,33 @@ void puts(const char *s)
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void flush(void)
+வெறுமை flush(வெறுமை)
 {
-	if (!gd)
-		return;
+	எனில் (!gd)
+		திரும்பு;
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	எனில் (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_flush();
-		return;
+		திரும்பு;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
-		return;
+	எனில் (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
+		திரும்பு;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	எனில் (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		திரும்பு;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	எனில் (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		திரும்பு;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return;
+	எனில் (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		திரும்பு;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	எனில் (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fflush(stdout);
-	} else {
+	} இல்லையெனில் {
 		/* Send directly to the handler */
 		serial_flush();
 	}
@@ -833,205 +833,205 @@ void flush(void)
 #endif
 
 #ifdef CONFIG_CONSOLE_RECORD
-int console_record_init(void)
+முழு console_record_init(வெறுமை)
 {
-	int ret;
+	முழு ret;
 
-	ret = membuf_new((struct membuf *)&gd->console_out,
+	ret = membuf_new((கட்டமைப்பு membuf *)&gd->console_out,
 			 gd->flags & GD_FLG_RELOC ?
 				CONFIG_CONSOLE_RECORD_OUT_SIZE :
 				CONFIG_CONSOLE_RECORD_OUT_SIZE_F);
-	if (ret)
-		return ret;
-	ret = membuf_new((struct membuf *)&gd->console_in,
+	எனில் (ret)
+		திரும்பு ret;
+	ret = membuf_new((கட்டமைப்பு membuf *)&gd->console_in,
 			 CONFIG_CONSOLE_RECORD_IN_SIZE);
 
 	/* Start recording from the beginning */
 	gd->flags |= GD_FLG_RECORD;
 
-	return ret;
+	திரும்பு ret;
 }
 
-void console_record_reset(void)
+வெறுமை console_record_reset(வெறுமை)
 {
-	membuf_purge((struct membuf *)&gd->console_out);
-	membuf_purge((struct membuf *)&gd->console_in);
+	membuf_purge((கட்டமைப்பு membuf *)&gd->console_out);
+	membuf_purge((கட்டமைப்பு membuf *)&gd->console_in);
 	gd->flags &= ~GD_FLG_RECORD_OVF;
 }
 
-int console_record_reset_enable(void)
+முழு console_record_reset_enable(வெறுமை)
 {
 	console_record_reset();
 	gd->flags |= GD_FLG_RECORD;
 
-	return 0;
+	திரும்பு 0;
 }
 
-int console_record_readline(char *str, int maxlen)
+முழு console_record_readline(எழுத்து *str, முழு maxlen)
 {
-	if (gd->flags & GD_FLG_RECORD_OVF)
-		return -ENOSPC;
-	if (console_record_isempty())
-		return -ENOENT;
+	எனில் (gd->flags & GD_FLG_RECORD_OVF)
+		திரும்பு -ENOSPC;
+	எனில் (console_record_isempty())
+		திரும்பு -ENOENT;
 
-	return membuf_readline((struct membuf *)&gd->console_out, str,
+	திரும்பு membuf_readline((கட்டமைப்பு membuf *)&gd->console_out, str,
 				maxlen, '\0', false);
 }
 
-int console_record_avail(void)
+முழு console_record_avail(வெறுமை)
 {
-	return membuf_avail((struct membuf *)&gd->console_out);
+	திரும்பு membuf_avail((கட்டமைப்பு membuf *)&gd->console_out);
 }
 
-bool console_record_isempty(void)
+bool console_record_isempty(வெறுமை)
 {
-	return membuf_isempty((struct membuf *)&gd->console_out);
+	திரும்பு membuf_isempty((கட்டமைப்பு membuf *)&gd->console_out);
 }
 
-int console_in_puts(const char *str)
+முழு console_in_puts(மாறிலி எழுத்து *str)
 {
-	return membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
+	திரும்பு membuf_put((கட்டமைப்பு membuf *)&gd->console_in, str, strlen(str));
 }
 
 #endif
 
 /* test if ctrl-c was pressed */
-static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
-int ctrlc(void)
+நிலையான முழு ctrlc_disabled = 0;	/* see disable_ctrl() */
+நிலையான முழு ctrlc_was_pressed = 0;
+முழு ctrlc(வெறுமை)
 {
-	if (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
-		if (tstc()) {
-			switch (getchar()) {
-			case 0x03:		/* ^C - Control C */
+	எனில் (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
+		எனில் (tstc()) {
+			தேர்வு (getchar()) {
+			நிலை 0x03:		/* ^C - Control C */
 				ctrlc_was_pressed = 1;
-				return 1;
-			default:
-				break;
+				திரும்பு 1;
+			இயல்பு:
+				நிறுத்து;
 			}
 		}
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 /* Reads user's confirmation.
    Returns 1 if user's input is "y", "Y", "yes" or "YES"
 */
-int confirm_yesno(void)
+முழு confirm_yesno(வெறுமை)
 {
-	int i;
-	char str_input[5];
+	முழு i;
+	எழுத்து str_உள்ளீடு[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
-		str_input[i] = getchar();
-		putc(str_input[i]);
-		if (str_input[i] == '\r')
-			break;
+	போது (i < அளவு(str_உள்ளீடு)) {
+		str_உள்ளீடு[i] = getchar();
+		putc(str_உள்ளீடு[i]);
+		எனில் (str_உள்ளீடு[i] == '\r')
+			நிறுத்து;
 		i++;
 	}
 	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
-	    strncmp(str_input, "Y\r", 2) == 0 ||
-	    strncmp(str_input, "yes\r", 4) == 0 ||
-	    strncmp(str_input, "YES\r", 4) == 0)
-		return 1;
-	return 0;
+	எனில் (strncmp(str_உள்ளீடு, "y\r", 2) == 0 ||
+	    strncmp(str_உள்ளீடு, "Y\r", 2) == 0 ||
+	    strncmp(str_உள்ளீடு, "yes\r", 4) == 0 ||
+	    strncmp(str_உள்ளீடு, "YES\r", 4) == 0)
+		திரும்பு 1;
+	திரும்பு 0;
 }
 /* pass 1 to disable ctrlc() checking, 0 to enable.
  * returns previous state
  */
-int disable_ctrlc(int disable)
+முழு disable_ctrlc(முழு disable)
 {
-	int prev = ctrlc_disabled;	/* save previous state */
+	முழு prev = ctrlc_disabled;	/* save previous state */
 
 	ctrlc_disabled = disable;
-	return prev;
+	திரும்பு prev;
 }
 
-int had_ctrlc (void)
+முழு had_ctrlc (வெறுமை)
 {
-	return ctrlc_was_pressed;
+	திரும்பு ctrlc_was_pressed;
 }
 
-void clear_ctrlc(void)
+வெறுமை clear_ctrlc(வெறுமை)
 {
 	ctrlc_was_pressed = 0;
 }
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+கட்டமைப்பு stdio_dev *console_தேடல்_dev(முழு flags, மாறிலி எழுத்து *name)
 {
-	struct stdio_dev *dev;
+	கட்டமைப்பு stdio_dev *dev;
 
 	dev = stdio_get_by_name(name);
-	if (dev && (dev->flags & flags))
-		return dev;
+	எனில் (dev && (dev->flags & flags))
+		திரும்பு dev;
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-int console_assign(int file, const char *devname)
+முழு console_assign(முழு file, மாறிலி எழுத்து *devname)
 {
-	int flag;
-	struct stdio_dev *dev;
+	முழு flag;
+	கட்டமைப்பு stdio_dev *dev;
 
 	/* Check for valid file */
 	flag = stdio_file_to_flags(file);
-	if (flag < 0)
-		return flag;
+	எனில் (flag < 0)
+		திரும்பு flag;
 
 	/* Check for valid device name */
 
-	dev = console_search_dev(flag, devname);
+	dev = console_தேடல்_dev(flag, devname);
 
-	if (dev)
-		return console_setfile(file, dev);
+	எனில் (dev)
+		திரும்பு console_setfile(file, dev);
 
-	return -1;
+	திரும்பு -1;
 }
 
 /* return true if the 'silent' flag is removed */
-static bool console_update_silent(void)
+நிலையான bool console_update_silent(வெறுமை)
 {
 	unsigned long flags = gd->flags;
 
-	if (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
-		return false;
+	எனில் (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
+		திரும்பு false;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
+	எனில் (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		திரும்பு false;
 	}
 
-	if (env_get("silent")) {
+	எனில் (env_get("silent")) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		திரும்பு false;
 	}
 
 	gd->flags &= ~GD_FLG_SILENT;
 
-	return !!(flags & GD_FLG_SILENT);
+	திரும்பு !!(flags & GD_FLG_SILENT);
 }
 
-int console_announce_r(void)
+முழு console_announce_r(வெறுமை)
 {
-#if !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+#எனில் !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
+	எழுத்து buf[DISPLAY_OPTIONS_BANNER_LENGTH];
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, அளவு(buf));
 
 	console_puts_select(stdout, false, buf);
 #endif
 
-	return 0;
+	திரும்பு 0;
 }
 
 /* Called before relocation - use serial functions */
-int console_init_f(void)
+முழு console_init_f(வெறுமை)
 {
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
@@ -1039,10 +1039,10 @@ int console_init_f(void)
 
 	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
-	return 0;
+	திரும்பு 0;
 }
 
-int console_clear(void)
+முழு console_clear(வெறுமை)
 {
 	/*
 	 * Send clear screen and home
@@ -1052,36 +1052,36 @@ int console_clear(void)
 	 * displays
 	 */
 	printf(CSI "2J" CSI "1;1H");
-	if (IS_ENABLED(CONFIG_VIDEO_ANSI))
-		return 0;
+	எனில் (IS_ENABLED(CONFIG_VIDEO_ANSI))
+		திரும்பு 0;
 
-	if (IS_ENABLED(CONFIG_VIDEO)) {
-		struct udevice *dev;
-		int ret;
+	எனில் (IS_ENABLED(CONFIG_VIDEO)) {
+		கட்டமைப்பு udevice *dev;
+		முழு ret;
 
 		ret = uclass_first_device_err(UCLASS_VIDEO_CONSOLE, &dev);
-		if (ret)
-			return ret;
+		எனில் (ret)
+			திரும்பு ret;
 		ret = vidconsole_clear_and_reset(dev);
-		if (ret)
-			return ret;
+		எனில் (ret)
+			திரும்பு ret;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static char *get_stdio(const u8 std)
+நிலையான எழுத்து *get_stdio(மாறிலி u8 std)
 {
-	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
+	திரும்பு stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
-static void stdio_print_current_devices(void)
+நிலையான வெறுமை stdio_print_current_devices(வெறுமை)
 {
-	char *stdinname = NULL;
-	char *stdoutname = NULL;
-	char *stderrname = NULL;
+	எழுத்து *stdinname = வெற்று;
+	எழுத்து *stdoutname = வெற்று;
+	எழுத்து *stderrname = வெற்று;
 
-	if (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
+	எனில் (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
 	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)) {
 		/* stdin stdout and stderr are in environment */
 		stdinname  = env_get("stdin");
@@ -1104,20 +1104,20 @@ static void stdio_print_current_devices(void)
 	printf("%s\n", stderrname);
 }
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#எனில் CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+முழு console_init_r(வெறுமை)
 {
-	char *stdinname, *stdoutname, *stderrname;
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL, *errdev = NULL;
-	int i;
-	int iomux_err = 0;
-	int flushpoint;
+	எழுத்து *stdinname, *stdoutname, *stderrname;
+	கட்டமைப்பு stdio_dev *inputdev = வெற்று, *outputdev = வெற்று, *errdev = வெற்று;
+	முழு i;
+	முழு iomux_err = 0;
+	முழு flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	எனில் (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	இல்லையெனில்
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/* set default handlers at first */
@@ -1133,76 +1133,76 @@ int console_init_r(void)
 	stdoutname = env_get("stdout");
 	stderrname = env_get("stderr");
 
-	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+	எனில் (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
+		inputdev  = console_தேடல்_dev(DEV_FLAGS_உள்ளீடு,  stdinname);
+		outputdev = console_தேடல்_dev(DEV_FLAGS_OUTPUT, stdoutname);
+		errdev    = console_தேடல்_dev(DEV_FLAGS_OUTPUT, stderrname);
+		எனில் (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 			iomux_err = iomux_doenv(stdin, stdinname);
 			iomux_err += iomux_doenv(stdout, stdoutname);
 			iomux_err += iomux_doenv(stderr, stderrname);
-			if (!iomux_err)
+			எனில் (!iomux_err)
 				/* Successful, so skip all the code below. */
-				goto done;
+				செல் done;
 		}
 	}
 	/* if the devices are overwritten or not found, use default device */
-	if (inputdev == NULL) {
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
+	எனில் (inputdev == வெற்று) {
+		inputdev  = console_தேடல்_dev(DEV_FLAGS_உள்ளீடு,  "serial");
 	}
-	if (outputdev == NULL) {
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	எனில் (outputdev == வெற்று) {
+		outputdev = console_தேடல்_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
-	if (errdev == NULL) {
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	எனில் (errdev == வெற்று) {
+		errdev    = console_தேடல்_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	எனில் (outputdev != வெற்று) {
 		/* need to set a console if not done above. */
 		console_doenv(stdout, outputdev);
 	}
-	if (errdev != NULL) {
+	எனில் (errdev != வெற்று) {
 		/* need to set a console if not done above. */
 		console_doenv(stderr, errdev);
 	}
-	if (inputdev != NULL) {
+	எனில் (inputdev != வெற்று) {
 		/* need to set a console if not done above. */
 		console_doenv(stdin, inputdev);
 	}
 
 done:
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	எனில் (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
-	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
+	எனில் (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
-		for (i = 0; i < MAX_FILES; i++)
+		க்கு (i = 0; i < MAX_FILES; i++)
 			env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	திரும்பு 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#இல்லையெனில் /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+முழு console_init_r(வெறுமை)
 {
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL;
-	int i;
-	struct list_head *list = stdio_get_list();
-	struct list_head *pos;
-	struct stdio_dev *dev;
-	int flushpoint;
+	கட்டமைப்பு stdio_dev *inputdev = வெற்று, *outputdev = வெற்று;
+	முழு i;
+	கட்டமைப்பு list_head *list = stdio_get_list();
+	கட்டமைப்பு list_head *pos;
+	கட்டமைப்பு stdio_dev *dev;
+	முழு flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	எனில் (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	இல்லையெனில்
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/*
@@ -1211,84 +1211,84 @@ int console_init_r(void)
 	 * console to serial console in this case or suppress it if
 	 * "silent" mode was requested.
 	 */
-	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
-		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
+	எனில் (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
+		எனில் (!(gd->flags & GD_FLG_SILENT))
+			outputdev = console_தேடல்_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
 	/* Scan devices looking for input and output devices */
 	list_for_each(pos, list) {
-		dev = list_entry(pos, struct stdio_dev, list);
+		dev = list_entry(pos, கட்டமைப்பு stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		எனில் ((dev->flags & DEV_FLAGS_உள்ளீடு) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
-		if ((dev->flags & DEV_FLAGS_OUTPUT) &&
+		எனில் ((dev->flags & DEV_FLAGS_OUTPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !outputdev))
 			outputdev = dev;
 
 		/* The current serial console is the preferred stdio. */
-		if (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
-			break;
+		எனில் (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
+			நிறுத்து;
 	}
 
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	எனில் (outputdev != வெற்று) {
 		console_setfile_and_devices(stdout, outputdev);
 		console_setfile_and_devices(stderr, outputdev);
 	}
 
 	/* Initializes input console */
-	if (inputdev != NULL)
+	எனில் (inputdev != வெற்று)
 		console_setfile_and_devices(stdin, inputdev);
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	எனில் (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
 	/* Setting environment variables */
-	for (i = 0; i < MAX_FILES; i++) {
+	க்கு (i = 0; i < MAX_FILES; i++) {
 		env_set(stdio_names[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
 	print_pre_console_buffer(flushpoint);
-	return 0;
+	திரும்பு 0;
 }
 
 #endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-int console_remove_by_name(const char *name)
+முழு console_remove_by_name(மாறிலி எழுத்து *name)
 {
-	int err = 0;
+	முழு err = 0;
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	int fnum;
+#எனில் CONFIG_IS_ENABLED(CONSOLE_MUX)
+	முழு fnum;
 
 	log_debug("removing console device %s\n", name);
-	for (fnum = 0; fnum < MAX_FILES; fnum++) {
-		struct stdio_dev **src, **dest;
-		int i;
+	க்கு (fnum = 0; fnum < MAX_FILES; fnum++) {
+		கட்டமைப்பு stdio_dev **src, **dest;
+		முழு i;
 
-		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
+		log_debug("file %d: %d devices: ", fnum, cd_மொத்தம்[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
-			struct stdio_dev *sdev = *src;
-			int ret = 0;
+		க்கு (i = 0; i < cd_மொத்தம்[fnum]; i++, src++) {
+			கட்டமைப்பு stdio_dev *sdev = *src;
+			முழு ret = 0;
 
-			if (!strcmp(sdev->name, name))
+			எனில் (!strcmp(sdev->name, name))
 				ret = stdio_deregister_dev(sdev, true);
-			else
+			இல்லையெனில்
 				*dest++ = *src;
-			if (ret && !err)
+			எனில் (ret && !err)
 				err = ret;
 		}
-		cd_count[fnum] = dest - console_devices[fnum];
-		log_debug("now %d\n", cd_count[fnum]);
+		cd_மொத்தம்[fnum] = dest - console_devices[fnum];
+		log_debug("now %d\n", cd_மொத்தம்[fnum]);
 	}
 #endif /* CONSOLE_MUX */
 
-	return err;
+	திரும்பு err;
 }

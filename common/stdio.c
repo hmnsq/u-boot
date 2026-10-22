@@ -8,96 +8,96 @@
  * Paolo Scaffardi, AIRVENT SAM s.p.a - RIMINI(ITALY), arsenio@tin.it
  */
 
-#include <config.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
-#include <stdarg.h>
-#include <malloc.h>
-#include <stdio_dev.h>
-#include <serial.h>
-#include <splash.h>
-#include <i2c.h>
-#include <dm/device-internal.h>
+#அந்தர்பாவ <config.h>
+#அந்தர்பாவ <dm.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <malloc.h>
+#அந்தர்பாவ <stdio_dev.h>
+#அந்தர்பாவ <serial.h>
+#அந்தர்பாவ <splash.h>
+#அந்தர்பாவ <i2c.h>
+#அந்தர்பாவ <dm/device-internal.h>
 
-static struct stdio_dev devs;
-struct stdio_dev *stdio_devices[] = { NULL, NULL, NULL };
-char *stdio_names[MAX_FILES] = { "stdin", "stdout", "stderr" };
+நிலையான கட்டமைப்பு stdio_dev devs;
+கட்டமைப்பு stdio_dev *stdio_devices[] = { வெற்று, வெற்று, வெற்று };
+எழுத்து *stdio_names[MAX_FILES] = { "stdin", "stdout", "stderr" };
 
-int stdio_file_to_flags(const int file)
+முழு stdio_file_to_flags(மாறிலி முழு file)
 {
-	switch (file) {
-	case stdin:
-		return DEV_FLAGS_INPUT;
-	case stdout:
-	case stderr:
-		return DEV_FLAGS_OUTPUT;
-	default:
-		return -EINVAL;
+	தேர்வு (file) {
+	நிலை stdin:
+		திரும்பு DEV_FLAGS_உள்ளீடு;
+	நிலை stdout:
+	நிலை stderr:
+		திரும்பு DEV_FLAGS_OUTPUT;
+	இயல்பு:
+		திரும்பு -EINVAL;
 	}
 }
 
-#if CONFIG_IS_ENABLED(SYS_DEVICE_NULLDEV)
-static void nulldev_putc(struct stdio_dev *dev, const char c)
+#எனில் CONFIG_IS_ENABLED(SYS_DEVICE_NULLDEV)
+நிலையான வெறுமை nulldev_putc(கட்டமைப்பு stdio_dev *dev, மாறிலி எழுத்து c)
 {
 	/* nulldev is empty! */
 }
 
-static void nulldev_puts(struct stdio_dev *dev, const char *s)
+நிலையான வெறுமை nulldev_puts(கட்டமைப்பு stdio_dev *dev, மாறிலி எழுத்து *s)
 {
 	/* nulldev is empty! */
 }
 
-static int nulldev_input(struct stdio_dev *dev)
+நிலையான முழு nulldev_உள்ளீடு(கட்டமைப்பு stdio_dev *dev)
 {
 	/* nulldev is empty! */
-	return 0;
+	திரும்பு 0;
 }
 
-static void nulldev_register(void)
+நிலையான வெறுமை nulldev_register(வெறுமை)
 {
-	struct stdio_dev dev;
+	கட்டமைப்பு stdio_dev dev;
 
-	memset(&dev, '\0', sizeof(dev));
+	memset(&dev, '\0', அளவு(dev));
 
 	strcpy(dev.name, "nulldev");
-	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_INPUT;
+	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_உள்ளீடு;
 	dev.putc = nulldev_putc;
 	dev.puts = nulldev_puts;
-	dev.getc = nulldev_input;
-	dev.tstc = nulldev_input;
+	dev.getc = nulldev_உள்ளீடு;
+	dev.tstc = nulldev_உள்ளீடு;
 
 	stdio_register(&dev);
 }
-#else
-static inline void nulldev_register(void) {}
+#இல்லையெனில்
+நிலையான உள்வரி வெறுமை nulldev_register(வெறுமை) {}
 #endif	/* SYS_DEVICE_NULLDEV */
 
-static void stdio_serial_putc(struct stdio_dev *dev, const char c)
+நிலையான வெறுமை stdio_serial_putc(கட்டமைப்பு stdio_dev *dev, மாறிலி எழுத்து c)
 {
 	serial_putc(c);
 }
 
-static void stdio_serial_puts(struct stdio_dev *dev, const char *s)
+நிலையான வெறுமை stdio_serial_puts(கட்டமைப்பு stdio_dev *dev, மாறிலி எழுத்து *s)
 {
 	serial_puts(s);
 }
 
 #ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void stdio_serial_flush(struct stdio_dev *dev)
+நிலையான வெறுமை stdio_serial_flush(கட்டமைப்பு stdio_dev *dev)
 {
 	serial_flush();
 }
 #endif
 
-static int stdio_serial_getc(struct stdio_dev *dev)
+நிலையான முழு stdio_serial_getc(கட்டமைப்பு stdio_dev *dev)
 {
-	return serial_getc();
+	திரும்பு serial_getc();
 }
 
-static int stdio_serial_tstc(struct stdio_dev *dev)
+நிலையான முழு stdio_serial_tstc(கட்டமைப்பு stdio_dev *dev)
 {
-	return serial_tstc();
+	திரும்பு serial_tstc();
 }
 
 /**************************************************************************
@@ -105,14 +105,14 @@ static int stdio_serial_tstc(struct stdio_dev *dev)
  **************************************************************************
  */
 
-static void drv_system_init (void)
+நிலையான வெறுமை drv_system_init (வெறுமை)
 {
-	struct stdio_dev dev;
+	கட்டமைப்பு stdio_dev dev;
 
-	memset (&dev, 0, sizeof (dev));
+	memset (&dev, 0, அளவு (dev));
 
 	strcpy (dev.name, "serial");
-	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_INPUT;
+	dev.flags = DEV_FLAGS_OUTPUT | DEV_FLAGS_உள்ளீடு;
 	dev.putc = stdio_serial_putc;
 	dev.puts = stdio_serial_puts;
 	STDIO_DEV_ASSIGN_FLUSH(&dev, stdio_serial_flush);
@@ -127,9 +127,9 @@ static void drv_system_init (void)
  * DEVICES
  **************************************************************************
  */
-struct list_head* stdio_get_list(void)
+கட்டமைப்பு list_head* stdio_get_list(வெறுமை)
 {
-	return &devs.list;
+	திரும்பு &devs.list;
 }
 
 /**
@@ -151,52 +151,52 @@ struct list_head* stdio_get_list(void)
  * Return: 0 if found, -ENOENT if no device found with that name, other -ve
  *	   on other error
  */
-static int stdio_probe_device(const char *name, enum uclass_id id,
-			      struct stdio_dev **sdevp)
+நிலையான முழு stdio_probe_device(மாறிலி எழுத்து *name, எண்ணிக்கை uclass_id id,
+			      கட்டமைப்பு stdio_dev **sdevp)
 {
-	struct stdio_dev *sdev;
-	struct udevice *dev;
-	int seq, ret;
+	கட்டமைப்பு stdio_dev *sdev;
+	கட்டமைப்பு udevice *dev;
+	முழு seq, ret;
 
-	*sdevp = NULL;
-	seq = trailing_strtoln(name, NULL);
-	if (seq == -1)
+	*sdevp = வெற்று;
+	seq = trailing_strtoln(name, வெற்று);
+	எனில் (seq == -1)
 		seq = 0;
 	ret = uclass_get_device_by_seq(id, seq, &dev);
-	if (ret == -ENODEV)
+	எனில் (ret == -ENODEV)
 		ret = uclass_first_device_err(id, &dev);
-	if (ret) {
+	எனில் (ret) {
 		debug("No %s device for seq %d (%s)\n", uclass_get_name(id),
 		      seq, name);
-		return ret;
+		திரும்பு ret;
 	}
 	/* The device should be be the last one registered */
-	sdev = list_empty(&devs.list) ? NULL :
-			list_last_entry(&devs.list, struct stdio_dev, list);
-	if (!sdev || strcmp(sdev->name, name)) {
+	sdev = list_empty(&devs.list) ? வெற்று :
+			list_last_entry(&devs.list, கட்டமைப்பு stdio_dev, list);
+	எனில் (!sdev || strcmp(sdev->name, name)) {
 		debug("Device '%s' did not register with stdio as '%s'\n",
 		      dev->name, name);
-		return -ENOENT;
+		திரும்பு -ENOENT;
 	}
 	*sdevp = sdev;
 
-	return 0;
+	திரும்பு 0;
 }
 
-struct stdio_dev *stdio_get_by_name(const char *name)
+கட்டமைப்பு stdio_dev *stdio_get_by_name(மாறிலி எழுத்து *name)
 {
-	struct list_head *pos;
-	struct stdio_dev *sdev;
+	கட்டமைப்பு list_head *pos;
+	கட்டமைப்பு stdio_dev *sdev;
 
-	if (!name)
-		return NULL;
+	எனில் (!name)
+		திரும்பு வெற்று;
 
 	list_for_each(pos, &devs.list) {
-		sdev = list_entry(pos, struct stdio_dev, list);
-		if (strcmp(sdev->name, name) == 0)
-			return sdev;
+		sdev = list_entry(pos, கட்டமைப்பு stdio_dev, list);
+		எனில் (strcmp(sdev->name, name) == 0)
+			திரும்பு sdev;
 	}
-	if (IS_ENABLED(CONFIG_VIDEO)) {
+	எனில் (IS_ENABLED(CONFIG_VIDEO)) {
 		/*
 		 * We did not find a suitable stdio device. If there is a video
 		 * driver with a name starting with 'vidconsole', we can try
@@ -209,82 +209,82 @@ struct stdio_dev *stdio_get_by_name(const char *name)
 		 * that case. The call path in that case is
 		 * console_init_r() -> console_search_dev() -> stdio_get_by_name()
 		 */
-		if (!strncmp(name, "vidconsole", 10) && !strchr(name, ',') &&
+		எனில் (!strncmp(name, "vidconsole", 10) && !strchr(name, ',') &&
 		    !stdio_probe_device(name, UCLASS_VIDEO, &sdev))
-			return sdev;
+			திரும்பு sdev;
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-int stdio_register_dev(struct stdio_dev *dev, struct stdio_dev **devp)
+முழு stdio_register_dev(கட்டமைப்பு stdio_dev *dev, கட்டமைப்பு stdio_dev **devp)
 {
-	struct stdio_dev *_dev;
+	கட்டமைப்பு stdio_dev *_dev;
 
-	_dev = memdup(dev, sizeof(*dev));
-	if (!_dev)
-		return -ENODEV;
+	_dev = memdup(dev, அளவு(*dev));
+	எனில் (!_dev)
+		திரும்பு -ENODEV;
 	list_add_tail(&_dev->list, &devs.list);
-	if (devp)
+	எனில் (devp)
 		*devp = _dev;
 
-	return 0;
+	திரும்பு 0;
 }
 
-int stdio_register(struct stdio_dev *dev)
+முழு stdio_register(கட்டமைப்பு stdio_dev *dev)
 {
-	return stdio_register_dev(dev, NULL);
+	திரும்பு stdio_register_dev(dev, வெற்று);
 }
 
-int stdio_deregister_dev(struct stdio_dev *dev, int force)
+முழு stdio_deregister_dev(கட்டமைப்பு stdio_dev *dev, முழு force)
 {
-	struct list_head *pos;
-	char temp_names[3][STDIO_NAME_LEN];
-	int i;
+	கட்டமைப்பு list_head *pos;
+	எழுத்து temp_names[3][STDIO_NAME_LEN];
+	முழு i;
 
 	/* get stdio devices (ListRemoveItem changes the dev list) */
-	for (i = 0 ; i < MAX_FILES; i++) {
-		if (stdio_devices[i] == dev) {
-			if (force) {
+	க்கு (i = 0 ; i < MAX_FILES; i++) {
+		எனில் (stdio_devices[i] == dev) {
+			எனில் (force) {
 				strcpy(temp_names[i], "nulldev");
-				continue;
+				தொடர்;
 			}
 			/* Device is assigned -> report error */
-			return -EBUSY;
+			திரும்பு -EBUSY;
 		}
 		strlcpy(&temp_names[i][0], stdio_devices[i]->name,
-			sizeof(temp_names[i]));
+			அளவு(temp_names[i]));
 	}
 
 	list_del(&dev->list);
-	free(dev);
+	விடுவி(dev);
 
 	/* reassign device list */
 	list_for_each(pos, &devs.list) {
-		dev = list_entry(pos, struct stdio_dev, list);
-		for (i = 0 ; i < MAX_FILES; i++) {
-			if (strcmp(dev->name, temp_names[i]) == 0)
+		dev = list_entry(pos, கட்டமைப்பு stdio_dev, list);
+		க்கு (i = 0 ; i < MAX_FILES; i++) {
+			எனில் (strcmp(dev->name, temp_names[i]) == 0)
 				stdio_devices[i] = dev;
 		}
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-int stdio_init_tables(void)
+முழு stdio_init_tables(வெறுமை)
 {
 	/* Initialize the list */
 	INIT_LIST_HEAD(&devs.list);
 
-	return 0;
+	திரும்பு 0;
 }
 
-int stdio_add_devices(void)
+முழு stdio_add_devices(வெறுமை)
 {
-	struct udevice *dev;
-	int ret;
+	கட்டமைப்பு udevice *dev;
+	முழு ret;
 
-	if (IS_ENABLED(CONFIG_DM_KEYBOARD)) {
+	எனில் (IS_ENABLED(CONFIG_DM_KEYBOARD)) {
 		/*
 		 * For now we probe all the devices here. At some point this
 		 * should be done only when the devices are required - e.g. we
@@ -297,18 +297,18 @@ int stdio_add_devices(void)
 		 * Don't report errors to the caller - assume that they are
 		 * non-fatal
 		 */
-		for (ret = uclass_first_device_check(UCLASS_KEYBOARD, &dev);
+		க்கு (ret = uclass_first_device_check(UCLASS_KEYBOARD, &dev);
 				dev;
 				ret = uclass_next_device_check(&dev)) {
-			if (ret)
+			எனில் (ret)
 				printf("%s: Failed to probe keyboard '%s' (ret=%d)\n",
 				       __func__, dev->name, ret);
 		}
 	}
-#if CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
+#எனில் CONFIG_IS_ENABLED(SYS_I2C_LEGACY)
 	i2c_init_all();
 #endif
-	if (IS_ENABLED(CONFIG_VIDEO)) {
+	எனில் (IS_ENABLED(CONFIG_VIDEO)) {
 		/*
 		 * If the console setting is not in environment variables then
 		 * console_init_r() will not be calling iomux_doenv() (which
@@ -318,20 +318,20 @@ int stdio_add_devices(void)
 		 * So just probe all video devices now so that whichever one is
 		 * required will be available.
 		 */
-		struct udevice *vdev;
-		int ret;
+		கட்டமைப்பு udevice *vdev;
+		முழு ret;
 
-		if (!IS_ENABLED(CONFIG_SYS_CONSOLE_IS_IN_ENV)) {
-			for (ret = uclass_first_device_check(UCLASS_VIDEO,
+		எனில் (!IS_ENABLED(CONFIG_SYS_CONSOLE_IS_IN_ENV)) {
+			க்கு (ret = uclass_first_device_check(UCLASS_VIDEO,
 							     &vdev);
 					vdev;
 					ret = uclass_next_device_check(&vdev)) {
-				if (ret)
+				எனில் (ret)
 					printf("%s: Failed to probe video device '%s' (ret=%d)\n",
 					       __func__, vdev->name, ret);
 			}
 		}
-		if (IS_ENABLED(CONFIG_SPLASH_SCREEN) &&
+		எனில் (IS_ENABLED(CONFIG_SPLASH_SCREEN) &&
 		    IS_ENABLED(CONFIG_BMP))
 			splash_display();
 	}
@@ -341,13 +341,13 @@ int stdio_add_devices(void)
 #ifdef CONFIG_USB_FUNCTION_ACM
 	drv_usbacm_init ();
 #endif
-	if (IS_ENABLED(CONFIG_NETCONSOLE))
+	எனில் (IS_ENABLED(CONFIG_NETCONSOLE))
 		drv_nc_init();
 #ifdef CONFIG_JTAG_CONSOLE
 	drv_jtag_console_init();
 #endif
-	if (IS_ENABLED(CONFIG_CBMEM_CONSOLE))
+	எனில் (IS_ENABLED(CONFIG_CBMEM_CONSOLE))
 		cbmemc_init();
 
-	return 0;
+	திரும்பு 0;
 }

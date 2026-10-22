@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#அந்தர்பாவ <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+நிலையான முழு hex1_bin (எழுத்து  c);
+நிலையான முழு hex2_bin (எழுத்து *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+முழு srec_decode (எழுத்து *உள்ளீடு, முழு *மொத்தம், ulong *addr, எழுத்து *data)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	முழு	i;
+	முழு	v;				/* conversion buffer	*/
+	முழு	srec_type;			/* S-Record type	*/
+	unsigned எழுத்து chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	க்கு (; *உள்ளீடு; ++உள்ளீடு) {
+		எனில் (*உள்ளீடு == 'S') {		/* skip 'S' */
+			++உள்ளீடு;
+			நிறுத்து;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	எனில் (*உள்ளீடு == '\0') {			/* no more data?	*/
+		திரும்பு (SREC_EMPTY);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *உள்ளீடு++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	எனில் ((*மொத்தம் = hex2_bin(உள்ளீடு)) < 0) {
+		திரும்பு (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *மொத்தம்;
+	உள்ளீடு  += 2;
 
-	switch (v) {				/* record type		*/
+	தேர்வு (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
+	நிலை '0':				/* start record		*/
 		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+		*மொத்தம்   -= 3;			/* - checksum and addr	*/
+		நிறுத்து;
+	நிலை '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*மொத்தம்   -= 3;			/* - checksum and addr	*/
+		நிறுத்து;
+	நிலை '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*மொத்தம்   -= 4;			/* - checksum and addr	*/
+		நிறுத்து;
+	நிலை '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*மொத்தம்   -= 5;			/* - checksum and addr	*/
+		நிறுத்து;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	நிலை '5':			/* count record, addr field contains */
+		srec_type = SREC_மொத்தம்;	/* a 2 byte record counter	*/
+		*மொத்தம்    = 0;			/* no data		*/
+		நிறுத்து;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	நிலை '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*மொத்தம்   -= 5;			/* - checksum and addr	*/
+		நிறுத்து;
+	நிலை '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*மொத்தம்   -= 4;			/* - checksum and addr	*/
+		நிறுத்து;
+	நிலை '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*மொத்தம்   -= 3;			/* - checksum and addr	*/
+		நிறுத்து;
+	இயல்பு:
+		திரும்பு (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	தேர்வு (v) {
+	நிலை '3':				/* 4 byte addr field	*/
+	நிலை '7':
+		எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+			திரும்பு (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		உள்ளீடு  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	நிலை '2':				/* 3 byte addr field	*/
+	நிலை '8':
+		எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+			திரும்பு (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		உள்ளீடு  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	நிலை '0':				/* 2 byte addr field	*/
+	நிலை '1':
+	நிலை '5':
+	நிலை '9':
+		எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+			திரும்பு (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		உள்ளீடு  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+			திரும்பு (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		உள்ளீடு  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		நிறுத்து;
+	இயல்பு:
+		திரும்பு (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	க்கு (i=0; i < *மொத்தம்; ++i) {
+		எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+			திரும்பு (SREC_E_NOSREC);
 		}
 		data[i] = v;
 		chksum += v;
-		input  += 2;
+		உள்ளீடு  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	எனில் ((v = hex2_bin(உள்ளீடு)) < 0) {
+		திரும்பு (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	எனில் ((unsigned எழுத்து)v != (unsigned எழுத்து)~chksum) {
+		திரும்பு (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	திரும்பு (srec_type);
 }
 
-static int hex1_bin (char c)
+நிலையான முழு hex1_bin (எழுத்து c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	எனில் (c >= '0' && c <= '9')
+		திரும்பு (c - '0');
+	எனில் (c >= 'a' && c <= 'f')
+		திரும்பு (c + 10 - 'a');
+	எனில் (c >= 'A' && c <= 'F')
+		திரும்பு (c + 10 - 'A');
+	திரும்பு (-1);
 }
 
-static int hex2_bin (char *s)
+நிலையான முழு hex2_bin (எழுத்து *s)
 {
-	int i, j;
+	முழு i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	எனில் ((i = hex1_bin(*s++)) < 0) {
+		திரும்பு (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	எனில் ((j = hex1_bin(*s)) < 0) {
+		திரும்பு (-1);
 	}
 
-	return ((i<<4) + j);
+	திரும்பு ((i<<4) + j);
 }

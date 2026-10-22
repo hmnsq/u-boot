@@ -12,15 +12,15 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <malloc.h>         /* malloc, free, realloc*/
+#அந்தர்பாவ <linux/ctype.h>    /* isalpha, isdigit */
+#அந்தர்பாவ <console.h>
+#அந்தர்பாவ <bootretry.h>
+#அந்தர்பாவ <cli.h>
+#அந்தர்பாவ <cli_hush.h>
+#அந்தர்பாவ <command.h>        /* find_cmd */
+#அந்தர்பாவ <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
@@ -42,14 +42,14 @@
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#எனில் CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+வகைவரை signed எழுத்து smallint;
+வகைவரை unsigned எழுத்து smalluint;
+#இல்லையெனில்
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
+வகைவரை முழு smallint;
+வகைவரை unsigned smalluint;
 #endif
 
 /*
@@ -59,7 +59,7 @@ typedef unsigned smalluint;
 #define ALIGN2			__attribute__((aligned(2)))
 #define ALIGN4			__attribute__((aligned(4)))
 #define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#define ALIGN_PTR		__attribute__((aligned(அளவு(வெறுமை*))))
 
 /*
  * Miscellaneous compiler/platform defines.
@@ -82,106 +82,106 @@ typedef unsigned smalluint;
  */
 #define utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+நிலையான வெறுமை __noreturn xfunc_die(வெறுமை)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#define bb_error_செய்தி_and_die(format, ...) செய் { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} போது (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#define bb_simple_error_செய்தி_and_die(செய்தி) செய் { \
+panic_str("HUSH: " செய்தி); \
+} போது (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+நிலையான முழு __maybe_unused fdprintf(முழு fd, மாறிலி எழுத்து *format, ...)
 {
 	va_list args;
 	uint i;
 
-	assert(fd == 2);
+	ப்ரதிஜ்ஞா(fd == 2);
 
 	va_start(args, format);
 	i = vprintf(format, args);
 	va_end(args);
 
-	return i;
+	திரும்பு i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+நிலையான வெறுமை bb_verror_செய்தி(மாறிலி எழுத்து *s, va_list p, மாறிலி எழுத்து* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+நிலையான வெறுமை bb_error_செய்தி(மாறிலி எழுத்து *s, ...)
 {
 	va_list p;
 
 	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
+	bb_verror_செய்தி(s, p, வெற்று);
 	va_end(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+நிலையான வெறுமை bb_simple_error_செய்தி(மாறிலி எழுத்து *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_செய்தி("%s", s);
 }
 
-static void *xmalloc(size_t size)
+நிலையான வெறுமை *xmalloc(size_t size)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	வெறுமை *p = வெற்று;
+	எனில் (!(p = malloc(size)))
 		panic("out of memory");
-	return p;
+	திரும்பு p;
 }
 
-static void *xzalloc(size_t size)
+நிலையான வெறுமை *xzalloc(size_t size)
 {
-	void *p = xmalloc(size);
+	வெறுமை *p = xmalloc(size);
 	memset(p, 0, size);
-	return p;
+	திரும்பு p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+நிலையான வெறுமை *xrealloc(வெறுமை *ptr, size_t size)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	வெறுமை *p = வெற்று;
+	எனில் (!(p = realloc(ptr, size)))
 		panic("out of memory");
-	return p;
+	திரும்பு p;
 }
 
-static void *xmemdup(const void *s, int n)
+நிலையான வெறுமை *xmemdup(மாறிலி வெறுமை *s, முழு n)
 {
-	return memcpy(xmalloc(n), s, n);
+	திரும்பு memcpy(xmalloc(n), s, n);
 }
 
 #define xstrdup		strdup
 #define xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+நிலையான வெறுமை *mempcpy(வெறுமை *dest, மாறிலி வெறுமை *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	திரும்பு memcpy(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+நிலையான வெறுமை overlapping_strcpy(எழுத்து *dst, மாறிலி எழுத்து *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	எனில் (dst != src) {
+		போது ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+நிலையான எழுத்து* skip_whitespace(மாறிலி எழுத்து *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	போது (*s == ' ' || (unsigned எழுத்து)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	திரும்பு (எழுத்து *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+நிலையான எழுத்து* skip_non_whitespace(மாறிலி எழுத்து *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	போது (*s != '\0' && *s != ' ' && (unsigned எழுத்து)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	திரும்பு (எழுத்து *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#define is_name(c)	((c) == '_' || isalpha((unsigned எழுத்து)(c)))
+#define is_in_name(c)	((c) == '_' || isalnum((unsigned எழுத்து)(c)))
 
-static const char* endofname(const char *name)
+நிலையான மாறிலி எழுத்து* endofname(மாறிலி எழுத்து *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	எனில் (!is_name(*name))
+		திரும்பு name;
+	போது (*++name) {
+		எனில் (!is_in_name(*name))
+			நிறுத்து;
 	}
-	return name;
+	திரும்பு name;
 }
 
 /**
@@ -226,45 +226,45 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+நிலையான size_t list_size(எழுத்து **list)
 {
 	size_t size;
 
-	for (size = 0; list[size] != NULL; size++);
+	க்கு (size = 0; list[size] != வெற்று; size++);
 
-	return size;
+	திரும்பு size;
 }
 
-static int varcmp(const char *p, const char *q)
+நிலையான முழு varcmp(மாறிலி எழுத்து *p, மாறிலி எழுத்து *q)
 {
-	int c, d;
+	முழு c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	போது ((c = *p) == (d = *q)) {
+		எனில் (c == '\0' || c == '=')
+			செல் out;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	எனில் (c == '=')
 		c = '\0';
-	if (d == '=')
+	எனில் (d == '=')
 		d = '\0';
 out:
-	return c - d;
+	திரும்பு c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+கட்டமைப்பு in_str;
+நிலையான முழு u_boot_cli_readline(கட்டமைப்பு in_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+கட்டமைப்பு in_str;
+நிலையான முழு u_boot_cli_readline(கட்டமைப்பு in_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+நிலையான uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
+நிலையான மாறிலி எழுத்து defifsvar[] __aligned(1) = "IFS= \t\n";
 #define defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
@@ -281,43 +281,43 @@ static const char defifsvar[] __aligned(1) = "IFS= \t\n";
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#அந்தர்பாவ "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+முழு u_boot_hush_start_modern(வெறுமை)
 {
 	INIT_G();
-	return 0;
+	திரும்பு 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+நிலையான முழு u_boot_cli_readline(கட்டமைப்பு in_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	எழுத்து *prompt;
+	எழுத்து __maybe_unused *ps_prompt = வெற்று;
 
-	if (!G.promptmode)
+	எனில் (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
 #ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+	இல்லையெனில்
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#இல்லையெனில்
 	/* TODO: default value? */
 	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
 #endif
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	எனில் (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		எனில் (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		இல்லையெனில்
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		எனில் (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	திரும்பு cli_readline(prompt);
 }

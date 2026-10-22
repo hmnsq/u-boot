@@ -25,66 +25,66 @@
  *
  * For each transfer (except "Interrupt") we wait for completion.
  */
-#include <command.h>
-#include <dm.h>
-#include <dm/device_compat.h>
-#include <env.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <asm/processor.h>
-#include <linux/compiler.h>
-#include <linux/ctype.h>
-#include <asm/byteorder.h>
-#include <asm/unaligned.h>
-#include <errno.h>
-#include <usb.h>
-#include <linux/delay.h>
+#அந்தர்பாவ <command.h>
+#அந்தர்பாவ <dm.h>
+#அந்தர்பாவ <dm/device_compat.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <malloc.h>
+#அந்தர்பாவ <memalign.h>
+#அந்தர்பாவ <asm/processor.h>
+#அந்தர்பாவ <linux/compiler.h>
+#அந்தர்பாவ <linux/ctype.h>
+#அந்தர்பாவ <asm/byteorder.h>
+#அந்தர்பாவ <asm/unaligned.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <usb.h>
+#அந்தர்பாவ <linux/delay.h>
 
 #define USB_BUFSIZ	512
 
-static int asynch_allowed;
+நிலையான முழு asynch_allowed;
 bool usb_started; /* flag for the started/stopped USB status */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_device usb_dev[USB_MAX_DEVICE];
-static int dev_index;
+#எனில் !CONFIG_IS_ENABLED(DM_USB)
+நிலையான கட்டமைப்பு usb_device usb_dev[USB_MAX_DEVICE];
+நிலையான முழு dev_index;
 
 /***************************************************************************
  * Init USB Device
  */
-int usb_init(void)
+முழு usb_init(வெறுமை)
 {
-	void *ctrl;
-	struct usb_device *dev;
-	int i, start_index = 0;
-	int controllers_initialized = 0;
-	int ret;
+	வெறுமை *ctrl;
+	கட்டமைப்பு usb_device *dev;
+	முழு i, start_index = 0;
+	முழு controllers_initialized = 0;
+	முழு ret;
 
 	dev_index = 0;
 	asynch_allowed = 1;
 	usb_hub_reset();
 
 	/* first make all devices unknown */
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
-		memset(&usb_dev[i], 0, sizeof(struct usb_device));
+	க்கு (i = 0; i < USB_MAX_DEVICE; i++) {
+		memset(&usb_dev[i], 0, அளவு(கட்டமைப்பு usb_device));
 		usb_dev[i].devnum = -1;
 	}
 
 	/* init low_level USB */
-	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+	க்கு (i = 0; i < CONFIG_USB_MAX_CONTROLLER_மொத்தம்; i++) {
 		/* init low_level USB */
 		printf("USB%d:   ", i);
 		ret = usb_lowlevel_init(i, USB_INIT_HOST, &ctrl);
-		if (ret == -ENODEV) {	/* No such device. */
+		எனில் (ret == -ENODEV) {	/* No such device. */
 			puts("Port not available.\n");
 			controllers_initialized++;
-			continue;
+			தொடர்;
 		}
 
-		if (ret) {		/* Other error. */
+		எனில் (ret) {		/* Other error. */
 			puts("lowlevel init failed\n");
-			continue;
+			தொடர்;
 		}
 		/*
 		 * lowlevel init is OK, now scan the bus for devices
@@ -94,21 +94,21 @@ int usb_init(void)
 		start_index = dev_index;
 		printf("scanning bus %d for devices... ", i);
 		ret = usb_alloc_new_device(ctrl, &dev);
-		if (ret)
-			break;
+		எனில் (ret)
+			நிறுத்து;
 
 		/*
 		 * device 0 is always present
 		 * (root hub, so let it analyze)
 		 */
 		ret = usb_new_device(dev);
-		if (ret)
+		எனில் (ret)
 			usb_free_device(dev->controller);
 
-		if (start_index == dev_index) {
+		எனில் (start_index == dev_index) {
 			puts("No USB Device found\n");
-			continue;
-		} else {
+			தொடர்;
+		} இல்லையெனில் {
 			printf("%d USB Device(s) found\n",
 				dev_index - start_index);
 		}
@@ -118,63 +118,63 @@ int usb_init(void)
 
 	debug("scan end\n");
 	/* if we were not able to find at least one working bus, bail out */
-	if (controllers_initialized == 0)
+	எனில் (controllers_initialized == 0)
 		puts("USB error: all controllers failed lowlevel init\n");
 
-	return usb_started ? 0 : -ENODEV;
+	திரும்பு usb_started ? 0 : -ENODEV;
 }
 
 /******************************************************************************
  * Stop USB this stops the LowLevel Part and deregisters USB devices.
  */
-int usb_stop(void)
+முழு usb_stop(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	if (usb_started) {
+	எனில் (usb_started) {
 		asynch_allowed = 1;
 		usb_started = 0;
 		usb_hub_reset();
 
-		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
-			if (usb_lowlevel_stop(i))
+		க்கு (i = 0; i < CONFIG_USB_MAX_CONTROLLER_மொத்தம்; i++) {
+			எனில் (usb_lowlevel_stop(i))
 				printf("failed to stop USB controller %d\n", i);
 		}
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
 /******************************************************************************
  * Detect if a USB device has been plugged or unplugged.
  */
-int usb_detect_change(void)
+முழு usb_detect_change(வெறுமை)
 {
-	int i, j;
-	int change = 0;
+	முழு i, j;
+	முழு change = 0;
 
-	for (j = 0; j < USB_MAX_DEVICE; j++) {
-		for (i = 0; i < usb_dev[j].maxchild; i++) {
-			struct usb_port_status status;
+	க்கு (j = 0; j < USB_MAX_DEVICE; j++) {
+		க்கு (i = 0; i < usb_dev[j].maxchild; i++) {
+			கட்டமைப்பு usb_port_status status;
 
-			if (usb_get_port_status(&usb_dev[j], i + 1,
+			எனில் (usb_get_port_status(&usb_dev[j], i + 1,
 						&status) < 0)
 				/* USB request failed */
-				continue;
+				தொடர்;
 
-			if (le16_to_cpu(status.wPortChange) &
+			எனில் (le16_to_cpu(status.wPortChange) &
 			    USB_PORT_STAT_C_CONNECTION)
 				change++;
 		}
 	}
 
-	return change;
+	திரும்பு change;
 }
 
 /* Lock or unlock async schedule on the controller */
-__weak int usb_lock_async(struct usb_device *dev, int lock)
+__weak முழு usb_lock_async(கட்டமைப்பு usb_device *dev, முழு lock)
 {
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -182,12 +182,12 @@ __weak int usb_lock_async(struct usb_device *dev, int lock)
  * transfers that uses the exclusiv access to the control and bulk messages.
  * Returns the old value so it can be restored later.
  */
-int usb_disable_asynch(int disable)
+முழு usb_disable_asynch(முழு disable)
 {
-	int old_value = asynch_allowed;
+	முழு old_மதிப்பு = asynch_allowed;
 
 	asynch_allowed = !disable;
-	return old_value;
+	திரும்பு old_மதிப்பு;
 }
 #endif /* !CONFIG_IS_ENABLED(DM_USB) */
 
@@ -201,10 +201,10 @@ int usb_disable_asynch(int disable)
  * polling: when non-block is true and the device is not responding return
  * -EAGAIN instead of waiting for device to respond.
  */
-int usb_int_msg(struct usb_device *dev, unsigned long pipe,
-		void *buffer, int transfer_len, int interval, bool nonblock)
+முழு usb_int_செய்தி(கட்டமைப்பு usb_device *dev, unsigned long pipe,
+		வெறுமை *buffer, முழு transfer_len, முழு interval, bool nonblock)
 {
-	return submit_int_msg(dev, pipe, buffer, transfer_len, interval,
+	திரும்பு submit_int_செய்தி(dev, pipe, buffer, transfer_len, interval,
 			      nonblock);
 }
 
@@ -218,54 +218,54 @@ int usb_int_msg(struct usb_device *dev, unsigned long pipe,
  * transferred length and the current status are stored in the dev->act_len and
  * dev->status.
  */
-int usb_control_msg(struct usb_device *dev, unsigned int pipe,
-			unsigned char request, unsigned char requesttype,
-			unsigned short value, unsigned short index,
-			void *data, unsigned short size, int timeout)
+முழு usb_control_செய்தி(கட்டமைப்பு usb_device *dev, unsigned முழு pipe,
+			unsigned எழுத்து request, unsigned எழுத்து requesttype,
+			unsigned short மதிப்பு, unsigned short index,
+			வெறுமை *data, unsigned short size, முழு timeout)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct devrequest, setup_packet, 1);
-	int err;
+	ALLOC_CACHE_ALIGN_BUFFER(கட்டமைப்பு devrequest, setup_packet, 1);
+	முழு err;
 
-	if ((timeout == 0) && (!asynch_allowed)) {
+	எனில் ((timeout == 0) && (!asynch_allowed)) {
 		/* request for a asynch control pipe is not allowed */
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
 
 	/* set setup command */
 	setup_packet->requesttype = requesttype;
 	setup_packet->request = request;
-	setup_packet->value = cpu_to_le16(value);
+	setup_packet->மதிப்பு = cpu_to_le16(மதிப்பு);
 	setup_packet->index = cpu_to_le16(index);
 	setup_packet->length = cpu_to_le16(size);
 	debug("usb_control_msg: request: 0x%X, requesttype: 0x%X, " \
 	      "value 0x%X index 0x%X length 0x%X\n",
-	      request, requesttype, value, index, size);
+	      request, requesttype, மதிப்பு, index, size);
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
 
-	err = submit_control_msg(dev, pipe, data, size, setup_packet);
-	if (err < 0)
-		return err;
-	if (timeout == 0)
-		return (int)size;
+	err = submit_control_செய்தி(dev, pipe, data, size, setup_packet);
+	எனில் (err < 0)
+		திரும்பு err;
+	எனில் (timeout == 0)
+		திரும்பு (முழு)size;
 
 	/*
 	 * Wait for status to update until timeout expires, USB driver
 	 * interrupt handler may set the status when the USB operation has
 	 * been completed.
 	 */
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	போது (timeout--) {
+		எனில் (!((நிலையற்ற unsigned long)dev->status & USB_ST_NOT_PROC))
+			நிறுத்து;
 		mdelay(1);
 	}
 
-	if (timeout == 0)
-		return -ETIMEDOUT;
+	எனில் (timeout == 0)
+		திரும்பு -ETIMEDOUT;
 
-	if (dev->status)
-		return -1;
+	எனில் (dev->status)
+		திரும்பு -1;
 
-	return dev->act_len;
+	திரும்பு dev->act_len;
 }
 
 /*-------------------------------------------------------------------
@@ -273,24 +273,24 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
  * negative if Error.
  * synchronous behavior
  */
-int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
-			void *data, int len, int *actual_length, int timeout)
+முழு usb_bulk_செய்தி(கட்டமைப்பு usb_device *dev, unsigned முழு pipe,
+			வெறுமை *data, முழு len, முழு *actual_length, முழு timeout)
 {
-	if (len < 0)
-		return -EINVAL;
+	எனில் (len < 0)
+		திரும்பு -EINVAL;
 	dev->status = USB_ST_NOT_PROC; /*not yet processed */
-	if (submit_bulk_msg(dev, pipe, data, len) < 0)
-		return -EIO;
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	எனில் (submit_bulk_செய்தி(dev, pipe, data, len) < 0)
+		திரும்பு -EIO;
+	போது (timeout--) {
+		எனில் (!((நிலையற்ற unsigned long)dev->status & USB_ST_NOT_PROC))
+			நிறுத்து;
 		mdelay(1);
 	}
 	*actual_length = dev->act_len;
-	if (dev->status == 0)
-		return 0;
-	else
-		return -EIO;
+	எனில் (dev->status == 0)
+		திரும்பு 0;
+	இல்லையெனில்
+		திரும்பு -EIO;
 }
 
 /*-------------------------------------------------------------------
@@ -301,13 +301,13 @@ int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
  * returns the max packet size, depending on the pipe direction and
  * the configurations values
  */
-int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
+முழு usb_maxpacket(கட்டமைப்பு usb_device *dev, unsigned long pipe)
 {
 	/* direction is out -> use emaxpacket out */
-	if ((pipe & USB_DIR_IN) == 0)
-		return dev->epmaxpacketout[((pipe>>15) & 0xf)];
-	else
-		return dev->epmaxpacketin[((pipe>>15) & 0xf)];
+	எனில் ((pipe & USB_DIR_IN) == 0)
+		திரும்பு dev->epmaxpacketout[((pipe>>15) & 0xf)];
+	இல்லையெனில்
+		திரும்பு dev->epmaxpacketin[((pipe>>15) & 0xf)];
 }
 
 /*
@@ -321,36 +321,36 @@ int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
  *
  * NOTE: Similar behaviour was observed with GCC4.6 on ARMv5.
  */
-static void noinline
-usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
+நிலையான வெறுமை noinline
+usb_set_maxpacket_ep(கட்டமைப்பு usb_device *dev, முழு if_idx, முழு ep_idx)
 {
-	int b;
-	struct usb_endpoint_descriptor *ep;
+	முழு b;
+	கட்டமைப்பு usb_endpoint_descriptor *ep;
 	u16 ep_wMaxPacketSize;
 
 	ep = &dev->config.if_desc[if_idx].ep_desc[ep_idx];
 
-	b = ep->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
+	b = ep->bEndpointAddress & USB_ENDPOINT_எண்_MASK;
 	ep_wMaxPacketSize = get_unaligned(&ep->wMaxPacketSize);
 
-	if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
+	எனில் ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
 						USB_ENDPOINT_XFER_CONTROL) {
 		/* Control => bidirectional */
 		dev->epmaxpacketout[b] = ep_wMaxPacketSize;
 		dev->epmaxpacketin[b] = ep_wMaxPacketSize;
 		debug("##Control EP epmaxpacketout/in[%d] = %d\n",
 		      b, dev->epmaxpacketin[b]);
-	} else {
-		if ((ep->bEndpointAddress & 0x80) == 0) {
+	} இல்லையெனில் {
+		எனில் ((ep->bEndpointAddress & 0x80) == 0) {
 			/* OUT Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
+			எனில் (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
 				dev->epmaxpacketout[b] = ep_wMaxPacketSize;
 				debug("##EP epmaxpacketout[%d] = %d\n",
 				      b, dev->epmaxpacketout[b]);
 			}
-		} else {
+		} இல்லையெனில் {
 			/* IN Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
+			எனில் (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
 				dev->epmaxpacketin[b] = ep_wMaxPacketSize;
 				debug("##EP epmaxpacketin[%d] = %d\n",
 				      b, dev->epmaxpacketin[b]);
@@ -362,15 +362,15 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 /*
  * set the max packed value of all endpoints in the given configuration
  */
-static int usb_set_maxpacket(struct usb_device *dev)
+நிலையான முழு usb_set_maxpacket(கட்டமைப்பு usb_device *dev)
 {
-	int i, ii;
+	முழு i, ii;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++)
-		for (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
+	க்கு (i = 0; i < dev->config.desc.b_இலக்கம்_Interfaces; i++)
+		க்கு (ii = 0; ii < dev->config.if_desc[i].desc.b_இலக்கம்_Endpoints; ii++)
 			usb_set_maxpacket_ep(dev, i, ii);
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*******************************************************************************
@@ -378,28 +378,28 @@ static int usb_set_maxpacket(struct usb_device *dev)
  * Note that all little/big endian swapping are done automatically.
  * (wTotalLength has already been swapped and sanitized when it was read.)
  */
-static int usb_parse_config(struct usb_device *dev,
-			unsigned char *buffer, int cfgno)
+நிலையான முழு usb_parse_config(கட்டமைப்பு usb_device *dev,
+			unsigned எழுத்து *buffer, முழு cfgno)
 {
-	struct usb_descriptor_header *head;
-	int index, ifno, epno, curr_if_num;
+	கட்டமைப்பு usb_descriptor_header *head;
+	முழு index, ifno, epno, curr_if_இலக்கம்;
 	u16 ep_wMaxPacketSize;
-	struct usb_interface *if_desc = NULL;
+	கட்டமைப்பு usb_interface *if_desc = வெற்று;
 
 	ifno = -1;
 	epno = -1;
-	curr_if_num = -1;
+	curr_if_இலக்கம் = -1;
 
 	dev->configno = cfgno;
-	head = (struct usb_descriptor_header *) &buffer[0];
-	if (head->bDescriptorType != USB_DT_CONFIG) {
+	head = (கட்டமைப்பு usb_descriptor_header *) &buffer[0];
+	எனில் (head->bDescriptorType != USB_DT_CONFIG) {
 		printf(" ERROR: NOT USB_CONFIG_DESC %x\n",
 			head->bDescriptorType);
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
-	if (head->bLength != USB_DT_CONFIG_SIZE) {
+	எனில் (head->bLength != USB_DT_CONFIG_SIZE) {
 		printf("ERROR: Invalid USB CFG length (%d)\n", head->bLength);
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
 	memcpy(&dev->config, head, USB_DT_CONFIG_SIZE);
 	dev->config.no_of_if = 0;
@@ -407,67 +407,67 @@ static int usb_parse_config(struct usb_device *dev,
 	index = dev->config.desc.bLength;
 	/* Ok the first entry must be a configuration entry,
 	 * now process the others */
-	head = (struct usb_descriptor_header *) &buffer[index];
-	while (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
-		switch (head->bDescriptorType) {
-		case USB_DT_INTERFACE:
-			if (head->bLength != USB_DT_INTERFACE_SIZE) {
+	head = (கட்டமைப்பு usb_descriptor_header *) &buffer[index];
+	போது (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
+		தேர்வு (head->bDescriptorType) {
+		நிலை USB_DT_INTERFACE:
+			எனில் (head->bLength != USB_DT_INTERFACE_SIZE) {
 				printf("ERROR: Invalid USB IF length (%d)\n",
 					head->bLength);
-				break;
+				நிறுத்து;
 			}
-			if (index + USB_DT_INTERFACE_SIZE >
+			எனில் (index + USB_DT_INTERFACE_SIZE >
 			    dev->config.desc.wTotalLength) {
 				puts("USB IF descriptor overflowed buffer!\n");
-				break;
+				நிறுத்து;
 			}
-			if (((struct usb_interface_descriptor *) \
-			     head)->bInterfaceNumber != curr_if_num) {
+			எனில் (((கட்டமைப்பு usb_interface_descriptor *) \
+			     head)->b_Interface_எண் != curr_if_இலக்கம்) {
 				/* this is a new interface, copy new desc */
 				ifno = dev->config.no_of_if;
-				if (ifno >= USB_MAXINTERFACES) {
+				எனில் (ifno >= USB_MAXINTERFACES) {
 					puts("Too many USB interfaces!\n");
 					/* try to go on with what we have */
-					return -EINVAL;
+					திரும்பு -EINVAL;
 				}
 				if_desc = &dev->config.if_desc[ifno];
 				dev->config.no_of_if++;
 				memcpy(if_desc, head,
 					USB_DT_INTERFACE_SIZE);
 				if_desc->no_of_ep = 0;
-				if_desc->num_altsetting = 1;
-				curr_if_num =
-				     if_desc->desc.bInterfaceNumber;
-			} else {
+				if_desc->இலக்கம்_altsetting = 1;
+				curr_if_இலக்கம் =
+				     if_desc->desc.b_Interface_எண்;
+			} இல்லையெனில் {
 				/* found alternate setting for the interface */
-				if (ifno >= 0) {
+				எனில் (ifno >= 0) {
 					if_desc = &dev->config.if_desc[ifno];
-					if_desc->num_altsetting++;
+					if_desc->இலக்கம்_altsetting++;
 				}
 			}
-			break;
-		case USB_DT_ENDPOINT:
-			if (head->bLength != USB_DT_ENDPOINT_SIZE &&
+			நிறுத்து;
+		நிலை USB_DT_ENDPOINT:
+			எனில் (head->bLength != USB_DT_ENDPOINT_SIZE &&
 			    head->bLength != USB_DT_ENDPOINT_AUDIO_SIZE) {
 				printf("ERROR: Invalid USB EP length (%d)\n",
 					head->bLength);
-				break;
+				நிறுத்து;
 			}
-			if (index + head->bLength >
+			எனில் (index + head->bLength >
 			    dev->config.desc.wTotalLength) {
 				puts("USB EP descriptor overflowed buffer!\n");
-				break;
+				நிறுத்து;
 			}
-			if (ifno < 0) {
+			எனில் (ifno < 0) {
 				puts("Endpoint descriptor out of order!\n");
-				break;
+				நிறுத்து;
 			}
 			epno = dev->config.if_desc[ifno].no_of_ep;
 			if_desc = &dev->config.if_desc[ifno];
-			if (epno >= USB_MAXENDPOINTS) {
+			எனில் (epno >= USB_MAXENDPOINTS) {
 				printf("Interface %d has too many endpoints!\n",
-					if_desc->desc.bInterfaceNumber);
-				return -EINVAL;
+					if_desc->desc.b_Interface_எண்);
+				திரும்பு -EINVAL;
 			}
 			/* found an endpoint */
 			if_desc->no_of_ep++;
@@ -483,49 +483,49 @@ static int usb_parse_config(struct usb_device *dev,
 					ep_desc[epno].\
 					wMaxPacketSize);
 			debug("if %d, ep %d\n", ifno, epno);
-			break;
-		case USB_DT_SS_ENDPOINT_COMP:
-			if (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
+			நிறுத்து;
+		நிலை USB_DT_SS_ENDPOINT_COMP:
+			எனில் (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
 				printf("ERROR: Invalid USB EPC length (%d)\n",
 					head->bLength);
-				break;
+				நிறுத்து;
 			}
-			if (index + USB_DT_SS_EP_COMP_SIZE >
+			எனில் (index + USB_DT_SS_EP_COMP_SIZE >
 			    dev->config.desc.wTotalLength) {
 				puts("USB EPC descriptor overflowed buffer!\n");
-				break;
+				நிறுத்து;
 			}
-			if (ifno < 0 || epno < 0) {
+			எனில் (ifno < 0 || epno < 0) {
 				puts("EPC descriptor out of order!\n");
-				break;
+				நிறுத்து;
 			}
 			if_desc = &dev->config.if_desc[ifno];
 			memcpy(&if_desc->ss_ep_comp_desc[epno], head,
 				USB_DT_SS_EP_COMP_SIZE);
-			break;
-		default:
-			if (head->bLength == 0)
-				return -EINVAL;
+			நிறுத்து;
+		இயல்பு:
+			எனில் (head->bLength == 0)
+				திரும்பு -EINVAL;
 
 			debug("unknown Description Type : %x\n",
 			      head->bDescriptorType);
 
 #ifdef DEBUG
 			{
-				unsigned char *ch = (unsigned char *)head;
-				int i;
+				unsigned எழுத்து *ch = (unsigned எழுத்து *)head;
+				முழு i;
 
-				for (i = 0; i < head->bLength; i++)
+				க்கு (i = 0; i < head->bLength; i++)
 					debug("%02X ", *ch++);
 				debug("\n\n\n");
 			}
 #endif
-			break;
+			நிறுத்து;
 		}
 		index += head->bLength;
-		head = (struct usb_descriptor_header *)&buffer[index];
+		head = (கட்டமைப்பு usb_descriptor_header *)&buffer[index];
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /***********************************************************************
@@ -533,18 +533,18 @@ static int usb_parse_config(struct usb_device *dev,
  * endp: endpoint number in bits 0-3;
  * direction flag in bit 7 (1 = IN, 0 = OUT)
  */
-int usb_clear_halt(struct usb_device *dev, int pipe)
+முழு usb_clear_halt(கட்டமைப்பு usb_device *dev, முழு pipe)
 {
-	int result;
-	int endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
+	முழு result;
+	முழு endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
 
-	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	result = usb_control_செய்தி(dev, usb_sndctrlpipe(dev, 0),
 				 USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
-				 endp, NULL, 0, USB_CNTL_TIMEOUT * 3);
+				 endp, வெற்று, 0, USB_CNTL_TIMEOUT * 3);
 
 	/* don't clear if failed */
-	if (result < 0)
-		return result;
+	எனில் (result < 0)
+		திரும்பு result;
 
 	/*
 	 * NOTE: we do not get status and verify reset was successful
@@ -555,110 +555,110 @@ int usb_clear_halt(struct usb_device *dev, int pipe)
 
 	/* toggle is reset on clear */
 	usb_settoggle(dev, usb_pipeendpoint(pipe), usb_pipeout(pipe), 0);
-	return 0;
+	திரும்பு 0;
 }
 
 /**********************************************************************
  * get_descriptor type
  */
-static int usb_get_descriptor(struct usb_device *dev, unsigned char type,
-			unsigned char index, void *buf, int size)
+நிலையான முழு usb_get_descriptor(கட்டமைப்பு usb_device *dev, unsigned எழுத்து type,
+			unsigned எழுத்து index, வெறுமை *buf, முழு size)
 {
-	int i;
-	int result;
+	முழு i;
+	முழு result;
 
-	if (size <= 0)		/* No point in asking for no data */
-		return -EINVAL;
+	எனில் (size <= 0)		/* No point in asking for no data */
+		திரும்பு -EINVAL;
 
 	memset(buf, 0, size);	/* Make sure we parse really received data */
 
-	for (i = 0; i < 3; ++i) {
+	க்கு (i = 0; i < 3; ++i) {
 		/* retry on length 0 or error; some devices are flakey */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+		result = usb_control_செய்தி(dev, usb_rcvctrlpipe(dev, 0),
 					 USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 					 (type << 8) + index, 0, buf, size,
 					 USB_CNTL_TIMEOUT);
-		if (result <= 0 && result != -ETIMEDOUT)
-			continue;
-		if (result > 1 && ((u8 *)buf)[1] != type) {
+		எனில் (result <= 0 && result != -ETIMEDOUT)
+			தொடர்;
+		எனில் (result > 1 && ((u8 *)buf)[1] != type) {
 			result = -ENODATA;
-			continue;
+			தொடர்;
 		}
-		break;
+		நிறுத்து;
 	}
-	return result;
+	திரும்பு result;
 }
 
 /**********************************************************************
  * gets len of configuration cfgno
  */
-int usb_get_configuration_len(struct usb_device *dev, int cfgno)
+முழு usb_get_configuration_len(கட்டமைப்பு usb_device *dev, முழு cfgno)
 {
-	int result;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, 9);
-	struct usb_config_descriptor *config;
+	முழு result;
+	ALLOC_CACHE_ALIGN_BUFFER(unsigned எழுத்து, buffer, 9);
+	கட்டமைப்பு usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
+	config = (கட்டமைப்பு usb_config_descriptor *)&buffer[0];
 	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, 9);
-	if (result < 9) {
-		if (result < 0)
+	எனில் (result < 9) {
+		எனில் (result < 0)
 			printf("unable to get descriptor, error %lX\n",
 				dev->status);
-		else
+		இல்லையெனில்
 			printf("config descriptor too short " \
 				"(expected %i, got %i)\n", 9, result);
-		return -EIO;
+		திரும்பு -EIO;
 	}
-	return le16_to_cpu(config->wTotalLength);
+	திரும்பு le16_to_cpu(config->wTotalLength);
 }
 
 /**********************************************************************
  * gets configuration cfgno and store it in the buffer
  */
-int usb_get_configuration_no(struct usb_device *dev, int cfgno,
-			     unsigned char *buffer, int length)
+முழு usb_get_configuration_no(கட்டமைப்பு usb_device *dev, முழு cfgno,
+			     unsigned எழுத்து *buffer, முழு length)
 {
-	int result;
-	struct usb_config_descriptor *config;
+	முழு result;
+	கட்டமைப்பு usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
+	config = (கட்டமைப்பு usb_config_descriptor *)&buffer[0];
 	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, length);
 	debug("get_conf_no %d Result %d, wLength %d\n", cfgno, result,
 	      le16_to_cpu(config->wTotalLength));
 	config->wTotalLength = result; /* validated, with CPU byte order */
 
-	return result;
+	திரும்பு result;
 }
 
 /********************************************************************
  * set address of a device to the value in dev->devnum.
  * This can only be done by addressing the device via the default address (0)
  */
-static int usb_set_address(struct usb_device *dev)
+நிலையான முழு usb_set_address(கட்டமைப்பு usb_device *dev)
 {
 	debug("set address %d\n", dev->devnum);
 
-	return usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
-			       0, (dev->devnum), 0, NULL, 0, USB_CNTL_TIMEOUT);
+	திரும்பு usb_control_செய்தி(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
+			       0, (dev->devnum), 0, வெற்று, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set interface number to interface
  */
-int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+முழு usb_set_interface(கட்டமைப்பு usb_device *dev, முழு interface, முழு alternate)
 {
-	struct usb_interface *if_face = NULL;
-	int ret, i;
+	கட்டமைப்பு usb_interface *if_face = வெற்று;
+	முழு ret, i;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
-		if (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
+	க்கு (i = 0; i < dev->config.desc.b_இலக்கம்_Interfaces; i++) {
+		எனில் (dev->config.if_desc[i].desc.b_Interface_எண் == interface) {
 			if_face = &dev->config.if_desc[i];
-			break;
+			நிறுத்து;
 		}
 	}
-	if (!if_face) {
+	எனில் (!if_face) {
 		printf("selecting invalid interface %d", interface);
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
 	/*
 	 * We should return now for devices with only one alternate setting.
@@ -667,66 +667,66 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	 * some USB sticks timeouting during initialization and then being
 	 * unusable in U-Boot.
 	 */
-	if (if_face->num_altsetting == 1)
-		return 0;
+	எனில் (if_face->இலக்கம்_altsetting == 1)
+		திரும்பு 0;
 
-	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	ret = usb_control_செய்தி(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_INTERFACE, USB_RECIP_INTERFACE,
-				alternate, interface, NULL, 0,
+				alternate, interface, வெற்று, 0,
 				USB_CNTL_TIMEOUT * 5);
-	if (ret < 0)
-		return ret;
+	எனில் (ret < 0)
+		திரும்பு ret;
 
-	return 0;
+	திரும்பு 0;
 }
 
 /********************************************************************
  * set configuration number to configuration
  */
-static int usb_set_configuration(struct usb_device *dev, int configuration)
+நிலையான முழு usb_set_configuration(கட்டமைப்பு usb_device *dev, முழு configuration)
 {
-	int res;
+	முழு res;
 	debug("set configuration %d\n", configuration);
 	/* set setup command */
-	res = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	res = usb_control_செய்தி(dev, usb_sndctrlpipe(dev, 0),
 				USB_REQ_SET_CONFIGURATION, 0,
 				configuration, 0,
-				NULL, 0, USB_CNTL_TIMEOUT);
-	if (res == 0) {
+				வெற்று, 0, USB_CNTL_TIMEOUT);
+	எனில் (res == 0) {
 		dev->toggle[0] = 0;
 		dev->toggle[1] = 0;
-		return 0;
-	} else
-		return -EIO;
+		திரும்பு 0;
+	} இல்லையெனில்
+		திரும்பு -EIO;
 }
 
 /********************************************************************
  * set protocol to protocol
  */
-int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
+முழு usb_set_protocol(கட்டமைப்பு usb_device *dev, முழு ifnum, முழு protocol)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	திரும்பு usb_control_செய்தி(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		protocol, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+		protocol, ifnum, வெற்று, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set idle
  */
-int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
+முழு usb_set_idle(கட்டமைப்பு usb_device *dev, முழு ifnum, முழு duration, முழு report_id)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	திரும்பு usb_control_செய்தி(dev, usb_sndctrlpipe(dev, 0),
 		USB_REQ_SET_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		(duration << 8) | report_id, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+		(duration << 8) | report_id, ifnum, வெற்று, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get report
  */
-int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
-		   unsigned char id, void *buf, int size)
+முழு usb_get_report(கட்டமைப்பு usb_device *dev, முழு ifnum, unsigned எழுத்து type,
+		   unsigned எழுத்து id, வெறுமை *buf, முழு size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	திரும்பு usb_control_செய்தி(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_REPORT,
 			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
 			(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
@@ -735,10 +735,10 @@ int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
 /********************************************************************
  * get class descriptor
  */
-int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
-		unsigned char type, unsigned char id, void *buf, int size)
+முழு usb_get_class_descriptor(கட்டமைப்பு usb_device *dev, முழு ifnum,
+		unsigned எழுத்து type, unsigned எழுத்து id, வெறுமை *buf, முழு size)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	திரும்பு usb_control_செய்தி(dev, usb_rcvctrlpipe(dev, 0),
 		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_IN,
 		(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
 }
@@ -746,44 +746,44 @@ int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
 /********************************************************************
  * get string index in buffer
  */
-static int usb_get_string(struct usb_device *dev, unsigned short langid,
-		   unsigned char index, void *buf, int size)
+நிலையான முழு usb_get_string(கட்டமைப்பு usb_device *dev, unsigned short langid,
+		   unsigned எழுத்து index, வெறுமை *buf, முழு size)
 {
-	int i;
-	int result;
+	முழு i;
+	முழு result;
 
-	for (i = 0; i < 3; ++i) {
+	க்கு (i = 0; i < 3; ++i) {
 		/* some devices are flaky */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+		result = usb_control_செய்தி(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
 			(USB_DT_STRING << 8) + index, langid, buf, size,
 			USB_CNTL_TIMEOUT);
 
-		if (result > 0)
-			break;
+		எனில் (result > 0)
+			நிறுத்து;
 	}
 
-	return result;
+	திரும்பு result;
 }
 
-static void usb_try_string_workarounds(unsigned char *buf, int *length)
+நிலையான வெறுமை usb_try_string_workarounds(unsigned எழுத்து *buf, முழு *length)
 {
-	int newlength, oldlength = *length;
+	முழு newlength, oldlength = *length;
 
-	for (newlength = 2; newlength + 1 < oldlength; newlength += 2)
-		if (!isprint(buf[newlength]) || buf[newlength + 1])
-			break;
+	க்கு (newlength = 2; newlength + 1 < oldlength; newlength += 2)
+		எனில் (!isprint(buf[newlength]) || buf[newlength + 1])
+			நிறுத்து;
 
-	if (newlength > 2) {
+	எனில் (newlength > 2) {
 		buf[0] = newlength;
 		*length = newlength;
 	}
 }
 
-static int usb_string_sub(struct usb_device *dev, unsigned int langid,
-		unsigned int index, unsigned char *buf)
+நிலையான முழு usb_string_sub(கட்டமைப்பு usb_device *dev, unsigned முழு langid,
+		unsigned முழு index, unsigned எழுத்து *buf)
 {
-	int rc;
+	முழு rc;
 
 	/* Try to read the string descriptor by asking for the maximum
 	 * possible number of bytes */
@@ -791,27 +791,27 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
 
 	/* If that failed try to read the descriptor length, then
 	 * ask for just that many bytes */
-	if (rc < 2) {
+	எனில் (rc < 2) {
 		rc = usb_get_string(dev, langid, index, buf, 2);
-		if (rc == 2)
+		எனில் (rc == 2)
 			rc = usb_get_string(dev, langid, index, buf, buf[0]);
 	}
 
-	if (rc >= 2) {
-		if (!buf[0] && !buf[1])
+	எனில் (rc >= 2) {
+		எனில் (!buf[0] && !buf[1])
 			usb_try_string_workarounds(buf, &rc);
 
 		/* There might be extra junk at the end of the descriptor */
-		if (buf[0] < rc)
+		எனில் (buf[0] < rc)
 			rc = buf[0];
 
 		rc = rc - (rc & 1); /* force a multiple of two */
 	}
 
-	if (rc < 2)
+	எனில் (rc < 2)
 		rc = -EINVAL;
 
-	return rc;
+	திரும்பு rc;
 }
 
 /********************************************************************
@@ -819,29 +819,29 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
  * Get string index and translate it to ascii.
  * returns string length (> 0) or error (< 0)
  */
-int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
+முழு usb_string(கட்டமைப்பு usb_device *dev, முழு index, எழுத்து *buf, size_t size)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, mybuf, USB_BUFSIZ);
-	unsigned char *tbuf;
-	int err;
-	unsigned int u, idx;
+	ALLOC_CACHE_ALIGN_BUFFER(unsigned எழுத்து, mybuf, USB_BUFSIZ);
+	unsigned எழுத்து *tbuf;
+	முழு err;
+	unsigned முழு u, idx;
 
-	if (size <= 0 || !buf || !index)
-		return -EINVAL;
+	எனில் (size <= 0 || !buf || !index)
+		திரும்பு -EINVAL;
 	buf[0] = 0;
 	tbuf = &mybuf[0];
 
 	/* get langid for strings if it's not yet known */
-	if (!dev->have_langid) {
+	எனில் (!dev->have_langid) {
 		err = usb_string_sub(dev, 0, 0, tbuf);
-		if (err < 0) {
+		எனில் (err < 0) {
 			debug("error getting string descriptor 0 " \
 			      "(error=%lx)\n", dev->status);
-			return -EIO;
-		} else if (tbuf[0] < 4) {
+			திரும்பு -EIO;
+		} இல்லையெனில் எனில் (tbuf[0] < 4) {
 			debug("string descriptor 0 too short\n");
-			return -EIO;
-		} else {
+			திரும்பு -EIO;
+		} இல்லையெனில் {
 			dev->have_langid = -1;
 			dev->string_langid = tbuf[2] | (tbuf[3] << 8);
 				/* always use the first langid listed */
@@ -852,21 +852,21 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
 	}
 
 	err = usb_string_sub(dev, dev->string_langid, index, tbuf);
-	if (err < 0)
-		return err;
+	எனில் (err < 0)
+		திரும்பு err;
 
 	size--;		/* leave room for trailing NULL char in output buffer */
-	for (idx = 0, u = 2; u < err; u += 2) {
-		if (idx >= size)
-			break;
-		if (tbuf[u+1])			/* high byte */
+	க்கு (idx = 0, u = 2; u < err; u += 2) {
+		எனில் (idx >= size)
+			நிறுத்து;
+		எனில் (tbuf[u+1])			/* high byte */
 			buf[idx++] = '?';  /* non-ASCII character */
-		else
+		இல்லையெனில்
 			buf[idx++] = tbuf[u];
 	}
 	buf[idx] = 0;
 	err = idx;
-	return err;
+	திரும்பு err;
 }
 
 /********************************************************************
@@ -874,38 +874,38 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
  * the USB device are static allocated [USB_MAX_DEVICE].
  */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#எனில் !CONFIG_IS_ENABLED(DM_USB)
 
 /* returns a pointer to the device with the index [index].
  * if the device is not assigned (dev->devnum==-1) returns NULL
  */
-struct usb_device *usb_get_dev_index(int index)
+கட்டமைப்பு usb_device *usb_get_dev_index(முழு index)
 {
-	if (usb_dev[index].devnum == -1)
-		return NULL;
-	else
-		return &usb_dev[index];
+	எனில் (usb_dev[index].devnum == -1)
+		திரும்பு வெற்று;
+	இல்லையெனில்
+		திரும்பு &usb_dev[index];
 }
 
-int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
+முழு usb_alloc_new_device(கட்டமைப்பு udevice *controller, கட்டமைப்பு usb_device **devp)
 {
-	int i;
+	முழு i;
 	debug("New Device %d\n", dev_index);
-	if (dev_index == USB_MAX_DEVICE) {
+	எனில் (dev_index == USB_MAX_DEVICE) {
 		printf("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
-		return -ENOSPC;
+		திரும்பு -ENOSPC;
 	}
 	/* default Address is 0, real addresses start with 1 */
 	usb_dev[dev_index].devnum = dev_index + 1;
 	usb_dev[dev_index].maxchild = 0;
-	for (i = 0; i < USB_MAXCHILDREN; i++)
-		usb_dev[dev_index].children[i] = NULL;
-	usb_dev[dev_index].parent = NULL;
+	க்கு (i = 0; i < USB_MAXCHILDREN; i++)
+		usb_dev[dev_index].children[i] = வெற்று;
+	usb_dev[dev_index].parent = வெற்று;
 	usb_dev[dev_index].controller = controller;
 	dev_index++;
 	*devp = &usb_dev[dev_index - 1];
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -913,11 +913,11 @@ int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
  * Called in error cases where configuring a newly attached
  * device fails for some reason.
  */
-void usb_free_device(struct udevice *controller)
+வெறுமை usb_free_device(கட்டமைப்பு udevice *controller)
 {
 	dev_index--;
 	debug("Freeing device node: %d\n", dev_index);
-	memset(&usb_dev[dev_index], 0, sizeof(struct usb_device));
+	memset(&usb_dev[dev_index], 0, அளவு(கட்டமைப்பு usb_device));
 	usb_dev[dev_index].devnum = -1;
 }
 
@@ -927,46 +927,46 @@ void usb_free_device(struct udevice *controller)
  * function for the purpose, so that XHCI overrides it
  * and EHCI/OHCI just work out of the box.
  */
-__weak int usb_alloc_device(struct usb_device *udev)
+__weak முழு usb_alloc_device(கட்டமைப்பு usb_device *udev)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif /* !CONFIG_IS_ENABLED(DM_USB) */
 
-static int usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
+நிலையான முழு usb_hub_port_reset(கட்டமைப்பு usb_device *dev, கட்டமைப்பு usb_device *hub)
 {
-	if (!hub)
-		usb_reset_root_port(dev);
+	எனில் (!hub)
+		usb_reset_வேர்_port(dev);
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int get_descriptor_len(struct usb_device *dev, int len, int expect_len)
+நிலையான முழு get_descriptor_len(கட்டமைப்பு usb_device *dev, முழு len, முழு expect_len)
 {
-	__maybe_unused struct usb_device_descriptor *desc;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, tmpbuf, USB_BUFSIZ);
-	int err;
+	__maybe_unused கட்டமைப்பு usb_device_descriptor *desc;
+	ALLOC_CACHE_ALIGN_BUFFER(unsigned எழுத்து, tmpbuf, USB_BUFSIZ);
+	முழு err;
 
-	desc = (struct usb_device_descriptor *)tmpbuf;
+	desc = (கட்டமைப்பு usb_device_descriptor *)tmpbuf;
 
 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0, desc, len);
-	if (err < expect_len) {
-		if (err < 0) {
+	எனில் (err < expect_len) {
+		எனில் (err < 0) {
 			printf("unable to get device descriptor (error=%d)\n",
 				err);
-			return err;
-		} else {
+			திரும்பு err;
+		} இல்லையெனில் {
 			printf("USB device descriptor short read (expected %i, got %i)\n",
 				expect_len, err);
-			return -EIO;
+			திரும்பு -EIO;
 		}
 	}
-	memcpy(&dev->descriptor, tmpbuf, sizeof(dev->descriptor));
+	memcpy(&dev->descriptor, tmpbuf, அளவு(dev->descriptor));
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
+நிலையான முழு usb_setup_descriptor(கட்டமைப்பு usb_device *dev, bool do_read)
 {
 	/*
 	 * This is a Windows scheme of initialization sequence, with double
@@ -984,18 +984,18 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 	 * some more, or keeps on retransmitting the 8 byte header.
 	 */
 
-	if (dev->speed == USB_SPEED_LOW) {
+	எனில் (dev->speed == USB_SPEED_கீழ்) {
 		dev->descriptor.bMaxPacketSize0 = 8;
 		dev->maxpacketsize = PACKET_SIZE_8;
-	} else {
+	} இல்லையெனில் {
 		dev->descriptor.bMaxPacketSize0 = 64;
 		dev->maxpacketsize = PACKET_SIZE_64;
 	}
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
 
-	if (do_read && dev->speed == USB_SPEED_FULL) {
-		int err;
+	எனில் (do_read && dev->speed == USB_SPEED_FULL) {
+		முழு err;
 
 		/*
 		 * Validate we've received only at least 8 bytes, not that
@@ -1014,8 +1014,8 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 		 * as 64 (above) yields a request for 1 packet.
 		 */
 		err = get_descriptor_len(dev, 64, 8);
-		if (err)
-			return err;
+		எனில் (err)
+			திரும்பு err;
 
 		/*
 		 * Logitech Unifying Receiver 046d:c52b bcdDevice 12.10 seems
@@ -1031,31 +1031,31 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
-	switch (dev->descriptor.bMaxPacketSize0) {
-	case 8:
+	தேர்வு (dev->descriptor.bMaxPacketSize0) {
+	நிலை 8:
 		dev->maxpacketsize  = PACKET_SIZE_8;
-		break;
-	case 16:
+		நிறுத்து;
+	நிலை 16:
 		dev->maxpacketsize = PACKET_SIZE_16;
-		break;
-	case 32:
+		நிறுத்து;
+	நிலை 32:
 		dev->maxpacketsize = PACKET_SIZE_32;
-		break;
-	case 64:
+		நிறுத்து;
+	நிலை 64:
 		dev->maxpacketsize = PACKET_SIZE_64;
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		printf("%s: invalid max packet size\n", __func__);
-		return -EIO;
+		திரும்பு -EIO;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
-			      struct usb_device *parent)
+நிலையான முழு usb_prepare_device(கட்டமைப்பு usb_device *dev, முழு addr, bool do_read,
+			      கட்டமைப்பு usb_device *parent)
 {
-	int err;
+	முழு err;
 
 	/*
 	 * Allocate usb 3.0 device context.
@@ -1064,25 +1064,25 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * Refer to sec 4.3.2 in xHCI spec rev1.0
 	 */
 	err = usb_alloc_device(dev);
-	if (err) {
+	எனில் (err) {
 		printf("Cannot allocate device context to get SLOT_ID\n");
-		return err;
+		திரும்பு err;
 	}
 	err = usb_setup_descriptor(dev, do_read);
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 	err = usb_hub_port_reset(dev, parent);
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
 	dev->devnum = addr;
 
 	err = usb_set_address(dev); /* set address */
 
-	if (err < 0) {
+	எனில் (err < 0) {
 		printf("\n      USB device not accepting new address " \
 			"(error=%lX)\n", dev->status);
-		return err;
+		திரும்பு err;
 	}
 
 	mdelay(10);	/* Let the SET_ADDRESS settle */
@@ -1092,41 +1092,41 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * after device is assigned an address. This is only applicable
 	 * to xHCI so far.
 	 */
-	if (!do_read) {
+	எனில் (!do_read) {
 		err = usb_setup_descriptor(dev, true);
-		if (err)
-			return err;
+		எனில் (err)
+			திரும்பு err;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
+நிலையான முழு usb_device_is_ignored(u16 id_vendor, u16 id_product)
 {
 	ulong vid, pid;
-	char *end;
-	const char *cur = NULL;
+	எழுத்து *end;
+	மாறிலி எழுத்து *cur = வெற்று;
 
 	/* ignore list depends on env support */
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		return 0;
+	எனில் (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		திரும்பு 0;
 
 	cur = env_get("usb_ignorelist");
 
 	/* parse "usb_ignorelist" strictly */
-	while (cur && cur[0] != '\0') {
+	போது (cur && cur[0] != '\0') {
 		vid = simple_strtoul(cur, &end, 0);
 		/*
 		 * If strtoul did not parse a single digit or the next char is
 		 * not ':' the ignore list is malformed.
 		 */
-		if (cur == end || end[0] != ':')
-			return -EINVAL;
+		எனில் (cur == end || end[0] != ':')
+			திரும்பு -EINVAL;
 
 		cur = end + 1;
 		pid = simple_strtoul(cur, &end, 0);
 		/* Consider '*' as wildcard for the product ID */
-		if (cur == end && end[0] == '*') {
+		எனில் (cur == end && end[0] == '*') {
 			pid = U16_MAX + 1;
 			end++;
 		}
@@ -1135,28 +1135,28 @@ static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
 		 * parsed or entries are not separated by ',' or terminated with
 		 * '\0'.
 		 */
-		if (cur == end || (end[0] != ',' && end[0] != '\0'))
-			return -EINVAL;
+		எனில் (cur == end || (end[0] != ',' && end[0] != '\0'))
+			திரும்பு -EINVAL;
 
-		if (id_vendor == vid && (pid > U16_MAX || id_product == pid))
-			return -ENODEV;
+		எனில் (id_vendor == vid && (pid > U16_MAX || id_product == pid))
+			திரும்பு -ENODEV;
 
-		if (end[0] == '\0')
-			break;
+		எனில் (end[0] == '\0')
+			நிறுத்து;
 		cur = end + 1;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-int usb_select_config(struct usb_device *dev)
+முழு usb_select_config(கட்டமைப்பு usb_device *dev)
 {
-	unsigned char *tmpbuf = NULL;
-	int err;
+	unsigned எழுத்து *tmpbuf = வெற்று;
+	முழு err;
 
 	err = get_descriptor_len(dev, USB_DT_DEVICE_SIZE, USB_DT_DEVICE_SIZE);
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
 	/* correct le values */
 	le16_to_cpus(&dev->descriptor.bcdUSB);
@@ -1167,11 +1167,11 @@ int usb_select_config(struct usb_device *dev)
 	/* ignore devices from usb_ignorelist */
 	err = usb_device_is_ignored(dev->descriptor.idVendor,
 				    dev->descriptor.idProduct);
-	if (err == -ENODEV) {
+	எனில் (err == -ENODEV) {
 		debug("Ignoring USB device 0x%x:0x%x\n",
 			dev->descriptor.idVendor, dev->descriptor.idProduct);
-		return err;
-	} else if (err == -EINVAL) {
+		திரும்பு err;
+	} இல்லையெனில் எனில் (err == -EINVAL) {
 		/*
 		 * Continue on "usb_ignorelist" parsing errors. The list is
 		 * parsed for each device returning the error would result in
@@ -1181,8 +1181,8 @@ int usb_select_config(struct usb_device *dev)
 		 */
 		printf("usb_ignorelist parse error in \"%s\"\n",
 		       env_get("usb_ignorelist"));
-	} else if (err < 0) {
-		return err;
+	} இல்லையெனில் எனில் (err < 0) {
+		திரும்பு err;
 	}
 
 	/*
@@ -1195,33 +1195,33 @@ int usb_select_config(struct usb_device *dev)
 
 	/* only support for one config for now */
 	err = usb_get_configuration_len(dev, 0);
-	if (err >= 0) {
-		tmpbuf = (unsigned char *)malloc_cache_aligned(err);
-		if (!tmpbuf)
+	எனில் (err >= 0) {
+		tmpbuf = (unsigned எழுத்து *)malloc_cache_aligned(err);
+		எனில் (!tmpbuf)
 			err = -ENOMEM;
-		else
+		இல்லையெனில்
 			err = usb_get_configuration_no(dev, 0, tmpbuf, err);
 	}
-	if (err < 0) {
+	எனில் (err < 0) {
 		printf("usb_new_device: Cannot read configuration, " \
 		       "skipping device %04x:%04x\n",
 		       dev->descriptor.idVendor, dev->descriptor.idProduct);
-		free(tmpbuf);
-		return err;
+		விடுவி(tmpbuf);
+		திரும்பு err;
 	}
 	usb_parse_config(dev, tmpbuf, 0);
-	free(tmpbuf);
+	விடுவி(tmpbuf);
 	usb_set_maxpacket(dev);
 	/*
 	 * we set the default configuration here
 	 * This seems premature. If the driver wants a different configuration
 	 * it will need to select itself.
 	 */
-	err = usb_set_configuration(dev, dev->config.desc.bConfigurationValue);
-	if (err < 0) {
+	err = usb_set_configuration(dev, dev->config.desc.b_Configuration_மதிப்பு);
+	எனில் (err < 0) {
 		printf("failed to set default configuration " \
 			"len %d, status %lX\n", dev->act_len, dev->status);
-		return err;
+		திரும்பு err;
 	}
 
 	/*
@@ -1233,45 +1233,45 @@ int usb_select_config(struct usb_device *dev)
 
 	debug("new device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
 	      dev->descriptor.iManufacturer, dev->descriptor.iProduct,
-	      dev->descriptor.iSerialNumber);
-	memset(dev->mf, 0, sizeof(dev->mf));
-	memset(dev->prod, 0, sizeof(dev->prod));
-	memset(dev->serial, 0, sizeof(dev->serial));
-	if (dev->descriptor.iManufacturer)
+	      dev->descriptor.i_Serial_எண்);
+	memset(dev->mf, 0, அளவு(dev->mf));
+	memset(dev->prod, 0, அளவு(dev->prod));
+	memset(dev->serial, 0, அளவு(dev->serial));
+	எனில் (dev->descriptor.iManufacturer)
 		usb_string(dev, dev->descriptor.iManufacturer,
-			   dev->mf, sizeof(dev->mf));
-	if (dev->descriptor.iProduct)
+			   dev->mf, அளவு(dev->mf));
+	எனில் (dev->descriptor.iProduct)
 		usb_string(dev, dev->descriptor.iProduct,
-			   dev->prod, sizeof(dev->prod));
-	if (dev->descriptor.iSerialNumber)
-		usb_string(dev, dev->descriptor.iSerialNumber,
-			   dev->serial, sizeof(dev->serial));
+			   dev->prod, அளவு(dev->prod));
+	எனில் (dev->descriptor.i_Serial_எண்)
+		usb_string(dev, dev->descriptor.i_Serial_எண்,
+			   dev->serial, அளவு(dev->serial));
 	debug("Manufacturer %s\n", dev->mf);
 	debug("Product      %s\n", dev->prod);
 	debug("SerialNumber %s\n", dev->serial);
 
-	return 0;
+	திரும்பு 0;
 }
 
-int usb_setup_device(struct usb_device *dev, bool do_read,
-		     struct usb_device *parent)
+முழு usb_setup_device(கட்டமைப்பு usb_device *dev, bool do_read,
+		     கட்டமைப்பு usb_device *parent)
 {
-	int addr;
-	int ret;
+	முழு addr;
+	முழு ret;
 
 	/* We still haven't set the Address yet */
 	addr = dev->devnum;
 	dev->devnum = 0;
 
 	ret = usb_prepare_device(dev, addr, do_read, parent);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 	ret = usb_select_config(dev);
 
-	return ret;
+	திரும்பு ret;
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#எனில் !CONFIG_IS_ENABLED(DM_USB)
 /*
  * By the time we get here, the device has gotten a new device ID
  * and is in the default state. We need to identify the thing and
@@ -1279,10 +1279,10 @@ int usb_setup_device(struct usb_device *dev, bool do_read,
  *
  * Returns 0 for success, != 0 for error.
  */
-int usb_new_device(struct usb_device *dev)
+முழு usb_new_device(கட்டமைப்பு usb_device *dev)
 {
 	bool do_read = true;
-	int err;
+	முழு err;
 
 	/*
 	 * XHCI needs to issue a Address device command to setup
@@ -1294,45 +1294,45 @@ int usb_new_device(struct usb_device *dev)
 	do_read = false;
 #endif
 	err = usb_setup_device(dev, do_read, dev->parent);
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
 	/* Now probe if the device is a hub */
 	err = usb_hub_probe(dev, 0);
-	if (err < 0)
-		return err;
+	எனில் (err < 0)
+		திரும்பு err;
 
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
 __weak
-int board_usb_init(int index, enum usb_init_type init)
+முழு board_usb_init(முழு index, எண்ணிக்கை usb_init_type init)
 {
-	return 0;
+	திரும்பு 0;
 }
 
 __weak
-int board_usb_cleanup(int index, enum usb_init_type init)
+முழு board_usb_cleanup(முழு index, எண்ணிக்கை usb_init_type init)
 {
-	return 0;
+	திரும்பு 0;
 }
 
-bool usb_device_has_child_on_port(struct usb_device *parent, int port)
+bool usb_device_has_child_on_port(கட்டமைப்பு usb_device *parent, முழு port)
 {
-#if CONFIG_IS_ENABLED(DM_USB)
-	return false;
-#else
-	return parent->children[port] != NULL;
+#எனில் CONFIG_IS_ENABLED(DM_USB)
+	திரும்பு false;
+#இல்லையெனில்
+	திரும்பு parent->children[port] != வெற்று;
 #endif
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
+#எனில் CONFIG_IS_ENABLED(DM_USB)
+வெறுமை usb_find_usb2_hub_address_port(கட்டமைப்பு usb_device *udev,
 			       uint8_t *hub_address, uint8_t *hub_port)
 {
-	struct udevice *parent;
-	struct usb_device *uparent, *ttdev;
+	கட்டமைப்பு udevice *parent;
+	கட்டமைப்பு usb_device *uparent, *ttdev;
 
 	/*
 	 * When called from usb-uclass.c: usb_scan_device() udev->dev points
@@ -1345,14 +1345,14 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	parent = udev->dev;
 	uparent = dev_get_parent_priv(parent);
 
-	while (uparent->speed != USB_SPEED_HIGH) {
-		struct udevice *dev = parent;
+	போது (uparent->speed != USB_SPEED_உயர்வு) {
+		கட்டமைப்பு udevice *dev = parent;
 
-		if (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
+		எனில் (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
 			printf("Error: Cannot find high speed parent of usb-1 device\n");
 			*hub_address = 0;
 			*hub_port = 0;
-			return;
+			திரும்பு;
 		}
 
 		ttdev = dev_get_parent_priv(dev);
@@ -1362,18 +1362,18 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	*hub_address = uparent->devnum;
 	*hub_port = ttdev->portnr;
 }
-#else
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
+#இல்லையெனில்
+வெறுமை usb_find_usb2_hub_address_port(கட்டமைப்பு usb_device *udev,
 			       uint8_t *hub_address, uint8_t *hub_port)
 {
 	/* Find out the nearest parent which is high speed */
-	while (udev->parent->parent != NULL)
-		if (udev->parent->speed != USB_SPEED_HIGH) {
+	போது (udev->parent->parent != வெற்று)
+		எனில் (udev->parent->speed != USB_SPEED_உயர்வு) {
 			udev = udev->parent;
-		} else {
+		} இல்லையெனில் {
 			*hub_address = udev->parent->devnum;
 			*hub_port = udev->portnr;
-			return;
+			திரும்பு;
 		}
 
 	printf("Error: Cannot find high speed parent of usb-1 device\n");

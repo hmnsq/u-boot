@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#அந்தர்பாவ <scp03.h>
+#அந்தர்பாவ <tee.h>
+#அந்தர்பாவ <tee/optee_ta_scp03.h>
+#அந்தர்பாவ <linux/errno.h>
+#அந்தர்பாவ <linux/string.h>
 
-static int scp03_enable(bool provision)
+நிலையான முழு scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	மாறிலி கட்டமைப்பு tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	கட்டமைப்பு tee_open_session_arg session;
+	கட்டமைப்பு tee_invoke_arg invoke;
+	கட்டமைப்பு tee_param param;
+	கட்டமைப்பு udevice *tee = வெற்று;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_find_device(tee, வெற்று, வெற்று, வெற்று);
+	எனில் (!tee)
+		திரும்பு -ENODEV;
 
-	memset(&session, 0, sizeof(session));
+	memset(&session, 0, அளவு(session));
 	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	எனில் (tee_open_session(tee, &session, 0, வெற்று))
+		திரும்பு -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, அளவு(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_மதிப்பு_உள்ளீடு;
+	param.u.மதிப்பு.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, அளவு(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	எனில் (tee_invoke_func(tee, &invoke, 1, &param))
+		திரும்பு -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	திரும்பு 0;
 }
 
-int tee_enable_scp03(void)
+முழு tee_enable_scp03(வெறுமை)
 {
-	return scp03_enable(false);
+	திரும்பு scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+முழு tee_provision_scp03(வெறுமை)
 {
-	return scp03_enable(true);
+	திரும்பு scp03_enable(true);
 }

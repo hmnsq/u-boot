@@ -5,83 +5,83 @@
  *
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <image.h>
-#include <fs.h>
-#include <asm/cache.h>
-#include <asm/io.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <spl_load.h>
+#அந்தர்பாவ <image.h>
+#அந்தர்பாவ <fs.h>
+#அந்தர்பாவ <asm/cache.h>
+#அந்தர்பாவ <asm/io.h>
 
-struct blk_dev {
-	const char *ifname;
-	const char *filename;
-	char dev_part_str[8];
+கட்டமைப்பு blk_dev {
+	மாறிலி எழுத்து *ifname;
+	மாறிலி எழுத்து *filename;
+	எழுத்து dev_part_str[8];
 };
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+நிலையான ulong spl_fit_read(கட்டமைப்பு spl_load_info *load, ulong file_offset,
+			  ulong size, வெறுமை *buf)
 {
 	loff_t actlen;
-	int ret;
-	struct blk_dev *dev = (struct blk_dev *)load->priv;
+	முழு ret;
+	கட்டமைப்பு blk_dev *dev = (கட்டமைப்பு blk_dev *)load->priv;
 
 	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	எனில் (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		திரும்பு ret;
 	}
 
 	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
 		      &actlen);
-	if (ret < 0) {
+	எனில் (ret < 0) {
 		printf("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		திரும்பு ret;
 	}
 
-	return actlen;
+	திரும்பு actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+முழு spl_blk_load_image(கட்டமைப்பு spl_image_info *spl_image,
+		       கட்டமைப்பு spl_boot_device *bootdev,
+		       எண்ணிக்கை uclass_id uclass_id, முழு devnum, முழு partnum)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	struct blk_desc *blk_desc;
+	மாறிலி எழுத்து *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
+	கட்டமைப்பு blk_desc *blk_desc;
 	loff_t filesize;
-	struct blk_dev dev;
-	struct spl_load_info load;
-	int ret;
+	கட்டமைப்பு blk_dev dev;
+	கட்டமைப்பு spl_load_info load;
+	முழு ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
+	எனில் (!blk_desc) {
 		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+		திரும்பு -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
 
 	dev.filename = filename;
 	dev.ifname = blk_get_uclass_name(uclass_id);
-	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
+	snprintf(dev.dev_part_str, அளவு(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
 	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
+	எனில் (ret) {
 		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		திரும்பு ret;
 	}
 
 	ret = fs_size(filename, &filesize);
-	if (ret) {
+	எனில் (ret) {
 		printf("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		திரும்பு ret;
 	}
 
 	spl_load_init(&load, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	திரும்பு spl_load(spl_image, bootdev, &load, filesize, 0);
 }

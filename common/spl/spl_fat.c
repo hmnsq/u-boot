@@ -8,143 +8,143 @@
  * FAT Image Functions copied from spl_mmc.c
  */
 
-#include <env.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <fat.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/libfdt.h>
-#include <asm/cache.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <spl_load.h>
+#அந்தர்பாவ <fat.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <image.h>
+#அந்தர்பாவ <linux/libfdt.h>
+#அந்தர்பாவ <asm/cache.h>
 
-static int fat_registered;
+நிலையான முழு fat_registered;
 
-void spl_fat_force_reregister(void)
+வெறுமை spl_fat_force_reregister(வெறுமை)
 {
 	fat_registered = 0;
 }
 
-static int spl_register_fat_device(struct blk_desc *block_dev, int partition)
+நிலையான முழு spl_register_fat_device(கட்டமைப்பு blk_desc *block_dev, முழு partition)
 {
-	int err = 0;
+	முழு err = 0;
 
-	if (fat_registered)
-		return err;
+	எனில் (fat_registered)
+		திரும்பு err;
 
 	err = fat_register_device(block_dev, partition);
-	if (err) {
+	எனில் (err) {
 		printf("%s: fat register err - %d\n", __func__, err);
-		return err;
+		திரும்பு err;
 	}
 
 	fat_registered = 1;
 
-	return err;
+	திரும்பு err;
 }
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+நிலையான ulong spl_fit_read(கட்டமைப்பு spl_load_info *load, ulong file_offset,
+			  ulong size, வெறுமை *buf)
 {
-	struct legacy_img_hdr *header;
+	கட்டமைப்பு legacy_img_hdr *header;
 	loff_t actread;
-	int ret;
-	char *filename = load->priv;
+	முழு ret;
+	எழுத்து *filename = load->priv;
 
 	ret = fat_read_file(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	எனில் (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (கட்டமைப்பு legacy_img_hdr *)buf;
+		எனில் (image_get_magic(header) != FDT_MAGIC)
+			திரும்பு size;
 	}
 
-	return actread;
+	திரும்பு actread;
 }
 
-int spl_load_image_fat(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+முழு spl_load_image_fat(கட்டமைப்பு spl_image_info *spl_image,
+		       கட்டமைப்பு spl_boot_device *bootdev,
+		       கட்டமைப்பு blk_desc *block_dev, முழு partition,
+		       மாறிலி எழுத்து *filename)
 {
-	int err;
+	முழு err;
 	loff_t size;
-	struct spl_load_info load;
+	கட்டமைப்பு spl_load_info load;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		goto end;
+	எனில் (err)
+		செல் end;
 
 	/*
 	 * Avoid pulling in this function for other image types since we are
 	 * very short on space on some boards.
 	 */
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	எனில் (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = fat_size(filename, &size);
-		if (err)
-			goto end;
-	} else {
+		எனில் (err)
+			செல் end;
+	} இல்லையெனில் {
 		size = 0;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename,
+	spl_load_init(&load, spl_fit_read, (வெறுமை *)filename,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
 
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0) {
+	எனில் (err < 0) {
 		spl_fat_force_reregister();
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 	}
 
-	return err;
+	திரும்பு err;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#எனில் CONFIG_IS_ENABLED(OS_BOOT)
+முழு spl_load_image_fat_os(கட்டமைப்பு spl_image_info *spl_image,
+			  கட்டமைப்பு spl_boot_device *bootdev,
+			  கட்டமைப்பு blk_desc *block_dev, முழு partition)
 {
-	int err;
-	__maybe_unused char *file;
+	முழு err;
+	__maybe_unused எழுத்து *file;
 
 	err = spl_register_fat_device(block_dev, partition);
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	எனில் (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		செல் defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	எனில் (file) {
 		err = spl_load_image_fat(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		எனில் (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			செல் defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#எனில் IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		file = env_get("falcon_args_file");
-		if (file) {
+		எனில் (file) {
 			err = file_fat_read(
-				file, (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-			if (err <= 0) {
+				file, (வெறுமை *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+			எனில் (err <= 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				செல் defaults;
 			}
-			return 0;
-		} else
+			திரும்பு 0;
+		} இல்லையெனில்
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 #endif
 
-	} else
+	} இல்லையெனில்
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 
 defaults:
@@ -152,26 +152,26 @@ defaults:
 	err = spl_load_image_fat(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#எனில் IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	err = file_fat_read(CONFIG_SPL_FS_LOAD_ARGS_NAME,
-			    (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
-	if (err <= 0) {
+			    (வெறுமை *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0);
+	எனில் (err <= 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		திரும்பு -1;
 	}
 #endif
 
-	return 0;
+	திரும்பு 0;
 }
-#else
-int spl_load_image_fat_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#இல்லையெனில்
+முழு spl_load_image_fat_os(கட்டமைப்பு spl_image_info *spl_image,
+			  கட்டமைப்பு spl_boot_device *bootdev,
+			  கட்டமைப்பு blk_desc *block_dev, முழு partition)
 {
-	return -ENOSYS;
+	திரும்பு -ENOSYS;
 }
 #endif

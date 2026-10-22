@@ -87,10 +87,10 @@
  *
  ****************************************************************************/
 
-#include <asm/ptrace.h>
+#அந்தர்பாவ <asm/ptrace.h>
 
-#include <kgdb.h>
-#include <command.h>
+#அந்தர்பாவ <kgdb.h>
+#அந்தர்பாவ <command.h>
 
 #undef KGDB_DEBUG
 
@@ -98,144 +98,144 @@
  * BUFMAX defines the maximum number of characters in inbound/outbound buffers
  */
 #define BUFMAX 1024
-static char remcomInBuffer[BUFMAX];
-static char remcomOutBuffer[BUFMAX];
-static char remcomRegBuffer[BUFMAX];
+நிலையான எழுத்து remcomInBuffer[BUFMAX];
+நிலையான எழுத்து remcomOutBuffer[BUFMAX];
+நிலையான எழுத்து remcomRegBuffer[BUFMAX];
 
-static int initialized = 0;
-static int kgdb_active;
-static struct pt_regs entry_regs;
-static long error_jmp_buf[BUFMAX/2];
-static int longjmp_on_fault = 0;
+நிலையான முழு initialized = 0;
+நிலையான முழு kgdb_active;
+நிலையான கட்டமைப்பு pt_regs entry_regs;
+நிலையான long error_jmp_buf[BUFMAX/2];
+நிலையான முழு longjmp_on_fault = 0;
 #ifdef KGDB_DEBUG
-static int kdebug = 1;
+நிலையான முழு kdebug = 1;
 #endif
 
-static const char hexchars[]="0123456789abcdef";
+நிலையான மாறிலி எழுத்து hexchars[]="0123456789abcdef";
 
 /* Convert ch from a hex digit to an int */
-static int
-hex(unsigned char ch)
+நிலையான முழு
+hex(unsigned எழுத்து ch)
 {
-	if (ch >= 'a' && ch <= 'f')
-		return ch-'a'+10;
-	if (ch >= '0' && ch <= '9')
-		return ch-'0';
-	if (ch >= 'A' && ch <= 'F')
-		return ch-'A'+10;
-	return -1;
+	எனில் (ch >= 'a' && ch <= 'f')
+		திரும்பு ch-'a'+10;
+	எனில் (ch >= '0' && ch <= '9')
+		திரும்பு ch-'0';
+	எனில் (ch >= 'A' && ch <= 'F')
+		திரும்பு ch-'A'+10;
+	திரும்பு -1;
 }
 
 /* Convert the memory pointed to by mem into hex, placing result in buf.
  * Return a pointer to the last char put in buf (null).
  */
-static unsigned char *
-mem2hex(char *mem, char *buf, int count)
+நிலையான unsigned எழுத்து *
+mem2hex(எழுத்து *mem, எழுத்து *buf, முழு மொத்தம்)
 {
-	char *tmp;
-	unsigned char ch;
+	எழுத்து *tmp;
+	unsigned எழுத்து ch;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory copy.  Hex conversion will work against this one.
 	 */
-	tmp = buf + count;
+	tmp = buf + மொத்தம்;
 	longjmp_on_fault = 1;
 
-	memcpy(tmp, mem, count);
+	memcpy(tmp, mem, மொத்தம்);
 
-	while (count-- > 0) {
+	போது (மொத்தம்-- > 0) {
 		ch = *tmp++;
 		*buf++ = hexchars[ch >> 4];
 		*buf++ = hexchars[ch & 0xf];
 	}
 	*buf = 0;
 	longjmp_on_fault = 0;
-	return (unsigned char *)buf;
+	திரும்பு (unsigned எழுத்து *)buf;
 }
 
 /* convert the hex array pointed to by buf into binary to be placed in mem
  * return a pointer to the character AFTER the last byte fetched from buf.
 */
-static char *
-hex2mem(char *buf, char *mem, int count)
+நிலையான எழுத்து *
+hex2mem(எழுத்து *buf, எழுத்து *mem, முழு மொத்தம்)
 {
-	int hexValue;
-	char *tmp_raw, *tmp_hex;
+	முழு hex_மதிப்பு;
+	எழுத்து *tmp_raw, *tmp_hex;
 
 	/*
 	 * We use the upper half of buf as an intermediate buffer for the
 	 * raw memory that is converted from hex.
 	 */
-	tmp_raw = buf + count * 2;
+	tmp_raw = buf + மொத்தம் * 2;
 	tmp_hex = tmp_raw - 1;
 
 	longjmp_on_fault = 1;
-	while (tmp_hex >= buf) {
+	போது (tmp_hex >= buf) {
 		tmp_raw--;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		hex_மதிப்பு = hex(*tmp_hex--);
+		எனில் (hex_மதிப்பு < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw = hexValue;
-		hexValue = hex(*tmp_hex--);
-		if (hexValue < 0)
+		*tmp_raw = hex_மதிப்பு;
+		hex_மதிப்பு = hex(*tmp_hex--);
+		எனில் (hex_மதிப்பு < 0)
 			kgdb_error(KGDBERR_NOTHEXDIG);
-		*tmp_raw |= hexValue << 4;
+		*tmp_raw |= hex_மதிப்பு << 4;
 
 	}
 
-	memcpy(mem, tmp_raw, count);
+	memcpy(mem, tmp_raw, மொத்தம்);
 
-	kgdb_flush_cache_range((void *)mem, (void *)(mem+count));
+	kgdb_flush_cache_range((வெறுமை *)mem, (வெறுமை *)(mem+மொத்தம்));
 	longjmp_on_fault = 0;
 
-	return buf;
+	திரும்பு buf;
 }
 
 /*
  * While we find nice hex chars, build an int.
  * Return number of chars processed.
  */
-static int
-hexToInt(char **ptr, int *intValue)
+நிலையான முழு
+hexToInt(எழுத்து **ptr, முழு *int_மதிப்பு)
 {
-	int numChars = 0;
-	int hexValue;
+	முழு இலக்கம்_Chars = 0;
+	முழு hex_மதிப்பு;
 
-	*intValue = 0;
+	*int_மதிப்பு = 0;
 
 	longjmp_on_fault = 1;
-	while (**ptr) {
-		hexValue = hex(**ptr);
-		if (hexValue < 0)
-			break;
+	போது (**ptr) {
+		hex_மதிப்பு = hex(**ptr);
+		எனில் (hex_மதிப்பு < 0)
+			நிறுத்து;
 
-		*intValue = (*intValue << 4) | hexValue;
-		numChars ++;
+		*int_மதிப்பு = (*int_மதிப்பு << 4) | hex_மதிப்பு;
+		இலக்கம்_Chars ++;
 
 		(*ptr)++;
 	}
 	longjmp_on_fault = 0;
 
-	return (numChars);
+	திரும்பு (இலக்கம்_Chars);
 }
 
 /* scan for the sequence $<data>#<checksum>     */
-static void
-getpacket(char *buffer)
+நிலையான வெறுமை
+getpacket(எழுத்து *buffer)
 {
-	unsigned char checksum;
-	unsigned char xmitcsum;
-	int i;
-	int count;
-	unsigned char ch;
+	unsigned எழுத்து checksum;
+	unsigned எழுத்து xmitcsum;
+	முழு i;
+	முழு மொத்தம்;
+	unsigned எழுத்து ch;
 
-	do {
+	செய் {
 		/* wait around for the start character, ignore all other
 		 * characters */
-		while ((ch = (getDebugChar() & 0x7f)) != '$') {
+		போது ((ch = (getDebugChar() & 0x7f)) != '$') {
 #ifdef KGDB_DEBUG
-			if (kdebug)
+			எனில் (kdebug)
 				putc(ch);
 #endif
 			;
@@ -244,98 +244,98 @@ getpacket(char *buffer)
 		checksum = 0;
 		xmitcsum = -1;
 
-		count = 0;
+		மொத்தம் = 0;
 
 		/* now, read until a # or end of buffer is found */
-		while (count < BUFMAX) {
+		போது (மொத்தம் < BUFMAX) {
 			ch = getDebugChar() & 0x7f;
-			if (ch == '#')
-				break;
+			எனில் (ch == '#')
+				நிறுத்து;
 			checksum = checksum + ch;
-			buffer[count] = ch;
-			count = count + 1;
+			buffer[மொத்தம்] = ch;
+			மொத்தம் = மொத்தம் + 1;
 		}
 
-		if (count >= BUFMAX)
-			continue;
+		எனில் (மொத்தம் >= BUFMAX)
+			தொடர்;
 
-		buffer[count] = 0;
+		buffer[மொத்தம்] = 0;
 
-		if (ch == '#') {
+		எனில் (ch == '#') {
 			xmitcsum = hex(getDebugChar() & 0x7f) << 4;
 			xmitcsum |= hex(getDebugChar() & 0x7f);
-			if (checksum != xmitcsum)
+			எனில் (checksum != xmitcsum)
 				putDebugChar('-');	/* failed checksum */
-			else {
+			இல்லையெனில் {
 				putDebugChar('+'); /* successful transfer */
 				/* if a sequence char is present, reply the ID */
-				if (buffer[2] == ':') {
+				எனில் (buffer[2] == ':') {
 					putDebugChar(buffer[0]);
 					putDebugChar(buffer[1]);
 					/* remove sequence chars from buffer */
-					count = strlen(buffer);
-					for (i=3; i <= count; i++)
+					மொத்தம் = strlen(buffer);
+					க்கு (i=3; i <= மொத்தம்; i++)
 						buffer[i-3] = buffer[i];
 				}
 			}
 		}
-	} while (checksum != xmitcsum);
+	} போது (checksum != xmitcsum);
 }
 
 /* send the packet in buffer.  */
-static void
-putpacket(unsigned char *buffer)
+நிலையான வெறுமை
+putpacket(unsigned எழுத்து *buffer)
 {
-	unsigned char checksum;
-	int count;
-	unsigned char ch, recv;
+	unsigned எழுத்து checksum;
+	முழு மொத்தம்;
+	unsigned எழுத்து ch, recv;
 
 	/*  $<packet info>#<checksum>. */
-	do {
+	செய் {
 		putDebugChar('$');
 		checksum = 0;
-		count = 0;
+		மொத்தம் = 0;
 
-		while ((ch = buffer[count])) {
+		போது ((ch = buffer[மொத்தம்])) {
 			putDebugChar(ch);
 			checksum += ch;
-			count += 1;
+			மொத்தம் += 1;
 		}
 
 		putDebugChar('#');
 		putDebugChar(hexchars[checksum >> 4]);
 		putDebugChar(hexchars[checksum & 0xf]);
 		recv = getDebugChar();
-	} while ((recv & 0x7f) != '+');
+	} போது ((recv & 0x7f) != '+');
 }
 
 /*
  * This function does all command processing for interfacing to gdb.
  */
-static int
-handle_exception (struct pt_regs *regs)
+நிலையான முழு
+handle_exception (கட்டமைப்பு pt_regs *regs)
 {
-	int addr;
-	int length;
-	char *ptr;
+	முழு addr;
+	முழு length;
+	எழுத்து *ptr;
 	kgdb_data kd;
-	int i;
+	முழு i;
 
-	if (!initialized) {
+	எனில் (!initialized) {
 		printf("kgdb: exception before kgdb is initialized! huh?\n");
-		return (0);
+		திரும்பு (0);
 	}
 
 	/* probably should check which exception occurred as well */
-	if (longjmp_on_fault) {
+	எனில் (longjmp_on_fault) {
 		longjmp_on_fault = 0;
 		kgdb_longjmp(error_jmp_buf, KGDBERR_MEMFAULT);
 		panic("kgdb longjump failed!\n");
 	}
 
-	if (kgdb_active) {
+	எனில் (kgdb_active) {
 		printf("kgdb: unexpected exception from within kgdb\n");
-		return (0);
+		திரும்பு (0);
 	}
 	kgdb_active = 1;
 
@@ -343,7 +343,7 @@ handle_exception (struct pt_regs *regs)
 
 	printf("kgdb: handle_exception; trap [0x%x]\n", kgdb_trap(regs));
 
-	if (kgdb_setjmp(error_jmp_buf) != 0)
+	எனில் (kgdb_setjmp(error_jmp_buf) != 0)
 		panic("kgdb: error or fault in entry init!\n");
 
 	kgdb_enter(regs, &kd);
@@ -357,27 +357,27 @@ handle_exception (struct pt_regs *regs)
 	*ptr++ = hexchars[kd.sigval >> 4];
 	*ptr++ = hexchars[kd.sigval & 0xf];
 
-	for (i = 0; i < kd.nregs; i++) {
+	க்கு (i = 0; i < kd.nregs; i++) {
 		kgdb_reg *rp = &kd.regs[i];
 
-		*ptr++ = hexchars[rp->num >> 4];
-		*ptr++ = hexchars[rp->num & 0xf];
+		*ptr++ = hexchars[rp->இலக்கம் >> 4];
+		*ptr++ = hexchars[rp->இலக்கம் & 0xf];
 		*ptr++ = ':';
-		ptr = (char *)mem2hex((char *)&rp->val, ptr, 4);
+		ptr = (எழுத்து *)mem2hex((எழுத்து *)&rp->val, ptr, 4);
 		*ptr++ = ';';
 	}
 
 	*ptr = 0;
 
 #ifdef KGDB_DEBUG
-	if (kdebug)
+	எனில் (kdebug)
 		printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
 #endif
 
-	putpacket((unsigned char *)&remcomOutBuffer);
+	putpacket((unsigned எழுத்து *)&remcomOutBuffer);
 
-	while (1) {
-		volatile int errnum;
+	போது (1) {
+		நிலையற்ற முழு errnum;
 
 		remcomOutBuffer[0] = 0;
 
@@ -385,95 +385,95 @@ handle_exception (struct pt_regs *regs)
 		ptr = &remcomInBuffer[1];
 
 #ifdef KGDB_DEBUG
-		if (kdebug)
+		எனில் (kdebug)
 			printf("kgdb:  remcomInBuffer: %s\n", remcomInBuffer);
 #endif
 
 		errnum = kgdb_setjmp(error_jmp_buf);
 
-		if (errnum == 0) switch (remcomInBuffer[0]) {
+		எனில் (errnum == 0) தேர்வு (remcomInBuffer[0]) {
 
-		case '?':               /* report most recent signal */
+		நிலை '?':               /* report most recent signal */
 			remcomOutBuffer[0] = 'S';
 			remcomOutBuffer[1] = hexchars[kd.sigval >> 4];
 			remcomOutBuffer[2] = hexchars[kd.sigval & 0xf];
 			remcomOutBuffer[3] = 0;
-			break;
+			நிறுத்து;
 
 #ifdef KGDB_DEBUG
-		case 'd':
+		நிலை 'd':
 			/* toggle debug flag */
 			kdebug ^= 1;
-			break;
+			நிறுத்து;
 #endif
 
-		case 'g':	/* return the value of the CPU registers. */
+		நிலை 'g':	/* return the value of the CPU registers. */
 			length = kgdb_getregs(regs, remcomRegBuffer, BUFMAX);
 			mem2hex(remcomRegBuffer, remcomOutBuffer, length);
-			break;
+			நிறுத்து;
 
-		case 'G':   /* set the value of the CPU registers */
+		நிலை 'G':   /* set the value of the CPU registers */
 			length = strlen(ptr);
-			if ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
+			எனில் ((length & 1) != 0) kgdb_error(KGDBERR_BADPARAMS);
 			hex2mem(ptr, remcomRegBuffer, length/2);
 			kgdb_putregs(regs, remcomRegBuffer, length/2);
 			strcpy(remcomOutBuffer,"OK");
-			break;
+			நிறுத்து;
 
-		case 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
+		நிலை 'm':	/* mAA..AA,LLLL  Read LLLL bytes at address AA..AA */
 				/* Try to read %x,%x.  */
 
-			if (hexToInt(&ptr, &addr)
+			எனில் (hexToInt(&ptr, &addr)
 			    && *ptr++ == ','
 			    && hexToInt(&ptr, &length))	{
-				mem2hex((char *)addr, remcomOutBuffer, length);
-			} else {
+				mem2hex((எழுத்து *)addr, remcomOutBuffer, length);
+			} இல்லையெனில் {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			நிறுத்து;
 
-		case 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
+		நிலை 'M': /* MAA..AA,LLLL: Write LLLL bytes at address AA.AA return OK */
 			/* Try to read '%x,%x:'.  */
 
-			if (hexToInt(&ptr, &addr)
+			எனில் (hexToInt(&ptr, &addr)
 			    && *ptr++ == ','
 			    && hexToInt(&ptr, &length)
 			    && *ptr++ == ':') {
-				hex2mem(ptr, (char *)addr, length);
+				hex2mem(ptr, (எழுத்து *)addr, length);
 				strcpy(remcomOutBuffer, "OK");
-			} else {
+			} இல்லையெனில் {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			நிறுத்து;
 
-		case 'k':    /* kill the program, actually return to monitor */
+		நிலை 'k':    /* kill the program, actually return to monitor */
 			kd.extype = KGDBEXIT_KILL;
 			*regs = entry_regs;
-			goto doexit;
+			செல் doexit;
 
-		case 'C':    /* CSS  continue with signal SS */
+		நிலை 'C':    /* CSS  continue with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 'c':    /* cAA..AA  Continue; address AA..AA optional */
+		நிலை 'c':    /* cAA..AA  Continue; address AA..AA optional */
 			/* try to read optional parameter, pc unchanged if no parm */
 			kd.extype = KGDBEXIT_CONTINUE;
 
-			if (hexToInt(&ptr, &addr)) {
+			எனில் (hexToInt(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
 
-			goto doexit;
+			செல் doexit;
 
-		case 'S':    /* SSS  single step with signal SS */
+		நிலை 'S':    /* SSS  single step with signal SS */
 			*ptr = '\0';	/* ignore the signal number for now */
 			/* fall through */
 
-		case 's':
+		நிலை 's':
 			kd.extype = KGDBEXIT_SINGLE;
 
-			if (hexToInt(&ptr, &addr)) {
+			எனில் (hexToInt(&ptr, &addr)) {
 				kd.exaddr = addr;
 				kd.extype |= KGDBEXIT_WITHADDR;
 			}
@@ -487,36 +487,36 @@ handle_exception (struct pt_regs *regs)
 			kgdb_exit(regs, &kd);
 			kgdb_active = 0;
 			kgdb_interruptible(1);
-			return (1);
+			திரும்பு (1);
 
-		case 'r':		/* Reset (if user process..exit ???)*/
+		நிலை 'r':		/* Reset (if user process..exit ???)*/
 			panic("kgdb reset.");
-			break;
+			நிறுத்து;
 
-		case 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
-			if (hexToInt(&ptr, &addr)
+		நிலை 'P':    /* Pr=v  set reg r to value v (r and v are hex) */
+			எனில் (hexToInt(&ptr, &addr)
 			    && *ptr++ == '='
 			    && ((length = strlen(ptr)) & 1) == 0) {
 				hex2mem(ptr, remcomRegBuffer, length/2);
 				kgdb_putreg(regs, addr,
 					remcomRegBuffer, length/2);
 				strcpy(remcomOutBuffer,"OK");
-			} else {
+			} இல்லையெனில் {
 				kgdb_error(KGDBERR_BADPARAMS);
 			}
-			break;
+			நிறுத்து;
 		}			/* switch */
 
-		if (errnum != 0)
+		எனில் (errnum != 0)
 			sprintf(remcomOutBuffer, "E%02d", errnum);
 
 #ifdef KGDB_DEBUG
-		if (kdebug)
+		எனில் (kdebug)
 			printf("kgdb: remcomOutBuffer: %s\n", remcomOutBuffer);
 #endif
 
 		/* reply to the request */
-		putpacket((unsigned char *)&remcomOutBuffer);
+		putpacket((unsigned எழுத்து *)&remcomOutBuffer);
 
 	} /* while(1) */
 }
@@ -525,7 +525,7 @@ handle_exception (struct pt_regs *regs)
  * kgdb_init must be called *after* the
  * monitor is relocated into ram
  */
-int kgdb_init(void)
+முழு kgdb_init(வெறுமை)
 {
 	puts("KGDB:  ");
 
@@ -536,11 +536,11 @@ int kgdb_init(void)
 	putDebugStr("kgdb ready\n");
 	puts("ready\n");
 
-	return 0;
+	திரும்பு 0;
 }
 
-void
-kgdb_error(int errnum)
+வெறுமை
+kgdb_error(முழு errnum)
 {
 	longjmp_on_fault = 0;
 	kgdb_longjmp(error_jmp_buf, errnum);
@@ -549,39 +549,39 @@ kgdb_error(int errnum)
 
 /* Output string in GDB O-packet format if GDB has connected. If nothing
    output, returns 0 (caller must then handle output). */
-int
-kgdb_output_string (const char* s, unsigned int count)
+முழு
+kgdb_output_string (மாறிலி எழுத்து* s, unsigned முழு மொத்தம்)
 {
-	char buffer[512];
+	எழுத்து buffer[512];
 
-	count = (count <= (sizeof(buffer) / 2 - 2))
-		? count : (sizeof(buffer) / 2 - 2);
+	மொத்தம் = (மொத்தம் <= (அளவு(buffer) / 2 - 2))
+		? மொத்தம் : (அளவு(buffer) / 2 - 2);
 
 	buffer[0] = 'O';
-	mem2hex ((char *)s, &buffer[1], count);
-	putpacket((unsigned char *)&buffer);
+	mem2hex ((எழுத்து *)s, &buffer[1], மொத்தம்);
+	putpacket((unsigned எழுத்து *)&buffer);
 
-	return 1;
+	திரும்பு 1;
 }
 
-void
-breakpoint(void)
+வெறுமை
+breakpoint(வெறுமை)
 {
-	if (!initialized) {
+	எனில் (!initialized) {
 		printf("breakpoint() called b4 kgdb init\n");
-		return;
+		திரும்பு;
 	}
 
 	kgdb_breakpoint(0, 0);
 }
 
-int
-do_kgdb(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[])
+முழு
+do_kgdb(கட்டமைப்பு cmd_tbl *cmdtp, முழு flag, முழு argc, எழுத்து *மாறிலி argv[])
 {
     printf("Entering KGDB mode via exception handler...\n\n");
     kgdb_breakpoint(argc - 1, argv + 1);
     printf("\nReturned from KGDB mode\n");
-    return 0;
+    திரும்பு 0;
 }
 
 U_BOOT_CMD(

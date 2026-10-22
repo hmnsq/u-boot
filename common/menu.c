@@ -4,16 +4,16 @@
  * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
  */
 
-#include <ansi.h>
-#include <cli.h>
-#include <malloc.h>
-#include <errno.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <watchdog.h>
+#அந்தர்பாவ <ansi.h>
+#அந்தர்பாவ <cli.h>
+#அந்தர்பாவ <malloc.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <linux/ctype.h>
+#அந்தர்பாவ <linux/delay.h>
+#அந்தர்பாவ <linux/list.h>
+#அந்தர்பாவ <watchdog.h>
 
-#include "menu.h"
+#அந்தர்பாவ "menu.h"
 
 #define ansi 1
 
@@ -24,10 +24,10 @@
  * by menu_item_destroy, and the consumer of the interface never sees that
  * this struct is used at all.
  */
-struct menu_item {
-	char *key;
-	void *data;
-	struct list_head list;
+கட்டமைப்பு menu_item {
+	எழுத்து *சாவி;
+	வெறுமை *data;
+	கட்டமைப்பு list_head list;
 };
 
 /*
@@ -36,18 +36,18 @@ struct menu_item {
  * in menu.h, but the full definition is here to prevent consumers from
  * relying on its contents.
  */
-struct menu {
-	struct menu_item *default_item;
-	int timeout;
-	char *title;
-	int prompt;
-	void (*display_statusline)(struct menu *);
-	void (*item_data_print)(void *);
-	char *(*item_choice)(void *);
-	bool (*need_reprint)(void *);
-	void *item_choice_data;
-	struct list_head items;
-	int item_cnt;
+கட்டமைப்பு menu {
+	கட்டமைப்பு menu_item *default_item;
+	முழு timeout;
+	எழுத்து *title;
+	முழு prompt;
+	வெறுமை (*display_statusline)(கட்டமைப்பு menu *);
+	வெறுமை (*item_data_print)(வெறுமை *);
+	எழுத்து *(*item_choice)(வெறுமை *);
+	bool (*need_reprint)(வெறுமை *);
+	வெறுமை *item_choice_data;
+	கட்டமைப்பு list_head பொருட்கள்;
+	முழு item_cnt;
 };
 
 /*
@@ -58,24 +58,24 @@ struct menu {
  * used for search type operations. It is also safe for callback to remove the
  * item from the list of items.
  */
-static inline void *menu_items_iter(struct menu *m,
-		void *(*callback)(struct menu *, struct menu_item *, void *),
-		void *extra)
+நிலையான உள்வரி வெறுமை *menu_பொருட்கள்_iter(கட்டமைப்பு menu *m,
+		வெறுமை *(*callback)(கட்டமைப்பு menu *, கட்டமைப்பு menu_item *, வெறுமை *),
+		வெறுமை *extra)
 {
-	struct list_head *pos, *n;
-	struct menu_item *item;
-	void *ret;
+	கட்டமைப்பு list_head *pos, *n;
+	கட்டமைப்பு menu_item *item;
+	வெறுமை *ret;
 
-	list_for_each_safe(pos, n, &m->items) {
-		item = list_entry(pos, struct menu_item, list);
+	list_for_each_safe(pos, n, &m->பொருட்கள்) {
+		item = list_entry(pos, கட்டமைப்பு menu_item, list);
 
 		ret = callback(m, item, extra);
 
-		if (ret)
-			return ret;
+		எனில் (ret)
+			திரும்பு ret;
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
@@ -83,55 +83,55 @@ static inline void *menu_items_iter(struct menu *m,
  * when creating the menu, call it with a pointer to the item's private data.
  * Otherwise, print the key of the item.
  */
-static inline void *menu_item_print(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+நிலையான உள்வரி வெறுமை *menu_item_print(கட்டமைப்பு menu *m,
+				கட்டமைப்பு menu_item *item,
+				வெறுமை *extra)
 {
-	if (!m->item_data_print) {
-		puts(item->key);
+	எனில் (!m->item_data_print) {
+		puts(item->சாவி);
 		putc('\n');
-	} else {
+	} இல்லையெனில் {
 		m->item_data_print(item->data);
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
  * Free the memory used by a menu item. This includes the memory used by its
  * key.
  */
-static inline void *menu_item_destroy(struct menu *m,
-				struct menu_item *item,
-				void *extra)
+நிலையான உள்வரி வெறுமை *menu_item_destroy(கட்டமைப்பு menu *m,
+				கட்டமைப்பு menu_item *item,
+				வெறுமை *extra)
 {
-	if (item->key)
-		free(item->key);
+	எனில் (item->சாவி)
+		விடுவி(item->சாவி);
 
-	free(item);
+	விடுவி(item);
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
  * Display a menu so the user can make a choice of an item. First display its
  * title, if any, and then each item in the menu.
  */
-static inline void menu_display(struct menu *m)
+நிலையான உள்வரி வெறுமை menu_display(கட்டமைப்பு menu *m)
 {
-	if (m->need_reprint) {
-		if (!m->need_reprint(m->item_choice_data))
-			return;
+	எனில் (m->need_reprint) {
+		எனில் (!m->need_reprint(m->item_choice_data))
+			திரும்பு;
 	}
 
-	if (m->title) {
+	எனில் (m->title) {
 		puts(m->title);
 		putc('\n');
 	}
-	if (m->display_statusline)
+	எனில் (m->display_statusline)
 		m->display_statusline(m);
 
-	menu_items_iter(m, menu_item_print, NULL);
+	menu_பொருட்கள்_iter(m, menu_item_print, வெற்று);
 }
 
 /*
@@ -142,45 +142,45 @@ static inline void menu_display(struct menu *m)
  * This is called via menu_items_iter, so it returns a pointer to the item if
  * the key matches, and returns NULL otherwise.
  */
-static inline void *menu_item_key_match(struct menu *m,
-			struct menu_item *item, void *extra)
+நிலையான உள்வரி வெறுமை *menu_item_சாவி_match(கட்டமைப்பு menu *m,
+			கட்டமைப்பு menu_item *item, வெறுமை *extra)
 {
-	char *item_key = extra;
+	எழுத்து *item_சாவி = extra;
 
-	if (!item_key || !item->key) {
-		if (item_key == item->key)
-			return item;
+	எனில் (!item_சாவி || !item->சாவி) {
+		எனில் (item_சாவி == item->சாவி)
+			திரும்பு item;
 
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	if (strcmp(item->key, item_key) == 0)
-		return item;
+	எனில் (strcmp(item->சாவி, item_சாவி) == 0)
+		திரும்பு item;
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
  * Find the first item with a key matching item_key, if any exists.
  */
-static inline struct menu_item *menu_item_by_key(struct menu *m,
-							char *item_key)
+நிலையான உள்வரி கட்டமைப்பு menu_item *menu_item_by_சாவி(கட்டமைப்பு menu *m,
+							எழுத்து *item_சாவி)
 {
-	return menu_items_iter(m, menu_item_key_match, item_key);
+	திரும்பு menu_பொருட்கள்_iter(m, menu_item_சாவி_match, item_சாவி);
 }
 
 /*
  * Set *choice to point to the default item's data, if any default item was
  * set, and returns 1. If no default item was set, returns -ENOENT.
  */
-int menu_default_choice(struct menu *m, void **choice)
+முழு menu_default_choice(கட்டமைப்பு menu *m, வெறுமை **choice)
 {
-	if (m->default_item) {
+	எனில் (m->default_item) {
 		*choice = m->default_item->data;
-		return 1;
+		திரும்பு 1;
 	}
 
-	return -ENOENT;
+	திரும்பு -ENOENT;
 }
 
 /*
@@ -192,45 +192,45 @@ int menu_default_choice(struct menu *m, void **choice)
  *
  * Returns 1 if the user made a choice, or -EINTR if they bail via ^c.
  */
-static inline int menu_interactive_choice(struct menu *m, void **choice)
+நிலையான உள்வரி முழு menu_interactive_choice(கட்டமைப்பு menu *m, வெறுமை **choice)
 {
-	char cbuf[CONFIG_SYS_CBSIZE];
-	struct menu_item *choice_item = NULL;
-	int readret;
+	எழுத்து cbuf[CONFIG_SYS_CBSIZE];
+	கட்டமைப்பு menu_item *choice_item = வெற்று;
+	முழு readret;
 
-	while (!choice_item) {
+	போது (!choice_item) {
 		cbuf[0] = '\0';
 
 		menu_display(m);
 
-		if (!m->item_choice) {
+		எனில் (!m->item_choice) {
 			readret = cli_readline_into_buffer("Enter choice: ",
 							   cbuf, m->timeout);
 
-			if (readret >= 0) {
-				choice_item = menu_item_by_key(m, cbuf);
-				if (!choice_item)
+			எனில் (readret >= 0) {
+				choice_item = menu_item_by_சாவி(m, cbuf);
+				எனில் (!choice_item)
 					printf("%s not found\n", cbuf);
-			} else if (readret == -1)  {
+			} இல்லையெனில் எனில் (readret == -1)  {
 				printf("<INTERRUPT>\n");
-				return -EINTR;
-			} else {
-				return menu_default_choice(m, choice);
+				திரும்பு -EINTR;
+			} இல்லையெனில் {
+				திரும்பு menu_default_choice(m, choice);
 			}
-		} else {
-			char *key = m->item_choice(m->item_choice_data);
+		} இல்லையெனில் {
+			எழுத்து *சாவி = m->item_choice(m->item_choice_data);
 
-			if (key)
-				choice_item = menu_item_by_key(m, key);
+			எனில் (சாவி)
+				choice_item = menu_item_by_சாவி(m, சாவி);
 		}
 
-		if (!choice_item)
+		எனில் (!choice_item)
 			m->timeout = 0;
 	}
 
 	*choice = choice_item->data;
 
-	return 1;
+	திரும்பு 1;
 }
 
 /*
@@ -245,21 +245,21 @@ static inline int menu_interactive_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOENT if no item with a
  * key matching item_key is found.
  */
-int menu_default_set(struct menu *m, char *item_key)
+முழு menu_default_set(கட்டமைப்பு menu *m, எழுத்து *item_சாவி)
 {
-	struct menu_item *item;
+	கட்டமைப்பு menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	எனில் (!m)
+		திரும்பு -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_சாவி(m, item_சாவி);
 
-	if (!item)
-		return -ENOENT;
+	எனில் (!item)
+		திரும்பு -ENOENT;
 
 	m->default_item = item;
 
-	return 1;
+	திரும்பு 1;
 }
 
 /*
@@ -277,18 +277,18 @@ int menu_default_set(struct menu *m, char *item_key)
  * default has been set and the menu is set to not prompt or the timeout
  * expires, or -EINTR if the user exits the menu via ^c.
  */
-int menu_get_choice(struct menu *m, void **choice)
+முழு menu_get_choice(கட்டமைப்பு menu *m, வெறுமை **choice)
 {
-	if (!m || !choice)
-		return -EINVAL;
+	எனில் (!m || !choice)
+		திரும்பு -EINVAL;
 
-	if (!m->item_cnt)
-		return -ENOENT;
+	எனில் (!m->item_cnt)
+		திரும்பு -ENOENT;
 
-	if (!m->prompt)
-		return menu_default_choice(m, choice);
+	எனில் (!m->prompt)
+		திரும்பு menu_default_choice(m, choice);
 
-	return menu_interactive_choice(m, choice);
+	திரும்பு menu_interactive_choice(m, choice);
 }
 
 /*
@@ -309,37 +309,37 @@ int menu_get_choice(struct menu *m, void **choice)
  * Returns 1 if successful, -EINVAL if m is NULL, or -ENOMEM if there is
  * insufficient memory to add the menu item.
  */
-int menu_item_add(struct menu *m, char *item_key, void *item_data)
+முழு menu_item_add(கட்டமைப்பு menu *m, எழுத்து *item_சாவி, வெறுமை *item_data)
 {
-	struct menu_item *item;
+	கட்டமைப்பு menu_item *item;
 
-	if (!m)
-		return -EINVAL;
+	எனில் (!m)
+		திரும்பு -EINVAL;
 
-	item = menu_item_by_key(m, item_key);
+	item = menu_item_by_சாவி(m, item_சாவி);
 
-	if (item) {
+	எனில் (item) {
 		item->data = item_data;
-		return 1;
+		திரும்பு 1;
 	}
 
-	item = malloc(sizeof *item);
-	if (!item)
-		return -ENOMEM;
+	item = malloc(அளவு *item);
+	எனில் (!item)
+		திரும்பு -ENOMEM;
 
-	item->key = strdup(item_key);
+	item->சாவி = strdup(item_சாவி);
 
-	if (!item->key) {
-		free(item);
-		return -ENOMEM;
+	எனில் (!item->சாவி) {
+		விடுவி(item);
+		திரும்பு -ENOMEM;
 	}
 
 	item->data = item_data;
 
-	list_add_tail(&item->list, &m->items);
+	list_add_tail(&item->list, &m->பொருட்கள்);
 	m->item_cnt++;
 
-	return 1;
+	திரும்பு 1;
 }
 
 /*
@@ -377,21 +377,21 @@ int menu_item_add(struct menu *m, char *item_key, void *item_data)
  * Returns a pointer to the menu if successful, or NULL if there is
  * insufficient memory available to create the menu.
  */
-struct menu *menu_create(char *title, int timeout, int prompt,
-				void (*display_statusline)(struct menu *),
-				void (*item_data_print)(void *),
-				char *(*item_choice)(void *),
-				bool (*need_reprint)(void *),
-				void *item_choice_data)
+கட்டமைப்பு menu *menu_create(எழுத்து *title, முழு timeout, முழு prompt,
+				வெறுமை (*display_statusline)(கட்டமைப்பு menu *),
+				வெறுமை (*item_data_print)(வெறுமை *),
+				எழுத்து *(*item_choice)(வெறுமை *),
+				bool (*need_reprint)(வெறுமை *),
+				வெறுமை *item_choice_data)
 {
-	struct menu *m;
+	கட்டமைப்பு menu *m;
 
-	m = malloc(sizeof *m);
+	m = malloc(அளவு *m);
 
-	if (!m)
-		return NULL;
+	எனில் (!m)
+		திரும்பு வெற்று;
 
-	m->default_item = NULL;
+	m->default_item = வெற்று;
 	m->prompt = prompt;
 	m->timeout = timeout;
 	m->display_statusline = display_statusline;
@@ -401,18 +401,18 @@ struct menu *menu_create(char *title, int timeout, int prompt,
 	m->item_choice_data = item_choice_data;
 	m->item_cnt = 0;
 
-	if (title) {
+	எனில் (title) {
 		m->title = strdup(title);
-		if (!m->title) {
-			free(m);
-			return NULL;
+		எனில் (!m->title) {
+			விடுவி(m);
+			திரும்பு வெற்று;
 		}
-	} else
-		m->title = NULL;
+	} இல்லையெனில்
+		m->title = வெற்று;
 
-	INIT_LIST_HEAD(&m->items);
+	INIT_LIST_HEAD(&m->பொருட்கள்);
 
-	return m;
+	திரும்பு m;
 }
 
 /*
@@ -422,61 +422,61 @@ struct menu *menu_create(char *title, int timeout, int prompt,
  *
  * Returns 1 if successful, or -EINVAL if m is NULL.
  */
-int menu_destroy(struct menu *m)
+முழு menu_destroy(கட்டமைப்பு menu *m)
 {
-	if (!m)
-		return -EINVAL;
+	எனில் (!m)
+		திரும்பு -EINVAL;
 
-	menu_items_iter(m, menu_item_destroy, NULL);
+	menu_பொருட்கள்_iter(m, menu_item_destroy, வெற்று);
 
-	if (m->title)
-		free(m->title);
+	எனில் (m->title)
+		விடுவி(m->title);
 
-	free(m);
+	விடுவி(m);
 
-	return 1;
+	திரும்பு 1;
 }
 
-static int bootmenu_conv_shortcut_key(struct bootmenu_data *menu, int ichar)
+நிலையான முழு bootmenu_conv_shortcut_சாவி(கட்டமைப்பு bootmenu_data *menu, முழு ichar)
 {
-	int shortcut_key;
+	முழு shortcut_சாவி;
 
 	ichar = tolower(ichar);
-	switch (ichar) {
+	தேர்வு (ichar) {
 	/* a-z for bootmenu entry > 9 */
-	case 'a' ... 'z':
-		shortcut_key = ichar - 'a' + 9;
-		break;
+	நிலை 'a' ... 'z':
+		shortcut_சாவி = ichar - 'a' + 9;
+		நிறுத்து;
 	/* 1-9 for bootmenu entry <= 9 */
-	case '1' ... '9':
-		shortcut_key = ichar - '1';
-		break;
+	நிலை '1' ... '9':
+		shortcut_சாவி = ichar - '1';
+		நிறுத்து;
 	/* Reserve 0 for last option (aka Exit) */
-	case '0':
-	default:
-		return -1;
+	நிலை '0':
+	இயல்பு:
+		திரும்பு -1;
 	}
 
-	return shortcut_key;
+	திரும்பு shortcut_சாவி;
 }
 
-enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
-					 struct cli_ch_state *cch)
+எண்ணிக்கை bootmenu_சாவி bootmenu_autoboot_loop(கட்டமைப்பு bootmenu_data *menu,
+					 கட்டமைப்பு cli_ch_state *cch)
 {
-	enum bootmenu_key key = BKEY_NONE;
-	int i, c;
+	எண்ணிக்கை bootmenu_சாவி சாவி = BKEY_NONE;
+	முழு i, c;
 
-	while (menu->delay > 0) {
-		int ichar;
+	போது (menu->delay > 0) {
+		முழு ichar;
 
-		if (ansi)
-			printf(ANSI_CURSOR_POSITION, menu->count + 5, 3);
+		எனில் (ansi)
+			printf(ANSI_CURSOR_POSITION, menu->மொத்தம் + 5, 3);
 		printf("Hit any key to stop autoboot: %d ", menu->delay);
-		for (i = 0; i < 100; ++i) {
-			if (!tstc()) {
+		க்கு (i = 0; i < 100; ++i) {
+			எனில் (!tstc()) {
 				schedule();
 				mdelay(10);
-				continue;
+				தொடர்;
 			}
 
 			menu->delay = -1;
@@ -484,112 +484,112 @@ enum bootmenu_key bootmenu_autoboot_loop(struct bootmenu_data *menu,
 
 			ichar = cli_ch_process(cch, c);
 
-			switch (ichar) {
-			case '\0':
-				key = BKEY_NONE;
-				break;
-			case '\n':
-				key = BKEY_SELECT;
-				break;
-			case 0x3: /* ^C */
-				key = BKEY_QUIT;
-				break;
-			case 'A' ... 'Z':
-			case 'a' ... 'z':
-			case '0' ... '9':
-				key = BKEY_SHORTCUT;
-				break;
-			default:
-				key = BKEY_NONE;
-				break;
+			தேர்வு (ichar) {
+			நிலை '\0':
+				சாவி = BKEY_NONE;
+				நிறுத்து;
+			நிலை '\n':
+				சாவி = BKEY_SELECT;
+				நிறுத்து;
+			நிலை 0x3: /* ^C */
+				சாவி = BKEY_QUIT;
+				நிறுத்து;
+			நிலை 'A' ... 'Z':
+			நிலை 'a' ... 'z':
+			நிலை '0' ... '9':
+				சாவி = BKEY_SHORTCUT;
+				நிறுத்து;
+			இயல்பு:
+				சாவி = BKEY_NONE;
+				நிறுத்து;
 			}
-			break;
+			நிறுத்து;
 		}
 
-		if (key == BKEY_SHORTCUT)
-			cch->shortcut_key = bootmenu_conv_shortcut_key(menu, ichar);
+		எனில் (சாவி == BKEY_SHORTCUT)
+			cch->shortcut_சாவி = bootmenu_conv_shortcut_சாவி(menu, ichar);
 
-		if (menu->delay < 0)
-			break;
+		எனில் (menu->delay < 0)
+			நிறுத்து;
 
 		--menu->delay;
 	}
 
-	if (ansi)
-		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_LINE, menu->count + 5, 1);
+	எனில் (ansi)
+		printf(ANSI_CURSOR_POSITION ANSI_CLEAR_வரி, menu->மொத்தம் + 5, 1);
 
-	if (menu->delay == 0)
-		key = BKEY_SELECT;
+	எனில் (menu->delay == 0)
+		சாவி = BKEY_SELECT;
 
-	return key;
+	திரும்பு சாவி;
 }
 
-enum bootmenu_key bootmenu_conv_key(int ichar)
+எண்ணிக்கை bootmenu_சாவி bootmenu_conv_சாவி(முழு ichar)
 {
-	enum bootmenu_key key;
+	எண்ணிக்கை bootmenu_சாவி சாவி;
 
-	switch (ichar) {
-	case '\n':
+	தேர்வு (ichar) {
+	நிலை '\n':
 		/* enter key was pressed */
-		key = BKEY_SELECT;
-		break;
-	case CTL_CH('c'):
-	case '\e':
+		சாவி = BKEY_SELECT;
+		நிறுத்து;
+	நிலை CTL_CH('c'):
+	நிலை '\e':
 		/* ^C was pressed */
-		key = BKEY_QUIT;
-		break;
-	case CTL_CH('p'):
-		key = BKEY_UP;
-		break;
-	case CTL_CH('n'):
-		key = BKEY_DOWN;
-		break;
-	case CTL_CH('s'):
-		key = BKEY_SAVE;
-		break;
-	case '+':
-		key = BKEY_PLUS;
-		break;
-	case '-':
-		key = BKEY_MINUS;
-		break;
-	case ' ':
-		key = BKEY_SPACE;
-		break;
-	default:
-		key = BKEY_NONE;
-		break;
+		சாவி = BKEY_QUIT;
+		நிறுத்து;
+	நிலை CTL_CH('p'):
+		சாவி = BKEY_UP;
+		நிறுத்து;
+	நிலை CTL_CH('n'):
+		சாவி = BKEY_DOWN;
+		நிறுத்து;
+	நிலை CTL_CH('s'):
+		சாவி = BKEY_SAVE;
+		நிறுத்து;
+	நிலை '+':
+		சாவி = BKEY_PLUS;
+		நிறுத்து;
+	நிலை '-':
+		சாவி = BKEY_MINUS;
+		நிறுத்து;
+	நிலை ' ':
+		சாவி = BKEY_SPACE;
+		நிறுத்து;
+	இயல்பு:
+		சாவி = BKEY_NONE;
+		நிறுத்து;
 	}
 
-	return key;
+	திரும்பு சாவி;
 }
 
-enum bootmenu_key bootmenu_loop(struct bootmenu_data *menu,
-				struct cli_ch_state *cch)
+எண்ணிக்கை bootmenu_சாவி bootmenu_loop(கட்டமைப்பு bootmenu_data *menu,
+				கட்டமைப்பு cli_ch_state *cch)
 {
-	enum bootmenu_key key;
-	int c, errchar = 0;
+	எண்ணிக்கை bootmenu_சாவி சாவி;
+	முழு c, errchar = 0;
 
 	c = cli_ch_process(cch, 0);
-	if (!c) {
-		while (!c && !tstc()) {
+	எனில் (!c) {
+		போது (!c && !tstc()) {
 			schedule();
 			mdelay(10);
 			c = cli_ch_process(cch, errchar);
 			errchar = -ETIMEDOUT;
 		}
-		if (!c) {
+		எனில் (!c) {
 			c = getchar();
 			c = cli_ch_process(cch, c);
 		}
 	}
 
-	key = bootmenu_conv_key(c);
+	சாவி = bootmenu_conv_சாவி(c);
 
-	if (key == BKEY_NONE && isalnum(c)) {
-		key = BKEY_SHORTCUT;
-		cch->shortcut_key = bootmenu_conv_shortcut_key(menu, c);
+	எனில் (சாவி == BKEY_NONE && isalnum(c)) {
+		சாவி = BKEY_SHORTCUT;
+		cch->shortcut_சாவி = bootmenu_conv_shortcut_சாவி(menu, c);
 	}
 
-	return key;
+	திரும்பு சாவி;
 }

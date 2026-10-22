@@ -3,52 +3,52 @@
  * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
  */
 
-#include <image.h>
-#include <log.h>
-#include <semihosting.h>
-#include <spl.h>
-#include <spl_load.h>
+#அந்தர்பாவ <image.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <semihosting.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <spl_load.h>
 
-static ulong smh_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+நிலையான ulong smh_fit_read(கட்டமைப்பு spl_load_info *load, ulong file_offset,
+			  ulong size, வெறுமை *buf)
 {
 	long fd = *(long *)load->priv;
 	ulong ret;
 
-	if (smh_seek(fd, file_offset))
-		return 0;
+	எனில் (smh_seek(fd, file_offset))
+		திரும்பு 0;
 
 	ret = smh_read(fd, buf, size);
-	return ret < 0 ? 0 : ret;
+	திரும்பு ret < 0 ? 0 : ret;
 }
 
-static int spl_smh_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+நிலையான முழு spl_smh_load_image(கட்டமைப்பு spl_image_info *spl_image,
+			      கட்டமைப்பு spl_boot_device *bootdev)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	int ret;
+	மாறிலி எழுத்து *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
+	முழு ret;
 	long fd, len;
-	struct spl_load_info load;
+	கட்டமைப்பு spl_load_info load;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
-	if (fd < 0) {
+	fd = smh_open(filename, MODE_READ | MODE_இருமம்);
+	எனில் (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
-		return fd;
+		திரும்பு fd;
 	}
 
 	ret = smh_flen(fd);
-	if (ret < 0) {
+	எனில் (ret < 0) {
 		log_debug("could not get length of image: %d\n", ret);
-		goto out;
+		செல் out;
 	}
 	len = ret;
 
 	spl_load_init(&load, smh_fit_read, &fd, 1);
 	ret = spl_load(spl_image, bootdev, &load, len, 0);
-	if (ret)
+	எனில் (ret)
 		log_debug("could not read %s: %d\n", filename, ret);
 out:
 	smh_close(fd);
-	return ret;
+	திரும்பு ret;
 }
 SPL_LOAD_IMAGE_METHOD("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_load_image);

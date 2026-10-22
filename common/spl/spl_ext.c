@@ -1,131 +1,131 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <ext4fs.h>
-#include <errno.h>
-#include <image.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <part.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <spl_load.h>
+#அந்தர்பாவ <ext4fs.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+நிலையான ulong spl_fit_read(கட்டமைப்பு spl_load_info *load, ulong file_offset,
+			  ulong size, வெறுமை *buf)
 {
-	struct legacy_img_hdr *header;
-	int ret;
+	கட்டமைப்பு legacy_img_hdr *header;
+	முழு ret;
 	loff_t actlen;
 
 	ret = ext4fs_read(buf, file_offset, size, &actlen);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	எனில் (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (கட்டமைப்பு legacy_img_hdr *)buf;
+		எனில் (image_get_magic(header) != FDT_MAGIC)
+			திரும்பு size;
 	}
 
-	return actlen;
+	திரும்பு actlen;
 }
 
-int spl_load_image_ext(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       struct blk_desc *block_dev, int partition,
-		       const char *filename)
+முழு spl_load_image_ext(கட்டமைப்பு spl_image_info *spl_image,
+		       கட்டமைப்பு spl_boot_device *bootdev,
+		       கட்டமைப்பு blk_desc *block_dev, முழு partition,
+		       மாறிலி எழுத்து *filename)
 {
 	s32 err;
 	loff_t filelen;
-	struct disk_partition part_info = {};
-	struct spl_load_info load;
+	கட்டமைப்பு disk_partition part_info = {};
+	கட்டமைப்பு spl_load_info load;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	எனில் (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		திரும்பு -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	எனில் (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		திரும்பு -1;
 	}
 
 	err = ext4fs_open(filename, &filelen);
-	if (err < 0) {
+	எனில் (err < 0) {
 		puts("spl: ext4fs_open failed\n");
-		goto end;
+		செல் end;
 	}
 
-	spl_load_init(&load, spl_fit_read, NULL, 1);
+	spl_load_init(&load, spl_fit_read, வெற்று, 1);
 	err = spl_load(spl_image, bootdev, &load, filelen, 0);
 
 end:
-	if (err < 0)
+	எனில் (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err < 0;
+	திரும்பு err < 0;
 }
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#எனில் CONFIG_IS_ENABLED(OS_BOOT)
+முழு spl_load_image_ext_os(கட்டமைப்பு spl_image_info *spl_image,
+			  கட்டமைப்பு spl_boot_device *bootdev,
+			  கட்டமைப்பு blk_desc *block_dev, முழு partition)
 {
-	int err;
+	முழு err;
 	__maybe_unused loff_t filelen, actlen;
-	struct disk_partition part_info = {};
-	__maybe_unused char *file;
+	கட்டமைப்பு disk_partition part_info = {};
+	__maybe_unused எழுத்து *file;
 
-	if (part_get_info(block_dev, partition, &part_info)) {
+	எனில் (part_get_info(block_dev, partition, &part_info)) {
 		printf("spl: no partition table found\n");
-		return -1;
+		திரும்பு -1;
 	}
 
 	ext4fs_set_blk_dev(block_dev, &part_info);
 
 	err = ext4fs_mount();
-	if (!err) {
+	எனில் (!err) {
 		printf("%s: ext4fs mount err - %d\n", __func__, err);
-		return -1;
+		திரும்பு -1;
 	}
 
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		goto defaults;
+	எனில் (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		செல் defaults;
 
 	file = env_get("falcon_image_file");
-	if (file) {
+	எனில் (file) {
 		err = spl_load_image_ext(spl_image, bootdev, block_dev,
 					 partition, file);
-		if (err != 0) {
+		எனில் (err != 0) {
 			puts("spl: falling back to default\n");
-			goto defaults;
+			செல் defaults;
 		}
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#எனில் IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 		ext4fs_set_blk_dev(block_dev, &part_info);
 		ext4fs_mount();
 		file = env_get("falcon_args_file");
-		if (file) {
+		எனில் (file) {
 			err = ext4fs_open(file, &filelen);
-			if (err < 0) {
+			எனில் (err < 0) {
 				puts("spl: ext4fs_open failed\n");
-				goto defaults;
+				செல் defaults;
 			}
-			err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+			err = ext4fs_read((வெறுமை *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
 					  0, filelen, &actlen);
-			if (err < 0) {
+			எனில் (err < 0) {
 				printf("spl: error reading args %s, err - %d, falling back to default\n",
 				       file, err);
-				goto defaults;
+				செல் defaults;
 			}
-			return 0;
-		} else {
+			திரும்பு 0;
+		} இல்லையெனில் {
 			puts("spl: falcon_args_file not set in environment, falling back to default\n");
 		}
 #endif
-	} else {
+	} இல்லையெனில் {
 		puts("spl: falcon_image_file not set in environment, falling back to default\n");
 	}
 
@@ -134,31 +134,31 @@ defaults:
 	err = spl_load_image_ext(spl_image, bootdev, block_dev, partition,
 				 CONFIG_SPL_FS_LOAD_KERNEL_NAME);
 
-	if (err)
-		return err;
+	எனில் (err)
+		திரும்பு err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#எனில் IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	ext4fs_set_blk_dev(block_dev, &part_info);
 	ext4fs_mount();
 	err = ext4fs_open(CONFIG_SPL_FS_LOAD_ARGS_NAME, &filelen);
-	if (err < 0)
+	எனில் (err < 0)
 		puts("spl: ext4fs_open failed\n");
 
-	err = ext4fs_read((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
-	if (err < 0) {
+	err = ext4fs_read((வெறுமை *)CONFIG_SPL_PAYLOAD_ARGS_ADDR, 0, filelen, &actlen);
+	எனில் (err < 0) {
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, CONFIG_SPL_FS_LOAD_ARGS_NAME, err);
-		return -1;
+		திரும்பு -1;
 	}
 #endif
 
-	return 0;
+	திரும்பு 0;
 }
-#else
-int spl_load_image_ext_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct blk_desc *block_dev, int partition)
+#இல்லையெனில்
+முழு spl_load_image_ext_os(கட்டமைப்பு spl_image_info *spl_image,
+			  கட்டமைப்பு spl_boot_device *bootdev,
+			  கட்டமைப்பு blk_desc *block_dev, முழு partition)
 {
-	return -ENOSYS;
+	திரும்பு -ENOSYS;
 }
 #endif

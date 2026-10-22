@@ -5,4 +5,4 @@
  * Licensed under the GPL-2 or later.
  */
 
-const char const system_map[] = SYSTEM_MAP;
+மாறிலி எழுத்து மாறிலி system_map[] = SYSTEM_MAP;

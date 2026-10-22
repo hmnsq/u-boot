@@ -4,49 +4,49 @@
  */
 
 #define LOG_CATEGORY LOGC_ARCH
-#include <stdlib.h>
-#include <errno.h>
-#include <imx_container.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <cpu_func.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <imx_container.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <mapmem.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <cpu_func.h>
 #ifdef CONFIG_AHAB_BOOT
-#include <asm/mach-imx/ahab.h>
+#அந்தர்பாவ <asm/mach-imx/ahab.h>
 #endif
 
-__weak bool arch_check_dst_in_secure(void *start, ulong size)
+__weak bool arch_check_dst_in_secure(வெறுமை *start, ulong size)
 {
-	return false;
+	திரும்பு false;
 }
 
-__weak void *arch_get_container_trampoline(void)
+__weak வெறுமை *arch_get_container_trampoline(வெறுமை)
 {
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
-					  struct spl_load_info *info,
-					  struct container_hdr *container,
-					  int image_index,
+நிலையான கட்டமைப்பு boot_img_t *read_auth_image(கட்டமைப்பு spl_image_info *spl_image,
+					  கட்டமைப்பு spl_load_info *info,
+					  கட்டமைப்பு container_hdr *container,
+					  முழு image_index,
 					  ulong container_offset)
 {
-	struct boot_img_t *images;
+	கட்டமைப்பு boot_img_t *images;
 	ulong offset, size;
-	void *buf, *trampoline;
+	வெறுமை *buf, *trampoline;
 
-	if (image_index > container->num_images) {
+	எனில் (image_index > container->இலக்கம்_images) {
 		debug("Invalid image number\n");
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	images = (struct boot_img_t *)((u8 *)container +
-				       sizeof(struct container_hdr));
+	images = (கட்டமைப்பு boot_img_t *)((u8 *)container +
+				       அளவு(கட்டமைப்பு container_hdr));
 
-	if (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
+	எனில் (!IS_ALIGNED(images[image_index].offset, spl_get_bl_len(info))) {
 		printf("%s: image%d offset not aligned to %u\n",
 		       __func__, image_index, spl_get_bl_len(info));
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	size = ALIGN(images[image_index].size, spl_get_bl_len(info));
@@ -56,43 +56,43 @@ static struct boot_img_t *read_auth_image(struct spl_image_info *spl_image,
 	      container, offset, size);
 
 	buf = map_sysmem(images[image_index].dst, images[image_index].size);
-	if (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
+	எனில் (IS_ENABLED(CONFIG_SPL_IMX_CONTAINER_USE_TRAMPOLINE) &&
 	    arch_check_dst_in_secure(buf, size)) {
 		trampoline = arch_get_container_trampoline();
-		if (!trampoline) {
+		எனில் (!trampoline) {
 			printf("%s: trampoline size is zero\n", __func__);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 
-		if (info->read(info, offset, size, trampoline) < images[image_index].size) {
+		எனில் (info->பட(info, offset, size, trampoline) < images[image_index].size) {
 			printf("%s: failed to load image to a trampoline buffer\n", __func__);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 
 		memcpy(buf, trampoline, images[image_index].size);
-	} else {
-		if (info->read(info, offset, size, buf) < images[image_index].size) {
+	} இல்லையெனில் {
+		எனில் (info->பட(info, offset, size, buf) < images[image_index].size) {
 				printf("%s: failed to load image to a non-secure region\n", __func__);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 	}
 
 #ifdef CONFIG_AHAB_BOOT
 	flush_dcache_range((ulong)buf, (ulong)(buf + images[image_index].size - 1));
-	if (ahab_verify_cntr_image(&images[image_index], image_index))
-		return NULL;
+	எனில் (ahab_verify_cntr_image(&images[image_index], image_index))
+		திரும்பு வெற்று;
 #endif
 
-	return &images[image_index];
+	திரும்பு &images[image_index];
 }
 
-static int read_auth_container(struct spl_image_info *spl_image,
-			       struct spl_load_info *info, ulong offset)
+நிலையான முழு read_auth_container(கட்டமைப்பு spl_image_info *spl_image,
+			       கட்டமைப்பு spl_load_info *info, ulong offset)
 {
-	struct container_hdr *container = NULL;
-	struct container_hdr *authhdr;
+	கட்டமைப்பு container_hdr *container = வெற்று;
+	கட்டமைப்பு container_hdr *authhdr;
 	u16 length;
-	int i, size, ret = 0;
+	முழு i, size, ret = 0;
 
 	size = ALIGN(CONTAINER_HDR_ALIGNMENT, spl_get_bl_len(info));
 
@@ -101,45 +101,45 @@ static int read_auth_container(struct spl_image_info *spl_image,
 	 * no need malloc
 	 */
 	container = malloc(size);
-	if (!container)
-		return -ENOMEM;
+	எனில் (!container)
+		திரும்பு -ENOMEM;
 
 	debug("%s: container: %p offset: %lu size: %u\n", __func__,
 	      container, offset, size);
-	if (info->read(info, offset, size, container) <
+	எனில் (info->பட(info, offset, size, container) <
 	    CONTAINER_HDR_ALIGNMENT) {
 		ret = -EIO;
-		goto end;
+		செல் end;
 	}
 
-	if (!valid_container_hdr(container)) {
+	எனில் (!valid_container_hdr(container)) {
 		log_err("Wrong container header\n");
 		ret = -ENOENT;
-		goto end;
+		செல் end;
 	}
 
-	if (!container->num_images) {
+	எனில் (!container->இலக்கம்_images) {
 		log_err("Wrong container, no image found\n");
 		ret = -ENOENT;
-		goto end;
+		செல் end;
 	}
 
 	length = container->length_lsb + (container->length_msb << 8);
 	debug("Container length %u\n", length);
 
-	if (length > CONTAINER_HDR_ALIGNMENT) {
+	எனில் (length > CONTAINER_HDR_ALIGNMENT) {
 		size = ALIGN(length, spl_get_bl_len(info));
 
-		free(container);
+		விடுவி(container);
 		container = malloc(size);
-		if (!container)
-			return -ENOMEM;
+		எனில் (!container)
+			திரும்பு -ENOMEM;
 
 		debug("%s: container: %p offset: %lu size: %u\n",
 		      __func__, container, offset, size);
-		if (info->read(info, offset, size, container) < length) {
+		எனில் (info->பட(info, offset, size, container) < length) {
 			ret = -EIO;
-			goto end;
+			செல் end;
 		}
 	}
 
@@ -147,23 +147,23 @@ static int read_auth_container(struct spl_image_info *spl_image,
 
 #ifdef CONFIG_AHAB_BOOT
 	authhdr = ahab_auth_cntr_hdr(authhdr, length);
-	if (!authhdr) {
+	எனில் (!authhdr) {
 		ret = -EINVAL;
-		goto end_auth;
+		செல் end_auth;
 	}
 #endif
 
-	for (i = 0; i < authhdr->num_images; i++) {
-		struct boot_img_t *image = read_auth_image(spl_image, info,
+	க்கு (i = 0; i < authhdr->இலக்கம்_images; i++) {
+		கட்டமைப்பு boot_img_t *image = read_auth_image(spl_image, info,
 							   authhdr, i,
 							   offset);
 
-		if (!image) {
+		எனில் (!image) {
 			ret = -EINVAL;
-			goto end_auth;
+			செல் end_auth;
 		}
 
-		if (i == 0) {
+		எனில் (i == 0) {
 			spl_image->load_addr = image->dst;
 			spl_image->entry_point = image->entry;
 		}
@@ -175,13 +175,13 @@ end_auth:
 #endif
 
 end:
-	free(container);
+	விடுவி(container);
 
-	return ret;
+	திரும்பு ret;
 }
 
-int spl_load_imx_container(struct spl_image_info *spl_image,
-			   struct spl_load_info *info, ulong offset)
+முழு spl_load_imx_container(கட்டமைப்பு spl_image_info *spl_image,
+			   கட்டமைப்பு spl_load_info *info, ulong offset)
 {
-	return read_auth_container(spl_image, info, offset);
+	திரும்பு read_auth_container(spl_image, info, offset);
 }

@@ -5,20 +5,20 @@
  *
  * Ravi B <ravibabu@ti.com>
  */
-#include <env.h>
-#include <spl.h>
-#include <linux/compiler.h>
-#include <errno.h>
-#include <watchdog.h>
-#include <console.h>
-#include <g_dnl.h>
-#include <usb.h>
-#include <dfu.h>
-#include <linux/printk.h>
-#include <pci_ep.h>
-#include <dm/uclass.h>
-#include <cpu_func.h>
-#include <linux/io.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <spl.h>
+#அந்தர்பாவ <linux/compiler.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <watchdog.h>
+#அந்தர்பாவ <console.h>
+#அந்தர்பாவ <g_dnl.h>
+#அந்தர்பாவ <usb.h>
+#அந்தர்பாவ <dfu.h>
+#அந்தர்பாவ <linux/printk.h>
+#அந்தர்பாவ <pci_ep.h>
+#அந்தர்பாவ <dm/uclass.h>
+#அந்தர்பாவ <cpu_func.h>
+#அந்தர்பாவ <linux/io.h>
 
 /*
  * Macros define size of magic word and boot phase string
@@ -27,38 +27,38 @@
 #define MAGIC_WORD_SIZE 4
 #define BOOT_PHASE_STRING_SIZE 63
 
-static int run_dfu(int usb_index, char *interface, char *devstring)
+நிலையான முழு run_dfu(முழு usb_index, எழுத்து *interface, எழுத்து *devstring)
 {
-	int ret;
+	முழு ret;
 
 	ret = dfu_init_env_entities(interface, devstring);
-	if (ret) {
+	எனில் (ret) {
 		dfu_free_entities();
-		goto exit;
+		செல் exit;
 	}
 
 	run_usb_dnl_gadget(usb_index, "usb_dnl_dfu");
 exit:
 	dfu_free_entities();
-	return ret;
+	திரும்பு ret;
 }
 
 #ifdef CONFIG_SPL_PCI_DFU
-static int dfu_over_pcie(void)
+நிலையான முழு dfu_over_pcie(வெறுமை)
 {
 	u32 offset, magic_word;
-	volatile void *addr;
-	struct udevice *dev;
-	struct pci_bar bar;
-	struct pci_ep_header hdr;
+	நிலையற்ற வெறுமை *addr;
+	கட்டமைப்பு udevice *dev;
+	கட்டமைப்பு pci_bar bar;
+	கட்டமைப்பு pci_ep_header hdr;
 	uint fn = 0;
-	int ret;
-	char *bootphase;
+	முழு ret;
+	எழுத்து *bootphase;
 
 	uclass_get_device_by_seq(UCLASS_PCI_EP, 0, &dev);
-	if (!dev) {
+	எனில் (!dev) {
 		pr_err("Failed to get pci ep device\n");
-		return -ENODEV;
+		திரும்பு -ENODEV;
 	}
 
 	hdr.deviceid = CONFIG_SPL_PCI_DFU_DEVICE_ID;
@@ -67,9 +67,9 @@ static int dfu_over_pcie(void)
 	hdr.subclass_code = PCI_CLASS_MEMORY_RAM & 0xff;
 
 	ret = pci_ep_write_header(dev, fn, &hdr);
-	if (ret) {
+	எனில் (ret) {
 		pr_err("Failed to write header: %d\n", ret);
-		return ret;
+		திரும்பு ret;
 	}
 
 	bar.barno = BAR_0;
@@ -81,67 +81,67 @@ static int dfu_over_pcie(void)
 	bar.size = CONFIG_SPL_PCI_DFU_BAR_SIZE;
 
 	ret = pci_ep_set_bar(dev, fn, &bar);
-	if (ret) {
+	எனில் (ret) {
 		pr_err("Failed to set bar: %d\n", ret);
-		return ret;
+		திரும்பு ret;
 	}
 
 	ret = pci_ep_start(dev);
-	if (ret) {
+	எனில் (ret) {
 		pr_err("Failed to start ep: %d\n", ret);
-		return ret;
+		திரும்பு ret;
 	}
 
-	addr = (void *)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
+	addr = (வெறுமை *)CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
 	offset = CONFIG_SPL_PCI_DFU_BAR_SIZE - MAGIC_WORD_SIZE;
 
-	if (sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
+	எனில் (அளவு(CONFIG_SPL_PCI_DFU_BOOT_PHASE) > BOOT_PHASE_STRING_SIZE) {
 		pr_err("Not copying boot phase. String too long\n");
-	} else {
-		bootphase = (char *)(addr + CONFIG_SPL_PCI_DFU_BAR_SIZE -
+	} இல்லையெனில் {
+		bootphase = (எழுத்து *)(addr + CONFIG_SPL_PCI_DFU_BAR_SIZE -
 				  (BOOT_PHASE_STRING_SIZE + MAGIC_WORD_SIZE + 1));
 		strlcpy(bootphase, CONFIG_SPL_PCI_DFU_BOOT_PHASE,
-			sizeof(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
+			அளவு(CONFIG_SPL_PCI_DFU_BOOT_PHASE) + 1);
 	}
 
 	addr = addr + offset;
 	magic_word = CONFIG_SPL_PCI_DFU_MAGIC_WORD;
-	(*(int *)addr) = 0;
+	(*(முழு *)addr) = 0;
 	flush_dcache_all();
-	for (;;) {
-		if (*(int *)addr == magic_word)
-			break;
+	க்கு (;;) {
+		எனில் (*(முழு *)addr == magic_word)
+			நிறுத்து;
 		invalidate_dcache_all();
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
-int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
+முழு spl_dfu_cmd(முழு usbctrl, எழுத்து *dfu_alt_info, எழுத்து *interface, எழுத்து *devstr)
 {
-	char *str_env;
-	int ret;
+	எழுத்து *str_env;
+	முழு ret;
 
 #ifdef CONFIG_SPL_PCI_DFU
-	if (spl_boot_device() == BOOT_DEVICE_PCIE)
-		return dfu_over_pcie();
+	எனில் (spl_boot_device() == BOOT_DEVICE_PCIE)
+		திரும்பு dfu_over_pcie();
 #endif
 
 	/* set default environment */
-	env_set_default(NULL, 0);
+	env_set_default(வெற்று, 0);
 	str_env = env_get(dfu_alt_info);
-	if (!str_env) {
+	எனில் (!str_env) {
 		pr_err("\"%s\" env variable not defined!\n", dfu_alt_info);
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
 
 	ret = env_set("dfu_alt_info", str_env);
-	if (ret) {
+	எனில் (ret) {
 		pr_err("unable to set env variable \"dfu_alt_info\"!\n");
-		return -EINVAL;
+		திரும்பு -EINVAL;
 	}
 
 	/* invoke dfu command */
-	return run_dfu(usbctrl, interface, devstr);
+	திரும்பு run_dfu(usbctrl, interface, devstr);
 }

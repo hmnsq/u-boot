@@ -4,19 +4,19 @@
  *   Author: Casey Connolly <casey.connolly@linaro.org>
  */
 
-#include <button.h>
-#include <command.h>
-#include <env.h>
-#include <log.h>
-#include <stdio.h>
+#அந்தர்பாவ <button.h>
+#அந்தர்பாவ <command.h>
+#அந்தர்பாவ <env.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <stdio.h>
 
 /* Some sane limit "just in case" */
 #define MAX_BTN_CMDS 32
 
-struct button_cmd {
+கட்டமைப்பு button_cmd {
 	bool pressed;
-	const char *btn_name;
-	const char *cmd;
+	மாறிலி எழுத்து *btn_name;
+	மாறிலி எழுத்து *cmd;
 };
 
 /*
@@ -30,54 +30,54 @@ struct button_cmd {
  *
  * Returns 1 if a command was found, 0 otherwise.
  */
-static int get_button_cmd(int n, struct button_cmd *cmd)
+நிலையான முழு get_button_cmd(முழு n, கட்டமைப்பு button_cmd *cmd)
 {
-	const char *cmd_str;
-	struct udevice *btn = NULL;
-	char buf[24];
+	மாறிலி எழுத்து *cmd_str;
+	கட்டமைப்பு udevice *btn = வெற்று;
+	எழுத்து buf[24];
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d_name", n);
+	snprintf(buf, அளவு(buf), "button_cmd_%d_name", n);
 	cmd->btn_name = env_get(buf);
-	if (!cmd->btn_name)
-		return 0;
+	எனில் (!cmd->btn_name)
+		திரும்பு 0;
 
 	button_get_by_label(cmd->btn_name, &btn);
-	if (!btn) {
+	எனில் (!btn) {
 		log_err("No button labelled '%s'\n", cmd->btn_name);
-		return 0;
+		திரும்பு 0;
 	}
 
 	cmd->pressed = button_get_state(btn) == BUTTON_ON;
 	/* If the button isn't pressed then cmd->cmd will be unused so don't waste
 	 * cycles reading it
 	 */
-	if (!cmd->pressed)
-		return 1;
+	எனில் (!cmd->pressed)
+		திரும்பு 1;
 
-	snprintf(buf, sizeof(buf), "button_cmd_%d", n);
+	snprintf(buf, அளவு(buf), "button_cmd_%d", n);
 	cmd_str = env_get(buf);
-	if (!cmd_str) {
+	எனில் (!cmd_str) {
 		log_err("No command set for button '%s'\n", cmd->btn_name);
-		return 0;
+		திரும்பு 0;
 	}
 
 	cmd->cmd = cmd_str;
 
-	return 1;
+	திரும்பு 1;
 }
 
-void process_button_cmds(void)
+வெறுமை process_button_cmds(வெறுமை)
 {
-	struct button_cmd cmd = {0};
-	int i = 0;
+	கட்டமைப்பு button_cmd cmd = {0};
+	முழு i = 0;
 
-	while (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
-		if (!cmd.pressed)
-			continue;
+	போது (get_button_cmd(i++, &cmd) && i < MAX_BTN_CMDS) {
+		எனில் (!cmd.pressed)
+			தொடர்;
 
 		log_info("BTN '%s'> %s\n", cmd.btn_name, cmd.cmd);
 		run_command(cmd.cmd, CMD_FLAG_ENV);
 		/* Don't run commands for multiple buttons */
-		return;
+		திரும்பு;
 	}
 }

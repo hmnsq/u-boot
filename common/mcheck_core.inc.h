@@ -57,248 +57,248 @@
  */
 #ifndef _MCHECKCORE_INC_H
 #define _MCHECKCORE_INC_H      1
-#include "mcheck.h"
+#அந்தர்பாவ "mcheck.h"
 
-#if defined(MCHECK_HEAP_PROTECTION)
+#எனில் defined(MCHECK_HEAP_PROTECTION)
 #define mcheck_flood memset
 
 // these are from /dev/random:
 #define MAGICWORD	0x99ccf430fa562a05ULL
 #define MAGICFREE	0x4875e63c0c6fc08eULL
 #define MAGICTAIL	0x918dbcd7df78dcd6ULL
-#define MALLOCFLOOD	((char)0xb6)
-#define FREEFLOOD	((char)0xf5)
-#define PADDINGFLOOD	((char)0x58)
+#define MALLOCFLOOD	((எழுத்து)0xb6)
+#define FREEFLOOD	((எழுத்து)0xf5)
+#define PADDINGFLOOD	((எழுத்து)0x58)
 
 // my normal run demands 4427-6449 chunks:
 #define REGISTRY_SZ	6608
 #define CANARY_DEPTH	2
 
 // avoid problems with BSS at early stage:
-static char mcheck_pedantic_flag __section(".data") = 0;
-static void *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
-static size_t mcheck_chunk_count __section(".data") = 0;
-static size_t mcheck_chunk_count_max __section(".data") = 0;
+நிலையான எழுத்து mcheck_pedantic_flag __section(".data") = 0;
+நிலையான வெறுமை *mcheck_registry[REGISTRY_SZ] __section(".data") = {0};
+நிலையான size_t mcheck_chunk_மொத்தம் __section(".data") = 0;
+நிலையான size_t mcheck_chunk_மொத்தம்_max __section(".data") = 0;
 
-typedef unsigned long long mcheck_elem;
-typedef struct {
+வகைவரை unsigned long long mcheck_elem;
+வகைவரை கட்டமைப்பு {
 	mcheck_elem elems[CANARY_DEPTH];
 } mcheck_canary;
-struct mcheck_hdr {
+கட்டமைப்பு mcheck_hdr {
 	size_t size; /* Exact size requested by user.  */
 	size_t aln_skip; /* Ignored bytes, before the mcheck_hdr, to fulfill alignment */
 	mcheck_canary canary; /* Magic number to check header integrity.  */
 };
 
-static void mcheck_default_abort(enum mcheck_status status, const void *p)
+நிலையான வெறுமை mcheck_default_abort(எண்ணிக்கை mcheck_status status, மாறிலி வெறுமை *p)
 {
-	const char *msg;
+	மாறிலி எழுத்து *செய்தி;
 
-	switch (status) {
-	case MCHECK_OK:
-		msg = "memory is consistent, library is buggy\n";
-		break;
-	case MCHECK_HEAD:
-		msg = "memory clobbered before allocated block\n";
-		break;
-	case MCHECK_TAIL:
-		msg = "memory clobbered past end of allocated block\n";
-		break;
-	case MCHECK_FREE:
-		msg = "block freed twice\n";
-		break;
-	default:
-		msg = "bogus mcheck_status, library is buggy\n";
-		break;
+	தேர்வு (status) {
+	நிலை MCHECK_OK:
+		செய்தி = "memory is consistent, library is buggy\n";
+		நிறுத்து;
+	நிலை MCHECK_HEAD:
+		செய்தி = "memory clobbered before allocated block\n";
+		நிறுத்து;
+	நிலை MCHECK_TAIL:
+		செய்தி = "memory clobbered past end of allocated block\n";
+		நிறுத்து;
+	நிலை MCHECK_FREE:
+		செய்தி = "block freed twice\n";
+		நிறுத்து;
+	இயல்பு:
+		செய்தி = "bogus mcheck_status, library is buggy\n";
+		நிறுத்து;
 	}
-	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, msg, mcheck_chunk_count_max);
+	printf("\n\nmcheck: %p:%s!!! [%zu]\n\n", p, செய்தி, mcheck_chunk_மொத்தம்_max);
 }
 
-static mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
+நிலையான mcheck_abortfunc_t mcheck_abortfunc = &mcheck_default_abort;
 
-static inline size_t allign_size_up(size_t sz, size_t grain)
+நிலையான உள்வரி size_t allign_size_up(size_t sz, size_t grain)
 {
-	return (sz + grain - 1) & ~(grain - 1);
+	திரும்பு (sz + grain - 1) & ~(grain - 1);
 }
 
-#define mcheck_allign_customer_size(SZ) allign_size_up(SZ, sizeof(mcheck_elem))
-#define mcheck_evaluate_memalign_prefix_size(ALIGN) allign_size_up(sizeof(struct mcheck_hdr), ALIGN)
+#define mcheck_allign_customer_size(SZ) allign_size_up(SZ, அளவு(mcheck_elem))
+#define mcheck_evaluate_memalign_prefix_size(ALIGN) allign_size_up(அளவு(கட்டமைப்பு mcheck_hdr), ALIGN)
 
-static enum mcheck_status mcheck_OnNok(enum mcheck_status status, const void *p)
+நிலையான எண்ணிக்கை mcheck_status mcheck_OnNok(எண்ணிக்கை mcheck_status status, மாறிலி வெறுமை *p)
 {
 	(*mcheck_abortfunc)(status, p);
-	return status;
+	திரும்பு status;
 }
 
-static enum mcheck_status mcheck_checkhdr(const struct mcheck_hdr *hdr)
+நிலையான எண்ணிக்கை mcheck_status mcheck_checkhdr(மாறிலி கட்டமைப்பு mcheck_hdr *hdr)
 {
-	int i;
+	முழு i;
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] == MAGICFREE)
-			return mcheck_OnNok(MCHECK_FREE, hdr + 1);
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
+		எனில் (hdr->canary.elems[i] == MAGICFREE)
+			திரும்பு mcheck_OnNok(MCHECK_FREE, hdr + 1);
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (hdr->canary.elems[i] != MAGICWORD)
-			return mcheck_OnNok(MCHECK_HEAD, hdr + 1);
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
+		எனில் (hdr->canary.elems[i] != MAGICWORD)
+			திரும்பு mcheck_OnNok(MCHECK_HEAD, hdr + 1);
 
-	const size_t payload_size = hdr->size;
-	const size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
-	const size_t padd_size = payload_size_aligned - hdr->size;
+	மாறிலி size_t payload_size = hdr->size;
+	மாறிலி size_t payload_size_aligned = mcheck_allign_customer_size(payload_size);
+	மாறிலி size_t padd_size = payload_size_aligned - hdr->size;
 
-	const char *payload = (const char *)&hdr[1];
+	மாறிலி எழுத்து *payload = (மாறிலி எழுத்து *)&hdr[1];
 
-	for (i = 0; i < padd_size; ++i)
-		if (payload[payload_size + i] != PADDINGFLOOD)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	க்கு (i = 0; i < padd_size; ++i)
+		எனில் (payload[payload_size + i] != PADDINGFLOOD)
+			திரும்பு mcheck_OnNok(MCHECK_TAIL, hdr + 1);
 
-	const mcheck_canary *tail = (const mcheck_canary *)&payload[payload_size_aligned];
+	மாறிலி mcheck_canary *tail = (மாறிலி mcheck_canary *)&payload[payload_size_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
-		if (tail->elems[i] != MAGICTAIL)
-			return mcheck_OnNok(MCHECK_TAIL, hdr + 1);
-	return MCHECK_OK;
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
+		எனில் (tail->elems[i] != MAGICTAIL)
+			திரும்பு mcheck_OnNok(MCHECK_TAIL, hdr + 1);
+	திரும்பு MCHECK_OK;
 }
 
-enum { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
-static void *mcheck_free_helper(void *ptr, int clean_content)
+எண்ணிக்கை { KEEP_CONTENT = 0, CLEAN_CONTENT, ANY_ALIGNMENT = 1 };
+நிலையான வெறுமை *mcheck_free_helper(வெறுமை *ptr, முழு clean_content)
 {
-	if (!ptr)
-		return ptr;
+	எனில் (!ptr)
+		திரும்பு ptr;
 
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
-	int i;
+	கட்டமைப்பு mcheck_hdr *hdr = &((கட்டமைப்பு mcheck_hdr *)ptr)[-1];
+	முழு i;
 
 	mcheck_checkhdr(hdr);
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICFREE;
 
-	if (clean_content)
+	எனில் (clean_content)
 		mcheck_flood(ptr, FREEFLOOD, mcheck_allign_customer_size(hdr->size));
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i] == hdr) {
+	க்கு (i = 0; i < REGISTRY_SZ; ++i)
+		எனில் (mcheck_registry[i] == hdr) {
 			mcheck_registry[i] = 0;
-			break;
+			நிறுத்து;
 		}
 
-	--mcheck_chunk_count;
-	return (char *)hdr - hdr->aln_skip;
+	--mcheck_chunk_மொத்தம்;
+	திரும்பு (எழுத்து *)hdr - hdr->aln_skip;
 }
 
-static void *mcheck_free_prehook(void *ptr) { return mcheck_free_helper(ptr, CLEAN_CONTENT); }
-static void *mcheck_reallocfree_prehook(void *ptr) { return mcheck_free_helper(ptr, KEEP_CONTENT); }
+நிலையான வெறுமை *mcheck_free_prehook(வெறுமை *ptr) { திரும்பு mcheck_free_helper(ptr, CLEAN_CONTENT); }
+நிலையான வெறுமை *mcheck_reallocfree_prehook(வெறுமை *ptr) { திரும்பு mcheck_free_helper(ptr, KEEP_CONTENT); }
 
-static size_t mcheck_alloc_prehook(size_t sz)
+நிலையான size_t mcheck_alloc_prehook(size_t sz)
 {
 	sz = mcheck_allign_customer_size(sz);
-	return sizeof(struct mcheck_hdr) + sz + sizeof(mcheck_canary);
+	திரும்பு அளவு(கட்டமைப்பு mcheck_hdr) + sz + அளவு(mcheck_canary);
 }
 
-static void *mcheck_allocated_helper(void *altoghether_ptr, size_t customer_sz,
-				     size_t alignment, int clean_content)
+நிலையான வெறுமை *mcheck_allocated_helper(வெறுமை *altoghether_ptr, size_t customer_sz,
+				     size_t alignment, முழு clean_content)
 {
-	const size_t slop = alignment ?
-		mcheck_evaluate_memalign_prefix_size(alignment) - sizeof(struct mcheck_hdr) : 0;
-	struct mcheck_hdr *hdr = (struct mcheck_hdr *)((char *)altoghether_ptr + slop);
-	int i;
+	மாறிலி size_t slop = alignment ?
+		mcheck_evaluate_memalign_prefix_size(alignment) - அளவு(கட்டமைப்பு mcheck_hdr) : 0;
+	கட்டமைப்பு mcheck_hdr *hdr = (கட்டமைப்பு mcheck_hdr *)((எழுத்து *)altoghether_ptr + slop);
+	முழு i;
 
 	hdr->size = customer_sz;
 	hdr->aln_skip = slop;
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
 		hdr->canary.elems[i] = MAGICWORD;
 
-	char *payload = (char *)&hdr[1];
+	எழுத்து *payload = (எழுத்து *)&hdr[1];
 
-	if (clean_content)
+	எனில் (clean_content)
 		mcheck_flood(payload, MALLOCFLOOD, customer_sz);
 
-	const size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
+	மாறிலி size_t customer_size_aligned = mcheck_allign_customer_size(customer_sz);
 
 	mcheck_flood(payload + customer_sz, PADDINGFLOOD, customer_size_aligned - customer_sz);
 
 	mcheck_canary *tail = (mcheck_canary *)&payload[customer_size_aligned];
 
-	for (i = 0; i < CANARY_DEPTH; ++i)
+	க்கு (i = 0; i < CANARY_DEPTH; ++i)
 		tail->elems[i] = MAGICTAIL;
 
-	++mcheck_chunk_count;
-	if (mcheck_chunk_count > mcheck_chunk_count_max)
-		mcheck_chunk_count_max = mcheck_chunk_count;
+	++mcheck_chunk_மொத்தம்;
+	எனில் (mcheck_chunk_மொத்தம் > mcheck_chunk_மொத்தம்_max)
+		mcheck_chunk_மொத்தம்_max = mcheck_chunk_மொத்தம்;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (!mcheck_registry[i]) {
+	க்கு (i = 0; i < REGISTRY_SZ; ++i)
+		எனில் (!mcheck_registry[i]) {
 			mcheck_registry[i] = hdr;
-			return payload; // normal end
+			திரும்பு payload; // normal end
 		}
 
-	static char *overflow_msg = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
+	நிலையான எழுத்து *overflow_செய்தி = "\n\n\nERROR: mcheck registry overflow, pedantic check would be incomplete!!\n\n\n\n";
 
-	printf("%s", overflow_msg);
-	overflow_msg = "(mcheck registry full)";
-	return payload;
+	printf("%s", overflow_செய்தி);
+	overflow_செய்தி = "(mcheck registry full)";
+	திரும்பு payload;
 }
 
-static void *mcheck_alloc_posthook(void *altoghether_ptr, size_t customer_sz)
+நிலையான வெறுமை *mcheck_alloc_posthook(வெறுமை *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
+	திரும்பு mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, CLEAN_CONTENT);
 }
 
-static void *mcheck_alloc_noclean_posthook(void *altoghether_ptr, size_t customer_sz)
+நிலையான வெறுமை *mcheck_alloc_noclean_posthook(வெறுமை *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
+	திரும்பு mcheck_allocated_helper(altoghether_ptr, customer_sz, ANY_ALIGNMENT, KEEP_CONTENT);
 }
 
-static size_t mcheck_memalign_prehook(size_t alig, size_t sz)
+நிலையான size_t mcheck_memalign_prehook(size_t alig, size_t sz)
 {
-	return mcheck_evaluate_memalign_prefix_size(alig) + sz + sizeof(mcheck_canary);
+	திரும்பு mcheck_evaluate_memalign_prefix_size(alig) + sz + அளவு(mcheck_canary);
 }
 
-static void *mcheck_memalign_posthook(size_t alignment, void *altoghether_ptr, size_t customer_sz)
+நிலையான வெறுமை *mcheck_memalign_posthook(size_t alignment, வெறுமை *altoghether_ptr, size_t customer_sz)
 {
-	return mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
+	திரும்பு mcheck_allocated_helper(altoghether_ptr, customer_sz, alignment, CLEAN_CONTENT);
 }
 
-static enum mcheck_status mcheck_mprobe(void *ptr)
+நிலையான எண்ணிக்கை mcheck_status mcheck_mprobe(வெறுமை *ptr)
 {
-	struct mcheck_hdr *hdr = &((struct mcheck_hdr *)ptr)[-1];
+	கட்டமைப்பு mcheck_hdr *hdr = &((கட்டமைப்பு mcheck_hdr *)ptr)[-1];
 
-	return mcheck_checkhdr(hdr);
+	திரும்பு mcheck_checkhdr(hdr);
 }
 
-static void mcheck_pedantic_check(void)
+நிலையான வெறுமை mcheck_pedantic_check(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if (mcheck_registry[i])
+	க்கு (i = 0; i < REGISTRY_SZ; ++i)
+		எனில் (mcheck_registry[i])
 			mcheck_checkhdr(mcheck_registry[i]);
 }
 
-static void mcheck_pedantic_prehook(void)
+நிலையான வெறுமை mcheck_pedantic_prehook(வெறுமை)
 {
-	if (mcheck_pedantic_flag)
+	எனில் (mcheck_pedantic_flag)
 		mcheck_pedantic_check();
 }
 
-static void mcheck_initialize(mcheck_abortfunc_t new_func, char pedantic_flag)
+நிலையான வெறுமை mcheck_initialize(mcheck_abortfunc_t new_func, எழுத்து pedantic_flag)
 {
 	mcheck_abortfunc = (new_func) ? new_func : &mcheck_default_abort;
 	mcheck_pedantic_flag = pedantic_flag;
 }
 
-void mcheck_on_ramrelocation(size_t offset)
+வெறுமை mcheck_on_ramrelocation(size_t offset)
 {
-	char *p;
-	int i;
+	எழுத்து *p;
+	முழு i;
 	// Simple, but inaccurate strategy: drop the pre-reloc heap
-	for (i = 0; i < REGISTRY_SZ; ++i)
-		if ((p = mcheck_registry[i]) != NULL ) {
+	க்கு (i = 0; i < REGISTRY_SZ; ++i)
+		எனில் ((p = mcheck_registry[i]) != வெற்று ) {
 			printf("mcheck, WRN: forgetting %p chunk\n", p);
 			mcheck_registry[i] = 0;
 		}
 
-	mcheck_chunk_count = 0;
+	mcheck_chunk_மொத்தம் = 0;
 }
 #endif
 #endif

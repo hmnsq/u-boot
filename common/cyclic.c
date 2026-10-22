@@ -8,38 +8,38 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#அந்தர்பாவ <cyclic.h>
+#அந்தர்பாவ <log.h>
+#அந்தர்பாவ <malloc.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <linux/errno.h>
+#அந்தர்பாவ <linux/list.h>
+#அந்தர்பாவ <asm/global_data.h>
+#அந்தர்பாவ <u-boot/schedule.h>
+#அந்தர்பாவ <uthread.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-void hw_watchdog_reset(void);
+வெறுமை hw_watchdog_reset(வெறுமை);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+நிலையான bool cyclic_is_registered(மாறிலி கட்டமைப்பு cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	மாறிலி கட்டமைப்பு cyclic_info *c;
 
 	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+		எனில் (c == cyclic)
+			திரும்பு true;
 	}
 
-	return false;
+	திரும்பு false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+வெறுமை cyclic_register(கட்டமைப்பு cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, மாறிலி எழுத்து *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	memset(cyclic, 0, அளவு(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
@@ -49,18 +49,18 @@ void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
 	hlist_add_head(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+வெறுமை cyclic_unregister(கட்டமைப்பு cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	எனில் (!cyclic_is_registered(cyclic))
+		திரும்பு;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+நிலையான வெறுமை cyclic_run(வெறுமை)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	கட்டமைப்பு cyclic_info *cyclic;
+	கட்டமைப்பு hlist_முனை *tmp;
 	u64 now, after, cpu_time;
 
 	/*
@@ -73,12 +73,12 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	எனில் (hlist_empty(&gd->cyclic_list))
+		திரும்பு;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	எனில் (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		திரும்பு;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
@@ -87,7 +87,7 @@ static void cyclic_run(void)
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		எனில் (time_after_eq64(now, cyclic->next_call)) {
 			/* Call cyclic function and account it's cpu-time */
 			cyclic->next_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
@@ -98,7 +98,7 @@ static void cyclic_run(void)
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			எனில் ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
 				       cyclic->name, cpu_time,
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+வெறுமை schedule(வெறுமை)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	எனில் (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
+	எனில் (gd)
 		cyclic_run();
 
 	uthread_schedule();
 }
 
-int cyclic_unregister_all(void)
+முழு cyclic_unregister_all(வெறுமை)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	கட்டமைப்பு cyclic_info *cyclic;
+	கட்டமைப்பு hlist_முனை *tmp;
 
 	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	திரும்பு 0;
 }
