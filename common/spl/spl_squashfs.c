@@ -7,72 +7,72 @@
  *
  */
 
-#include <env.h>
-#include <part.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <squashfs.h>
-#include <errno.h>
-#include <image.h>
+#অন্তর্ভাৱ <env.h>
+#অন্তর্ভাৱ <part.h>
+#অন্তর্ভাৱ <spl.h>
+#অন্তর্ভাৱ <spl_load.h>
+#অন্তর্ভাৱ <squashfs.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <image.h>
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+স্থির ulong spl_fit_read(সংরচনা spl_load_info *load, ulong file_offset,
+			  ulong size, শূন্য *buf)
 {
-	struct legacy_img_hdr *header;
-	char *filename = load->priv;
+	সংরচনা legacy_img_hdr *header;
+	ৱর্ণ *filename = load->priv;
 	loff_t actread;
-	int ret;
+	পূর্ণাঙ্ক ret;
 
 	ret = sqfs_read(filename, buf, file_offset, size, &actread);
-	if (ret)
-		return ret;
+	যদি (ret)
+		ঘূৰাই ret;
 
-	if (CONFIG_IS_ENABLED(OS_BOOT)) {
-		header = (struct legacy_img_hdr *)buf;
-		if (image_get_magic(header) != FDT_MAGIC)
-			return size;
+	যদি (CONFIG_IS_ENABLED(OS_BOOT)) {
+		header = (সংরচনা legacy_img_hdr *)buf;
+		যদি (image_get_magic(header) != FDT_MAGIC)
+			ঘূৰাই size;
 	}
 
-	return actread;
+	ঘূৰাই actread;
 }
 
-int spl_load_image_sqfs(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev,
-			struct blk_desc *block_dev, int partition,
-			const char *filename)
+পূর্ণাঙ্ক spl_load_image_sqfs(সংরচনা spl_image_info *spl_image,
+			সংরচনা spl_boot_device *bootdev,
+			সংরচনা blk_desc *block_dev, পূর্ণাঙ্ক partition,
+			ধ্রুৱ ৱর্ণ *filename)
 {
-	int err;
+	পূর্ণাঙ্ক err;
 	loff_t size = 0;
-	struct spl_load_info load;
-	struct disk_partition part_info = {};
+	সংরচনা spl_load_info load;
+	সংরচনা disk_partition part_info = {};
 
 	err = part_get_info(block_dev, partition, &part_info);
-	if (err) {
+	যদি (err) {
 		printf("spl: no partition table found\n");
-		goto end;
+		গচ্ছ end;
 	}
 
 	err = sqfs_probe(block_dev, &part_info);
-	if (err) {
+	যদি (err) {
 		printf("spl: sqfs probe err part_name:%s type=%s err=%d\n",
 		       part_info.name, part_info.type, err);
-		goto end;
+		গচ্ছ end;
 	}
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
+	যদি (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL)) {
 		err = sqfs_size(filename, &size);
-		if (err)
-			goto end;
+		যদি (err)
+			গচ্ছ end;
 	}
 
-	spl_load_init(&load, spl_fit_read, (void *)filename, 1);
+	spl_load_init(&load, spl_fit_read, (শূন্য *)filename, 1);
 
 	err = spl_load(spl_image, bootdev, &load, size, 0);
 
 end:
-	if (err < 0)
+	যদি (err < 0)
 		printf("%s: error reading image %s, err - %d\n",
 		       __func__, filename, err);
 
-	return err;
+	ঘূৰাই err;
 }

@@ -6,10 +6,10 @@
  * Copyright 2022 Google LLC
  */
 
-#include <cli.h>
-#include <stdio.h>
-#include <string.h>
-#include <linux/errno.h>
+#অন্তর্ভাৱ <cli.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <linux/errno.h>
 
 /**
  * enum cli_esc_state_t - indicates what to do with an escape character
@@ -20,15 +20,15 @@
  * @ESC_CONVERTED: Escape sequence has been completed and the resulting
  *	character is available
  */
-enum cli_esc_state_t {
+গণনা cli_esc_state_t {
 	ESC_REJECT,
 	ESC_SAVE,
 	ESC_CONVERTED
 };
 
-void cli_ch_init(struct cli_ch_state *cch)
+শূন্য cli_ch_init(সংরচনা cli_ch_state *cch)
 {
-	memset(cch, '\0', sizeof(*cch));
+	memset(cch, '\0', পরিমাণ(*cch));
 }
 
 /**
@@ -39,93 +39,93 @@ void cli_ch_init(struct cli_ch_state *cch)
  * @actp: Returns the action to take
  * Returns: Output character if *actp is ESC_CONVERTED, else 0
  */
-static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
-		      enum cli_esc_state_t *actp)
+স্থির পূর্ণাঙ্ক cli_ch_esc(সংরচনা cli_ch_state *cch, পূর্ণাঙ্ক ichar,
+		      গণনা cli_esc_state_t *actp)
 {
-	enum cli_esc_state_t act = ESC_REJECT;
+	গণনা cli_esc_state_t act = ESC_REJECT;
 
-	switch (cch->esc_len) {
-	case 1:
-		if (ichar == '[' || ichar == 'O')
+	ৱিকল্প (cch->esc_len) {
+	পক্ষ 1:
+		যদি (ichar == '[' || ichar == 'O')
 			act = ESC_SAVE;
-		else
+		অন্যথা
 			act = ESC_CONVERTED;
-		break;
-	case 2:
-		switch (ichar) {
-		case 'D':	/* <- key */
+		ভঙ্গ;
+	পক্ষ 2:
+		ৱিকল্প (ichar) {
+		পক্ষ 'D':	/* <- key */
 			ichar = CTL_CH('b');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^B handler */
-		case 'C':	/* -> key */
+			ভঙ্গ;	/* pass off to ^B handler */
+		পক্ষ 'C':	/* -> key */
 			ichar = CTL_CH('f');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^F handler */
-		case 'H':	/* Home key */
+			ভঙ্গ;	/* pass off to ^F handler */
+		পক্ষ 'H':	/* Home key */
 			ichar = CTL_CH('a');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^A handler */
-		case 'F':	/* End key */
+			ভঙ্গ;	/* pass off to ^A handler */
+		পক্ষ 'F':	/* End key */
 			ichar = CTL_CH('e');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^E handler */
-		case 'A':	/* up arrow */
+			ভঙ্গ;	/* pass off to ^E handler */
+		পক্ষ 'A':	/* up arrow */
 			ichar = CTL_CH('p');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^P handler */
-		case 'B':	/* down arrow */
+			ভঙ্গ;	/* pass off to ^P handler */
+		পক্ষ 'B':	/* down arrow */
 			ichar = CTL_CH('n');
 			act = ESC_CONVERTED;
-			break;	/* pass off to ^N handler */
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '7':
-		case '8':
-			if (cch->esc_save[1] == '[') {
+			ভঙ্গ;	/* pass off to ^N handler */
+		পক্ষ '1':
+		পক্ষ '2':
+		পক্ষ '3':
+		পক্ষ '4':
+		পক্ষ '7':
+		পক্ষ '8':
+			যদি (cch->esc_save[1] == '[') {
 				/* see if next character is ~ */
 				act = ESC_SAVE;
 			}
-			break;
+			ভঙ্গ;
 		}
-		break;
-	case 3:
-		switch (ichar) {
-		case '~':
-			switch (cch->esc_save[2]) {
-			case '3':	/* Delete key */
+		ভঙ্গ;
+	পক্ষ 3:
+		ৱিকল্প (ichar) {
+		পক্ষ '~':
+			ৱিকল্প (cch->esc_save[2]) {
+			পক্ষ '3':	/* Delete key */
 				ichar = CTL_CH('d');
 				act = ESC_CONVERTED;
-				break;	/* pass to ^D handler */
-			case '1':	/* Home key */
-			case '7':
+				ভঙ্গ;	/* pass to ^D handler */
+			পক্ষ '1':	/* Home key */
+			পক্ষ '7':
 				ichar = CTL_CH('a');
 				act = ESC_CONVERTED;
-				break;	/* pass to ^A handler */
-			case '4':	/* End key */
-			case '8':
+				ভঙ্গ;	/* pass to ^A handler */
+			পক্ষ '4':	/* End key */
+			পক্ষ '8':
 				ichar = CTL_CH('e');
 				act = ESC_CONVERTED;
-				break;	/* pass to ^E handler */
+				ভঙ্গ;	/* pass to ^E handler */
 			}
-			break;
-		case '0':
-			if (cch->esc_save[2] == '2')
+			ভঙ্গ;
+		পক্ষ '0':
+			যদি (cch->esc_save[2] == '2')
 				act = ESC_SAVE;
-			break;
+			ভঙ্গ;
 		}
-		break;
-	case 4:
-		switch (ichar) {
-		case '0':
-		case '1':
+		ভঙ্গ;
+	পক্ষ 4:
+		ৱিকল্প (ichar) {
+		পক্ষ '0':
+		পক্ষ '1':
 			act = ESC_SAVE;
-			break;		/* bracketed paste */
+			ভঙ্গ;		/* bracketed paste */
 		}
-		break;
-	case 5:
-		if (ichar == '~') {	/* bracketed paste */
+		ভঙ্গ;
+	পক্ষ 5:
+		যদি (ichar == '~') {	/* bracketed paste */
 			ichar = 0;
 			act = ESC_CONVERTED;
 		}
@@ -133,56 +133,56 @@ static int cli_ch_esc(struct cli_ch_state *cch, int ichar,
 
 	*actp = act;
 
-	return ichar;
+	ঘূৰাই ichar;
 }
 
-int cli_ch_process(struct cli_ch_state *cch, int ichar)
+পূর্ণাঙ্ক cli_ch_process(সংরচনা cli_ch_state *cch, পূর্ণাঙ্ক ichar)
 {
 	/*
 	 * ichar=0x0 when error occurs in U-Boot getchar() or when the caller
 	 * wants to check if there are more characters saved in the escape
 	 * sequence
 	 */
-	if (!ichar) {
-		if (cch->emitting) {
-			if (cch->emit_upto < cch->esc_len)
-				return cch->esc_save[cch->emit_upto++];
+	যদি (!ichar) {
+		যদি (cch->emitting) {
+			যদি (cch->emit_upto < cch->esc_len)
+				ঘূৰাই cch->esc_save[cch->emit_upto++];
 			cch->emit_upto = 0;
 			cch->emitting = false;
 			cch->esc_len = 0;
 		}
-		return 0;
-	} else if (ichar == -ETIMEDOUT) {
+		ঘূৰাই 0;
+	} অন্যথা যদি (ichar == -ETIMEDOUT) {
 		/*
 		 * If we are in an escape sequence but nothing has followed the
 		 * Escape character, then the user probably just pressed the
 		 * Escape key. Return it and clear the sequence.
 		 */
-		if (cch->esc_len) {
+		যদি (cch->esc_len) {
 			cch->esc_len = 0;
-			return '\e';
+			ঘূৰাই '\e';
 		}
 
 		/* Otherwise there is nothing to return */
-		return 0;
+		ঘূৰাই 0;
 	}
 
-	if (ichar == '\n' || ichar == '\r')
-		return '\n';
+	যদি (ichar == '\n' || ichar == '\r')
+		ঘূৰাই '\n';
 
 	/* handle standard linux xterm esc sequences for arrow key, etc. */
-	if (cch->esc_len != 0) {
-		enum cli_esc_state_t act;
+	যদি (cch->esc_len != 0) {
+		গণনা cli_esc_state_t act;
 
 		ichar = cli_ch_esc(cch, ichar, &act);
 
-		switch (act) {
-		case ESC_SAVE:
+		ৱিকল্প (act) {
+		পক্ষ ESC_SAVE:
 			/* save this character and return nothing */
 			cch->esc_save[cch->esc_len++] = ichar;
 			ichar = 0;
-			break;
-		case ESC_REJECT:
+			ভঙ্গ;
+		পক্ষ ESC_REJECT:
 			/*
 			 * invalid escape sequence, start returning the
 			 * characters in it
@@ -190,24 +190,24 @@ int cli_ch_process(struct cli_ch_state *cch, int ichar)
 			cch->esc_save[cch->esc_len++] = ichar;
 			ichar = cch->esc_save[cch->emit_upto++];
 			cch->emitting = true;
-			return ichar;
-		case ESC_CONVERTED:
+			ঘূৰাই ichar;
+		পক্ষ ESC_CONVERTED:
 			/* valid escape sequence, return the resulting char */
 			cch->esc_len = 0;
-			break;
+			ভঙ্গ;
 		}
 	}
 
-	if (ichar == '\e') {
-		if (!cch->esc_len) {
+	যদি (ichar == '\e') {
+		যদি (!cch->esc_len) {
 			cch->esc_save[cch->esc_len] = ichar;
 			cch->esc_len = 1;
-		} else {
+		} অন্যথা {
 			puts("impossible condition #876\n");
 			cch->esc_len = 0;
 		}
-		return 0;
+		ঘূৰাই 0;
 	}
 
-	return ichar;
+	ঘূৰাই ichar;
 }

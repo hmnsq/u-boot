@@ -3,27 +3,27 @@
  * Copyright (C) 2011
  * Corscience GmbH & Co. KG - Simon Schwarz <schwarz@corscience.de>
  */
-#include <config.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
-#include <asm/io.h>
-#include <mapmem.h>
-#include <nand.h>
-#include <linux/libfdt_env.h>
-#include <fdt.h>
+#অন্তর্ভাৱ <config.h>
+#অন্তর্ভাৱ <fdt_support.h>
+#অন্তর্ভাৱ <image.h>
+#অন্তর্ভাৱ <imx_container.h>
+#অন্তর্ভাৱ <log.h>
+#অন্তর্ভাৱ <spl.h>
+#অন্তর্ভাৱ <spl_load.h>
+#অন্তর্ভাৱ <asm/io.h>
+#অন্তর্ভাৱ <mapmem.h>
+#অন্তর্ভাৱ <nand.h>
+#অন্তর্ভাৱ <linux/libfdt_env.h>
+#অন্তর্ভাৱ <fdt.h>
 
-uint32_t __weak spl_nand_get_uboot_raw_page(void)
+uint32_t __weak spl_nand_get_uboot_raw_page(শূন্য)
 {
-	return CONFIG_SYS_NAND_U_BOOT_OFFS;
+	ঘূৰাই CONFIG_SYS_NAND_U_BOOT_OFFS;
 }
 
-#if defined(CONFIG_SPL_NAND_RAW_ONLY)
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			struct spl_boot_device *bootdev)
+#যদি defined(CONFIG_SPL_NAND_RAW_ONLY)
+স্থির পূর্ণাঙ্ক spl_nand_load_image(সংরচনা spl_image_info *spl_image,
+			সংরচনা spl_boot_device *bootdev)
 {
 	nand_init();
 
@@ -38,112 +38,112 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	spl_set_header_raw_uboot(spl_image);
 	nand_deselect();
 
-	return 0;
+	ঘূৰাই 0;
 }
-#else
+#অন্যথা
 
 __weak u32 nand_spl_adjust_offset(u32 sector, u32 offs)
 {
-	return offs;
+	ঘূৰাই offs;
 }
 
-static ulong spl_nand_read(struct spl_load_info *load, ulong offs, ulong size,
-			   void *dst)
+স্থির ulong spl_nand_read(সংরচনা spl_load_info *load, ulong offs, ulong size,
+			   শূন্য *dst)
 {
-	int err;
+	পূর্ণাঙ্ক err;
 	ulong sector;
 
 	debug("%s: offs %lx, size %lx, dst %p\n",
 	      __func__, offs, size, dst);
 
-	sector = *(int *)load->priv;
+	sector = *(পূর্ণাঙ্ক *)load->priv;
 	offs = sector + nand_spl_adjust_offset(sector, offs - sector);
 	err = nand_spl_load_image(offs, size, dst);
 	spl_set_bl_len(load, nand_page_size());
-	if (err)
-		return 0;
+	যদি (err)
+		ঘূৰাই 0;
 
-	return size;
+	ঘূৰাই size;
 }
 
-static int spl_nand_load_element(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev, int offset)
+স্থির পূর্ণাঙ্ক spl_nand_load_element(সংরচনা spl_image_info *spl_image,
+				 সংরচনা spl_boot_device *bootdev, পূর্ণাঙ্ক offset)
 {
-	struct spl_load_info load;
+	সংরচনা spl_load_info load;
 
 	spl_load_init(&load, spl_nand_read, &offset, 1);
-	return spl_load(spl_image, bootdev, &load, 0, offset);
+	ঘূৰাই spl_load(spl_image, bootdev, &load, 0, offset);
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nand_load_image_os(struct spl_image_info *spl_image,
-				  struct spl_boot_device *bootdev)
+#যদি IS_ENABLED(CONFIG_SPL_OS_BOOT)
+স্থির পূর্ণাঙ্ক spl_nand_load_image_os(সংরচনা spl_image_info *spl_image,
+				  সংরচনা spl_boot_device *bootdev)
 {
-	int err;
-	struct legacy_img_hdr *header = spl_get_load_buffer(0, sizeof(*header));
+	পূর্ণাঙ্ক err;
+	সংরচনা legacy_img_hdr *header = spl_get_load_buffer(0, পরিমাণ(*header));
 
 	/* load linux */
-	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, sizeof(*header),
-			    (void *)header);
+	nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS, পরিমাণ(*header),
+			    (শূন্য *)header);
 	err = spl_parse_image_header(spl_image, bootdev, header);
-	if (err)
-		return err;
+	যদি (err)
+		ঘূৰাই err;
 
-	if (header->ih_os != IH_OS_LINUX)
-		return -EINVAL;
+	যদি (header->ih_os != IH_OS_LINUX)
+		ঘূৰাই -EINVAL;
 
 	/* happy - was a linux */
 	err = nand_spl_load_image(CONFIG_SYS_NAND_SPL_KERNEL_OFFS,
 				  spl_image->size,
-				  (void *)spl_image->load_addr);
+				  (শূন্য *)spl_image->load_addr);
 	nand_deselect();
 
-	if (err)
-		return err;
+	যদি (err)
+		ঘূৰাই err;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
+#যদি IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
 	/*
 	 * load parameter image load to temp position since nand_spl_load_image
 	 * reads a whole block which is typically larger than
 	 * CONFIG_CMD_SPL_WRITE_SIZE therefore may overwrite following sections
 	 * like BSS
 	 */
-	int *src, *dst;
+	পূর্ণাঙ্ক *src, *dst;
 	nand_spl_load_image(CONFIG_CMD_SPL_NAND_OFS, CONFIG_CMD_SPL_WRITE_SIZE,
-			    (void *)CONFIG_TEXT_BASE);
+			    (শূন্য *)CONFIG_TEXT_BASE);
 	/* copy to destination */
-	for (dst = (int *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-	    src = (int *)CONFIG_TEXT_BASE;
-	     src < (int *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
+	বাবে (dst = (পূর্ণাঙ্ক *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
+	    src = (পূর্ণাঙ্ক *)CONFIG_TEXT_BASE;
+	     src < (পূর্ণাঙ্ক *)(CONFIG_TEXT_BASE + CONFIG_CMD_SPL_WRITE_SIZE);
 	     src++, dst++) {
 		writel(readl(src), dst);
 	}
 #endif
 
-	return 0;
+	ঘূৰাই 0;
 }
 #endif
 
-static int spl_nand_load_image(struct spl_image_info *spl_image,
-			       struct spl_boot_device *bootdev)
+স্থির পূর্ণাঙ্ক spl_nand_load_image(সংরচনা spl_image_info *spl_image,
+			       সংরচনা spl_boot_device *bootdev)
 {
-	int err;
+	পূর্ণাঙ্ক err;
 
 #ifdef CONFIG_SPL_NAND_SOFTECC
 	debug("spl: nand - using sw ecc\n");
-#else
+#অন্যথা
 	debug("spl: nand - using hw ecc\n");
 #endif
 	nand_init();
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
+#যদি CONFIG_IS_ENABLED(OS_BOOT)
+	যদি (!spl_start_uboot()) {
 		err = spl_nand_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+		যদি (!err)
+			ঘূৰাই 0;
 		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
+		যদি (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			ঘূৰাই err;
 		printf("Fallback to U-Boot\n");
 	}
 #endif
@@ -157,14 +157,14 @@ static int spl_nand_load_image(struct spl_image_info *spl_image,
 	/* Load u-boot */
 	err = spl_nand_load_element(spl_image, bootdev, spl_nand_get_uboot_raw_page());
 #ifdef CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-#if CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
-	if (err)
+#যদি CONFIG_SYS_NAND_U_BOOT_OFFS != CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND
+	যদি (err)
 		err = spl_nand_load_element(spl_image, bootdev,
 					    CONFIG_SYS_NAND_U_BOOT_OFFS_REDUND);
 #endif
 #endif
 	nand_deselect();
-	return err;
+	ঘূৰাই err;
 }
 #endif
 /* Use priorty 1 so that Ubi can override this */

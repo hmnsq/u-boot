@@ -5,4 +5,4 @@
  * Licensed under the GPL-2 or later.
  */
 
-const char const system_map[] = SYSTEM_MAP;
+ধ্রুৱ ৱর্ণ ধ্রুৱ system_map[] = SYSTEM_MAP;

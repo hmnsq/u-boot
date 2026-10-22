@@ -5,16 +5,16 @@
  * Copyright (c) 2020, Heinrich Schuchardt <xypron.glpk@gmx.de>
  */
 
-#include <env.h>
-#include <log.h>
-#include <net.h>
-#include <asm/global_data.h>
+#অন্তর্ভাৱ <env.h>
+#অন্তর্ভাৱ <log.h>
+#অন্তর্ভাৱ <net.h>
+#অন্তর্ভাৱ <asm/global_data.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
 #define BUFFER_SIZE 480
 
-static void append(char **buf, char *buf_end, const char *fmt, ...)
+স্থির শূন্য append(ৱর্ণ **buf, ৱর্ণ *buf_end, ধ্রুৱ ৱর্ণ *fmt, ...)
 {
 	va_list args;
 	size_t size = buf_end - *buf;
@@ -25,86 +25,86 @@ static void append(char **buf, char *buf_end, const char *fmt, ...)
 	*buf += strlen(*buf);
 }
 
-static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
+স্থির পূর্ণাঙ্ক log_syslog_emit(সংরচনা log_device *ldev, সংরচনা log_rec *rec)
 {
-	int ret;
-	int fmt = gd->log_fmt;
-	char msg[BUFFER_SIZE];
-	char *msg_end = msg + BUFFER_SIZE;
-	char *ptr = msg;
-	char *iphdr;
-	char *log_msg;
-	int eth_hdr_size;
-	struct in_addr bcast_ip;
-	unsigned int log_level;
-	char *log_hostname;
+	পূর্ণাঙ্ক ret;
+	পূর্ণাঙ্ক fmt = gd->log_fmt;
+	ৱর্ণ বাৰ্তা[BUFFER_SIZE];
+	ৱর্ণ *বাৰ্তা_end = বাৰ্তা + BUFFER_SIZE;
+	ৱর্ণ *ptr = বাৰ্তা;
+	ৱর্ণ *iphdr;
+	ৱর্ণ *log_বাৰ্তা;
+	পূর্ণাঙ্ক eth_hdr_size;
+	সংরচনা in_addr bcast_ip;
+	unsigned পূর্ণাঙ্ক log_level;
+	ৱর্ণ *log_hostname;
 
 	/* Setup packet buffers */
 	ret = net_init();
-	if (ret)
-		return ret;
+	যদি (ret)
+		ঘূৰাই ret;
 	/* Disable hardware and put it into the reset state */
 	eth_halt();
 	/* Set current device according to environment variables */
 	eth_set_current();
 	/* Get hardware ready for send and receive operations */
 	ret = eth_init();
-	if (ret < 0) {
+	যদি (ret < 0) {
 		eth_halt();
-		goto out;
+		গচ্ছ out;
 	}
 
-	memset(msg, 0, BUFFER_SIZE);
+	memset(বাৰ্তা, 0, BUFFER_SIZE);
 
 	/* Set ethernet header */
 	eth_hdr_size = net_set_ether((uchar *)ptr, net_bcast_ethaddr, PROT_IP);
 	ptr += eth_hdr_size;
 	iphdr = ptr;
 	ptr += IP_UDP_HDR_SIZE;
-	log_msg = ptr;
+	log_বাৰ্তা = ptr;
 
 	/*
 	 * The syslog log levels defined in RFC 5424 match the U-Boot ones up to
 	 * level 7 (debug).
 	 */
 	log_level = rec->level;
-	if (log_level > 7)
+	যদি (log_level > 7)
 		log_level = 7;
 	/* Leave high bits as 0 to write a 'kernel message' */
 
 	/* Write log message to buffer */
-	append(&ptr, msg_end, "<%u>", log_level);
+	append(&ptr, বাৰ্তা_end, "<%u>", log_level);
 	log_hostname = env_get("log_hostname");
-	if (log_hostname)
-		append(&ptr, msg_end, "%s ", log_hostname);
-	append(&ptr, msg_end, "uboot: ");
-	if (fmt & BIT(LOGF_LEVEL))
-		append(&ptr, msg_end, "%s.",
+	যদি (log_hostname)
+		append(&ptr, বাৰ্তা_end, "%s ", log_hostname);
+	append(&ptr, বাৰ্তা_end, "uboot: ");
+	যদি (fmt & BIT(LOGF_LEVEL))
+		append(&ptr, বাৰ্তা_end, "%s.",
 		       log_get_level_name(rec->level));
-	if (fmt & BIT(LOGF_CAT))
-		append(&ptr, msg_end, "%s,",
+	যদি (fmt & BIT(LOGF_CAT))
+		append(&ptr, বাৰ্তা_end, "%s,",
 		       log_get_cat_name(rec->cat));
-	if (fmt & BIT(LOGF_FILE))
-		append(&ptr, msg_end, "%s:", rec->file);
-	if (fmt & BIT(LOGF_LINE))
-		append(&ptr, msg_end, "%d-", rec->line);
-	if (fmt & BIT(LOGF_FUNC))
-		append(&ptr, msg_end, "%s()", rec->func ?: "?");
-	if (fmt & BIT(LOGF_MSG))
-		append(&ptr, msg_end, "%s%s",
-		       fmt != BIT(LOGF_MSG) ? " " : "", rec->msg);
+	যদি (fmt & BIT(LOGF_FILE))
+		append(&ptr, বাৰ্তা_end, "%s:", rec->file);
+	যদি (fmt & BIT(LOGF_সাৰি))
+		append(&ptr, বাৰ্তা_end, "%d-", rec->সাৰি);
+	যদি (fmt & BIT(LOGF_FUNC))
+		append(&ptr, বাৰ্তা_end, "%s()", rec->func ?: "?");
+	যদি (fmt & BIT(LOGF_বাৰ্তা))
+		append(&ptr, বাৰ্তা_end, "%s%s",
+		       fmt != BIT(LOGF_বাৰ্তা) ? " " : "", rec->বাৰ্তা);
 	/* Consider trailing 0x00 */
 	ptr++;
 
-	debug("log message: '%s'\n", log_msg);
+	debug("log message: '%s'\n", log_বাৰ্তা);
 
 	/* Broadcast message */
 	bcast_ip.s_addr = 0xFFFFFFFFL;
-	net_set_udp_header((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_msg);
-	net_send_packet((uchar *)msg, ptr - msg);
+	net_set_udp_header((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_বাৰ্তা);
+	net_send_packet((uchar *)বাৰ্তা, ptr - বাৰ্তা);
 
 out:
-	return ret;
+	ঘূৰাই ret;
 }
 
 LOG_DRIVER(syslog) = {
