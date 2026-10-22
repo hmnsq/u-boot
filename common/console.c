@@ -4,216 +4,216 @@
  * Paolo Scaffardi, AIRVENT SAM s.p.a - RIMINI(ITALY), arsenio@tin.it
  */
 
-#define LOG_CATEGORY	LOGC_CONSOLE
+#నిర్వచించు LOG_CATEGORY	LOGC_CONSOLE
 
-#include <console.h>
-#include <debug_uart.h>
-#include <display_options.h>
-#include <dm.h>
-#include <env.h>
-#include <stdarg.h>
-#include <iomux.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <os.h>
-#include <serial.h>
-#include <stdio_dev.h>
-#include <exports.h>
-#include <env_internal.h>
-#include <video_console.h>
-#include <watchdog.h>
-#include <asm/global_data.h>
-#include <linux/delay.h>
+#అన్తర్భావ <console.h>
+#అన్తర్భావ <debug_uart.h>
+#అన్తర్భావ <display_options.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <iomux.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <os.h>
+#అన్తర్భావ <serial.h>
+#అన్తర్భావ <stdio_dev.h>
+#అన్తర్భావ <exports.h>
+#అన్తర్భావ <env_internal.h>
+#అన్తర్భావ <video_console.h>
+#అన్తర్భావ <watchdog.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <linux/delay.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-#define CSI "\x1b["
+#నిర్వచించు CSI "\x1b["
 
-static int on_console(const char *name, const char *value, enum env_op op,
-	int flags)
+స్థిర పూర్ణాంకం on_console(స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *విలువ, గణన env_op op,
+	పూర్ణాంకం flags)
 {
-	int console = -1;
+	పూర్ణాంకం console = -1;
 
 	/* Check for console redirection */
-	if (strcmp(name, "stdin") == 0)
+	ఒకవేళ (strcmp(name, "stdin") == 0)
 		console = stdin;
-	else if (strcmp(name, "stdout") == 0)
+	లేకపోతే ఒకవేళ (strcmp(name, "stdout") == 0)
 		console = stdout;
-	else if (strcmp(name, "stderr") == 0)
+	లేకపోతే ఒకవేళ (strcmp(name, "stderr") == 0)
 		console = stderr;
 
 	/* if not actually setting a console variable, we don't care */
-	if (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
-		return 0;
+	ఒకవేళ (console == -1 || (gd->flags & GD_FLG_DEVINIT) == 0)
+		తిరిగి 0;
 
-	switch (op) {
-	case env_op_create:
-	case env_op_overwrite:
+	ఎంపిక (op) {
+	స్థితి env_op_create:
+	స్థితి env_op_overwrite:
 
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
-			if (iomux_doenv(console, value))
-				return 1;
-		} else {
+		ఒకవేళ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+			ఒకవేళ (iomux_doenv(console, విలువ))
+				తిరిగి 1;
+		} లేకపోతే {
 			/* Try assigning specified device */
-			if (console_assign(console, value) < 0)
-				return 1;
+			ఒకవేళ (console_కేటాయించు(console, విలువ) < 0)
+				తిరిగి 1;
 		}
 
-		return 0;
+		తిరిగి 0;
 
-	case env_op_delete:
-		if ((flags & H_FORCE) == 0)
-			printf("Can't delete \"%s\"\n", name);
-		return 1;
+	స్థితి env_op_delete:
+		ఒకవేళ ((flags & H_FORCE) == 0)
+			రాయి("Can't delete \"%s\"\n", name);
+		తిరిగి 1;
 
-	default:
-		return 0;
+	అప్రమేయ:
+		తిరిగి 0;
 	}
 }
 U_BOOT_ENV_CALLBACK(console, on_console);
 
-#ifdef CONFIG_SILENT_CONSOLE
-static int on_silent(const char *name, const char *value, enum env_op op,
-	int flags)
+#నిర్వచితమైతే CONFIG_SILENT_CONSOLE
+స్థిర పూర్ణాంకం on_silent(స్థిరరాశి అక్షరం *name, స్థిరరాశి అక్షరం *విలువ, గణన env_op op,
+	పూర్ణాంకం flags)
 {
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_SET))
-		if (flags & H_INTERACTIVE)
-			return 0;
+	ఒకవేళ (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_సమితి))
+		ఒకవేళ (flags & H_INTERACTIVE)
+			తిరిగి 0;
 
-	if (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
-		if ((flags & H_INTERACTIVE) == 0)
-			return 0;
+	ఒకవేళ (!CONFIG_IS_ENABLED(SILENT_CONSOLE_UPDATE_ON_RELOC))
+		ఒకవేళ ((flags & H_INTERACTIVE) == 0)
+			తిరిగి 0;
 
-	if (value != NULL)
+	ఒకవేళ (విలువ != ఖాళీ)
 		gd->flags |= GD_FLG_SILENT;
-	else
+	లేకపోతే
 		gd->flags &= ~GD_FLG_SILENT;
 
-	return 0;
+	తిరిగి 0;
 }
 U_BOOT_ENV_CALLBACK(silent, on_silent);
-#endif
+#అయితే_ముగింపు
 
-#ifdef CONFIG_CONSOLE_RECORD
+#నిర్వచితమైతే CONFIG_CONSOLE_రికార్డు
 /* helper function: access to gd->console_out and gd->console_in */
-static void console_record_putc(const char c)
+స్థిర శూన్య console_రికార్డు_putc(స్థిరరాశి అక్షరం c)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start &&
-	     !membuf_putbyte((struct membuf *)&gd->console_out, c))
-		gd->flags |= GD_FLG_RECORD_OVF;
+	ఒకవేళ (!(gd->flags & GD_FLG_రికార్డు))
+		తిరిగి;
+	ఒకవేళ  (gd->console_బహిర్గతం.ప్రారంభం &&
+	     !membuf_putbyte((నిర్మాణం membuf *)&gd->console_బహిర్గతం, c))
+		gd->flags |= GD_FLG_రికార్డు_OVF;
 }
 
-static void console_record_puts(const char *s)
+స్థిర శూన్య console_రికార్డు_puts(స్థిరరాశి అక్షరం *s)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return;
-	if  (gd->console_out.start) {
-		int len = strlen(s);
+	ఒకవేళ (!(gd->flags & GD_FLG_రికార్డు))
+		తిరిగి;
+	ఒకవేళ  (gd->console_బహిర్గతం.ప్రారంభం) {
+		పూర్ణాంకం len = అక్షరశ్రేణి_పొడవు(s);
 
-		if (membuf_put((struct membuf *)&gd->console_out, s, len) !=
+		ఒకవేళ (membuf_put((నిర్మాణం membuf *)&gd->console_బహిర్గతం, s, len) !=
 		    len)
-			gd->flags |= GD_FLG_RECORD_OVF;
+			gd->flags |= GD_FLG_రికార్డు_OVF;
 	}
 }
 
-static int console_record_getc(void)
+స్థిర పూర్ణాంకం console_రికార్డు_getc(శూన్య)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return -1;
-	if (!gd->console_in.start)
-		return -1;
+	ఒకవేళ (!(gd->flags & GD_FLG_రికార్డు))
+		తిరిగి -1;
+	ఒకవేళ (!gd->console_లోపల.ప్రారంభం)
+		తిరిగి -1;
 
-	return membuf_getbyte((struct membuf *)&gd->console_in);
+	తిరిగి membuf_getbyte((నిర్మాణం membuf *)&gd->console_లోపల);
 }
 
-static int console_record_tstc(void)
+స్థిర పూర్ణాంకం console_రికార్డు_tstc(శూన్య)
 {
-	if (!(gd->flags & GD_FLG_RECORD))
-		return 0;
-	if (gd->console_in.start) {
-		if (membuf_peekbyte((struct membuf *)&gd->console_in) != -1)
-			return 1;
+	ఒకవేళ (!(gd->flags & GD_FLG_రికార్డు))
+		తిరిగి 0;
+	ఒకవేళ (gd->console_లోపల.ప్రారంభం) {
+		ఒకవేళ (membuf_peekbyte((నిర్మాణం membuf *)&gd->console_లోపల) != -1)
+			తిరిగి 1;
 	}
-	return 0;
+	తిరిగి 0;
 }
-#else
-static void console_record_putc(char c)
+#లేకపోతే
+స్థిర శూన్య console_రికార్డు_putc(అక్షరం c)
 {
 }
 
-static void console_record_puts(const char *s)
+స్థిర శూన్య console_రికార్డు_puts(స్థిరరాశి అక్షరం *s)
 {
 }
 
-static int console_record_getc(void)
+స్థిర పూర్ణాంకం console_రికార్డు_getc(శూన్య)
 {
-	return -1;
+	తిరిగి -1;
 }
 
-static int console_record_tstc(void)
+స్థిర పూర్ణాంకం console_రికార్డు_tstc(శూన్య)
 {
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#ఒకవేళ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_లోపల_ENV)
 /*
  * if overwrite_console returns 1, the stdin, stderr and stdout
  * are switched to the serial port, else the settings in the
  * environment are used
  */
-#ifdef CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
-extern int overwrite_console(void);
-#define OVERWRITE_CONSOLE overwrite_console()
-#else
-#define OVERWRITE_CONSOLE 0
-#endif /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
+#నిర్వచితమైతే CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
+బాహ్య పూర్ణాంకం overwrite_console(శూన్య);
+#నిర్వచించు OVERWRITE_CONSOLE overwrite_console()
+#లేకపోతే
+#నిర్వచించు OVERWRITE_CONSOLE 0
+#అయితే_ముగింపు /* CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE */
 
-#endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#అయితే_ముగింపు /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-static int console_setfile(int file, struct stdio_dev * dev)
+స్థిర పూర్ణాంకం console_setfile(పూర్ణాంకం file, నిర్మాణం stdio_dev * dev)
 {
-	int error = 0;
+	పూర్ణాంకం error = 0;
 
-	if (dev == NULL)
-		return -1;
+	ఒకవేళ (dev == ఖాళీ)
+		తిరిగి -1;
 
-	switch (file) {
-	case stdin:
-	case stdout:
-	case stderr:
-		error = console_start(file, dev);
-		if (error)
-			break;
+	ఎంపిక (file) {
+	స్థితి stdin:
+	స్థితి stdout:
+	స్థితి stderr:
+		error = console_ప్రారంభం(file, dev);
+		ఒకవేళ (error)
+			ఆపు;
 
 		/* Assign the new device (leaving the existing one started) */
 		stdio_devices[file] = dev;
 
-#ifndef CONFIG_XPL_BUILD
+#నిర్వచితం_కాకపోతే CONFIG_XPL_BUILD
 		/*
 		 * Update monitor functions
 		 * (to use the console stuff by other applications)
 		 */
-		switch (file) {
-		case stdin:
+		ఎంపిక (file) {
+		స్థితి stdin:
 			gd->jt->getc = getchar;
 			gd->jt->tstc = tstc;
-			break;
-		case stdout:
+			ఆపు;
+		స్థితి stdout:
 			gd->jt->putc  = putc;
 			gd->jt->puts  = puts;
-			STDIO_DEV_ASSIGN_FLUSH(gd->jt, flush);
-			gd->jt->printf = printf;
-			break;
+			STDIO_DEV_కేటాయించు_FLUSH(gd->jt, flush);
+			gd->jt->రాయి = రాయి;
+			ఆపు;
 		}
-#endif
-		break;
-	default:		/* Invalid file ID */
+#అయితే_ముగింపు
+		ఆపు;
+	అప్రమేయ:		/* Invalid file ID */
 		error = -1;
 	}
-	return error;
+	తిరిగి error;
 }
 
 /**
@@ -223,33 +223,33 @@ static int console_setfile(int file, struct stdio_dev * dev)
  * Return: true if this device is in the serial uclass (or for pre-driver-model,
  * whether it is called "serial".
  */
-static bool console_dev_is_serial(struct stdio_dev *sdev)
+స్థిర bool console_dev_is_serial(నిర్మాణం stdio_dev *sdev)
 {
 	bool is_serial;
 
-	if (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
-		struct udevice *dev = sdev->priv;
+	ఒకవేళ (IS_ENABLED(CONFIG_DM_SERIAL) && (sdev->flags & DEV_FLAGS_DM)) {
+		నిర్మాణం udevice *dev = sdev->priv;
 
 		is_serial = device_get_uclass_id(dev) == UCLASS_SERIAL;
-	} else {
+	} లేకపోతే {
 		is_serial = !strcmp(sdev->name, "serial");
 	}
 
-	return is_serial;
+	తిరిగి is_serial;
 }
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
+#ఒకవేళ CONFIG_IS_ENABLED(CONSOLE_MUX)
 /** Console I/O multiplexing *******************************************/
 
 /* tstcdev: save the last stdio device with pending characters, with tstc != 0 */
-static struct stdio_dev *tstcdev;
-struct stdio_dev **console_devices[MAX_FILES];
-int cd_count[MAX_FILES];
+స్థిర నిర్మాణం stdio_dev *tstcdev;
+నిర్మాణం stdio_dev **console_devices[MAX_FILES];
+పూర్ణాంకం cd_లెక్క[MAX_FILES];
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+స్థిర శూన్య console_devices_సమితి(పూర్ణాంకం file, నిర్మాణం stdio_dev *dev)
 {
 	console_devices[file][0] = dev;
-	cd_count[file] = 1;
+	cd_లెక్క[file] = 1;
 }
 
 /**
@@ -263,18 +263,18 @@ static void console_devices_set(int file, struct stdio_dev *dev)
  * other words, we start console once before first STDIO device wants it and
  * stop after the last is gone.
  */
-static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+స్థిర bool console_needs_ప్రారంభం_stop(పూర్ణాంకం file, నిర్మాణం stdio_dev *sdev)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; i < ARRAY_SIZE(cd_count); i++) {
-		if (i == file)
-			continue;
+	కొరకు (i = 0; i < ARRAY_కొలత(cd_లెక్క); i++) {
+		ఒకవేళ (i == file)
+			కొనసాగు;
 
-		if (iomux_match_device(console_devices[i], cd_count[i], sdev) >= 0)
-			return false;
+		ఒకవేళ (iomux_సరిపోలిక_device(console_devices[i], cd_లెక్క[i], sdev) >= 0)
+			తిరిగి false;
 	}
-	return true;
+	తిరిగి true;
 }
 
 /*
@@ -283,51 +283,51 @@ static bool console_needs_start_stop(int file, struct stdio_dev *sdev)
  * only from fgetc() which assures it.
  * No attempt is made to demultiplex multiple input sources.
  */
-static int console_getc(int file)
+స్థిర పూర్ణాంకం console_getc(పూర్ణాంకం file)
 {
-	unsigned char ret;
+	గుర్తులేని అక్షరం ret;
 
 	/* This is never called with testcdev == NULL */
 	ret = tstcdev->getc(tstcdev);
-	tstcdev = NULL;
-	return ret;
+	tstcdev = ఖాళీ;
+	తిరిగి ret;
 }
 
 /*  Upper layer may have already called tstc(): check the saved result */
-static bool console_has_tstc(void)
+స్థిర bool console_has_tstc(శూన్య)
 {
-	return !!tstcdev;
+	తిరిగి !!tstcdev;
 }
 
-static int console_tstc(int file)
+స్థిర పూర్ణాంకం console_tstc(పూర్ణాంకం file)
 {
-	int i, ret;
-	struct stdio_dev *dev;
-	int prev;
+	పూర్ణాంకం i, ret;
+	నిర్మాణం stdio_dev *dev;
+	పూర్ణాంకం prev;
 
 	prev = disable_ctrlc(1);
 	for_each_console_dev(i, file, dev) {
-		if (dev->tstc != NULL) {
+		ఒకవేళ (dev->tstc != ఖాళీ) {
 			ret = dev->tstc(dev);
-			if (ret > 0) {
+			ఒకవేళ (ret > 0) {
 				tstcdev = dev;
 				disable_ctrlc(prev);
-				return ret;
+				తిరిగి ret;
 			}
 		}
 	}
 	disable_ctrlc(prev);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static void console_putc(int file, const char c)
+స్థిర శూన్య console_putc(పూర్ణాంకం file, స్థిరరాశి అక్షరం c)
 {
-	int i;
-	struct stdio_dev *dev;
+	పూర్ణాంకం i;
+	నిర్మాణం stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->putc != NULL)
+		ఒకవేళ (dev->putc != ఖాళీ)
 			dev->putc(dev, c);
 	}
 }
@@ -340,709 +340,709 @@ static void console_putc(int file, const char c)
  *	else
  * @s: String to output
  */
-static void console_puts_select(int file, bool serial_only, const char *s)
+స్థిర శూన్య console_puts_select(పూర్ణాంకం file, bool serial_only, స్థిరరాశి అక్షరం *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	పూర్ణాంకం i;
+	నిర్మాణం stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
 		bool is_serial = console_dev_is_serial(dev);
 
-		if (dev->puts && serial_only == is_serial)
+		ఒకవేళ (dev->puts && serial_only == is_serial)
 			dev->puts(dev, s);
 	}
 }
 
-void console_puts_select_stderr(bool serial_only, const char *s)
+శూన్య console_puts_select_stderr(bool serial_only, స్థిరరాశి అక్షరం *s)
 {
-	if (gd->flags & GD_FLG_DEVINIT)
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT)
 		console_puts_select(stderr, serial_only, s);
 }
 
-int console_printf_select_stderr(bool serial_only, const char *fmt, ...)
+పూర్ణాంకం console_printf_select_stderr(bool serial_only, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	char buf[CONFIG_SYS_PBSIZE];
-	va_list args;
-	int ret;
+	అక్షరం buf[CONFIG_SYS_PBSIZE];
+	va_list వాదనలు;
+	పూర్ణాంకం ret;
 
-	va_start(args, fmt);
+	va_ప్రారంభం(వాదనలు, fmt);
 
 	/* For this to work, buf must be larger than anything we ever want to
 	 * print.
 	 */
-	ret = vscnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	ret = vscnprintf(buf, పరిమాణం(buf), fmt, వాదనలు);
+	va_చివర(వాదనలు);
 	console_puts_select_stderr(serial_only, buf);
 
-	return ret;
+	తిరిగి ret;
 }
 
-static void console_puts(int file, const char *s)
+స్థిర శూన్య console_puts(పూర్ణాంకం file, స్థిరరాశి అక్షరం *s)
 {
-	int i;
-	struct stdio_dev *dev;
+	పూర్ణాంకం i;
+	నిర్మాణం stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->puts != NULL)
+		ఒకవేళ (dev->puts != ఖాళీ)
 			dev->puts(dev, s);
 	}
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static void console_flush(int file)
+#నిర్వచితమైతే CONFIG_CONSOLE_FLUSH_SUPPORT
+స్థిర శూన్య console_flush(పూర్ణాంకం file)
 {
-	int i;
-	struct stdio_dev *dev;
+	పూర్ణాంకం i;
+	నిర్మాణం stdio_dev *dev;
 
 	for_each_console_dev(i, file, dev) {
-		if (dev->flush != NULL)
+		ఒకవేళ (dev->flush != ఖాళీ)
 			dev->flush(dev);
 	}
 }
-#endif
+#అయితే_ముగింపు
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#ఒకవేళ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_లోపల_ENV)
+స్థిర అంతఃవరుస శూన్య console_doenv(పూర్ణాంకం file, నిర్మాణం stdio_dev *dev)
 {
 	iomux_doenv(file, dev->name);
 }
-#endif
-#else
+#అయితే_ముగింపు
+#లేకపోతే
 
-static void console_devices_set(int file, struct stdio_dev *dev)
+స్థిర శూన్య console_devices_సమితి(పూర్ణాంకం file, నిర్మాణం stdio_dev *dev)
 {
 }
 
-static inline bool console_needs_start_stop(int file, struct stdio_dev *sdev)
+స్థిర అంతఃవరుస bool console_needs_ప్రారంభం_stop(పూర్ణాంకం file, నిర్మాణం stdio_dev *sdev)
 {
-	return true;
+	తిరిగి true;
 }
 
-static inline int console_getc(int file)
+స్థిర అంతఃవరుస పూర్ణాంకం console_getc(పూర్ణాంకం file)
 {
-	return stdio_devices[file]->getc(stdio_devices[file]);
+	తిరిగి stdio_devices[file]->getc(stdio_devices[file]);
 }
 
-static bool console_has_tstc(void)
+స్థిర bool console_has_tstc(శూన్య)
 {
-	return false;
+	తిరిగి false;
 }
 
-static inline int console_tstc(int file)
+స్థిర అంతఃవరుస పూర్ణాంకం console_tstc(పూర్ణాంకం file)
 {
-	return stdio_devices[file]->tstc(stdio_devices[file]);
+	తిరిగి stdio_devices[file]->tstc(stdio_devices[file]);
 }
 
-static inline void console_putc(int file, const char c)
+స్థిర అంతఃవరుస శూన్య console_putc(పూర్ణాంకం file, స్థిరరాశి అక్షరం c)
 {
 	stdio_devices[file]->putc(stdio_devices[file], c);
 }
 
-void console_puts_select(int file, bool serial_only, const char *s)
+శూన్య console_puts_select(పూర్ణాంకం file, bool serial_only, స్థిరరాశి అక్షరం *s)
 {
-	if ((gd->flags & GD_FLG_DEVINIT) &&
+	ఒకవేళ ((gd->flags & GD_FLG_DEVINIT) &&
 	    serial_only == console_dev_is_serial(stdio_devices[file]))
 		stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
-static inline void console_puts(int file, const char *s)
+స్థిర అంతఃవరుస శూన్య console_puts(పూర్ణాంకం file, స్థిరరాశి అక్షరం *s)
 {
 	stdio_devices[file]->puts(stdio_devices[file], s);
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-static inline void console_flush(int file)
+#నిర్వచితమైతే CONFIG_CONSOLE_FLUSH_SUPPORT
+స్థిర అంతఃవరుస శూన్య console_flush(పూర్ణాంకం file)
 {
-	if (stdio_devices[file]->flush)
+	ఒకవేళ (stdio_devices[file]->flush)
 		stdio_devices[file]->flush(stdio_devices[file]);
 }
-#endif
+#అయితే_ముగింపు
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
-static inline void console_doenv(int file, struct stdio_dev *dev)
+#ఒకవేళ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_లోపల_ENV)
+స్థిర అంతఃవరుస శూన్య console_doenv(పూర్ణాంకం file, నిర్మాణం stdio_dev *dev)
 {
 	console_setfile(file, dev);
 }
-#endif
-#endif /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
+#అయితే_ముగింపు
+#అయితే_ముగింపు /* CONIFIG_IS_ENABLED(CONSOLE_MUX) */
 
-static void __maybe_unused console_setfile_and_devices(int file, struct stdio_dev *dev)
+స్థిర శూన్య __maybe_unused console_setfile_and_devices(పూర్ణాంకం file, నిర్మాణం stdio_dev *dev)
 {
 	console_setfile(file, dev);
-	console_devices_set(file, dev);
+	console_devices_సమితి(file, dev);
 }
 
-int console_start(int file, struct stdio_dev *sdev)
+పూర్ణాంకం console_ప్రారంభం(పూర్ణాంకం file, నిర్మాణం stdio_dev *sdev)
 {
-	int error;
+	పూర్ణాంకం error;
 
-	if (!console_needs_start_stop(file, sdev))
-		return 0;
+	ఒకవేళ (!console_needs_ప్రారంభం_stop(file, sdev))
+		తిరిగి 0;
 
 	/* Start new device */
-	if (sdev->start) {
-		error = sdev->start(sdev);
+	ఒకవేళ (sdev->ప్రారంభం) {
+		error = sdev->ప్రారంభం(sdev);
 		/* If it's not started don't use it */
-		if (error < 0)
-			return error;
+		ఒకవేళ (error < 0)
+			తిరిగి error;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-void console_stop(int file, struct stdio_dev *sdev)
+శూన్య console_stop(పూర్ణాంకం file, నిర్మాణం stdio_dev *sdev)
 {
-	if (!console_needs_start_stop(file, sdev))
-		return;
+	ఒకవేళ (!console_needs_ప్రారంభం_stop(file, sdev))
+		తిరిగి;
 
-	if (sdev->stop)
+	ఒకవేళ (sdev->stop)
 		sdev->stop(sdev);
 }
 
 /** U-Boot INITIAL CONSOLE-NOT COMPATIBLE FUNCTIONS *************************/
 
-int serial_printf(const char *fmt, ...)
+పూర్ణాంకం serial_printf(స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	అక్షరం printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	va_ప్రారంభం(వాదనలు, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, పరిమాణం(printbuffer), fmt, వాదనలు);
+	va_చివర(వాదనలు);
 
 	serial_puts(printbuffer);
-	return i;
+	తిరిగి i;
 }
 
-int fgetc(int file)
+పూర్ణాంకం fgetc(పూర్ణాంకం file)
 {
-	if ((unsigned int)file < MAX_FILES) {
+	ఒకవేళ ((గుర్తులేని పూర్ణాంకం)file < MAX_FILES) {
 		/*
 		 * Effectively poll for input wherever it may be available.
 		 */
-		for (;;) {
-			schedule();
-			if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+		కొరకు (;;) {
+			కాలపట్టిక();
+			ఒకవేళ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 				/*
 				 * Upper layer may have already called tstc() so
 				 * check for that first.
 				 */
-				if (console_has_tstc())
-					return console_getc(file);
+				ఒకవేళ (console_has_tstc())
+					తిరిగి console_getc(file);
 				console_tstc(file);
-			} else {
-				if (console_tstc(file))
-					return console_getc(file);
+			} లేకపోతే {
+				ఒకవేళ (console_tstc(file))
+					తిరిగి console_getc(file);
 			}
 
 			/*
 			 * If the watchdog must be rate-limited then it should
 			 * already be handled in board-specific code.
 			 */
-			if (IS_ENABLED(CONFIG_WATCHDOG))
+			ఒకవేళ (IS_ENABLED(CONFIG_WATCHDOG))
 				udelay(1);
 		}
 	}
 
-	return -1;
+	తిరిగి -1;
 }
 
-int ftstc(int file)
+పూర్ణాంకం ftstc(పూర్ణాంకం file)
 {
-	if ((unsigned int)file < MAX_FILES)
-		return console_tstc(file);
+	ఒకవేళ ((గుర్తులేని పూర్ణాంకం)file < MAX_FILES)
+		తిరిగి console_tstc(file);
 
-	return -1;
+	తిరిగి -1;
 }
 
-void fputc(int file, const char c)
+శూన్య fputc(పూర్ణాంకం file, స్థిరరాశి అక్షరం c)
 {
-	if ((unsigned int)file < MAX_FILES)
+	ఒకవేళ ((గుర్తులేని పూర్ణాంకం)file < MAX_FILES)
 		console_putc(file, c);
 }
 
-void fputs(int file, const char *s)
+శూన్య fputs(పూర్ణాంకం file, స్థిరరాశి అక్షరం *s)
 {
-	if ((unsigned int)file < MAX_FILES)
+	ఒకవేళ ((గుర్తులేని పూర్ణాంకం)file < MAX_FILES)
 		console_puts(file, s);
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void fflush(int file)
+#నిర్వచితమైతే CONFIG_CONSOLE_FLUSH_SUPPORT
+శూన్య fflush(పూర్ణాంకం file)
 {
-	if ((unsigned int)file < MAX_FILES)
+	ఒకవేళ ((గుర్తులేని పూర్ణాంకం)file < MAX_FILES)
 		console_flush(file);
 }
-#endif
+#అయితే_ముగింపు
 
-int fprintf(int file, const char *fmt, ...)
+పూర్ణాంకం fprintf(పూర్ణాంకం file, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 	uint i;
-	char printbuffer[CONFIG_SYS_PBSIZE];
+	అక్షరం printbuffer[CONFIG_SYS_PBSIZE];
 
-	va_start(args, fmt);
+	va_ప్రారంభం(వాదనలు, fmt);
 
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	i = vscnprintf(printbuffer, sizeof(printbuffer), fmt, args);
-	va_end(args);
+	i = vscnprintf(printbuffer, పరిమాణం(printbuffer), fmt, వాదనలు);
+	va_చివర(వాదనలు);
 
 	/* Send to desired file */
 	fputs(file, printbuffer);
-	return i;
+	తిరిగి i;
 }
 
 /** U-Boot INITIAL CONSOLE-COMPATIBLE FUNCTION *****************************/
 
-int getchar(void)
+పూర్ణాంకం getchar(శూన్య)
 {
-	int ch;
+	పూర్ణాంకం ch;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	ఒకవేళ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		తిరిగి 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	ఒకవేళ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		తిరిగి 0;
 
-	ch = console_record_getc();
-	if (ch != -1)
-		return ch;
+	ch = console_రికార్డు_getc();
+	ఒకవేళ (ch != -1)
+		తిరిగి ch;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT) {
 		/* Get from the standard input */
-		return fgetc(stdin);
+		తిరిగి fgetc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_getc();
+	తిరిగి serial_getc();
 }
 
-int tstc(void)
+పూర్ణాంకం tstc(శూన్య)
 {
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return 0;
+	ఒకవేళ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		తిరిగి 0;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return 0;
+	ఒకవేళ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		తిరిగి 0;
 
-	if (console_record_tstc())
-		return 1;
+	ఒకవేళ (console_రికార్డు_tstc())
+		తిరిగి 1;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT) {
 		/* Test the standard input */
-		return ftstc(stdin);
+		తిరిగి ftstc(stdin);
 	}
 
 	/* Send directly to the handler */
-	return serial_tstc();
+	తిరిగి serial_tstc();
 }
 
 /**
  * console_flush_stdin() - drops all pending characters from stdin
  */
-void console_flush_stdin(void)
+శూన్య console_flush_stdin(శూన్య)
 {
-	while (tstc())
-		(void)getchar();
+	అయితే (tstc())
+		(శూన్య)getchar();
 }
 
-#define PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
-#define PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
+#నిర్వచించు PRE_CONSOLE_FLUSHPOINT1_SERIAL			0
+#నిర్వచించు PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL	1
 
-#if CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-#define CIRC_BUF_IDX(idx) ((idx) % (unsigned long)CONFIG_VAL(PRE_CON_BUF_SZ))
+#ఒకవేళ CONFIG_IS_ENABLED(PRE_CONSOLE_బఫరు)
+#నిర్వచించు CIRC_BUF_IDX(idx) ((idx) % (గుర్తులేని దీర్ఘ)CONFIG_VAL(PRE_CON_BUF_SZ))
 
-static void pre_console_putc(const char c)
+స్థిర శూన్య pre_console_putc(స్థిరరాశి అక్షరం c)
 {
-	char *buffer;
+	అక్షరం *బఫరు;
 
-	if (gd->precon_buf_idx < 0)
-		return;
+	ఒకవేళ (gd->precon_buf_idx < 0)
+		తిరిగి;
 
-	buffer = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
+	బఫరు = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
 
-	buffer[CIRC_BUF_IDX(gd->precon_buf_idx++)] = c;
+	బఫరు[CIRC_BUF_IDX(gd->precon_buf_idx++)] = c;
 
-	unmap_sysmem(buffer);
+	unmap_sysmem(బఫరు);
 }
 
-static void pre_console_puts(const char *s)
+స్థిర శూన్య pre_console_puts(స్థిరరాశి అక్షరం *s)
 {
-	if (gd->precon_buf_idx < 0)
-		return;
+	ఒకవేళ (gd->precon_buf_idx < 0)
+		తిరిగి;
 
-	while (*s)
+	అయితే (*s)
 		pre_console_putc(*s++);
 }
 
-static void print_pre_console_buffer(int flushpoint)
+స్థిర శూన్య print_pre_console_బఫరు(పూర్ణాంకం flushpoint)
 {
-	long in = 0, out = 0;
-	char buf_out[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
-	char *buf_in;
+	దీర్ఘ లోపల = 0, బహిర్గతం = 0;
+	అక్షరం buf_బహిర్గతం[CONFIG_VAL(PRE_CON_BUF_SZ) + 1];
+	అక్షరం *buf_లోపల;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		తిరిగి;
 
-	buf_in = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
-	if (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
-		in = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
+	buf_లోపల = map_sysmem(CONFIG_VAL(PRE_CON_BUF_ADDR), CONFIG_VAL(PRE_CON_BUF_SZ));
+	ఒకవేళ (gd->precon_buf_idx > CONFIG_VAL(PRE_CON_BUF_SZ))
+		లోపల = gd->precon_buf_idx - CONFIG_VAL(PRE_CON_BUF_SZ);
 
-	while (in < gd->precon_buf_idx)
-		buf_out[out++] = buf_in[CIRC_BUF_IDX(in++)];
-	unmap_sysmem(buf_in);
+	అయితే (లోపల < gd->precon_buf_idx)
+		buf_బహిర్గతం[బహిర్గతం++] = buf_లోపల[CIRC_BUF_IDX(లోపల++)];
+	unmap_sysmem(buf_లోపల);
 
-	buf_out[out] = 0;
+	buf_బహిర్గతం[బహిర్గతం] = 0;
 
 	gd->precon_buf_idx = -1;
-	switch (flushpoint) {
-	case PRE_CONSOLE_FLUSHPOINT1_SERIAL:
-		puts(buf_out);
-		break;
-	case PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
-		console_puts_select(stdout, false, buf_out);
-		break;
+	ఎంపిక (flushpoint) {
+	స్థితి PRE_CONSOLE_FLUSHPOINT1_SERIAL:
+		puts(buf_బహిర్గతం);
+		ఆపు;
+	స్థితి PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL:
+		console_puts_select(stdout, false, buf_బహిర్గతం);
+		ఆపు;
 	}
-	gd->precon_buf_idx = in;
+	gd->precon_buf_idx = లోపల;
 }
-#else
-static inline void pre_console_putc(const char c) {}
-static inline void pre_console_puts(const char *s) {}
-static inline void print_pre_console_buffer(int flushpoint) {}
-#endif
+#లేకపోతే
+స్థిర అంతఃవరుస శూన్య pre_console_putc(స్థిరరాశి అక్షరం c) {}
+స్థిర అంతఃవరుస శూన్య pre_console_puts(స్థిరరాశి అక్షరం *s) {}
+స్థిర అంతఃవరుస శూన్య print_pre_console_బఫరు(పూర్ణాంకం flushpoint) {}
+#అయితే_ముగింపు
 
-void putc(const char c)
+శూన్య putc(స్థిరరాశి అక్షరం c)
 {
-	if (!gd)
-		return;
+	ఒకవేళ (!gd)
+		తిరిగి;
 
-	console_record_putc(c);
+	console_రికార్డు_putc(c);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_putc(c);
-		return;
+		తిరిగి;
 	}
 
 	/* if we don't have a console yet, use the debug UART */
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printch(c);
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	ఒకవేళ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		ఒకవేళ (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_putc(c);
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		తిరిగి;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_putc(c);
+	ఒకవేళ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		తిరిగి pre_console_putc(c);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputc(stdout, c);
-	} else {
+	} లేకపోతే {
 		/* Send directly to the handler */
 		pre_console_putc(c);
 		serial_putc(c);
 	}
 }
 
-void puts(const char *s)
+శూన్య puts(స్థిరరాశి అక్షరం *s)
 {
-	if (!gd)
-		return;
+	ఒకవేళ (!gd)
+		తిరిగి;
 
-	console_record_puts(s);
+	console_రికార్డు_puts(s);
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_puts(s);
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		printascii(s);
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
-		if (!(gd->flags & GD_FLG_DEVINIT))
+	ఒకవేళ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT)) {
+		ఒకవేళ (!(gd->flags & GD_FLG_DEVINIT))
 			pre_console_puts(s);
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		తిరిగి;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return pre_console_puts(s);
+	ఒకవేళ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		తిరిగి pre_console_puts(s);
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fputs(stdout, s);
-	} else {
+	} లేకపోతే {
 		/* Send directly to the handler */
 		pre_console_puts(s);
 		serial_puts(s);
 	}
 }
 
-#ifdef CONFIG_CONSOLE_FLUSH_SUPPORT
-void flush(void)
+#నిర్వచితమైతే CONFIG_CONSOLE_FLUSH_SUPPORT
+శూన్య flush(శూన్య)
 {
-	if (!gd)
-		return;
+	ఒకవేళ (!gd)
+		తిరిగి;
 
 	/* sandbox can send characters to stdout before it has a console */
-	if (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_SANDBOX) && !(gd->flags & GD_FLG_SERIAL_READY)) {
 		os_flush();
-		return;
+		తిరిగి;
 	}
 
-	if (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_DEBUG_UART) && !(gd->flags & GD_FLG_SERIAL_READY))
+		తిరిగి;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_SILENT_CONSOLE) && (gd->flags & GD_FLG_SILENT))
+		తిరిగి;
 
-	if (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
-		return;
+	ఒకవేళ (IS_ENABLED(CONFIG_DISABLE_CONSOLE) && (gd->flags & GD_FLG_DISABLE_CONSOLE))
+		తిరిగి;
 
-	if (!(gd->flags & GD_FLG_HAVE_CONSOLE))
-		return;
+	ఒకవేళ (!(gd->flags & GD_FLG_HAVE_CONSOLE))
+		తిరిగి;
 
-	if (gd->flags & GD_FLG_DEVINIT) {
+	ఒకవేళ (gd->flags & GD_FLG_DEVINIT) {
 		/* Send to the standard output */
 		fflush(stdout);
-	} else {
+	} లేకపోతే {
 		/* Send directly to the handler */
 		serial_flush();
 	}
 }
-#endif
+#అయితే_ముగింపు
 
-#ifdef CONFIG_CONSOLE_RECORD
-int console_record_init(void)
+#నిర్వచితమైతే CONFIG_CONSOLE_రికార్డు
+పూర్ణాంకం console_రికార్డు_init(శూన్య)
 {
-	int ret;
+	పూర్ణాంకం ret;
 
-	ret = membuf_new((struct membuf *)&gd->console_out,
+	ret = membuf_new((నిర్మాణం membuf *)&gd->console_బహిర్గతం,
 			 gd->flags & GD_FLG_RELOC ?
-				CONFIG_CONSOLE_RECORD_OUT_SIZE :
-				CONFIG_CONSOLE_RECORD_OUT_SIZE_F);
-	if (ret)
-		return ret;
-	ret = membuf_new((struct membuf *)&gd->console_in,
-			 CONFIG_CONSOLE_RECORD_IN_SIZE);
+				CONFIG_CONSOLE_రికార్డు_బహిర్గతం_కొలత :
+				CONFIG_CONSOLE_రికార్డు_బహిర్గతం_కొలత_F);
+	ఒకవేళ (ret)
+		తిరిగి ret;
+	ret = membuf_new((నిర్మాణం membuf *)&gd->console_లోపల,
+			 CONFIG_CONSOLE_రికార్డు_లోపల_కొలత);
 
 	/* Start recording from the beginning */
-	gd->flags |= GD_FLG_RECORD;
+	gd->flags |= GD_FLG_రికార్డు;
 
-	return ret;
+	తిరిగి ret;
 }
 
-void console_record_reset(void)
+శూన్య console_రికార్డు_reset(శూన్య)
 {
-	membuf_purge((struct membuf *)&gd->console_out);
-	membuf_purge((struct membuf *)&gd->console_in);
-	gd->flags &= ~GD_FLG_RECORD_OVF;
+	membuf_purge((నిర్మాణం membuf *)&gd->console_బహిర్గతం);
+	membuf_purge((నిర్మాణం membuf *)&gd->console_లోపల);
+	gd->flags &= ~GD_FLG_రికార్డు_OVF;
 }
 
-int console_record_reset_enable(void)
+పూర్ణాంకం console_రికార్డు_reset_enable(శూన్య)
 {
-	console_record_reset();
-	gd->flags |= GD_FLG_RECORD;
+	console_రికార్డు_reset();
+	gd->flags |= GD_FLG_రికార్డు;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int console_record_readline(char *str, int maxlen)
+పూర్ణాంకం console_రికార్డు_readline(అక్షరం *str, పూర్ణాంకం maxlen)
 {
-	if (gd->flags & GD_FLG_RECORD_OVF)
-		return -ENOSPC;
-	if (console_record_isempty())
-		return -ENOENT;
+	ఒకవేళ (gd->flags & GD_FLG_రికార్డు_OVF)
+		తిరిగి -ENOSPC;
+	ఒకవేళ (console_రికార్డు_isempty())
+		తిరిగి -ENOENT;
 
-	return membuf_readline((struct membuf *)&gd->console_out, str,
+	తిరిగి membuf_readline((నిర్మాణం membuf *)&gd->console_బహిర్గతం, str,
 				maxlen, '\0', false);
 }
 
-int console_record_avail(void)
+పూర్ణాంకం console_రికార్డు_avail(శూన్య)
 {
-	return membuf_avail((struct membuf *)&gd->console_out);
+	తిరిగి membuf_avail((నిర్మాణం membuf *)&gd->console_బహిర్గతం);
 }
 
-bool console_record_isempty(void)
+bool console_రికార్డు_isempty(శూన్య)
 {
-	return membuf_isempty((struct membuf *)&gd->console_out);
+	తిరిగి membuf_isempty((నిర్మాణం membuf *)&gd->console_బహిర్గతం);
 }
 
-int console_in_puts(const char *str)
+పూర్ణాంకం console_లోపల_puts(స్థిరరాశి అక్షరం *str)
 {
-	return membuf_put((struct membuf *)&gd->console_in, str, strlen(str));
+	తిరిగి membuf_put((నిర్మాణం membuf *)&gd->console_లోపల, str, అక్షరశ్రేణి_పొడవు(str));
 }
 
-#endif
+#అయితే_ముగింపు
 
 /* test if ctrl-c was pressed */
-static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
-int ctrlc(void)
+స్థిర పూర్ణాంకం ctrlc_disabled = 0;	/* see disable_ctrl() */
+స్థిర పూర్ణాంకం ctrlc_was_pressed = 0;
+పూర్ణాంకం ctrlc(శూన్య)
 {
-	if (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
-		if (tstc()) {
-			switch (getchar()) {
-			case 0x03:		/* ^C - Control C */
+	ఒకవేళ (!ctrlc_disabled && (gd->flags & GD_FLG_HAVE_CONSOLE)) {
+		ఒకవేళ (tstc()) {
+			ఎంపిక (getchar()) {
+			స్థితి 0x03:		/* ^C - Control C */
 				ctrlc_was_pressed = 1;
-				return 1;
-			default:
-				break;
+				తిరిగి 1;
+			అప్రమేయ:
+				ఆపు;
 			}
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 /* Reads user's confirmation.
    Returns 1 if user's input is "y", "Y", "yes" or "YES"
 */
-int confirm_yesno(void)
+పూర్ణాంకం confirm_yesno(శూన్య)
 {
-	int i;
-	char str_input[5];
+	పూర్ణాంకం i;
+	అక్షరం str_ఆదానం[5];
 
 	/* Flush input */
 	console_flush_stdin();
 	i = 0;
-	while (i < sizeof(str_input)) {
-		str_input[i] = getchar();
-		putc(str_input[i]);
-		if (str_input[i] == '\r')
-			break;
+	అయితే (i < పరిమాణం(str_ఆదానం)) {
+		str_ఆదానం[i] = getchar();
+		putc(str_ఆదానం[i]);
+		ఒకవేళ (str_ఆదానం[i] == '\r')
+			ఆపు;
 		i++;
 	}
 	putc('\n');
-	if (strncmp(str_input, "y\r", 2) == 0 ||
-	    strncmp(str_input, "Y\r", 2) == 0 ||
-	    strncmp(str_input, "yes\r", 4) == 0 ||
-	    strncmp(str_input, "YES\r", 4) == 0)
-		return 1;
-	return 0;
+	ఒకవేళ (అక్షరశ్రేణి_పోలిక(str_ఆదానం, "y\r", 2) == 0 ||
+	    అక్షరశ్రేణి_పోలిక(str_ఆదానం, "Y\r", 2) == 0 ||
+	    అక్షరశ్రేణి_పోలిక(str_ఆదానం, "yes\r", 4) == 0 ||
+	    అక్షరశ్రేణి_పోలిక(str_ఆదానం, "YES\r", 4) == 0)
+		తిరిగి 1;
+	తిరిగి 0;
 }
 /* pass 1 to disable ctrlc() checking, 0 to enable.
  * returns previous state
  */
-int disable_ctrlc(int disable)
+పూర్ణాంకం disable_ctrlc(పూర్ణాంకం disable)
 {
-	int prev = ctrlc_disabled;	/* save previous state */
+	పూర్ణాంకం prev = ctrlc_disabled;	/* save previous state */
 
 	ctrlc_disabled = disable;
-	return prev;
+	తిరిగి prev;
 }
 
-int had_ctrlc (void)
+పూర్ణాంకం had_ctrlc (శూన్య)
 {
-	return ctrlc_was_pressed;
+	తిరిగి ctrlc_was_pressed;
 }
 
-void clear_ctrlc(void)
+శూన్య clear_ctrlc(శూన్య)
 {
 	ctrlc_was_pressed = 0;
 }
 
 /** U-Boot INIT FUNCTIONS *************************************************/
 
-struct stdio_dev *console_search_dev(int flags, const char *name)
+నిర్మాణం stdio_dev *console_శోధన_dev(పూర్ణాంకం flags, స్థిరరాశి అక్షరం *name)
 {
-	struct stdio_dev *dev;
+	నిర్మాణం stdio_dev *dev;
 
 	dev = stdio_get_by_name(name);
-	if (dev && (dev->flags & flags))
-		return dev;
+	ఒకవేళ (dev && (dev->flags & flags))
+		తిరిగి dev;
 
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-int console_assign(int file, const char *devname)
+పూర్ణాంకం console_కేటాయించు(పూర్ణాంకం file, స్థిరరాశి అక్షరం *devname)
 {
-	int flag;
-	struct stdio_dev *dev;
+	పూర్ణాంకం flag;
+	నిర్మాణం stdio_dev *dev;
 
 	/* Check for valid file */
-	flag = stdio_file_to_flags(file);
-	if (flag < 0)
-		return flag;
+	flag = stdio_file_గమ్యం_flags(file);
+	ఒకవేళ (flag < 0)
+		తిరిగి flag;
 
 	/* Check for valid device name */
 
-	dev = console_search_dev(flag, devname);
+	dev = console_శోధన_dev(flag, devname);
 
-	if (dev)
-		return console_setfile(file, dev);
+	ఒకవేళ (dev)
+		తిరిగి console_setfile(file, dev);
 
-	return -1;
+	తిరిగి -1;
 }
 
 /* return true if the 'silent' flag is removed */
-static bool console_update_silent(void)
+స్థిర bool console_update_silent(శూన్య)
 {
-	unsigned long flags = gd->flags;
+	గుర్తులేని దీర్ఘ flags = gd->flags;
 
-	if (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
-		return false;
+	ఒకవేళ (!IS_ENABLED(CONFIG_SILENT_CONSOLE))
+		తిరిగి false;
 
-	if (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_SILENT_CONSOLE_UNTIL_ENV) && !(gd->flags & GD_FLG_ENV_READY)) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		తిరిగి false;
 	}
 
-	if (env_get("silent")) {
+	ఒకవేళ (env_get("silent")) {
 		gd->flags |= GD_FLG_SILENT;
-		return false;
+		తిరిగి false;
 	}
 
 	gd->flags &= ~GD_FLG_SILENT;
 
-	return !!(flags & GD_FLG_SILENT);
+	తిరిగి !!(flags & GD_FLG_SILENT);
 }
 
-int console_announce_r(void)
+పూర్ణాంకం console_announce_r(శూన్య)
 {
-#if !CONFIG_IS_ENABLED(PRE_CONSOLE_BUFFER)
-	char buf[DISPLAY_OPTIONS_BANNER_LENGTH];
+#ఒకవేళ !CONFIG_IS_ENABLED(PRE_CONSOLE_బఫరు)
+	అక్షరం buf[DISPLAY_OPTIONS_BANNER_నిడివి];
 
-	display_options_get_banner(false, buf, sizeof(buf));
+	display_options_get_banner(false, buf, పరిమాణం(buf));
 
 	console_puts_select(stdout, false, buf);
-#endif
+#అయితే_ముగింపు
 
-	return 0;
+	తిరిగి 0;
 }
 
 /* Called before relocation - use serial functions */
-int console_init_f(void)
+పూర్ణాంకం console_init_f(శూన్య)
 {
 	gd->flags |= GD_FLG_HAVE_CONSOLE;
 
 	console_update_silent();
 
-	print_pre_console_buffer(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
+	print_pre_console_బఫరు(PRE_CONSOLE_FLUSHPOINT1_SERIAL);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int console_clear(void)
+పూర్ణాంకం console_clear(శూన్య)
 {
 	/*
 	 * Send clear screen and home
@@ -1051,38 +1051,38 @@ int console_clear(void)
 	 * through an API and only be written to serial terminals, not video
 	 * displays
 	 */
-	printf(CSI "2J" CSI "1;1H");
-	if (IS_ENABLED(CONFIG_VIDEO_ANSI))
-		return 0;
+	రాయి(CSI "2J" CSI "1;1H");
+	ఒకవేళ (IS_ENABLED(CONFIG_VIDEO_ANSI))
+		తిరిగి 0;
 
-	if (IS_ENABLED(CONFIG_VIDEO)) {
-		struct udevice *dev;
-		int ret;
+	ఒకవేళ (IS_ENABLED(CONFIG_VIDEO)) {
+		నిర్మాణం udevice *dev;
+		పూర్ణాంకం ret;
 
-		ret = uclass_first_device_err(UCLASS_VIDEO_CONSOLE, &dev);
-		if (ret)
-			return ret;
+		ret = uclass_మొదటి_device_err(UCLASS_VIDEO_CONSOLE, &dev);
+		ఒకవేళ (ret)
+			తిరిగి ret;
 		ret = vidconsole_clear_and_reset(dev);
-		if (ret)
-			return ret;
+		ఒకవేళ (ret)
+			తిరిగి ret;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static char *get_stdio(const u8 std)
+స్థిర అక్షరం *get_stdio(స్థిరరాశి u8 std)
 {
-	return stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
+	తిరిగి stdio_devices[std] ? stdio_devices[std]->name : "No devices available!";
 }
 
-static void stdio_print_current_devices(void)
+స్థిర శూన్య stdio_print_current_devices(శూన్య)
 {
-	char *stdinname = NULL;
-	char *stdoutname = NULL;
-	char *stderrname = NULL;
+	అక్షరం *stdinname = ఖాళీ;
+	అక్షరం *stdoutname = ఖాళీ;
+	అక్షరం *stderrname = ఖాళీ;
 
-	if (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
-	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)) {
+	ఒకవేళ (CONFIG_IS_ENABLED(CONSOLE_MUX) &&
+	    CONFIG_IS_ENABLED(SYS_CONSOLE_IS_లోపల_ENV)) {
 		/* stdin stdout and stderr are in environment */
 		stdinname  = env_get("stdin");
 		stdoutname = env_get("stdout");
@@ -1095,29 +1095,29 @@ static void stdio_print_current_devices(void)
 
 	/* Print information */
 	puts("In:    ");
-	printf("%s\n", stdinname);
+	రాయి("%s\n", stdinname);
 
 	puts("Out:   ");
-	printf("%s\n", stdoutname);
+	రాయి("%s\n", stdoutname);
 
 	puts("Err:   ");
-	printf("%s\n", stderrname);
+	రాయి("%s\n", stderrname);
 }
 
-#if CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV)
+#ఒకవేళ CONFIG_IS_ENABLED(SYS_CONSOLE_IS_లోపల_ENV)
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+పూర్ణాంకం console_init_r(శూన్య)
 {
-	char *stdinname, *stdoutname, *stderrname;
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL, *errdev = NULL;
-	int i;
-	int iomux_err = 0;
-	int flushpoint;
+	అక్షరం *stdinname, *stdoutname, *stderrname;
+	నిర్మాణం stdio_dev *inputdev = ఖాళీ, *outputdev = ఖాళీ, *errdev = ఖాళీ;
+	పూర్ణాంకం i;
+	పూర్ణాంకం iomux_err = 0;
+	పూర్ణాంకం flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	ఒకవేళ (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	లేకపోతే
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/* set default handlers at first */
@@ -1125,7 +1125,7 @@ int console_init_r(void)
 	gd->jt->tstc  = serial_tstc;
 	gd->jt->putc  = serial_putc;
 	gd->jt->puts  = serial_puts;
-	gd->jt->printf = serial_printf;
+	gd->jt->రాయి = serial_printf;
 
 	/* stdin stdout and stderr are in environment */
 	/* scan for it */
@@ -1133,76 +1133,76 @@ int console_init_r(void)
 	stdoutname = env_get("stdout");
 	stderrname = env_get("stderr");
 
-	if (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  stdinname);
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, stdoutname);
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, stderrname);
-		if (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
+	ఒకవేళ (OVERWRITE_CONSOLE == 0) {	/* if not overwritten by config switch */
+		inputdev  = console_శోధన_dev(DEV_FLAGS_ఆదానం,  stdinname);
+		outputdev = console_శోధన_dev(DEV_FLAGS_OUTPUT, stdoutname);
+		errdev    = console_శోధన_dev(DEV_FLAGS_OUTPUT, stderrname);
+		ఒకవేళ (CONFIG_IS_ENABLED(CONSOLE_MUX)) {
 			iomux_err = iomux_doenv(stdin, stdinname);
 			iomux_err += iomux_doenv(stdout, stdoutname);
 			iomux_err += iomux_doenv(stderr, stderrname);
-			if (!iomux_err)
+			ఒకవేళ (!iomux_err)
 				/* Successful, so skip all the code below. */
-				goto done;
+				వెళ్ళు పూర్తి;
 		}
 	}
 	/* if the devices are overwritten or not found, use default device */
-	if (inputdev == NULL) {
-		inputdev  = console_search_dev(DEV_FLAGS_INPUT,  "serial");
+	ఒకవేళ (inputdev == ఖాళీ) {
+		inputdev  = console_శోధన_dev(DEV_FLAGS_ఆదానం,  "serial");
 	}
-	if (outputdev == NULL) {
-		outputdev = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	ఒకవేళ (outputdev == ఖాళీ) {
+		outputdev = console_శోధన_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
-	if (errdev == NULL) {
-		errdev    = console_search_dev(DEV_FLAGS_OUTPUT, "serial");
+	ఒకవేళ (errdev == ఖాళీ) {
+		errdev    = console_శోధన_dev(DEV_FLAGS_OUTPUT, "serial");
 	}
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	ఒకవేళ (outputdev != ఖాళీ) {
 		/* need to set a console if not done above. */
 		console_doenv(stdout, outputdev);
 	}
-	if (errdev != NULL) {
+	ఒకవేళ (errdev != ఖాళీ) {
 		/* need to set a console if not done above. */
 		console_doenv(stderr, errdev);
 	}
-	if (inputdev != NULL) {
+	ఒకవేళ (inputdev != ఖాళీ) {
 		/* need to set a console if not done above. */
 		console_doenv(stdin, inputdev);
 	}
 
-done:
+పూర్తి:
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	ఒకవేళ (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
-	if (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_SYS_CONSOLE_ENV_OVERWRITE)) {
 		/* set the environment variables (will overwrite previous env settings) */
-		for (i = 0; i < MAX_FILES; i++)
-			env_set(stdio_names[i], stdio_devices[i]->name);
+		కొరకు (i = 0; i < MAX_FILES; i++)
+			env_సమితి(stdio_పేర్లు[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
-	return 0;
+	print_pre_console_బఫరు(flushpoint);
+	తిరిగి 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#లేకపోతే /* !CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
 /* Called after the relocation - use desired console functions */
-int console_init_r(void)
+పూర్ణాంకం console_init_r(శూన్య)
 {
-	struct stdio_dev *inputdev = NULL, *outputdev = NULL;
-	int i;
-	struct list_head *list = stdio_get_list();
-	struct list_head *pos;
-	struct stdio_dev *dev;
-	int flushpoint;
+	నిర్మాణం stdio_dev *inputdev = ఖాళీ, *outputdev = ఖాళీ;
+	పూర్ణాంకం i;
+	నిర్మాణం list_తల *list = stdio_get_list();
+	నిర్మాణం list_తల *pos;
+	నిర్మాణం stdio_dev *dev;
+	పూర్ణాంకం flushpoint;
 
 	/* update silent for env loaded from flash (initr_env) */
-	if (console_update_silent())
+	ఒకవేళ (console_update_silent())
 		flushpoint = PRE_CONSOLE_FLUSHPOINT1_SERIAL;
-	else
+	లేకపోతే
 		flushpoint = PRE_CONSOLE_FLUSHPOINT2_EVERYTHING_BUT_SERIAL;
 
 	/*
@@ -1211,84 +1211,84 @@ int console_init_r(void)
 	 * console to serial console in this case or suppress it if
 	 * "silent" mode was requested.
 	 */
-	if (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
-		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = console_search_dev (DEV_FLAGS_OUTPUT, "serial");
+	ఒకవేళ (IS_ENABLED(CONFIG_SPLASH_SCREEN) && env_get("splashimage")) {
+		ఒకవేళ (!(gd->flags & GD_FLG_SILENT))
+			outputdev = console_శోధన_dev (DEV_FLAGS_OUTPUT, "serial");
 	}
 
 	/* Scan devices looking for input and output devices */
 	list_for_each(pos, list) {
-		dev = list_entry(pos, struct stdio_dev, list);
+		dev = list_నమోదు(pos, నిర్మాణం stdio_dev, list);
 
-		if ((dev->flags & DEV_FLAGS_INPUT) &&
+		ఒకవేళ ((dev->flags & DEV_FLAGS_ఆదానం) &&
 		    (dev->priv == gd->cur_serial_dev || !inputdev))
 			inputdev = dev;
 
-		if ((dev->flags & DEV_FLAGS_OUTPUT) &&
+		ఒకవేళ ((dev->flags & DEV_FLAGS_OUTPUT) &&
 		    (dev->priv == gd->cur_serial_dev || !outputdev))
 			outputdev = dev;
 
 		/* The current serial console is the preferred stdio. */
-		if (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
-			break;
+		ఒకవేళ (dev->priv == gd->cur_serial_dev && inputdev && outputdev)
+			ఆపు;
 	}
 
 	/* Initializes output console first */
-	if (outputdev != NULL) {
+	ఒకవేళ (outputdev != ఖాళీ) {
 		console_setfile_and_devices(stdout, outputdev);
 		console_setfile_and_devices(stderr, outputdev);
 	}
 
 	/* Initializes input console */
-	if (inputdev != NULL)
+	ఒకవేళ (inputdev != ఖాళీ)
 		console_setfile_and_devices(stdin, inputdev);
 
-	if (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
+	ఒకవేళ (!IS_ENABLED(CONFIG_SYS_CONSOLE_INFO_QUIET))
 		stdio_print_current_devices();
 
 	/* Setting environment variables */
-	for (i = 0; i < MAX_FILES; i++) {
-		env_set(stdio_names[i], stdio_devices[i]->name);
+	కొరకు (i = 0; i < MAX_FILES; i++) {
+		env_సమితి(stdio_పేర్లు[i], stdio_devices[i]->name);
 	}
 
 	gd->flags |= GD_FLG_DEVINIT;	/* device initialization completed */
 
-	print_pre_console_buffer(flushpoint);
-	return 0;
+	print_pre_console_బఫరు(flushpoint);
+	తిరిగి 0;
 }
 
-#endif /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
+#అయితే_ముగింపు /* CONFIG_IS_ENABLED(SYS_CONSOLE_IS_IN_ENV) */
 
-int console_remove_by_name(const char *name)
+పూర్ణాంకం console_remove_by_name(స్థిరరాశి అక్షరం *name)
 {
-	int err = 0;
+	పూర్ణాంకం err = 0;
 
-#if CONFIG_IS_ENABLED(CONSOLE_MUX)
-	int fnum;
+#ఒకవేళ CONFIG_IS_ENABLED(CONSOLE_MUX)
+	పూర్ణాంకం fnum;
 
 	log_debug("removing console device %s\n", name);
-	for (fnum = 0; fnum < MAX_FILES; fnum++) {
-		struct stdio_dev **src, **dest;
-		int i;
+	కొరకు (fnum = 0; fnum < MAX_FILES; fnum++) {
+		నిర్మాణం stdio_dev **src, **dest;
+		పూర్ణాంకం i;
 
-		log_debug("file %d: %d devices: ", fnum, cd_count[fnum]);
+		log_debug("file %d: %d devices: ", fnum, cd_లెక్క[fnum]);
 		src = console_devices[fnum];
 		dest = src;
-		for (i = 0; i < cd_count[fnum]; i++, src++) {
-			struct stdio_dev *sdev = *src;
-			int ret = 0;
+		కొరకు (i = 0; i < cd_లెక్క[fnum]; i++, src++) {
+			నిర్మాణం stdio_dev *sdev = *src;
+			పూర్ణాంకం ret = 0;
 
-			if (!strcmp(sdev->name, name))
+			ఒకవేళ (!strcmp(sdev->name, name))
 				ret = stdio_deregister_dev(sdev, true);
-			else
+			లేకపోతే
 				*dest++ = *src;
-			if (ret && !err)
+			ఒకవేళ (ret && !err)
 				err = ret;
 		}
-		cd_count[fnum] = dest - console_devices[fnum];
-		log_debug("now %d\n", cd_count[fnum]);
+		cd_లెక్క[fnum] = dest - console_devices[fnum];
+		log_debug("now %d\n", cd_లెక్క[fnum]);
 	}
-#endif /* CONSOLE_MUX */
+#అయితే_ముగింపు /* CONSOLE_MUX */
 
-	return err;
+	తిరిగి err;
 }

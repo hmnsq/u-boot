@@ -5,304 +5,304 @@
  * Authors: Igor Grinberg <grinberg@compulab.co.il>
  */
 
-#include <bmp_layout.h>
-#include <command.h>
-#include <env.h>
-#include <errno.h>
-#include <fs.h>
-#include <fdt_support.h>
-#include <image.h>
-#include <log.h>
-#include <nand.h>
-#include <sata.h>
-#include <spi.h>
-#include <spi_flash.h>
-#include <splash.h>
-#include <usb.h>
-#include <virtio.h>
-#include <asm/global_data.h>
+#అన్తర్భావ <bmp_layout.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <fs.h>
+#అన్తర్భావ <fdt_support.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <nand.h>
+#అన్తర్భావ <sata.h>
+#అన్తర్భావ <spi.h>
+#అన్తర్భావ <spi_flash.h>
+#అన్తర్భావ <splash.h>
+#అన్తర్భావ <usb.h>
+#అన్తర్భావ <virtio.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-#ifdef CONFIG_SPI_FLASH
-static struct spi_flash *sf;
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#నిర్వచితమైతే CONFIG_SPI_FLASH
+స్థిర నిర్మాణం spi_flash *sf;
+స్థిర పూర్ణాంకం splash_sf_read_raw(ulong bmp_ఎక్కించు_addr, పూర్ణాంకం స్థానభ్రంశం, size_t read_కొలత)
 {
-	if (!sf) {
+	ఒకవేళ (!sf) {
 		sf = spi_flash_probe(CONFIG_SF_DEFAULT_BUS,
 				     CONFIG_SF_DEFAULT_CS,
-				     CONFIG_SF_DEFAULT_SPEED,
-				     CONFIG_SF_DEFAULT_MODE);
-		if (!sf)
-			return -ENODEV;
+				     CONFIG_SF_DEFAULT_వేగం,
+				     CONFIG_SF_DEFAULT_బహుళకం);
+		ఒకవేళ (!sf)
+			తిరిగి -ENODEV;
 	}
 
-	return spi_flash_read(sf, offset, read_size, (void *)(uintptr_t)bmp_load_addr);
+	తిరిగి spi_flash_read(sf, స్థానభ్రంశం, read_కొలత, (శూన్య *)(uintptr_t)bmp_ఎక్కించు_addr);
 }
-#else
-static int splash_sf_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#లేకపోతే
+స్థిర పూర్ణాంకం splash_sf_read_raw(ulong bmp_ఎక్కించు_addr, పూర్ణాంకం స్థానభ్రంశం, size_t read_కొలత)
 {
 	debug("%s: sf support not available\n", __func__);
-	return -ENOSYS;
+	తిరిగి -ENOSYS;
 }
-#endif
+#అయితే_ముగింపు
 
-#ifdef CONFIG_CMD_NAND
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#నిర్వచితమైతే CONFIG_CMD_NAND
+స్థిర పూర్ణాంకం splash_nand_read_raw(ulong bmp_ఎక్కించు_addr, పూర్ణాంకం స్థానభ్రంశం, size_t read_కొలత)
 {
-	struct mtd_info *mtd = get_nand_dev_by_index(nand_curr_device);
-	return nand_read_skip_bad(mtd, offset,
-				  &read_size, NULL,
-				  mtd->size,
-				  (u_char *)bmp_load_addr);
+	నిర్మాణం mtd_info *mtd = get_nand_dev_by_సూచీ(nand_curr_device);
+	తిరిగి nand_read_skip_bad(mtd, స్థానభ్రంశం,
+				  &read_కొలత, ఖాళీ,
+				  mtd->కొలత,
+				  (u_char *)bmp_ఎక్కించు_addr);
 }
-#else
-static int splash_nand_read_raw(ulong bmp_load_addr, int offset, size_t read_size)
+#లేకపోతే
+స్థిర పూర్ణాంకం splash_nand_read_raw(ulong bmp_ఎక్కించు_addr, పూర్ణాంకం స్థానభ్రంశం, size_t read_కొలత)
 {
 	debug("%s: nand support not available\n", __func__);
-	return -ENOSYS;
+	తిరిగి -ENOSYS;
 }
-#endif
+#అయితే_ముగింపు
 
-static int splash_mmc_read_raw(ulong bmp_load_addr, struct splash_location *location,
-			       size_t read_size)
+స్థిర పూర్ణాంకం splash_mmc_read_raw(ulong bmp_ఎక్కించు_addr, నిర్మాణం splash_location *location,
+			       size_t read_కొలత)
 {
-	struct disk_partition partition;
-	struct blk_desc *desc;
+	నిర్మాణం disk_విభజన విభజన;
+	నిర్మాణం blk_desc *desc;
 	lbaint_t blkcnt;
-	int ret, n;
+	పూర్ణాంకం ret, n;
 
-	if (!IS_ENABLED(CONFIG_CMD_MMC)) {
+	ఒకవేళ (!IS_ENABLED(CONFIG_CMD_MMC)) {
 		debug("%s: mmc support not available\n", __func__);
-		return -ENOSYS;
+		తిరిగి -ENOSYS;
 	}
 
-	ret = part_get_info_by_dev_and_name_or_num("mmc", location->devpart, &desc,
-						   &partition, 1);
-	if (ret < 0)
-		return ret;
+	ret = part_get_info_by_dev_and_name_or_అంకె("mmc", location->devpart, &desc,
+						   &విభజన, 1);
+	ఒకవేళ (ret < 0)
+		తిరిగి ret;
 
-	blkcnt = DIV_ROUND_UP(read_size, partition.blksz);
-	n = blk_dread(desc, partition.start, blkcnt, (void *)(uintptr_t)bmp_load_addr);
+	blkcnt = DIV_విడత_పైకి(read_కొలత, విభజన.blksz);
+	n = blk_dread(desc, విభజన.ప్రారంభం, blkcnt, (శూన్య *)(uintptr_t)bmp_ఎక్కించు_addr);
 
-	return (n == blkcnt) ? 0 : -EIO;
+	తిరిగి (n == blkcnt) ? 0 : -EIO;
 }
 
-static int splash_storage_read_raw(struct splash_location *location,
-			       ulong bmp_load_addr, size_t read_size)
+స్థిర పూర్ణాంకం splash_storage_read_raw(నిర్మాణం splash_location *location,
+			       ulong bmp_ఎక్కించు_addr, size_t read_కొలత)
 {
-	u32 offset;
+	u32 స్థానభ్రంశం;
 
-	if (!location)
-		return -EINVAL;
+	ఒకవేళ (!location)
+		తిరిగి -EINVAL;
 
-	offset = location->offset;
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
-		return splash_mmc_read_raw(bmp_load_addr, location, read_size);
-	case SPLASH_STORAGE_NAND:
-		return splash_nand_read_raw(bmp_load_addr, offset, read_size);
-	case SPLASH_STORAGE_SF:
-		return splash_sf_read_raw(bmp_load_addr, offset, read_size);
-	default:
-		printf("Unknown splash location\n");
+	స్థానభ్రంశం = location->స్థానభ్రంశం;
+	ఎంపిక (location->storage) {
+	స్థితి SPLASH_STORAGE_MMC:
+		తిరిగి splash_mmc_read_raw(bmp_ఎక్కించు_addr, location, read_కొలత);
+	స్థితి SPLASH_STORAGE_NAND:
+		తిరిగి splash_nand_read_raw(bmp_ఎక్కించు_addr, స్థానభ్రంశం, read_కొలత);
+	స్థితి SPLASH_STORAGE_SF:
+		తిరిగి splash_sf_read_raw(bmp_ఎక్కించు_addr, స్థానభ్రంశం, read_కొలత);
+	అప్రమేయ:
+		రాయి("Unknown splash location\n");
 	}
 
-	return -EINVAL;
+	తిరిగి -EINVAL;
 }
 
-static int splash_load_raw(struct splash_location *location, ulong bmp_load_addr)
+స్థిర పూర్ణాంకం splash_ఎక్కించు_raw(నిర్మాణం splash_location *location, ulong bmp_ఎక్కించు_addr)
 {
-	struct bmp_header *bmp_hdr;
-	int res;
-	size_t bmp_size, bmp_header_size = sizeof(struct bmp_header);
+	నిర్మాణం bmp_శీర్షిక *bmp_hdr;
+	పూర్ణాంకం res;
+	size_t bmp_కొలత, bmp_శీర్షిక_కొలత = పరిమాణం(నిర్మాణం bmp_శీర్షిక);
 
-	if (bmp_load_addr + bmp_header_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	ఒకవేళ (bmp_ఎక్కించు_addr + bmp_శీర్షిక_కొలత >= gd->ప్రారంభం_addr_sp)
+		వెళ్ళు splash_చిరునామా_too_ఎగువ;
 
-	res = splash_storage_read_raw(location, bmp_load_addr, bmp_header_size);
-	if (res < 0)
-		return res;
+	res = splash_storage_read_raw(location, bmp_ఎక్కించు_addr, bmp_శీర్షిక_కొలత);
+	ఒకవేళ (res < 0)
+		తిరిగి res;
 
-	bmp_hdr = (struct bmp_header *)(uintptr_t)bmp_load_addr;
-	bmp_size = le32_to_cpu(bmp_hdr->file_size);
+	bmp_hdr = (నిర్మాణం bmp_శీర్షిక *)(uintptr_t)bmp_ఎక్కించు_addr;
+	bmp_కొలత = le32_గమ్యం_cpu(bmp_hdr->file_కొలత);
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp)
-		goto splash_address_too_high;
+	ఒకవేళ (bmp_ఎక్కించు_addr + bmp_కొలత >= gd->ప్రారంభం_addr_sp)
+		వెళ్ళు splash_చిరునామా_too_ఎగువ;
 
-	return splash_storage_read_raw(location, bmp_load_addr, bmp_size);
+	తిరిగి splash_storage_read_raw(location, bmp_ఎక్కించు_addr, bmp_కొలత);
 
-splash_address_too_high:
-	printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
+splash_చిరునామా_too_ఎగువ:
+	రాయి("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 
-	return -EFAULT;
+	తిరిగి -EFAULT;
 }
 
-static int splash_select_fs_dev(struct splash_location *location)
+స్థిర పూర్ణాంకం splash_select_fs_dev(నిర్మాణం splash_location *location)
 {
-	int res;
+	పూర్ణాంకం res;
 
-	switch (location->storage) {
-	case SPLASH_STORAGE_MMC:
-		res = fs_set_blk_dev("mmc", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_USB:
-		res = fs_set_blk_dev("usb", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_SATA:
-		res = fs_set_blk_dev("sata", location->devpart, FS_TYPE_ANY);
-		break;
-	case SPLASH_STORAGE_NAND:
-		if (location->ubivol != NULL)
-			res = fs_set_blk_dev("ubi", NULL, FS_TYPE_UBIFS);
-		else
+	ఎంపిక (location->storage) {
+	స్థితి SPLASH_STORAGE_MMC:
+		res = fs_సమితి_blk_dev("mmc", location->devpart, FS_TYPE_ANY);
+		ఆపు;
+	స్థితి SPLASH_STORAGE_USB:
+		res = fs_సమితి_blk_dev("usb", location->devpart, FS_TYPE_ANY);
+		ఆపు;
+	స్థితి SPLASH_STORAGE_SATA:
+		res = fs_సమితి_blk_dev("sata", location->devpart, FS_TYPE_ANY);
+		ఆపు;
+	స్థితి SPLASH_STORAGE_NAND:
+		ఒకవేళ (location->ubivol != ఖాళీ)
+			res = fs_సమితి_blk_dev("ubi", ఖాళీ, FS_TYPE_UBIFS);
+		లేకపోతే
 			res = -ENODEV;
-		break;
-	default:
-		printf("Error: %s: unsupported location storage.\n", __func__);
-		return -ENODEV;
+		ఆపు;
+	అప్రమేయ:
+		రాయి("Error: %s: unsupported location storage.\n", __func__);
+		తిరిగి -ENODEV;
 	}
 
-	if (res)
-		printf("Error: %s: could not access storage.\n", __func__);
+	ఒకవేళ (res)
+		రాయి("Error: %s: could not access storage.\n", __func__);
 
-	return res;
+	తిరిగి res;
 }
 
-#ifdef CONFIG_USB_STORAGE
-static int splash_init_usb(void)
+#నిర్వచితమైతే CONFIG_USB_STORAGE
+స్థిర పూర్ణాంకం splash_init_usb(శూన్య)
 {
-	int err;
+	పూర్ణాంకం err;
 
 	err = usb_init();
-	if (err)
-		return err;
+	ఒకవేళ (err)
+		తిరిగి err;
 
-#ifndef CONFIG_DM_USB
-	err = usb_stor_scan(1) < 0 ? -ENODEV : 0;
-#endif
+#నిర్వచితం_కాకపోతే CONFIG_DM_USB
+	err = usb_stor_పరిశీలన(1) < 0 ? -ENODEV : 0;
+#అయితే_ముగింపు
 
-	return err;
+	తిరిగి err;
 }
-#else
-static inline int splash_init_usb(void)
+#లేకపోతే
+స్థిర అంతఃవరుస పూర్ణాంకం splash_init_usb(శూన్య)
 {
-	printf("Cannot load splash image: no USB support\n");
-	return -ENOSYS;
+	రాయి("Cannot load splash image: no USB support\n");
+	తిరిగి -ENOSYS;
 }
-#endif
+#అయితే_ముగింపు
 
-#ifdef CONFIG_SATA
-static int splash_init_sata(void)
+#నిర్వచితమైతే CONFIG_SATA
+స్థిర పూర్ణాంకం splash_init_sata(శూన్య)
 {
-	return sata_probe(0);
+	తిరిగి sata_probe(0);
 }
-#else
-static inline int splash_init_sata(void)
+#లేకపోతే
+స్థిర అంతఃవరుస పూర్ణాంకం splash_init_sata(శూన్య)
 {
-	printf("Cannot load splash image: no SATA support\n");
-	return -ENOSYS;
+	రాయి("Cannot load splash image: no SATA support\n");
+	తిరిగి -ENOSYS;
 }
-#endif
+#అయితే_ముగింపు
 
-static int splash_init_virtio(void)
+స్థిర పూర్ణాంకం splash_init_virtio(శూన్య)
 {
-	if (!IS_ENABLED(CONFIG_VIRTIO)) {
-		printf("Cannot load splash image: no virtio support\n");
-		return -ENOSYS;
-	} else {
-		return virtio_init();
+	ఒకవేళ (!IS_ENABLED(CONFIG_VIRTIO)) {
+		రాయి("Cannot load splash image: no virtio support\n");
+		తిరిగి -ENOSYS;
+	} లేకపోతే {
+		తిరిగి virtio_init();
 	}
 }
 
-#if defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
-static int splash_mount_ubifs(struct splash_location *location)
+#ఒకవేళ defined(CONFIG_CMD_UBIFS) && !defined(CONFIG_XPL_BUILD)
+స్థిర పూర్ణాంకం splash_mount_ubifs(నిర్మాణం splash_location *location)
 {
-	int res;
-	char cmd[32];
+	పూర్ణాంకం res;
+	అక్షరం cmd[32];
 
 	sprintf(cmd, "ubi part %s", location->mtdpart);
-	res = run_command(cmd, 0);
-	if (res)
-		return res;
+	res = నిరంతరం_command(cmd, 0);
+	ఒకవేళ (res)
+		తిరిగి res;
 
 	sprintf(cmd, "ubifsmount %s", location->ubivol);
-	res = run_command(cmd, 0);
+	res = నిరంతరం_command(cmd, 0);
 
-	return res;
+	తిరిగి res;
 }
 
-static inline int splash_umount_ubifs(void)
+స్థిర అంతఃవరుస పూర్ణాంకం splash_umount_ubifs(శూన్య)
 {
-	return run_command("ubifsumount", 0);
+	తిరిగి నిరంతరం_command("ubifsumount", 0);
 }
-#else
-static inline int splash_mount_ubifs(struct splash_location *location)
+#లేకపోతే
+స్థిర అంతఃవరుస పూర్ణాంకం splash_mount_ubifs(నిర్మాణం splash_location *location)
 {
-	printf("Cannot load splash image: no UBIFS support\n");
-	return -ENOSYS;
+	రాయి("Cannot load splash image: no UBIFS support\n");
+	తిరిగి -ENOSYS;
 }
 
-static inline int splash_umount_ubifs(void)
+స్థిర అంతఃవరుస పూర్ణాంకం splash_umount_ubifs(శూన్య)
 {
-	printf("Cannot unmount UBIFS: no UBIFS support\n");
-	return -ENOSYS;
+	రాయి("Cannot unmount UBIFS: no UBIFS support\n");
+	తిరిగి -ENOSYS;
 }
-#endif
+#అయితే_ముగింపు
 
-#define SPLASH_SOURCE_DEFAULT_FILE_NAME		"splash.bmp"
+#నిర్వచించు SPLASH_ఆధారం_DEFAULT_FILE_NAME		"splash.bmp"
 
-static int splash_load_fs(struct splash_location *location, ulong bmp_load_addr)
+స్థిర పూర్ణాంకం splash_ఎక్కించు_fs(నిర్మాణం splash_location *location, ulong bmp_ఎక్కించు_addr)
 {
-	int res = 0;
-	loff_t bmp_size;
+	పూర్ణాంకం res = 0;
+	loff_t bmp_కొలత;
 	loff_t actread;
-	char *splash_file;
+	అక్షరం *splash_file;
 
 	splash_file = env_get("splashfile");
-	if (!splash_file)
-		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
+	ఒకవేళ (!splash_file)
+		splash_file = SPLASH_ఆధారం_DEFAULT_FILE_NAME;
 
-	if (location->storage == SPLASH_STORAGE_USB)
+	ఒకవేళ (location->storage == SPLASH_STORAGE_USB)
 		res = splash_init_usb();
 
-	if (location->storage == SPLASH_STORAGE_SATA)
+	ఒకవేళ (location->storage == SPLASH_STORAGE_SATA)
 		res = splash_init_sata();
 
-	if (location->storage == SPLASH_STORAGE_VIRTIO)
+	ఒకవేళ (location->storage == SPLASH_STORAGE_VIRTIO)
 		res = splash_init_virtio();
 
-	if (location->ubivol != NULL)
+	ఒకవేళ (location->ubivol != ఖాళీ)
 		res = splash_mount_ubifs(location);
 
-	if (res)
-		return res;
+	ఒకవేళ (res)
+		తిరిగి res;
 
 	res = splash_select_fs_dev(location);
-	if (res)
-		goto out;
+	ఒకవేళ (res)
+		వెళ్ళు బహిర్గతం;
 
-	res = fs_size(splash_file, &bmp_size);
-	if (res) {
-		printf("Error: %s: cannot determine file size (%d)\n",
+	res = fs_కొలత(splash_file, &bmp_కొలత);
+	ఒకవేళ (res) {
+		రాయి("Error: %s: cannot determine file size (%d)\n",
 		       __func__, res);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (bmp_load_addr + bmp_size >= gd->start_addr_sp) {
-		printf("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
+	ఒకవేళ (bmp_ఎక్కించు_addr + bmp_కొలత >= gd->ప్రారంభం_addr_sp) {
+		రాయి("Error: splashimage address too high. Data overwrites U-Boot and/or placed beyond DRAM boundaries.\n");
 		res = -EFAULT;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
 	splash_select_fs_dev(location);
-	res = fs_read(splash_file, bmp_load_addr, 0, 0, &actread);
+	res = fs_read(splash_file, bmp_ఎక్కించు_addr, 0, 0, &actread);
 
-out:
-	if (location->ubivol != NULL)
+బహిర్గతం:
+	ఒకవేళ (location->ubivol != ఖాళీ)
 		splash_umount_ubifs();
 
-	return res;
+	తిరిగి res;
 }
 
 /**
@@ -320,108 +320,108 @@ out:
  *	    If splashsource env variable contains a supported value
  *			return the location selected by splashsource.
  */
-static struct splash_location *select_splash_location(
-			    struct splash_location *locations, uint size)
+స్థిర నిర్మాణం splash_location *select_splash_location(
+			    నిర్మాణం splash_location *locations, uint కొలత)
 {
-	int i;
-	char *env_splashsource;
+	పూర్ణాంకం i;
+	అక్షరం *env_splashsource;
 
-	if (!locations || size == 0)
-		return NULL;
+	ఒకవేళ (!locations || కొలత == 0)
+		తిరిగి ఖాళీ;
 
 	env_splashsource = env_get("splashsource");
-	if (env_splashsource == NULL)
-		return &locations[0];
+	ఒకవేళ (env_splashsource == ఖాళీ)
+		తిరిగి &locations[0];
 
-	for (i = 0; i < size; i++) {
-		if (!strcmp(locations[i].name, env_splashsource))
-			return &locations[i];
+	కొరకు (i = 0; i < కొలత; i++) {
+		ఒకవేళ (!strcmp(locations[i].name, env_splashsource))
+			తిరిగి &locations[i];
 	}
 
-	printf("splashsource env variable set to unsupported value\n");
-	return NULL;
+	రాయి("splashsource env variable set to unsupported value\n");
+	తిరిగి ఖాళీ;
 }
 
-#ifdef CONFIG_FIT
-static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr)
+#నిర్వచితమైతే CONFIG_FIT
+స్థిర పూర్ణాంకం splash_ఎక్కించు_fit(నిర్మాణం splash_location *location, ulong bmp_ఎక్కించు_addr)
 {
-	int res;
-	int node_offset;
-	const char *splash_file;
-	const void *internal_splash_data;
-	size_t internal_splash_size;
-	int external_splash_addr;
-	u32 external_splash_size;
+	పూర్ణాంకం res;
+	పూర్ణాంకం కణుపు_స్థానభ్రంశం;
+	స్థిరరాశి అక్షరం *splash_file;
+	స్థిరరాశి శూన్య *అంతర్గత_splash_దత్తాంశం;
+	size_t అంతర్గత_splash_కొలత;
+	పూర్ణాంకం external_splash_addr;
+	u32 external_splash_కొలత;
 	bool is_splash_external = false;
-	struct legacy_img_hdr *img_header;
-	const u32 *fit_header;
-	u32 fit_size;
-	const size_t header_size = sizeof(struct legacy_img_hdr);
+	నిర్మాణం legacy_img_hdr *img_శీర్షిక;
+	స్థిరరాశి u32 *fit_శీర్షిక;
+	u32 fit_కొలత;
+	స్థిరరాశి size_t శీర్షిక_కొలత = పరిమాణం(నిర్మాణం legacy_img_hdr);
 
 	/* Read in image header */
-	res = splash_storage_read_raw(location, bmp_load_addr, header_size);
-	if (res < 0)
-		return res;
+	res = splash_storage_read_raw(location, bmp_ఎక్కించు_addr, శీర్షిక_కొలత);
+	ఒకవేళ (res < 0)
+		తిరిగి res;
 
-	img_header = (struct legacy_img_hdr *)(uintptr_t)bmp_load_addr;
-	if (image_get_magic(img_header) != FDT_MAGIC) {
-		printf("Could not find FDT magic\n");
-		return -EINVAL;
+	img_శీర్షిక = (నిర్మాణం legacy_img_hdr *)(uintptr_t)bmp_ఎక్కించు_addr;
+	ఒకవేళ (image_get_magic(img_శీర్షిక) != FDT_MAGIC) {
+		రాయి("Could not find FDT magic\n");
+		తిరిగి -EINVAL;
 	}
 
-	fit_size = fdt_totalsize(img_header);
+	fit_కొలత = fdt_totalsize(img_శీర్షిక);
 
 	/* Read in entire FIT */
-	fit_header = (const u32 *)(bmp_load_addr + header_size);
-	res = splash_storage_read_raw(location, (uintptr_t)fit_header, fit_size);
-	if (res < 0)
-		return res;
+	fit_శీర్షిక = (స్థిరరాశి u32 *)(bmp_ఎక్కించు_addr + శీర్షిక_కొలత);
+	res = splash_storage_read_raw(location, (uintptr_t)fit_శీర్షిక, fit_కొలత);
+	ఒకవేళ (res < 0)
+		తిరిగి res;
 
-	res = fit_check_format(fit_header, IMAGE_SIZE_INVAL);
-	if (res) {
+	res = fit_check_format(fit_శీర్షిక, IMAGE_కొలత_INVAL);
+	ఒకవేళ (res) {
 		debug("Could not find valid FIT image\n");
-		return res;
+		తిరిగి res;
 	}
 
 	/* Get the splash image node */
 	splash_file = env_get("splashfile");
-	if (!splash_file)
-		splash_file = SPLASH_SOURCE_DEFAULT_FILE_NAME;
+	ఒకవేళ (!splash_file)
+		splash_file = SPLASH_ఆధారం_DEFAULT_FILE_NAME;
 
-	node_offset = fit_image_get_node(fit_header, splash_file);
-	if (node_offset < 0) {
+	కణుపు_స్థానభ్రంశం = fit_image_get_కణుపు(fit_శీర్షిక, splash_file);
+	ఒకవేళ (కణుపు_స్థానభ్రంశం < 0) {
 		debug("Could not find splash image '%s' in FIT\n",
 		      splash_file);
-		return -ENOENT;
+		తిరిగి -ENOENT;
 	}
 
 	/* Extract the splash data from FIT */
-	if (!fit_image_get_data(fit_header, node_offset, &internal_splash_data,
-				&internal_splash_size)) {
-		memmove((void *)(uintptr_t)bmp_load_addr, internal_splash_data,
-			internal_splash_size);
-	} else {
-		printf("Failed to get splash image from FIT\n");
-		return -ENODATA;
+	ఒకవేళ (!fit_image_get_దత్తాంశం(fit_శీర్షిక, కణుపు_స్థానభ్రంశం, &అంతర్గత_splash_దత్తాంశం,
+				&అంతర్గత_splash_కొలత)) {
+		memmove((శూన్య *)(uintptr_t)bmp_ఎక్కించు_addr, అంతర్గత_splash_దత్తాంశం,
+			అంతర్గత_splash_కొలత);
+	} లేకపోతే {
+		రాయి("Failed to get splash image from FIT\n");
+		తిరిగి -ENODATA;
 	}
 
-	if (is_splash_external) {
-		res = fit_image_get_data_size(fit_header, node_offset, &external_splash_size);
-		if (res < 0) {
-			printf("Failed to get size of splash image (err=%d)\n", res);
-			return res;
+	ఒకవేళ (is_splash_external) {
+		res = fit_image_get_దత్తాంశం_కొలత(fit_శీర్షిక, కణుపు_స్థానభ్రంశం, &external_splash_కొలత);
+		ఒకవేళ (res < 0) {
+			రాయి("Failed to get size of splash image (err=%d)\n", res);
+			తిరిగి res;
 		}
 
 		/* Read in the splash data */
-		location->offset = external_splash_addr;
-		res = splash_storage_read_raw(location, bmp_load_addr, external_splash_size);
-		if (res < 0)
-			return res;
+		location->స్థానభ్రంశం = external_splash_addr;
+		res = splash_storage_read_raw(location, bmp_ఎక్కించు_addr, external_splash_కొలత);
+		ఒకవేళ (res < 0)
+			తిరిగి res;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
-#endif /* CONFIG_FIT */
+#అయితే_ముగింపు /* CONFIG_FIT */
 
 /**
  * splash_source_load - load splash image from a supported location.
@@ -435,38 +435,38 @@ static int splash_load_fit(struct splash_location *location, ulong bmp_load_addr
  *
  * @return: 0 on success, negative value on failure.
  */
-int splash_source_load(struct splash_location *locations, uint size)
+పూర్ణాంకం splash_ఆధారం_ఎక్కించు(నిర్మాణం splash_location *locations, uint కొలత)
 {
-	struct splash_location *splash_location;
-	char *env_splashimage_value;
-	char *devpart;
-	ulong bmp_load_addr;
+	నిర్మాణం splash_location *splash_location;
+	అక్షరం *env_splashimage_విలువ;
+	అక్షరం *devpart;
+	ulong bmp_ఎక్కించు_addr;
 
-	env_splashimage_value = env_get("splashimage");
-	if (env_splashimage_value == NULL)
-		return -ENOENT;
+	env_splashimage_విలువ = env_get("splashimage");
+	ఒకవేళ (env_splashimage_విలువ == ఖాళీ)
+		తిరిగి -ENOENT;
 
-	bmp_load_addr = hextoul(env_splashimage_value, 0);
-	if (bmp_load_addr == 0) {
-		printf("Error: bad splashimage address specified\n");
-		return -EFAULT;
+	bmp_ఎక్కించు_addr = hextoul(env_splashimage_విలువ, 0);
+	ఒకవేళ (bmp_ఎక్కించు_addr == 0) {
+		రాయి("Error: bad splashimage address specified\n");
+		తిరిగి -EFAULT;
 	}
 
-	splash_location = select_splash_location(locations, size);
-	if (!splash_location)
-		return -EINVAL;
+	splash_location = select_splash_location(locations, కొలత);
+	ఒకవేళ (!splash_location)
+		తిరిగి -EINVAL;
 
 	devpart = env_get("splashdevpart");
-	if (devpart)
+	ఒకవేళ (devpart)
 		splash_location->devpart = devpart;
 
-	if (splash_location->flags == SPLASH_STORAGE_RAW)
-		return splash_load_raw(splash_location, bmp_load_addr);
-	else if (splash_location->flags == SPLASH_STORAGE_FS)
-		return splash_load_fs(splash_location, bmp_load_addr);
-#ifdef CONFIG_FIT
-	else if (splash_location->flags == SPLASH_STORAGE_FIT)
-		return splash_load_fit(splash_location, bmp_load_addr);
-#endif
-	return -EINVAL;
+	ఒకవేళ (splash_location->flags == SPLASH_STORAGE_RAW)
+		తిరిగి splash_ఎక్కించు_raw(splash_location, bmp_ఎక్కించు_addr);
+	లేకపోతే ఒకవేళ (splash_location->flags == SPLASH_STORAGE_FS)
+		తిరిగి splash_ఎక్కించు_fs(splash_location, bmp_ఎక్కించు_addr);
+#నిర్వచితమైతే CONFIG_FIT
+	లేకపోతే ఒకవేళ (splash_location->flags == SPLASH_STORAGE_FIT)
+		తిరిగి splash_ఎక్కించు_fit(splash_location, bmp_ఎక్కించు_addr);
+#అయితే_ముగింపు
+	తిరిగి -EINVAL;
 }

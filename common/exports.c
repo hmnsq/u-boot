@@ -1,23 +1,23 @@
-#include <command.h>
-#include <exports.h>
-#include <malloc.h>
-#include <spi.h>
-#include <i2c.h>
-#include <asm/global_data.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <exports.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <spi.h>
+#అన్తర్భావ <i2c.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-unsigned long get_version(void)
+గుర్తులేని దీర్ఘ get_సంస్కరణ(శూన్య)
 {
-	return XF_VERSION;
+	తిరిగి XF_సంస్కరణ;
 }
 
-#define EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
+#నిర్వచించు EXPORT_FUNC(f, a, x, ...)  gd->jt->x = f;
 
-int jumptable_init(void)
+పూర్ణాంకం jumptable_init(శూన్య)
 {
-	gd->jt = malloc(sizeof(struct jt_funcs));
-#include <_exports.h>
+	gd->jt = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం jt_funcs));
+#అన్తర్భావ <_exports.h>
 
-	return 0;
+	తిరిగి 0;
 }

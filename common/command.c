@@ -8,223 +8,223 @@
  *  Command Processor Table
  */
 
-#include <config.h>
-#include <compiler.h>
-#include <command.h>
-#include <console.h>
-#include <env.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <linux/ctype.h>
+#అన్తర్భావ <config.h>
+#అన్తర్భావ <compiler.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <console.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <linux/ctype.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
 /*
  * Use puts() instead of printf() to avoid printf buffer overflow
  * for long help messages
  */
 
-int _do_help(struct cmd_tbl *cmd_start, int cmd_items, struct cmd_tbl *cmdtp,
-	     int flag, int argc, char *const argv[])
+పూర్ణాంకం _do_help(నిర్మాణం cmd_tbl *cmd_ప్రారంభం, పూర్ణాంకం cmd_వస్తువులు, నిర్మాణం cmd_tbl *cmdtp,
+	     పూర్ణాంకం flag, పూర్ణాంకం argc, అక్షరం *స్థిరరాశి argv[])
 {
-	int i;
-	int rcode = 0;
+	పూర్ణాంకం i;
+	పూర్ణాంకం rcode = 0;
 
-	if (argc == 1) {	/* show list of commands */
-		struct cmd_tbl *cmd_array[cmd_items];
-		int i, j, swaps;
+	ఒకవేళ (argc == 1) {	/* show list of commands */
+		నిర్మాణం cmd_tbl *cmd_array[cmd_వస్తువులు];
+		పూర్ణాంకం i, j, swaps;
 
 		/* Make array of commands from .uboot_cmd section */
-		cmdtp = cmd_start;
-		for (i = 0; i < cmd_items; i++) {
+		cmdtp = cmd_ప్రారంభం;
+		కొరకు (i = 0; i < cmd_వస్తువులు; i++) {
 			cmd_array[i] = cmdtp++;
 		}
 
 		/* Sort command list (trivial bubble sort) */
-		for (i = cmd_items - 1; i > 0; --i) {
+		కొరకు (i = cmd_వస్తువులు - 1; i > 0; --i) {
 			swaps = 0;
-			for (j = 0; j < i; ++j) {
-				if (strcmp(cmd_array[j]->name,
+			కొరకు (j = 0; j < i; ++j) {
+				ఒకవేళ (strcmp(cmd_array[j]->name,
 					   cmd_array[j + 1]->name) > 0) {
-					struct cmd_tbl *tmp;
+					నిర్మాణం cmd_tbl *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
 					cmd_array[j + 1] = tmp;
 					++swaps;
 				}
 			}
-			if (!swaps)
-				break;
+			ఒకవేళ (!swaps)
+				ఆపు;
 		}
 
 		/* print short help (usage) */
-		for (i = 0; i < cmd_items; i++) {
-			const char *usage = cmd_array[i]->usage;
+		కొరకు (i = 0; i < cmd_వస్తువులు; i++) {
+			స్థిరరాశి అక్షరం *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc())
-				return 1;
-			if (usage == NULL)
-				continue;
-			printf("%-*s- %s\n", CFG_SYS_HELP_CMD_WIDTH,
+			ఒకవేళ (ctrlc())
+				తిరిగి 1;
+			ఒకవేళ (usage == ఖాళీ)
+				కొనసాగు;
+			రాయి("%-*s- %s\n", CFG_SYS_HELP_CMD_వెడల్పు,
 			       cmd_array[i]->name, usage);
 		}
-		return 0;
+		తిరిగి 0;
 	}
 	/*
 	 * command help (long version)
 	 */
-	for (i = 1; i < argc; ++i) {
-		cmdtp = find_cmd_tbl(argv[i], cmd_start, cmd_items);
-		if (cmdtp != NULL) {
+	కొరకు (i = 1; i < argc; ++i) {
+		cmdtp = కనుగొను_cmd_tbl(argv[i], cmd_ప్రారంభం, cmd_వస్తువులు);
+		ఒకవేళ (cmdtp != ఖాళీ) {
 			rcode |= cmd_usage(cmdtp);
-		} else {
-			printf("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
+		} లేకపోతే {
+			రాయి("Unknown command '%s' - try 'help' without arguments for list of all known commands\n\n",
 			       argv[i]);
 			rcode = 1;
 		}
 	}
-	return rcode;
+	తిరిగి rcode;
 }
 
 /* find command table entry for a command */
-struct cmd_tbl *find_cmd_tbl(const char *cmd, struct cmd_tbl *table,
-			     int table_len)
+నిర్మాణం cmd_tbl *కనుగొను_cmd_tbl(స్థిరరాశి అక్షరం *cmd, నిర్మాణం cmd_tbl *పట్టిక,
+			     పూర్ణాంకం పట్టిక_len)
 {
-#ifdef CONFIG_CMDLINE
-	struct cmd_tbl *cmdtp;
-	struct cmd_tbl *cmdtp_temp = table;	/* Init value */
-	const char *p;
-	int len;
-	int n_found = 0;
+#నిర్వచితమైతే CONFIG_CMDLINE
+	నిర్మాణం cmd_tbl *cmdtp;
+	నిర్మాణం cmd_tbl *cmdtp_తాత్కాలిక = పట్టిక;	/* Init value */
+	స్థిరరాశి అక్షరం *p;
+	పూర్ణాంకం len;
+	పూర్ణాంకం n_దొరికింది = 0;
 
-	if (!cmd)
-		return NULL;
+	ఒకవేళ (!cmd)
+		తిరిగి ఖాళీ;
 	/*
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == ఖాళీ) ? అక్షరశ్రేణి_పొడవు (cmd) : (p - cmd);
 
-	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
-		if (strncmp(cmd, cmdtp->name, len) == 0) {
-			if (len == strlen(cmdtp->name))
-				return cmdtp;	/* full match */
+	కొరకు (cmdtp = పట్టిక; cmdtp != పట్టిక + పట్టిక_len; cmdtp++) {
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(cmd, cmdtp->name, len) == 0) {
+			ఒకవేళ (len == అక్షరశ్రేణి_పొడవు(cmdtp->name))
+				తిరిగి cmdtp;	/* full match */
 
-			cmdtp_temp = cmdtp;	/* abbreviated command ? */
-			n_found++;
+			cmdtp_తాత్కాలిక = cmdtp;	/* abbreviated command ? */
+			n_దొరికింది++;
 		}
 	}
-	if (n_found == 1) {			/* exactly one match */
-		return cmdtp_temp;
+	ఒకవేళ (n_దొరికింది == 1) {			/* exactly one match */
+		తిరిగి cmdtp_తాత్కాలిక;
 	}
-#endif /* CONFIG_CMDLINE */
+#అయితే_ముగింపు /* CONFIG_CMDLINE */
 
-	return NULL;	/* not found or ambiguous command */
+	తిరిగి ఖాళీ;	/* not found or ambiguous command */
 }
 
-struct cmd_tbl *find_cmd(const char *cmd)
+నిర్మాణం cmd_tbl *కనుగొను_cmd(స్థిరరాశి అక్షరం *cmd)
 {
-	struct cmd_tbl *start = ll_entry_start(struct cmd_tbl, cmd);
-	const int len = ll_entry_count(struct cmd_tbl, cmd);
-	return find_cmd_tbl(cmd, start, len);
+	నిర్మాణం cmd_tbl *ప్రారంభం = ll_నమోదు_ప్రారంభం(నిర్మాణం cmd_tbl, cmd);
+	స్థిరరాశి పూర్ణాంకం len = ll_నమోదు_లెక్క(నిర్మాణం cmd_tbl, cmd);
+	తిరిగి కనుగొను_cmd_tbl(cmd, ప్రారంభం, len);
 }
 
-int cmd_usage(const struct cmd_tbl *cmdtp)
+పూర్ణాంకం cmd_usage(స్థిరరాశి నిర్మాణం cmd_tbl *cmdtp)
 {
-	printf("%s - %s\n\n", cmdtp->name, cmdtp->usage);
+	రాయి("%s - %s\n\n", cmdtp->name, cmdtp->usage);
 
-#ifdef	CONFIG_SYS_LONGHELP
-	printf("Usage:\n%s ", cmdtp->name);
+#నిర్వచితమైతే	CONFIG_SYS_LONGHELP
+	రాయి("Usage:\n%s ", cmdtp->name);
 
-	if (!cmdtp->help) {
+	ఒకవేళ (!cmdtp->help) {
 		puts ("- No additional help available.\n");
-		return 1;
+		తిరిగి 1;
 	}
 
 	puts(cmdtp->help);
 	putc('\n');
-#endif	/* CONFIG_SYS_LONGHELP */
-	return 1;
+#అయితే_ముగింపు	/* CONFIG_SYS_LONGHELP */
+	తిరిగి 1;
 }
 
-#ifdef CONFIG_AUTO_COMPLETE
-static char env_complete_buf[512];
+#నిర్వచితమైతే CONFIG_AUTO_COMPLETE
+స్థిర అక్షరం env_complete_buf[512];
 
-int var_complete(int argc, char *const argv[], char last_char, int maxv,
-		 char *cmdv[])
+పూర్ణాంకం var_complete(పూర్ణాంకం argc, అక్షరం *స్థిరరాశి argv[], అక్షరం చివరి_char, పూర్ణాంకం maxv,
+		 అక్షరం *cmdv[])
 {
-	int space;
+	పూర్ణాంకం space;
 
-	space = last_char == '\0' || isblank(last_char);
+	space = చివరి_char == '\0' || isblank(చివరి_char);
 
-	if (space && argc == 1)
-		return env_complete("", maxv, cmdv, sizeof(env_complete_buf),
+	ఒకవేళ (space && argc == 1)
+		తిరిగి env_complete("", maxv, cmdv, పరిమాణం(env_complete_buf),
 				    env_complete_buf, false);
 
-	if (!space && argc == 2)
-		return env_complete(argv[1], maxv, cmdv,
-				    sizeof(env_complete_buf),
+	ఒకవేళ (!space && argc == 2)
+		తిరిగి env_complete(argv[1], maxv, cmdv,
+				    పరిమాణం(env_complete_buf),
 				    env_complete_buf, false);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int dollar_complete(int argc, char *const argv[], char last_char,
-			   int maxv, char *cmdv[])
+స్థిర పూర్ణాంకం dollar_complete(పూర్ణాంకం argc, అక్షరం *స్థిరరాశి argv[], అక్షరం చివరి_char,
+			   పూర్ణాంకం maxv, అక్షరం *cmdv[])
 {
 	/* Make sure the last argument starts with a $. */
-	if (argc < 1 || argv[argc - 1][0] != '$' ||
-	    last_char == '\0' || isblank(last_char))
-		return 0;
+	ఒకవేళ (argc < 1 || argv[argc - 1][0] != '$' ||
+	    చివరి_char == '\0' || isblank(చివరి_char))
+		తిరిగి 0;
 
-	return env_complete(argv[argc - 1], maxv, cmdv, sizeof(env_complete_buf),
+	తిరిగి env_complete(argv[argc - 1], maxv, cmdv, పరిమాణం(env_complete_buf),
 			    env_complete_buf, true);
 }
 
 /*************************************************************************************/
 
-int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
-		     char *const argv[], char last_char,
-		     int maxv, char *cmdv[])
+పూర్ణాంకం complete_subcmdv(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం లెక్క, పూర్ణాంకం argc,
+		     అక్షరం *స్థిరరాశి argv[], అక్షరం చివరి_char,
+		     పూర్ణాంకం maxv, అక్షరం *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	const struct cmd_tbl *cmdend = cmdtp + count;
-	const char *p;
-	int len, clen;
-	int n_found = 0;
-	const char *cmd;
+#నిర్వచితమైతే CONFIG_CMDLINE
+	స్థిరరాశి నిర్మాణం cmd_tbl *cmdend = cmdtp + లెక్క;
+	స్థిరరాశి అక్షరం *p;
+	పూర్ణాంకం len, clen;
+	పూర్ణాంకం n_దొరికింది = 0;
+	స్థిరరాశి అక్షరం *cmd;
 
 	/* sanity? */
-	if (maxv < 2)
-		return -2;
+	ఒకవేళ (maxv < 2)
+		తిరిగి -2;
 
-	cmdv[0] = NULL;
+	cmdv[0] = ఖాళీ;
 
-	if (argc == 0) {
+	ఒకవేళ (argc == 0) {
 		/* output full list of commands */
-		for (; cmdtp != cmdend; cmdtp++) {
-			if (n_found >= maxv - 2) {
-				cmdv[n_found++] = "...";
-				break;
+		కొరకు (; cmdtp != cmdend; cmdtp++) {
+			ఒకవేళ (n_దొరికింది >= maxv - 2) {
+				cmdv[n_దొరికింది++] = "...";
+				ఆపు;
 			}
-			cmdv[n_found++] = cmdtp->name;
+			cmdv[n_దొరికింది++] = cmdtp->name;
 		}
-		cmdv[n_found] = NULL;
-		return n_found;
+		cmdv[n_దొరికింది] = ఖాళీ;
+		తిరిగి n_దొరికింది;
 	}
 
 	/* more than one arg or one but the start of the next */
-	if (argc > 1 || last_char == '\0' || isblank(last_char)) {
-		cmdtp = find_cmd_tbl(argv[0], cmdtp, count);
-		if (cmdtp == NULL || cmdtp->complete == NULL) {
-			cmdv[0] = NULL;
-			return 0;
+	ఒకవేళ (argc > 1 || చివరి_char == '\0' || isblank(చివరి_char)) {
+		cmdtp = కనుగొను_cmd_tbl(argv[0], cmdtp, లెక్క);
+		ఒకవేళ (cmdtp == ఖాళీ || cmdtp->complete == ఖాళీ) {
+			cmdv[0] = ఖాళీ;
+			తిరిగి 0;
 		}
-		return (*cmdtp->complete)(argc, argv, last_char, maxv, cmdv);
+		తిరిగి (*cmdtp->complete)(argc, argv, చివరి_char, maxv, cmdv);
 	}
 
 	cmd = argv[0];
@@ -233,337 +233,337 @@ int complete_subcmdv(struct cmd_tbl *cmdtp, int count, int argc,
 	 * compare command name only until first dot.
 	 */
 	p = strchr(cmd, '.');
-	if (p == NULL)
-		len = strlen(cmd);
-	else
+	ఒకవేళ (p == ఖాళీ)
+		len = అక్షరశ్రేణి_పొడవు(cmd);
+	లేకపోతే
 		len = p - cmd;
 
 	/* return the partial matches */
-	for (; cmdtp != cmdend; cmdtp++) {
+	కొరకు (; cmdtp != cmdend; cmdtp++) {
 
-		clen = strlen(cmdtp->name);
-		if (clen < len)
-			continue;
+		clen = అక్షరశ్రేణి_పొడవు(cmdtp->name);
+		ఒకవేళ (clen < len)
+			కొనసాగు;
 
-		if (memcmp(cmd, cmdtp->name, len) != 0)
-			continue;
+		ఒకవేళ (memcmp(cmd, cmdtp->name, len) != 0)
+			కొనసాగు;
 
 		/* too many! */
-		if (n_found >= maxv - 2) {
-			cmdv[n_found++] = "...";
-			break;
+		ఒకవేళ (n_దొరికింది >= maxv - 2) {
+			cmdv[n_దొరికింది++] = "...";
+			ఆపు;
 		}
 
-		cmdv[n_found++] = cmdtp->name;
+		cmdv[n_దొరికింది++] = cmdtp->name;
 	}
 
-	cmdv[n_found] = NULL;
-	return n_found;
-#else
-	return 0;
-#endif
+	cmdv[n_దొరికింది] = ఖాళీ;
+	తిరిగి n_దొరికింది;
+#లేకపోతే
+	తిరిగి 0;
+#అయితే_ముగింపు
 }
 
-static int complete_cmdv(int argc, char *const argv[], char last_char,
-			 int maxv, char *cmdv[])
+స్థిర పూర్ణాంకం complete_cmdv(పూర్ణాంకం argc, అక్షరం *స్థిరరాశి argv[], అక్షరం చివరి_char,
+			 పూర్ణాంకం maxv, అక్షరం *cmdv[])
 {
-#ifdef CONFIG_CMDLINE
-	return complete_subcmdv(ll_entry_start(struct cmd_tbl, cmd),
-				ll_entry_count(struct cmd_tbl, cmd), argc, argv,
-				last_char, maxv, cmdv);
-#else
-	return 0;
-#endif
+#నిర్వచితమైతే CONFIG_CMDLINE
+	తిరిగి complete_subcmdv(ll_నమోదు_ప్రారంభం(నిర్మాణం cmd_tbl, cmd),
+				ll_నమోదు_లెక్క(నిర్మాణం cmd_tbl, cmd), argc, argv,
+				చివరి_char, maxv, cmdv);
+#లేకపోతే
+	తిరిగి 0;
+#అయితే_ముగింపు
 }
 
-static int make_argv(char *s, int argvsz, char *argv[])
+స్థిర పూర్ణాంకం make_argv(అక్షరం *s, పూర్ణాంకం argvsz, అక్షరం *argv[])
 {
-	int argc = 0;
+	పూర్ణాంకం argc = 0;
 
 	/* split into argv */
-	while (argc < argvsz - 1) {
+	అయితే (argc < argvsz - 1) {
 
 		/* skip any white space */
-		while (isblank(*s))
+		అయితే (isblank(*s))
 			++s;
 
-		if (*s == '\0')	/* end of s, no more args	*/
-			break;
+		ఒకవేళ (*s == '\0')	/* end of s, no more args	*/
+			ఆపు;
 
 		argv[argc++] = s;	/* begin of argument string	*/
 
 		/* find end of string */
-		while (*s && !isblank(*s))
+		అయితే (*s && !isblank(*s))
 			++s;
 
-		if (*s == '\0')		/* end of s, no more args	*/
-			break;
+		ఒకవేళ (*s == '\0')		/* end of s, no more args	*/
+			ఆపు;
 
 		*s++ = '\0';		/* terminate current arg	 */
 	}
-	argv[argc] = NULL;
+	argv[argc] = ఖాళీ;
 
-	return argc;
+	తిరిగి argc;
 }
 
-static void print_argv(const char *banner, const char *leader, const char *sep,
-		       int linemax, char *const argv[])
+స్థిర శూన్య print_argv(స్థిరరాశి అక్షరం *banner, స్థిరరాశి అక్షరం *leader, స్థిరరాశి అక్షరం *sep,
+		       పూర్ణాంకం linemax, అక్షరం *స్థిరరాశి argv[])
 {
-	int ll = leader != NULL ? strlen(leader) : 0;
-	int sl = sep != NULL ? strlen(sep) : 0;
-	int len, i;
+	పూర్ణాంకం ll = leader != ఖాళీ ? అక్షరశ్రేణి_పొడవు(leader) : 0;
+	పూర్ణాంకం sl = sep != ఖాళీ ? అక్షరశ్రేణి_పొడవు(sep) : 0;
+	పూర్ణాంకం len, i;
 
-	if (banner) {
+	ఒకవేళ (banner) {
 		puts("\n");
 		puts(banner);
 	}
 
 	i = linemax;	/* force leader and newline */
-	while (*argv != NULL) {
-		len = strlen(*argv) + sl;
-		if (i + len >= linemax) {
+	అయితే (*argv != ఖాళీ) {
+		len = అక్షరశ్రేణి_పొడవు(*argv) + sl;
+		ఒకవేళ (i + len >= linemax) {
 			puts("\n");
-			if (leader)
+			ఒకవేళ (leader)
 				puts(leader);
 			i = ll - sl;
-		} else if (sep)
+		} లేకపోతే ఒకవేళ (sep)
 			puts(sep);
 		puts(*argv++);
 		i += len;
 	}
-	printf("\n");
+	రాయి("\n");
 }
 
-static int find_common_prefix(char *const argv[])
+స్థిర పూర్ణాంకం కనుగొను_common_ఉపసర్గ(అక్షరం *స్థిరరాశి argv[])
 {
-	int i, len;
-	char *anchor, *s, *t;
+	పూర్ణాంకం i, len;
+	అక్షరం *anchor, *s, *t;
 
-	if (*argv == NULL)
-		return 0;
+	ఒకవేళ (*argv == ఖాళీ)
+		తిరిగి 0;
 
 	/* begin with max */
 	anchor = *argv++;
-	len = strlen(anchor);
-	while ((t = *argv++) != NULL) {
+	len = అక్షరశ్రేణి_పొడవు(anchor);
+	అయితే ((t = *argv++) != ఖాళీ) {
 		s = anchor;
-		for (i = 0; i < len; i++, t++, s++) {
-			if (*t != *s)
-				break;
+		కొరకు (i = 0; i < len; i++, t++, s++) {
+			ఒకవేళ (*t != *s)
+				ఆపు;
 		}
 		len = s - anchor;
 	}
-	return len;
+	తిరిగి len;
 }
 
-int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
+పూర్ణాంకం cmd_auto_complete(స్థిరరాశి అక్షరం *స్థిరరాశి prompt, అక్షరం *buf, పూర్ణాంకం *np, పూర్ణాంకం *colp)
 {
-	char tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
-	int n = *np, col = *colp;
-	char *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
-	char *cmdv[20];
-	char *s, *t;
-	const char *sep;
-	int i, j, k, len, seplen, argc;
-	int cnt;
-	char last_char;
-	const char *ps_prompt;
+	అక్షరం tmp_buf[CONFIG_SYS_CBSIZE + 1];	/* copy of console I/O buffer */
+	పూర్ణాంకం n = *np, నిలువు = *colp;
+	అక్షరం *argv[CONFIG_SYS_MAXARGS + 1];		/* NULL terminated	*/
+	అక్షరం *cmdv[20];
+	అక్షరం *s, *t;
+	స్థిరరాశి అక్షరం *sep;
+	పూర్ణాంకం i, j, k, len, seplen, argc;
+	పూర్ణాంకం cnt;
+	అక్షరం చివరి_char;
+	స్థిరరాశి అక్షరం *ps_prompt;
 
-	if (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
+	ఒకవేళ (IS_ENABLED(CONFIG_CMDLINE_PS_SUPPORT)) {
 		ps_prompt = env_get("PS1");
 
-		if (!ps_prompt)
+		ఒకవేళ (!ps_prompt)
 			ps_prompt = CONFIG_SYS_PROMPT;
-	} else
+	} లేకపోతే
 		ps_prompt = CONFIG_SYS_PROMPT;
 
-	if (strcmp(prompt, ps_prompt) != 0)
-		return 0;	/* not in normal console */
+	ఒకవేళ (strcmp(prompt, ps_prompt) != 0)
+		తిరిగి 0;	/* not in normal console */
 
-	cnt = strlen(buf);
-	if (cnt >= 1)
-		last_char = buf[cnt - 1];
-	else
-		last_char = '\0';
+	cnt = అక్షరశ్రేణి_పొడవు(buf);
+	ఒకవేళ (cnt >= 1)
+		చివరి_char = buf[cnt - 1];
+	లేకపోతే
+		చివరి_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
 	strcpy(tmp_buf, buf);
 
 	/* separate into argv */
-	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);
+	argc = make_argv(tmp_buf, పరిమాణం(argv)/పరిమాణం(argv[0]), argv);
 
 	/* first try a $ completion */
-	i = dollar_complete(argc, argv, last_char,
-			    sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
-	if (!i) {
+	i = dollar_complete(argc, argv, చివరి_char,
+			    పరిమాణం(cmdv) / పరిమాణం(cmdv[0]), cmdv);
+	ఒకవేళ (!i) {
 		/* do the completion and return the possible completions */
-		i = complete_cmdv(argc, argv, last_char,
-				  sizeof(cmdv) / sizeof(cmdv[0]), cmdv);
+		i = complete_cmdv(argc, argv, చివరి_char,
+				  పరిమాణం(cmdv) / పరిమాణం(cmdv[0]), cmdv);
 	}
 
 	/* no match; bell and out */
-	if (i == 0) {
-		if (argc > 1)	/* allow tab for non command */
-			return 0;
+	ఒకవేళ (i == 0) {
+		ఒకవేళ (argc > 1)	/* allow tab for non command */
+			తిరిగి 0;
 		putc('\a');
-		return 1;
+		తిరిగి 1;
 	}
 
-	s = NULL;
+	s = ఖాళీ;
 	len = 0;
-	sep = NULL;
+	sep = ఖాళీ;
 	seplen = 0;
-	if (i == 1) { /* one match; perfect */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	ఒకవేళ (i == 1) { /* one match; perfect */
+		ఒకవేళ (చివరి_char != '\0' && !isblank(చివరి_char))
+			k = అక్షరశ్రేణి_పొడవు(argv[argc - 1]);
+		లేకపోతే
 			k = 0;
 
 		s = cmdv[0] + k;
-		len = strlen(s);
+		len = అక్షరశ్రేణి_పొడవు(s);
 		sep = " ";
 		seplen = 1;
-	} else if (i > 1 && (j = find_common_prefix(cmdv)) != 0) { /* more */
-		if (last_char != '\0' && !isblank(last_char))
-			k = strlen(argv[argc - 1]);
-		else
+	} లేకపోతే ఒకవేళ (i > 1 && (j = కనుగొను_common_ఉపసర్గ(cmdv)) != 0) { /*మరిన్ని*/
+		ఒకవేళ (చివరి_char != '\0' && !isblank(చివరి_char))
+			k = అక్షరశ్రేణి_పొడవు(argv[argc - 1]);
+		లేకపోతే
 			k = 0;
 
 		j -= k;
-		if (j > 0) {
+		ఒకవేళ (j > 0) {
 			s = cmdv[0] + k;
 			len = j;
 		}
 	}
 
-	if (s != NULL) {
+	ఒకవేళ (s != ఖాళీ) {
 		k = len + seplen;
 		/* make sure it fits */
-		if (n + k >= CONFIG_SYS_CBSIZE - 2) {
+		ఒకవేళ (n + k >= CONFIG_SYS_CBSIZE - 2) {
 			putc('\a');
-			return 1;
+			తిరిగి 1;
 		}
 
 		t = buf + cnt;
-		for (i = 0; i < len; i++)
+		కొరకు (i = 0; i < len; i++)
 			*t++ = *s++;
-		if (sep != NULL)
-			for (i = 0; i < seplen; i++)
+		ఒకవేళ (sep != ఖాళీ)
+			కొరకు (i = 0; i < seplen; i++)
 				*t++ = sep[i];
 		*t = '\0';
 		n += k;
-		col += k;
+		నిలువు += k;
 		puts(t - k);
-		if (sep == NULL)
+		ఒకవేళ (sep == ఖాళీ)
 			putc('\a');
 		*np = n;
-		*colp = col;
-	} else {
-		print_argv(NULL, "  ", " ", 78, cmdv);
+		*colp = నిలువు;
+	} లేకపోతే {
+		print_argv(ఖాళీ, "  ", " ", 78, cmdv);
 
 		puts(prompt);
 		puts(buf);
 	}
-	return 1;
+	తిరిగి 1;
 }
 
-#endif
+#అయితే_ముగింపు
 
-#ifdef CMD_DATA_SIZE
-int cmd_get_data_size(const char *arg, int default_size)
+#నిర్వచితమైతే CMD_దత్తాంశం_కొలత
+పూర్ణాంకం cmd_get_దత్తాంశం_కొలత(స్థిరరాశి అక్షరం *arg, పూర్ణాంకం default_కొలత)
 {
 	/* Check for a size specification .b, .w or .l.
 	 */
-	int len = strlen(arg);
-	if (len >= 2 && arg[len-2] == '.') {
-		switch (arg[len-1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return CMD_DATA_SIZE_STR;
-		case 'q':
-			if (MEM_SUPPORT_64BIT_DATA)
-				return 8;
+	పూర్ణాంకం len = అక్షరశ్రేణి_పొడవు(arg);
+	ఒకవేళ (len >= 2 && arg[len-2] == '.') {
+		ఎంపిక (arg[len-1]) {
+		స్థితి 'b':
+			తిరిగి 1;
+		స్థితి 'w':
+			తిరిగి 2;
+		స్థితి 'l':
+			తిరిగి 4;
+		స్థితి 's':
+			తిరిగి CMD_దత్తాంశం_కొలత_STR;
+		స్థితి 'q':
+			ఒకవేళ (MEM_SUPPORT_64_బిట్టు_దత్తాంశం)
+				తిరిగి 8;
 			fallthrough;
-		default:
-			return CMD_DATA_SIZE_ERR;
+		అప్రమేయ:
+			తిరిగి CMD_దత్తాంశం_కొలత_ERR;
 		}
 	}
-	return default_size;
+	తిరిగి default_కొలత;
 }
-#endif
+#అయితే_ముగింపు
 
-void fixup_cmdtable(struct cmd_tbl *cmdtp, int size)
+శూన్య fixup_cmdtable(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం కొలత)
 {
-	int	i;
+	పూర్ణాంకం	i;
 
-	if (gd->reloc_off == 0)
-		return;
+	ఒకవేళ (gd->reloc_off == 0)
+		తిరిగి;
 
-	for (i = 0; i < size; i++) {
+	కొరకు (i = 0; i < కొలత; i++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd_rep) + gd->reloc_off;
 		cmdtp->cmd_rep =
-			(int (*)(struct cmd_tbl *, int, int,
-				 char * const [], int *))addr;
+			(పూర్ణాంకం (*)(నిర్మాణం cmd_tbl *, పూర్ణాంకం, పూర్ణాంకం,
+				 అక్షరం * స్థిరరాశి [], పూర్ణాంకం *))addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
-#ifdef DEBUG_COMMANDS
-		printf("Command \"%s\": 0x%08lx => 0x%08lx\n",
+#నిర్వచితమైతే DEBUG_COMMANDS
+		రాయి("Command \"%s\": 0x%08lx => 0x%08lx\n",
 		       cmdtp->name, (ulong)(cmdtp->cmd), addr);
-#endif
-		cmdtp->cmd = (int (*)(struct cmd_tbl *, int, int,
-				      char *const []))addr;
+#అయితే_ముగింపు
+		cmdtp->cmd = (పూర్ణాంకం (*)(నిర్మాణం cmd_tbl *, పూర్ణాంకం, పూర్ణాంకం,
+				      అక్షరం *స్థిరరాశి []))addr;
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-		if (cmdtp->usage) {
+		cmdtp->name = (అక్షరం *)addr;
+		ఒకవేళ (cmdtp->usage) {
 			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
+			cmdtp->usage = (అక్షరం *)addr;
 		}
-#ifdef	CONFIG_SYS_LONGHELP
-		if (cmdtp->help) {
+#నిర్వచితమైతే	CONFIG_SYS_LONGHELP
+		ఒకవేళ (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
+			cmdtp->help = (అక్షరం *)addr;
 		}
-#endif
-#ifdef CONFIG_AUTO_COMPLETE
-		if (cmdtp->complete) {
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_AUTO_COMPLETE
+		ఒకవేళ (cmdtp->complete) {
 			addr = (ulong)(cmdtp->complete) + gd->reloc_off;
 			cmdtp->complete =
-				(int (*)(int, char * const [], char, int, char * []))addr;
+				(పూర్ణాంకం (*)(పూర్ణాంకం, అక్షరం * స్థిరరాశి [], అక్షరం, పూర్ణాంకం, అక్షరం * []))addr;
 		}
-#endif
+#అయితే_ముగింపు
 		cmdtp++;
 	}
 }
 
-int cmd_always_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			  char *const argv[], int *repeatable)
+పూర్ణాంకం cmd_always_repeatable(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం flag, పూర్ణాంకం argc,
+			  అక్షరం *స్థిరరాశి argv[], పూర్ణాంకం *repeatable)
 {
 	*repeatable = 1;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	తిరిగి cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_never_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			 char *const argv[], int *repeatable)
+పూర్ణాంకం cmd_never_repeatable(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం flag, పూర్ణాంకం argc,
+			 అక్షరం *స్థిరరాశి argv[], పూర్ణాంకం *repeatable)
 {
 	*repeatable = 0;
 
-	return cmdtp->cmd(cmdtp, flag, argc, argv);
+	తిరిగి cmdtp->cmd(cmdtp, flag, argc, argv);
 }
 
-int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
-			   char *const argv[])
+పూర్ణాంకం cmd_discard_repeatable(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం flag, పూర్ణాంకం argc,
+			   అక్షరం *స్థిరరాశి argv[])
 {
-	int repeatable;
+	పూర్ణాంకం repeatable;
 
-	return cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
+	తిరిగి cmdtp->cmd_rep(cmdtp, flag, argc, argv, &repeatable);
 }
 
 /**
@@ -578,102 +578,102 @@ int cmd_discard_repeatable(struct cmd_tbl *cmdtp, int flag, int argc,
  * @param repeatable	Can the command be repeated
  * Return: 0 if command succeeded, else non-zero (CMD_RET_...)
  */
-static int cmd_call(struct cmd_tbl *cmdtp, int flag, int argc,
-		    char *const argv[], int *repeatable)
+స్థిర పూర్ణాంకం cmd_call(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం flag, పూర్ణాంకం argc,
+		    అక్షరం *స్థిరరాశి argv[], పూర్ణాంకం *repeatable)
 {
-	int result;
+	పూర్ణాంకం ఫలితం;
 
-	result = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
-	if (result)
-		debug("Command failed, result=%d\n", result);
-	return result;
+	ఫలితం = cmdtp->cmd_rep(cmdtp, flag, argc, argv, repeatable);
+	ఒకవేళ (ఫలితం)
+		debug("Command failed, result=%d\n", ఫలితం);
+	తిరిగి ఫలితం;
 }
 
-enum command_ret_t cmd_process(int flag, int argc, char *const argv[],
-			       int *repeatable, ulong *ticks)
+గణన command_ret_t cmd_process(పూర్ణాంకం flag, పూర్ణాంకం argc, అక్షరం *స్థిరరాశి argv[],
+			       పూర్ణాంకం *repeatable, ulong *ticks)
 {
-	enum command_ret_t rc = CMD_RET_SUCCESS;
-	struct cmd_tbl *cmdtp;
+	గణన command_ret_t rc = CMD_RET_SUCCESS;
+	నిర్మాణం cmd_tbl *cmdtp;
 
-#if defined(CONFIG_SYS_XTRACE)
-	char *xtrace;
+#ఒకవేళ defined(CONFIG_SYS_XTRACE)
+	అక్షరం *xtrace;
 
 	xtrace = env_get("xtrace");
-	if (xtrace) {
+	ఒకవేళ (xtrace) {
 		puts("+");
-		for (int i = 0; i < argc; i++) {
+		కొరకు (పూర్ణాంకం i = 0; i < argc; i++) {
 			puts(" ");
 			puts(argv[i]);
 		}
 		puts("\n");
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* Look up command in command table */
-	cmdtp = find_cmd(argv[0]);
-	if (cmdtp == NULL) {
-		printf("Unknown command '%s' - try 'help'\n", argv[0]);
-		return 1;
+	cmdtp = కనుగొను_cmd(argv[0]);
+	ఒకవేళ (cmdtp == ఖాళీ) {
+		రాయి("Unknown command '%s' - try 'help'\n", argv[0]);
+		తిరిగి 1;
 	}
 
 	/* found - check max args */
-	if (argc > cmdtp->maxargs)
+	ఒకవేళ (argc > cmdtp->maxargs)
 		rc = CMD_RET_USAGE;
 
-#if defined(CONFIG_CMD_BOOTD)
+#ఒకవేళ defined(CONFIG_CMD_BOOTD)
 	/* avoid "bootd" recursion */
-	else if (cmdtp->cmd == do_bootd) {
-		if (flag & CMD_FLAG_BOOTD) {
+	లేకపోతే ఒకవేళ (cmdtp->cmd == do_bootd) {
+		ఒకవేళ (flag & CMD_FLAG_BOOTD) {
 			puts("'bootd' recursion detected\n");
 			rc = CMD_RET_FAILURE;
-		} else {
+		} లేకపోతే {
 			flag |= CMD_FLAG_BOOTD;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* If OK so far, then do the command */
-	if (!rc) {
-		int newrep;
+	ఒకవేళ (!rc) {
+		పూర్ణాంకం newrep;
 
-		if (ticks)
+		ఒకవేళ (ticks)
 			*ticks = get_timer(0);
 		rc = cmd_call(cmdtp, flag, argc, argv, &newrep);
-		if (ticks)
+		ఒకవేళ (ticks)
 			*ticks = get_timer(*ticks);
 		*repeatable &= newrep;
 	}
-	if (rc == CMD_RET_USAGE)
+	ఒకవేళ (rc == CMD_RET_USAGE)
 		rc = cmd_usage(cmdtp);
-	return rc;
+	తిరిగి rc;
 }
 
-int cmd_process_error(struct cmd_tbl *cmdtp, int err)
+పూర్ణాంకం cmd_process_error(నిర్మాణం cmd_tbl *cmdtp, పూర్ణాంకం err)
 {
-	if (err == CMD_RET_USAGE)
-		return CMD_RET_USAGE;
+	ఒకవేళ (err == CMD_RET_USAGE)
+		తిరిగి CMD_RET_USAGE;
 
-	if (err) {
-		printf("Command '%s' failed: Error %d\n", cmdtp->name, err);
-		return CMD_RET_FAILURE;
+	ఒకవేళ (err) {
+		రాయి("Command '%s' failed: Error %d\n", cmdtp->name, err);
+		తిరిగి CMD_RET_FAILURE;
 	}
 
-	return CMD_RET_SUCCESS;
+	తిరిగి CMD_RET_SUCCESS;
 }
 
-int cmd_source_script(ulong addr, const char *fit_uname, const char *confname)
+పూర్ణాంకం cmd_ఆధారం_script(ulong addr, స్థిరరాశి అక్షరం *fit_uname, స్థిరరాశి అక్షరం *confname)
 {
-	char *data;
-	void *buf;
+	అక్షరం *దత్తాంశం;
+	శూన్య *buf;
 	uint len;
-	int ret;
+	పూర్ణాంకం ret;
 
 	buf = map_sysmem(addr, 0);
-	ret = image_locate_script(buf, 0, fit_uname, confname, &data, &len);
+	ret = image_locate_script(buf, 0, fit_uname, confname, &దత్తాంశం, &len);
 	unmap_sysmem(buf);
-	if (ret)
-		return CMD_RET_FAILURE;
+	ఒకవేళ (ret)
+		తిరిగి CMD_RET_FAILURE;
 
 	debug("** Script length: %d\n", len);
-	return run_command_list(data, len, 0);
+	తిరిగి నిరంతరం_command_list(దత్తాంశం, len, 0);
 }

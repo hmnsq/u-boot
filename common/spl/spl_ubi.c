@@ -4,110 +4,110 @@
  * Ladislav Michl <ladis@linux-mips.org>
  */
 
-#include <config.h>
-#include <image.h>
-#include <nand.h>
-#include <onenand_uboot.h>
-#include <ubispl.h>
-#include <spl.h>
+#అన్తర్భావ <config.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <nand.h>
+#అన్తర్భావ <onenand_uboot.h>
+#అన్తర్భావ <ubispl.h>
+#అన్తర్భావ <spl.h>
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-int spl_ubi_load_image_os(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev,
-			  struct ubispl_info *info)
+#ఒకవేళ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+పూర్ణాంకం spl_ubi_ఎక్కించు_image_os(నిర్మాణం spl_image_info *spl_image,
+			  నిర్మాణం spl_boot_device *bootdev,
+			  నిర్మాణం ubispl_info *info)
 {
-	struct legacy_img_hdr *header;
-	struct ubispl_load volumes[2];
-	int err;
+	నిర్మాణం legacy_img_hdr *శీర్షిక;
+	నిర్మాణం ubispl_ఎక్కించు volumes[2];
+	పూర్ణాంకం err;
 
-	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_KERNEL_ID;
-	volumes[0].load_addr = (void *)CONFIG_SYS_LOAD_ADDR;
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_ARGS)
-	volumes[1].vol_id = CONFIG_SPL_UBI_LOAD_ARGS_ID;
-	volumes[1].load_addr = (void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR;
+	volumes[0].vol_id = CONFIG_SPL_UBI_ఎక్కించు_KERNEL_ID;
+	volumes[0].ఎక్కించు_addr = (శూన్య *)CONFIG_SYS_ఎక్కించు_ADDR;
+#ఒకవేళ IS_ENABLED(CONFIG_SPL_OS_BOOT_వాదనలు)
+	volumes[1].vol_id = CONFIG_SPL_UBI_ఎక్కించు_వాదనలు_ID;
+	volumes[1].ఎక్కించు_addr = (శూన్య *)CONFIG_SPL_PAYLOAD_వాదనలు_ADDR;
 
-	err = ubispl_load_volumes(info, volumes, 2);
-#else
-	err = ubispl_load_volumes(info, volumes, 1);
-#endif
-	if (err)
-		return err;
+	err = ubispl_ఎక్కించు_volumes(info, volumes, 2);
+#లేకపోతే
+	err = ubispl_ఎక్కించు_volumes(info, volumes, 1);
+#అయితే_ముగింపు
+	ఒకవేళ (err)
+		తిరిగి err;
 
-	header = (struct legacy_img_hdr *)volumes[0].load_addr;
-	spl_parse_image_header(spl_image, bootdev, header);
+	శీర్షిక = (నిర్మాణం legacy_img_hdr *)volumes[0].ఎక్కించు_addr;
+	spl_parse_image_శీర్షిక(spl_image, bootdev, శీర్షిక);
 	puts("Linux loaded.\n");
 
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-int spl_ubi_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev)
+పూర్ణాంకం spl_ubi_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+		       నిర్మాణం spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
-	struct ubispl_info info;
-	struct ubispl_load volumes[2];
-	int ret = 1;
+	నిర్మాణం legacy_img_hdr *శీర్షిక;
+	నిర్మాణం ubispl_info info;
+	నిర్మాణం ubispl_ఎక్కించు volumes[2];
+	పూర్ణాంకం ret = 1;
 
-	switch (bootdev->boot_device) {
-#ifdef CONFIG_SPL_NAND_SUPPORT
-	case BOOT_DEVICE_NAND:
+	ఎంపిక (bootdev->boot_device) {
+#నిర్వచితమైతే CONFIG_SPL_NAND_SUPPORT
+	స్థితి BOOT_DEVICE_NAND:
 		nand_init();
-		info.read = nand_spl_read_block;
-		info.peb_size = CONFIG_SYS_NAND_BLOCK_SIZE;
-		break;
-#endif
-#ifdef CONFIG_SPL_ONENAND_SUPPORT
-	case BOOT_DEVICE_ONENAND:
-		info.read = onenand_spl_read_block;
-		info.peb_size = CFG_SYS_ONENAND_BLOCK_SIZE;
-		break;
-#endif
-	default:
-		goto out;
+		info.పఠ = nand_spl_read_ఖండం;
+		info.peb_కొలత = CONFIG_SYS_NAND_ఖండం_కొలత;
+		ఆపు;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_SPL_ONENAND_SUPPORT
+	స్థితి BOOT_DEVICE_ONENAND:
+		info.పఠ = onenand_spl_read_ఖండం;
+		info.peb_కొలత = CFG_SYS_ONENAND_ఖండం_కొలత;
+		ఆపు;
+#అయితే_ముగింపు
+	అప్రమేయ:
+		వెళ్ళు బహిర్గతం;
 	}
-	info.ubi = (struct ubi_scan_info *)CONFIG_SPL_UBI_INFO_ADDR;
+	info.ubi = (నిర్మాణం ubi_పరిశీలన_info *)CONFIG_SPL_UBI_INFO_ADDR;
 	info.fastmap = IS_ENABLED(CONFIG_MTD_UBI_FASTMAP);
 
-	info.peb_offset = CONFIG_SPL_UBI_PEB_OFFSET;
-	info.vid_offset = CONFIG_SPL_UBI_VID_OFFSET;
-	info.leb_start = CONFIG_SPL_UBI_LEB_START;
-	info.peb_count = CONFIG_SPL_UBI_MAX_PEBS - info.peb_offset;
+	info.peb_స్థానభ్రంశం = CONFIG_SPL_UBI_PEB_స్థానభ్రంశం;
+	info.vid_స్థానభ్రంశం = CONFIG_SPL_UBI_VID_స్థానభ్రంశం;
+	info.leb_ప్రారంభం = CONFIG_SPL_UBI_LEB_ప్రారంభం;
+	info.peb_లెక్క = CONFIG_SPL_UBI_MAX_PEBS - info.peb_స్థానభ్రంశం;
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (!spl_start_uboot()) {
-		ret = spl_ubi_load_image_os(spl_image, bootdev, &info);
-		if (!ret)
-			return 0;
+#ఒకవేళ CONFIG_IS_ENABLED(OS_BOOT)
+	ఒకవేళ (!spl_ప్రారంభం_uboot()) {
+		ret = spl_ubi_ఎక్కించు_image_os(spl_image, bootdev, &info);
+		ఒకవేళ (!ret)
+			తిరిగి 0;
 
-		printf("%s: Failed in falcon boot: %d", __func__, ret);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return ret;
-		printf("Fallback to U-Boot\n");
+		రాయి("%s: Failed in falcon boot: %d", __func__, ret);
+		ఒకవేళ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			తిరిగి ret;
+		రాయి("Fallback to U-Boot\n");
 	}
-#endif
+#అయితే_ముగింపు
 
-	header = spl_get_load_buffer(-sizeof(*header), sizeof(header));
-#ifdef CONFIG_SPL_UBI_LOAD_BY_VOLNAME
+	శీర్షిక = spl_get_ఎక్కించు_బఫరు(-పరిమాణం(*శీర్షిక), పరిమాణం(శీర్షిక));
+#నిర్వచితమైతే CONFIG_SPL_UBI_ఎక్కించు_BY_VOLNAME
 	volumes[0].vol_id = -1;
 	strncpy(volumes[0].name,
-		CONFIG_SPL_UBI_LOAD_MONITOR_VOLNAME,
+		CONFIG_SPL_UBI_ఎక్కించు_MONITOR_VOLNAME,
 		UBI_VOL_NAME_MAX + 1);
-#else
-	volumes[0].vol_id = CONFIG_SPL_UBI_LOAD_MONITOR_ID;
-#endif
-	volumes[0].load_addr = (void *)header;
+#లేకపోతే
+	volumes[0].vol_id = CONFIG_SPL_UBI_ఎక్కించు_MONITOR_ID;
+#అయితే_ముగింపు
+	volumes[0].ఎక్కించు_addr = (శూన్య *)శీర్షిక;
 
-	ret = ubispl_load_volumes(&info, volumes, 1);
-	if (!ret)
-		spl_parse_image_header(spl_image, bootdev, header);
-out:
-#ifdef CONFIG_SPL_NAND_SUPPORT
-	if (bootdev->boot_device == BOOT_DEVICE_NAND)
+	ret = ubispl_ఎక్కించు_volumes(&info, volumes, 1);
+	ఒకవేళ (!ret)
+		spl_parse_image_శీర్షిక(spl_image, bootdev, శీర్షిక);
+బహిర్గతం:
+#నిర్వచితమైతే CONFIG_SPL_NAND_SUPPORT
+	ఒకవేళ (bootdev->boot_device == BOOT_DEVICE_NAND)
 		nand_deselect();
-#endif
-	return ret;
+#అయితే_ముగింపు
+	తిరిగి ret;
 }
 /* Use priorty 0 so that Ubi will override NAND and ONENAND methods */
-SPL_LOAD_IMAGE_METHOD("NAND", 0, BOOT_DEVICE_NAND, spl_ubi_load_image);
-SPL_LOAD_IMAGE_METHOD("OneNAND", 0, BOOT_DEVICE_ONENAND, spl_ubi_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("NAND", 0, BOOT_DEVICE_NAND, spl_ubi_ఎక్కించు_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("OneNAND", 0, BOOT_DEVICE_ONENAND, spl_ubi_ఎక్కించు_image);

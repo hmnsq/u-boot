@@ -8,20 +8,20 @@
  * Software Foundation.
  */
 
-#include <cros_ec.h>
-#include <dm.h>
-#include <errno.h>
-#include <log.h>
+#అన్తర్భావ <cros_ec.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <log.h>
 
-struct udevice *board_get_cros_ec_dev(void)
+నిర్మాణం udevice *board_get_cros_ec_dev(శూన్య)
 {
-	struct udevice *dev;
-	int ret;
+	నిర్మాణం udevice *dev;
+	పూర్ణాంకం ret;
 
 	ret = uclass_get_device(UCLASS_CROS_EC, 0, &dev);
-	if (ret) {
+	ఒకవేళ (ret) {
 		debug("%s: Error %d\n", __func__, ret);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	return dev;
+	తిరిగి dev;
 }

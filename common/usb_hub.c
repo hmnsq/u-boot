@@ -21,119 +21,119 @@
  * Probes device for being a hub and configurate it
  */
 
-#include <command.h>
-#include <dm.h>
-#include <env.h>
-#include <errno.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <time.h>
-#include <asm/processor.h>
-#include <asm/unaligned.h>
-#include <linux/ctype.h>
-#include <linux/delay.h>
-#include <linux/list.h>
-#include <asm/byteorder.h>
-#ifdef CONFIG_SANDBOX
-#include <asm/state.h>
-#endif
-#include <asm/unaligned.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <memalign.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <asm/processor.h>
+#అన్తర్భావ <asm/unaligned.h>
+#అన్తర్భావ <linux/ctype.h>
+#అన్తర్భావ <linux/delay.h>
+#అన్తర్భావ <linux/list.h>
+#అన్తర్భావ <asm/byteorder.h>
+#నిర్వచితమైతే CONFIG_SANDBOX
+#అన్తర్భావ <asm/state.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <asm/unaligned.h>
 
-#include <usb.h>
+#అన్తర్భావ <usb.h>
 
-#define USB_BUFSIZ	512
+#నిర్వచించు USB_BUFSIZ	512
 
-#define HUB_SHORT_RESET_TIME	20
-#define HUB_LONG_RESET_TIME	200
+#నిర్వచించు HUB_SHORT_RESET_సమయం	20
+#నిర్వచించు HUB_LONG_RESET_సమయం	200
 
-#define HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
+#నిర్వచించు HUB_DEBOUNCE_TIMEOUT	CONFIG_USB_HUB_DEBOUNCE_TIMEOUT
 
-#define PORT_OVERCURRENT_MAX_SCAN_COUNT		3
+#నిర్వచించు పోర్టు_OVERCURRENT_MAX_పరిశీలన_లెక్క		3
 
-struct usb_device_scan {
-	struct usb_device *dev;		/* USB hub device to scan */
-	struct usb_hub_device *hub;	/* USB hub struct */
-	int port;			/* USB port to scan */
-	struct list_head list;
+నిర్మాణం usb_device_పరిశీలన {
+	నిర్మాణం usb_device *dev;		/* USB hub device to scan */
+	నిర్మాణం usb_hub_device *hub;	/* USB hub struct */
+	పూర్ణాంకం పోర్టు;			/* USB port to scan */
+	నిర్మాణం list_తల list;
 };
 
-static LIST_HEAD(usb_scan_list);
+స్థిర LIST_తల(usb_పరిశీలన_list);
 
-__weak void usb_hub_reset_devices(struct usb_hub_device *hub, int port)
+__weak శూన్య usb_hub_reset_devices(నిర్మాణం usb_hub_device *hub, పూర్ణాంకం పోర్టు)
 {
-	return;
+	తిరిగి;
 }
 
-static inline bool usb_hub_is_superspeed(struct usb_device *hdev)
+స్థిర అంతఃవరుస bool usb_hub_is_superspeed(నిర్మాణం usb_device *hdev)
 {
-	return hdev->descriptor.bDeviceProtocol == 3;
+	తిరిగి hdev->descriptor.bDeviceProtocol == 3;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-bool usb_hub_is_root_hub(struct udevice *hub)
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+bool usb_hub_is_మూలం_hub(నిర్మాణం udevice *hub)
 {
-	if (device_get_uclass_id(hub->parent) != UCLASS_USB_HUB)
-		return true;
+	ఒకవేళ (device_get_uclass_id(hub->మాతృ) != UCLASS_USB_HUB)
+		తిరిగి true;
 
-	return false;
+	తిరిగి false;
 }
 
-static int usb_set_hub_depth(struct usb_device *dev, int depth)
+స్థిర పూర్ణాంకం usb_సమితి_hub_లోతు(నిర్మాణం usb_device *dev, పూర్ణాంకం లోతు)
 {
-	if (depth < 0 || depth > 4)
-		return -EINVAL;
+	ఒకవేళ (లోతు < 0 || లోతు > 4)
+		తిరిగి -EINVAL;
 
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_HUB_DEPTH, USB_DIR_OUT | USB_RT_HUB,
-		depth, 0, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_సమితి_HUB_లోతు, USB_DIR_బహిర్గతం | USB_RT_HUB,
+		లోతు, 0, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
-#endif
+#అయితే_ముగింపు
 
-static int usb_get_hub_descriptor(struct usb_device *dev, void *data, int size)
+స్థిర పూర్ణాంకం usb_get_hub_descriptor(నిర్మాణం usb_device *dev, శూన్య *దత్తాంశం, పూర్ణాంకం కొలత)
 {
-	unsigned short dtype = USB_DT_HUB;
+	గుర్తులేని పొట్టి dtype = USB_DT_HUB;
 
-	if (usb_hub_is_superspeed(dev))
+	ఒకవేళ (usb_hub_is_superspeed(dev))
 		dtype = USB_DT_SS_HUB;
 
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-		USB_REQ_GET_DESCRIPTOR, USB_DIR_IN | USB_RT_HUB,
-		dtype << 8, 0, data, size, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+		USB_REQ_GET_DESCRIPTOR, USB_DIR_లోపల | USB_RT_HUB,
+		dtype << 8, 0, దత్తాంశం, కొలత, USB_CNTL_TIMEOUT);
 }
 
-static int usb_clear_port_feature(struct usb_device *dev, int port, int feature)
+స్థిర పూర్ణాంకం usb_clear_పోర్టు_feature(నిర్మాణం usb_device *dev, పూర్ణాంకం పోర్టు, పూర్ణాంకం feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_CLEAR_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_CLEAR_FEATURE, USB_RT_పోర్టు, feature,
+				పోర్టు, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_set_port_feature(struct usb_device *dev, int port, int feature)
+స్థిర పూర్ణాంకం usb_సమితి_పోర్టు_feature(నిర్మాణం usb_device *dev, పూర్ణాంకం పోర్టు, పూర్ణాంకం feature)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_FEATURE, USB_RT_PORT, feature,
-				port, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_సమితి_FEATURE, USB_RT_పోర్టు, feature,
+				పోర్టు, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
 
-static int usb_get_hub_status(struct usb_device *dev, void *data)
+స్థిర పూర్ణాంకం usb_get_hub_స్థితి(నిర్మాణం usb_device *dev, శూన్య *దత్తాంశం)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_HUB, 0, 0,
-			data, sizeof(struct usb_hub_status), USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_స్థితి, USB_DIR_లోపల | USB_RT_HUB, 0, 0,
+			దత్తాంశం, పరిమాణం(నిర్మాణం usb_hub_స్థితి), USB_CNTL_TIMEOUT);
 }
 
-int usb_get_port_status(struct usb_device *dev, int port, void *data)
+పూర్ణాంకం usb_get_పోర్టు_స్థితి(నిర్మాణం usb_device *dev, పూర్ణాంకం పోర్టు, శూన్య *దత్తాంశం)
 {
-	int ret;
+	పూర్ణాంకం ret;
 
-	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_STATUS, USB_DIR_IN | USB_RT_PORT, 0, port,
-			data, sizeof(struct usb_port_status), USB_CNTL_TIMEOUT);
+	ret = usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_స్థితి, USB_DIR_లోపల | USB_RT_పోర్టు, 0, పోర్టు,
+			దత్తాంశం, పరిమాణం(నిర్మాణం usb_పోర్టు_స్థితి), USB_CNTL_TIMEOUT);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	if (ret < 0)
-		return ret;
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+	ఒకవేళ (ret < 0)
+		తిరిగి ret;
 
 	/*
 	 * Translate the USB 3.0 hub port status field into the old version
@@ -144,51 +144,51 @@ int usb_get_port_status(struct usb_device *dev, int port, void *data)
 	 * Note: this only supports driver model.
 	 */
 
-	if (!usb_hub_is_root_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
-		struct usb_port_status *status = (struct usb_port_status *)data;
-		u16 tmp = le16_to_cpu(status->wPortStatus) &
-			USB_SS_PORT_STAT_MASK;
+	ఒకవేళ (!usb_hub_is_మూలం_hub(dev->dev) && usb_hub_is_superspeed(dev)) {
+		నిర్మాణం usb_పోర్టు_స్థితి *స్థితి_2 = (నిర్మాణం usb_పోర్టు_స్థితి *)దత్తాంశం;
+		u16 tmp = le16_గమ్యం_cpu(స్థితి_2->w_పోర్టు_స్థితి) &
+			USB_SS_పోర్టు_STAT_ముసుగు;
 
-		if (status->wPortStatus & USB_SS_PORT_STAT_POWER)
-			tmp |= USB_PORT_STAT_POWER;
-		if ((status->wPortStatus & USB_SS_PORT_STAT_SPEED) ==
-		    USB_SS_PORT_STAT_SPEED_5GBPS)
-			tmp |= USB_PORT_STAT_SUPER_SPEED;
+		ఒకవేళ (స్థితి_2->w_పోర్టు_స్థితి & USB_SS_పోర్టు_STAT_POWER)
+			tmp |= USB_పోర్టు_STAT_POWER;
+		ఒకవేళ ((స్థితి_2->w_పోర్టు_స్థితి & USB_SS_పోర్టు_STAT_వేగం) ==
+		    USB_SS_పోర్టు_STAT_వేగం_5_GBPS)
+			tmp |= USB_పోర్టు_STAT_SUPER_వేగం;
 
-		status->wPortStatus = cpu_to_le16(tmp);
+		స్థితి_2->w_పోర్టు_స్థితి = cpu_గమ్యం_le16(tmp);
 	}
-#endif
+#అయితే_ముగింపు
 
-	return ret;
+	తిరిగి ret;
 }
 
-static void usb_hub_power_on(struct usb_hub_device *hub)
+స్థిర శూన్య usb_hub_power_on(నిర్మాణం usb_hub_device *hub)
 {
-	int i;
-	struct usb_device *dev;
-	unsigned pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
-	const char __maybe_unused *env;
+	పూర్ణాంకం i;
+	నిర్మాణం usb_device *dev;
+	గుర్తులేని pgood_delay = hub->desc.bPwrOn2PwrGood * 2;
+	స్థిరరాశి అక్షరం __maybe_unused *env;
 
 	dev = hub->pusb_dev;
 
 	debug("enabling power on all ports\n");
-	for (i = 0; i < dev->maxchild; i++) {
-		if (usb_hub_is_superspeed(dev)) {
-			usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_RESET);
-			debug("Reset : port %d returns %lX\n", i + 1, dev->status);
+	కొరకు (i = 0; i < dev->maxchild; i++) {
+		ఒకవేళ (usb_hub_is_superspeed(dev)) {
+			usb_సమితి_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_RESET);
+			debug("Reset : port %d returns %lX\n", i + 1, dev->స్థితి_2);
 		}
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		debug("PowerOn : port %d returns %lX\n", i + 1, dev->status);
+		usb_సమితి_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_POWER);
+		debug("PowerOn : port %d returns %lX\n", i + 1, dev->స్థితి_2);
 	}
 
-#ifdef CONFIG_SANDBOX
+#నిర్వచితమైతే CONFIG_SANDBOX
 	/*
 	 * Don't set timeout / delay values here. This results
 	 * in these values still being reset to 0.
 	 */
-	if (state_get_skip_delays())
-		return;
-#endif
+	ఒకవేళ (state_get_skip_delays())
+		తిరిగి;
+#అయితే_ముగింపు
 
 	/*
 	 * Wait for power to become stable,
@@ -196,19 +196,19 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 * but allow this time to be increased via env variable as some
 	 * devices break the spec and require longer warm-up times
 	 */
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#ఒకవేళ CONFIG_IS_ENABLED(ENV_SUPPORT)
 	env = env_get("usb_pgood_delay");
-	if (env)
+	ఒకవేళ (env)
 		pgood_delay = max(pgood_delay,
-			          (unsigned)simple_strtol(env, NULL, 0));
-#endif
+			          (గుర్తులేని)simple_strtol(env, ఖాళీ, 0));
+#అయితే_ముగింపు
 	debug("pgood_delay=%dms\n", pgood_delay);
 
 	/*
 	 * Do a minimum delay of the larger value of 100ms or pgood_delay
 	 * so that the power can stablize before the devices are queried
 	 */
-	hub->query_delay = get_timer(0) + max(100, (int)pgood_delay);
+	hub->query_delay = get_timer(0) + max(100, (పూర్ణాంకం)pgood_delay);
 
 	/*
 	 * Record the power-on timeout here. The max. delay (timeout)
@@ -217,45 +217,45 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 */
 	hub->connect_timeout = hub->query_delay + HUB_DEBOUNCE_TIMEOUT;
 	debug("devnum=%d poweron: query_delay=%d connect_timeout=%d\n",
-	      dev->devnum, max(100, (int)pgood_delay),
-	      max(100, (int)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
+	      dev->devnum, max(100, (పూర్ణాంకం)pgood_delay),
+	      max(100, (పూర్ణాంకం)pgood_delay) + HUB_DEBOUNCE_TIMEOUT);
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_hub_device hub_dev[USB_MAX_HUB];
-static int usb_hub_index;
+#ఒకవేళ !CONFIG_IS_ENABLED(DM_USB)
+స్థిర నిర్మాణం usb_hub_device hub_dev[USB_MAX_HUB];
+స్థిర పూర్ణాంకం usb_hub_సూచీ;
 
-void usb_hub_reset(void)
+శూన్య usb_hub_reset(శూన్య)
 {
-	usb_hub_index = 0;
+	usb_hub_సూచీ = 0;
 
 	/* Zero out global hub_dev in case its re-used again */
-	memset(hub_dev, 0, sizeof(hub_dev));
+	memset(hub_dev, 0, పరిమాణం(hub_dev));
 }
 
-static struct usb_hub_device *usb_hub_allocate(void)
+స్థిర నిర్మాణం usb_hub_device *usb_hub_allocate(శూన్య)
 {
-	if (usb_hub_index < USB_MAX_HUB)
-		return &hub_dev[usb_hub_index++];
+	ఒకవేళ (usb_hub_సూచీ < USB_MAX_HUB)
+		తిరిగి &hub_dev[usb_hub_సూచీ++];
 
-	printf("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
-	return NULL;
+	రాయి("ERROR: USB_MAX_HUB (%d) reached\n", USB_MAX_HUB);
+	తిరిగి ఖాళీ;
 }
-#endif
+#అయితే_ముగింపు
 
-#define MAX_TRIES 5
+#నిర్వచించు MAX_TRIES 5
 
-static inline const char *portspeed(int portstatus)
+స్థిర అంతఃవరుస స్థిరరాశి అక్షరం *portspeed(పూర్ణాంకం portstatus)
 {
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		return "5 Gb/s";
-	case USB_PORT_STAT_HIGH_SPEED:
-		return "480 Mb/s";
-	case USB_PORT_STAT_LOW_SPEED:
-		return "1.5 Mb/s";
-	default:
-		return "12 Mb/s";
+	ఎంపిక (portstatus & USB_పోర్టు_STAT_వేగం_ముసుగు) {
+	స్థితి USB_పోర్టు_STAT_SUPER_వేగం:
+		తిరిగి "5 Gb/s";
+	స్థితి USB_పోర్టు_STAT_ఎగువ_వేగం:
+		తిరిగి "480 Mb/s";
+	స్థితి USB_పోర్టు_STAT_దిగువ_వేగం:
+		తిరిగి "1.5 Mb/s";
+	అప్రమేయ:
+		తిరిగి "12 Mb/s";
 	}
 }
 
@@ -269,43 +269,43 @@ static inline const char *portspeed(int portstatus)
  * @port:	Port number to reset (note ports are numbered from 0 here)
  * @portstat:	Returns port status
  */
-static int usb_hub_port_reset(struct usb_device *dev, int port,
-			      unsigned short *portstat)
+స్థిర పూర్ణాంకం usb_hub_పోర్టు_reset(నిర్మాణం usb_device *dev, పూర్ణాంకం పోర్టు,
+			      గుర్తులేని పొట్టి *portstat)
 {
-	int err, tries;
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus, portchange;
-	int delay = HUB_SHORT_RESET_TIME; /* start with short reset delay */
+	పూర్ణాంకం err, tries;
+	ALLOC_CACHE_ALIGN_బఫరు(నిర్మాణం usb_పోర్టు_స్థితి, portsts, 1);
+	గుర్తులేని పొట్టి portstatus, portchange;
+	పూర్ణాంకం delay = HUB_SHORT_RESET_సమయం; /* start with short reset delay */
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
 	debug("%s: resetting '%s' port %d...\n", __func__, dev->dev->name,
-	      port + 1);
-#else
-	debug("%s: resetting port %d...\n", __func__, port + 1);
-#endif
-	for (tries = 0; tries < MAX_TRIES; tries++) {
-		err = usb_set_port_feature(dev, port + 1, USB_PORT_FEAT_RESET);
-		if (err < 0)
-			return err;
+	      పోర్టు + 1);
+#లేకపోతే
+	debug("%s: resetting port %d...\n", __func__, పోర్టు + 1);
+#అయితే_ముగింపు
+	కొరకు (tries = 0; tries < MAX_TRIES; tries++) {
+		err = usb_సమితి_పోర్టు_feature(dev, పోర్టు + 1, USB_పోర్టు_FEAT_RESET);
+		ఒకవేళ (err < 0)
+			తిరిగి err;
 
 		mdelay(delay);
 
-		if (usb_get_port_status(dev, port + 1, portsts) < 0) {
+		ఒకవేళ (usb_get_పోర్టు_స్థితి(dev, పోర్టు + 1, portsts) < 0) {
 			debug("get_port_status failed status %lX\n",
-			      dev->status);
-			return -1;
+			      dev->స్థితి_2);
+			తిరిగి -1;
 		}
-		portstatus = le16_to_cpu(portsts->wPortStatus);
-		portchange = le16_to_cpu(portsts->wPortChange);
+		portstatus = le16_గమ్యం_cpu(portsts->w_పోర్టు_స్థితి);
+		portchange = le16_గమ్యం_cpu(portsts->w_పోర్టు_Change);
 
 		debug("portstatus %x, change %x, %s\n", portstatus, portchange,
 							portspeed(portstatus));
 
 		debug("STAT_C_CONNECTION = %d STAT_CONNECTION = %d" \
 		      "  USB_PORT_STAT_ENABLE %d\n",
-		      (portchange & USB_PORT_STAT_C_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_CONNECTION) ? 1 : 0,
-		      (portstatus & USB_PORT_STAT_ENABLE) ? 1 : 0);
+		      (portchange & USB_పోర్టు_STAT_C_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_పోర్టు_STAT_CONNECTION) ? 1 : 0,
+		      (portstatus & USB_పోర్టు_STAT_ENABLE) ? 1 : 0);
 
 		/*
 		 * Perhaps we should check for the following here:
@@ -324,78 +324,78 @@ static int usb_hub_port_reset(struct usb_device *dev, int port,
 		 * back after another reset or two.
 		 */
 
-		if (portstatus & USB_PORT_STAT_ENABLE)
-			break;
+		ఒకవేళ (portstatus & USB_పోర్టు_STAT_ENABLE)
+			ఆపు;
 
 		/* Switch to long reset delay for the next round */
-		delay = HUB_LONG_RESET_TIME;
+		delay = HUB_LONG_RESET_సమయం;
 	}
 
-	if (tries == MAX_TRIES) {
+	ఒకవేళ (tries == MAX_TRIES) {
 		debug("Cannot enable port %i after %i retries, " \
-		      "disabling port.\n", port + 1, MAX_TRIES);
+		      "disabling port.\n", పోర్టు + 1, MAX_TRIES);
 		debug("Maybe the USB cable is bad?\n");
-		return -1;
+		తిరిగి -1;
 	}
 
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_RESET);
+	usb_clear_పోర్టు_feature(dev, పోర్టు + 1, USB_పోర్టు_FEAT_C_RESET);
 	*portstat = portstatus;
-	return 0;
+	తిరిగి 0;
 }
 
-int usb_hub_port_connect_change(struct usb_device *dev, int port)
+పూర్ణాంకం usb_hub_పోర్టు_connect_change(నిర్మాణం usb_device *dev, పూర్ణాంకం పోర్టు)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	int ret, speed;
+	ALLOC_CACHE_ALIGN_బఫరు(నిర్మాణం usb_పోర్టు_స్థితి, portsts, 1);
+	గుర్తులేని పొట్టి portstatus;
+	పూర్ణాంకం ret, వేగం;
 
 	/* Check status */
-	ret = usb_get_port_status(dev, port + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_పోర్టు_స్థితి(dev, పోర్టు + 1, portsts);
+	ఒకవేళ (ret < 0) {
 		debug("get_port_status failed\n");
-		return ret;
+		తిరిగి ret;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
+	portstatus = le16_గమ్యం_cpu(portsts->w_పోర్టు_స్థితి);
 	debug("portstatus %x, change %x, %s\n",
 	      portstatus,
-	      le16_to_cpu(portsts->wPortChange),
+	      le16_గమ్యం_cpu(portsts->w_పోర్టు_Change),
 	      portspeed(portstatus));
 
 	/* Clear the connection change status */
-	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_CONNECTION);
+	usb_clear_పోర్టు_feature(dev, పోర్టు + 1, USB_పోర్టు_FEAT_C_CONNECTION);
 
 	/* Disconnect any existing devices under this port */
-	if (((!(portstatus & USB_PORT_STAT_CONNECTION)) &&
-	     (!(portstatus & USB_PORT_STAT_ENABLE))) ||
-	    usb_device_has_child_on_port(dev, port)) {
+	ఒకవేళ (((!(portstatus & USB_పోర్టు_STAT_CONNECTION)) &&
+	     (!(portstatus & USB_పోర్టు_STAT_ENABLE))) ||
+	    usb_device_has_బిడ్డ_on_పోర్టు(dev, పోర్టు)) {
 		debug("usb_disconnect(&hub->children[port]);\n");
 		/* Return now if nothing is connected */
-		if (!(portstatus & USB_PORT_STAT_CONNECTION))
-			return -ENOTCONN;
+		ఒకవేళ (!(portstatus & USB_పోర్టు_STAT_CONNECTION))
+			తిరిగి -ENOTCONN;
 	}
 
 	/* Reset the port */
-	ret = usb_hub_port_reset(dev, port, &portstatus);
-	if (ret < 0) {
-		if (ret != -ENXIO)
-			printf("cannot reset port %i!?\n", port + 1);
-		return ret;
+	ret = usb_hub_పోర్టు_reset(dev, పోర్టు, &portstatus);
+	ఒకవేళ (ret < 0) {
+		ఒకవేళ (ret != -ENXIO)
+			రాయి("cannot reset port %i!?\n", పోర్టు + 1);
+		తిరిగి ret;
 	}
 
-	switch (portstatus & USB_PORT_STAT_SPEED_MASK) {
-	case USB_PORT_STAT_SUPER_SPEED:
-		speed = USB_SPEED_SUPER;
-		break;
-	case USB_PORT_STAT_HIGH_SPEED:
-		speed = USB_SPEED_HIGH;
-		break;
-	case USB_PORT_STAT_LOW_SPEED:
-		speed = USB_SPEED_LOW;
-		break;
-	default:
-		speed = USB_SPEED_FULL;
-		break;
+	ఎంపిక (portstatus & USB_పోర్టు_STAT_వేగం_ముసుగు) {
+	స్థితి USB_పోర్టు_STAT_SUPER_వేగం:
+		వేగం = USB_వేగం_SUPER;
+		ఆపు;
+	స్థితి USB_పోర్టు_STAT_ఎగువ_వేగం:
+		వేగం = USB_వేగం_ఎగువ;
+		ఆపు;
+	స్థితి USB_పోర్టు_STAT_దిగువ_వేగం:
+		వేగం = USB_వేగం_దిగువ;
+		ఆపు;
+	అప్రమేయ:
+		వేగం = USB_వేగం_నిండిన;
+		ఆపు;
 	}
 
 	/*
@@ -405,76 +405,76 @@ int usb_hub_port_connect_change(struct usb_device *dev, int port)
 	 */
 	mdelay(10);
 
-#if CONFIG_IS_ENABLED(DM_USB)
-	struct udevice *child;
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+	నిర్మాణం udevice *బిడ్డ;
 
-	ret = usb_scan_device(dev->dev, port + 1, speed, &child);
-#else
-	struct usb_device *usb;
+	ret = usb_పరిశీలన_device(dev->dev, పోర్టు + 1, వేగం, &బిడ్డ);
+#లేకపోతే
+	నిర్మాణం usb_device *usb;
 
 	ret = usb_alloc_new_device(dev->controller, &usb);
-	if (ret) {
-		printf("cannot create new device: ret=%d", ret);
-		return ret;
+	ఒకవేళ (ret) {
+		రాయి("cannot create new device: ret=%d", ret);
+		తిరిగి ret;
 	}
 
-	dev->children[port] = usb;
-	usb->speed = speed;
-	usb->parent = dev;
-	usb->portnr = port + 1;
+	dev->children[పోర్టు] = usb;
+	usb->వేగం = వేగం;
+	usb->మాతృ = dev;
+	usb->portnr = పోర్టు + 1;
 	/* Run it through the hoops (find a driver, etc) */
 	ret = usb_new_device(usb);
-	if (ret < 0) {
+	ఒకవేళ (ret < 0) {
 		/* Woops, disable the port */
 		usb_free_device(dev->controller);
-		dev->children[port] = NULL;
+		dev->children[పోర్టు] = ఖాళీ;
 	}
-#endif
-	if (ret < 0) {
-		debug("hub: disabling port %d\n", port + 1);
-		usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_ENABLE);
+#అయితే_ముగింపు
+	ఒకవేళ (ret < 0) {
+		debug("hub: disabling port %d\n", పోర్టు + 1);
+		usb_clear_పోర్టు_feature(dev, పోర్టు + 1, USB_పోర్టు_FEAT_ENABLE);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int usb_scan_port(struct usb_device_scan *usb_scan)
+స్థిర పూర్ణాంకం usb_పరిశీలన_పోర్టు(నిర్మాణం usb_device_పరిశీలన *usb_పరిశీలన)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct usb_port_status, portsts, 1);
-	unsigned short portstatus;
-	unsigned short portchange;
-	struct usb_device *dev;
-	struct usb_hub_device *hub;
-	int ret = 0;
-	int i;
+	ALLOC_CACHE_ALIGN_బఫరు(నిర్మాణం usb_పోర్టు_స్థితి, portsts, 1);
+	గుర్తులేని పొట్టి portstatus;
+	గుర్తులేని పొట్టి portchange;
+	నిర్మాణం usb_device *dev;
+	నిర్మాణం usb_hub_device *hub;
+	పూర్ణాంకం ret = 0;
+	పూర్ణాంకం i;
 
-	dev = usb_scan->dev;
-	hub = usb_scan->hub;
-	i = usb_scan->port;
+	dev = usb_పరిశీలన->dev;
+	hub = usb_పరిశీలన->hub;
+	i = usb_పరిశీలన->పోర్టు;
 
 	/*
 	 * Don't talk to the device before the query delay is expired.
 	 * This is needed for voltages to stabalize.
 	 */
-	if (get_timer(0) < hub->query_delay)
-		return 0;
+	ఒకవేళ (get_timer(0) < hub->query_delay)
+		తిరిగి 0;
 
-	ret = usb_get_port_status(dev, i + 1, portsts);
-	if (ret < 0) {
+	ret = usb_get_పోర్టు_స్థితి(dev, i + 1, portsts);
+	ఒకవేళ (ret < 0) {
 		debug("get_port_status failed\n");
-		if (get_timer(0) >= hub->connect_timeout) {
+		ఒకవేళ (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_పరిశీలన->list);
+			విడుదల(usb_పరిశీలన);
+			తిరిగి 0;
 		}
-		return 0;
+		తిరిగి 0;
 	}
 
-	portstatus = le16_to_cpu(portsts->wPortStatus);
-	portchange = le16_to_cpu(portsts->wPortChange);
+	portstatus = le16_గమ్యం_cpu(portsts->w_పోర్టు_స్థితి);
+	portchange = le16_గమ్యం_cpu(portsts->w_పోర్టు_Change);
 	debug("Port %d Status %X Change %X\n", i + 1, portstatus, portchange);
 
 	/*
@@ -484,117 +484,117 @@ static int usb_scan_port(struct usb_device_scan *usb_scan)
 	 * device is connected to the port (eg: CCS bit is set but CSC is not
 	 * in the PORTSC register of a root hub), ignore such case.
 	 */
-	if (!(portchange & USB_PORT_STAT_C_CONNECTION) &&
-	    !(portstatus & USB_PORT_STAT_CONNECTION)) {
-		if (get_timer(0) >= hub->connect_timeout) {
+	ఒకవేళ (!(portchange & USB_పోర్టు_STAT_C_CONNECTION) &&
+	    !(portstatus & USB_పోర్టు_STAT_CONNECTION)) {
+		ఒకవేళ (get_timer(0) >= hub->connect_timeout) {
 			debug("devnum=%d port=%d: timeout\n",
 			      dev->devnum, i + 1);
 			/* Remove this device from scanning list */
-			list_del(&usb_scan->list);
-			free(usb_scan);
-			return 0;
+			list_del(&usb_పరిశీలన->list);
+			విడుదల(usb_పరిశీలన);
+			తిరిగి 0;
 		}
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (portchange & USB_PORT_STAT_C_RESET) {
+	ఒకవేళ (portchange & USB_పోర్టు_STAT_C_RESET) {
 		debug("port %d reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_RESET);
+		usb_clear_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_C_RESET);
 	}
 
-	if ((portchange & USB_SS_PORT_STAT_C_BH_RESET) &&
+	ఒకవేళ ((portchange & USB_SS_పోర్టు_STAT_C_BH_RESET) &&
 	    usb_hub_is_superspeed(dev)) {
 		debug("port %d BH reset change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_SS_PORT_FEAT_C_BH_RESET);
+		usb_clear_పోర్టు_feature(dev, i + 1, USB_SS_పోర్టు_FEAT_C_BH_RESET);
 	}
 
 	/* A new USB device is ready at this point */
 	debug("devnum=%d port=%d: USB dev found\n", dev->devnum, i + 1);
 
-	usb_hub_port_connect_change(dev, i);
+	usb_hub_పోర్టు_connect_change(dev, i);
 
-	if (portchange & USB_PORT_STAT_C_ENABLE) {
+	ఒకవేళ (portchange & USB_పోర్టు_STAT_C_ENABLE) {
 		debug("port %d enable change, status %x\n", i + 1, portstatus);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_C_ENABLE);
+		usb_clear_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_C_ENABLE);
 		/*
 		 * EM interference sometimes causes bad shielded USB
 		 * devices to be shutdown by the hub, this hack enables
 		 * them again. Works at least with mouse driver
 		 */
-		if (!(portstatus & USB_PORT_STAT_ENABLE) &&
-		    (portstatus & USB_PORT_STAT_CONNECTION) &&
-		    usb_device_has_child_on_port(dev, i)) {
+		ఒకవేళ (!(portstatus & USB_పోర్టు_STAT_ENABLE) &&
+		    (portstatus & USB_పోర్టు_STAT_CONNECTION) &&
+		    usb_device_has_బిడ్డ_on_పోర్టు(dev, i)) {
 			debug("already running port %i disabled by hub (EMI?), re-enabling...\n",
 			      i + 1);
-			usb_hub_port_connect_change(dev, i);
+			usb_hub_పోర్టు_connect_change(dev, i);
 		}
 	}
 
-	if (portstatus & USB_PORT_STAT_SUSPEND) {
+	ఒకవేళ (portstatus & USB_పోర్టు_STAT_SUSPEND) {
 		debug("port %d suspend change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1, USB_PORT_FEAT_SUSPEND);
+		usb_clear_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_SUSPEND);
 	}
 
-	if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
+	ఒకవేళ (portchange & USB_పోర్టు_STAT_C_OVERCURRENT) {
 		debug("port %d over-current change\n", i + 1);
-		usb_clear_port_feature(dev, i + 1,
-				       USB_PORT_FEAT_C_OVER_CURRENT);
+		usb_clear_పోర్టు_feature(dev, i + 1,
+				       USB_పోర్టు_FEAT_C_OVER_CURRENT);
 		/* Only power-on this one port */
-		usb_set_port_feature(dev, i + 1, USB_PORT_FEAT_POWER);
-		hub->overcurrent_count[i]++;
+		usb_సమితి_పోర్టు_feature(dev, i + 1, USB_పోర్టు_FEAT_POWER);
+		hub->overcurrent_లెక్క[i]++;
 
 		/*
 		 * If the max-scan-count is not reached, return without removing
 		 * the device from scan-list. This will re-issue a new scan.
 		 */
-		if (hub->overcurrent_count[i] <=
-		    PORT_OVERCURRENT_MAX_SCAN_COUNT)
-			return 0;
+		ఒకవేళ (hub->overcurrent_లెక్క[i] <=
+		    పోర్టు_OVERCURRENT_MAX_పరిశీలన_లెక్క)
+			తిరిగి 0;
 
 		/* Otherwise the device will get removed */
-		printf("Port %d over-current occurred %d times\n", i + 1,
-		       hub->overcurrent_count[i]);
+		రాయి("Port %d over-current occurred %d times\n", i + 1,
+		       hub->overcurrent_లెక్క[i]);
 	}
 
 	/*
 	 * We're done with this device, so let's remove this device from
 	 * scanning list
 	 */
-	list_del(&usb_scan->list);
-	free(usb_scan);
+	list_del(&usb_పరిశీలన->list);
+	విడుదల(usb_పరిశీలన);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int usb_device_list_scan(void)
+స్థిర పూర్ణాంకం usb_device_list_పరిశీలన(శూన్య)
 {
-	struct usb_device_scan *usb_scan;
-	struct usb_device_scan *tmp;
-	static int running;
-	int ret = 0;
+	నిర్మాణం usb_device_పరిశీలన *usb_పరిశీలన;
+	నిర్మాణం usb_device_పరిశీలన *tmp;
+	స్థిర పూర్ణాంకం running;
+	పూర్ణాంకం ret = 0;
 
 	/* Only run this loop once for each controller */
-	if (running)
-		return 0;
+	ఒకవేళ (running)
+		తిరిగి 0;
 
 	running = 1;
 
-	while (1) {
+	అయితే (1) {
 		/* We're done, once the list is empty again */
-		if (list_empty(&usb_scan_list))
-			goto out;
+		ఒకవేళ (list_ఖాళీలు(&usb_పరిశీలన_list))
+			వెళ్ళు బహిర్గతం;
 
-		list_for_each_entry_safe(usb_scan, tmp, &usb_scan_list, list) {
-			int ret;
+		list_for_each_నమోదు_సురక్షిత(usb_పరిశీలన, tmp, &usb_పరిశీలన_list, list) {
+			పూర్ణాంకం ret;
 
 			/* Scan this port */
-			ret = usb_scan_port(usb_scan);
-			if (ret)
-				goto out;
+			ret = usb_పరిశీలన_పోర్టు(usb_పరిశీలన);
+			ఒకవేళ (ret)
+				వెళ్ళు బహిర్గతం;
 		}
 	}
 
-out:
+బహిర్గతం:
 	/*
 	 * This USB controller has finished scanning all its connected
 	 * USB devices. Set "running" back to 0, so that other USB controllers
@@ -602,160 +602,160 @@ out:
 	 */
 	running = 0;
 
-	return ret;
+	తిరిగి ret;
 }
 
-static struct usb_hub_device *usb_get_hub_device(struct usb_device *dev)
+స్థిర నిర్మాణం usb_hub_device *usb_get_hub_device(నిర్మాణం usb_device *dev)
 {
-	struct usb_hub_device *hub;
+	నిర్మాణం usb_hub_device *hub;
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#ఒకవేళ !CONFIG_IS_ENABLED(DM_USB)
 	/* "allocate" Hub device */
 	hub = usb_hub_allocate();
-#else
+#లేకపోతే
 	hub = dev_get_uclass_priv(dev->dev);
-#endif
+#అయితే_ముగింపు
 
-	return hub;
+	తిరిగి hub;
 }
 
-static int usb_hub_configure(struct usb_device *dev)
+స్థిర పూర్ణాంకం usb_hub_configure(నిర్మాణం usb_device *dev)
 {
-	int i, length;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, USB_BUFSIZ);
-	unsigned char *bitmap;
-	short hubCharacteristics;
-	struct usb_hub_descriptor *descriptor;
-	struct usb_hub_device *hub;
-	struct usb_hub_status *hubsts;
-	int ret;
+	పూర్ణాంకం i, నిడివి;
+	ALLOC_CACHE_ALIGN_బఫరు(గుర్తులేని అక్షరం, బఫరు, USB_BUFSIZ);
+	గుర్తులేని అక్షరం *bitmap;
+	పొట్టి hubCharacteristics;
+	నిర్మాణం usb_hub_descriptor *descriptor;
+	నిర్మాణం usb_hub_device *hub;
+	నిర్మాణం usb_hub_స్థితి *hubsts;
+	పూర్ణాంకం ret;
 
 	hub = usb_get_hub_device(dev);
-	if (hub == NULL)
-		return -ENOMEM;
+	ఒకవేళ (hub == ఖాళీ)
+		తిరిగి -ENOMEM;
 	hub->pusb_dev = dev;
 
 	/* Get the the hub descriptor */
-	ret = usb_get_hub_descriptor(dev, buffer, 4);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, బఫరు, 4);
+	ఒకవేళ (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor, giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor, giving up %lX\n", dev->స్థితి_2);
+		తిరిగి ret;
 	}
-	descriptor = (struct usb_hub_descriptor *)buffer;
+	descriptor = (నిర్మాణం usb_hub_descriptor *)బఫరు;
 
-	length = min_t(int, descriptor->bLength,
-		       sizeof(struct usb_hub_descriptor));
+	నిడివి = min_t(పూర్ణాంకం, descriptor->b_నిడివి,
+		       పరిమాణం(నిర్మాణం usb_hub_descriptor));
 
-	ret = usb_get_hub_descriptor(dev, buffer, length);
-	if (ret < 0) {
+	ret = usb_get_hub_descriptor(dev, బఫరు, నిడివి);
+	ఒకవేళ (ret < 0) {
 		debug("usb_hub_configure: failed to get hub " \
-		      "descriptor 2nd giving up %lX\n", dev->status);
-		return ret;
+		      "descriptor 2nd giving up %lX\n", dev->స్థితి_2);
+		తిరిగి ret;
 	}
-	memcpy((unsigned char *)&hub->desc, buffer, length);
+	జ్ఞాపకం_నకలు((గుర్తులేని అక్షరం *)&hub->desc, బఫరు, నిడివి);
 	/* adjust 16bit values */
-	put_unaligned(le16_to_cpu(get_unaligned(
+	put_unaligned(le16_గమ్యం_cpu(get_unaligned(
 			&descriptor->wHubCharacteristics)),
 			&hub->desc.wHubCharacteristics);
 	/* set the bitmap */
-	bitmap = (unsigned char *)&hub->desc.u.hs.DeviceRemovable[0];
+	bitmap = (గుర్తులేని అక్షరం *)&hub->desc.u.hs.DeviceRemovable[0];
 	/* devices not removable by default */
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8);
-	bitmap = (unsigned char *)&hub->desc.u.hs.PortPowerCtrlMask[0];
+	bitmap = (గుర్తులేని అక్షరం *)&hub->desc.u.hs.పోర్టు_Power_Ctrl_ముసుగు[0];
 	memset(bitmap, 0xff, (USB_MAXCHILDREN+1+7)/8); /* PowerMask = 1B */
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+	కొరకు (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
 		hub->desc.u.hs.DeviceRemovable[i] =
 			descriptor->u.hs.DeviceRemovable[i];
 
-	for (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
-		hub->desc.u.hs.PortPowerCtrlMask[i] =
-			descriptor->u.hs.PortPowerCtrlMask[i];
+	కొరకు (i = 0; i < ((hub->desc.bNbrPorts + 1 + 7)/8); i++)
+		hub->desc.u.hs.పోర్టు_Power_Ctrl_ముసుగు[i] =
+			descriptor->u.hs.పోర్టు_Power_Ctrl_ముసుగు[i];
 
 	dev->maxchild = descriptor->bNbrPorts;
 	debug("%d ports detected\n", dev->maxchild);
 
 	hubCharacteristics = get_unaligned(&hub->desc.wHubCharacteristics);
-	switch (hubCharacteristics & HUB_CHAR_LPSM) {
-	case 0x00:
+	ఎంపిక (hubCharacteristics & HUB_CHAR_LPSM) {
+	స్థితి 0x00:
 		debug("ganged power switching\n");
-		break;
-	case 0x01:
+		ఆపు;
+	స్థితి 0x01:
 		debug("individual port power switching\n");
-		break;
-	case 0x02:
-	case 0x03:
+		ఆపు;
+	స్థితి 0x02:
+	స్థితి 0x03:
 		debug("unknown reserved power switching mode\n");
-		break;
+		ఆపు;
 	}
 
-	if (hubCharacteristics & HUB_CHAR_COMPOUND)
+	ఒకవేళ (hubCharacteristics & HUB_CHAR_COMPOUND)
 		debug("part of a compound device\n");
-	else
+	లేకపోతే
 		debug("standalone hub\n");
 
-	switch (hubCharacteristics & HUB_CHAR_OCPM) {
-	case 0x00:
+	ఎంపిక (hubCharacteristics & HUB_CHAR_OCPM) {
+	స్థితి 0x00:
 		debug("global over-current protection\n");
-		break;
-	case 0x08:
+		ఆపు;
+	స్థితి 0x08:
 		debug("individual port over-current protection\n");
-		break;
-	case 0x10:
-	case 0x18:
+		ఆపు;
+	స్థితి 0x10:
+	స్థితి 0x18:
 		debug("no over-current protection\n");
-		break;
+		ఆపు;
 	}
 
-	switch (dev->descriptor.bDeviceProtocol) {
-	case USB_HUB_PR_FS:
-		break;
-	case USB_HUB_PR_HS_SINGLE_TT:
+	ఎంపిక (dev->descriptor.bDeviceProtocol) {
+	స్థితి USB_HUB_PR_FS:
+		ఆపు;
+	స్థితి USB_HUB_PR_HS_SINGLE_TT:
 		debug("Single TT\n");
-		break;
-	case USB_HUB_PR_HS_MULTI_TT:
-		ret = usb_set_interface(dev, 0, 1);
-		if (ret == 0) {
+		ఆపు;
+	స్థితి USB_HUB_PR_HS_MULTI_TT:
+		ret = usb_సమితి_interface(dev, 0, 1);
+		ఒకవేళ (ret == 0) {
 			debug("TT per port\n");
 			hub->tt.multi = true;
-		} else {
+		} లేకపోతే {
 			debug("Using single TT (err %d)\n", ret);
 		}
-		break;
-	case USB_HUB_PR_SS:
+		ఆపు;
+	స్థితి USB_HUB_PR_SS:
 		/* USB 3.0 hubs don't have a TT */
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		debug("Unrecognized hub protocol %d\n",
 		      dev->descriptor.bDeviceProtocol);
-		break;
+		ఆపు;
 	}
 
 	/* Note 8 FS bit times == (8 bits / 12000000 bps) ~= 666ns */
-	switch (hubCharacteristics & HUB_CHAR_TTTT) {
-	case HUB_TTTT_8_BITS:
-		if (dev->descriptor.bDeviceProtocol != 0) {
-			hub->tt.think_time = 666;
+	ఎంపిక (hubCharacteristics & HUB_CHAR_TTTT) {
+	స్థితి HUB_TTTT_8_బిట్లు:
+		ఒకవేళ (dev->descriptor.bDeviceProtocol != 0) {
+			hub->tt.think_సమయం = 666;
 			debug("TT requires at most %d FS bit times (%d ns)\n",
-			      8, hub->tt.think_time);
+			      8, hub->tt.think_సమయం);
 		}
-		break;
-	case HUB_TTTT_16_BITS:
-		hub->tt.think_time = 666 * 2;
+		ఆపు;
+	స్థితి HUB_TTTT_16_బిట్లు:
+		hub->tt.think_సమయం = 666 * 2;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      16, hub->tt.think_time);
-		break;
-	case HUB_TTTT_24_BITS:
-		hub->tt.think_time = 666 * 3;
+		      16, hub->tt.think_సమయం);
+		ఆపు;
+	స్థితి HUB_TTTT_24_బిట్లు:
+		hub->tt.think_సమయం = 666 * 3;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      24, hub->tt.think_time);
-		break;
-	case HUB_TTTT_32_BITS:
-		hub->tt.think_time = 666 * 4;
+		      24, hub->tt.think_సమయం);
+		ఆపు;
+	స్థితి HUB_TTTT_32_బిట్లు:
+		hub->tt.think_సమయం = 666 * 4;
 		debug("TT requires at most %d FS bit times (%d ns)\n",
-		      32, hub->tt.think_time);
-		break;
+		      32, hub->tt.think_సమయం);
+		ఆపు;
 	}
 
 	debug("power on to power good time: %dms\n",
@@ -763,46 +763,46 @@ static int usb_hub_configure(struct usb_device *dev)
 	debug("hub controller current requirement: %dmA\n",
 	      descriptor->bHubContrCurrent);
 
-	for (i = 0; i < dev->maxchild; i++)
+	కొరకు (i = 0; i < dev->maxchild; i++)
 		debug("port %d is%s removable\n", i + 1,
 		      hub->desc.u.hs.DeviceRemovable[(i + 1) / 8] & \
 		      (1 << ((i + 1) % 8)) ? " not" : "");
 
-	if (sizeof(struct usb_hub_status) > USB_BUFSIZ) {
+	ఒకవేళ (పరిమాణం(నిర్మాణం usb_hub_స్థితి) > USB_BUFSIZ) {
 		debug("usb_hub_configure: failed to get Status - " \
-		      "too long: %d\n", descriptor->bLength);
-		return -EFBIG;
+		      "too long: %d\n", descriptor->b_నిడివి);
+		తిరిగి -EFBIG;
 	}
 
-	ret = usb_get_hub_status(dev, buffer);
-	if (ret < 0) {
+	ret = usb_get_hub_స్థితి(dev, బఫరు);
+	ఒకవేళ (ret < 0) {
 		debug("usb_hub_configure: failed to get Status %lX\n",
-		      dev->status);
-		return ret;
+		      dev->స్థితి_2);
+		తిరిగి ret;
 	}
 
-	hubsts = (struct usb_hub_status *)buffer;
+	hubsts = (నిర్మాణం usb_hub_స్థితి *)బఫరు;
 
 	debug("get_hub_status returned status %X, change %X\n",
-	      le16_to_cpu(hubsts->wHubStatus),
-	      le16_to_cpu(hubsts->wHubChange));
+	      le16_గమ్యం_cpu(hubsts->w_Hub_స్థితి),
+	      le16_గమ్యం_cpu(hubsts->wHubChange));
 	debug("local power source is %s\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_LOCAL_POWER) ? \
+	      (le16_గమ్యం_cpu(hubsts->w_Hub_స్థితి) & HUB_స్థితి_LOCAL_POWER) ? \
 	      "lost (inactive)" : "good");
 	debug("%sover-current condition exists\n",
-	      (le16_to_cpu(hubsts->wHubStatus) & HUB_STATUS_OVERCURRENT) ? \
+	      (le16_గమ్యం_cpu(hubsts->w_Hub_స్థితి) & HUB_స్థితి_OVERCURRENT) ? \
 	      "" : "no ");
 
-#if CONFIG_IS_ENABLED(DM_USB)
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
 	/*
 	 * Update USB host controller's internal representation of this hub
 	 * after the hub descriptor is fetched.
 	 */
 	ret = usb_update_hub_device(dev);
-	if (ret < 0 && ret != -ENOSYS) {
+	ఒకవేళ (ret < 0 && ret != -ENOSYS) {
 		debug("%s: failed to update hub device for HCD (%x)\n",
 		      __func__, ret);
-		return ret;
+		తిరిగి ret;
 	}
 
 	/*
@@ -814,36 +814,36 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * string' to locate the bits it uses to determine the downstream
 	 * port number.
 	 */
-	if (usb_hub_is_root_hub(dev->dev)) {
-		hub->hub_depth = -1;
-	} else {
-		struct udevice *hdev;
-		int depth = 0;
+	ఒకవేళ (usb_hub_is_మూలం_hub(dev->dev)) {
+		hub->hub_లోతు = -1;
+	} లేకపోతే {
+		నిర్మాణం udevice *hdev;
+		పూర్ణాంకం లోతు = 0;
 
-		hdev = dev->dev->parent;
-		while (!usb_hub_is_root_hub(hdev)) {
-			depth++;
-			hdev = hdev->parent;
+		hdev = dev->dev->మాతృ;
+		అయితే (!usb_hub_is_మూలం_hub(hdev)) {
+			లోతు++;
+			hdev = hdev->మాతృ;
 		}
 
-		hub->hub_depth = depth;
+		hub->hub_లోతు = లోతు;
 
-		if (usb_hub_is_superspeed(dev)) {
-			debug("set hub (%p) depth to %d\n", dev, depth);
+		ఒకవేళ (usb_hub_is_superspeed(dev)) {
+			debug("set hub (%p) depth to %d\n", dev, లోతు);
 			/*
 			 * This request sets the value that the hub uses to
 			 * determine the index into the 'route string index'
 			 * for this hub.
 			 */
-			ret = usb_set_hub_depth(dev, depth);
-			if (ret < 0) {
+			ret = usb_సమితి_hub_లోతు(dev, లోతు);
+			ఒకవేళ (ret < 0) {
 				debug("%s: failed to set hub depth (%lX)\n",
-				      __func__, dev->status);
-				return ret;
+				      __func__, dev->స్థితి_2);
+				తిరిగి ret;
 			}
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
 	usb_hub_power_on(hub);
 
@@ -852,7 +852,7 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * the power.  This is a __weak function.  Resetting of the devices
 	 * should occur in the board file of the device.
 	 */
-	for (i = 0; i < dev->maxchild; i++)
+	కొరకు (i = 0; i < dev->maxchild; i++)
 		usb_hub_reset_devices(hub, i + 1);
 
 	/*
@@ -862,94 +862,94 @@ static int usb_hub_configure(struct usb_device *dev)
 	 * will get removed from this list. Scanning of the devices on this
 	 * list will continue until all devices are removed.
 	 */
-	for (i = 0; i < dev->maxchild; i++) {
-		struct usb_device_scan *usb_scan;
+	కొరకు (i = 0; i < dev->maxchild; i++) {
+		నిర్మాణం usb_device_పరిశీలన *usb_పరిశీలన;
 
-		usb_scan = calloc(1, sizeof(*usb_scan));
-		if (!usb_scan) {
-			printf("Can't allocate memory for USB device!\n");
-			return -ENOMEM;
+		usb_పరిశీలన = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*usb_పరిశీలన));
+		ఒకవేళ (!usb_పరిశీలన) {
+			రాయి("Can't allocate memory for USB device!\n");
+			తిరిగి -ENOMEM;
 		}
-		usb_scan->dev = dev;
-		usb_scan->hub = hub;
-		usb_scan->port = i;
-		list_add_tail(&usb_scan->list, &usb_scan_list);
+		usb_పరిశీలన->dev = dev;
+		usb_పరిశీలన->hub = hub;
+		usb_పరిశీలన->పోర్టు = i;
+		list_కూడు_తోక(&usb_పరిశీలన->list, &usb_పరిశీలన_list);
 	}
 
 	/*
 	 * And now call the scanning code which loops over the generated list
 	 */
-	ret = usb_device_list_scan();
+	ret = usb_device_list_పరిశీలన();
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int usb_hub_check(struct usb_device *dev, int ifnum)
+స్థిర పూర్ణాంకం usb_hub_check(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum)
 {
-	struct usb_interface *iface;
-	struct usb_endpoint_descriptor *ep = NULL;
+	నిర్మాణం usb_interface *iface;
+	నిర్మాణం usb_endpoint_descriptor *ep = ఖాళీ;
 
 	iface = &dev->config.if_desc[ifnum];
 	/* Is it a hub? */
-	if (iface->desc.bInterfaceClass != USB_CLASS_HUB)
-		goto err;
+	ఒకవేళ (iface->desc.bInterfaceClass != USB_CLASS_HUB)
+		వెళ్ళు err;
 	/* Some hubs have a subclass of 1, which AFAICT according to the */
 	/*  specs is not defined, but it works */
-	if ((iface->desc.bInterfaceSubClass != 0) &&
+	ఒకవేళ ((iface->desc.bInterfaceSubClass != 0) &&
 	    (iface->desc.bInterfaceSubClass != 1))
-		goto err;
+		వెళ్ళు err;
 	/* Multiple endpoints? What kind of mutant ninja-hub is this? */
-	if (iface->desc.bNumEndpoints != 1)
-		goto err;
+	ఒకవేళ (iface->desc.b_అంకె_Endpoints != 1)
+		వెళ్ళు err;
 	ep = &iface->ep_desc[0];
 	/* Output endpoint? Curiousier and curiousier.. */
-	if (!(ep->bEndpointAddress & USB_DIR_IN))
-		goto err;
+	ఒకవేళ (!(ep->b_Endpoint_చిరునామా & USB_DIR_లోపల))
+		వెళ్ళు err;
 	/* If it's not an interrupt endpoint, we'd better punt! */
-	if ((ep->bmAttributes & 3) != 3)
-		goto err;
+	ఒకవేళ ((ep->bm_లక్షణాలు & 3) != 3)
+		వెళ్ళు err;
 	/* We found a hub */
 	debug("USB hub found\n");
-	return 0;
+	తిరిగి 0;
 
 err:
 	debug("USB hub not found: bInterfaceClass=%d, bInterfaceSubClass=%d, bNumEndpoints=%d\n",
 	      iface->desc.bInterfaceClass, iface->desc.bInterfaceSubClass,
-	      iface->desc.bNumEndpoints);
-	if (ep) {
+	      iface->desc.b_అంకె_Endpoints);
+	ఒకవేళ (ep) {
 		debug("   bEndpointAddress=%#x, bmAttributes=%d",
-		      ep->bEndpointAddress, ep->bmAttributes);
+		      ep->b_Endpoint_చిరునామా, ep->bm_లక్షణాలు);
 	}
 
-	return -ENOENT;
+	తిరిగి -ENOENT;
 }
 
-int usb_hub_probe(struct usb_device *dev, int ifnum)
+పూర్ణాంకం usb_hub_probe(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum)
 {
-	int ret;
+	పూర్ణాంకం ret;
 
 	ret = usb_hub_check(dev, ifnum);
-	if (ret)
-		return 0;
+	ఒకవేళ (ret)
+		తిరిగి 0;
 	ret = usb_hub_configure(dev);
-	return ret;
+	తిరిగి ret;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-int usb_hub_scan(struct udevice *hub)
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+పూర్ణాంకం usb_hub_పరిశీలన(నిర్మాణం udevice *hub)
 {
-	struct usb_device *udev = dev_get_parent_priv(hub);
+	నిర్మాణం usb_device *udev = dev_get_మాతృ_priv(hub);
 
-	return usb_hub_configure(udev);
+	తిరిగి usb_hub_configure(udev);
 }
 
-static int usb_hub_post_probe(struct udevice *dev)
+స్థిర పూర్ణాంకం usb_hub_post_probe(నిర్మాణం udevice *dev)
 {
 	debug("%s\n", __func__);
-	return usb_hub_scan(dev);
+	తిరిగి usb_hub_పరిశీలన(dev);
 }
 
-static const struct udevice_id usb_hub_ids[] = {
+స్థిర స్థిరరాశి నిర్మాణం udevice_id usb_hub_ids[] = {
 	{ .compatible = "usb-hub" },
 	{ }
 };
@@ -957,29 +957,29 @@ static const struct udevice_id usb_hub_ids[] = {
 U_BOOT_DRIVER(usb_generic_hub) = {
 	.name	= "usb_hub",
 	.id	= UCLASS_USB_HUB,
-	.of_match = usb_hub_ids,
+	.యొక్క_సరిపోలిక = usb_hub_ids,
 	.flags	= DM_FLAG_ALLOC_PRIV_DMA,
 };
 
 UCLASS_DRIVER(usb_hub) = {
 	.id		= UCLASS_USB_HUB,
 	.name		= "usb_hub",
-	.post_bind	= dm_scan_fdt_dev,
+	.post_bind	= dm_పరిశీలన_fdt_dev,
 	.post_probe	= usb_hub_post_probe,
-	.child_pre_probe	= usb_child_pre_probe,
-	.per_child_auto	= sizeof(struct usb_device),
-	.per_child_plat_auto	= sizeof(struct usb_dev_plat),
-	.per_device_auto	= sizeof(struct usb_hub_device),
+	.బిడ్డ_pre_probe	= usb_బిడ్డ_pre_probe,
+	.చొప్పున_బిడ్డ_auto	= పరిమాణం(నిర్మాణం usb_device),
+	.చొప్పున_బిడ్డ_plat_auto	= పరిమాణం(నిర్మాణం usb_dev_plat),
+	.చొప్పున_device_auto	= పరిమాణం(నిర్మాణం usb_hub_device),
 };
 
-static const struct usb_device_id hub_id_table[] = {
+స్థిర స్థిరరాశి నిర్మాణం usb_device_id hub_id_పట్టిక[] = {
 	{
-		.match_flags = USB_DEVICE_ID_MATCH_DEV_CLASS,
+		.సరిపోలిక_flags = USB_DEVICE_ID_సరిపోలిక_DEV_CLASS,
 		.bDeviceClass = USB_CLASS_HUB
 	},
 	{ }	/* Terminating entry */
 };
 
-U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_table);
+U_BOOT_USB_DEVICE(usb_generic_hub, hub_id_పట్టిక);
 
-#endif
+#అయితే_ముగింపు

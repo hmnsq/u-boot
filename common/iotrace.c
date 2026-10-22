@@ -3,16 +3,16 @@
  * Copyright (c) 2014 Google, Inc.
  */
 
-#define IOTRACE_IMPL
+#నిర్వచించు IOTRACE_IMPL
 
-#include <mapmem.h>
-#include <time.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <linux/bug.h>
-#include <u-boot/crc.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <asm/io.h>
+#అన్తర్భావ <linux/bug.h>
+#అన్తర్భావ <u-boot/crc.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
 /**
  * struct iotrace - current trace status and checksum
@@ -26,20 +26,20 @@ DECLARE_GLOBAL_DATA_PTR;
  * @crc32:	Current value of CRC chceksum of trace records
  * @enabled:	true if enabled, false if disabled
  */
-static struct iotrace {
-	ulong start;
-	ulong size;
-	ulong needed_size;
-	ulong offset;
-	ulong region_start;
-	ulong region_size;
-	u32 crc32;
+స్థిర నిర్మాణం iotrace {
+	ulong ప్రారంభం;
+	ulong కొలత;
+	ulong needed_కొలత;
+	ulong స్థానభ్రంశం;
+	ulong region_ప్రారంభం;
+	ulong region_కొలత;
+	u32 చక్రీయ_తనిఖీ_32;
 	bool enabled;
 } iotrace;
 
-static void add_record(int flags, const void *ptr, ulong value)
+స్థిర శూన్య కూడు_రికార్డు(పూర్ణాంకం flags, స్థిరరాశి శూన్య *ptr, ulong విలువ)
 {
-	struct iotrace_record srec, *rec = &srec;
+	నిర్మాణం iotrace_రికార్డు srec, *rec = &srec;
 
 	/*
 	 * We don't support iotrace before relocation. Since the trace buffer
@@ -47,137 +47,137 @@ static void add_record(int flags, const void *ptr, ulong value)
 	 * this we would need to set the iotrace buffer at build-time. See
 	 * lib/trace.c for how this might be done if you are interested.
 	 */
-	if (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
-		return;
+	ఒకవేళ (!(gd->flags & GD_FLG_RELOC) || !iotrace.enabled)
+		తిరిగి;
 
-	if (iotrace.region_size)
-		if ((ulong)ptr < iotrace.region_start ||
-		    (ulong)ptr > iotrace.region_start + iotrace.region_size)
-			return;
+	ఒకవేళ (iotrace.region_కొలత)
+		ఒకవేళ ((ulong)ptr < iotrace.region_ప్రారంభం ||
+		    (ulong)ptr > iotrace.region_ప్రారంభం + iotrace.region_కొలత)
+			తిరిగి;
 
 	/* Store it if there is room */
-	if (iotrace.offset + sizeof(*rec) < iotrace.size) {
-		rec = (struct iotrace_record *)map_sysmem(
-					iotrace.start + iotrace.offset,
-					sizeof(value));
-	} else {
+	ఒకవేళ (iotrace.స్థానభ్రంశం + పరిమాణం(*rec) < iotrace.కొలత) {
+		rec = (నిర్మాణం iotrace_రికార్డు *)map_sysmem(
+					iotrace.ప్రారంభం + iotrace.స్థానభ్రంశం,
+					పరిమాణం(విలువ));
+	} లేకపోతే {
 		WARN_ONCE(1, "WARNING: iotrace buffer exhausted, please check needed length using \"iotrace stats\"\n");
-		iotrace.needed_size += sizeof(struct iotrace_record);
-		return;
+		iotrace.needed_కొలత += పరిమాణం(నిర్మాణం iotrace_రికార్డు);
+		తిరిగి;
 	}
 
 	rec->timestamp = timer_get_us();
 	rec->flags = flags;
-	rec->addr = map_to_sysmem(ptr);
-	rec->value = value;
+	rec->addr = map_గమ్యం_sysmem(ptr);
+	rec->విలువ = విలువ;
 
 	/* Update our checksum */
-	iotrace.crc32 = crc32(iotrace.crc32, (unsigned char *)rec,
-			      sizeof(*rec));
+	iotrace.చక్రీయ_తనిఖీ_32 = చక్రీయ_తనిఖీ_32(iotrace.చక్రీయ_తనిఖీ_32, (గుర్తులేని అక్షరం *)rec,
+			      పరిమాణం(*rec));
 
-	iotrace.needed_size += sizeof(struct iotrace_record);
-	iotrace.offset += sizeof(struct iotrace_record);
+	iotrace.needed_కొలత += పరిమాణం(నిర్మాణం iotrace_రికార్డు);
+	iotrace.స్థానభ్రంశం += పరిమాణం(నిర్మాణం iotrace_రికార్డు);
 }
 
-u32 iotrace_readl(const void *ptr)
+u32 iotrace_readl(స్థిరరాశి శూన్య *ptr)
 {
 	u32 v;
 
 	v = readl(ptr);
-	add_record(IOT_32 | IOT_READ, ptr, v);
+	కూడు_రికార్డు(IOT_32 | IOT_READ, ptr, v);
 
-	return v;
+	తిరిగి v;
 }
 
-void iotrace_writel(ulong value, void *ptr)
+శూన్య iotrace_writel(ulong విలువ, శూన్య *ptr)
 {
-	add_record(IOT_32 | IOT_WRITE, ptr, value);
-	writel(value, ptr);
+	కూడు_రికార్డు(IOT_32 | IOT_WRITE, ptr, విలువ);
+	writel(విలువ, ptr);
 }
 
-u16 iotrace_readw(const void *ptr)
+u16 iotrace_readw(స్థిరరాశి శూన్య *ptr)
 {
 	u32 v;
 
 	v = readw(ptr);
-	add_record(IOT_16 | IOT_READ, ptr, v);
+	కూడు_రికార్డు(IOT_16 | IOT_READ, ptr, v);
 
-	return v;
+	తిరిగి v;
 }
 
-void iotrace_writew(ulong value, void *ptr)
+శూన్య iotrace_writew(ulong విలువ, శూన్య *ptr)
 {
-	add_record(IOT_16 | IOT_WRITE, ptr, value);
-	writew(value, ptr);
+	కూడు_రికార్డు(IOT_16 | IOT_WRITE, ptr, విలువ);
+	writew(విలువ, ptr);
 }
 
-u8 iotrace_readb(const void *ptr)
+u8 iotrace_readb(స్థిరరాశి శూన్య *ptr)
 {
 	u32 v;
 
 	v = readb(ptr);
-	add_record(IOT_8 | IOT_READ, ptr, v);
+	కూడు_రికార్డు(IOT_8 | IOT_READ, ptr, v);
 
-	return v;
+	తిరిగి v;
 }
 
-void iotrace_writeb(ulong value, void *ptr)
+శూన్య iotrace_writeb(ulong విలువ, శూన్య *ptr)
 {
-	add_record(IOT_8 | IOT_WRITE, ptr, value);
-	writeb(value, ptr);
+	కూడు_రికార్డు(IOT_8 | IOT_WRITE, ptr, విలువ);
+	writeb(విలువ, ptr);
 }
 
-void iotrace_reset_checksum(void)
+శూన్య iotrace_reset_checksum(శూన్య)
 {
-	iotrace.crc32 = 0;
+	iotrace.చక్రీయ_తనిఖీ_32 = 0;
 }
 
-u32 iotrace_get_checksum(void)
+u32 iotrace_get_checksum(శూన్య)
 {
-	return iotrace.crc32;
+	తిరిగి iotrace.చక్రీయ_తనిఖీ_32;
 }
 
-void iotrace_set_region(ulong start, ulong size)
+శూన్య iotrace_సమితి_region(ulong ప్రారంభం, ulong కొలత)
 {
-	iotrace.region_start = start;
-	iotrace.region_size = size;
+	iotrace.region_ప్రారంభం = ప్రారంభం;
+	iotrace.region_కొలత = కొలత;
 }
 
-void iotrace_reset_region(void)
+శూన్య iotrace_reset_region(శూన్య)
 {
-	iotrace.region_start = 0;
-	iotrace.region_size = 0;
+	iotrace.region_ప్రారంభం = 0;
+	iotrace.region_కొలత = 0;
 }
 
-void iotrace_get_region(ulong *start, ulong *size)
+శూన్య iotrace_get_region(ulong *ప్రారంభం, ulong *కొలత)
 {
-	*start = iotrace.region_start;
-	*size = iotrace.region_size;
+	*ప్రారంభం = iotrace.region_ప్రారంభం;
+	*కొలత = iotrace.region_కొలత;
 }
 
-void iotrace_set_enabled(int enable)
+శూన్య iotrace_సమితి_enabled(పూర్ణాంకం enable)
 {
 	iotrace.enabled = enable;
 }
 
-int iotrace_get_enabled(void)
+పూర్ణాంకం iotrace_get_enabled(శూన్య)
 {
-	return iotrace.enabled;
+	తిరిగి iotrace.enabled;
 }
 
-void iotrace_set_buffer(ulong start, ulong size)
+శూన్య iotrace_సమితి_బఫరు(ulong ప్రారంభం, ulong కొలత)
 {
-	iotrace.start = start;
-	iotrace.size = size;
-	iotrace.offset = 0;
-	iotrace.crc32 = 0;
+	iotrace.ప్రారంభం = ప్రారంభం;
+	iotrace.కొలత = కొలత;
+	iotrace.స్థానభ్రంశం = 0;
+	iotrace.చక్రీయ_తనిఖీ_32 = 0;
 }
 
-void iotrace_get_buffer(ulong *start, ulong *size, ulong *needed_size, ulong *offset, ulong *count)
+శూన్య iotrace_get_బఫరు(ulong *ప్రారంభం, ulong *కొలత, ulong *needed_కొలత, ulong *స్థానభ్రంశం, ulong *లెక్క)
 {
-	*start = iotrace.start;
-	*size = iotrace.size;
-	*needed_size = iotrace.needed_size;
-	*offset = iotrace.offset;
-	*count = iotrace.offset / sizeof(struct iotrace_record);
+	*ప్రారంభం = iotrace.ప్రారంభం;
+	*కొలత = iotrace.కొలత;
+	*needed_కొలత = iotrace.needed_కొలత;
+	*స్థానభ్రంశం = iotrace.స్థానభ్రంశం;
+	*లెక్క = iotrace.స్థానభ్రంశం / పరిమాణం(నిర్మాణం iotrace_రికార్డు);
 }

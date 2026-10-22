@@ -4,172 +4,172 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <asm/sections.h>
-#include <asm/unaligned.h>
-#include <linux/types.h>
-#include <lzma/LzmaTypes.h>
-#include <lzma/LzmaDec.h>
-#include <lzma/LzmaTools.h>
-#include <u-boot/crc.h>
-#include <u-boot/lz4.h>
+#అన్తర్భావ <gzip.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <asm/io.h>
+#అన్తర్భావ <asm/sections.h>
+#అన్తర్భావ <asm/unaligned.h>
+#అన్తర్భావ <linux/types.h>
+#అన్తర్భావ <lzma/LzmaTypes.h>
+#అన్తర్భావ <lzma/LzmaDec.h>
+#అన్తర్భావ <lzma/LzmaTools.h>
+#అన్తర్భావ <u-boot/crc.h>
+#అన్తర్భావ <u-boot/lz4.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
 /* provide a way to jump straight into the relocation code, for debugging */
-#define DEBUG_JUMP	0
+#నిర్వచించు DEBUG_JUMP	0
 
-enum {
+గణన {
 	/* margin to allow for stack growth */
-	RELOC_STACK_MARGIN	= 0x800,
+	RELOC_దొంతర_MARGIN	= 0x800,
 
 	/* align base address for DMA controllers which require it */
-	BASE_ALIGN		= 0x200,
+	పునాది_ALIGN		= 0x200,
 
-	STACK_PROT_VALUE	= 0x51ce4697,
+	దొంతర_PROT_విలువ	= 0x51ce4697,
 };
 
-typedef int (*rcode_func)(struct spl_image_info *image);
+రకనిర్వచనం పూర్ణాంకం (*rcode_func)(నిర్మాణం spl_image_info *image);
 
-static int setup_layout(struct spl_image_info *image, ulong *addrp)
+స్థిర పూర్ణాంకం అమరిక_layout(నిర్మాణం spl_image_info *image, ulong *addrp)
 {
-	ulong base, fdt_size;
-	ulong limit, rcode_base;
-	uint rcode_size;
-	int buf_size, margin;
-	char *rcode_buf;
+	ulong పునాది, fdt_కొలత;
+	ulong హద్దు, rcode_పునాది;
+	uint rcode_కొలత;
+	పూర్ణాంకం buf_కొలత, margin;
+	అక్షరం *rcode_buf;
 
-	limit = ALIGN(map_to_sysmem(&limit) - RELOC_STACK_MARGIN, 8);
-	image->stack_prot = map_sysmem(limit, sizeof(uint));
-	*image->stack_prot = STACK_PROT_VALUE;
+	హద్దు = ALIGN(map_గమ్యం_sysmem(&హద్దు) - RELOC_దొంతర_MARGIN, 8);
+	image->దొంతర_prot = map_sysmem(హద్దు, పరిమాణం(uint));
+	*image->దొంతర_prot = దొంతర_PROT_విలువ;
 
-	fdt_size = fdt_totalsize(gd->fdt_blob);
-	base = ALIGN(map_to_sysmem(gd->fdt_blob) + fdt_size + BASE_ALIGN - 1,
-		     BASE_ALIGN);
+	fdt_కొలత = fdt_totalsize(gd->fdt_blob);
+	పునాది = ALIGN(map_గమ్యం_sysmem(gd->fdt_blob) + fdt_కొలత + పునాది_ALIGN - 1,
+		     పునాది_ALIGN);
 
-	rcode_size = _rcode_end - _rcode_start;
-	rcode_base = limit - rcode_size;
-	buf_size = rcode_base - base;
-	uint need_size = image->size + image->fdt_size;
-	margin = buf_size - need_size;
+	rcode_కొలత = rcode_చివర - rcode_ప్రారంభం;
+	rcode_పునాది = హద్దు - rcode_కొలత;
+	buf_కొలత = rcode_పునాది - పునాది;
+	uint need_కొలత = image->కొలత + image->fdt_కొలత;
+	margin = buf_కొలత - need_కొలత;
 	log_debug("spl_reloc %s->%s: margin%s%lx limit %lx fdt_size %lx base %lx avail %x image %x fdt %lx need %x\n",
 		  spl_phase_name(spl_phase()), spl_phase_name(spl_phase() + 1),
-		  margin >= 0 ? " " : " -", abs(margin), limit, fdt_size, base,
-		  buf_size, image->size, image->fdt_size, need_size);
-	if (margin < 0) {
-		log_err("Image size %x but buffer is only %x\n", need_size,
-			buf_size);
-		return -ENOSPC;
+		  margin >= 0 ? " " : " -", నిరపేక్ష(margin), హద్దు, fdt_కొలత, పునాది,
+		  buf_కొలత, image->కొలత, image->fdt_కొలత, need_కొలత);
+	ఒకవేళ (margin < 0) {
+		log_err("Image size %x but buffer is only %x\n", need_కొలత,
+			buf_కొలత);
+		తిరిగి -ENOSPC;
 	}
 
-	rcode_buf = map_sysmem(rcode_base, rcode_size);
-	log_debug("_rcode_start %p: %x -- func %p %x\n", _rcode_start,
-		  *(uint *)_rcode_start, setup_layout, *(uint *)setup_layout);
+	rcode_buf = map_sysmem(rcode_పునాది, rcode_కొలత);
+	log_debug("_rcode_start %p: %x -- func %p %x\n", rcode_ప్రారంభం,
+		  *(uint *)rcode_ప్రారంభం, అమరిక_layout, *(uint *)అమరిక_layout);
 
-	image->reloc_offset = rcode_buf - _rcode_start;
+	image->reloc_స్థానభ్రంశం = rcode_buf - rcode_ప్రారంభం;
 	log_debug("_rcode start %lx base %lx size %x offset %lx\n",
-		  (ulong)map_to_sysmem(_rcode_start), rcode_base, rcode_size,
-		  image->reloc_offset);
+		  (ulong)map_గమ్యం_sysmem(rcode_ప్రారంభం), rcode_పునాది, rcode_కొలత,
+		  image->reloc_స్థానభ్రంశం);
 
-	memcpy(rcode_buf, _rcode_start, rcode_size);
+	జ్ఞాపకం_నకలు(rcode_buf, rcode_ప్రారంభం, rcode_కొలత);
 
-	image->buf = map_sysmem(base, need_size);
-	image->fdt_buf = image->buf + image->size;
+	image->buf = map_sysmem(పునాది, need_కొలత);
+	image->fdt_buf = image->buf + image->కొలత;
 	image->rcode_buf = rcode_buf;
-	*addrp = base;
+	*addrp = పునాది;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int spl_reloc_prepare(struct spl_image_info *image, ulong *addrp)
+పూర్ణాంకం spl_reloc_prepare(నిర్మాణం spl_image_info *image, ulong *addrp)
 {
-	int ret;
+	పూర్ణాంకం ret;
 
-	ret = setup_layout(image, addrp);
-	if (ret)
-		return ret;
+	ret = అమరిక_layout(image, addrp);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	return 0;
+	తిరిగి 0;
 }
 
-typedef void __noreturn (*image_entry_noargs_t)(uint crc, uint unc_len);
+రకనిర్వచనం శూన్య __noreturn (*image_నమోదు_noargs_t)(uint చక్రీయ_తనిఖీ, uint unc_len);
 
 /* this is the relocation + jump code that is copied to the top of memory */
-__rcode int rcode_reloc_and_jump(struct spl_image_info *image)
+__rcode పూర్ణాంకం rcode_reloc_and_jump(నిర్మాణం spl_image_info *image)
 {
-	image_entry_noargs_t entry = (image_entry_noargs_t)image->entry_point;
+	image_నమోదు_noargs_t నమోదు_2 = (image_నమోదు_noargs_t)image->నమోదు_బిందువు;
 	u32 *dst;
 	ulong image_len;
 	size_t unc_len;
-	int ret, crc;
+	పూర్ణాంకం ret, చక్రీయ_తనిఖీ;
 	uint magic;
 
-	dst = map_sysmem(image->load_addr, image->size);
-	unc_len = (void *)image->rcode_buf - (void *)dst;
-	image_len = image->size;
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	dst = map_sysmem(image->ఎక్కించు_addr, image->కొలత);
+	unc_len = (శూన్య *)image->rcode_buf - (శూన్య *)dst;
+	image_len = image->కొలత;
+	ఒకవేళ (*image->దొంతర_prot != దొంతర_PROT_విలువ)
+		తిరిగి -EFAULT;
 	magic = get_unaligned_le32(image->buf);
-	if (CONFIG_IS_ENABLED(LZMA)) {
-		SizeT lzma_len = unc_len;
+	ఒకవేళ (CONFIG_IS_ENABLED(LZMA)) {
+		కొలత_T lzma_len = unc_len;
 
-		ret = lzmaBuffToBuffDecompress((u8 *)dst, &lzma_len,
+		ret = lzma_Buff_గమ్యం_Buff_Decompress((u8 *)dst, &lzma_len,
 					       image->buf, image_len);
 		unc_len = lzma_len;
-	} else if (CONFIG_IS_ENABLED(GZIP)) {
+	} లేకపోతే ఒకవేళ (CONFIG_IS_ENABLED(GZIP)) {
 		ret = gunzip(dst, unc_len, image->buf, &image_len);
-	} else if (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
+	} లేకపోతే ఒకవేళ (CONFIG_IS_ENABLED(LZ4) && magic == LZ4F_MAGIC) {
 		ret = ulz4fn(image->buf, image_len, dst, &unc_len);
-		if (ret)
-			return ret;
-	} else {
-		u32 *src, *end, *ptr;
+		ఒకవేళ (ret)
+			తిరిగి ret;
+	} లేకపోతే {
+		u32 *src, *చివర_2, *ptr;
 
-		unc_len = image->size;
-		for (src = image->buf, end = (void *)src + image->size,
-		     ptr = dst; src < end;)
+		unc_len = image->కొలత;
+		కొరకు (src = image->buf, చివర_2 = (శూన్య *)src + image->కొలత,
+		     ptr = dst; src < చివర_2;)
 			*ptr++ = *src++;
 	}
-	if (*image->stack_prot != STACK_PROT_VALUE)
-		return -EFAULT;
+	ఒకవేళ (*image->దొంతర_prot != దొంతర_PROT_విలువ)
+		తిరిగి -EFAULT;
 
 	/* copy in the FDT if needed */
-	if (image->fdt_size)
-		memcpy(image->fdt_start, image->fdt_buf, image->fdt_size);
+	ఒకవేళ (image->fdt_కొలత)
+		జ్ఞాపకం_నకలు(image->fdt_ప్రారంభం, image->fdt_buf, image->fdt_కొలత);
 
-	crc = crc8(0, (u8 *)dst, unc_len);
+	చక్రీయ_తనిఖీ = crc8(0, (u8 *)dst, unc_len);
 
 	/* jump to the entry point */
-	entry(crc, unc_len);
+	నమోదు_2(చక్రీయ_తనిఖీ, unc_len);
 }
 
-int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
+పూర్ణాంకం spl_reloc_jump(నిర్మాణం spl_image_info *image, spl_jump_గమ్యం_image_t jump)
 {
 	rcode_func loader;
-	int ret;
+	పూర్ణాంకం ret;
 
 	log_debug("malloc usage %x bytes (%d KB of %d KB)\n", gd->malloc_ptr,
 		  gd->malloc_ptr / 1024, CONFIG_VAL(SYS_MALLOC_F_LEN) / 1024);
 
-	if (*image->stack_prot != STACK_PROT_VALUE) {
+	ఒకవేళ (*image->దొంతర_prot != దొంతర_PROT_విలువ) {
 		log_err("stack busted, cannot continue\n");
-		return -EFAULT;
+		తిరిగి -EFAULT;
 	}
-	loader = (rcode_func)(void *)rcode_reloc_and_jump + image->reloc_offset;
+	loader = (rcode_func)(శూన్య *)rcode_reloc_and_jump + image->reloc_స్థానభ్రంశం;
 	log_debug("Jumping via %p to %lx - image %p size %x load %lx\n", loader,
-		  image->entry_point, image, image->size, image->load_addr);
+		  image->నమోదు_బిందువు, image, image->కొలత, image->ఎక్కించు_addr);
 
 	log_debug("unc_len %lx\n",
-		  image->rcode_buf - map_sysmem(image->load_addr, image->size));
-	if (DEBUG_JUMP) {
+		  image->rcode_buf - map_sysmem(image->ఎక్కించు_addr, image->కొలత));
+	ఒకవేళ (DEBUG_JUMP) {
 		rcode_reloc_and_jump(image);
-	} else {
+	} లేకపోతే {
 		/*
 		 * Must disable LOG_DEBUG since the decompressor cannot call
 		 * log functions, printf(), etc.
@@ -179,5 +179,5 @@ int spl_reloc_jump(struct spl_image_info *image, spl_jump_to_image_t jump)
 		ret = loader(image);
 	}
 
-	return -EFAULT;
+	తిరిగి -EFAULT;
 }

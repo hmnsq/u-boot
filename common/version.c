@@ -4,13 +4,13 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <timestamp.h>
-#include <version.h>
-#include <version_string.h>
+#అన్తర్భావ <timestamp.h>
+#అన్తర్భావ <version.h>
+#అన్తర్భావ <version_string.h>
 
-#define U_BOOT_VERSION_STRING U_BOOT_VERSION " (" U_BOOT_DATE " - " \
-	U_BOOT_TIME " " U_BOOT_TZ ")" CONFIG_IDENT_STRING
+#నిర్వచించు U_BOOT_సంస్కరణ_STRING U_BOOT_సంస్కరణ " (" U_BOOT_DATE " - " \
+	U_BOOT_సమయం " " U_BOOT_TZ ")" CONFIG_IDENT_STRING
 
-const char version_string[] = U_BOOT_VERSION_STRING;
-const unsigned short version_num = U_BOOT_VERSION_NUM;
-const unsigned char version_num_patch = U_BOOT_VERSION_NUM_PATCH;
+స్థిరరాశి అక్షరం సంస్కరణ_string[] = U_BOOT_సంస్కరణ_STRING;
+స్థిరరాశి గుర్తులేని పొట్టి సంస్కరణ_అంకె = U_BOOT_సంస్కరణ_అంకె;
+స్థిరరాశి గుర్తులేని అక్షరం సంస్కరణ_అంకె_patch = U_BOOT_సంస్కరణ_అంకె_PATCH;

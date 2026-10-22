@@ -4,51 +4,51 @@
  *
  */
 
-#include <scp03.h>
-#include <tee.h>
-#include <tee/optee_ta_scp03.h>
-#include <linux/errno.h>
-#include <linux/string.h>
+#అన్తర్భావ <scp03.h>
+#అన్తర్భావ <tee.h>
+#అన్తర్భావ <tee/optee_ta_scp03.h>
+#అన్తర్భావ <linux/errno.h>
+#అన్తర్భావ <linux/string.h>
 
-static int scp03_enable(bool provision)
+స్థిర పూర్ణాంకం scp03_enable(bool provision)
 {
-	const struct tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
-	struct tee_open_session_arg session;
-	struct tee_invoke_arg invoke;
-	struct tee_param param;
-	struct udevice *tee = NULL;
+	స్థిరరాశి నిర్మాణం tee_optee_ta_uuid uuid = PTA_SCP03_UUID;
+	నిర్మాణం tee_open_session_arg session;
+	నిర్మాణం tee_invoke_arg invoke;
+	నిర్మాణం tee_param param;
+	నిర్మాణం udevice *tee = ఖాళీ;
 
-	tee = tee_find_device(tee, NULL, NULL, NULL);
-	if (!tee)
-		return -ENODEV;
+	tee = tee_కనుగొను_device(tee, ఖాళీ, ఖాళీ, ఖాళీ);
+	ఒకవేళ (!tee)
+		తిరిగి -ENODEV;
 
-	memset(&session, 0, sizeof(session));
-	tee_optee_ta_uuid_to_octets(session.uuid, &uuid);
-	if (tee_open_session(tee, &session, 0, NULL))
-		return -ENXIO;
+	memset(&session, 0, పరిమాణం(session));
+	tee_optee_ta_uuid_గమ్యం_octets(session.uuid, &uuid);
+	ఒకవేళ (tee_open_session(tee, &session, 0, ఖాళీ))
+		తిరిగి -ENXIO;
 
-	memset(&param, 0, sizeof(param));
-	param.attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
-	param.u.value.a = provision;
+	memset(&param, 0, పరిమాణం(param));
+	param.attr = TEE_PARAM_ATTR_TYPE_విలువ_ఆదానం;
+	param.u.విలువ.a = provision;
 
-	memset(&invoke, 0, sizeof(invoke));
+	memset(&invoke, 0, పరిమాణం(invoke));
 	invoke.func = PTA_CMD_ENABLE_SCP03;
 	invoke.session = session.session;
 
-	if (tee_invoke_func(tee, &invoke, 1, &param))
-		return -EIO;
+	ఒకవేళ (tee_invoke_func(tee, &invoke, 1, &param))
+		తిరిగి -EIO;
 
 	tee_close_session(tee, session.session);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int tee_enable_scp03(void)
+పూర్ణాంకం tee_enable_scp03(శూన్య)
 {
-	return scp03_enable(false);
+	తిరిగి scp03_enable(false);
 }
 
-int tee_provision_scp03(void)
+పూర్ణాంకం tee_provision_scp03(శూన్య)
 {
-	return scp03_enable(true);
+	తిరిగి scp03_enable(true);
 }

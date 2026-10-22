@@ -9,232 +9,232 @@
  * Copyright (C) 2017 Theobroma Systems Design und Consulting GmbH
  */
 
-#include <atf_common.h>
-#include <cpu_func.h>
-#include <errno.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <asm/cache.h>
+#అన్తర్భావ <atf_common.h>
+#అన్తర్భావ <cpu_func.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <asm/cache.h>
 
 /* Holds all the structures we need for bl31 parameter passing */
-struct bl2_to_bl31_params_mem {
-	struct bl31_params bl31_params;
-	struct atf_image_info bl31_image_info;
-	struct atf_image_info bl32_image_info;
-	struct atf_image_info bl33_image_info;
-	struct entry_point_info bl33_ep_info;
-	struct entry_point_info bl32_ep_info;
-	struct entry_point_info bl31_ep_info;
+నిర్మాణం bl2_గమ్యం_bl31_params_mem {
+	నిర్మాణం bl31_params bl31_params;
+	నిర్మాణం atf_image_info bl31_image_info;
+	నిర్మాణం atf_image_info bl32_image_info;
+	నిర్మాణం atf_image_info bl33_image_info;
+	నిర్మాణం నమోదు_బిందువు_info bl33_ep_info;
+	నిర్మాణం నమోదు_బిందువు_info bl32_ep_info;
+	నిర్మాణం నమోదు_బిందువు_info bl31_ep_info;
 };
 
-struct bl2_to_bl31_params_mem_v2 {
-	struct bl_params bl_params;
-	struct bl_params_node bl31_params_node;
-	struct bl_params_node bl32_params_node;
-	struct bl_params_node bl33_params_node;
-	struct atf_image_info bl31_image_info;
-	struct atf_image_info bl32_image_info;
-	struct atf_image_info bl33_image_info;
-	struct entry_point_info bl33_ep_info;
-	struct entry_point_info bl32_ep_info;
-	struct entry_point_info bl31_ep_info;
+నిర్మాణం bl2_గమ్యం_bl31_params_mem_v2 {
+	నిర్మాణం bl_params bl_params;
+	నిర్మాణం bl_params_కణుపు bl31_params_కణుపు;
+	నిర్మాణం bl_params_కణుపు bl32_params_కణుపు;
+	నిర్మాణం bl_params_కణుపు bl33_params_కణుపు;
+	నిర్మాణం atf_image_info bl31_image_info;
+	నిర్మాణం atf_image_info bl32_image_info;
+	నిర్మాణం atf_image_info bl33_image_info;
+	నిర్మాణం నమోదు_బిందువు_info bl33_ep_info;
+	నిర్మాణం నమోదు_బిందువు_info bl32_ep_info;
+	నిర్మాణం నమోదు_బిందువు_info bl31_ep_info;
 };
 
-struct bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_entry,
-						     ulong bl33_entry,
+నిర్మాణం bl31_params *bl2_plat_get_bl31_params_default(ulong bl32_నమోదు,
+						     ulong bl33_నమోదు,
 						     ulong fdt_addr)
 {
-	static struct bl2_to_bl31_params_mem bl31_params_mem;
-	struct bl31_params *bl2_to_bl31_params;
-	struct entry_point_info *bl32_ep_info;
-	struct entry_point_info *bl33_ep_info;
+	స్థిర నిర్మాణం bl2_గమ్యం_bl31_params_mem bl31_params_mem;
+	నిర్మాణం bl31_params *bl2_గమ్యం_bl31_params;
+	నిర్మాణం నమోదు_బిందువు_info *bl32_ep_info;
+	నిర్మాణం నమోదు_బిందువు_info *bl33_ep_info;
 
 	/*
 	 * Initialise the memory for all the arguments that needs to
 	 * be passed to BL31
 	 */
-	memset(&bl31_params_mem, 0, sizeof(struct bl2_to_bl31_params_mem));
+	memset(&bl31_params_mem, 0, పరిమాణం(నిర్మాణం bl2_గమ్యం_bl31_params_mem));
 
 	/* Assign memory for TF related information */
-	bl2_to_bl31_params = &bl31_params_mem.bl31_params;
-	SET_PARAM_HEAD(bl2_to_bl31_params, ATF_PARAM_BL31, ATF_VERSION_1, 0);
+	bl2_గమ్యం_bl31_params = &bl31_params_mem.bl31_params;
+	సమితి_PARAM_తల(bl2_గమ్యం_bl31_params, ATF_PARAM_BL31, ATF_సంస్కరణ_1, 0);
 
 	/* Fill BL31 related information */
-	bl2_to_bl31_params->bl31_image_info = &bl31_params_mem.bl31_image_info;
-	SET_PARAM_HEAD(bl2_to_bl31_params->bl31_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+	bl2_గమ్యం_bl31_params->bl31_image_info = &bl31_params_mem.bl31_image_info;
+	సమితి_PARAM_తల(bl2_గమ్యం_bl31_params->bl31_image_info,
+		       ATF_PARAM_IMAGE_ద్విమాన, ATF_సంస్కరణ_1, 0);
 
 	/* Fill BL32 related information */
-	bl2_to_bl31_params->bl32_ep_info = &bl31_params_mem.bl32_ep_info;
+	bl2_గమ్యం_bl31_params->bl32_ep_info = &bl31_params_mem.bl32_ep_info;
 	bl32_ep_info = &bl31_params_mem.bl32_ep_info;
-	SET_PARAM_HEAD(bl32_ep_info, ATF_PARAM_EP, ATF_VERSION_1,
+	సమితి_PARAM_తల(bl32_ep_info, ATF_PARAM_EP, ATF_సంస్కరణ_1,
 		       ATF_EP_SECURE);
 
 	/* secure payload is optional, so set pc to 0 if absent */
-	bl32_ep_info->args.arg3 = fdt_addr;
-	bl32_ep_info->pc = bl32_entry ? bl32_entry : 0;
-	bl32_ep_info->spsr = SPSR_64(MODE_EL1, MODE_SP_ELX,
+	bl32_ep_info->వాదనలు.arg3 = fdt_addr;
+	bl32_ep_info->pc = bl32_నమోదు ? bl32_నమోదు : 0;
+	bl32_ep_info->spsr = SPSR_64(బహుళకం_EL1, బహుళకం_SP_ELX,
 				     DISABLE_ALL_EXCEPTIONS);
 
-	bl2_to_bl31_params->bl32_image_info = &bl31_params_mem.bl32_image_info;
-	SET_PARAM_HEAD(bl2_to_bl31_params->bl32_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+	bl2_గమ్యం_bl31_params->bl32_image_info = &bl31_params_mem.bl32_image_info;
+	సమితి_PARAM_తల(bl2_గమ్యం_bl31_params->bl32_image_info,
+		       ATF_PARAM_IMAGE_ద్విమాన, ATF_సంస్కరణ_1, 0);
 
 	/* Fill BL33 related information */
-	bl2_to_bl31_params->bl33_ep_info = &bl31_params_mem.bl33_ep_info;
+	bl2_గమ్యం_bl31_params->bl33_ep_info = &bl31_params_mem.bl33_ep_info;
 	bl33_ep_info = &bl31_params_mem.bl33_ep_info;
-	SET_PARAM_HEAD(bl33_ep_info, ATF_PARAM_EP, ATF_VERSION_1,
+	సమితి_PARAM_తల(bl33_ep_info, ATF_PARAM_EP, ATF_సంస్కరణ_1,
 		       ATF_EP_NON_SECURE);
 
 	/* BL33 expects to receive the primary CPU MPID (through x0) */
-	bl33_ep_info->args.arg0 = 0xffff & read_mpidr();
-	bl33_ep_info->pc = bl33_entry;
-	bl33_ep_info->spsr = SPSR_64(MODE_EL2, MODE_SP_ELX,
+	bl33_ep_info->వాదనలు.arg0 = 0xffff & read_mpidr();
+	bl33_ep_info->pc = bl33_నమోదు;
+	bl33_ep_info->spsr = SPSR_64(బహుళకం_EL2, బహుళకం_SP_ELX,
 				     DISABLE_ALL_EXCEPTIONS);
 
-	bl2_to_bl31_params->bl33_image_info = &bl31_params_mem.bl33_image_info;
-	SET_PARAM_HEAD(bl2_to_bl31_params->bl33_image_info,
-		       ATF_PARAM_IMAGE_BINARY, ATF_VERSION_1, 0);
+	bl2_గమ్యం_bl31_params->bl33_image_info = &bl31_params_mem.bl33_image_info;
+	సమితి_PARAM_తల(bl2_గమ్యం_bl31_params->bl33_image_info,
+		       ATF_PARAM_IMAGE_ద్విమాన, ATF_సంస్కరణ_1, 0);
 
-	return bl2_to_bl31_params;
+	తిరిగి bl2_గమ్యం_bl31_params;
 }
 
-__weak struct bl31_params *bl2_plat_get_bl31_params(ulong bl32_entry,
-						    ulong bl33_entry,
+__weak నిర్మాణం bl31_params *bl2_plat_get_bl31_params(ulong bl32_నమోదు,
+						    ulong bl33_నమోదు,
 						    ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_default(bl32_entry, bl33_entry,
+	తిరిగి bl2_plat_get_bl31_params_default(bl32_నమోదు, bl33_నమోదు,
 						fdt_addr);
 }
 
-struct bl_params *bl2_plat_get_bl31_params_v2_default(ulong bl32_entry,
-						      ulong bl33_entry,
+నిర్మాణం bl_params *bl2_plat_get_bl31_params_v2_default(ulong bl32_నమోదు,
+						      ulong bl33_నమోదు,
 						      ulong fdt_addr)
 {
-	static struct bl2_to_bl31_params_mem_v2 bl31_params_mem;
-	struct bl_params *bl_params;
-	struct bl_params_node *bl_params_node;
+	స్థిర నిర్మాణం bl2_గమ్యం_bl31_params_mem_v2 bl31_params_mem;
+	నిర్మాణం bl_params *bl_params;
+	నిర్మాణం bl_params_కణుపు *bl_params_కణుపు;
 
 	/*
 	 * Initialise the memory for all the arguments that needs to
 	 * be passed to BL31
 	 */
-	memset(&bl31_params_mem, 0, sizeof(bl31_params_mem));
+	memset(&bl31_params_mem, 0, పరిమాణం(bl31_params_mem));
 
 	/* Assign memory for TF related information */
 	bl_params = &bl31_params_mem.bl_params;
-	SET_PARAM_HEAD(bl_params, ATF_PARAM_BL_PARAMS, ATF_VERSION_2, 0);
-	bl_params->head = &bl31_params_mem.bl31_params_node;
+	సమితి_PARAM_తల(bl_params, ATF_PARAM_BL_PARAMS, ATF_సంస్కరణ_2, 0);
+	bl_params->తల = &bl31_params_mem.bl31_params_కణుపు;
 
 	/* Fill BL31 related information */
-	bl_params_node = &bl31_params_mem.bl31_params_node;
-	bl_params_node->image_id = ATF_BL31_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl31_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl31_ep_info;
-	bl_params_node->next_params_info = &bl31_params_mem.bl32_params_node;
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
-		       ATF_VERSION_2, 0);
+	bl_params_కణుపు = &bl31_params_mem.bl31_params_కణుపు;
+	bl_params_కణుపు->image_id = ATF_BL31_IMAGE_ID;
+	bl_params_కణుపు->image_info = &bl31_params_mem.bl31_image_info;
+	bl_params_కణుపు->ep_info = &bl31_params_mem.bl31_ep_info;
+	bl_params_కణుపు->తదుపరి_params_info = &bl31_params_mem.bl32_params_కణుపు;
+	సమితి_PARAM_తల(bl_params_కణుపు->image_info, ATF_PARAM_IMAGE_ద్విమాన,
+		       ATF_సంస్కరణ_2, 0);
 
 	/* Fill BL32 related information */
-	bl_params_node = &bl31_params_mem.bl32_params_node;
-	bl_params_node->image_id = ATF_BL32_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl32_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl32_ep_info;
-	bl_params_node->next_params_info = &bl31_params_mem.bl33_params_node;
-	SET_PARAM_HEAD(bl_params_node->ep_info, ATF_PARAM_EP,
-		       ATF_VERSION_2, ATF_EP_SECURE);
+	bl_params_కణుపు = &bl31_params_mem.bl32_params_కణుపు;
+	bl_params_కణుపు->image_id = ATF_BL32_IMAGE_ID;
+	bl_params_కణుపు->image_info = &bl31_params_mem.bl32_image_info;
+	bl_params_కణుపు->ep_info = &bl31_params_mem.bl32_ep_info;
+	bl_params_కణుపు->తదుపరి_params_info = &bl31_params_mem.bl33_params_కణుపు;
+	సమితి_PARAM_తల(bl_params_కణుపు->ep_info, ATF_PARAM_EP,
+		       ATF_సంస్కరణ_2, ATF_EP_SECURE);
 
 	/* secure payload is optional, so set pc to 0 if absent */
-	bl_params_node->ep_info->args.arg3 = fdt_addr;
-	bl_params_node->ep_info->pc = bl32_entry ? bl32_entry : 0;
-	bl_params_node->ep_info->spsr = SPSR_64(MODE_EL1, MODE_SP_ELX,
+	bl_params_కణుపు->ep_info->వాదనలు.arg3 = fdt_addr;
+	bl_params_కణుపు->ep_info->pc = bl32_నమోదు ? bl32_నమోదు : 0;
+	bl_params_కణుపు->ep_info->spsr = SPSR_64(బహుళకం_EL1, బహుళకం_SP_ELX,
 						DISABLE_ALL_EXCEPTIONS);
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
-		       ATF_VERSION_2, 0);
+	సమితి_PARAM_తల(bl_params_కణుపు->image_info, ATF_PARAM_IMAGE_ద్విమాన,
+		       ATF_సంస్కరణ_2, 0);
 
 	/* Fill BL33 related information */
-	bl_params_node = &bl31_params_mem.bl33_params_node;
-	bl_params_node->image_id = ATF_BL33_IMAGE_ID;
-	bl_params_node->image_info = &bl31_params_mem.bl33_image_info;
-	bl_params_node->ep_info = &bl31_params_mem.bl33_ep_info;
-	bl_params_node->next_params_info = NULL;
-	SET_PARAM_HEAD(bl_params_node->ep_info, ATF_PARAM_EP,
-		       ATF_VERSION_2, ATF_EP_NON_SECURE);
+	bl_params_కణుపు = &bl31_params_mem.bl33_params_కణుపు;
+	bl_params_కణుపు->image_id = ATF_BL33_IMAGE_ID;
+	bl_params_కణుపు->image_info = &bl31_params_mem.bl33_image_info;
+	bl_params_కణుపు->ep_info = &bl31_params_mem.bl33_ep_info;
+	bl_params_కణుపు->తదుపరి_params_info = ఖాళీ;
+	సమితి_PARAM_తల(bl_params_కణుపు->ep_info, ATF_PARAM_EP,
+		       ATF_సంస్కరణ_2, ATF_EP_NON_SECURE);
 
 	/* BL33 expects to receive the primary CPU MPID (through x0) */
-	bl_params_node->ep_info->args.arg0 = 0xffff & read_mpidr();
-	bl_params_node->ep_info->pc = bl33_entry;
-	bl_params_node->ep_info->spsr = SPSR_64(MODE_EL2, MODE_SP_ELX,
+	bl_params_కణుపు->ep_info->వాదనలు.arg0 = 0xffff & read_mpidr();
+	bl_params_కణుపు->ep_info->pc = bl33_నమోదు;
+	bl_params_కణుపు->ep_info->spsr = SPSR_64(బహుళకం_EL2, బహుళకం_SP_ELX,
 						DISABLE_ALL_EXCEPTIONS);
-	SET_PARAM_HEAD(bl_params_node->image_info, ATF_PARAM_IMAGE_BINARY,
-		       ATF_VERSION_2, 0);
+	సమితి_PARAM_తల(bl_params_కణుపు->image_info, ATF_PARAM_IMAGE_ద్విమాన,
+		       ATF_సంస్కరణ_2, 0);
 
-	return bl_params;
+	తిరిగి bl_params;
 }
 
-__weak struct bl_params *bl2_plat_get_bl31_params_v2(ulong bl32_entry,
-						     ulong bl33_entry,
+__weak నిర్మాణం bl_params *bl2_plat_get_bl31_params_v2(ulong bl32_నమోదు,
+						     ulong bl33_నమోదు,
 						     ulong fdt_addr)
 {
-	return bl2_plat_get_bl31_params_v2_default(bl32_entry, bl33_entry,
+	తిరిగి bl2_plat_get_bl31_params_v2_default(bl32_నమోదు, bl33_నమోదు,
 						   fdt_addr);
 }
 
-static inline void raw_write_daif(unsigned int daif)
+స్థిర అంతఃవరుస శూన్య raw_write_daif(గుర్తులేని పూర్ణాంకం daif)
 {
 	__asm__ __volatile__("msr DAIF, %x0\n\t" : : "r" (daif) : "memory");
 }
 
-typedef void __noreturn (*atf_entry_t)(struct bl31_params *params, void *plat_params);
+రకనిర్వచనం శూన్య __noreturn (*atf_నమోదు_t)(నిర్మాణం bl31_params *params, శూన్య *plat_params);
 
-static void __noreturn bl31_entry(ulong bl31_entry, ulong bl32_entry,
-				  ulong bl33_entry, ulong fdt_addr)
+స్థిర శూన్య __noreturn bl31_నమోదు(ulong bl31_నమోదు, ulong bl32_నమోదు,
+				  ulong bl33_నమోదు, ulong fdt_addr)
 {
-	atf_entry_t  atf_entry = (atf_entry_t)bl31_entry;
-	void *bl31_params;
+	atf_నమోదు_t  atf_నమోదు = (atf_నమోదు_t)bl31_నమోదు;
+	శూన్య *bl31_params;
 
-	if (CONFIG_IS_ENABLED(ATF_LOAD_IMAGE_V2))
-		bl31_params = bl2_plat_get_bl31_params_v2(bl32_entry,
-							  bl33_entry,
+	ఒకవేళ (CONFIG_IS_ENABLED(ATF_ఎక్కించు_IMAGE_V2))
+		bl31_params = bl2_plat_get_bl31_params_v2(bl32_నమోదు,
+							  bl33_నమోదు,
 							  fdt_addr);
-	else
-		bl31_params = bl2_plat_get_bl31_params(bl32_entry, bl33_entry,
+	లేకపోతే
+		bl31_params = bl2_plat_get_bl31_params(bl32_నమోదు, bl33_నమోదు,
 						       fdt_addr);
 
-	raw_write_daif(SPSR_EXCEPTION_MASK);
-	if (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
+	raw_write_daif(SPSR_EXCEPTION_ముసుగు);
+	ఒకవేళ (!CONFIG_IS_ENABLED(SYS_DCACHE_OFF))
 		dcache_disable();
 
-	atf_entry(bl31_params, (void *)fdt_addr);
+	atf_నమోదు(bl31_params, (శూన్య *)fdt_addr);
 }
 
-static int spl_fit_images_find(void *blob, int os)
+స్థిర పూర్ణాంకం spl_fit_images_కనుగొను(శూన్య *blob, పూర్ణాంకం os)
 {
-	int parent, node, ndepth = 0;
-	int found = -FDT_ERR_NOTFOUND;
-	const void *data;
+	పూర్ణాంకం మాతృ, కణుపు, ndepth = 0;
+	పూర్ణాంకం దొరికింది = -FDT_ERR_NOTFOUND;
+	స్థిరరాశి శూన్య *దత్తాంశం;
 	ulong val;
 
-	if (!blob)
-		return -FDT_ERR_BADMAGIC;
+	ఒకవేళ (!blob)
+		తిరిగి -FDT_ERR_BADMAGIC;
 
-	parent = fdt_path_offset(blob, "/fit-images");
-	if (parent < 0)
-		return -FDT_ERR_NOTFOUND;
+	మాతృ = fdt_మార్గం_స్థానభ్రంశం(blob, "/fit-images");
+	ఒకవేళ (మాతృ < 0)
+		తిరిగి -FDT_ERR_NOTFOUND;
 
-	for (node = fdt_next_node(blob, parent, &ndepth);
-	     (node >= 0) && (ndepth > 0);
-	     node = fdt_next_node(blob, node, &ndepth)) {
-		if (ndepth != 1)
-			continue;
+	కొరకు (కణుపు = fdt_తదుపరి_కణుపు(blob, మాతృ, &ndepth);
+	     (కణుపు >= 0) && (ndepth > 0);
+	     కణుపు = fdt_తదుపరి_కణుపు(blob, కణుపు, &ndepth)) {
+		ఒకవేళ (ndepth != 1)
+			కొనసాగు;
 
-		data = fdt_getprop(blob, node, FIT_OS_PROP, NULL);
-		if (!data)
-			continue;
+		దత్తాంశం = fdt_getprop(blob, కణుపు, FIT_OS_PROP, ఖాళీ);
+		ఒకవేళ (!దత్తాంశం)
+			కొనసాగు;
 
-		if (genimg_get_os_id(data) != os)
-			continue;
+		ఒకవేళ (genimg_get_os_id(దత్తాంశం) != os)
+			కొనసాగు;
 
 		/*
 		 * A multi-segment image, e.g. an OP-TEE ELF split by
@@ -242,45 +242,45 @@ static int spl_fit_images_find(void *blob, int os)
 		 * the same os. Only the segment holding the ELF entry
 		 * point carries an entry property, so prefer that node.
 		 */
-		if (!fit_image_get_entry(blob, node, &val))
-			return node;
+		ఒకవేళ (!fit_image_get_నమోదు(blob, కణుపు, &val))
+			తిరిగి కణుపు;
 
-		if (found < 0)
-			found = node;
+		ఒకవేళ (దొరికింది < 0)
+			దొరికింది = కణుపు;
 	};
 
-	return found;
+	తిరిగి దొరికింది;
 }
 
-ulong spl_fit_images_get_entry(void *blob, int node)
+ulong spl_fit_images_get_నమోదు(శూన్య *blob, పూర్ణాంకం కణుపు)
 {
 	ulong  val;
-	int ret;
+	పూర్ణాంకం ret;
 
-	ret = fit_image_get_entry(blob, node, &val);
-	if (ret)
-		ret = fit_image_get_load(blob, node, &val);
+	ret = fit_image_get_నమోదు(blob, కణుపు, &val);
+	ఒకవేళ (ret)
+		ret = fit_image_get_ఎక్కించు(blob, కణుపు, &val);
 
 	debug("%s: entry point 0x%lx\n", __func__, val);
-	return val;
+	తిరిగి val;
 }
 
-void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
+శూన్య __noreturn spl_invoke_atf(నిర్మాణం spl_image_info *spl_image)
 {
-	ulong  bl32_entry = 0;
-	ulong  bl33_entry = CONFIG_TEXT_BASE;
-	void *blob = spl_image->fdt_addr;
+	ulong  bl32_నమోదు = 0;
+	ulong  bl33_నమోదు = CONFIG_పాఠ్యం_పునాది;
+	శూన్య *blob = spl_image->fdt_addr;
 	ulong platform_param = (ulong)blob;
-	int node;
+	పూర్ణాంకం కణుపు;
 
 	/*
 	 * Find the OP-TEE binary (in /fit-images) load address or
 	 * entry point (if different) and pass it as the BL3-2 entry
 	 * point, this is optional.
 	 */
-	node = spl_fit_images_find(blob, IH_OS_TEE);
-	if (node >= 0)
-		bl32_entry = spl_fit_images_get_entry(blob, node);
+	కణుపు = spl_fit_images_కనుగొను(blob, IH_OS_TEE);
+	ఒకవేళ (కణుపు >= 0)
+		bl32_నమోదు = spl_fit_images_get_నమోదు(blob, కణుపు);
 
 	/*
 	 * Find the U-Boot binary (in /fit-images) load addreess or
@@ -289,9 +289,9 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * This will need to be extended to support Falcon mode.
 	 */
 
-	node = spl_fit_images_find(blob, IH_OS_U_BOOT);
-	if (node >= 0)
-		bl33_entry = spl_fit_images_get_entry(blob, node);
+	కణుపు = spl_fit_images_కనుగొను(blob, IH_OS_U_BOOT);
+	ఒకవేళ (కణుపు >= 0)
+		bl33_నమోదు = spl_fit_images_get_నమోదు(blob, కణుపు);
 
 	/*
 	 * If ATF_NO_PLATFORM_PARAM is set, we override the platform
@@ -299,13 +299,13 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	 * older ATF versions that have insufficiently robust (or
 	 * overzealous) argument validation.
 	 */
-	if (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
+	ఒకవేళ (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM))
 		platform_param = 0;
 
 	/*
 	 * We don't provide a BL3-2 entry yet, but this will be possible
 	 * using similar logic.
 	 */
-	bl31_entry(spl_image->entry_point, bl32_entry,
-		   bl33_entry, platform_param);
+	bl31_నమోదు(spl_image->నమోదు_బిందువు, bl32_నమోదు,
+		   bl33_నమోదు, platform_param);
 }

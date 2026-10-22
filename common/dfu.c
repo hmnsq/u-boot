@@ -10,49 +10,49 @@
  *	    Lukasz Majewski <l.majewski@samsung.com>
  */
 
-#include <command.h>
-#include <log.h>
-#include <watchdog.h>
-#include <dfu.h>
-#include <console.h>
-#include <g_dnl.h>
-#include <usb.h>
-#include <net.h>
-#include <linux/printk.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <watchdog.h>
+#అన్తర్భావ <dfu.h>
+#అన్తర్భావ <console.h>
+#అన్తర్భావ <g_dnl.h>
+#అన్తర్భావ <usb.h>
+#అన్తర్భావ <net.h>
+#అన్తర్భావ <linux/printk.h>
 
-int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+పూర్ణాంకం నిరంతరం_usb_dnl_gadget(పూర్ణాంకం usbctrl_సూచీ, అక్షరం *usb_dnl_gadget)
 {
 	bool dfu_reset = false;
-	struct udevice *udc;
-	int ret, i = 0;
+	నిర్మాణం udevice *udc;
+	పూర్ణాంకం ret, i = 0;
 
-	ret = udc_device_get_by_index(usbctrl_index, &udc);
-	if (ret) {
+	ret = udc_device_get_by_సూచీ(usbctrl_సూచీ, &udc);
+	ఒకవేళ (ret) {
 		pr_err("udc_device_get_by_index failed\n");
-		return CMD_RET_FAILURE;
+		తిరిగి CMD_RET_FAILURE;
 	}
 	g_dnl_clear_detach();
-	ret = g_dnl_register(usb_dnl_gadget);
-	if (ret) {
+	ret = g_dnl_రిజిస్టరు(usb_dnl_gadget);
+	ఒకవేళ (ret) {
 		pr_err("g_dnl_register failed");
 		ret = CMD_RET_FAILURE;
-		goto err_detach;
+		వెళ్ళు err_detach;
 	}
 
-#ifdef CONFIG_DFU_TIMEOUT
-	unsigned long start_time = get_timer(0);
-#endif
+#నిర్వచితమైతే CONFIG_DFU_TIMEOUT
+	గుర్తులేని దీర్ఘ ప్రారంభం_సమయం = get_timer(0);
+#అయితే_ముగింపు
 
-	while (1) {
-		if (g_dnl_detach()) {
+	అయితే (1) {
+		ఒకవేళ (g_dnl_detach()) {
 			/*
 			 * Check if USB bus reset is performed after detach,
 			 * which indicates that -R switch has been passed to
 			 * dfu-util. In this case reboot the device
 			 */
-			if (dfu_usb_get_reset()) {
+			ఒకవేళ (dfu_usb_get_reset()) {
 				dfu_reset = true;
-				goto exit;
+				వెళ్ళు నిష్క్రమించు;
 			}
 
 			/*
@@ -60,14 +60,14 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			 * calls is necessary to assure correct transmission
 			 * completion with dfu-util
 			 */
-			if (++i == 10000)
-				goto exit;
+			ఒకవేళ (++i == 10000)
+				వెళ్ళు నిష్క్రమించు;
 		}
 
-		if (ctrlc())
-			goto exit;
+		ఒకవేళ (ctrlc())
+			వెళ్ళు నిష్క్రమించు;
 
-		if (dfu_get_defer_flush()) {
+		ఒకవేళ (dfu_get_defer_flush()) {
 			/*
 			 * Call to dm_usb_gadget_handle_interrupts() is necessary
 			 * to act on ZLP OUT transaction from HOST PC after
@@ -79,42 +79,42 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 			 * exits with error message.
 			 */
 			dm_usb_gadget_handle_interrupts(udc);
-			ret = dfu_flush(dfu_get_defer_flush(), NULL, 0, 0);
-			dfu_set_defer_flush(NULL);
-			if (ret) {
+			ret = dfu_flush(dfu_get_defer_flush(), ఖాళీ, 0, 0);
+			dfu_సమితి_defer_flush(ఖాళీ);
+			ఒకవేళ (ret) {
 				pr_err("Deferred dfu_flush() failed!");
-				goto exit;
+				వెళ్ళు నిష్క్రమించు;
 			}
 		}
 
-#ifdef CONFIG_DFU_TIMEOUT
-		unsigned long wait_time = dfu_get_timeout();
+#నిర్వచితమైతే CONFIG_DFU_TIMEOUT
+		గుర్తులేని దీర్ఘ wait_సమయం = dfu_get_timeout();
 
-		if (wait_time) {
-			unsigned long current_time = get_timer(start_time);
+		ఒకవేళ (wait_సమయం) {
+			గుర్తులేని దీర్ఘ current_సమయం = get_timer(ప్రారంభం_సమయం);
 
-			if (current_time > wait_time) {
+			ఒకవేళ (current_సమయం > wait_సమయం) {
 				debug("Inactivity timeout, abort DFU\n");
-				goto exit;
+				వెళ్ళు నిష్క్రమించు;
 			}
 		}
-#endif
+#అయితే_ముగింపు
 
-		if (dfu_reinit_needed)
-			goto exit;
+		ఒకవేళ (dfu_reinit_needed)
+			వెళ్ళు నిష్క్రమించు;
 
-		schedule();
+		కాలపట్టిక();
 		dm_usb_gadget_handle_interrupts(udc);
 	}
-exit:
+నిష్క్రమించు:
 	g_dnl_unregister();
 err_detach:
 	udc_device_put(udc);
 
-	if (dfu_reset)
-		do_reset(NULL, 0, 0, NULL);
+	ఒకవేళ (dfu_reset)
+		do_reset(ఖాళీ, 0, 0, ఖాళీ);
 
 	g_dnl_clear_detach();
 
-	return ret;
+	తిరిగి ret;
 }

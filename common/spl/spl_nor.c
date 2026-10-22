@@ -3,80 +3,80 @@
  * Copyright (C) 2012 Stefan Roese <sr@denx.de>
  */
 
-#include <config.h>
-#include <image.h>
-#include <imx_container.h>
-#include <log.h>
-#include <spl.h>
-#include <spl_load.h>
+#అన్తర్భావ <config.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <imx_container.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <spl_load.h>
 
-static ulong spl_nor_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+స్థిర ulong spl_nor_ఎక్కించు_read(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong sector,
+			       ulong లెక్క, శూన్య *buf)
 {
 	debug("%s: sector %lx, count %lx, buf %p\n",
-	      __func__, sector, count, buf);
-	memcpy(buf, map_sysmem(sector, count), count);
+	      __func__, sector, లెక్క, buf);
+	జ్ఞాపకం_నకలు(buf, map_sysmem(sector, లెక్క), లెక్క);
 
-	return count;
+	తిరిగి లెక్క;
 }
 
-unsigned long __weak spl_nor_get_uboot_base(void)
+గుర్తులేని దీర్ఘ __weak spl_nor_get_uboot_పునాది(శూన్య)
 {
-	return CFG_SYS_UBOOT_BASE;
+	తిరిగి CFG_SYS_UBOOT_పునాది;
 }
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-static int spl_nor_load_image_os(struct spl_image_info *spl_image,
-				 struct spl_boot_device *bootdev)
+#ఒకవేళ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+స్థిర పూర్ణాంకం spl_nor_ఎక్కించు_image_os(నిర్మాణం spl_image_info *spl_image,
+				 నిర్మాణం spl_boot_device *bootdev)
 {
 	/*
 	 * Load Linux from its location in NOR flash to its defined
 	 * location in SDRAM
 	 */
-	const struct legacy_img_hdr *header =
-		(const struct legacy_img_hdr *)CONFIG_SYS_OS_BASE;
-	struct spl_load_info load;
+	స్థిరరాశి నిర్మాణం legacy_img_hdr *శీర్షిక =
+		(స్థిరరాశి నిర్మాణం legacy_img_hdr *)CONFIG_SYS_OS_పునాది;
+	నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
 
-#ifdef CONFIG_SPL_LOAD_FIT
-	if (image_get_magic(header) == FDT_MAGIC) {
-		int ret;
+#నిర్వచితమైతే CONFIG_SPL_ఎక్కించు_FIT
+	ఒకవేళ (image_get_magic(శీర్షిక) == FDT_MAGIC) {
+		పూర్ణాంకం ret;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, spl_nor_load_read, NULL, 1);
+		spl_ఎక్కించు_init(&ఎక్కించు, spl_nor_ఎక్కించు_read, ఖాళీ, 1);
 
-		ret = spl_load_simple_fit(spl_image, &load, CONFIG_SYS_OS_BASE,
-					  (void *)header);
+		ret = spl_ఎక్కించు_simple_fit(spl_image, &ఎక్కించు, CONFIG_SYS_OS_పునాది,
+					  (శూన్య *)శీర్షిక);
 
-#if defined CONFIG_SPL_PAYLOAD_ARGS_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
-		memcpy((void *)CONFIG_SPL_PAYLOAD_ARGS_ADDR,
-		       (void *)CONFIG_CMD_SPL_NOR_OFS,
-		       CONFIG_CMD_SPL_WRITE_SIZE);
-#endif
-		return ret;
+#ఒకవేళ defined CONFIG_SPL_PAYLOAD_వాదనలు_ADDR && defined CONFIG_CMD_SPL_NOR_OFS
+		జ్ఞాపకం_నకలు((శూన్య *)CONFIG_SPL_PAYLOAD_వాదనలు_ADDR,
+		       (శూన్య *)CONFIG_CMD_SPL_NOR_OFS,
+		       CONFIG_CMD_SPL_WRITE_కొలత);
+#అయితే_ముగింపు
+		తిరిగి ret;
 	}
-#endif
-	if (image_get_os(header) != IH_OS_LINUX)
-		return -EINVAL;
+#అయితే_ముగింపు
+	ఒకవేళ (image_get_os(శీర్షిక) != IH_OS_LINUX)
+		తిరిగి -EINVAL;
 
 	/* happy - was a Linux */
-	int ret;
+	పూర్ణాంకం ret;
 
-	ret = spl_parse_image_header(spl_image, bootdev, header);
-	if (ret)
-		return ret;
+	ret = spl_parse_image_శీర్షిక(spl_image, bootdev, శీర్షిక);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	memcpy((void *)spl_image->load_addr,
-	       (void *)(CONFIG_SYS_OS_BASE + sizeof(struct legacy_img_hdr)),
-	       spl_image->size);
+	జ్ఞాపకం_నకలు((శూన్య *)spl_image->ఎక్కించు_addr,
+	       (శూన్య *)(CONFIG_SYS_OS_పునాది + పరిమాణం(నిర్మాణం legacy_img_hdr)),
+	       spl_image->కొలత);
 
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
-static int spl_nor_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_nor_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	struct spl_load_info load;
+	నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
 
 	/*
 	 * Loading of the payload to SDRAM is done with skipping of
@@ -84,26 +84,26 @@ static int spl_nor_load_image(struct spl_image_info *spl_image,
 	 */
 	spl_image->flags |= SPL_COPY_PAYLOAD_ONLY;
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT)
-	int err;
+#ఒకవేళ IS_ENABLED(CONFIG_SPL_OS_BOOT)
+	పూర్ణాంకం err;
 
-	if (!spl_start_uboot()) {
-		err = spl_nor_load_image_os(spl_image, bootdev);
-		if (!err)
-			return 0;
+	ఒకవేళ (!spl_ప్రారంభం_uboot()) {
+		err = spl_nor_ఎక్కించు_image_os(spl_image, bootdev);
+		ఒకవేళ (!err)
+			తిరిగి 0;
 
-		printf("%s: Failed in falcon boot: %d", __func__, err);
-		if (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
-			return err;
-		printf("Fallback to U-Boot\n");
+		రాయి("%s: Failed in falcon boot: %d", __func__, err);
+		ఒకవేళ (IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE))
+			తిరిగి err;
+		రాయి("Fallback to U-Boot\n");
 	}
-#endif
+#అయితే_ముగింపు
 
 	/*
 	 * Load real U-Boot from its location in NOR flash to its
 	 * defined location in SDRAM
 	 */
-	spl_load_init(&load, spl_nor_load_read, NULL, 1);
-	return spl_load(spl_image, bootdev, &load, 0, spl_nor_get_uboot_base());
+	spl_ఎక్కించు_init(&ఎక్కించు, spl_nor_ఎక్కించు_read, ఖాళీ, 1);
+	తిరిగి spl_ఎక్కించు(spl_image, bootdev, &ఎక్కించు, 0, spl_nor_get_uboot_పునాది());
 }
-SPL_LOAD_IMAGE_METHOD("NOR", 0, BOOT_DEVICE_NOR, spl_nor_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("NOR", 0, BOOT_DEVICE_NOR, spl_nor_ఎక్కించు_image);

@@ -9,84 +9,84 @@
  * Michal Simek <michal.simek@amd.com>
  * Stefan Agner <stefan.agner@toradex.com>
  */
-#include <binman_sym.h>
-#include <image.h>
-#include <log.h>
-#include <mapmem.h>
-#include <spl.h>
-#include <linux/libfdt.h>
+#అన్తర్భావ <binman_sym.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <linux/libfdt.h>
 
-static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
-			       ulong count, void *buf)
+స్థిర ulong spl_ram_ఎక్కించు_read(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong sector,
+			       ulong లెక్క, శూన్య *buf)
 {
 	ulong addr = 0;
 
 	debug("%s: sector %lx, count %lx, buf %lx\n",
-	      __func__, sector, count, (ulong)buf);
+	      __func__, sector, లెక్క, (ulong)buf);
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	ఒకవేళ (IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_ఎక్కించు_FIT,
+				      CONFIG_SPL_ఎక్కించు_FIT_చిరునామా);
 
-#ifdef	CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#నిర్వచితమైతే	CONFIG_SPL_PCI_DFU
+		ఒకవేళ (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_ఎక్కించు_FIT_చిరునామా;
+#అయితే_ముగింపు
 	}
 	addr += sector;
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD))
-		addr += image_load_offset;
+	ఒకవేళ (CONFIG_IS_ENABLED(IMAGE_PRE_ఎక్కించు))
+		addr += image_ఎక్కించు_స్థానభ్రంశం;
 
-	memcpy(buf, (void *)addr, count);
+	జ్ఞాపకం_నకలు(buf, (శూన్య *)addr, లెక్క);
 
-	return count;
+	తిరిగి లెక్క;
 }
 
-static int spl_ram_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_ram_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	struct legacy_img_hdr *header;
+	నిర్మాణం legacy_img_hdr *శీర్షిక;
 	ulong addr = 0;
-	int ret;
+	పూర్ణాంకం ret;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT)) {
-		addr = IF_ENABLED_INT(CONFIG_SPL_LOAD_FIT,
-				      CONFIG_SPL_LOAD_FIT_ADDRESS);
+	ఒకవేళ (IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT)) {
+		addr = IF_ENABLED_INT(CONFIG_SPL_ఎక్కించు_FIT,
+				      CONFIG_SPL_ఎక్కించు_FIT_చిరునామా);
 
-#ifdef CONFIG_SPL_PCI_DFU
-		if (spl_boot_device() == BOOT_DEVICE_PCIE)
-			addr = CONFIG_SPL_PCI_DFU_SPL_LOAD_FIT_ADDRESS;
-#endif
+#నిర్వచితమైతే CONFIG_SPL_PCI_DFU
+		ఒకవేళ (spl_boot_device() == BOOT_DEVICE_PCIE)
+			addr = CONFIG_SPL_PCI_DFU_SPL_ఎక్కించు_FIT_చిరునామా;
+#అయితే_ముగింపు
 	}
 
-	if (CONFIG_IS_ENABLED(IMAGE_PRE_LOAD)) {
-		ret = image_pre_load(addr);
+	ఒకవేళ (CONFIG_IS_ENABLED(IMAGE_PRE_ఎక్కించు)) {
+		ret = image_pre_ఎక్కించు(addr);
 
-		if (ret)
-			return ret;
+		ఒకవేళ (ret)
+			తిరిగి ret;
 
-		addr += image_load_offset;
+		addr += image_ఎక్కించు_స్థానభ్రంశం;
 	}
-	header = map_sysmem(addr, 0);
+	శీర్షిక = map_sysmem(addr, 0);
 
-#if CONFIG_IS_ENABLED(DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_DFU)
+#ఒకవేళ CONFIG_IS_ENABLED(DFU)
+	ఒకవేళ (bootdev->boot_device == BOOT_DEVICE_DFU)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#అయితే_ముగింపు
 
-#if CONFIG_IS_ENABLED(PCI_DFU)
-	if (bootdev->boot_device == BOOT_DEVICE_PCIE)
+#ఒకవేళ CONFIG_IS_ENABLED(PCI_DFU)
+	ఒకవేళ (bootdev->boot_device == BOOT_DEVICE_PCIE)
 		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
-#endif
+#అయితే_ముగింపు
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic(header) == FDT_MAGIC) {
-		struct spl_load_info load;
+	ఒకవేళ (IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT) &&
+	    image_get_magic(శీర్షిక) == FDT_MAGIC) {
+		నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, spl_ram_load_read, NULL, 1);
-		ret = spl_load_simple_fit(spl_image, &load, 0, header);
-	} else {
+		spl_ఎక్కించు_init(&ఎక్కించు, spl_ram_ఎక్కించు_read, ఖాళీ, 1);
+		ret = spl_ఎక్కించు_simple_fit(spl_image, &ఎక్కించు, 0, శీర్షిక);
+	} లేకపోతే {
 		ulong u_boot_pos = spl_get_image_pos();
 
 		debug("Legacy image\n");
@@ -96,27 +96,27 @@ static int spl_ram_load_image(struct spl_image_info *spl_image,
 		 * the flash.
 		 */
 		debug("u_boot_pos = %lx\n", u_boot_pos);
-		if (u_boot_pos == BINMAN_SYM_MISSING) {
+		ఒకవేళ (u_boot_pos == BINMAN_SYM_MISSING) {
 			/*
 			 * No binman support or no information. For now, fix it
 			 * to the address pointed to by U-Boot.
 			 */
-			u_boot_pos = (ulong)spl_get_load_buffer(-sizeof(*header),
-								sizeof(*header));
+			u_boot_pos = (ulong)spl_get_ఎక్కించు_బఫరు(-పరిమాణం(*శీర్షిక),
+								పరిమాణం(*శీర్షిక));
 		}
-		header = map_sysmem(u_boot_pos, 0);
+		శీర్షిక = map_sysmem(u_boot_pos, 0);
 
-		ret = spl_parse_image_header(spl_image, bootdev, header);
+		ret = spl_parse_image_శీర్షిక(spl_image, bootdev, శీర్షిక);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
-#if CONFIG_IS_ENABLED(RAM_DEVICE)
-SPL_LOAD_IMAGE_METHOD("RAM", 0, BOOT_DEVICE_RAM, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(DFU)
-SPL_LOAD_IMAGE_METHOD("DFU", 0, BOOT_DEVICE_DFU, spl_ram_load_image);
-#endif
-#if CONFIG_IS_ENABLED(PCI_DFU)
-SPL_LOAD_IMAGE_METHOD("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_load_image);
-#endif
+#ఒకవేళ CONFIG_IS_ENABLED(RAM_DEVICE)
+SPL_ఎక్కించు_IMAGE_పద్ధతి("RAM", 0, BOOT_DEVICE_RAM, spl_ram_ఎక్కించు_image);
+#అయితే_ముగింపు
+#ఒకవేళ CONFIG_IS_ENABLED(DFU)
+SPL_ఎక్కించు_IMAGE_పద్ధతి("DFU", 0, BOOT_DEVICE_DFU, spl_ram_ఎక్కించు_image);
+#అయితే_ముగింపు
+#ఒకవేళ CONFIG_IS_ENABLED(PCI_DFU)
+SPL_ఎక్కించు_IMAGE_పద్ధతి("PCIE", 0, BOOT_DEVICE_PCIE, spl_ram_ఎక్కించు_image);
+#అయితే_ముగింపు

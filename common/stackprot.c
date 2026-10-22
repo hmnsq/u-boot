@@ -3,22 +3,22 @@
  *  Copyright 2021 Broadcom
  */
 
-#include <asm/global_data.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-unsigned long __stack_chk_guard = (unsigned long)(0xfeedf00ddeadbeef & ~0UL);
+గుర్తులేని దీర్ఘ __stack_chk_guard = (గుర్తులేని దీర్ఘ)(0xfeedf00ddeadbeef & ~0UL);
 
-void __stack_chk_fail(void)
+శూన్య __stack_chk_fail(శూన్య)
 {
-	void *ra;
+	శూన్య *ra;
 
 	ra = __builtin_extract_return_addr(__builtin_return_address(0));
 	panic("Stack smashing detected in function:\n%p relocated from %p",
 	      ra, ra - gd->reloc_off);
 }
 
-void __stack_chk_fail_local(void)
+శూన్య __stack_chk_fail_local(శూన్య)
 {
 	__stack_chk_fail();
 }

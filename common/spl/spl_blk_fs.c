@@ -5,83 +5,83 @@
  *
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <image.h>
-#include <fs.h>
-#include <asm/cache.h>
-#include <asm/io.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <spl_load.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <fs.h>
+#అన్తర్భావ <asm/cache.h>
+#అన్తర్భావ <asm/io.h>
 
-struct blk_dev {
-	const char *ifname;
-	const char *filename;
-	char dev_part_str[8];
+నిర్మాణం blk_dev {
+	స్థిరరాశి అక్షరం *ifname;
+	స్థిరరాశి అక్షరం *filename;
+	అక్షరం dev_part_str[8];
 };
 
-static ulong spl_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+స్థిర ulong spl_fit_read(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong file_స్థానభ్రంశం,
+			  ulong కొలత, శూన్య *buf)
 {
 	loff_t actlen;
-	int ret;
-	struct blk_dev *dev = (struct blk_dev *)load->priv;
+	పూర్ణాంకం ret;
+	నిర్మాణం blk_dev *dev = (నిర్మాణం blk_dev *)ఎక్కించు->priv;
 
-	ret = fs_set_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	ret = fs_సమితి_blk_dev(dev->ifname, dev->dev_part_str, FS_TYPE_ANY);
+	ఒకవేళ (ret) {
+		రాయి("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev->ifname, dev->dev_part_str, ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	ret = fs_read(dev->filename, virt_to_phys(buf), file_offset, size,
+	ret = fs_read(dev->filename, virt_గమ్యం_phys(buf), file_స్థానభ్రంశం, కొలత,
 		      &actlen);
-	if (ret < 0) {
-		printf("spl: error reading image %s. Err - %d\n",
+	ఒకవేళ (ret < 0) {
+		రాయి("spl: error reading image %s. Err - %d\n",
 		       dev->filename, ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	return actlen;
+	తిరిగి actlen;
 }
 
-int spl_blk_load_image(struct spl_image_info *spl_image,
-		       struct spl_boot_device *bootdev,
-		       enum uclass_id uclass_id, int devnum, int partnum)
+పూర్ణాంకం spl_blk_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+		       నిర్మాణం spl_boot_device *bootdev,
+		       గణన uclass_id uclass_id, పూర్ణాంకం devnum, పూర్ణాంకం partnum)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	struct blk_desc *blk_desc;
+	స్థిరరాశి అక్షరం *filename = CONFIG_SPL_FS_ఎక్కించు_PAYLOAD_NAME;
+	నిర్మాణం blk_desc *blk_desc;
 	loff_t filesize;
-	struct blk_dev dev;
-	struct spl_load_info load;
-	int ret;
+	నిర్మాణం blk_dev dev;
+	నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
+	పూర్ణాంకం ret;
 
 	blk_desc = blk_get_devnum_by_uclass_id(uclass_id, devnum);
-	if (!blk_desc) {
-		printf("blk desc for %d %d not found\n", uclass_id, devnum);
-		return -ENODEV;
+	ఒకవేళ (!blk_desc) {
+		రాయి("blk desc for %d %d not found\n", uclass_id, devnum);
+		తిరిగి -ENODEV;
 	}
 
 	blk_show_device(uclass_id, devnum);
 
 	dev.filename = filename;
 	dev.ifname = blk_get_uclass_name(uclass_id);
-	snprintf(dev.dev_part_str, sizeof(dev.dev_part_str) - 1, "%x:%x",
+	snprintf(dev.dev_part_str, పరిమాణం(dev.dev_part_str) - 1, "%x:%x",
 		 devnum, partnum);
-	ret = fs_set_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
-	if (ret) {
-		printf("spl: unable to set blk_dev %s %s. Err - %d\n",
+	ret = fs_సమితి_blk_dev(dev.ifname, dev.dev_part_str, FS_TYPE_ANY);
+	ఒకవేళ (ret) {
+		రాయి("spl: unable to set blk_dev %s %s. Err - %d\n",
 		       dev.ifname, dev.dev_part_str, ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	ret = fs_size(filename, &filesize);
-	if (ret) {
-		printf("spl: unable to get file size: %s. Err - %d\n",
+	ret = fs_కొలత(filename, &filesize);
+	ఒకవేళ (ret) {
+		రాయి("spl: unable to get file size: %s. Err - %d\n",
 		       filename, ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	spl_load_init(&load, spl_fit_read, &dev,
+	spl_ఎక్కించు_init(&ఎక్కించు, spl_fit_read, &dev,
 		      IS_ENABLED(CONFIG_SPL_FS_FAT_DMA_ALIGN) ?
 		      ARCH_DMA_MINALIGN : 1);
-	return spl_load(spl_image, bootdev, &load, filesize, 0);
+	తిరిగి spl_ఎక్కించు(spl_image, bootdev, &ఎక్కించు, filesize, 0);
 }

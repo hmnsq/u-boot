@@ -1,79 +1,79 @@
 // SPDX-License-Identifier: GPL-2.0+
 
-#include <dm.h>
-#include <init.h>
-#include <sysinfo.h>
-#include <asm/global_data.h>
-#include <linux/libfdt.h>
-#include <linux/compiler.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <init.h>
+#అన్తర్భావ <sysinfo.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <linux/libfdt.h>
+#అన్తర్భావ <linux/compiler.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-int __weak checkboard(void)
+పూర్ణాంకం __weak checkboard(శూన్య)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-static const struct to_show {
-	const char *name;
-	enum sysinfo_id id;
-} to_show[] = {
+స్థిర స్థిరరాశి నిర్మాణం గమ్యం_show {
+	స్థిరరాశి అక్షరం *name;
+	గణన sysinfo_id id;
+} గమ్యం_show[] = {
 	{ "Manufacturer", SYSID_BOARD_MANUFACTURER},
-	{ "Prior-stage version", SYSID_PRIOR_STAGE_VERSION },
-	{ "Prior-stage date", SYSID_PRIOR_STAGE_DATE },
+	{ "Prior-stage version", SYSID_పూర్వ_STAGE_సంస్కరణ },
+	{ "Prior-stage date", SYSID_పూర్వ_STAGE_DATE },
 	{ /* sentinel */ }
 };
 
-static int try_sysinfo(void)
+స్థిర పూర్ణాంకం try_sysinfo(శూన్య)
 {
-	struct udevice *dev;
-	char str[80];
-	int ret;
+	నిర్మాణం udevice *dev;
+	అక్షరం str[80];
+	పూర్ణాంకం ret;
 
 	/* This might provide more detail */
 	ret = sysinfo_get(&dev);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
 	ret = sysinfo_detect(dev);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, sizeof(str), str);
-	if (ret)
-		return ret;
-	printf("Model: %s\n", str);
+	ret = sysinfo_get_str(dev, SYSID_BOARD_MODEL, పరిమాణం(str), str);
+	ఒకవేళ (ret)
+		తిరిగి ret;
+	రాయి("Model: %s\n", str);
 
-	if (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
-		const struct to_show *item;
+	ఒకవేళ (IS_ENABLED(CONFIG_SYSINFO_EXTRA)) {
+		స్థిరరాశి నిర్మాణం గమ్యం_show *అంశం;
 
-		for (item = to_show; item->id; item++) {
-			ret = sysinfo_get_str(dev, item->id, sizeof(str), str);
-			if (!ret)
-				printf("%s: %s\n", item->name, str);
+		కొరకు (అంశం = గమ్యం_show; అంశం->id; అంశం++) {
+			ret = sysinfo_get_str(dev, అంశం->id, పరిమాణం(str), str);
+			ఒకవేళ (!ret)
+				రాయి("%s: %s\n", అంశం->name, str);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-int show_board_info(void)
+పూర్ణాంకం show_board_info(శూన్య)
 {
-	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
-		int ret = -ENOSYS;
+	ఒకవేళ (IS_ENABLED(CONFIG_యొక్క_CONTROL)) {
+		పూర్ణాంకం ret = -ENOSYS;
 
-		if (IS_ENABLED(CONFIG_SYSINFO))
+		ఒకవేళ (IS_ENABLED(CONFIG_SYSINFO))
 			ret = try_sysinfo();
 
 		/* Fail back to the main 'model' if available */
-		if (ret) {
-			const char *model;
+		ఒకవేళ (ret) {
+			స్థిరరాశి అక్షరం *model;
 
-			model = fdt_getprop(gd->fdt_blob, 0, "model", NULL);
-			if (model)
-				printf("Model: %s\n", model);
+			model = fdt_getprop(gd->fdt_blob, 0, "model", ఖాళీ);
+			ఒకవేళ (model)
+				రాయి("Model: %s\n", model);
 		}
 	}
 
-	return checkboard();
+	తిరిగి checkboard();
 }

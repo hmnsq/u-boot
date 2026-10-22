@@ -8,60 +8,60 @@
  * Copyright (C) 2022 Stefan Roese <sr@denx.de>
  */
 
-#include <cyclic.h>
-#include <log.h>
-#include <malloc.h>
-#include <time.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <asm/global_data.h>
-#include <u-boot/schedule.h>
-#include <uthread.h>
+#అన్తర్భావ <cyclic.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <linux/errno.h>
+#అన్తర్భావ <linux/list.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <u-boot/schedule.h>
+#అన్తర్భావ <uthread.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-void hw_watchdog_reset(void);
+శూన్య hw_watchdog_reset(శూన్య);
 
-static bool cyclic_is_registered(const struct cyclic_info *cyclic)
+స్థిర bool cyclic_is_registered(స్థిరరాశి నిర్మాణం cyclic_info *cyclic)
 {
-	const struct cyclic_info *c;
+	స్థిరరాశి నిర్మాణం cyclic_info *c;
 
-	hlist_for_each_entry(c, &gd->cyclic_list, list) {
-		if (c == cyclic)
-			return true;
+	hlist_for_each_నమోదు(c, &gd->cyclic_list, list) {
+		ఒకవేళ (c == cyclic)
+			తిరిగి true;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
-void cyclic_register(struct cyclic_info *cyclic, cyclic_func_t func,
-		     u64 delay_us, const char *name)
+శూన్య cyclic_రిజిస్టరు(నిర్మాణం cyclic_info *cyclic, cyclic_func_t func,
+		     u64 delay_us, స్థిరరాశి అక్షరం *name)
 {
 	cyclic_unregister(cyclic);
 
-	memset(cyclic, 0, sizeof(*cyclic));
+	memset(cyclic, 0, పరిమాణం(*cyclic));
 
 	/* Store values in struct */
 	cyclic->func = func;
 	cyclic->name = name;
 	cyclic->delay_us = delay_us;
-	cyclic->start_time_us = get_timer_us(0);
-	hlist_add_head(&cyclic->list, &gd->cyclic_list);
+	cyclic->ప్రారంభం_సమయం_us = get_timer_us(0);
+	hlist_కూడు_తల(&cyclic->list, &gd->cyclic_list);
 }
 
-void cyclic_unregister(struct cyclic_info *cyclic)
+శూన్య cyclic_unregister(నిర్మాణం cyclic_info *cyclic)
 {
-	if (!cyclic_is_registered(cyclic))
-		return;
+	ఒకవేళ (!cyclic_is_registered(cyclic))
+		తిరిగి;
 
 	hlist_del(&cyclic->list);
 }
 
-static void cyclic_run(void)
+స్థిర శూన్య cyclic_నిరంతరం(శూన్య)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
-	u64 now, after, cpu_time;
+	నిర్మాణం cyclic_info *cyclic;
+	నిర్మాణం hlist_కణుపు *tmp;
+	u64 now, after, cpu_సమయం;
 
 	/*
 	 * Nothing to do if the list is empty. Also, schedule() can be
@@ -73,36 +73,36 @@ static void cyclic_run(void)
 	 * ok. Otherwise, we would need a new GD_FLG_TIMERS_READY
 	 * flag.
 	 */
-	if (hlist_empty(&gd->cyclic_list))
-		return;
+	ఒకవేళ (hlist_ఖాళీలు(&gd->cyclic_list))
+		తిరిగి;
 
 	/* Prevent recursion */
-	if (gd->flags & GD_FLG_CYCLIC_RUNNING)
-		return;
+	ఒకవేళ (gd->flags & GD_FLG_CYCLIC_RUNNING)
+		తిరిగి;
 
 	gd->flags |= GD_FLG_CYCLIC_RUNNING;
 	now = get_timer_us(0);
-	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list) {
+	hlist_for_each_నమోదు_సురక్షిత(cyclic, tmp, &gd->cyclic_list, list) {
 		/*
 		 * Check if this cyclic function needs to get called, e.g.
 		 * do not call the cyclic func too often
 		 */
-		if (time_after_eq64(now, cyclic->next_call)) {
+		ఒకవేళ (సమయం_after_eq64(now, cyclic->తదుపరి_call)) {
 			/* Call cyclic function and account it's cpu-time */
-			cyclic->next_call = now + cyclic->delay_us;
+			cyclic->తదుపరి_call = now + cyclic->delay_us;
 			cyclic->func(cyclic);
 			after = get_timer_us(0);
-			cyclic->run_cnt++;
-			cpu_time = after - now;
-			cyclic->cpu_time_us += cpu_time;
+			cyclic->నిరంతరం_cnt++;
+			cpu_సమయం = after - now;
+			cyclic->cpu_సమయం_us += cpu_సమయం;
 			now = after;
 
 			/* Check if cpu-time exceeds max allowed time */
-			if ((cpu_time > CONFIG_CYCLIC_MAX_CPU_TIME_US) &&
+			ఒకవేళ ((cpu_సమయం > CONFIG_CYCLIC_MAX_CPU_సమయం_US) &&
 			    (!cyclic->already_warned)) {
 				pr_err("cyclic function %s took too long: %lldus vs %dus max\n",
-				       cyclic->name, cpu_time,
-				       CONFIG_CYCLIC_MAX_CPU_TIME_US);
+				       cyclic->name, cpu_సమయం,
+				       CONFIG_CYCLIC_MAX_CPU_సమయం_US);
 
 				/*
 				 * Don't disable this function, just warn once
@@ -115,29 +115,29 @@ static void cyclic_run(void)
 	gd->flags &= ~GD_FLG_CYCLIC_RUNNING;
 }
 
-void schedule(void)
+శూన్య కాలపట్టిక(శూన్య)
 {
 	/* The HW watchdog is not integrated into the cyclic IF (yet) */
-	if (IS_ENABLED(CONFIG_HW_WATCHDOG))
+	ఒకవేళ (IS_ENABLED(CONFIG_HW_WATCHDOG))
 		hw_watchdog_reset();
 
 	/*
 	 * schedule() might get called very early before the cyclic IF is
 	 * ready. Make sure to only call cyclic_run() when it's initalized.
 	 */
-	if (gd)
-		cyclic_run();
+	ఒకవేళ (gd)
+		cyclic_నిరంతరం();
 
-	uthread_schedule();
+	uthread_కాలపట్టిక();
 }
 
-int cyclic_unregister_all(void)
+పూర్ణాంకం cyclic_unregister_all(శూన్య)
 {
-	struct cyclic_info *cyclic;
-	struct hlist_node *tmp;
+	నిర్మాణం cyclic_info *cyclic;
+	నిర్మాణం hlist_కణుపు *tmp;
 
-	hlist_for_each_entry_safe(cyclic, tmp, &gd->cyclic_list, list)
+	hlist_for_each_నమోదు_సురక్షిత(cyclic, tmp, &gd->cyclic_list, list)
 		cyclic_unregister(cyclic);
 
-	return 0;
+	తిరిగి 0;
 }

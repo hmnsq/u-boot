@@ -5,88 +5,88 @@
  * Copyright (c) 2014 Google, Inc
  */
 
-#define LOG_CATEGORY LOGC_ALLOC
+#నిర్వచించు LOG_CATEGORY LOGC_ALLOC
 
-#include <log.h>
-#include <malloc.h>
-#include <mapmem.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <valgrind/valgrind.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <mapmem.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <asm/io.h>
+#అన్తర్భావ <valgrind/valgrind.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-static void *alloc_simple(size_t bytes, int align)
+స్థిర శూన్య *alloc_simple(size_t బైట్లు, పూర్ణాంకం align)
 {
 	ulong addr, new_ptr;
-	void *ptr;
+	శూన్య *ptr;
 
-	addr = ALIGN(gd->malloc_base + gd->malloc_ptr, align);
-	new_ptr = addr + bytes - gd->malloc_base;
-	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)bytes, new_ptr,
-		  gd->malloc_limit);
-	if (new_ptr > gd->malloc_limit) {
+	addr = ALIGN(gd->malloc_పునాది + gd->malloc_ptr, align);
+	new_ptr = addr + బైట్లు - gd->malloc_పునాది;
+	log_debug("size=%lx, ptr=%lx, limit=%x: ", (ulong)బైట్లు, new_ptr,
+		  gd->malloc_హద్దు);
+	ఒకవేళ (new_ptr > gd->malloc_హద్దు) {
 		log_err("alloc space exhausted ptr %lx limit %x\n", new_ptr,
-			gd->malloc_limit);
-		return NULL;
+			gd->malloc_హద్దు);
+		తిరిగి ఖాళీ;
 	}
 
-	ptr = map_sysmem(addr, bytes);
-	gd->malloc_ptr = ALIGN(new_ptr, sizeof(new_ptr));
+	ptr = map_sysmem(addr, బైట్లు);
+	gd->malloc_ptr = ALIGN(new_ptr, పరిమాణం(new_ptr));
 
-	return ptr;
+	తిరిగి ptr;
 }
 
-void *malloc_simple(size_t bytes)
+శూన్య *malloc_simple(size_t బైట్లు)
 {
-	void *ptr;
+	శూన్య *ptr;
 
-	ptr = alloc_simple(bytes, 1);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(బైట్లు, 1);
+	ఒకవేళ (!ptr)
+		తిరిగి ptr;
 
 	log_debug("%lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_ఖండం(ptr, బైట్లు, 0, false);
 
-	return ptr;
+	తిరిగి ptr;
 }
 
-void *memalign_simple(size_t align, size_t bytes)
+శూన్య *memalign_simple(size_t align, size_t బైట్లు)
 {
-	void *ptr;
+	శూన్య *ptr;
 
-	ptr = alloc_simple(bytes, align);
-	if (!ptr)
-		return ptr;
+	ptr = alloc_simple(బైట్లు, align);
+	ఒకవేళ (!ptr)
+		తిరిగి ptr;
 	log_debug("aligned to %lx\n", (ulong)ptr);
-	VALGRIND_MALLOCLIKE_BLOCK(ptr, bytes, 0, false);
+	VALGRIND_MALLOCLIKE_ఖండం(ptr, బైట్లు, 0, false);
 
-	return ptr;
+	తిరిగి ptr;
 }
 
-#if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
-void *calloc(size_t nmemb, size_t elem_size)
+#ఒకవేళ CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+శూన్య *సున్నా_జ్ఞాపకం_ఇవ్వు(size_t nmemb, size_t elem_కొలత)
 {
-	size_t size = nmemb * elem_size;
-	void *ptr;
+	size_t కొలత = nmemb * elem_కొలత;
+	శూన్య *ptr;
 
-	ptr = malloc(size);
-	if (!ptr)
-		return ptr;
-	memset(ptr, '\0', size);
+	ptr = జ్ఞాపకం_ఇవ్వు(కొలత);
+	ఒకవేళ (!ptr)
+		తిరిగి ptr;
+	memset(ptr, '\0', కొలత);
 
-	return ptr;
+	తిరిగి ptr;
 }
 
-#if IS_ENABLED(CONFIG_VALGRIND)
-void free_simple(void *ptr)
+#ఒకవేళ IS_ENABLED(CONFIG_VALGRIND)
+శూన్య free_simple(శూన్య *ptr)
 {
-	VALGRIND_FREELIKE_BLOCK(ptr, 0);
+	VALGRIND_FREELIKE_ఖండం(ptr, 0);
 }
-#endif
-#endif
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-void malloc_simple_info(void)
+శూన్య malloc_simple_info(శూన్య)
 {
 	log_info("malloc_simple: %x bytes used, %x remain\n", gd->malloc_ptr,
 		 CONFIG_VAL(SYS_MALLOC_F_LEN) - gd->malloc_ptr);

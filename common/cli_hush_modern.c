@@ -12,176 +12,176 @@
  * Copyright (c) 2021, Harald Seiler, DENX Software Engineering, hws@denx.de
  */
 
-#include <env.h>
-#include <malloc.h>         /* malloc, free, realloc*/
-#include <linux/ctype.h>    /* isalpha, isdigit */
-#include <console.h>
-#include <bootretry.h>
-#include <cli.h>
-#include <cli_hush.h>
-#include <command.h>        /* find_cmd */
-#include <asm/global_data.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <malloc.h>         /* malloc, free, realloc*/
+#అన్తర్భావ <linux/ctype.h>    /* isalpha, isdigit */
+#అన్తర్భావ <console.h>
+#అన్తర్భావ <bootretry.h>
+#అన్తర్భావ <cli.h>
+#అన్తర్భావ <cli_hush.h>
+#అన్తర్భావ <command.h>        /* find_cmd */
+#అన్తర్భావ <asm/global_data.h>
 
 /*
  * BusyBox Version: UPDATE THIS WHEN PULLING NEW UPSTREAM REVISION!
  */
-#define BB_VER			"1.37.0.git23da5c4b716b"
+#నిర్వచించు BB_VER			"1.37.0.git23da5c4b716b"
 
 /*
  * Define hush features by the names used upstream.
  */
-#define ENABLE_HUSH_INTERACTIVE	1
-#define ENABLE_FEATURE_EDITING	1
-#define ENABLE_HUSH_IF		1
-#define ENABLE_HUSH_LOOPS	1
+#నిర్వచించు ENABLE_HUSH_INTERACTIVE	1
+#నిర్వచించు ENABLE_FEATURE_EDITING	1
+#నిర్వచించు ENABLE_HUSH_IF		1
+#నిర్వచించు ENABLE_HUSH_LOOPS	1
 /* No MMU in U-Boot */
-#define BB_MMU			0
-#define USE_FOR_NOMMU(...)	__VA_ARGS__
-#define USE_FOR_MMU(...)
+#నిర్వచించు BB_MMU			0
+#నిర్వచించు USE_FOR_NOMMU(...)	__VA_ARGS__
+#నిర్వచించు USE_FOR_MMU(...)
 
 /*
  * Size-saving "small" ints (arch-dependent)
  */
-#if CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
+#ఒకవేళ CONFIG_IS_ENABLED(X86) || CONFIG_IS_ENABLED(X86_64) || CONFIG_IS_ENABLED(MIPS)
 /* add other arches which benefit from this... */
-typedef signed char smallint;
-typedef unsigned char smalluint;
-#else
+రకనిర్వచనం గుర్తుగల అక్షరం smallint;
+రకనిర్వచనం గుర్తులేని అక్షరం smalluint;
+#లేకపోతే
 /* for arches where byte accesses generate larger code: */
-typedef int smallint;
-typedef unsigned smalluint;
-#endif
+రకనిర్వచనం పూర్ణాంకం smallint;
+రకనిర్వచనం గుర్తులేని smalluint;
+#అయితే_ముగింపు
 
 /*
  * Alignment defines used by BusyBox.
  */
-#define ALIGN1			__attribute__((aligned(1)))
-#define ALIGN2			__attribute__((aligned(2)))
-#define ALIGN4			__attribute__((aligned(4)))
-#define ALIGN8			__attribute__((aligned(8)))
-#define ALIGN_PTR		__attribute__((aligned(sizeof(void*))))
+#నిర్వచించు ALIGN1			__attribute__((aligned(1)))
+#నిర్వచించు ALIGN2			__attribute__((aligned(2)))
+#నిర్వచించు ALIGN4			__attribute__((aligned(4)))
+#నిర్వచించు ALIGN8			__attribute__((aligned(8)))
+#నిర్వచించు ALIGN_PTR		__attribute__((aligned(పరిమాణం(శూన్య*))))
 
 /*
  * Miscellaneous compiler/platform defines.
  */
-#define FAST_FUNC /* not used in U-Boot */
-#define UNUSED_PARAM		__always_unused
-#define ALWAYS_INLINE		__always_inline
-#define NOINLINE		noinline
+#నిర్వచించు FAST_FUNC /* not used in U-Boot */
+#నిర్వచించు వాడని_PARAM		__always_unused
+#నిర్వచించు ALWAYS_INLINE		__always_inline
+#నిర్వచించు NOINLINE		noinline
 
 /*
  * Defines to provide equivalents to what libc/BusyBox defines.
  */
-#define EOF			(-1)
-#define EXIT_SUCCESS		0
-#define EXIT_FAILURE		1
+#నిర్వచించు EOF			(-1)
+#నిర్వచించు EXIT_SUCCESS		0
+#నిర్వచించు EXIT_FAILURE		1
 
 /*
  * Stubs to provide libc/BusyBox functions based on U-Boot equivalents where it
  * makes sense.
  */
-#define utoa			simple_itoa
+#నిర్వచించు utoa			simple_itoa
 
-static void __noreturn xfunc_die(void)
+స్థిర శూన్య __noreturn xfunc_die(శూన్య)
 {
 	panic("HUSH died!");
 }
 
-#define bb_error_msg_and_die(format, ...) do { \
+#నిర్వచించు bb_error_సందేశం_and_die(format, ...) చేయి { \
 panic("HUSH: " format, __VA_ARGS__); \
-} while (0);
+} అయితే (0);
 
-#define bb_simple_error_msg_and_die(msg) do { \
-panic_str("HUSH: " msg); \
-} while (0);
+#నిర్వచించు bb_simple_error_సందేశం_and_die(సందేశం) చేయి { \
+panic_str("HUSH: " సందేశం); \
+} అయితే (0);
 
 /* fdprintf() is used for debug output. */
-static int __maybe_unused fdprintf(int fd, const char *format, ...)
+స్థిర పూర్ణాంకం __maybe_unused fdprintf(పూర్ణాంకం fd, స్థిరరాశి అక్షరం *format, ...)
 {
-	va_list args;
+	va_list వాదనలు;
 	uint i;
 
-	assert(fd == 2);
+	ప్రతిజ్ఞా(fd == 2);
 
-	va_start(args, format);
-	i = vprintf(format, args);
-	va_end(args);
+	va_ప్రారంభం(వాదనలు, format);
+	i = vprintf(format, వాదనలు);
+	va_చివర(వాదనలు);
 
-	return i;
+	తిరిగి i;
 }
 
-static void bb_verror_msg(const char *s, va_list p, const char* strerr)
+స్థిర శూన్య bb_verror_సందేశం(స్థిరరాశి అక్షరం *s, va_list p, స్థిరరాశి అక్షరం* strerr)
 {
 	/* TODO: what to do with strerr arg? */
 	vprintf(s, p);
 }
 
-static void bb_error_msg(const char *s, ...)
+స్థిర శూన్య bb_error_సందేశం(స్థిరరాశి అక్షరం *s, ...)
 {
 	va_list p;
 
-	va_start(p, s);
-	bb_verror_msg(s, p, NULL);
-	va_end(p);
+	va_ప్రారంభం(p, s);
+	bb_verror_సందేశం(s, p, ఖాళీ);
+	va_చివర(p);
 }
 
-static void bb_simple_error_msg(const char *s)
+స్థిర శూన్య bb_simple_error_సందేశం(స్థిరరాశి అక్షరం *s)
 {
-	bb_error_msg("%s", s);
+	bb_error_సందేశం("%s", s);
 }
 
-static void *xmalloc(size_t size)
+స్థిర శూన్య *xmalloc(size_t కొలత)
 {
-	void *p = NULL;
-	if (!(p = malloc(size)))
+	శూన్య *p = ఖాళీ;
+	ఒకవేళ (!(p = జ్ఞాపకం_ఇవ్వు(కొలత)))
 		panic("out of memory");
-	return p;
+	తిరిగి p;
 }
 
-static void *xzalloc(size_t size)
+స్థిర శూన్య *xzalloc(size_t కొలత)
 {
-	void *p = xmalloc(size);
-	memset(p, 0, size);
-	return p;
+	శూన్య *p = xmalloc(కొలత);
+	memset(p, 0, కొలత);
+	తిరిగి p;
 }
 
-static void *xrealloc(void *ptr, size_t size)
+స్థిర శూన్య *xrealloc(శూన్య *ptr, size_t కొలత)
 {
-	void *p = NULL;
-	if (!(p = realloc(ptr, size)))
+	శూన్య *p = ఖాళీ;
+	ఒకవేళ (!(p = realloc(ptr, కొలత)))
 		panic("out of memory");
-	return p;
+	తిరిగి p;
 }
 
-static void *xmemdup(const void *s, int n)
+స్థిర శూన్య *xmemdup(స్థిరరాశి శూన్య *s, పూర్ణాంకం n)
 {
-	return memcpy(xmalloc(n), s, n);
+	తిరిగి జ్ఞాపకం_నకలు(xmalloc(n), s, n);
 }
 
-#define xstrdup		strdup
-#define xstrndup	strndup
+#నిర్వచించు xstrdup		strdup
+#నిర్వచించు xstrndup	strndup
 
-static void *mempcpy(void *dest, const void *src, size_t len)
+స్థిర శూన్య *mempcpy(శూన్య *dest, స్థిరరాశి శూన్య *src, size_t len)
 {
-	return memcpy(dest, src, len) + len;
+	తిరిగి జ్ఞాపకం_నకలు(dest, src, len) + len;
 }
 
 /* Like strcpy but can copy overlapping strings. */
-static void overlapping_strcpy(char *dst, const char *src)
+స్థిర శూన్య overlapping_strcpy(అక్షరం *dst, స్థిరరాశి అక్షరం *src)
 {
 	/*
 	 * Cheap optimization for dst == src case -
 	 * better to have it here than in many callers.
 	 */
-	if (dst != src) {
-		while ((*dst = *src) != '\0') {
+	ఒకవేళ (dst != src) {
+		అయితే ((*dst = *src) != '\0') {
 			dst++;
 			src++;
 		}
 	}
 }
 
-static char* skip_whitespace(const char *s)
+స్థిర అక్షరం* skip_whitespace(స్థిరరాశి అక్షరం *s)
 {
 	/*
 	 * In POSIX/C locale (the only locale we care about: do we REALLY want
@@ -190,32 +190,32 @@ static char* skip_whitespace(const char *s)
 	 * "\t\n\v\f\r" happen to have ASCII codes 9,10,11,12,13.
 	 * Use that.
 	 */
-	while (*s == ' ' || (unsigned char)(*s - 9) <= (13 - 9))
+	అయితే (*s == ' ' || (గుర్తులేని అక్షరం)(*s - 9) <= (13 - 9))
 		s++;
 
-	return (char *) s;
+	తిరిగి (అక్షరం *) s;
 }
 
-static char* skip_non_whitespace(const char *s)
+స్థిర అక్షరం* skip_non_whitespace(స్థిరరాశి అక్షరం *s)
 {
-	while (*s != '\0' && *s != ' ' && (unsigned char)(*s - 9) > (13 - 9))
+	అయితే (*s != '\0' && *s != ' ' && (గుర్తులేని అక్షరం)(*s - 9) > (13 - 9))
 		s++;
 
-	return (char *) s;
+	తిరిగి (అక్షరం *) s;
 }
 
-#define is_name(c)	((c) == '_' || isalpha((unsigned char)(c)))
-#define is_in_name(c)	((c) == '_' || isalnum((unsigned char)(c)))
+#నిర్వచించు is_name(c)	((c) == '_' || అక్షరమా((గుర్తులేని అక్షరం)(c)))
+#నిర్వచించు is_లోపల_name(c)	((c) == '_' || అక్షరమా_అంకెనా((గుర్తులేని అక్షరం)(c)))
 
-static const char* endofname(const char *name)
+స్థిర స్థిరరాశి అక్షరం* endofname(స్థిరరాశి అక్షరం *name)
 {
-	if (!is_name(*name))
-		return name;
-	while (*++name) {
-		if (!is_in_name(*name))
-			break;
+	ఒకవేళ (!is_name(*name))
+		తిరిగి name;
+	అయితే (*++name) {
+		ఒకవేళ (!is_లోపల_name(*name))
+			ఆపు;
 	}
-	return name;
+	తిరిగి name;
 }
 
 /**
@@ -226,98 +226,98 @@ static const char* endofname(const char *name)
  * @list The list to count the number of element.
  * @return The number of element in list.
  */
-static size_t list_size(char **list)
+స్థిర size_t list_కొలత(అక్షరం **list)
 {
-	size_t size;
+	size_t కొలత;
 
-	for (size = 0; list[size] != NULL; size++);
+	కొరకు (కొలత = 0; list[కొలత] != ఖాళీ; కొలత++);
 
-	return size;
+	తిరిగి కొలత;
 }
 
-static int varcmp(const char *p, const char *q)
+స్థిర పూర్ణాంకం varcmp(స్థిరరాశి అక్షరం *p, స్థిరరాశి అక్షరం *q)
 {
-	int c, d;
+	పూర్ణాంకం c, d;
 
-	while ((c = *p) == (d = *q)) {
-		if (c == '\0' || c == '=')
-			goto out;
+	అయితే ((c = *p) == (d = *q)) {
+		ఒకవేళ (c == '\0' || c == '=')
+			వెళ్ళు బహిర్గతం;
 		p++;
 		q++;
 	}
-	if (c == '=')
+	ఒకవేళ (c == '=')
 		c = '\0';
-	if (d == '=')
+	ఒకవేళ (d == '=')
 		d = '\0';
-out:
-	return c - d;
+బహిర్గతం:
+	తిరిగి c - d;
 }
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+నిర్మాణం లోపల_str;
+స్థిర పూర్ణాంకం u_boot_cli_readline(నిర్మాణం లోపల_str *i);
 
-struct in_str;
-static int u_boot_cli_readline(struct in_str *i);
+నిర్మాణం లోపల_str;
+స్థిర పూర్ణాంకం u_boot_cli_readline(నిర్మాణం లోపల_str *i);
 
 /*
  * BusyBox globals which are needed for hush.
  */
-static uint8_t xfunc_error_retval;
+స్థిర uint8_t xfunc_error_retval;
 
-static const char defifsvar[] __aligned(1) = "IFS= \t\n";
-#define defifs (defifsvar + 4)
+స్థిర స్థిరరాశి అక్షరం defifsvar[] __aligned(1) = "IFS= \t\n";
+#నిర్వచించు defifs (defifsvar + 4)
 
 /* This define is used to check if exit command was called. */
-#define EXIT_RET_CODE -2
+#నిర్వచించు EXIT_RET_సంకేతం -2
 
 /*
  * This define is used for changes that need be done directly in the upstream
  * sources still. Ideally, its use should be minimized as much as possible.
  */
-#define __U_BOOT__
+#నిర్వచించు __U_BOOT__
 
 /*
  *
  * +-- Include of the upstream sources --+ *
  * V                                     V
  */
-#include "cli_hush_upstream.c"
+#అన్తర్భావ "cli_hush_upstream.c"
 /*
  * A                                     A
  * +-- Include of the upstream sources --+ *
  *
  */
 
-int u_boot_hush_start_modern(void)
+పూర్ణాంకం u_boot_hush_ప్రారంభం_modern(శూన్య)
 {
 	INIT_G();
-	return 0;
+	తిరిగి 0;
 }
 
-static int u_boot_cli_readline(struct in_str *i)
+స్థిర పూర్ణాంకం u_boot_cli_readline(నిర్మాణం లోపల_str *i)
 {
-	char *prompt;
-	char __maybe_unused *ps_prompt = NULL;
+	అక్షరం *prompt;
+	అక్షరం __maybe_unused *ps_prompt = ఖాళీ;
 
-	if (!G.promptmode)
+	ఒకవేళ (!G.promptmode)
 		prompt = CONFIG_SYS_PROMPT;
-#ifdef CONFIG_SYS_PROMPT_HUSH_PS2
-	else
+#నిర్వచితమైతే CONFIG_SYS_PROMPT_HUSH_PS2
+	లేకపోతే
 		prompt = CONFIG_SYS_PROMPT_HUSH_PS2;
-#else
+#లేకపోతే
 	/* TODO: default value? */
-	#error "SYS_PROMPT_HUSH_PS2 is not defined!"
-#endif
+	#దోషం "SYS_PROMPT_HUSH_PS2 is not defined!"
+#అయితే_ముగింపు
 
-	if (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
-		if (!G.promptmode)
+	ఒకవేళ (CONFIG_IS_ENABLED(CMDLINE_PS_SUPPORT)) {
+		ఒకవేళ (!G.promptmode)
 			ps_prompt = env_get("PS1");
-		else
+		లేకపోతే
 			ps_prompt = env_get("PS2");
 
-		if (ps_prompt)
+		ఒకవేళ (ps_prompt)
 			prompt = ps_prompt;
 	}
 
-	return cli_readline(prompt);
+	తిరిగి cli_readline(prompt);
 }

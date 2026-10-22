@@ -7,35 +7,35 @@
  * Mostly inspired by Linux kernel v6.1 onboard_usb_hub driver
  */
 
-#include <asm/gpio.h>
-#include <dm.h>
-#include <dm/device_compat.h>
-#include <dm/uclass-internal.h>
-#include <i2c.h>
-#include <linux/delay.h>
-#include <power/regulator.h>
+#అన్తర్భావ <asm/gpio.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <dm/device_compat.h>
+#అన్తర్భావ <dm/uclass-internal.h>
+#అన్తర్భావ <i2c.h>
+#అన్తర్భావ <linux/delay.h>
+#అన్తర్భావ <power/regulator.h>
 
-#define USB5744_COMMAND_ATTACH		0x0056
-#define USB5744_COMMAND_ATTACH_LSB	0xAA
-#define USB5744_CONFIG_REG_ACCESS	0x0037
-#define USB5744_CONFIG_REG_ACCESS_LSB	0x99
+#నిర్వచించు USB5744_COMMAND_ATTACH		0x0056
+#నిర్వచించు USB5744_COMMAND_ATTACH_LSB	0xAA
+#నిర్వచించు USB5744_CONFIG_REG_ACCESS	0x0037
+#నిర్వచించు USB5744_CONFIG_REG_ACCESS_LSB	0x99
 
-#define MAX_SUPPLIES 2
+#నిర్వచించు MAX_SUPPLIES 2
 
-struct onboard_hub {
-	struct udevice *vdd[MAX_SUPPLIES];
-	struct gpio_desc *reset_gpio;
+నిర్మాణం onboard_hub {
+	నిర్మాణం udevice *vdd[MAX_SUPPLIES];
+	నిర్మాణం gpio_desc *reset_gpio;
 };
 
-struct onboard_hub_data {
-	unsigned long reset_us;
-	unsigned long power_on_delay_us;
-	unsigned int num_supplies;
-	const char * const supply_names[MAX_SUPPLIES];
-	int (*init)(struct udevice *dev);
+నిర్మాణం onboard_hub_దత్తాంశం {
+	గుర్తులేని దీర్ఘ reset_us;
+	గుర్తులేని దీర్ఘ power_on_delay_us;
+	గుర్తులేని పూర్ణాంకం అంకె_supplies;
+	స్థిరరాశి అక్షరం * స్థిరరాశి supply_పేర్లు[MAX_SUPPLIES];
+	పూర్ణాంకం (*init)(నిర్మాణం udevice *dev);
 };
 
-static int usb5744_i2c_init(struct udevice *dev)
+స్థిర పూర్ణాంకం usb5744_i2c_init(నిర్మాణం udevice *dev)
 {
 	/*
 	 *  Prevent the MCU from the putting the HUB in suspend mode through register write.
@@ -52,265 +52,265 @@ static int usb5744_i2c_init(struct udevice *dev)
 	 *  Byte 7: MSB of register address 0x1D
 	 *  Byte 8: value to be written to the register
 	 */
-	u8 data_buf[8] = {0x0, 0x5, 0x0, 0x1, 0x41, 0x1D, 0x08};
+	u8 దత్తాంశం_buf[8] = {0x0, 0x5, 0x0, 0x1, 0x41, 0x1D, 0x08};
 	u8 config_reg_access_buf = USB5744_CONFIG_REG_ACCESS;
-	struct udevice *i2c_bus = NULL, *i2c_dev;
-	struct ofnode_phandle_args phandle;
+	నిర్మాణం udevice *i2c_bus = ఖాళీ, *i2c_dev;
+	నిర్మాణం ofnode_phandle_వాదనలు phandle;
 	u8 buf = USB5744_COMMAND_ATTACH;
-	struct dm_i2c_chip *i2c_chip;
-	int ret, slave_addr;
+	నిర్మాణం dm_i2c_chip *i2c_chip;
+	పూర్ణాంకం ret, slave_addr;
 
-	ret = dev_read_phandle_with_args(dev, "i2c-bus", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	ret = dev_read_phandle_with_వాదనలు(dev, "i2c-bus", ఖాళీ, 0, 0, &phandle);
+	ఒకవేళ (ret == -ENOENT) {
 		dev_dbg(dev, "i2c-bus not specified\n");
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (ret) {
+	ఒకవేళ (ret) {
 		dev_err(dev, "i2c-bus read failed\n");
-		return ret;
+		తిరిగి ret;
 	}
 
-	ret = device_get_global_by_ofnode(ofnode_get_parent(phandle.node), &i2c_bus);
-	if (ret) {
+	ret = device_get_global_by_ofnode(ofnode_get_మాతృ(phandle.కణుపు), &i2c_bus);
+	ఒకవేళ (ret) {
 		dev_err(dev, "Failed to get i2c node, err: %d\n", ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	ret = ofnode_read_u32(phandle.node, "reg", &slave_addr);
-	if (ret)
-		return ret;
+	ret = ofnode_read_u32(phandle.కణుపు, "reg", &slave_addr);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
 	ret = i2c_get_chip(i2c_bus, slave_addr, 1, &i2c_dev);
-	if (ret) {
+	ఒకవేళ (ret) {
 		dev_err(dev, "%s: can't find i2c chip device for addr 0x%x\n", __func__,
 			slave_addr);
-		return ret;
+		తిరిగి ret;
 	}
 
-	i2c_chip = dev_get_parent_plat(i2c_dev);
-	if (!i2c_chip) {
+	i2c_chip = dev_get_మాతృ_plat(i2c_dev);
+	ఒకవేళ (!i2c_chip) {
 		dev_err(dev, "parent platform data not found\n");
-		return -EINVAL;
+		తిరిగి -EINVAL;
 	}
 
-	i2c_chip->flags &= ~DM_I2C_CHIP_WR_ADDRESS;
+	i2c_chip->flags &= ~DM_I2_C_CHIP_WR_చిరునామా;
 	/* SMBus write command */
-	ret = dm_i2c_write(i2c_dev, 0, (uint8_t *)&data_buf, 8);
-	if (ret) {
+	ret = dm_i2c_write(i2c_dev, 0, (uint8_t *)&దత్తాంశం_buf, 8);
+	ఒకవేళ (ret) {
 		dev_err(dev, "data_buf i2c_write failed, err:%d\n", ret);
-		return ret;
+		తిరిగి ret;
 	}
 
 	/* Configuration register access command */
 	ret = dm_i2c_write(i2c_dev, USB5744_CONFIG_REG_ACCESS_LSB,
 			   &config_reg_access_buf, 2);
-	if (ret) {
+	ఒకవేళ (ret) {
 		dev_err(dev, "config_reg_access i2c_write failed, err: %d\n", ret);
-		return ret;
+		తిరిగి ret;
 	}
 
 	/* USB Attach with SMBus */
 	ret = dm_i2c_write(i2c_dev, USB5744_COMMAND_ATTACH_LSB, &buf, 2);
-	if (ret) {
+	ఒకవేళ (ret) {
 		dev_err(dev, "usb_attach i2c_write failed, err: %d\n", ret);
-		return ret;
+		తిరిగి ret;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-int usb_onboard_hub_reset(struct udevice *dev)
+పూర్ణాంకం usb_onboard_hub_reset(నిర్మాణం udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret;
+	నిర్మాణం onboard_hub_దత్తాంశం *దత్తాంశం =
+		(నిర్మాణం onboard_hub_దత్తాంశం *)dev_get_driver_దత్తాంశం(dev);
+	నిర్మాణం onboard_hub *hub = dev_get_priv(dev);
+	పూర్ణాంకం ret;
 
-	hub->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_IS_OUT);
+	hub->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_IS_బహిర్గతం);
 
 	/* property is optional, don't return error! */
-	if (!hub->reset_gpio)
-		return 0;
+	ఒకవేళ (!hub->reset_gpio)
+		తిరిగి 0;
 
-	ret = dm_gpio_set_value(hub->reset_gpio, 1);
-	if (ret)
-		return ret;
+	ret = dm_gpio_సమితి_విలువ(hub->reset_gpio, 1);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	udelay(data->reset_us);
+	udelay(దత్తాంశం->reset_us);
 
-	ret = dm_gpio_set_value(hub->reset_gpio, 0);
-	if (ret)
-		return ret;
+	ret = dm_gpio_సమితి_విలువ(hub->reset_gpio, 0);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	udelay(data->power_on_delay_us);
+	udelay(దత్తాంశం->power_on_delay_us);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int usb_onboard_hub_power_off(struct udevice *dev)
+స్థిర పూర్ణాంకం usb_onboard_hub_power_off(నిర్మాణం udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0, ret2;
-	unsigned int i;
+	నిర్మాణం onboard_hub_దత్తాంశం *దత్తాంశం =
+		(నిర్మాణం onboard_hub_దత్తాంశం *)dev_get_driver_దత్తాంశం(dev);
+	నిర్మాణం onboard_hub *hub = dev_get_priv(dev);
+	పూర్ణాంకం ret = 0, ret2;
+	గుర్తులేని పూర్ణాంకం i;
 
-	for (i = data->num_supplies; i > 0; i--) {
-		if (hub->vdd[i-1]) {
-			ret2 = regulator_set_enable_if_allowed(hub->vdd[i-1], false);
-			if (ret2 && ret2 != -ENOSYS) {
-				dev_err(dev, "can't disable %s: %d\n", data->supply_names[i-1], ret2);
+	కొరకు (i = దత్తాంశం->అంకె_supplies; i > 0; i--) {
+		ఒకవేళ (hub->vdd[i-1]) {
+			ret2 = regulator_సమితి_enable_if_allowed(hub->vdd[i-1], false);
+			ఒకవేళ (ret2 && ret2 != -ENOSYS) {
+				dev_err(dev, "can't disable %s: %d\n", దత్తాంశం->supply_పేర్లు[i-1], ret2);
 				ret |= ret2;
 			}
 		}
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int usb_onboard_hub_probe(struct udevice *dev)
+స్థిర పూర్ణాంకం usb_onboard_hub_probe(నిర్మాణం udevice *dev)
 {
-	struct onboard_hub_data *data =
-		(struct onboard_hub_data *)dev_get_driver_data(dev);
-	struct onboard_hub *hub = dev_get_priv(dev);
-	unsigned int i;
-	int ret;
+	నిర్మాణం onboard_hub_దత్తాంశం *దత్తాంశం =
+		(నిర్మాణం onboard_hub_దత్తాంశం *)dev_get_driver_దత్తాంశం(dev);
+	నిర్మాణం onboard_hub *hub = dev_get_priv(dev);
+	గుర్తులేని పూర్ణాంకం i;
+	పూర్ణాంకం ret;
 
-	if (data->num_supplies > MAX_SUPPLIES) {
+	ఒకవేళ (దత్తాంశం->అంకె_supplies > MAX_SUPPLIES) {
 		dev_err(dev, "invalid supplies number, max supported: %d\n", MAX_SUPPLIES);
-		return -EINVAL;
+		తిరిగి -EINVAL;
 	}
 
-	for (i = 0; i < data->num_supplies; i++) {
-		ret = device_get_supply_regulator(dev, data->supply_names[i], &hub->vdd[i]);
-		if (ret && ret != -ENOENT && ret != -ENOSYS) {
-			dev_err(dev, "can't get %s: %d\n", data->supply_names[i], ret);
-			goto err_supply;
+	కొరకు (i = 0; i < దత్తాంశం->అంకె_supplies; i++) {
+		ret = device_get_supply_regulator(dev, దత్తాంశం->supply_పేర్లు[i], &hub->vdd[i]);
+		ఒకవేళ (ret && ret != -ENOENT && ret != -ENOSYS) {
+			dev_err(dev, "can't get %s: %d\n", దత్తాంశం->supply_పేర్లు[i], ret);
+			వెళ్ళు err_supply;
 		}
 
-		if (hub->vdd[i]) {
-			ret = regulator_set_enable_if_allowed(hub->vdd[i], true);
-			if (ret && ret != -ENOSYS) {
-				dev_err(dev, "can't enable %s: %d\n", data->supply_names[i], ret);
-				goto err_supply;
+		ఒకవేళ (hub->vdd[i]) {
+			ret = regulator_సమితి_enable_if_allowed(hub->vdd[i], true);
+			ఒకవేళ (ret && ret != -ENOSYS) {
+				dev_err(dev, "can't enable %s: %d\n", దత్తాంశం->supply_పేర్లు[i], ret);
+				వెళ్ళు err_supply;
 			}
 		}
 	}
 
 	ret = usb_onboard_hub_reset(dev);
-	if (ret)
-		goto err_supply;
+	ఒకవేళ (ret)
+		వెళ్ళు err_supply;
 
-	if (data->init) {
-		ret = data->init(dev);
-		if (ret) {
+	ఒకవేళ (దత్తాంశం->init) {
+		ret = దత్తాంశం->init(dev);
+		ఒకవేళ (ret) {
 			dev_err(dev, "onboard i2c init failed: %d\n", ret);
-			goto err;
+			వెళ్ళు err;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 err:
-	dm_gpio_set_value(hub->reset_gpio, 0);
+	dm_gpio_సమితి_విలువ(hub->reset_gpio, 0);
 err_supply:
 	usb_onboard_hub_power_off(dev);
-	return ret;
+	తిరిగి ret;
 }
 
-static int usb_onboard_hub_bind(struct udevice *dev)
+స్థిర పూర్ణాంకం usb_onboard_hub_bind(నిర్మాణం udevice *dev)
 {
-	struct ofnode_phandle_args phandle;
-	struct udevice *peerdev;
-	int ret;
+	నిర్మాణం ofnode_phandle_వాదనలు phandle;
+	నిర్మాణం udevice *peerdev;
+	పూర్ణాంకం ret;
 
-	ret = dev_read_phandle_with_args(dev, "peer-hub", NULL, 0, 0, &phandle);
-	if (ret == -ENOENT) {
+	ret = dev_read_phandle_with_వాదనలు(dev, "peer-hub", ఖాళీ, 0, 0, &phandle);
+	ఒకవేళ (ret == -ENOENT) {
 		dev_dbg(dev, "peer-hub property not present\n");
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (ret) {
+	ఒకవేళ (ret) {
 		dev_err(dev, "peer-hub not specified\n");
-		return ret;
+		తిరిగి ret;
 	}
 
-	ret = uclass_find_device_by_ofnode(UCLASS_USB_HUB, phandle.node, &peerdev);
-	if (ret) {
+	ret = uclass_కనుగొను_device_by_ofnode(UCLASS_USB_HUB, phandle.కణుపు, &peerdev);
+	ఒకవేళ (ret) {
 		dev_dbg(dev, "binding before peer-hub %s\n",
-			ofnode_get_name(phandle.node));
-		return 0;
+			ofnode_get_name(phandle.కణుపు));
+		తిరిగి 0;
 	}
 
 	dev_dbg(dev, "peer-hub %s has been bound\n", peerdev->name);
 
-	return -ENODEV;
+	తిరిగి -ENODEV;
 }
 
-static int usb_onboard_hub_remove(struct udevice *dev)
+స్థిర పూర్ణాంకం usb_onboard_hub_remove(నిర్మాణం udevice *dev)
 {
-	struct onboard_hub *hub = dev_get_priv(dev);
-	int ret = 0;
+	నిర్మాణం onboard_hub *hub = dev_get_priv(dev);
+	పూర్ణాంకం ret = 0;
 
-	if (hub->reset_gpio) {
-		ret = dm_gpio_set_value(hub->reset_gpio, 1);
-		if (ret)
+	ఒకవేళ (hub->reset_gpio) {
+		ret = dm_gpio_సమితి_విలువ(hub->reset_gpio, 1);
+		ఒకవేళ (ret)
 			dev_err(dev, "can't set gpio %s: %d\n", hub->reset_gpio->dev->name,
 				ret);
 	}
 
 	ret |= usb_onboard_hub_power_off(dev);
-	return ret;
+	తిరిగి ret;
 }
 
-static const struct onboard_hub_data corechips_sl6341_data = {
+స్థిర స్థిరరాశి నిర్మాణం onboard_hub_దత్తాంశం corechips_sl6341_దత్తాంశం = {
 	.reset_us = 10000,
-	.num_supplies = 2,
-	.supply_names = { "vdd1v1-supply", "vdd3v3-supply" },
+	.అంకె_supplies = 2,
+	.supply_పేర్లు = { "vdd1v1-supply", "vdd3v3-supply" },
 };
 
-static const struct onboard_hub_data usb2514_data = {
+స్థిర స్థిరరాశి నిర్మాణం onboard_hub_దత్తాంశం usb2514_దత్తాంశం = {
 	.power_on_delay_us = 500,
 	.reset_us = 1,
-	.num_supplies = 1,
-	.supply_names = { "vdd-supply" },
+	.అంకె_supplies = 1,
+	.supply_పేర్లు = { "vdd-supply" },
 };
 
-static const struct onboard_hub_data usb5744_data = {
+స్థిర స్థిరరాశి నిర్మాణం onboard_hub_దత్తాంశం usb5744_దత్తాంశం = {
 	.init = usb5744_i2c_init,
 	.power_on_delay_us = 1000,
 	.reset_us = 5,
-	.num_supplies = 1,
-	.supply_names = { "vdd-supply" },
+	.అంకె_supplies = 1,
+	.supply_పేర్లు = { "vdd-supply" },
 };
 
-static const struct onboard_hub_data usbhx3_data = {
+స్థిర స్థిరరాశి నిర్మాణం onboard_hub_దత్తాంశం usbhx3_దత్తాంశం = {
 	.reset_us = 10000,
-	.num_supplies = 2,
-	.supply_names = { "vdd-supply", "vdd2-supply" },
+	.అంకె_supplies = 2,
+	.supply_పేర్లు = { "vdd-supply", "vdd2-supply" },
 };
 
-static const struct udevice_id usb_onboard_hub_ids[] = {
+స్థిర స్థిరరాశి నిర్మాణం udevice_id usb_onboard_hub_ids[] = {
 	/* Use generic usbVID,PID dt-bindings (usb-device.yaml) */
 	{	.compatible = "usb3431,6241",	/* Corechips SL6341 USB 2.0 */
-		.data = (ulong)&corechips_sl6341_data,
+		.దత్తాంశం = (ulong)&corechips_sl6341_దత్తాంశం,
 	}, {
 		.compatible = "usb3431,6341",	/* Corechips SL6341 USB 3.0 */
-		.data = (ulong)&corechips_sl6341_data,
+		.దత్తాంశం = (ulong)&corechips_sl6341_దత్తాంశం,
 	}, {
 		.compatible = "usb424,2514",	/* USB2514B USB 2.0 */
-		.data = (ulong)&usb2514_data,
+		.దత్తాంశం = (ulong)&usb2514_దత్తాంశం,
 	}, {
 		.compatible = "usb424,2744",	/* USB2744 USB 2.0 */
-		.data = (ulong)&usb5744_data,
+		.దత్తాంశం = (ulong)&usb5744_దత్తాంశం,
 	}, {
 		.compatible = "usb424,5744",	/* USB5744 USB 3.0 */
-		.data = (ulong)&usb5744_data,
+		.దత్తాంశం = (ulong)&usb5744_దత్తాంశం,
 	}, {
 		.compatible = "usb4b4,6504",	/* Cypress HX3 USB 3.0 */
-		.data = (ulong)&usbhx3_data,
+		.దత్తాంశం = (ulong)&usbhx3_దత్తాంశం,
 	}, {
 		.compatible = "usb4b4,6506",	/* Cypress HX3 USB 2.0 */
-		.data = (ulong)&usbhx3_data,
+		.దత్తాంశం = (ulong)&usbhx3_దత్తాంశం,
 	},
 	{ /* sentinel */ }
 };
@@ -321,6 +321,6 @@ U_BOOT_DRIVER(usb_onboard_hub) = {
 	.bind   = usb_onboard_hub_bind,
 	.probe = usb_onboard_hub_probe,
 	.remove = usb_onboard_hub_remove,
-	.of_match = usb_onboard_hub_ids,
-	.priv_auto = sizeof(struct onboard_hub),
+	.యొక్క_సరిపోలిక = usb_onboard_hub_ids,
+	.priv_auto = పరిమాణం(నిర్మాణం onboard_hub),
 };

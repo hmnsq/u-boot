@@ -5,106 +5,106 @@
  * Copyright (c) 2020, Heinrich Schuchardt <xypron.glpk@gmx.de>
  */
 
-#include <env.h>
-#include <log.h>
-#include <net.h>
-#include <asm/global_data.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <net.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-#define BUFFER_SIZE 480
+#నిర్వచించు బఫరు_కొలత_2 480
 
-static void append(char **buf, char *buf_end, const char *fmt, ...)
+స్థిర శూన్య append(అక్షరం **buf, అక్షరం *buf_చివర, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	va_list args;
-	size_t size = buf_end - *buf;
+	va_list వాదనలు;
+	size_t కొలత = buf_చివర - *buf;
 
-	va_start(args, fmt);
-	vsnprintf(*buf, size, fmt, args);
-	va_end(args);
-	*buf += strlen(*buf);
+	va_ప్రారంభం(వాదనలు, fmt);
+	vsnprintf(*buf, కొలత, fmt, వాదనలు);
+	va_చివర(వాదనలు);
+	*buf += అక్షరశ్రేణి_పొడవు(*buf);
 }
 
-static int log_syslog_emit(struct log_device *ldev, struct log_rec *rec)
+స్థిర పూర్ణాంకం log_syslog_emit(నిర్మాణం log_device *ldev, నిర్మాణం log_rec *rec)
 {
-	int ret;
-	int fmt = gd->log_fmt;
-	char msg[BUFFER_SIZE];
-	char *msg_end = msg + BUFFER_SIZE;
-	char *ptr = msg;
-	char *iphdr;
-	char *log_msg;
-	int eth_hdr_size;
-	struct in_addr bcast_ip;
-	unsigned int log_level;
-	char *log_hostname;
+	పూర్ణాంకం ret;
+	పూర్ణాంకం fmt = gd->log_fmt;
+	అక్షరం సందేశం[బఫరు_కొలత_2];
+	అక్షరం *సందేశం_చివర = సందేశం + బఫరు_కొలత_2;
+	అక్షరం *ptr = సందేశం;
+	అక్షరం *iphdr;
+	అక్షరం *log_సందేశం;
+	పూర్ణాంకం eth_hdr_కొలత;
+	నిర్మాణం లోపల_addr bcast_ip;
+	గుర్తులేని పూర్ణాంకం log_level;
+	అక్షరం *log_hostname;
 
 	/* Setup packet buffers */
 	ret = net_init();
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 	/* Disable hardware and put it into the reset state */
 	eth_halt();
 	/* Set current device according to environment variables */
-	eth_set_current();
+	eth_సమితి_current();
 	/* Get hardware ready for send and receive operations */
 	ret = eth_init();
-	if (ret < 0) {
+	ఒకవేళ (ret < 0) {
 		eth_halt();
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	memset(msg, 0, BUFFER_SIZE);
+	memset(సందేశం, 0, బఫరు_కొలత_2);
 
 	/* Set ethernet header */
-	eth_hdr_size = net_set_ether((uchar *)ptr, net_bcast_ethaddr, PROT_IP);
-	ptr += eth_hdr_size;
+	eth_hdr_కొలత = net_సమితి_ether((uchar *)ptr, net_bcast_ethaddr, PROT_IP);
+	ptr += eth_hdr_కొలత;
 	iphdr = ptr;
-	ptr += IP_UDP_HDR_SIZE;
-	log_msg = ptr;
+	ptr += IP_UDP_HDR_కొలత;
+	log_సందేశం = ptr;
 
 	/*
 	 * The syslog log levels defined in RFC 5424 match the U-Boot ones up to
 	 * level 7 (debug).
 	 */
 	log_level = rec->level;
-	if (log_level > 7)
+	ఒకవేళ (log_level > 7)
 		log_level = 7;
 	/* Leave high bits as 0 to write a 'kernel message' */
 
 	/* Write log message to buffer */
-	append(&ptr, msg_end, "<%u>", log_level);
+	append(&ptr, సందేశం_చివర, "<%u>", log_level);
 	log_hostname = env_get("log_hostname");
-	if (log_hostname)
-		append(&ptr, msg_end, "%s ", log_hostname);
-	append(&ptr, msg_end, "uboot: ");
-	if (fmt & BIT(LOGF_LEVEL))
-		append(&ptr, msg_end, "%s.",
+	ఒకవేళ (log_hostname)
+		append(&ptr, సందేశం_చివర, "%s ", log_hostname);
+	append(&ptr, సందేశం_చివర, "uboot: ");
+	ఒకవేళ (fmt & బిట్టు(LOGF_LEVEL))
+		append(&ptr, సందేశం_చివర, "%s.",
 		       log_get_level_name(rec->level));
-	if (fmt & BIT(LOGF_CAT))
-		append(&ptr, msg_end, "%s,",
+	ఒకవేళ (fmt & బిట్టు(LOGF_CAT))
+		append(&ptr, సందేశం_చివర, "%s,",
 		       log_get_cat_name(rec->cat));
-	if (fmt & BIT(LOGF_FILE))
-		append(&ptr, msg_end, "%s:", rec->file);
-	if (fmt & BIT(LOGF_LINE))
-		append(&ptr, msg_end, "%d-", rec->line);
-	if (fmt & BIT(LOGF_FUNC))
-		append(&ptr, msg_end, "%s()", rec->func ?: "?");
-	if (fmt & BIT(LOGF_MSG))
-		append(&ptr, msg_end, "%s%s",
-		       fmt != BIT(LOGF_MSG) ? " " : "", rec->msg);
+	ఒకవేళ (fmt & బిట్టు(LOGF_FILE))
+		append(&ptr, సందేశం_చివర, "%s:", rec->file);
+	ఒకవేళ (fmt & బిట్టు(LOGF_పంక్తి))
+		append(&ptr, సందేశం_చివర, "%d-", rec->పంక్తి);
+	ఒకవేళ (fmt & బిట్టు(LOGF_FUNC))
+		append(&ptr, సందేశం_చివర, "%s()", rec->func ?: "?");
+	ఒకవేళ (fmt & బిట్టు(LOGF_సందేశం))
+		append(&ptr, సందేశం_చివర, "%s%s",
+		       fmt != బిట్టు(LOGF_సందేశం) ? " " : "", rec->సందేశం);
 	/* Consider trailing 0x00 */
 	ptr++;
 
-	debug("log message: '%s'\n", log_msg);
+	debug("log message: '%s'\n", log_సందేశం);
 
 	/* Broadcast message */
 	bcast_ip.s_addr = 0xFFFFFFFFL;
-	net_set_udp_header((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_msg);
-	net_send_packet((uchar *)msg, ptr - msg);
+	net_సమితి_udp_శీర్షిక((uchar *)iphdr, bcast_ip, 514, 514, ptr - log_సందేశం);
+	net_send_packet((uchar *)సందేశం, ptr - సందేశం);
 
-out:
-	return ret;
+బహిర్గతం:
+	తిరిగి ret;
 }
 
 LOG_DRIVER(syslog) = {

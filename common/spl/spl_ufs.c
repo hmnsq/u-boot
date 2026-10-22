@@ -3,47 +3,47 @@
  * (C) Copyright 2025 Alexey Charkov <alchark@gmail.com>
  */
 
-#include <spl.h>
-#include <spl_load.h>
-#include <scsi.h>
-#include <errno.h>
-#include <image.h>
-#include <linux/compiler.h>
-#include <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <spl_load.h>
+#అన్తర్భావ <scsi.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <linux/compiler.h>
+#అన్తర్భావ <log.h>
 
-static ulong spl_ufs_load_read(struct spl_load_info *load, ulong off, ulong size, void *buf)
+స్థిర ulong spl_ufs_ఎక్కించు_read(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong off, ulong కొలత, శూన్య *buf)
 {
-	struct blk_desc *bd = load->priv;
+	నిర్మాణం blk_desc *bd = ఎక్కించు->priv;
 	lbaint_t sector = off >> bd->log2blksz;
-	lbaint_t count = size >> bd->log2blksz;
+	lbaint_t లెక్క = కొలత >> bd->log2blksz;
 
-	return blk_dread(bd, sector, count, buf) << bd->log2blksz;
+	తిరిగి blk_dread(bd, sector, లెక్క, buf) << bd->log2blksz;
 }
 
-static int spl_ufs_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_ufs_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	unsigned long sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
-	int devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
-	struct spl_load_info load;
-	struct blk_desc *bd;
-	int err;
+	గుర్తులేని దీర్ఘ sector = CONFIG_SPL_UFS_RAW_U_BOOT_SECTOR;
+	పూర్ణాంకం devnum = CONFIG_SPL_UFS_RAW_U_BOOT_DEVNUM;
+	నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
+	నిర్మాణం blk_desc *bd;
+	పూర్ణాంకం err;
 
 	/* try to recognize storage devices immediately */
-	scsi_scan(false);
+	scsi_పరిశీలన(false);
 	bd = blk_get_devnum_by_uclass_id(UCLASS_SCSI, devnum);
-	if (!bd)
-		return -ENODEV;
+	ఒకవేళ (!bd)
+		తిరిగి -ENODEV;
 
-	spl_load_init(&load, spl_ufs_load_read, bd, bd->blksz);
-	err = spl_load(spl_image, bootdev, &load, 0, sector << bd->log2blksz);
-	if (err) {
+	spl_ఎక్కించు_init(&ఎక్కించు, spl_ufs_ఎక్కించు_read, bd, bd->blksz);
+	err = spl_ఎక్కించు(spl_image, bootdev, &ఎక్కించు, 0, sector << bd->log2blksz);
+	ఒకవేళ (err) {
 		puts("spl_ufs_load_image: ufs block read error\n");
 		log_debug("(error=%d)\n", err);
-		return err;
+		తిరిగి err;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-SPL_LOAD_IMAGE_METHOD("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("UFS", 0, BOOT_DEVICE_UFS, spl_ufs_ఎక్కించు_image);

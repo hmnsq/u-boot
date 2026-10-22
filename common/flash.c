@@ -6,12 +6,12 @@
 
 /* #define DEBUG */
 
-#include <flash.h>
-#include <log.h>
-#include <u-boot/uuid.h>
-#include <linux/string.h>
+#అన్తర్భావ <flash.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <u-boot/uuid.h>
+#అన్తర్భావ <linux/string.h>
 
-#include <mtd/cfi_flash.h>
+#అన్తర్భావ <mtd/cfi_flash.h>
 
 /*-----------------------------------------------------------------------
  * Functions
@@ -23,57 +23,57 @@
  * The monitor is always located in the _first_ Flash bank.
  * If necessary you have to map the second bank at lower addresses.
  */
-void
-flash_protect(int flag, ulong from, ulong to, flash_info_t *info)
+శూన్య
+flash_protect(పూర్ణాంకం flag, ulong from, ulong గమ్యం, flash_info_t *info)
 {
-	ulong b_end;
-	short s_end;
-	int i;
+	ulong b_చివర;
+	పొట్టి s_చివర;
+	పూర్ణాంకం i;
 
 	/* Do nothing if input data is bad. */
-	if (!info || info->sector_count == 0 || info->size == 0 || to < from) {
-		return;
+	ఒకవేళ (!info || info->sector_లెక్క == 0 || info->కొలత == 0 || గమ్యం < from) {
+		తిరిగి;
 	}
 
-	s_end = info->sector_count - 1;	/* index of last sector */
-	b_end = info->start[0] + info->size - 1;	/* bank end address */
+	s_చివర = info->sector_లెక్క - 1;	/* index of last sector */
+	b_చివర = info->ప్రారంభం[0] + info->కొలత - 1;	/* bank end address */
 
 	debug("%s %s: from 0x%08lX to 0x%08lX\n", __func__,
-	      (flag & FLAG_PROTECT_SET) ? "ON" :
+	      (flag & FLAG_PROTECT_సమితి) ? "ON" :
 	      (flag & FLAG_PROTECT_CLEAR) ? "OFF" : "???",
-	      from, to);
+	      from, గమ్యం);
 
 	/* There is nothing to do if we have no data about the flash
 	 * or the protect range and flash range don't overlap.
 	 */
-	if (info->flash_id == FLASH_UNKNOWN ||
-	    to < info->start[0] || from > b_end) {
-		return;
+	ఒకవేళ (info->flash_id == FLASH_UNKNOWN ||
+	    గమ్యం < info->ప్రారంభం[0] || from > b_చివర) {
+		తిరిగి;
 	}
 
-	for (i=0; i<info->sector_count; ++i) {
-		ulong end;		/* last address in current sect	*/
+	కొరకు (i=0; i<info->sector_లెక్క; ++i) {
+		ulong చివర_2;		/* last address in current sect	*/
 
-		end = (i == s_end) ? b_end : info->start[i + 1] - 1;
+		చివర_2 = (i == s_చివర) ? b_చివర : info->ప్రారంభం[i + 1] - 1;
 
 		/* Update protection if any part of the sector
 		 * is in the specified range.
 		 */
-		if (from <= end && to >= info->start[i]) {
-			if (flag & FLAG_PROTECT_CLEAR) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+		ఒకవేళ (from <= చివర_2 && గమ్యం >= info->ప్రారంభం[i]) {
+			ఒకవేళ (flag & FLAG_PROTECT_CLEAR) {
+#ఒకవేళ defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 0);
-#else
+#లేకపోతే
 				info->protect[i] = 0;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#అయితే_ముగింపు	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect off %d\n", i);
 			}
-			else if (flag & FLAG_PROTECT_SET) {
-#if defined(CONFIG_SYS_FLASH_PROTECTION)
+			లేకపోతే ఒకవేళ (flag & FLAG_PROTECT_సమితి) {
+#ఒకవేళ defined(CONFIG_SYS_FLASH_PROTECTION)
 				flash_real_protect(info, i, 1);
-#else
+#లేకపోతే
 				info->protect[i] = 1;
-#endif	/* CONFIG_SYS_FLASH_PROTECTION */
+#అయితే_ముగింపు	/* CONFIG_SYS_FLASH_PROTECTION */
 				debug("protect on %d\n", i);
 			}
 		}
@@ -87,22 +87,22 @@ flash_info_t *
 addr2info(ulong addr)
 {
 	flash_info_t *info;
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
-		if (info->flash_id != FLASH_UNKNOWN &&
-		    addr >= info->start[0] &&
+	కొరకు (i = 0, info = &flash_info[0]; i < CFI_FLASH_BANKS; ++i, ++info) {
+		ఒకవేళ (info->flash_id != FLASH_UNKNOWN &&
+		    addr >= info->ప్రారంభం[0] &&
 		    /* WARNING - The '- 1' is needed if the flash
 		     * is at the end of the address space, since
 		     * info->start[0] + info->size wraps back to 0.
 		     * Please don't change this unless you understand this.
 		     */
-		    addr <= info->start[0] + info->size - 1) {
-			return (info);
+		    addr <= info->ప్రారంభం[0] + info->కొలత - 1) {
+			తిరిగి (info);
 		}
 	}
 
-	return (NULL);
+	తిరిగి (ఖాళీ);
 }
 
 /*-----------------------------------------------------------------------
@@ -118,101 +118,101 @@ addr2info(ulong addr)
  * FL_ERR_ALIGN       16 - target address not aligned on boundary
  *			   (only some targets require alignment)
  */
-int
-flash_write(char *src, ulong addr, ulong cnt)
+పూర్ణాంకం
+flash_write(అక్షరం *src, ulong addr, ulong cnt)
 {
-	int i;
-	ulong         end        = addr + cnt - 1;
-	flash_info_t *info_first = addr2info(addr);
-	flash_info_t *info_last  = addr2info(end);
+	పూర్ణాంకం i;
+	ulong         చివర_2        = addr + cnt - 1;
+	flash_info_t *info_మొదటి = addr2info(addr);
+	flash_info_t *info_చివరి  = addr2info(చివర_2);
 	flash_info_t *info;
-	__maybe_unused char *src_orig = src;
-	__maybe_unused char *addr_orig = (char *)addr;
+	__maybe_unused అక్షరం *src_orig = src;
+	__maybe_unused అక్షరం *addr_orig = (అక్షరం *)addr;
 	__maybe_unused ulong cnt_orig = cnt;
 
-	if (cnt == 0) {
-		return (FL_ERR_OK);
+	ఒకవేళ (cnt == 0) {
+		తిరిగి (FL_ERR_OK);
 	}
 
-	if (!info_first || !info_last) {
-		return (FL_ERR_INVAL);
+	ఒకవేళ (!info_మొదటి || !info_చివరి) {
+		తిరిగి (FL_ERR_INVAL);
 	}
 
-	for (info = info_first; info <= info_last; ++info) {
-		ulong b_end = info->start[0] + info->size;	/* bank end addr */
-		short s_end = info->sector_count - 1;
-		for (i=0; i<info->sector_count; ++i) {
-			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
+	కొరకు (info = info_మొదటి; info <= info_చివరి; ++info) {
+		ulong b_చివర = info->ప్రారంభం[0] + info->కొలత;	/* bank end addr */
+		పొట్టి s_చివర = info->sector_లెక్క - 1;
+		కొరకు (i=0; i<info->sector_లెక్క; ++i) {
+			ulong e_addr = (i == s_చివర) ? b_చివర : info->ప్రారంభం[i + 1];
 
-			if ((end >= info->start[i]) && (addr < e_addr) &&
+			ఒకవేళ ((చివర_2 >= info->ప్రారంభం[i]) && (addr < e_addr) &&
 			    (info->protect[i] != 0) ) {
-				return (FL_ERR_PROTECTED);
+				తిరిగి (FL_ERR_PROTECTED);
 			}
 		}
 	}
 
 	/* finally write data to flash */
-	for (info = info_first; info <= info_last && cnt>0; ++info) {
+	కొరకు (info = info_మొదటి; info <= info_చివరి && cnt>0; ++info) {
 		ulong len;
 
-		len = info->start[0] + info->size - addr;
-		if (len > cnt)
+		len = info->ప్రారంభం[0] + info->కొలత - addr;
+		ఒకవేళ (len > cnt)
 			len = cnt;
-		if ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
-			return (i);
+		ఒకవేళ ((i = write_buff(info, (uchar *)src, addr, len)) != 0) {
+			తిరిగి (i);
 		}
 		cnt  -= len;
 		addr += len;
 		src  += len;
 	}
 
-#if defined(CONFIG_FLASH_VERIFY)
-	if (memcmp(src_orig, addr_orig, cnt_orig)) {
-		printf("\nVerify failed!\n");
-		return FL_ERR_PROG_ERROR;
+#ఒకవేళ defined(CONFIG_FLASH_VERIFY)
+	ఒకవేళ (memcmp(src_orig, addr_orig, cnt_orig)) {
+		రాయి("\nVerify failed!\n");
+		తిరిగి FL_ERR_PROG_ERROR;
 	}
-#endif /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
+#అయితే_ముగింపు /* CONFIG_SYS_FLASH_VERIFY_AFTER_WRITE */
 
-	return (FL_ERR_OK);
+	తిరిగి (FL_ERR_OK);
 }
 
 /*-----------------------------------------------------------------------
  */
 
-void flash_perror(int err)
+శూన్య flash_perror(పూర్ణాంకం err)
 {
-	switch (err) {
-	case FL_ERR_OK:
-		break;
-	case FL_ERR_TIMEOUT:
+	ఎంపిక (err) {
+	స్థితి FL_ERR_OK:
+		ఆపు;
+	స్థితి FL_ERR_TIMEOUT:
 		puts ("Timeout writing to Flash\n");
-		break;
-	case FL_ERR_NOT_ERASED:
+		ఆపు;
+	స్థితి FL_ERR_NOT_ERASED:
 		puts ("Flash not Erased\n");
-		break;
-	case FL_ERR_PROTECTED:
+		ఆపు;
+	స్థితి FL_ERR_PROTECTED:
 		puts ("Can't write to protected Flash sectors\n");
-		break;
-	case FL_ERR_INVAL:
+		ఆపు;
+	స్థితి FL_ERR_INVAL:
 		puts ("Outside available Flash\n");
-		break;
-	case FL_ERR_ALIGN:
+		ఆపు;
+	స్థితి FL_ERR_ALIGN:
 		puts ("Start and/or end address not on sector boundary\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_VENDOR:
+		ఆపు;
+	స్థితి FL_ERR_UNKNOWN_FLASH_VENDOR:
 		puts ("Unknown Vendor of Flash\n");
-		break;
-	case FL_ERR_UNKNOWN_FLASH_TYPE:
+		ఆపు;
+	స్థితి FL_ERR_UNKNOWN_FLASH_TYPE:
 		puts ("Unknown Type of Flash\n");
-		break;
-	case FL_ERR_PROG_ERROR:
+		ఆపు;
+	స్థితి FL_ERR_PROG_ERROR:
 		puts ("General Flash Programming Error\n");
-		break;
-	case FL_ERR_ABORTED:
+		ఆపు;
+	స్థితి FL_ERR_ABORTED:
 		puts("Flash Programming Aborted\n");
-		break;
-	default:
-		printf ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
-		break;
+		ఆపు;
+	అప్రమేయ:
+		రాయి ("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
+		ఆపు;
 	}
 }

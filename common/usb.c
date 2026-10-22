@@ -25,92 +25,92 @@
  *
  * For each transfer (except "Interrupt") we wait for completion.
  */
-#include <command.h>
-#include <dm.h>
-#include <dm/device_compat.h>
-#include <env.h>
-#include <log.h>
-#include <malloc.h>
-#include <memalign.h>
-#include <asm/processor.h>
-#include <linux/compiler.h>
-#include <linux/ctype.h>
-#include <asm/byteorder.h>
-#include <asm/unaligned.h>
-#include <errno.h>
-#include <usb.h>
-#include <linux/delay.h>
+#అన్తర్భావ <command.h>
+#అన్తర్భావ <dm.h>
+#అన్తర్భావ <dm/device_compat.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <memalign.h>
+#అన్తర్భావ <asm/processor.h>
+#అన్తర్భావ <linux/compiler.h>
+#అన్తర్భావ <linux/ctype.h>
+#అన్తర్భావ <asm/byteorder.h>
+#అన్తర్భావ <asm/unaligned.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <usb.h>
+#అన్తర్భావ <linux/delay.h>
 
-#define USB_BUFSIZ	512
+#నిర్వచించు USB_BUFSIZ	512
 
-static int asynch_allowed;
+స్థిర పూర్ణాంకం asynch_allowed;
 bool usb_started; /* flag for the started/stopped USB status */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
-static struct usb_device usb_dev[USB_MAX_DEVICE];
-static int dev_index;
+#ఒకవేళ !CONFIG_IS_ENABLED(DM_USB)
+స్థిర నిర్మాణం usb_device usb_dev[USB_MAX_DEVICE];
+స్థిర పూర్ణాంకం dev_సూచీ;
 
 /***************************************************************************
  * Init USB Device
  */
-int usb_init(void)
+పూర్ణాంకం usb_init(శూన్య)
 {
-	void *ctrl;
-	struct usb_device *dev;
-	int i, start_index = 0;
-	int controllers_initialized = 0;
-	int ret;
+	శూన్య *ctrl;
+	నిర్మాణం usb_device *dev;
+	పూర్ణాంకం i, ప్రారంభం_సూచీ = 0;
+	పూర్ణాంకం controllers_initialized = 0;
+	పూర్ణాంకం ret;
 
-	dev_index = 0;
+	dev_సూచీ = 0;
 	asynch_allowed = 1;
 	usb_hub_reset();
 
 	/* first make all devices unknown */
-	for (i = 0; i < USB_MAX_DEVICE; i++) {
-		memset(&usb_dev[i], 0, sizeof(struct usb_device));
+	కొరకు (i = 0; i < USB_MAX_DEVICE; i++) {
+		memset(&usb_dev[i], 0, పరిమాణం(నిర్మాణం usb_device));
 		usb_dev[i].devnum = -1;
 	}
 
 	/* init low_level USB */
-	for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
+	కొరకు (i = 0; i < CONFIG_USB_MAX_CONTROLLER_లెక్క; i++) {
 		/* init low_level USB */
-		printf("USB%d:   ", i);
+		రాయి("USB%d:   ", i);
 		ret = usb_lowlevel_init(i, USB_INIT_HOST, &ctrl);
-		if (ret == -ENODEV) {	/* No such device. */
+		ఒకవేళ (ret == -ENODEV) {	/* No such device. */
 			puts("Port not available.\n");
 			controllers_initialized++;
-			continue;
+			కొనసాగు;
 		}
 
-		if (ret) {		/* Other error. */
+		ఒకవేళ (ret) {		/* Other error. */
 			puts("lowlevel init failed\n");
-			continue;
+			కొనసాగు;
 		}
 		/*
 		 * lowlevel init is OK, now scan the bus for devices
 		 * i.e. search HUBs and configure them
 		 */
 		controllers_initialized++;
-		start_index = dev_index;
-		printf("scanning bus %d for devices... ", i);
+		ప్రారంభం_సూచీ = dev_సూచీ;
+		రాయి("scanning bus %d for devices... ", i);
 		ret = usb_alloc_new_device(ctrl, &dev);
-		if (ret)
-			break;
+		ఒకవేళ (ret)
+			ఆపు;
 
 		/*
 		 * device 0 is always present
 		 * (root hub, so let it analyze)
 		 */
 		ret = usb_new_device(dev);
-		if (ret)
+		ఒకవేళ (ret)
 			usb_free_device(dev->controller);
 
-		if (start_index == dev_index) {
+		ఒకవేళ (ప్రారంభం_సూచీ == dev_సూచీ) {
 			puts("No USB Device found\n");
-			continue;
-		} else {
-			printf("%d USB Device(s) found\n",
-				dev_index - start_index);
+			కొనసాగు;
+		} లేకపోతే {
+			రాయి("%d USB Device(s) found\n",
+				dev_సూచీ - ప్రారంభం_సూచీ);
 		}
 
 		usb_started = 1;
@@ -118,63 +118,63 @@ int usb_init(void)
 
 	debug("scan end\n");
 	/* if we were not able to find at least one working bus, bail out */
-	if (controllers_initialized == 0)
+	ఒకవేళ (controllers_initialized == 0)
 		puts("USB error: all controllers failed lowlevel init\n");
 
-	return usb_started ? 0 : -ENODEV;
+	తిరిగి usb_started ? 0 : -ENODEV;
 }
 
 /******************************************************************************
  * Stop USB this stops the LowLevel Part and deregisters USB devices.
  */
-int usb_stop(void)
+పూర్ణాంకం usb_stop(శూన్య)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (usb_started) {
+	ఒకవేళ (usb_started) {
 		asynch_allowed = 1;
 		usb_started = 0;
 		usb_hub_reset();
 
-		for (i = 0; i < CONFIG_USB_MAX_CONTROLLER_COUNT; i++) {
-			if (usb_lowlevel_stop(i))
-				printf("failed to stop USB controller %d\n", i);
+		కొరకు (i = 0; i < CONFIG_USB_MAX_CONTROLLER_లెక్క; i++) {
+			ఒకవేళ (usb_lowlevel_stop(i))
+				రాయి("failed to stop USB controller %d\n", i);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /******************************************************************************
  * Detect if a USB device has been plugged or unplugged.
  */
-int usb_detect_change(void)
+పూర్ణాంకం usb_detect_change(శూన్య)
 {
-	int i, j;
-	int change = 0;
+	పూర్ణాంకం i, j;
+	పూర్ణాంకం change = 0;
 
-	for (j = 0; j < USB_MAX_DEVICE; j++) {
-		for (i = 0; i < usb_dev[j].maxchild; i++) {
-			struct usb_port_status status;
+	కొరకు (j = 0; j < USB_MAX_DEVICE; j++) {
+		కొరకు (i = 0; i < usb_dev[j].maxchild; i++) {
+			నిర్మాణం usb_పోర్టు_స్థితి స్థితి_2;
 
-			if (usb_get_port_status(&usb_dev[j], i + 1,
-						&status) < 0)
+			ఒకవేళ (usb_get_పోర్టు_స్థితి(&usb_dev[j], i + 1,
+						&స్థితి_2) < 0)
 				/* USB request failed */
-				continue;
+				కొనసాగు;
 
-			if (le16_to_cpu(status.wPortChange) &
-			    USB_PORT_STAT_C_CONNECTION)
+			ఒకవేళ (le16_గమ్యం_cpu(స్థితి_2.w_పోర్టు_Change) &
+			    USB_పోర్టు_STAT_C_CONNECTION)
 				change++;
 		}
 	}
 
-	return change;
+	తిరిగి change;
 }
 
 /* Lock or unlock async schedule on the controller */
-__weak int usb_lock_async(struct usb_device *dev, int lock)
+__weak పూర్ణాంకం usb_తాళం_async(నిర్మాణం usb_device *dev, పూర్ణాంకం తాళం)
 {
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -182,14 +182,14 @@ __weak int usb_lock_async(struct usb_device *dev, int lock)
  * transfers that uses the exclusiv access to the control and bulk messages.
  * Returns the old value so it can be restored later.
  */
-int usb_disable_asynch(int disable)
+పూర్ణాంకం usb_disable_asynch(పూర్ణాంకం disable)
 {
-	int old_value = asynch_allowed;
+	పూర్ణాంకం old_విలువ = asynch_allowed;
 
 	asynch_allowed = !disable;
-	return old_value;
+	తిరిగి old_విలువ;
 }
-#endif /* !CONFIG_IS_ENABLED(DM_USB) */
+#అయితే_ముగింపు /* !CONFIG_IS_ENABLED(DM_USB) */
 
 /*-------------------------------------------------------------------
  * Message wrappers.
@@ -201,10 +201,10 @@ int usb_disable_asynch(int disable)
  * polling: when non-block is true and the device is not responding return
  * -EAGAIN instead of waiting for device to respond.
  */
-int usb_int_msg(struct usb_device *dev, unsigned long pipe,
-		void *buffer, int transfer_len, int interval, bool nonblock)
+పూర్ణాంకం usb_int_సందేశం(నిర్మాణం usb_device *dev, గుర్తులేని దీర్ఘ pipe,
+		శూన్య *బఫరు, పూర్ణాంకం transfer_len, పూర్ణాంకం interval, bool nonblock)
 {
-	return submit_int_msg(dev, pipe, buffer, transfer_len, interval,
+	తిరిగి submit_int_సందేశం(dev, pipe, బఫరు, transfer_len, interval,
 			      nonblock);
 }
 
@@ -218,54 +218,54 @@ int usb_int_msg(struct usb_device *dev, unsigned long pipe,
  * transferred length and the current status are stored in the dev->act_len and
  * dev->status.
  */
-int usb_control_msg(struct usb_device *dev, unsigned int pipe,
-			unsigned char request, unsigned char requesttype,
-			unsigned short value, unsigned short index,
-			void *data, unsigned short size, int timeout)
+పూర్ణాంకం usb_control_సందేశం(నిర్మాణం usb_device *dev, గుర్తులేని పూర్ణాంకం pipe,
+			గుర్తులేని అక్షరం request, గుర్తులేని అక్షరం requesttype,
+			గుర్తులేని పొట్టి విలువ, గుర్తులేని పొట్టి సూచీ,
+			శూన్య *దత్తాంశం, గుర్తులేని పొట్టి కొలత, పూర్ణాంకం timeout)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(struct devrequest, setup_packet, 1);
-	int err;
+	ALLOC_CACHE_ALIGN_బఫరు(నిర్మాణం devrequest, అమరిక_packet, 1);
+	పూర్ణాంకం err;
 
-	if ((timeout == 0) && (!asynch_allowed)) {
+	ఒకవేళ ((timeout == 0) && (!asynch_allowed)) {
 		/* request for a asynch control pipe is not allowed */
-		return -EINVAL;
+		తిరిగి -EINVAL;
 	}
 
 	/* set setup command */
-	setup_packet->requesttype = requesttype;
-	setup_packet->request = request;
-	setup_packet->value = cpu_to_le16(value);
-	setup_packet->index = cpu_to_le16(index);
-	setup_packet->length = cpu_to_le16(size);
+	అమరిక_packet->requesttype = requesttype;
+	అమరిక_packet->request = request;
+	అమరిక_packet->విలువ = cpu_గమ్యం_le16(విలువ);
+	అమరిక_packet->సూచీ = cpu_గమ్యం_le16(సూచీ);
+	అమరిక_packet->నిడివి = cpu_గమ్యం_le16(కొలత);
 	debug("usb_control_msg: request: 0x%X, requesttype: 0x%X, " \
 	      "value 0x%X index 0x%X length 0x%X\n",
-	      request, requesttype, value, index, size);
-	dev->status = USB_ST_NOT_PROC; /*not yet processed */
+	      request, requesttype, విలువ, సూచీ, కొలత);
+	dev->స్థితి_2 = USB_ST_NOT_PROC; /*not yet processed */
 
-	err = submit_control_msg(dev, pipe, data, size, setup_packet);
-	if (err < 0)
-		return err;
-	if (timeout == 0)
-		return (int)size;
+	err = submit_control_సందేశం(dev, pipe, దత్తాంశం, కొలత, అమరిక_packet);
+	ఒకవేళ (err < 0)
+		తిరిగి err;
+	ఒకవేళ (timeout == 0)
+		తిరిగి (పూర్ణాంకం)కొలత;
 
 	/*
 	 * Wait for status to update until timeout expires, USB driver
 	 * interrupt handler may set the status when the USB operation has
 	 * been completed.
 	 */
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	అయితే (timeout--) {
+		ఒకవేళ (!((అస్థిర గుర్తులేని దీర్ఘ)dev->స్థితి_2 & USB_ST_NOT_PROC))
+			ఆపు;
 		mdelay(1);
 	}
 
-	if (timeout == 0)
-		return -ETIMEDOUT;
+	ఒకవేళ (timeout == 0)
+		తిరిగి -ETIMEDOUT;
 
-	if (dev->status)
-		return -1;
+	ఒకవేళ (dev->స్థితి_2)
+		తిరిగి -1;
 
-	return dev->act_len;
+	తిరిగి dev->act_len;
 }
 
 /*-------------------------------------------------------------------
@@ -273,24 +273,24 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe,
  * negative if Error.
  * synchronous behavior
  */
-int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
-			void *data, int len, int *actual_length, int timeout)
+పూర్ణాంకం usb_bulk_సందేశం(నిర్మాణం usb_device *dev, గుర్తులేని పూర్ణాంకం pipe,
+			శూన్య *దత్తాంశం, పూర్ణాంకం len, పూర్ణాంకం *actual_నిడివి, పూర్ణాంకం timeout)
 {
-	if (len < 0)
-		return -EINVAL;
-	dev->status = USB_ST_NOT_PROC; /*not yet processed */
-	if (submit_bulk_msg(dev, pipe, data, len) < 0)
-		return -EIO;
-	while (timeout--) {
-		if (!((volatile unsigned long)dev->status & USB_ST_NOT_PROC))
-			break;
+	ఒకవేళ (len < 0)
+		తిరిగి -EINVAL;
+	dev->స్థితి_2 = USB_ST_NOT_PROC; /*not yet processed */
+	ఒకవేళ (submit_bulk_సందేశం(dev, pipe, దత్తాంశం, len) < 0)
+		తిరిగి -EIO;
+	అయితే (timeout--) {
+		ఒకవేళ (!((అస్థిర గుర్తులేని దీర్ఘ)dev->స్థితి_2 & USB_ST_NOT_PROC))
+			ఆపు;
 		mdelay(1);
 	}
-	*actual_length = dev->act_len;
-	if (dev->status == 0)
-		return 0;
-	else
-		return -EIO;
+	*actual_నిడివి = dev->act_len;
+	ఒకవేళ (dev->స్థితి_2 == 0)
+		తిరిగి 0;
+	లేకపోతే
+		తిరిగి -EIO;
 }
 
 /*-------------------------------------------------------------------
@@ -301,13 +301,13 @@ int usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
  * returns the max packet size, depending on the pipe direction and
  * the configurations values
  */
-int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
+పూర్ణాంకం usb_maxpacket(నిర్మాణం usb_device *dev, గుర్తులేని దీర్ఘ pipe)
 {
 	/* direction is out -> use emaxpacket out */
-	if ((pipe & USB_DIR_IN) == 0)
-		return dev->epmaxpacketout[((pipe>>15) & 0xf)];
-	else
-		return dev->epmaxpacketin[((pipe>>15) & 0xf)];
+	ఒకవేళ ((pipe & USB_DIR_లోపల) == 0)
+		తిరిగి dev->epmaxpacketout[((pipe>>15) & 0xf)];
+	లేకపోతే
+		తిరిగి dev->epmaxpacketin[((pipe>>15) & 0xf)];
 }
 
 /*
@@ -321,37 +321,37 @@ int usb_maxpacket(struct usb_device *dev, unsigned long pipe)
  *
  * NOTE: Similar behaviour was observed with GCC4.6 on ARMv5.
  */
-static void noinline
-usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
+స్థిర శూన్య noinline
+usb_సమితి_maxpacket_ep(నిర్మాణం usb_device *dev, పూర్ణాంకం if_idx, పూర్ణాంకం ep_idx)
 {
-	int b;
-	struct usb_endpoint_descriptor *ep;
-	u16 ep_wMaxPacketSize;
+	పూర్ణాంకం b;
+	నిర్మాణం usb_endpoint_descriptor *ep;
+	u16 ep_w_Max_Packet_కొలత;
 
 	ep = &dev->config.if_desc[if_idx].ep_desc[ep_idx];
 
-	b = ep->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
-	ep_wMaxPacketSize = get_unaligned(&ep->wMaxPacketSize);
+	b = ep->b_Endpoint_చిరునామా & USB_ENDPOINT_సంఖ్య_ముసుగు;
+	ep_w_Max_Packet_కొలత = get_unaligned(&ep->w_Max_Packet_కొలత);
 
-	if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
+	ఒకవేళ ((ep->bm_లక్షణాలు & USB_ENDPOINT_XFERTYPE_ముసుగు) ==
 						USB_ENDPOINT_XFER_CONTROL) {
 		/* Control => bidirectional */
-		dev->epmaxpacketout[b] = ep_wMaxPacketSize;
-		dev->epmaxpacketin[b] = ep_wMaxPacketSize;
+		dev->epmaxpacketout[b] = ep_w_Max_Packet_కొలత;
+		dev->epmaxpacketin[b] = ep_w_Max_Packet_కొలత;
 		debug("##Control EP epmaxpacketout/in[%d] = %d\n",
 		      b, dev->epmaxpacketin[b]);
-	} else {
-		if ((ep->bEndpointAddress & 0x80) == 0) {
+	} లేకపోతే {
+		ఒకవేళ ((ep->b_Endpoint_చిరునామా & 0x80) == 0) {
 			/* OUT Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketout[b]) {
-				dev->epmaxpacketout[b] = ep_wMaxPacketSize;
+			ఒకవేళ (ep_w_Max_Packet_కొలత > dev->epmaxpacketout[b]) {
+				dev->epmaxpacketout[b] = ep_w_Max_Packet_కొలత;
 				debug("##EP epmaxpacketout[%d] = %d\n",
 				      b, dev->epmaxpacketout[b]);
 			}
-		} else {
+		} లేకపోతే {
 			/* IN Endpoint */
-			if (ep_wMaxPacketSize > dev->epmaxpacketin[b]) {
-				dev->epmaxpacketin[b] = ep_wMaxPacketSize;
+			ఒకవేళ (ep_w_Max_Packet_కొలత > dev->epmaxpacketin[b]) {
+				dev->epmaxpacketin[b] = ep_w_Max_Packet_కొలత;
 				debug("##EP epmaxpacketin[%d] = %d\n",
 				      b, dev->epmaxpacketin[b]);
 			}
@@ -362,15 +362,15 @@ usb_set_maxpacket_ep(struct usb_device *dev, int if_idx, int ep_idx)
 /*
  * set the max packed value of all endpoints in the given configuration
  */
-static int usb_set_maxpacket(struct usb_device *dev)
+స్థిర పూర్ణాంకం usb_సమితి_maxpacket(నిర్మాణం usb_device *dev)
 {
-	int i, ii;
+	పూర్ణాంకం i, ii;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++)
-		for (ii = 0; ii < dev->config.if_desc[i].desc.bNumEndpoints; ii++)
-			usb_set_maxpacket_ep(dev, i, ii);
+	కొరకు (i = 0; i < dev->config.desc.b_అంకె_Interfaces; i++)
+		కొరకు (ii = 0; ii < dev->config.if_desc[i].desc.b_అంకె_Endpoints; ii++)
+			usb_సమితి_maxpacket_ep(dev, i, ii);
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*******************************************************************************
@@ -378,154 +378,154 @@ static int usb_set_maxpacket(struct usb_device *dev)
  * Note that all little/big endian swapping are done automatically.
  * (wTotalLength has already been swapped and sanitized when it was read.)
  */
-static int usb_parse_config(struct usb_device *dev,
-			unsigned char *buffer, int cfgno)
+స్థిర పూర్ణాంకం usb_parse_config(నిర్మాణం usb_device *dev,
+			గుర్తులేని అక్షరం *బఫరు, పూర్ణాంకం cfgno)
 {
-	struct usb_descriptor_header *head;
-	int index, ifno, epno, curr_if_num;
-	u16 ep_wMaxPacketSize;
-	struct usb_interface *if_desc = NULL;
+	నిర్మాణం usb_descriptor_శీర్షిక *తల;
+	పూర్ణాంకం సూచీ, ifno, epno, curr_if_అంకె;
+	u16 ep_w_Max_Packet_కొలత;
+	నిర్మాణం usb_interface *if_desc = ఖాళీ;
 
 	ifno = -1;
 	epno = -1;
-	curr_if_num = -1;
+	curr_if_అంకె = -1;
 
 	dev->configno = cfgno;
-	head = (struct usb_descriptor_header *) &buffer[0];
-	if (head->bDescriptorType != USB_DT_CONFIG) {
-		printf(" ERROR: NOT USB_CONFIG_DESC %x\n",
-			head->bDescriptorType);
-		return -EINVAL;
+	తల = (నిర్మాణం usb_descriptor_శీర్షిక *) &బఫరు[0];
+	ఒకవేళ (తల->bDescriptorType != USB_DT_CONFIG) {
+		రాయి(" ERROR: NOT USB_CONFIG_DESC %x\n",
+			తల->bDescriptorType);
+		తిరిగి -EINVAL;
 	}
-	if (head->bLength != USB_DT_CONFIG_SIZE) {
-		printf("ERROR: Invalid USB CFG length (%d)\n", head->bLength);
-		return -EINVAL;
+	ఒకవేళ (తల->b_నిడివి != USB_DT_CONFIG_కొలత) {
+		రాయి("ERROR: Invalid USB CFG length (%d)\n", తల->b_నిడివి);
+		తిరిగి -EINVAL;
 	}
-	memcpy(&dev->config, head, USB_DT_CONFIG_SIZE);
-	dev->config.no_of_if = 0;
+	జ్ఞాపకం_నకలు(&dev->config, తల, USB_DT_CONFIG_కొలత);
+	dev->config.no_యొక్క_if = 0;
 
-	index = dev->config.desc.bLength;
+	సూచీ = dev->config.desc.b_నిడివి;
 	/* Ok the first entry must be a configuration entry,
 	 * now process the others */
-	head = (struct usb_descriptor_header *) &buffer[index];
-	while (index + 1 < dev->config.desc.wTotalLength && head->bLength) {
-		switch (head->bDescriptorType) {
-		case USB_DT_INTERFACE:
-			if (head->bLength != USB_DT_INTERFACE_SIZE) {
-				printf("ERROR: Invalid USB IF length (%d)\n",
-					head->bLength);
-				break;
+	తల = (నిర్మాణం usb_descriptor_శీర్షిక *) &బఫరు[సూచీ];
+	అయితే (సూచీ + 1 < dev->config.desc.w_మొత్తం_నిడివి && తల->b_నిడివి) {
+		ఎంపిక (తల->bDescriptorType) {
+		స్థితి USB_DT_INTERFACE:
+			ఒకవేళ (తల->b_నిడివి != USB_DT_INTERFACE_కొలత) {
+				రాయి("ERROR: Invalid USB IF length (%d)\n",
+					తల->b_నిడివి);
+				ఆపు;
 			}
-			if (index + USB_DT_INTERFACE_SIZE >
-			    dev->config.desc.wTotalLength) {
+			ఒకవేళ (సూచీ + USB_DT_INTERFACE_కొలత >
+			    dev->config.desc.w_మొత్తం_నిడివి) {
 				puts("USB IF descriptor overflowed buffer!\n");
-				break;
+				ఆపు;
 			}
-			if (((struct usb_interface_descriptor *) \
-			     head)->bInterfaceNumber != curr_if_num) {
+			ఒకవేళ (((నిర్మాణం usb_interface_descriptor *) \
+			     తల)->b_Interface_సంఖ్య != curr_if_అంకె) {
 				/* this is a new interface, copy new desc */
-				ifno = dev->config.no_of_if;
-				if (ifno >= USB_MAXINTERFACES) {
+				ifno = dev->config.no_యొక్క_if;
+				ఒకవేళ (ifno >= USB_MAXINTERFACES) {
 					puts("Too many USB interfaces!\n");
 					/* try to go on with what we have */
-					return -EINVAL;
+					తిరిగి -EINVAL;
 				}
 				if_desc = &dev->config.if_desc[ifno];
-				dev->config.no_of_if++;
-				memcpy(if_desc, head,
-					USB_DT_INTERFACE_SIZE);
-				if_desc->no_of_ep = 0;
-				if_desc->num_altsetting = 1;
-				curr_if_num =
-				     if_desc->desc.bInterfaceNumber;
-			} else {
+				dev->config.no_యొక్క_if++;
+				జ్ఞాపకం_నకలు(if_desc, తల,
+					USB_DT_INTERFACE_కొలత);
+				if_desc->no_యొక్క_ep = 0;
+				if_desc->అంకె_altsetting = 1;
+				curr_if_అంకె =
+				     if_desc->desc.b_Interface_సంఖ్య;
+			} లేకపోతే {
 				/* found alternate setting for the interface */
-				if (ifno >= 0) {
+				ఒకవేళ (ifno >= 0) {
 					if_desc = &dev->config.if_desc[ifno];
-					if_desc->num_altsetting++;
+					if_desc->అంకె_altsetting++;
 				}
 			}
-			break;
-		case USB_DT_ENDPOINT:
-			if (head->bLength != USB_DT_ENDPOINT_SIZE &&
-			    head->bLength != USB_DT_ENDPOINT_AUDIO_SIZE) {
-				printf("ERROR: Invalid USB EP length (%d)\n",
-					head->bLength);
-				break;
+			ఆపు;
+		స్థితి USB_DT_ENDPOINT:
+			ఒకవేళ (తల->b_నిడివి != USB_DT_ENDPOINT_కొలత &&
+			    తల->b_నిడివి != USB_DT_ENDPOINT_AUDIO_కొలత) {
+				రాయి("ERROR: Invalid USB EP length (%d)\n",
+					తల->b_నిడివి);
+				ఆపు;
 			}
-			if (index + head->bLength >
-			    dev->config.desc.wTotalLength) {
+			ఒకవేళ (సూచీ + తల->b_నిడివి >
+			    dev->config.desc.w_మొత్తం_నిడివి) {
 				puts("USB EP descriptor overflowed buffer!\n");
-				break;
+				ఆపు;
 			}
-			if (ifno < 0) {
+			ఒకవేళ (ifno < 0) {
 				puts("Endpoint descriptor out of order!\n");
-				break;
+				ఆపు;
 			}
-			epno = dev->config.if_desc[ifno].no_of_ep;
+			epno = dev->config.if_desc[ifno].no_యొక్క_ep;
 			if_desc = &dev->config.if_desc[ifno];
-			if (epno >= USB_MAXENDPOINTS) {
-				printf("Interface %d has too many endpoints!\n",
-					if_desc->desc.bInterfaceNumber);
-				return -EINVAL;
+			ఒకవేళ (epno >= USB_MAXENDPOINTS) {
+				రాయి("Interface %d has too many endpoints!\n",
+					if_desc->desc.b_Interface_సంఖ్య);
+				తిరిగి -EINVAL;
 			}
 			/* found an endpoint */
-			if_desc->no_of_ep++;
-			memcpy(&if_desc->ep_desc[epno], head,
-				USB_DT_ENDPOINT_SIZE);
-			ep_wMaxPacketSize = get_unaligned(&dev->config.\
+			if_desc->no_యొక్క_ep++;
+			జ్ఞాపకం_నకలు(&if_desc->ep_desc[epno], తల,
+				USB_DT_ENDPOINT_కొలత);
+			ep_w_Max_Packet_కొలత = get_unaligned(&dev->config.\
 							if_desc[ifno].\
 							ep_desc[epno].\
-							wMaxPacketSize);
-			put_unaligned(le16_to_cpu(ep_wMaxPacketSize),
+							w_Max_Packet_కొలత);
+			put_unaligned(le16_గమ్యం_cpu(ep_w_Max_Packet_కొలత),
 					&dev->config.\
 					if_desc[ifno].\
 					ep_desc[epno].\
-					wMaxPacketSize);
+					w_Max_Packet_కొలత);
 			debug("if %d, ep %d\n", ifno, epno);
-			break;
-		case USB_DT_SS_ENDPOINT_COMP:
-			if (head->bLength != USB_DT_SS_EP_COMP_SIZE) {
-				printf("ERROR: Invalid USB EPC length (%d)\n",
-					head->bLength);
-				break;
+			ఆపు;
+		స్థితి USB_DT_SS_ENDPOINT_COMP:
+			ఒకవేళ (తల->b_నిడివి != USB_DT_SS_EP_COMP_కొలత) {
+				రాయి("ERROR: Invalid USB EPC length (%d)\n",
+					తల->b_నిడివి);
+				ఆపు;
 			}
-			if (index + USB_DT_SS_EP_COMP_SIZE >
-			    dev->config.desc.wTotalLength) {
+			ఒకవేళ (సూచీ + USB_DT_SS_EP_COMP_కొలత >
+			    dev->config.desc.w_మొత్తం_నిడివి) {
 				puts("USB EPC descriptor overflowed buffer!\n");
-				break;
+				ఆపు;
 			}
-			if (ifno < 0 || epno < 0) {
+			ఒకవేళ (ifno < 0 || epno < 0) {
 				puts("EPC descriptor out of order!\n");
-				break;
+				ఆపు;
 			}
 			if_desc = &dev->config.if_desc[ifno];
-			memcpy(&if_desc->ss_ep_comp_desc[epno], head,
-				USB_DT_SS_EP_COMP_SIZE);
-			break;
-		default:
-			if (head->bLength == 0)
-				return -EINVAL;
+			జ్ఞాపకం_నకలు(&if_desc->ss_ep_comp_desc[epno], తల,
+				USB_DT_SS_EP_COMP_కొలత);
+			ఆపు;
+		అప్రమేయ:
+			ఒకవేళ (తల->b_నిడివి == 0)
+				తిరిగి -EINVAL;
 
 			debug("unknown Description Type : %x\n",
-			      head->bDescriptorType);
+			      తల->bDescriptorType);
 
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 			{
-				unsigned char *ch = (unsigned char *)head;
-				int i;
+				గుర్తులేని అక్షరం *ch = (గుర్తులేని అక్షరం *)తల;
+				పూర్ణాంకం i;
 
-				for (i = 0; i < head->bLength; i++)
+				కొరకు (i = 0; i < తల->b_నిడివి; i++)
 					debug("%02X ", *ch++);
 				debug("\n\n\n");
 			}
-#endif
-			break;
+#అయితే_ముగింపు
+			ఆపు;
 		}
-		index += head->bLength;
-		head = (struct usb_descriptor_header *)&buffer[index];
+		సూచీ += తల->b_నిడివి;
+		తల = (నిర్మాణం usb_descriptor_శీర్షిక *)&బఫరు[సూచీ];
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /***********************************************************************
@@ -533,18 +533,18 @@ static int usb_parse_config(struct usb_device *dev,
  * endp: endpoint number in bits 0-3;
  * direction flag in bit 7 (1 = IN, 0 = OUT)
  */
-int usb_clear_halt(struct usb_device *dev, int pipe)
+పూర్ణాంకం usb_clear_halt(నిర్మాణం usb_device *dev, పూర్ణాంకం pipe)
 {
-	int result;
-	int endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
+	పూర్ణాంకం ఫలితం;
+	పూర్ణాంకం endp = usb_pipeendpoint(pipe)|(usb_pipein(pipe)<<7);
 
-	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+	ఫలితం = usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
 				 USB_REQ_CLEAR_FEATURE, USB_RECIP_ENDPOINT, 0,
-				 endp, NULL, 0, USB_CNTL_TIMEOUT * 3);
+				 endp, ఖాళీ, 0, USB_CNTL_TIMEOUT * 3);
 
 	/* don't clear if failed */
-	if (result < 0)
-		return result;
+	ఒకవేళ (ఫలితం < 0)
+		తిరిగి ఫలితం;
 
 	/*
 	 * NOTE: we do not get status and verify reset was successful
@@ -555,110 +555,110 @@ int usb_clear_halt(struct usb_device *dev, int pipe)
 
 	/* toggle is reset on clear */
 	usb_settoggle(dev, usb_pipeendpoint(pipe), usb_pipeout(pipe), 0);
-	return 0;
+	తిరిగి 0;
 }
 
 /**********************************************************************
  * get_descriptor type
  */
-static int usb_get_descriptor(struct usb_device *dev, unsigned char type,
-			unsigned char index, void *buf, int size)
+స్థిర పూర్ణాంకం usb_get_descriptor(నిర్మాణం usb_device *dev, గుర్తులేని అక్షరం type,
+			గుర్తులేని అక్షరం సూచీ, శూన్య *buf, పూర్ణాంకం కొలత)
 {
-	int i;
-	int result;
+	పూర్ణాంకం i;
+	పూర్ణాంకం ఫలితం;
 
-	if (size <= 0)		/* No point in asking for no data */
-		return -EINVAL;
+	ఒకవేళ (కొలత <= 0)		/* No point in asking for no data */
+		తిరిగి -EINVAL;
 
-	memset(buf, 0, size);	/* Make sure we parse really received data */
+	memset(buf, 0, కొలత);	/* Make sure we parse really received data */
 
-	for (i = 0; i < 3; ++i) {
+	కొరకు (i = 0; i < 3; ++i) {
 		/* retry on length 0 or error; some devices are flakey */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-					 USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
-					 (type << 8) + index, 0, buf, size,
+		ఫలితం = usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+					 USB_REQ_GET_DESCRIPTOR, USB_DIR_లోపల,
+					 (type << 8) + సూచీ, 0, buf, కొలత,
 					 USB_CNTL_TIMEOUT);
-		if (result <= 0 && result != -ETIMEDOUT)
-			continue;
-		if (result > 1 && ((u8 *)buf)[1] != type) {
-			result = -ENODATA;
-			continue;
+		ఒకవేళ (ఫలితం <= 0 && ఫలితం != -ETIMEDOUT)
+			కొనసాగు;
+		ఒకవేళ (ఫలితం > 1 && ((u8 *)buf)[1] != type) {
+			ఫలితం = -ENODATA;
+			కొనసాగు;
 		}
-		break;
+		ఆపు;
 	}
-	return result;
+	తిరిగి ఫలితం;
 }
 
 /**********************************************************************
  * gets len of configuration cfgno
  */
-int usb_get_configuration_len(struct usb_device *dev, int cfgno)
+పూర్ణాంకం usb_get_configuration_len(నిర్మాణం usb_device *dev, పూర్ణాంకం cfgno)
 {
-	int result;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, buffer, 9);
-	struct usb_config_descriptor *config;
+	పూర్ణాంకం ఫలితం;
+	ALLOC_CACHE_ALIGN_బఫరు(గుర్తులేని అక్షరం, బఫరు, 9);
+	నిర్మాణం usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
-	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, 9);
-	if (result < 9) {
-		if (result < 0)
-			printf("unable to get descriptor, error %lX\n",
-				dev->status);
-		else
-			printf("config descriptor too short " \
-				"(expected %i, got %i)\n", 9, result);
-		return -EIO;
+	config = (నిర్మాణం usb_config_descriptor *)&బఫరు[0];
+	ఫలితం = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, బఫరు, 9);
+	ఒకవేళ (ఫలితం < 9) {
+		ఒకవేళ (ఫలితం < 0)
+			రాయి("unable to get descriptor, error %lX\n",
+				dev->స్థితి_2);
+		లేకపోతే
+			రాయి("config descriptor too short " \
+				"(expected %i, got %i)\n", 9, ఫలితం);
+		తిరిగి -EIO;
 	}
-	return le16_to_cpu(config->wTotalLength);
+	తిరిగి le16_గమ్యం_cpu(config->w_మొత్తం_నిడివి);
 }
 
 /**********************************************************************
  * gets configuration cfgno and store it in the buffer
  */
-int usb_get_configuration_no(struct usb_device *dev, int cfgno,
-			     unsigned char *buffer, int length)
+పూర్ణాంకం usb_get_configuration_no(నిర్మాణం usb_device *dev, పూర్ణాంకం cfgno,
+			     గుర్తులేని అక్షరం *బఫరు, పూర్ణాంకం నిడివి)
 {
-	int result;
-	struct usb_config_descriptor *config;
+	పూర్ణాంకం ఫలితం;
+	నిర్మాణం usb_config_descriptor *config;
 
-	config = (struct usb_config_descriptor *)&buffer[0];
-	result = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, buffer, length);
-	debug("get_conf_no %d Result %d, wLength %d\n", cfgno, result,
-	      le16_to_cpu(config->wTotalLength));
-	config->wTotalLength = result; /* validated, with CPU byte order */
+	config = (నిర్మాణం usb_config_descriptor *)&బఫరు[0];
+	ఫలితం = usb_get_descriptor(dev, USB_DT_CONFIG, cfgno, బఫరు, నిడివి);
+	debug("get_conf_no %d Result %d, wLength %d\n", cfgno, ఫలితం,
+	      le16_గమ్యం_cpu(config->w_మొత్తం_నిడివి));
+	config->w_మొత్తం_నిడివి = ఫలితం; /* validated, with CPU byte order */
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
 /********************************************************************
  * set address of a device to the value in dev->devnum.
  * This can only be done by addressing the device via the default address (0)
  */
-static int usb_set_address(struct usb_device *dev)
+స్థిర పూర్ణాంకం usb_సమితి_చిరునామా(నిర్మాణం usb_device *dev)
 {
 	debug("set address %d\n", dev->devnum);
 
-	return usb_control_msg(dev, usb_snddefctrl(dev), USB_REQ_SET_ADDRESS,
-			       0, (dev->devnum), 0, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_snddefctrl(dev), USB_REQ_సమితి_చిరునామా,
+			       0, (dev->devnum), 0, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set interface number to interface
  */
-int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+పూర్ణాంకం usb_సమితి_interface(నిర్మాణం usb_device *dev, పూర్ణాంకం interface, పూర్ణాంకం alternate)
 {
-	struct usb_interface *if_face = NULL;
-	int ret, i;
+	నిర్మాణం usb_interface *if_face = ఖాళీ;
+	పూర్ణాంకం ret, i;
 
-	for (i = 0; i < dev->config.desc.bNumInterfaces; i++) {
-		if (dev->config.if_desc[i].desc.bInterfaceNumber == interface) {
+	కొరకు (i = 0; i < dev->config.desc.b_అంకె_Interfaces; i++) {
+		ఒకవేళ (dev->config.if_desc[i].desc.b_Interface_సంఖ్య == interface) {
 			if_face = &dev->config.if_desc[i];
-			break;
+			ఆపు;
 		}
 	}
-	if (!if_face) {
-		printf("selecting invalid interface %d", interface);
-		return -EINVAL;
+	ఒకవేళ (!if_face) {
+		రాయి("selecting invalid interface %d", interface);
+		తిరిగి -EINVAL;
 	}
 	/*
 	 * We should return now for devices with only one alternate setting.
@@ -667,151 +667,151 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
 	 * some USB sticks timeouting during initialization and then being
 	 * unusable in U-Boot.
 	 */
-	if (if_face->num_altsetting == 1)
-		return 0;
+	ఒకవేళ (if_face->అంకె_altsetting == 1)
+		తిరిగి 0;
 
-	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_INTERFACE, USB_RECIP_INTERFACE,
-				alternate, interface, NULL, 0,
+	ret = usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_సమితి_INTERFACE, USB_RECIP_INTERFACE,
+				alternate, interface, ఖాళీ, 0,
 				USB_CNTL_TIMEOUT * 5);
-	if (ret < 0)
-		return ret;
+	ఒకవేళ (ret < 0)
+		తిరిగి ret;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /********************************************************************
  * set configuration number to configuration
  */
-static int usb_set_configuration(struct usb_device *dev, int configuration)
+స్థిర పూర్ణాంకం usb_సమితి_configuration(నిర్మాణం usb_device *dev, పూర్ణాంకం configuration)
 {
-	int res;
+	పూర్ణాంకం res;
 	debug("set configuration %d\n", configuration);
 	/* set setup command */
-	res = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-				USB_REQ_SET_CONFIGURATION, 0,
+	res = usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+				USB_REQ_సమితి_CONFIGURATION, 0,
 				configuration, 0,
-				NULL, 0, USB_CNTL_TIMEOUT);
-	if (res == 0) {
+				ఖాళీ, 0, USB_CNTL_TIMEOUT);
+	ఒకవేళ (res == 0) {
 		dev->toggle[0] = 0;
 		dev->toggle[1] = 0;
-		return 0;
-	} else
-		return -EIO;
+		తిరిగి 0;
+	} లేకపోతే
+		తిరిగి -EIO;
 }
 
 /********************************************************************
  * set protocol to protocol
  */
-int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol)
+పూర్ణాంకం usb_సమితి_protocol(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum, పూర్ణాంకం protocol)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		protocol, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_సమితి_PROTOCOL, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+		protocol, ifnum, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * set idle
  */
-int usb_set_idle(struct usb_device *dev, int ifnum, int duration, int report_id)
+పూర్ణాంకం usb_సమితి_idle(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum, పూర్ణాంకం duration, పూర్ణాంకం report_id)
 {
-	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-		USB_REQ_SET_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-		(duration << 8) | report_id, ifnum, NULL, 0, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_sndctrlpipe(dev, 0),
+		USB_REQ_సమితి_IDLE, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+		(duration << 8) | report_id, ifnum, ఖాళీ, 0, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get report
  */
-int usb_get_report(struct usb_device *dev, int ifnum, unsigned char type,
-		   unsigned char id, void *buf, int size)
+పూర్ణాంకం usb_get_report(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum, గుర్తులేని అక్షరం type,
+		   గుర్తులేని అక్షరం id, శూన్య *buf, పూర్ణాంకం కొలత)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+	తిరిగి usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
 			USB_REQ_GET_REPORT,
-			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-			(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
+			USB_DIR_లోపల | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+			(type << 8) + id, ifnum, buf, కొలత, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get class descriptor
  */
-int usb_get_class_descriptor(struct usb_device *dev, int ifnum,
-		unsigned char type, unsigned char id, void *buf, int size)
+పూర్ణాంకం usb_get_class_descriptor(నిర్మాణం usb_device *dev, పూర్ణాంకం ifnum,
+		గుర్తులేని అక్షరం type, గుర్తులేని అక్షరం id, శూన్య *buf, పూర్ణాంకం కొలత)
 {
-	return usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_IN,
-		(type << 8) + id, ifnum, buf, size, USB_CNTL_TIMEOUT);
+	తిరిగి usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+		USB_REQ_GET_DESCRIPTOR, USB_RECIP_INTERFACE | USB_DIR_లోపల,
+		(type << 8) + id, ifnum, buf, కొలత, USB_CNTL_TIMEOUT);
 }
 
 /********************************************************************
  * get string index in buffer
  */
-static int usb_get_string(struct usb_device *dev, unsigned short langid,
-		   unsigned char index, void *buf, int size)
+స్థిర పూర్ణాంకం usb_get_string(నిర్మాణం usb_device *dev, గుర్తులేని పొట్టి langid,
+		   గుర్తులేని అక్షరం సూచీ, శూన్య *buf, పూర్ణాంకం కొలత)
 {
-	int i;
-	int result;
+	పూర్ణాంకం i;
+	పూర్ణాంకం ఫలితం;
 
-	for (i = 0; i < 3; ++i) {
+	కొరకు (i = 0; i < 3; ++i) {
 		/* some devices are flaky */
-		result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
-			USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
-			(USB_DT_STRING << 8) + index, langid, buf, size,
+		ఫలితం = usb_control_సందేశం(dev, usb_rcvctrlpipe(dev, 0),
+			USB_REQ_GET_DESCRIPTOR, USB_DIR_లోపల,
+			(USB_DT_STRING << 8) + సూచీ, langid, buf, కొలత,
 			USB_CNTL_TIMEOUT);
 
-		if (result > 0)
-			break;
+		ఒకవేళ (ఫలితం > 0)
+			ఆపు;
 	}
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
-static void usb_try_string_workarounds(unsigned char *buf, int *length)
+స్థిర శూన్య usb_try_string_workarounds(గుర్తులేని అక్షరం *buf, పూర్ణాంకం *నిడివి)
 {
-	int newlength, oldlength = *length;
+	పూర్ణాంకం newlength, oldlength = *నిడివి;
 
-	for (newlength = 2; newlength + 1 < oldlength; newlength += 2)
-		if (!isprint(buf[newlength]) || buf[newlength + 1])
-			break;
+	కొరకు (newlength = 2; newlength + 1 < oldlength; newlength += 2)
+		ఒకవేళ (!isprint(buf[newlength]) || buf[newlength + 1])
+			ఆపు;
 
-	if (newlength > 2) {
+	ఒకవేళ (newlength > 2) {
 		buf[0] = newlength;
-		*length = newlength;
+		*నిడివి = newlength;
 	}
 }
 
-static int usb_string_sub(struct usb_device *dev, unsigned int langid,
-		unsigned int index, unsigned char *buf)
+స్థిర పూర్ణాంకం usb_string_sub(నిర్మాణం usb_device *dev, గుర్తులేని పూర్ణాంకం langid,
+		గుర్తులేని పూర్ణాంకం సూచీ, గుర్తులేని అక్షరం *buf)
 {
-	int rc;
+	పూర్ణాంకం rc;
 
 	/* Try to read the string descriptor by asking for the maximum
 	 * possible number of bytes */
-	rc = usb_get_string(dev, langid, index, buf, 255);
+	rc = usb_get_string(dev, langid, సూచీ, buf, 255);
 
 	/* If that failed try to read the descriptor length, then
 	 * ask for just that many bytes */
-	if (rc < 2) {
-		rc = usb_get_string(dev, langid, index, buf, 2);
-		if (rc == 2)
-			rc = usb_get_string(dev, langid, index, buf, buf[0]);
+	ఒకవేళ (rc < 2) {
+		rc = usb_get_string(dev, langid, సూచీ, buf, 2);
+		ఒకవేళ (rc == 2)
+			rc = usb_get_string(dev, langid, సూచీ, buf, buf[0]);
 	}
 
-	if (rc >= 2) {
-		if (!buf[0] && !buf[1])
+	ఒకవేళ (rc >= 2) {
+		ఒకవేళ (!buf[0] && !buf[1])
 			usb_try_string_workarounds(buf, &rc);
 
 		/* There might be extra junk at the end of the descriptor */
-		if (buf[0] < rc)
+		ఒకవేళ (buf[0] < rc)
 			rc = buf[0];
 
 		rc = rc - (rc & 1); /* force a multiple of two */
 	}
 
-	if (rc < 2)
+	ఒకవేళ (rc < 2)
 		rc = -EINVAL;
 
-	return rc;
+	తిరిగి rc;
 }
 
 /********************************************************************
@@ -819,29 +819,29 @@ static int usb_string_sub(struct usb_device *dev, unsigned int langid,
  * Get string index and translate it to ascii.
  * returns string length (> 0) or error (< 0)
  */
-int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
+పూర్ణాంకం usb_string(నిర్మాణం usb_device *dev, పూర్ణాంకం సూచీ, అక్షరం *buf, size_t కొలత)
 {
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, mybuf, USB_BUFSIZ);
-	unsigned char *tbuf;
-	int err;
-	unsigned int u, idx;
+	ALLOC_CACHE_ALIGN_బఫరు(గుర్తులేని అక్షరం, mybuf, USB_BUFSIZ);
+	గుర్తులేని అక్షరం *tbuf;
+	పూర్ణాంకం err;
+	గుర్తులేని పూర్ణాంకం u, idx;
 
-	if (size <= 0 || !buf || !index)
-		return -EINVAL;
+	ఒకవేళ (కొలత <= 0 || !buf || !సూచీ)
+		తిరిగి -EINVAL;
 	buf[0] = 0;
 	tbuf = &mybuf[0];
 
 	/* get langid for strings if it's not yet known */
-	if (!dev->have_langid) {
+	ఒకవేళ (!dev->have_langid) {
 		err = usb_string_sub(dev, 0, 0, tbuf);
-		if (err < 0) {
+		ఒకవేళ (err < 0) {
 			debug("error getting string descriptor 0 " \
-			      "(error=%lx)\n", dev->status);
-			return -EIO;
-		} else if (tbuf[0] < 4) {
+			      "(error=%lx)\n", dev->స్థితి_2);
+			తిరిగి -EIO;
+		} లేకపోతే ఒకవేళ (tbuf[0] < 4) {
 			debug("string descriptor 0 too short\n");
-			return -EIO;
-		} else {
+			తిరిగి -EIO;
+		} లేకపోతే {
 			dev->have_langid = -1;
 			dev->string_langid = tbuf[2] | (tbuf[3] << 8);
 				/* always use the first langid listed */
@@ -851,22 +851,22 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
 		}
 	}
 
-	err = usb_string_sub(dev, dev->string_langid, index, tbuf);
-	if (err < 0)
-		return err;
+	err = usb_string_sub(dev, dev->string_langid, సూచీ, tbuf);
+	ఒకవేళ (err < 0)
+		తిరిగి err;
 
-	size--;		/* leave room for trailing NULL char in output buffer */
-	for (idx = 0, u = 2; u < err; u += 2) {
-		if (idx >= size)
-			break;
-		if (tbuf[u+1])			/* high byte */
+	కొలత--;		/* leave room for trailing NULL char in output buffer */
+	కొరకు (idx = 0, u = 2; u < err; u += 2) {
+		ఒకవేళ (idx >= కొలత)
+			ఆపు;
+		ఒకవేళ (tbuf[u+1])			/* high byte */
 			buf[idx++] = '?';  /* non-ASCII character */
-		else
+		లేకపోతే
 			buf[idx++] = tbuf[u];
 	}
 	buf[idx] = 0;
 	err = idx;
-	return err;
+	తిరిగి err;
 }
 
 /********************************************************************
@@ -874,38 +874,38 @@ int usb_string(struct usb_device *dev, int index, char *buf, size_t size)
  * the USB device are static allocated [USB_MAX_DEVICE].
  */
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#ఒకవేళ !CONFIG_IS_ENABLED(DM_USB)
 
 /* returns a pointer to the device with the index [index].
  * if the device is not assigned (dev->devnum==-1) returns NULL
  */
-struct usb_device *usb_get_dev_index(int index)
+నిర్మాణం usb_device *usb_get_dev_సూచీ(పూర్ణాంకం సూచీ)
 {
-	if (usb_dev[index].devnum == -1)
-		return NULL;
-	else
-		return &usb_dev[index];
+	ఒకవేళ (usb_dev[సూచీ].devnum == -1)
+		తిరిగి ఖాళీ;
+	లేకపోతే
+		తిరిగి &usb_dev[సూచీ];
 }
 
-int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
+పూర్ణాంకం usb_alloc_new_device(నిర్మాణం udevice *controller, నిర్మాణం usb_device **devp)
 {
-	int i;
-	debug("New Device %d\n", dev_index);
-	if (dev_index == USB_MAX_DEVICE) {
-		printf("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
-		return -ENOSPC;
+	పూర్ణాంకం i;
+	debug("New Device %d\n", dev_సూచీ);
+	ఒకవేళ (dev_సూచీ == USB_MAX_DEVICE) {
+		రాయి("ERROR, too many USB Devices, max=%d\n", USB_MAX_DEVICE);
+		తిరిగి -ENOSPC;
 	}
 	/* default Address is 0, real addresses start with 1 */
-	usb_dev[dev_index].devnum = dev_index + 1;
-	usb_dev[dev_index].maxchild = 0;
-	for (i = 0; i < USB_MAXCHILDREN; i++)
-		usb_dev[dev_index].children[i] = NULL;
-	usb_dev[dev_index].parent = NULL;
-	usb_dev[dev_index].controller = controller;
-	dev_index++;
-	*devp = &usb_dev[dev_index - 1];
+	usb_dev[dev_సూచీ].devnum = dev_సూచీ + 1;
+	usb_dev[dev_సూచీ].maxchild = 0;
+	కొరకు (i = 0; i < USB_MAXCHILDREN; i++)
+		usb_dev[dev_సూచీ].children[i] = ఖాళీ;
+	usb_dev[dev_సూచీ].మాతృ = ఖాళీ;
+	usb_dev[dev_సూచీ].controller = controller;
+	dev_సూచీ++;
+	*devp = &usb_dev[dev_సూచీ - 1];
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -913,12 +913,12 @@ int usb_alloc_new_device(struct udevice *controller, struct usb_device **devp)
  * Called in error cases where configuring a newly attached
  * device fails for some reason.
  */
-void usb_free_device(struct udevice *controller)
+శూన్య usb_free_device(నిర్మాణం udevice *controller)
 {
-	dev_index--;
-	debug("Freeing device node: %d\n", dev_index);
-	memset(&usb_dev[dev_index], 0, sizeof(struct usb_device));
-	usb_dev[dev_index].devnum = -1;
+	dev_సూచీ--;
+	debug("Freeing device node: %d\n", dev_సూచీ);
+	memset(&usb_dev[dev_సూచీ], 0, పరిమాణం(నిర్మాణం usb_device));
+	usb_dev[dev_సూచీ].devnum = -1;
 }
 
 /*
@@ -927,46 +927,46 @@ void usb_free_device(struct udevice *controller)
  * function for the purpose, so that XHCI overrides it
  * and EHCI/OHCI just work out of the box.
  */
-__weak int usb_alloc_device(struct usb_device *udev)
+__weak పూర్ణాంకం usb_alloc_device(నిర్మాణం usb_device *udev)
 {
-	return 0;
+	తిరిగి 0;
 }
-#endif /* !CONFIG_IS_ENABLED(DM_USB) */
+#అయితే_ముగింపు /* !CONFIG_IS_ENABLED(DM_USB) */
 
-static int usb_hub_port_reset(struct usb_device *dev, struct usb_device *hub)
+స్థిర పూర్ణాంకం usb_hub_పోర్టు_reset(నిర్మాణం usb_device *dev, నిర్మాణం usb_device *hub)
 {
-	if (!hub)
-		usb_reset_root_port(dev);
+	ఒకవేళ (!hub)
+		usb_reset_మూలం_పోర్టు(dev);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int get_descriptor_len(struct usb_device *dev, int len, int expect_len)
+స్థిర పూర్ణాంకం get_descriptor_len(నిర్మాణం usb_device *dev, పూర్ణాంకం len, పూర్ణాంకం expect_len)
 {
-	__maybe_unused struct usb_device_descriptor *desc;
-	ALLOC_CACHE_ALIGN_BUFFER(unsigned char, tmpbuf, USB_BUFSIZ);
-	int err;
+	__maybe_unused నిర్మాణం usb_device_descriptor *desc;
+	ALLOC_CACHE_ALIGN_బఫరు(గుర్తులేని అక్షరం, tmpbuf, USB_BUFSIZ);
+	పూర్ణాంకం err;
 
-	desc = (struct usb_device_descriptor *)tmpbuf;
+	desc = (నిర్మాణం usb_device_descriptor *)tmpbuf;
 
 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0, desc, len);
-	if (err < expect_len) {
-		if (err < 0) {
-			printf("unable to get device descriptor (error=%d)\n",
+	ఒకవేళ (err < expect_len) {
+		ఒకవేళ (err < 0) {
+			రాయి("unable to get device descriptor (error=%d)\n",
 				err);
-			return err;
-		} else {
-			printf("USB device descriptor short read (expected %i, got %i)\n",
+			తిరిగి err;
+		} లేకపోతే {
+			రాయి("USB device descriptor short read (expected %i, got %i)\n",
 				expect_len, err);
-			return -EIO;
+			తిరిగి -EIO;
 		}
 	}
-	memcpy(&dev->descriptor, tmpbuf, sizeof(dev->descriptor));
+	జ్ఞాపకం_నకలు(&dev->descriptor, tmpbuf, పరిమాణం(dev->descriptor));
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
+స్థిర పూర్ణాంకం usb_అమరిక_descriptor(నిర్మాణం usb_device *dev, bool do_read)
 {
 	/*
 	 * This is a Windows scheme of initialization sequence, with double
@@ -984,18 +984,18 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 	 * some more, or keeps on retransmitting the 8 byte header.
 	 */
 
-	if (dev->speed == USB_SPEED_LOW) {
+	ఒకవేళ (dev->వేగం == USB_వేగం_దిగువ) {
 		dev->descriptor.bMaxPacketSize0 = 8;
-		dev->maxpacketsize = PACKET_SIZE_8;
-	} else {
+		dev->maxpacketsize = PACKET_కొలత_8;
+	} లేకపోతే {
 		dev->descriptor.bMaxPacketSize0 = 64;
-		dev->maxpacketsize = PACKET_SIZE_64;
+		dev->maxpacketsize = PACKET_కొలత_64;
 	}
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
 
-	if (do_read && dev->speed == USB_SPEED_FULL) {
-		int err;
+	ఒకవేళ (do_read && dev->వేగం == USB_వేగం_నిండిన) {
+		పూర్ణాంకం err;
 
 		/*
 		 * Validate we've received only at least 8 bytes, not that
@@ -1014,8 +1014,8 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 		 * as 64 (above) yields a request for 1 packet.
 		 */
 		err = get_descriptor_len(dev, 64, 8);
-		if (err)
-			return err;
+		ఒకవేళ (err)
+			తిరిగి err;
 
 		/*
 		 * Logitech Unifying Receiver 046d:c52b bcdDevice 12.10 seems
@@ -1031,31 +1031,31 @@ static int usb_setup_descriptor(struct usb_device *dev, bool do_read)
 
 	dev->epmaxpacketin[0] = dev->descriptor.bMaxPacketSize0;
 	dev->epmaxpacketout[0] = dev->descriptor.bMaxPacketSize0;
-	switch (dev->descriptor.bMaxPacketSize0) {
-	case 8:
-		dev->maxpacketsize  = PACKET_SIZE_8;
-		break;
-	case 16:
-		dev->maxpacketsize = PACKET_SIZE_16;
-		break;
-	case 32:
-		dev->maxpacketsize = PACKET_SIZE_32;
-		break;
-	case 64:
-		dev->maxpacketsize = PACKET_SIZE_64;
-		break;
-	default:
-		printf("%s: invalid max packet size\n", __func__);
-		return -EIO;
+	ఎంపిక (dev->descriptor.bMaxPacketSize0) {
+	స్థితి 8:
+		dev->maxpacketsize  = PACKET_కొలత_8;
+		ఆపు;
+	స్థితి 16:
+		dev->maxpacketsize = PACKET_కొలత_16;
+		ఆపు;
+	స్థితి 32:
+		dev->maxpacketsize = PACKET_కొలత_32;
+		ఆపు;
+	స్థితి 64:
+		dev->maxpacketsize = PACKET_కొలత_64;
+		ఆపు;
+	అప్రమేయ:
+		రాయి("%s: invalid max packet size\n", __func__);
+		తిరిగి -EIO;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
-			      struct usb_device *parent)
+స్థిర పూర్ణాంకం usb_prepare_device(నిర్మాణం usb_device *dev, పూర్ణాంకం addr, bool do_read,
+			      నిర్మాణం usb_device *మాతృ)
 {
-	int err;
+	పూర్ణాంకం err;
 
 	/*
 	 * Allocate usb 3.0 device context.
@@ -1064,25 +1064,25 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * Refer to sec 4.3.2 in xHCI spec rev1.0
 	 */
 	err = usb_alloc_device(dev);
-	if (err) {
-		printf("Cannot allocate device context to get SLOT_ID\n");
-		return err;
+	ఒకవేళ (err) {
+		రాయి("Cannot allocate device context to get SLOT_ID\n");
+		తిరిగి err;
 	}
-	err = usb_setup_descriptor(dev, do_read);
-	if (err)
-		return err;
-	err = usb_hub_port_reset(dev, parent);
-	if (err)
-		return err;
+	err = usb_అమరిక_descriptor(dev, do_read);
+	ఒకవేళ (err)
+		తిరిగి err;
+	err = usb_hub_పోర్టు_reset(dev, మాతృ);
+	ఒకవేళ (err)
+		తిరిగి err;
 
 	dev->devnum = addr;
 
-	err = usb_set_address(dev); /* set address */
+	err = usb_సమితి_చిరునామా(dev); /* set address */
 
-	if (err < 0) {
-		printf("\n      USB device not accepting new address " \
-			"(error=%lX)\n", dev->status);
-		return err;
+	ఒకవేళ (err < 0) {
+		రాయి("\n      USB device not accepting new address " \
+			"(error=%lX)\n", dev->స్థితి_2);
+		తిరిగి err;
 	}
 
 	mdelay(10);	/* Let the SET_ADDRESS settle */
@@ -1092,86 +1092,86 @@ static int usb_prepare_device(struct usb_device *dev, int addr, bool do_read,
 	 * after device is assigned an address. This is only applicable
 	 * to xHCI so far.
 	 */
-	if (!do_read) {
-		err = usb_setup_descriptor(dev, true);
-		if (err)
-			return err;
+	ఒకవేళ (!do_read) {
+		err = usb_అమరిక_descriptor(dev, true);
+		ఒకవేళ (err)
+			తిరిగి err;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int usb_device_is_ignored(u16 id_vendor, u16 id_product)
+స్థిర పూర్ణాంకం usb_device_is_ignored(u16 id_vendor, u16 id_లబ్ధం)
 {
 	ulong vid, pid;
-	char *end;
-	const char *cur = NULL;
+	అక్షరం *చివర_2;
+	స్థిరరాశి అక్షరం *cur = ఖాళీ;
 
 	/* ignore list depends on env support */
-	if (!CONFIG_IS_ENABLED(ENV_SUPPORT))
-		return 0;
+	ఒకవేళ (!CONFIG_IS_ENABLED(ENV_SUPPORT))
+		తిరిగి 0;
 
 	cur = env_get("usb_ignorelist");
 
 	/* parse "usb_ignorelist" strictly */
-	while (cur && cur[0] != '\0') {
-		vid = simple_strtoul(cur, &end, 0);
+	అయితే (cur && cur[0] != '\0') {
+		vid = simple_strtoul(cur, &చివర_2, 0);
 		/*
 		 * If strtoul did not parse a single digit or the next char is
 		 * not ':' the ignore list is malformed.
 		 */
-		if (cur == end || end[0] != ':')
-			return -EINVAL;
+		ఒకవేళ (cur == చివర_2 || చివర_2[0] != ':')
+			తిరిగి -EINVAL;
 
-		cur = end + 1;
-		pid = simple_strtoul(cur, &end, 0);
+		cur = చివర_2 + 1;
+		pid = simple_strtoul(cur, &చివర_2, 0);
 		/* Consider '*' as wildcard for the product ID */
-		if (cur == end && end[0] == '*') {
+		ఒకవేళ (cur == చివర_2 && చివర_2[0] == '*') {
 			pid = U16_MAX + 1;
-			end++;
+			చివర_2++;
 		}
 		/*
 		 * The ignore list is malformed if no product ID / wildcard was
 		 * parsed or entries are not separated by ',' or terminated with
 		 * '\0'.
 		 */
-		if (cur == end || (end[0] != ',' && end[0] != '\0'))
-			return -EINVAL;
+		ఒకవేళ (cur == చివర_2 || (చివర_2[0] != ',' && చివర_2[0] != '\0'))
+			తిరిగి -EINVAL;
 
-		if (id_vendor == vid && (pid > U16_MAX || id_product == pid))
-			return -ENODEV;
+		ఒకవేళ (id_vendor == vid && (pid > U16_MAX || id_లబ్ధం == pid))
+			తిరిగి -ENODEV;
 
-		if (end[0] == '\0')
-			break;
-		cur = end + 1;
+		ఒకవేళ (చివర_2[0] == '\0')
+			ఆపు;
+		cur = చివర_2 + 1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-int usb_select_config(struct usb_device *dev)
+పూర్ణాంకం usb_select_config(నిర్మాణం usb_device *dev)
 {
-	unsigned char *tmpbuf = NULL;
-	int err;
+	గుర్తులేని అక్షరం *tmpbuf = ఖాళీ;
+	పూర్ణాంకం err;
 
-	err = get_descriptor_len(dev, USB_DT_DEVICE_SIZE, USB_DT_DEVICE_SIZE);
-	if (err)
-		return err;
+	err = get_descriptor_len(dev, USB_DT_DEVICE_కొలత, USB_DT_DEVICE_కొలత);
+	ఒకవేళ (err)
+		తిరిగి err;
 
 	/* correct le values */
-	le16_to_cpus(&dev->descriptor.bcdUSB);
-	le16_to_cpus(&dev->descriptor.idVendor);
-	le16_to_cpus(&dev->descriptor.idProduct);
-	le16_to_cpus(&dev->descriptor.bcdDevice);
+	le16_గమ్యం_cpus(&dev->descriptor.bcdUSB);
+	le16_గమ్యం_cpus(&dev->descriptor.idVendor);
+	le16_గమ్యం_cpus(&dev->descriptor.id_లబ్ధం_2);
+	le16_గమ్యం_cpus(&dev->descriptor.bcdDevice);
 
 	/* ignore devices from usb_ignorelist */
 	err = usb_device_is_ignored(dev->descriptor.idVendor,
-				    dev->descriptor.idProduct);
-	if (err == -ENODEV) {
+				    dev->descriptor.id_లబ్ధం_2);
+	ఒకవేళ (err == -ENODEV) {
 		debug("Ignoring USB device 0x%x:0x%x\n",
-			dev->descriptor.idVendor, dev->descriptor.idProduct);
-		return err;
-	} else if (err == -EINVAL) {
+			dev->descriptor.idVendor, dev->descriptor.id_లబ్ధం_2);
+		తిరిగి err;
+	} లేకపోతే ఒకవేళ (err == -EINVAL) {
 		/*
 		 * Continue on "usb_ignorelist" parsing errors. The list is
 		 * parsed for each device returning the error would result in
@@ -1179,10 +1179,10 @@ int usb_select_config(struct usb_device *dev)
 		 * Since the parsing error is independent of the probed device
 		 * report errors with printf instead of dev_err.
 		 */
-		printf("usb_ignorelist parse error in \"%s\"\n",
+		రాయి("usb_ignorelist parse error in \"%s\"\n",
 		       env_get("usb_ignorelist"));
-	} else if (err < 0) {
-		return err;
+	} లేకపోతే ఒకవేళ (err < 0) {
+		తిరిగి err;
 	}
 
 	/*
@@ -1195,33 +1195,33 @@ int usb_select_config(struct usb_device *dev)
 
 	/* only support for one config for now */
 	err = usb_get_configuration_len(dev, 0);
-	if (err >= 0) {
-		tmpbuf = (unsigned char *)malloc_cache_aligned(err);
-		if (!tmpbuf)
+	ఒకవేళ (err >= 0) {
+		tmpbuf = (గుర్తులేని అక్షరం *)malloc_cache_aligned(err);
+		ఒకవేళ (!tmpbuf)
 			err = -ENOMEM;
-		else
+		లేకపోతే
 			err = usb_get_configuration_no(dev, 0, tmpbuf, err);
 	}
-	if (err < 0) {
-		printf("usb_new_device: Cannot read configuration, " \
+	ఒకవేళ (err < 0) {
+		రాయి("usb_new_device: Cannot read configuration, " \
 		       "skipping device %04x:%04x\n",
-		       dev->descriptor.idVendor, dev->descriptor.idProduct);
-		free(tmpbuf);
-		return err;
+		       dev->descriptor.idVendor, dev->descriptor.id_లబ్ధం_2);
+		విడుదల(tmpbuf);
+		తిరిగి err;
 	}
 	usb_parse_config(dev, tmpbuf, 0);
-	free(tmpbuf);
-	usb_set_maxpacket(dev);
+	విడుదల(tmpbuf);
+	usb_సమితి_maxpacket(dev);
 	/*
 	 * we set the default configuration here
 	 * This seems premature. If the driver wants a different configuration
 	 * it will need to select itself.
 	 */
-	err = usb_set_configuration(dev, dev->config.desc.bConfigurationValue);
-	if (err < 0) {
-		printf("failed to set default configuration " \
-			"len %d, status %lX\n", dev->act_len, dev->status);
-		return err;
+	err = usb_సమితి_configuration(dev, dev->config.desc.b_Configuration_విలువ);
+	ఒకవేళ (err < 0) {
+		రాయి("failed to set default configuration " \
+			"len %d, status %lX\n", dev->act_len, dev->స్థితి_2);
+		తిరిగి err;
 	}
 
 	/*
@@ -1232,46 +1232,46 @@ int usb_select_config(struct usb_device *dev)
 	mdelay(10);
 
 	debug("new device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
-	      dev->descriptor.iManufacturer, dev->descriptor.iProduct,
-	      dev->descriptor.iSerialNumber);
-	memset(dev->mf, 0, sizeof(dev->mf));
-	memset(dev->prod, 0, sizeof(dev->prod));
-	memset(dev->serial, 0, sizeof(dev->serial));
-	if (dev->descriptor.iManufacturer)
+	      dev->descriptor.iManufacturer, dev->descriptor.i_లబ్ధం,
+	      dev->descriptor.i_Serial_సంఖ్య);
+	memset(dev->mf, 0, పరిమాణం(dev->mf));
+	memset(dev->prod, 0, పరిమాణం(dev->prod));
+	memset(dev->serial, 0, పరిమాణం(dev->serial));
+	ఒకవేళ (dev->descriptor.iManufacturer)
 		usb_string(dev, dev->descriptor.iManufacturer,
-			   dev->mf, sizeof(dev->mf));
-	if (dev->descriptor.iProduct)
-		usb_string(dev, dev->descriptor.iProduct,
-			   dev->prod, sizeof(dev->prod));
-	if (dev->descriptor.iSerialNumber)
-		usb_string(dev, dev->descriptor.iSerialNumber,
-			   dev->serial, sizeof(dev->serial));
+			   dev->mf, పరిమాణం(dev->mf));
+	ఒకవేళ (dev->descriptor.i_లబ్ధం)
+		usb_string(dev, dev->descriptor.i_లబ్ధం,
+			   dev->prod, పరిమాణం(dev->prod));
+	ఒకవేళ (dev->descriptor.i_Serial_సంఖ్య)
+		usb_string(dev, dev->descriptor.i_Serial_సంఖ్య,
+			   dev->serial, పరిమాణం(dev->serial));
 	debug("Manufacturer %s\n", dev->mf);
 	debug("Product      %s\n", dev->prod);
 	debug("SerialNumber %s\n", dev->serial);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int usb_setup_device(struct usb_device *dev, bool do_read,
-		     struct usb_device *parent)
+పూర్ణాంకం usb_అమరిక_device(నిర్మాణం usb_device *dev, bool do_read,
+		     నిర్మాణం usb_device *మాతృ)
 {
-	int addr;
-	int ret;
+	పూర్ణాంకం addr;
+	పూర్ణాంకం ret;
 
 	/* We still haven't set the Address yet */
 	addr = dev->devnum;
 	dev->devnum = 0;
 
-	ret = usb_prepare_device(dev, addr, do_read, parent);
-	if (ret)
-		return ret;
+	ret = usb_prepare_device(dev, addr, do_read, మాతృ);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 	ret = usb_select_config(dev);
 
-	return ret;
+	తిరిగి ret;
 }
 
-#if !CONFIG_IS_ENABLED(DM_USB)
+#ఒకవేళ !CONFIG_IS_ENABLED(DM_USB)
 /*
  * By the time we get here, the device has gotten a new device ID
  * and is in the default state. We need to identify the thing and
@@ -1279,10 +1279,10 @@ int usb_setup_device(struct usb_device *dev, bool do_read,
  *
  * Returns 0 for success, != 0 for error.
  */
-int usb_new_device(struct usb_device *dev)
+పూర్ణాంకం usb_new_device(నిర్మాణం usb_device *dev)
 {
 	bool do_read = true;
-	int err;
+	పూర్ణాంకం err;
 
 	/*
 	 * XHCI needs to issue a Address device command to setup
@@ -1290,49 +1290,49 @@ int usb_new_device(struct usb_device *dev)
 	 * with the device. So a get_descriptor will fail before any
 	 * of that is done for XHCI unlike EHCI.
 	 */
-#ifdef CONFIG_USB_XHCI_HCD
+#నిర్వచితమైతే CONFIG_USB_XHCI_HCD
 	do_read = false;
-#endif
-	err = usb_setup_device(dev, do_read, dev->parent);
-	if (err)
-		return err;
+#అయితే_ముగింపు
+	err = usb_అమరిక_device(dev, do_read, dev->మాతృ);
+	ఒకవేళ (err)
+		తిరిగి err;
 
 	/* Now probe if the device is a hub */
 	err = usb_hub_probe(dev, 0);
-	if (err < 0)
-		return err;
+	ఒకవేళ (err < 0)
+		తిరిగి err;
 
-	return 0;
+	తిరిగి 0;
 }
-#endif
+#అయితే_ముగింపు
 
 __weak
-int board_usb_init(int index, enum usb_init_type init)
+పూర్ణాంకం board_usb_init(పూర్ణాంకం సూచీ, గణన usb_init_type init)
 {
-	return 0;
+	తిరిగి 0;
 }
 
 __weak
-int board_usb_cleanup(int index, enum usb_init_type init)
+పూర్ణాంకం board_usb_cleanup(పూర్ణాంకం సూచీ, గణన usb_init_type init)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-bool usb_device_has_child_on_port(struct usb_device *parent, int port)
+bool usb_device_has_బిడ్డ_on_పోర్టు(నిర్మాణం usb_device *మాతృ, పూర్ణాంకం పోర్టు)
 {
-#if CONFIG_IS_ENABLED(DM_USB)
-	return false;
-#else
-	return parent->children[port] != NULL;
-#endif
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+	తిరిగి false;
+#లేకపోతే
+	తిరిగి మాతృ->children[పోర్టు] != ఖాళీ;
+#అయితే_ముగింపు
 }
 
-#if CONFIG_IS_ENABLED(DM_USB)
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
-			       uint8_t *hub_address, uint8_t *hub_port)
+#ఒకవేళ CONFIG_IS_ENABLED(DM_USB)
+శూన్య usb_కనుగొను_usb2_hub_చిరునామా_పోర్టు(నిర్మాణం usb_device *udev,
+			       uint8_t *hub_చిరునామా, uint8_t *hub_పోర్టు)
 {
-	struct udevice *parent;
-	struct usb_device *uparent, *ttdev;
+	నిర్మాణం udevice *మాతృ;
+	నిర్మాణం usb_device *uparent, *ttdev;
 
 	/*
 	 * When called from usb-uclass.c: usb_scan_device() udev->dev points
@@ -1342,44 +1342,44 @@ void usb_find_usb2_hub_address_port(struct usb_device *udev,
 	 * udev->dev->parent .
 	 */
 	ttdev = udev;
-	parent = udev->dev;
-	uparent = dev_get_parent_priv(parent);
+	మాతృ = udev->dev;
+	uparent = dev_get_మాతృ_priv(మాతృ);
 
-	while (uparent->speed != USB_SPEED_HIGH) {
-		struct udevice *dev = parent;
+	అయితే (uparent->వేగం != USB_వేగం_ఎగువ) {
+		నిర్మాణం udevice *dev = మాతృ;
 
-		if (device_get_uclass_id(dev->parent) != UCLASS_USB_HUB) {
-			printf("Error: Cannot find high speed parent of usb-1 device\n");
-			*hub_address = 0;
-			*hub_port = 0;
-			return;
+		ఒకవేళ (device_get_uclass_id(dev->మాతృ) != UCLASS_USB_HUB) {
+			రాయి("Error: Cannot find high speed parent of usb-1 device\n");
+			*hub_చిరునామా = 0;
+			*hub_పోర్టు = 0;
+			తిరిగి;
 		}
 
-		ttdev = dev_get_parent_priv(dev);
-		parent = dev->parent;
-		uparent = dev_get_parent_priv(parent);
+		ttdev = dev_get_మాతృ_priv(dev);
+		మాతృ = dev->మాతృ;
+		uparent = dev_get_మాతృ_priv(మాతృ);
 	}
-	*hub_address = uparent->devnum;
-	*hub_port = ttdev->portnr;
+	*hub_చిరునామా = uparent->devnum;
+	*hub_పోర్టు = ttdev->portnr;
 }
-#else
-void usb_find_usb2_hub_address_port(struct usb_device *udev,
-			       uint8_t *hub_address, uint8_t *hub_port)
+#లేకపోతే
+శూన్య usb_కనుగొను_usb2_hub_చిరునామా_పోర్టు(నిర్మాణం usb_device *udev,
+			       uint8_t *hub_చిరునామా, uint8_t *hub_పోర్టు)
 {
 	/* Find out the nearest parent which is high speed */
-	while (udev->parent->parent != NULL)
-		if (udev->parent->speed != USB_SPEED_HIGH) {
-			udev = udev->parent;
-		} else {
-			*hub_address = udev->parent->devnum;
-			*hub_port = udev->portnr;
-			return;
+	అయితే (udev->మాతృ->మాతృ != ఖాళీ)
+		ఒకవేళ (udev->మాతృ->వేగం != USB_వేగం_ఎగువ) {
+			udev = udev->మాతృ;
+		} లేకపోతే {
+			*hub_చిరునామా = udev->మాతృ->devnum;
+			*hub_పోర్టు = udev->portnr;
+			తిరిగి;
 		}
 
-	printf("Error: Cannot find high speed parent of usb-1 device\n");
-	*hub_address = 0;
-	*hub_port = 0;
+	రాయి("Error: Cannot find high speed parent of usb-1 device\n");
+	*hub_చిరునామా = 0;
+	*hub_పోర్టు = 0;
 }
-#endif
+#అయితే_ముగింపు
 
 /* EOF */

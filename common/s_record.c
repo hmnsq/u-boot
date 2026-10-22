@@ -4,17 +4,17 @@
  * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
  */
 
-#include <s_record.h>
+#అన్తర్భావ <s_record.h>
 
-static int hex1_bin (char  c);
-static int hex2_bin (char *s);
+స్థిర పూర్ణాంకం hex1_bin (అక్షరం  c);
+స్థిర పూర్ణాంకం hex2_bin (అక్షరం *s);
 
-int srec_decode (char *input, int *count, ulong *addr, char *data)
+పూర్ణాంకం srec_decode (అక్షరం *ఆదానం, పూర్ణాంకం *లెక్క, ulong *addr, అక్షరం *దత్తాంశం)
 {
-	int	i;
-	int	v;				/* conversion buffer	*/
-	int	srec_type;			/* S-Record type	*/
-	unsigned char chksum;			/* buffer for checksum	*/
+	పూర్ణాంకం	i;
+	పూర్ణాంకం	v;				/* conversion buffer	*/
+	పూర్ణాంకం	srec_type;			/* S-Record type	*/
+	గుర్తులేని అక్షరం chksum;			/* buffer for checksum	*/
 
 	chksum = 0;
 
@@ -22,156 +22,156 @@ int srec_decode (char *input, int *count, ulong *addr, char *data)
 	 * Return error if not found
 	 */
 
-	for (; *input; ++input) {
-		if (*input == 'S') {		/* skip 'S' */
-			++input;
-			break;
+	కొరకు (; *ఆదానం; ++ఆదానం) {
+		ఒకవేళ (*ఆదానం == 'S') {		/* skip 'S' */
+			++ఆదానం;
+			ఆపు;
 		}
 	}
-	if (*input == '\0') {			/* no more data?	*/
-		return (SREC_EMPTY);
+	ఒకవేళ (*ఆదానం == '\0') {			/* no more data?	*/
+		తిరిగి (SREC_ఖాళీలు);
 	}
 
-	v = *input++;				/* record type		*/
+	v = *ఆదానం++;				/* record type		*/
 
-	if ((*count = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ఒకవేళ ((*లెక్క = hex2_bin(ఆదానం)) < 0) {
+		తిరిగి (SREC_E_NOSREC);
 	}
 
-	chksum += *count;
-	input  += 2;
+	chksum += *లెక్క;
+	ఆదానం  += 2;
 
-	switch (v) {				/* record type		*/
+	ఎంపిక (v) {				/* record type		*/
 
-	case '0':				/* start record		*/
-		srec_type = SREC_START;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '1':
+	స్థితి '0':				/* start record		*/
+		srec_type = SREC_ప్రారంభం;		/* 2 byte addr field	*/
+		*లెక్క   -= 3;			/* - checksum and addr	*/
+		ఆపు;
+	స్థితి '1':
 		srec_type = SREC_DATA2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	case '2':
+		*లెక్క   -= 3;			/* - checksum and addr	*/
+		ఆపు;
+	స్థితి '2':
 		srec_type = SREC_DATA3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '3':				/* data record with a	*/
+		*లెక్క   -= 4;			/* - checksum and addr	*/
+		ఆపు;
+	స్థితి '3':				/* data record with a	*/
 		srec_type = SREC_DATA4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
+		*లెక్క   -= 5;			/* - checksum and addr	*/
+		ఆపు;
 /***	case '4'  ***/
-	case '5':			/* count record, addr field contains */
-		srec_type = SREC_COUNT;	/* a 2 byte record counter	*/
-		*count    = 0;			/* no data		*/
-		break;
+	స్థితి '5':			/* count record, addr field contains */
+		srec_type = SREC_లెక్క;	/* a 2 byte record counter	*/
+		*లెక్క    = 0;			/* no data		*/
+		ఆపు;
 /***	case '6' -- not used  ***/
-	case '7':				/* end record with a	*/
+	స్థితి '7':				/* end record with a	*/
 		srec_type = SREC_END4;		/* 4 byte addr field	*/
-		*count   -= 5;			/* - checksum and addr	*/
-		break;
-	case '8':				/* end record with a	*/
+		*లెక్క   -= 5;			/* - checksum and addr	*/
+		ఆపు;
+	స్థితి '8':				/* end record with a	*/
 		srec_type = SREC_END3;		/* 3 byte addr field	*/
-		*count   -= 4;			/* - checksum and addr	*/
-		break;
-	case '9':				/* end record with a	*/
+		*లెక్క   -= 4;			/* - checksum and addr	*/
+		ఆపు;
+	స్థితి '9':				/* end record with a	*/
 		srec_type = SREC_END2;		/* 2 byte addr field	*/
-		*count   -= 3;			/* - checksum and addr	*/
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		*లెక్క   -= 3;			/* - checksum and addr	*/
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి (SREC_E_BADTYPE);
 	}
 
 	/* read address field */
 	*addr = 0;
 
-	switch (v) {
-	case '3':				/* 4 byte addr field	*/
-	case '7':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	ఎంపిక (v) {
+	స్థితి '3':				/* 4 byte addr field	*/
+	స్థితి '7':
+		ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+			తిరిగి (SREC_E_NOSREC);
 		}
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ఆదానం  += 2;
 		/* FALL THRU */
-	case '2':				/* 3 byte addr field	*/
-	case '8':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	స్థితి '2':				/* 3 byte addr field	*/
+	స్థితి '8':
+		ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+			తిరిగి (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ఆదానం  += 2;
 		/* FALL THRU */
-	case '0':				/* 2 byte addr field	*/
-	case '1':
-	case '5':
-	case '9':
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	స్థితి '0':				/* 2 byte addr field	*/
+	స్థితి '1':
+	స్థితి '5':
+	స్థితి '9':
+		ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+			తిరిగి (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ఆదానం  += 2;
 
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+		ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+			తిరిగి (SREC_E_NOSREC);
 		}
 		*addr <<= 8;
 		*addr  += v;
 		chksum += v;
-		input  += 2;
+		ఆదానం  += 2;
 
-		break;
-	default:
-		return (SREC_E_BADTYPE);
+		ఆపు;
+	అప్రమేయ:
+		తిరిగి (SREC_E_BADTYPE);
 	}
 
 	/* convert data and calculate checksum */
-	for (i=0; i < *count; ++i) {
-		if ((v = hex2_bin(input)) < 0) {
-			return (SREC_E_NOSREC);
+	కొరకు (i=0; i < *లెక్క; ++i) {
+		ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+			తిరిగి (SREC_E_NOSREC);
 		}
-		data[i] = v;
+		దత్తాంశం[i] = v;
 		chksum += v;
-		input  += 2;
+		ఆదానం  += 2;
 	}
 
 	/* read anc check checksum */
-	if ((v = hex2_bin(input)) < 0) {
-		return (SREC_E_NOSREC);
+	ఒకవేళ ((v = hex2_bin(ఆదానం)) < 0) {
+		తిరిగి (SREC_E_NOSREC);
 	}
 
-	if ((unsigned char)v != (unsigned char)~chksum) {
-		return (SREC_E_BADCHKS);
+	ఒకవేళ ((గుర్తులేని అక్షరం)v != (గుర్తులేని అక్షరం)~chksum) {
+		తిరిగి (SREC_E_BADCHKS);
 	}
 
-	return (srec_type);
+	తిరిగి (srec_type);
 }
 
-static int hex1_bin (char c)
+స్థిర పూర్ణాంకం hex1_bin (అక్షరం c)
 {
-	if (c >= '0' && c <= '9')
-		return (c - '0');
-	if (c >= 'a' && c <= 'f')
-		return (c + 10 - 'a');
-	if (c >= 'A' && c <= 'F')
-		return (c + 10 - 'A');
-	return (-1);
+	ఒకవేళ (c >= '0' && c <= '9')
+		తిరిగి (c - '0');
+	ఒకవేళ (c >= 'a' && c <= 'f')
+		తిరిగి (c + 10 - 'a');
+	ఒకవేళ (c >= 'A' && c <= 'F')
+		తిరిగి (c + 10 - 'A');
+	తిరిగి (-1);
 }
 
-static int hex2_bin (char *s)
+స్థిర పూర్ణాంకం hex2_bin (అక్షరం *s)
 {
-	int i, j;
+	పూర్ణాంకం i, j;
 
-	if ((i = hex1_bin(*s++)) < 0) {
-		return (-1);
+	ఒకవేళ ((i = hex1_bin(*s++)) < 0) {
+		తిరిగి (-1);
 	}
-	if ((j = hex1_bin(*s)) < 0) {
-		return (-1);
+	ఒకవేళ ((j = hex1_bin(*s)) < 0) {
+		తిరిగి (-1);
 	}
 
-	return ((i<<4) + j);
+	తిరిగి ((i<<4) + j);
 }

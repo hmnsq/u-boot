@@ -8,64 +8,64 @@
  * Derived work from spl_mmc.c
  */
 
-#include <log.h>
-#include <spl.h>
-#include <errno.h>
-#include <usb.h>
-#include <fat.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <usb.h>
+#అన్తర్భావ <fat.h>
 
-static int usb_stor_curr_dev = -1; /* current device */
+స్థిర పూర్ణాంకం usb_stor_curr_dev = -1; /* current device */
 
-int spl_usb_load(struct spl_image_info *spl_image,
-		 struct spl_boot_device *bootdev, int partition,
-		 const char *filename)
+పూర్ణాంకం spl_usb_ఎక్కించు(నిర్మాణం spl_image_info *spl_image,
+		 నిర్మాణం spl_boot_device *bootdev, పూర్ణాంకం విభజన,
+		 స్థిరరాశి అక్షరం *filename)
 {
-	int err = 0;
-	struct blk_desc *stor_dev;
-	static bool usb_init_pending = true;
+	పూర్ణాంకం err = 0;
+	నిర్మాణం blk_desc *stor_dev;
+	స్థిర bool usb_init_pending = true;
 
-	if (usb_init_pending) {
+	ఒకవేళ (usb_init_pending) {
 		usb_stop();
 		err = usb_init();
 		usb_init_pending = false;
 	}
 
-	if (err) {
-#ifdef CONFIG_SPL_LIBCOMMON_SUPPORT
-		printf("%s: usb init failed: err - %d\n", __func__, err);
-#endif
-		return err;
+	ఒకవేళ (err) {
+#నిర్వచితమైతే CONFIG_SPL_LIBCOMMON_SUPPORT
+		రాయి("%s: usb init failed: err - %d\n", __func__, err);
+#అయితే_ముగింపు
+		తిరిగి err;
 	}
 
 	/* try to recognize storage devices immediately */
-	usb_stor_curr_dev = usb_stor_scan(1);
+	usb_stor_curr_dev = usb_stor_పరిశీలన(1);
 	stor_dev = blk_get_devnum_by_uclass_id(UCLASS_USB, usb_stor_curr_dev);
-	if (!stor_dev)
-		return -ENODEV;
+	ఒకవేళ (!stor_dev)
+		తిరిగి -ENODEV;
 
 	debug("boot mode - FAT\n");
 
-#if CONFIG_IS_ENABLED(OS_BOOT)
-	if (spl_start_uboot() ||
-	    spl_load_image_fat_os(spl_image, bootdev, stor_dev, partition))
-#endif
+#ఒకవేళ CONFIG_IS_ENABLED(OS_BOOT)
+	ఒకవేళ (spl_ప్రారంభం_uboot() ||
+	    spl_ఎక్కించు_image_fat_os(spl_image, bootdev, stor_dev, విభజన))
+#అయితే_ముగింపు
 	{
-		err = spl_load_image_fat(spl_image, bootdev, stor_dev, partition, filename);
+		err = spl_ఎక్కించు_image_fat(spl_image, bootdev, stor_dev, విభజన, filename);
 	}
 
-	if (err) {
+	ఒకవేళ (err) {
 		puts("Error loading from USB device\n");
-		return err;
+		తిరిగి err;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int spl_usb_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_usb_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	return spl_usb_load(spl_image, bootdev,
-			    CONFIG_SYS_USB_FAT_BOOT_PARTITION,
-			    CONFIG_SPL_FS_LOAD_PAYLOAD_NAME);
+	తిరిగి spl_usb_ఎక్కించు(spl_image, bootdev,
+			    CONFIG_SYS_USB_FAT_BOOT_విభజన,
+			    CONFIG_SPL_FS_ఎక్కించు_PAYLOAD_NAME);
 }
-SPL_LOAD_IMAGE_METHOD("USB", 0, BOOT_DEVICE_USB, spl_usb_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("USB", 0, BOOT_DEVICE_USB, spl_usb_ఎక్కించు_image);

@@ -3,169 +3,169 @@
  * Copyright (c) 2024, Linaro Limited
  */
 
-#include <fdt_support.h>
-#include <fdtdec.h>
-#include <memtop.h>
+#అన్తర్భావ <fdt_support.h>
+#అన్తర్భావ <fdtdec.h>
+#అన్తర్భావ <memtop.h>
 
-#include <asm/types.h>
+#అన్తర్భావ <asm/types.h>
 
-#define MEM_RGN_COUNT	64
+#నిర్వచించు MEM_RGN_లెక్క	64
 
-struct region {
-	phys_addr_t base;
-	phys_size_t size;
+నిర్మాణం region {
+	phys_addr_t పునాది;
+	phys_కొలత_t కొలత;
 };
 
-struct mem_region {
-	struct region rgn[MEM_RGN_COUNT];
-	uint count;
+నిర్మాణం mem_region {
+	నిర్మాణం region rgn[MEM_RGN_లెక్క];
+	uint లెక్క;
 };
 
-static void add_mem_region(struct mem_region *mem_rgn, phys_addr_t base,
-			   phys_size_t size)
+స్థిర శూన్య కూడు_mem_region(నిర్మాణం mem_region *mem_rgn, phys_addr_t పునాది,
+			   phys_కొలత_t కొలత)
 {
-	long i;
+	దీర్ఘ i;
 
-	for (i = mem_rgn->count; i >= 0; i--) {
-		if (i && base < mem_rgn->rgn[i - 1].base) {
+	కొరకు (i = mem_rgn->లెక్క; i >= 0; i--) {
+		ఒకవేళ (i && పునాది < mem_rgn->rgn[i - 1].పునాది) {
 			mem_rgn->rgn[i] = mem_rgn->rgn[i - 1];
-		} else {
-			mem_rgn->rgn[i].base = base;
-			mem_rgn->rgn[i].size = size;
-			break;
+		} లేకపోతే {
+			mem_rgn->rgn[i].పునాది = పునాది;
+			mem_rgn->rgn[i].కొలత = కొలత;
+			ఆపు;
 		}
 	}
 
-	mem_rgn->count++;
+	mem_rgn->లెక్క++;
 }
 
-static void mem_regions_init(struct mem_region *mem)
+స్థిర శూన్య mem_regions_init(నిర్మాణం mem_region *mem)
 {
 	uint i;
 
-	mem->count = 0;
-	for (i = 0; i < MEM_RGN_COUNT; i++) {
-		mem->rgn[i].base = 0;
-		mem->rgn[i].size = 0;
+	mem->లెక్క = 0;
+	కొరకు (i = 0; i < MEM_RGN_లెక్క; i++) {
+		mem->rgn[i].పునాది = 0;
+		mem->rgn[i].కొలత = 0;
 	}
 }
 
-static int fdt_add_reserved_regions(struct mem_region *free_mem,
-				    struct mem_region *reserved_mem,
-				    void *fdt_blob)
+స్థిర పూర్ణాంకం fdt_కూడు_reserved_regions(నిర్మాణం mem_region *free_mem,
+				    నిర్మాణం mem_region *reserved_mem,
+				    శూన్య *fdt_blob)
 {
-	u64 addr, size;
-	int i, total, ret;
-	int nodeoffset, subnode;
-	struct fdt_resource res;
+	u64 addr, కొలత;
+	పూర్ణాంకం i, మొత్తం, ret;
+	పూర్ణాంకం nodeoffset, subnode;
+	నిర్మాణం fdt_resource res;
 
-	if (fdt_check_header(fdt_blob) != 0)
-		return -1;
+	ఒకవేళ (fdt_check_శీర్షిక(fdt_blob) != 0)
+		తిరిగి -1;
 
 	/* process memreserve sections */
-	total = fdt_num_mem_rsv(fdt_blob);
-	assert_noisy(total < MEM_RGN_COUNT);
-	for (i = 0; i < total; i++) {
-		if (fdt_get_mem_rsv(fdt_blob, i, &addr, &size) != 0)
-			continue;
-		add_mem_region(reserved_mem, addr, size);
+	మొత్తం = fdt_అంకె_mem_rsv(fdt_blob);
+	assert_noisy(మొత్తం < MEM_RGN_లెక్క);
+	కొరకు (i = 0; i < మొత్తం; i++) {
+		ఒకవేళ (fdt_get_mem_rsv(fdt_blob, i, &addr, &కొలత) != 0)
+			కొనసాగు;
+		కూడు_mem_region(reserved_mem, addr, కొలత);
 	}
 
 	i = 0;
 	/* process reserved-memory */
-	nodeoffset = fdt_subnode_offset(fdt_blob, 0, "reserved-memory");
-	if (nodeoffset >= 0) {
-		subnode = fdt_first_subnode(fdt_blob, nodeoffset);
-		while (subnode >= 0) {
+	nodeoffset = fdt_subnode_స్థానభ్రంశం(fdt_blob, 0, "reserved-memory");
+	ఒకవేళ (nodeoffset >= 0) {
+		subnode = fdt_మొదటి_subnode(fdt_blob, nodeoffset);
+		అయితే (subnode >= 0) {
 			/* check if this subnode has a reg property */
 			ret = fdt_get_resource(fdt_blob, subnode, "reg", 0,
 					       &res);
-			if (!ret && fdtdec_get_is_enabled(fdt_blob, subnode)) {
-				addr = res.start;
-				size = res.end - res.start + 1;
-				assert_noisy(i < MEM_RGN_COUNT);
-				add_mem_region(reserved_mem, addr, size);
+			ఒకవేళ (!ret && fdtdec_get_is_enabled(fdt_blob, subnode)) {
+				addr = res.ప్రారంభం;
+				కొలత = res.చివర_2 - res.ప్రారంభం + 1;
+				assert_noisy(i < MEM_RGN_లెక్క);
+				కూడు_mem_region(reserved_mem, addr, కొలత);
 			}
 
-			subnode = fdt_next_subnode(fdt_blob, subnode);
+			subnode = fdt_తదుపరి_subnode(fdt_blob, subnode);
 			++i;
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static long addrs_overlap(phys_addr_t base1, phys_size_t size1,
-			  phys_addr_t base2, phys_size_t size2)
+స్థిర దీర్ఘ addrs_overlap(phys_addr_t base1, phys_కొలత_t size1,
+			  phys_addr_t base2, phys_కొలత_t size2)
 {
-	const phys_addr_t base1_end = base1 + size1 - 1;
-	const phys_addr_t base2_end = base2 + size2 - 1;
+	స్థిరరాశి phys_addr_t base1_చివర = base1 + size1 - 1;
+	స్థిరరాశి phys_addr_t base2_చివర = base2 + size2 - 1;
 
-	return ((base1 <= base2_end) && (base2 <= base1_end));
+	తిరిగి ((base1 <= base2_చివర) && (base2 <= base1_చివర));
 }
 
-static long region_overlap_check(struct mem_region *mem_rgn, phys_addr_t base,
-				 phys_size_t size)
+స్థిర దీర్ఘ region_overlap_check(నిర్మాణం mem_region *mem_rgn, phys_addr_t పునాది,
+				 phys_కొలత_t కొలత)
 {
-	unsigned long i;
-	struct region *rgn = mem_rgn->rgn;
+	గుర్తులేని దీర్ఘ i;
+	నిర్మాణం region *rgn = mem_rgn->rgn;
 
-	for (i = 0; i < mem_rgn->count; i++) {
-		phys_addr_t rgnbase = rgn[i].base;
-		phys_size_t rgnsize = rgn[i].size;
+	కొరకు (i = 0; i < mem_rgn->లెక్క; i++) {
+		phys_addr_t rgnbase = rgn[i].పునాది;
+		phys_కొలత_t rgnsize = rgn[i].కొలత;
 
-		if (addrs_overlap(base, size, rgnbase, rgnsize))
-			break;
+		ఒకవేళ (addrs_overlap(పునాది, కొలత, rgnbase, rgnsize))
+			ఆపు;
 	}
 
-	return (i < mem_rgn->count) ? i : -1;
+	తిరిగి (i < mem_rgn->లెక్క) ? i : -1;
 }
 
-static phys_addr_t find_ram_top(struct mem_region *free_mem,
-				struct mem_region *reserved_mem, phys_size_t size)
+స్థిర phys_addr_t కనుగొను_ram_శిఖరం(నిర్మాణం mem_region *free_mem,
+				నిర్మాణం mem_region *reserved_mem, phys_కొలత_t కొలత)
 {
-	long i, rgn;
-	phys_addr_t base = 0;
-	phys_addr_t res_base;
+	దీర్ఘ i, rgn;
+	phys_addr_t పునాది = 0;
+	phys_addr_t res_పునాది;
 
-	for (i = free_mem->count - 1; i >= 0; i--) {
-		phys_addr_t rgnbase = free_mem->rgn[i].base;
-		phys_size_t rgnsize = free_mem->rgn[i].size;
+	కొరకు (i = free_mem->లెక్క - 1; i >= 0; i--) {
+		phys_addr_t rgnbase = free_mem->rgn[i].పునాది;
+		phys_కొలత_t rgnsize = free_mem->rgn[i].కొలత;
 
-		if (rgnsize < size)
-			continue;
+		ఒకవేళ (rgnsize < కొలత)
+			కొనసాగు;
 
-		base = rgnbase + rgnsize - size;
-		while (base && rgnbase <= base) {
-			rgn = region_overlap_check(reserved_mem, base, size);
-			if (rgn < 0)
-				return base;
+		పునాది = rgnbase + rgnsize - కొలత;
+		అయితే (పునాది && rgnbase <= పునాది) {
+			rgn = region_overlap_check(reserved_mem, పునాది, కొలత);
+			ఒకవేళ (rgn < 0)
+				తిరిగి పునాది;
 
-			res_base = reserved_mem->rgn[rgn].base;
-			if (res_base < size)
-				break;
-			base = res_base - size;
+			res_పునాది = reserved_mem->rgn[rgn].పునాది;
+			ఒకవేళ (res_పునాది < కొలత)
+				ఆపు;
+			పునాది = res_పునాది - కొలత;
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-phys_addr_t get_mem_top(phys_addr_t ram_start, phys_size_t ram_size,
-			phys_size_t size, void *fdt)
+phys_addr_t get_mem_శిఖరం(phys_addr_t ram_ప్రారంభం, phys_కొలత_t ram_కొలత,
+			phys_కొలత_t కొలత, శూన్య *fdt)
 {
-	int i;
-	struct mem_region free_mem;
-	struct mem_region reserved_mem;
+	పూర్ణాంకం i;
+	నిర్మాణం mem_region free_mem;
+	నిర్మాణం mem_region reserved_mem;
 
 	mem_regions_init(&free_mem);
 	mem_regions_init(&reserved_mem);
 
-	add_mem_region(&free_mem, ram_start, ram_size);
+	కూడు_mem_region(&free_mem, ram_ప్రారంభం, ram_కొలత);
 
-	i = fdt_add_reserved_regions(&free_mem, &reserved_mem, fdt);
-	if (i < 0)
-		return 0;
+	i = fdt_కూడు_reserved_regions(&free_mem, &reserved_mem, fdt);
+	ఒకవేళ (i < 0)
+		తిరిగి 0;
 
-	return find_ram_top(&free_mem, &reserved_mem, size);
+	తిరిగి కనుగొను_ram_శిఖరం(&free_mem, &reserved_mem, కొలత);
 }

@@ -4,37 +4,37 @@
  * Author: Stefan Agner <stefan.agner@toradex.com>
  */
 
-#include <log.h>
-#include <spl.h>
-#include <usb.h>
-#include <g_dnl.h>
-#include <sdp.h>
-#include <linux/printk.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <usb.h>
+#అన్తర్భావ <g_dnl.h>
+#అన్తర్భావ <sdp.h>
+#అన్తర్భావ <linux/printk.h>
 
-static int spl_sdp_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_sdp_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	const int controller_index = CONFIG_SPL_SDP_USB_DEV;
-	struct udevice *udc;
-	int ret;
+	స్థిరరాశి పూర్ణాంకం controller_సూచీ = CONFIG_SPL_SDP_USB_DEV;
+	నిర్మాణం udevice *udc;
+	పూర్ణాంకం ret;
 
-	ret = udc_device_get_by_index(controller_index, &udc);
-	if (ret)
-		return ret;
+	ret = udc_device_get_by_సూచీ(controller_సూచీ, &udc);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	board_usb_init(controller_index, USB_INIT_DEVICE);
+	board_usb_init(controller_సూచీ, USB_INIT_DEVICE);
 
 	g_dnl_clear_detach();
-	ret = g_dnl_register("usb_dnl_sdp");
-	if (ret) {
+	ret = g_dnl_రిజిస్టరు("usb_dnl_sdp");
+	ఒకవేళ (ret) {
 		pr_err("SDP dnl register failed: %d\n", ret);
-		goto err_detach;
+		వెళ్ళు err_detach;
 	}
 
 	ret = sdp_init(udc);
-	if (ret) {
+	ఒకవేళ (ret) {
 		pr_err("SDP init failed: %d\n", ret);
-		goto err_unregister;
+		వెళ్ళు err_unregister;
 	}
 
 	/*
@@ -49,6 +49,6 @@ err_unregister:
 	g_dnl_unregister();
 err_detach:
 	udc_device_put(udc);
-	return ret;
+	తిరిగి ret;
 }
-SPL_LOAD_IMAGE_METHOD("USB SDP", 0, BOOT_DEVICE_BOARD, spl_sdp_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("USB SDP", 0, BOOT_DEVICE_BOARD, spl_sdp_ఎక్కించు_image);

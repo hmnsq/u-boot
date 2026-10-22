@@ -8,14 +8,14 @@
  *
  * Matt Porter <mporter@ti.com>
  */
-#include <gzip.h>
-#include <image.h>
-#include <log.h>
-#include <spl.h>
-#include <xyzModem.h>
-#include <linux/libfdt.h>
+#అన్తర్భావ <gzip.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <xyzModem.h>
+#అన్తర్భావ <linux/libfdt.h>
 
-#define BUF_SIZE 1024
+#నిర్వచించు BUF_కొలత 1024
 
 /*
  * Information required to load image using ymodem.
@@ -23,166 +23,166 @@
  * @image_read: Now of bytes read from the image.
  * @buf: pointer to the previous read block.
  */
-struct ymodem_fit_info {
-	int image_read;
-	char *buf;
+నిర్మాణం ymodem_fit_info {
+	పూర్ణాంకం image_read;
+	అక్షరం *buf;
 };
 
-static int getcymodem(void) {
-	if (tstc())
-		return (getchar());
-	return -1;
+స్థిర పూర్ణాంకం getcymodem(శూన్య) {
+	ఒకవేళ (tstc())
+		తిరిగి (getchar());
+	తిరిగి -1;
 }
 
-static ulong ymodem_read_fit(struct spl_load_info *load, ulong offset,
-			     ulong size, void *addr)
+స్థిర ulong ymodem_read_fit(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong స్థానభ్రంశం,
+			     ulong కొలత, శూన్య *addr)
 {
-	int res, err, buf_offset;
-	struct ymodem_fit_info *info = load->priv;
-	char *buf = info->buf;
-	ulong copy_size = size;
+	పూర్ణాంకం res, err, buf_స్థానభ్రంశం;
+	నిర్మాణం ymodem_fit_info *info = ఎక్కించు->priv;
+	అక్షరం *buf = info->buf;
+	ulong copy_కొలత = కొలత;
 
-	while (info->image_read < offset) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	అయితే (info->image_read < స్థానభ్రంశం) {
+		res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err);
+		ఒకవేళ (res <= 0)
+			ఆపు;
 
 		info->image_read += res;
 	}
 
-	if (info->image_read > offset) {
-		res = info->image_read - offset;
-		if (info->image_read % BUF_SIZE)
-			buf_offset = (info->image_read % BUF_SIZE);
-		else
-			buf_offset = BUF_SIZE;
+	ఒకవేళ (info->image_read > స్థానభ్రంశం) {
+		res = info->image_read - స్థానభ్రంశం;
+		ఒకవేళ (info->image_read % BUF_కొలత)
+			buf_స్థానభ్రంశం = (info->image_read % BUF_కొలత);
+		లేకపోతే
+			buf_స్థానభ్రంశం = BUF_కొలత;
 
-		if (res > copy_size) {
-			memcpy(addr, &buf[buf_offset - res], copy_size);
-			goto done;
+		ఒకవేళ (res > copy_కొలత) {
+			జ్ఞాపకం_నకలు(addr, &buf[buf_స్థానభ్రంశం - res], copy_కొలత);
+			వెళ్ళు పూర్తి;
 		}
-		memcpy(addr, &buf[buf_offset - res], res);
+		జ్ఞాపకం_నకలు(addr, &buf[buf_స్థానభ్రంశం - res], res);
 		addr = addr + res;
-		copy_size -= res;
+		copy_కొలత -= res;
 	}
 
-	while (info->image_read < offset + size) {
-		res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-		if (res <= 0)
-			break;
+	అయితే (info->image_read < స్థానభ్రంశం + కొలత) {
+		res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err);
+		ఒకవేళ (res <= 0)
+			ఆపు;
 
 		info->image_read += res;
-		if (res > copy_size) {
-			memcpy(addr, buf, copy_size);
-			goto done;
+		ఒకవేళ (res > copy_కొలత) {
+			జ్ఞాపకం_నకలు(addr, buf, copy_కొలత);
+			వెళ్ళు పూర్తి;
 		}
-		memcpy(addr, buf, res);
+		జ్ఞాపకం_నకలు(addr, buf, res);
 		addr += res;
-		copy_size -= res;
+		copy_కొలత -= res;
 	}
 
-done:
-	return size;
+పూర్తి:
+	తిరిగి కొలత;
 }
 
-int spl_ymodem_load_image(struct spl_image_info *spl_image,
-			  struct spl_boot_device *bootdev)
+పూర్ణాంకం spl_ymodem_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			  నిర్మాణం spl_boot_device *bootdev)
 {
-	ulong size = 0;
-	int err;
-	int res;
-	int ret;
+	ulong కొలత = 0;
+	పూర్ణాంకం err;
+	పూర్ణాంకం res;
+	పూర్ణాంకం ret;
 	connection_info_t info;
-	char buf[BUF_SIZE];
-	struct legacy_img_hdr *ih = NULL;
+	అక్షరం buf[BUF_కొలత];
+	నిర్మాణం legacy_img_hdr *ih = ఖాళీ;
 	ulong addr = 0;
 
-	info.mode = xyzModem_ymodem;
-	ret = xyzModem_stream_open(&info, &err);
-	if (ret) {
-		printf("spl: ymodem err - %s\n", xyzModem_error(err));
-		return ret;
+	info.బహుళకం = xyzModem_ymodem;
+	ret = xyz_Modem_ప్రవాహం_open(&info, &err);
+	ఒకవేళ (ret) {
+		రాయి("spl: ymodem err - %s\n", xyzModem_error(err));
+		తిరిగి ret;
 	}
 
-	res = xyzModem_stream_read(buf, BUF_SIZE, &err);
-	if (res <= 0)
-		goto end_stream;
+	res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err);
+	ఒకవేళ (res <= 0)
+		వెళ్ళు చివర_ప్రవాహం;
 
-	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT_FULL) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
-		addr = CONFIG_SYS_LOAD_ADDR;
-		ih = (struct legacy_img_hdr *)addr;
+	ఒకవేళ (IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT_నిండిన) &&
+	    image_get_magic((నిర్మాణం legacy_img_hdr *)buf) == FDT_MAGIC) {
+		addr = CONFIG_SYS_ఎక్కించు_ADDR;
+		ih = (నిర్మాణం legacy_img_hdr *)addr;
 
-		memcpy((void *)addr, buf, res);
-		size += res;
+		జ్ఞాపకం_నకలు((శూన్య *)addr, buf, res);
+		కొలత += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		అయితే ((res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err)) > 0) {
+			జ్ఞాపకం_నకలు((శూన్య *)addr, buf, res);
+			కొలత += res;
 			addr += res;
 		}
 
-		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			return ret;
-	} else if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	    image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) {
-		struct spl_load_info load;
-		struct ymodem_fit_info info;
+		ret = spl_parse_image_శీర్షిక(spl_image, bootdev, ih);
+		ఒకవేళ (ret)
+			తిరిగి ret;
+	} లేకపోతే ఒకవేళ (IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT) &&
+	    image_get_magic((నిర్మాణం legacy_img_hdr *)buf) == FDT_MAGIC) {
+		నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
+		నిర్మాణం ymodem_fit_info info;
 
 		debug("Found FIT\n");
-		spl_load_init(&load, ymodem_read_fit, (void *)&info, 1);
+		spl_ఎక్కించు_init(&ఎక్కించు, ymodem_read_fit, (శూన్య *)&info, 1);
 		info.buf = buf;
-		info.image_read = BUF_SIZE;
-		ret = spl_load_simple_fit(spl_image, &load, 0, (void *)buf);
-		size = info.image_read;
+		info.image_read = BUF_కొలత;
+		ret = spl_ఎక్కించు_simple_fit(spl_image, &ఎక్కించు, 0, (శూన్య *)buf);
+		కొలత = info.image_read;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0)
-			size += res;
-	} else {
-		ih = (struct legacy_img_hdr *)buf;
-		ret = spl_parse_image_header(spl_image, bootdev, ih);
-		if (ret)
-			goto end_stream;
-#ifdef CONFIG_SPL_GZIP
-		if (ih->ih_comp == IH_COMP_GZIP)
-			addr = CONFIG_SYS_LOAD_ADDR;
-		else
-#endif
-			addr = spl_image->load_addr;
-		memcpy((void *)addr, buf, res);
-		ih = (struct legacy_img_hdr *)addr;
-		size += res;
+		అయితే ((res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err)) > 0)
+			కొలత += res;
+	} లేకపోతే {
+		ih = (నిర్మాణం legacy_img_hdr *)buf;
+		ret = spl_parse_image_శీర్షిక(spl_image, bootdev, ih);
+		ఒకవేళ (ret)
+			వెళ్ళు చివర_ప్రవాహం;
+#నిర్వచితమైతే CONFIG_SPL_GZIP
+		ఒకవేళ (ih->ih_comp == IH_COMP_GZIP)
+			addr = CONFIG_SYS_ఎక్కించు_ADDR;
+		లేకపోతే
+#అయితే_ముగింపు
+			addr = spl_image->ఎక్కించు_addr;
+		జ్ఞాపకం_నకలు((శూన్య *)addr, buf, res);
+		ih = (నిర్మాణం legacy_img_hdr *)addr;
+		కొలత += res;
 		addr += res;
 
-		while ((res = xyzModem_stream_read(buf, BUF_SIZE, &err)) > 0) {
-			memcpy((void *)addr, buf, res);
-			size += res;
+		అయితే ((res = xyz_Modem_ప్రవాహం_read(buf, BUF_కొలత, &err)) > 0) {
+			జ్ఞాపకం_నకలు((శూన్య *)addr, buf, res);
+			కొలత += res;
 			addr += res;
 		}
 	}
 
-end_stream:
-	xyzModem_stream_close(&err);
-	xyzModem_stream_terminate(false, &getcymodem);
+చివర_ప్రవాహం:
+	xyz_Modem_ప్రవాహం_close(&err);
+	xyz_Modem_ప్రవాహం_terminate(false, &getcymodem);
 
-	printf("Loaded %lu bytes\n", size);
+	రాయి("Loaded %lu bytes\n", కొలత);
 
-#ifdef CONFIG_SPL_GZIP
-	if (!(IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
-	      image_get_magic((struct legacy_img_hdr *)buf) == FDT_MAGIC) &&
+#నిర్వచితమైతే CONFIG_SPL_GZIP
+	ఒకవేళ (!(IS_ENABLED(CONFIG_SPL_ఎక్కించు_FIT) &&
+	      image_get_magic((నిర్మాణం legacy_img_hdr *)buf) == FDT_MAGIC) &&
 	    (ih->ih_comp == IH_COMP_GZIP)) {
-		if (gunzip((void *)(spl_image->load_addr + sizeof(*ih)),
+		ఒకవేళ (gunzip((శూన్య *)(spl_image->ఎక్కించు_addr + పరిమాణం(*ih)),
 			   CONFIG_SYS_BOOTM_LEN,
-			   (void *)(CONFIG_SYS_LOAD_ADDR + sizeof(*ih)),
-			   &size)) {
+			   (శూన్య *)(CONFIG_SYS_ఎక్కించు_ADDR + పరిమాణం(*ih)),
+			   &కొలత)) {
 			puts("Uncompressing error\n");
-			return -EIO;
+			తిరిగి -EIO;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-	return ret;
+	తిరిగి ret;
 }
-SPL_LOAD_IMAGE_METHOD("UART", 0, BOOT_DEVICE_UART, spl_ymodem_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("UART", 0, BOOT_DEVICE_UART, spl_ymodem_ఎక్కించు_image);

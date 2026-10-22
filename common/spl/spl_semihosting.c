@@ -3,52 +3,52 @@
  * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
  */
 
-#include <image.h>
-#include <log.h>
-#include <semihosting.h>
-#include <spl.h>
-#include <spl_load.h>
+#అన్తర్భావ <image.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <semihosting.h>
+#అన్తర్భావ <spl.h>
+#అన్తర్భావ <spl_load.h>
 
-static ulong smh_fit_read(struct spl_load_info *load, ulong file_offset,
-			  ulong size, void *buf)
+స్థిర ulong smh_fit_read(నిర్మాణం spl_ఎక్కించు_info *ఎక్కించు, ulong file_స్థానభ్రంశం,
+			  ulong కొలత, శూన్య *buf)
 {
-	long fd = *(long *)load->priv;
+	దీర్ఘ fd = *(దీర్ఘ *)ఎక్కించు->priv;
 	ulong ret;
 
-	if (smh_seek(fd, file_offset))
-		return 0;
+	ఒకవేళ (smh_seek(fd, file_స్థానభ్రంశం))
+		తిరిగి 0;
 
-	ret = smh_read(fd, buf, size);
-	return ret < 0 ? 0 : ret;
+	ret = smh_read(fd, buf, కొలత);
+	తిరిగి ret < 0 ? 0 : ret;
 }
 
-static int spl_smh_load_image(struct spl_image_info *spl_image,
-			      struct spl_boot_device *bootdev)
+స్థిర పూర్ణాంకం spl_smh_ఎక్కించు_image(నిర్మాణం spl_image_info *spl_image,
+			      నిర్మాణం spl_boot_device *bootdev)
 {
-	const char *filename = CONFIG_SPL_FS_LOAD_PAYLOAD_NAME;
-	int ret;
-	long fd, len;
-	struct spl_load_info load;
+	స్థిరరాశి అక్షరం *filename = CONFIG_SPL_FS_ఎక్కించు_PAYLOAD_NAME;
+	పూర్ణాంకం ret;
+	దీర్ఘ fd, len;
+	నిర్మాణం spl_ఎక్కించు_info ఎక్కించు;
 
-	fd = smh_open(filename, MODE_READ | MODE_BINARY);
-	if (fd < 0) {
+	fd = smh_open(filename, బహుళకం_READ | బహుళకం_ద్విమాన);
+	ఒకవేళ (fd < 0) {
 		log_debug("could not open %s: %ld\n", filename, fd);
-		return fd;
+		తిరిగి fd;
 	}
 
 	ret = smh_flen(fd);
-	if (ret < 0) {
+	ఒకవేళ (ret < 0) {
 		log_debug("could not get length of image: %d\n", ret);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 	len = ret;
 
-	spl_load_init(&load, smh_fit_read, &fd, 1);
-	ret = spl_load(spl_image, bootdev, &load, len, 0);
-	if (ret)
+	spl_ఎక్కించు_init(&ఎక్కించు, smh_fit_read, &fd, 1);
+	ret = spl_ఎక్కించు(spl_image, bootdev, &ఎక్కించు, len, 0);
+	ఒకవేళ (ret)
 		log_debug("could not read %s: %d\n", filename, ret);
-out:
+బహిర్గతం:
 	smh_close(fd);
-	return ret;
+	తిరిగి ret;
 }
-SPL_LOAD_IMAGE_METHOD("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_load_image);
+SPL_ఎక్కించు_IMAGE_పద్ధతి("SEMIHOSTING", 0, BOOT_DEVICE_SMH, spl_smh_ఎక్కించు_image);

@@ -8,104 +8,104 @@
  * Author: Anton Vorontsov <avorontsov@ru.mvista.com>
  */
 
-#ifndef HWCONFIG_TEST
-#include <config.h>
-#include <env.h>
-#include <exports.h>
-#include <hwconfig.h>
-#include <log.h>
-#include <asm/global_data.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif /* HWCONFIG_TEST */
+#నిర్వచితం_కాకపోతే HWCONFIG_TEST
+#అన్తర్భావ <config.h>
+#అన్తర్భావ <env.h>
+#అన్తర్భావ <exports.h>
+#అన్తర్భావ <hwconfig.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <linux/types.h>
+#అన్తర్భావ <linux/string.h>
+#లేకపోతే
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <assert.h>
+#నిర్వచించు min(a, b) (((a) < (b)) ? (a) : (b))
+#అయితే_ముగింపు /* HWCONFIG_TEST */
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-static const char *hwconfig_parse(const char *opts, size_t maxlen,
-				  const char *opt, char *stopchs, char eqch,
+స్థిర స్థిరరాశి అక్షరం *hwconfig_parse(స్థిరరాశి అక్షరం *opts, size_t maxlen,
+				  స్థిరరాశి అక్షరం *opt, అక్షరం *stopchs, అక్షరం eqch,
 				  size_t *arglen)
 {
-	size_t optlen = strlen(opt);
-	char *str;
-	const char *start = opts;
-	const char *end;
+	size_t optlen = అక్షరశ్రేణి_పొడవు(opt);
+	అక్షరం *str;
+	స్థిరరాశి అక్షరం *ప్రారంభం = opts;
+	స్థిరరాశి అక్షరం *చివర_2;
 
-next:
-	str = strstr(opts, opt);
-	end = str + optlen;
-	if (end - start > maxlen)
-		return NULL;
+తదుపరి:
+	str = అక్షరశ్రేణి_శోధన(opts, opt);
+	చివర_2 = str + optlen;
+	ఒకవేళ (చివర_2 - ప్రారంభం > maxlen)
+		తిరిగి ఖాళీ;
 
-	if (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
-			(strpbrk(end, stopchs) == end || *end == eqch ||
-			 *end == '\0')) {
-		const char *arg_end;
+	ఒకవేళ (str && (str == opts || strpbrk(str - 1, stopchs) == str - 1) &&
+			(strpbrk(చివర_2, stopchs) == చివర_2 || *చివర_2 == eqch ||
+			 *చివర_2 == '\0')) {
+		స్థిరరాశి అక్షరం *arg_చివర;
 
-		if (!arglen)
-			return str;
+		ఒకవేళ (!arglen)
+			తిరిగి str;
 
-		if (*end != eqch)
-			return NULL;
+		ఒకవేళ (*చివర_2 != eqch)
+			తిరిగి ఖాళీ;
 
-		arg_end = strpbrk(str, stopchs);
-		if (!arg_end)
-			*arglen = min(maxlen, strlen(str)) - optlen - 1;
-		else
-			*arglen = arg_end - end - 1;
+		arg_చివర = strpbrk(str, stopchs);
+		ఒకవేళ (!arg_చివర)
+			*arglen = min(maxlen, అక్షరశ్రేణి_పొడవు(str)) - optlen - 1;
+		లేకపోతే
+			*arglen = arg_చివర - చివర_2 - 1;
 
-		return end + 1;
-	} else if (str) {
-		opts = end;
-		goto next;
+		తిరిగి చివర_2 + 1;
+	} లేకపోతే ఒకవేళ (str) {
+		opts = చివర_2;
+		వెళ్ళు తదుపరి;
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-const char cpu_hwconfig[] __attribute__((weak)) = "";
-const char board_hwconfig[] __attribute__((weak)) = "";
+స్థిరరాశి అక్షరం cpu_hwconfig[] __attribute__((weak)) = "";
+స్థిరరాశి అక్షరం board_hwconfig[] __attribute__((weak)) = "";
 
-static const char *__hwconfig(const char *opt, size_t *arglen,
-			      const char *env_hwconfig)
+స్థిర స్థిరరాశి అక్షరం *__hwconfig(స్థిరరాశి అక్షరం *opt, size_t *arglen,
+			      స్థిరరాశి అక్షరం *env_hwconfig)
 {
-	const char *ret;
+	స్థిరరాశి అక్షరం *ret;
 
 	/* if we are passed a buffer use it, otherwise try the environment */
-	if (!env_hwconfig) {
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
-		if (!(gd->flags & GD_FLG_ENV_READY) &&
+	ఒకవేళ (!env_hwconfig) {
+#ఒకవేళ CONFIG_IS_ENABLED(ENV_SUPPORT)
+		ఒకవేళ (!(gd->flags & GD_FLG_ENV_READY) &&
 		    gd->env_valid != ENV_VALID)
-#else
-		if (true)
-#endif
+#లేకపోతే
+		ఒకవేళ (true)
+#అయితే_ముగింపు
 		{
-			printf("WARNING: Calling __hwconfig without a buffer "
+			రాయి("WARNING: Calling __hwconfig without a buffer "
 					"and before environment is ready\n");
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
-#if CONFIG_IS_ENABLED(ENV_SUPPORT)
+#ఒకవేళ CONFIG_IS_ENABLED(ENV_SUPPORT)
 		env_hwconfig = env_get("hwconfig");
-#endif
+#అయితే_ముగింపు
 	}
 
-	if (env_hwconfig) {
-		ret = hwconfig_parse(env_hwconfig, strlen(env_hwconfig),
+	ఒకవేళ (env_hwconfig) {
+		ret = hwconfig_parse(env_hwconfig, అక్షరశ్రేణి_పొడవు(env_hwconfig),
 				      opt, ";", ':', arglen);
-		if (ret)
-			return ret;
+		ఒకవేళ (ret)
+			తిరిగి ret;
 	}
 
-	ret = hwconfig_parse(board_hwconfig, strlen(board_hwconfig),
+	ret = hwconfig_parse(board_hwconfig, అక్షరశ్రేణి_పొడవు(board_hwconfig),
 			opt, ";", ':', arglen);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
-	return hwconfig_parse(cpu_hwconfig, strlen(cpu_hwconfig),
+	తిరిగి hwconfig_parse(cpu_hwconfig, అక్షరశ్రేణి_పొడవు(cpu_hwconfig),
 			opt, ";", ':', arglen);
 }
 
@@ -129,9 +129,9 @@ static const char *__hwconfig(const char *opt, size_t *arglen,
  * that the board file only calls things that are actually used, so
  * hwconfig() will always return true result.
  */
-int hwconfig_f(const char *opt, char *buf)
+పూర్ణాంకం hwconfig_f(స్థిరరాశి అక్షరం *opt, అక్షరం *buf)
 {
-	return !!__hwconfig(opt, NULL, buf);
+	తిరిగి !!__hwconfig(opt, ఖాళీ, buf);
 }
 
 /*
@@ -147,9 +147,9 @@ int hwconfig_f(const char *opt, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns "", and
  * arglen is set to 0.
  */
-const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
+స్థిరరాశి అక్షరం *hwconfig_arg_f(స్థిరరాశి అక్షరం *opt, size_t *arglen, అక్షరం *buf)
 {
-	return __hwconfig(opt, arglen, buf);
+	తిరిగి __hwconfig(opt, arglen, buf);
 }
 
 /*
@@ -166,16 +166,16 @@ const char *hwconfig_arg_f(const char *opt, size_t *arglen, char *buf)
  * If CONFIG_HWCONFIG is undefined, the function returns a non-zero
  * value, i.e. the argument matches.
  */
-int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
+పూర్ణాంకం hwconfig_arg_cmp_f(స్థిరరాశి అక్షరం *opt, స్థిరరాశి అక్షరం *arg, అక్షరం *buf)
 {
-	const char *argstr;
+	స్థిరరాశి అక్షరం *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_arg_f(opt, &arglen, buf);
-	if (!argstr || arglen != strlen(arg))
-		return 0;
+	ఒకవేళ (!argstr || arglen != అక్షరశ్రేణి_పొడవు(arg))
+		తిరిగి 0;
 
-	return !strncmp(argstr, arg, arglen);
+	తిరిగి !అక్షరశ్రేణి_పోలిక(argstr, arg, arglen);
 }
 
 /*
@@ -190,15 +190,15 @@ int hwconfig_arg_cmp_f(const char *opt, const char *arg, char *buf)
  * "dr_usb" is an option, "mode" is a sub-option, and "peripheral" is its
  * argument.
  */
-int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
+పూర్ణాంకం hwconfig_sub_f(స్థిరరాశి అక్షరం *opt, స్థిరరాశి అక్షరం *subopt, అక్షరం *buf)
 {
 	size_t arglen;
-	const char *arg;
+	స్థిరరాశి అక్షరం *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return 0;
-	return !!hwconfig_parse(arg, arglen, subopt, ",;", '=', NULL);
+	ఒకవేళ (!arg)
+		తిరిగి 0;
+	తిరిగి !!hwconfig_parse(arg, arglen, subopt, ",;", '=', ఖాళీ);
 }
 
 /*
@@ -211,16 +211,16 @@ int hwconfig_sub_f(const char *opt, const char *subopt, char *buf)
  * This call is similar to hwconfig_arg_f(), except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-const char *hwconfig_subarg_f(const char *opt, const char *subopt,
-			      size_t *subarglen, char *buf)
+స్థిరరాశి అక్షరం *hwconfig_subarg_f(స్థిరరాశి అక్షరం *opt, స్థిరరాశి అక్షరం *subopt,
+			      size_t *subarglen, అక్షరం *buf)
 {
 	size_t arglen;
-	const char *arg;
+	స్థిరరాశి అక్షరం *arg;
 
 	arg = __hwconfig(opt, &arglen, buf);
-	if (!arg)
-		return NULL;
-	return hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
+	ఒకవేళ (!arg)
+		తిరిగి ఖాళీ;
+	తిరిగి hwconfig_parse(arg, arglen, subopt, ",;", '=', subarglen);
 }
 
 /*
@@ -233,62 +233,62 @@ const char *hwconfig_subarg_f(const char *opt, const char *subopt,
  * This call is similar to hwconfig_arg_cmp_f, except that it takes an
  * additional argument @subopt, and so works with sub-options.
  */
-int hwconfig_subarg_cmp_f(const char *opt, const char *subopt,
-			  const char *subarg, char *buf)
+పూర్ణాంకం hwconfig_subarg_cmp_f(స్థిరరాశి అక్షరం *opt, స్థిరరాశి అక్షరం *subopt,
+			  స్థిరరాశి అక్షరం *subarg, అక్షరం *buf)
 {
-	const char *argstr;
+	స్థిరరాశి అక్షరం *argstr;
 	size_t arglen;
 
 	argstr = hwconfig_subarg_f(opt, subopt, &arglen, buf);
-	if (!argstr || arglen != strlen(subarg))
-		return 0;
+	ఒకవేళ (!argstr || arglen != అక్షరశ్రేణి_పొడవు(subarg))
+		తిరిగి 0;
 
-	return !strncmp(argstr, subarg, arglen);
+	తిరిగి !అక్షరశ్రేణి_పోలిక(argstr, subarg, arglen);
 }
 
-#ifdef HWCONFIG_TEST
-int main()
+#నిర్వచితమైతే HWCONFIG_TEST
+పూర్ణాంకం ప్రధాన()
 {
-	const char *ret;
+	స్థిరరాశి అక్షరం *ret;
 	size_t len;
 
-	env_set("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
+	env_సమితి("hwconfig", "key1:subkey1=value1,subkey2=value2;key2:value3;;;;"
 			   "key3;:,:=;key4", 1);
 
 	ret = hwconfig_arg("key1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 29);
-	assert(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
-	assert(!strncmp(ret, "subkey1=value1,subkey2=value2", len));
+	రాయి("%zd %.*s\n", len, (పూర్ణాంకం)len, ret);
+	ప్రతిజ్ఞా(len == 29);
+	ప్రతిజ్ఞా(hwconfig_arg_cmp("key1", "subkey1=value1,subkey2=value2"));
+	ప్రతిజ్ఞా(!అక్షరశ్రేణి_పోలిక(ret, "subkey1=value1,subkey2=value2", len));
 
 	ret = hwconfig_subarg("key1", "subkey1", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
-	assert(!strncmp(ret, "value1", len));
+	రాయి("%zd %.*s\n", len, (పూర్ణాంకం)len, ret);
+	ప్రతిజ్ఞా(len == 6);
+	ప్రతిజ్ఞా(hwconfig_subarg_cmp("key1", "subkey1", "value1"));
+	ప్రతిజ్ఞా(!అక్షరశ్రేణి_పోలిక(ret, "value1", len));
 
 	ret = hwconfig_subarg("key1", "subkey2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
-	assert(!strncmp(ret, "value2", len));
+	రాయి("%zd %.*s\n", len, (పూర్ణాంకం)len, ret);
+	ప్రతిజ్ఞా(len == 6);
+	ప్రతిజ్ఞా(hwconfig_subarg_cmp("key1", "subkey2", "value2"));
+	ప్రతిజ్ఞా(!అక్షరశ్రేణి_పోలిక(ret, "value2", len));
 
 	ret = hwconfig_arg("key2", &len);
-	printf("%zd %.*s\n", len, (int)len, ret);
-	assert(len == 6);
-	assert(hwconfig_arg_cmp("key2", "value3"));
-	assert(!strncmp(ret, "value3", len));
+	రాయి("%zd %.*s\n", len, (పూర్ణాంకం)len, ret);
+	ప్రతిజ్ఞా(len == 6);
+	ప్రతిజ్ఞా(hwconfig_arg_cmp("key2", "value3"));
+	ప్రతిజ్ఞా(!అక్షరశ్రేణి_పోలిక(ret, "value3", len));
 
-	assert(hwconfig("key3"));
-	assert(hwconfig_arg("key4", &len) == NULL);
-	assert(hwconfig_arg("bogus", &len) == NULL);
+	ప్రతిజ్ఞా(hwconfig("key3"));
+	ప్రతిజ్ఞా(hwconfig_arg("key4", &len) == ఖాళీ);
+	ప్రతిజ్ఞా(hwconfig_arg("bogus", &len) == ఖాళీ);
 
-	unenv_set("hwconfig");
+	unenv_సమితి("hwconfig");
 
-	assert(hwconfig(NULL) == 0);
-	assert(hwconfig("") == 0);
-	assert(hwconfig("key3") == 0);
+	ప్రతిజ్ఞా(hwconfig(ఖాళీ) == 0);
+	ప్రతిజ్ఞా(hwconfig("") == 0);
+	ప్రతిజ్ఞా(hwconfig("key3") == 0);
 
-	return 0;
+	తిరిగి 0;
 }
-#endif /* HWCONFIG_TEST */
+#అయితే_ముగింపు /* HWCONFIG_TEST */

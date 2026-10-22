@@ -5,34 +5,34 @@
  * Copyright 2018 Google, Inc
  */
 
-#include <handoff.h>
-#include <asm/global_data.h>
+#అన్తర్భావ <handoff.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-void handoff_save_dram(struct spl_handoff *ho)
+శూన్య handoff_save_dram(నిర్మాణం spl_handoff *ho)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	ho->ram_size = gd->ram_size;
+	ho->ram_కొలత = gd->ram_కొలత;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-		ho->ram_bank[i].start = gd->dram[i].start;
-		ho->ram_bank[i].size = gd->dram[i].size;
+	కొరకు (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		ho->ram_bank[i].ప్రారంభం = gd->dram[i].ప్రారంభం;
+		ho->ram_bank[i].కొలత = gd->dram[i].కొలత;
 	}
 }
 
-void handoff_load_dram_size(struct spl_handoff *ho)
+శూన్య handoff_ఎక్కించు_dram_కొలత(నిర్మాణం spl_handoff *ho)
 {
-	gd->ram_size = ho->ram_size;
+	gd->ram_కొలత = ho->ram_కొలత;
 }
 
-void handoff_load_dram_banks(struct spl_handoff *ho)
+శూన్య handoff_ఎక్కించు_dram_banks(నిర్మాణం spl_handoff *ho)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
-		gd->dram[i].start = ho->ram_bank[i].start;
-		gd->dram[i].size = ho->ram_bank[i].size;
+	కొరకు (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		gd->dram[i].ప్రారంభం = ho->ram_bank[i].ప్రారంభం;
+		gd->dram[i].కొలత = ho->ram_bank[i].కొలత;
 	}
 }

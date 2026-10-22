@@ -7,22 +7,22 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY	LOGC_EVENT
+#నిర్వచించు LOG_CATEGORY	LOGC_EVENT
 
-#include <event.h>
-#include <event_internal.h>
-#include <log.h>
-#include <linker_lists.h>
-#include <malloc.h>
-#include <asm/global_data.h>
-#include <linux/errno.h>
-#include <linux/list.h>
-#include <relocate.h>
+#అన్తర్భావ <event.h>
+#అన్తర్భావ <event_internal.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <linker_lists.h>
+#అన్తర్భావ <malloc.h>
+#అన్తర్భావ <asm/global_data.h>
+#అన్తర్భావ <linux/errno.h>
+#అన్తర్భావ <linux/list.h>
+#అన్తర్భావ <relocate.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-const char *const type_name[] = {
+#ఒకవేళ CONFIG_IS_ENABLED(EVENT_DEBUG)
+స్థిరరాశి అక్షరం *స్థిరరాశి type_name[] = {
 	"none",
 	"test",
 
@@ -56,41 +56,41 @@ const char *const type_name[] = {
 	"of_live_init",
 };
 
-_Static_assert(ARRAY_SIZE(type_name) == EVT_COUNT, "event type_name size");
-#endif
+_Static_assert(ARRAY_కొలత(type_name) == EVT_లెక్క, "event type_name size");
+#అయితే_ముగింపు
 
-const char *event_type_name(enum event_t type)
+స్థిరరాశి అక్షరం *event_type_name(గణన event_t type)
 {
-#if CONFIG_IS_ENABLED(EVENT_DEBUG)
-	if (type < ARRAY_SIZE(type_name))
-		return type_name[type];
-	else
-		return "(unknown)";
-#else
-	return "(unknown)";
-#endif
+#ఒకవేళ CONFIG_IS_ENABLED(EVENT_DEBUG)
+	ఒకవేళ (type < ARRAY_కొలత(type_name))
+		తిరిగి type_name[type];
+	లేకపోతే
+		తిరిగి "(unknown)";
+#లేకపోతే
+	తిరిగి "(unknown)";
+#అయితే_ముగింపు
 }
 
-static int notify_static(struct event *ev)
+స్థిర పూర్ణాంకం notify_static(నిర్మాణం event *ev)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
+	నిర్మాణం evspy_info *ప్రారంభం =
+		ll_నమోదు_ప్రారంభం(నిర్మాణం evspy_info, evspy_info);
+	స్థిరరాశి పూర్ణాంకం n_ents = ll_నమోదు_లెక్క(నిర్మాణం evspy_info, evspy_info);
+	నిర్మాణం evspy_info *spy;
 
-	for (spy = start; spy != start + n_ents; spy++) {
-		if (spy->type == ev->type) {
-			int ret;
+	కొరకు (spy = ప్రారంభం; spy != ప్రారంభం + n_ents; spy++) {
+		ఒకవేళ (spy->type == ev->type) {
+			పూర్ణాంకం ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), event_spy_id(spy));
-			if (spy->flags & EVSPYF_SIMPLE) {
-				const struct evspy_info_simple *simple;
+			ఒకవేళ (spy->flags & EVSPYF_SIMPLE) {
+				స్థిరరాశి నిర్మాణం evspy_info_simple *simple;
 
-				simple = (struct evspy_info_simple *)spy;
+				simple = (నిర్మాణం evspy_info_simple *)spy;
 				ret = simple->func();
-			} else {
-				ret = spy->func(NULL, ev);
+			} లేకపోతే {
+				ret = spy->func(ఖాళీ, ev);
 			}
 
 			/*
@@ -99,22 +99,22 @@ static int notify_static(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			ఒకవేళ (ret)
+				తిరిగి log_సందేశం_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int notify_dynamic(struct event *ev)
+స్థిర పూర్ణాంకం notify_dynamic(నిర్మాణం event *ev)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	నిర్మాణం event_state *state = gd_event_state();
+	నిర్మాణం event_spy *spy, *తదుపరి;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node) {
-		if (spy->type == ev->type) {
-			int ret;
+	list_for_each_నమోదు_సురక్షిత(spy, తదుపరి, &state->spy_తల, sibling_కణుపు) {
+		ఒకవేళ (spy->type == ev->type) {
+			పూర్ణాంకం ret;
 
 			log_debug("Sending event %x/%s to spy '%s'\n", ev->type,
 				  event_type_name(ev->type), spy->id);
@@ -126,99 +126,99 @@ static int notify_dynamic(struct event *ev)
 			 * - claim an event (no others will see it)
 			 * - return an error from the event
 			 */
-			if (ret)
-				return log_msg_ret("spy", ret);
+			ఒకవేళ (ret)
+				తిరిగి log_సందేశం_ret("spy", ret);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-int event_notify(enum event_t type, void *data, int size)
+పూర్ణాంకం event_notify(గణన event_t type, శూన్య *దత్తాంశం, పూర్ణాంకం కొలత)
 {
-	struct event event;
-	int ret;
+	నిర్మాణం event event;
+	పూర్ణాంకం ret;
 
 	event.type = type;
-	if (size > sizeof(event.data))
-		return log_msg_ret("size", -E2BIG);
-	memcpy(&event.data, data, size);
+	ఒకవేళ (కొలత > పరిమాణం(event.దత్తాంశం))
+		తిరిగి log_సందేశం_ret("size", -E2BIG);
+	జ్ఞాపకం_నకలు(&event.దత్తాంశం, దత్తాంశం, కొలత);
 
 	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("sta", ret);
+	ఒకవేళ (ret)
+		తిరిగి log_సందేశం_ret("sta", ret);
 
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+	ఒకవేళ (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
 		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
+		ఒకవేళ (ret)
+			తిరిగి log_సందేశం_ret("dyn", ret);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-int event_notify_null(enum event_t type)
+పూర్ణాంకం event_notify_null(గణన event_t type)
 {
-	return event_notify(type, NULL, 0);
+	తిరిగి event_notify(type, ఖాళీ, 0);
 }
 
-void event_show_spy_list(void)
+శూన్య event_show_spy_list(శూన్య)
 {
-	struct evspy_info *start =
-		ll_entry_start(struct evspy_info, evspy_info);
-	const int n_ents = ll_entry_count(struct evspy_info, evspy_info);
-	struct evspy_info *spy;
-	const int size = sizeof(ulong) * 2;
+	నిర్మాణం evspy_info *ప్రారంభం =
+		ll_నమోదు_ప్రారంభం(నిర్మాణం evspy_info, evspy_info);
+	స్థిరరాశి పూర్ణాంకం n_ents = ll_నమోదు_లెక్క(నిర్మాణం evspy_info, evspy_info);
+	నిర్మాణం evspy_info *spy;
+	స్థిరరాశి పూర్ణాంకం కొలత = పరిమాణం(ulong) * 2;
 
-	printf("Seq  %-24s  %*s  %s\n", "Type", size, "Function", "ID");
-	for (spy = start; spy != start + n_ents; spy++) {
-		printf("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - start),
-		       spy->type, event_type_name(spy->type), size, spy->func,
+	రాయి("Seq  %-24s  %*s  %s\n", "Type", కొలత, "Function", "ID");
+	కొరకు (spy = ప్రారంభం; spy != ప్రారంభం + n_ents; spy++) {
+		రాయి("%3x  %-3x %-20s  %*p  %s\n", (uint)(spy - ప్రారంభం),
+		       spy->type, event_type_name(spy->type), కొలత, spy->func,
 		       event_spy_id(spy));
 	}
 }
 
-#if CONFIG_IS_ENABLED(EVENT_DYNAMIC)
-static void spy_free(struct event_spy *spy)
+#ఒకవేళ CONFIG_IS_ENABLED(EVENT_DYNAMIC)
+స్థిర శూన్య spy_free(నిర్మాణం event_spy *spy)
 {
-	list_del(&spy->sibling_node);
+	list_del(&spy->sibling_కణుపు);
 }
 
-int event_register(const char *id, enum event_t type, event_handler_t func, void *ctx)
+పూర్ణాంకం event_రిజిస్టరు(స్థిరరాశి అక్షరం *id, గణన event_t type, event_handler_t func, శూన్య *ctx)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy;
+	నిర్మాణం event_state *state = gd_event_state();
+	నిర్మాణం event_spy *spy;
 
-	spy = malloc(sizeof(*spy));
-	if (!spy)
-		return log_msg_ret("alloc", -ENOMEM);
+	spy = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*spy));
+	ఒకవేళ (!spy)
+		తిరిగి log_సందేశం_ret("alloc", -ENOMEM);
 
 	spy->id = id;
 	spy->type = type;
 	spy->func = func;
 	spy->ctx = ctx;
-	list_add_tail(&spy->sibling_node, &state->spy_head);
+	list_కూడు_తోక(&spy->sibling_కణుపు, &state->spy_తల);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int event_uninit(void)
+పూర్ణాంకం event_uninit(శూన్య)
 {
-	struct event_state *state = gd_event_state();
-	struct event_spy *spy, *next;
+	నిర్మాణం event_state *state = gd_event_state();
+	నిర్మాణం event_spy *spy, *తదుపరి;
 
-	list_for_each_entry_safe(spy, next, &state->spy_head, sibling_node)
+	list_for_each_నమోదు_సురక్షిత(spy, తదుపరి, &state->spy_తల, sibling_కణుపు)
 		spy_free(spy);
 
-	return 0;
+	తిరిగి 0;
 }
 
-int event_init(void)
+పూర్ణాంకం event_init(శూన్య)
 {
-	struct event_state *state = gd_event_state();
+	నిర్మాణం event_state *state = gd_event_state();
 
-	INIT_LIST_HEAD(&state->spy_head);
+	INIT_LIST_తల(&state->spy_తల);
 
-	return 0;
+	తిరిగి 0;
 }
-#endif /* EVENT_DYNAMIC */
+#అయితే_ముగింపు /* EVENT_DYNAMIC */

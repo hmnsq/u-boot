@@ -3,93 +3,93 @@
  * Copyright 2008-2014 Freescale Semiconductor, Inc.
  */
 
-#include <ddr_spd.h>
-#include <stdio.h>
+#అన్తర్భావ <ddr_spd.h>
+#అన్తర్భావ <stdio.h>
 
 /* used for ddr1 and ddr2 spd */
-static int
-spd_check(const u8 *buf, u8 spd_rev, u8 spd_cksum)
+స్థిర పూర్ణాంకం
+spd_check(స్థిరరాశి u8 *buf, u8 spd_rev, u8 spd_cksum)
 {
-	unsigned int cksum = 0;
-	unsigned int i;
+	గుర్తులేని పూర్ణాంకం cksum = 0;
+	గుర్తులేని పూర్ణాంకం i;
 
 	/*
 	 * Check SPD revision supported
 	 * Rev 1.X or less supported by this code
 	 */
-	if (spd_rev >= 0x20) {
-		printf("SPD revision %02X not supported by this code\n",
+	ఒకవేళ (spd_rev >= 0x20) {
+		రాయి("SPD revision %02X not supported by this code\n",
 		       spd_rev);
-		return 1;
+		తిరిగి 1;
 	}
-	if (spd_rev > 0x13) {
-		printf("SPD revision %02X not verified by this code\n",
+	ఒకవేళ (spd_rev > 0x13) {
+		రాయి("SPD revision %02X not verified by this code\n",
 		       spd_rev);
 	}
 
 	/*
 	 * Calculate checksum
 	 */
-	for (i = 0; i < 63; i++) {
+	కొరకు (i = 0; i < 63; i++) {
 		cksum += *buf++;
 	}
 	cksum &= 0xFF;
 
-	if (cksum != spd_cksum) {
-		printf("SPD checksum unexpected. "
+	ఒకవేళ (cksum != spd_cksum) {
+		రాయి("SPD checksum unexpected. "
 			"Checksum in SPD = %02X, computed SPD = %02X\n",
 			spd_cksum, cksum);
-		return 1;
+		తిరిగి 1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-unsigned int
-ddr1_spd_check(const ddr1_spd_eeprom_t *spd)
+గుర్తులేని పూర్ణాంకం
+ddr1_spd_check(స్థిరరాశి ddr1_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	స్థిరరాశి u8 *p = (స్థిరరాశి u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	తిరిగి spd_check(p, spd->spd_rev, spd->cksum);
 }
 
-unsigned int
-ddr2_spd_check(const ddr2_spd_eeprom_t *spd)
+గుర్తులేని పూర్ణాంకం
+ddr2_spd_check(స్థిరరాశి ddr2_spd_eeprom_t *spd)
 {
-	const u8 *p = (const u8 *)spd;
+	స్థిరరాశి u8 *p = (స్థిరరాశి u8 *)spd;
 
-	return spd_check(p, spd->spd_rev, spd->cksum);
+	తిరిగి spd_check(p, spd->spd_rev, spd->cksum);
 }
 
 /*
  * CRC16 compute for DDR3 SPD
  * Copied from DDR3 SPD spec.
  */
-static int
-crc16(char *ptr, int count)
+స్థిర పూర్ణాంకం
+crc16(అక్షరం *ptr, పూర్ణాంకం లెక్క)
 {
-	int crc, i;
+	పూర్ణాంకం చక్రీయ_తనిఖీ, i;
 
-	crc = 0;
-	while (--count >= 0) {
-		crc = crc ^ (int)*ptr++ << 8;
-		for (i = 0; i < 8; ++i)
-			if (crc & 0x8000)
-				crc = crc << 1 ^ 0x1021;
-			else
-				crc = crc << 1;
+	చక్రీయ_తనిఖీ = 0;
+	అయితే (--లెక్క >= 0) {
+		చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ ^ (పూర్ణాంకం)*ptr++ << 8;
+		కొరకు (i = 0; i < 8; ++i)
+			ఒకవేళ (చక్రీయ_తనిఖీ & 0x8000)
+				చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ << 1 ^ 0x1021;
+			లేకపోతే
+				చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ << 1;
 	}
-	return crc & 0xffff;
+	తిరిగి చక్రీయ_తనిఖీ & 0xffff;
 }
 
-unsigned int
-ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
+గుర్తులేని పూర్ణాంకం
+ddr3_spd_check(స్థిరరాశి ddr3_spd_eeprom_t *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	అక్షరం *p = (అక్షరం *)spd;
+	పూర్ణాంకం csum16;
+	పూర్ణాంకం len;
+	అక్షరం చక్రీయ_తనిఖీ_lsb;	/* byte 126 */
+	అక్షరం చక్రీయ_తనిఖీ_msb;	/* byte 127 */
 
 	/*
 	 * SPD byte0[7] - CRC coverage
@@ -97,62 +97,62 @@ ddr3_spd_check(const ddr3_spd_eeprom_t *spd)
 	 * 1 = CRC covers bytes 0~116
 	 */
 
-	len = !(spd->info_size_crc & 0x80) ? 126 : 117;
+	len = !(spd->info_కొలత_చక్రీయ_తనిఖీ & 0x80) ? 126 : 117;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	చక్రీయ_తనిఖీ_lsb = (అక్షరం) (csum16 & 0xff);
+	చక్రీయ_తనిఖీ_msb = (అక్షరం) (csum16 >> 8);
 
-	if (spd->crc[0] == crc_lsb && spd->crc[1] == crc_msb) {
-		return 0;
-	} else {
-		printf("SPD checksum unexpected.\n"
+	ఒకవేళ (spd->చక్రీయ_తనిఖీ[0] == చక్రీయ_తనిఖీ_lsb && spd->చక్రీయ_తనిఖీ[1] == చక్రీయ_తనిఖీ_msb) {
+		తిరిగి 0;
+	} లేకపోతే {
+		రాయి("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->చక్రీయ_తనిఖీ[0], చక్రీయ_తనిఖీ_lsb, spd->చక్రీయ_తనిఖీ[1], చక్రీయ_తనిఖీ_msb);
+		తిరిగి 1;
 	}
 }
 
-unsigned int ddr4_spd_check(const struct ddr4_spd_eeprom_s *spd)
+గుర్తులేని పూర్ణాంకం ddr4_spd_check(స్థిరరాశి నిర్మాణం ddr4_spd_eeprom_s *spd)
 {
-	char *p = (char *)spd;
-	int csum16;
-	int len;
-	char crc_lsb;	/* byte 126 */
-	char crc_msb;	/* byte 127 */
+	అక్షరం *p = (అక్షరం *)spd;
+	పూర్ణాంకం csum16;
+	పూర్ణాంకం len;
+	అక్షరం చక్రీయ_తనిఖీ_lsb;	/* byte 126 */
+	అక్షరం చక్రీయ_తనిఖీ_msb;	/* byte 127 */
 
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	చక్రీయ_తనిఖీ_lsb = (అక్షరం) (csum16 & 0xff);
+	చక్రీయ_తనిఖీ_msb = (అక్షరం) (csum16 >> 8);
 
-	if (spd->crc[0] != crc_lsb || spd->crc[1] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	ఒకవేళ (spd->చక్రీయ_తనిఖీ[0] != చక్రీయ_తనిఖీ_lsb || spd->చక్రీయ_తనిఖీ[1] != చక్రీయ_తనిఖీ_msb) {
+		రాయి("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
-			spd->crc[0], crc_lsb, spd->crc[1], crc_msb);
-		return 1;
+			spd->చక్రీయ_తనిఖీ[0], చక్రీయ_తనిఖీ_lsb, spd->చక్రీయ_తనిఖీ[1], చక్రీయ_తనిఖీ_msb);
+		తిరిగి 1;
 	}
 
-	p = (char *)((ulong)spd + 128);
+	p = (అక్షరం *)((ulong)spd + 128);
 	len = 126;
 	csum16 = crc16(p, len);
 
-	crc_lsb = (char) (csum16 & 0xff);
-	crc_msb = (char) (csum16 >> 8);
+	చక్రీయ_తనిఖీ_lsb = (అక్షరం) (csum16 & 0xff);
+	చక్రీయ_తనిఖీ_msb = (అక్షరం) (csum16 >> 8);
 
-	if (spd->mod_section.uc[126] != crc_lsb ||
-	    spd->mod_section.uc[127] != crc_msb) {
-		printf("SPD checksum unexpected.\n"
+	ఒకవేళ (spd->mod_section.uc[126] != చక్రీయ_తనిఖీ_lsb ||
+	    spd->mod_section.uc[127] != చక్రీయ_తనిఖీ_msb) {
+		రాయి("SPD checksum unexpected.\n"
 			"Checksum lsb in SPD = %02X, computed SPD = %02X\n"
 			"Checksum msb in SPD = %02X, computed SPD = %02X\n",
 			spd->mod_section.uc[126],
-			crc_lsb, spd->mod_section.uc[127],
-			crc_msb);
-		return 1;
+			చక్రీయ_తనిఖీ_lsb, spd->mod_section.uc[127],
+			చక్రీయ_తనిఖీ_msb);
+		తిరిగి 1;
 	}
 
-	return 0;
+	తిరిగి 0;
 }

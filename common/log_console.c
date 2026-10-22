@@ -6,15 +6,15 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <log.h>
-#include <asm/global_data.h>
+#అన్తర్భావ <log.h>
+#అన్తర్భావ <asm/global_data.h>
 
-DECLARE_GLOBAL_DATA_PTR;
+DECLARE_GLOBAL_దత్తాంశం_PTR;
 
-static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
+స్థిర పూర్ణాంకం log_console_emit(నిర్మాణం log_device *ldev, నిర్మాణం log_rec *rec)
 {
-	int fmt = gd->log_fmt;
-	bool add_space = false;
+	పూర్ణాంకం fmt = gd->log_fmt;
+	bool కూడు_space = false;
 
 	/*
 	 * The output format is designed to give someone a fighting chance of
@@ -26,29 +26,29 @@ static int log_console_emit(struct log_device *ldev, struct log_rec *rec)
 	 *    - function is an identifier and ends with ()
 	 *    - message has a space before it unless it is on its own
 	 */
-	if (!(rec->flags & LOGRECF_CONT) && fmt != BIT(LOGF_MSG)) {
-		add_space = true;
-		if (fmt & BIT(LOGF_LEVEL))
-			printf("%s.", log_get_level_name(rec->level));
-		if (fmt & BIT(LOGF_CAT))
-			printf("%s,", log_get_cat_name(rec->cat));
-		if (fmt & BIT(LOGF_FILE))
-			printf("%s:", rec->file);
-		if (fmt & BIT(LOGF_LINE))
-			printf("%d-", rec->line);
-		if (fmt & BIT(LOGF_FUNC)) {
-			if (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
-				printf("%s()", rec->func ?: "?");
-			} else {
-				printf("%*s()", CONFIG_LOGF_FUNC_PAD,
+	ఒకవేళ (!(rec->flags & LOGRECF_CONT) && fmt != బిట్టు(LOGF_సందేశం)) {
+		కూడు_space = true;
+		ఒకవేళ (fmt & బిట్టు(LOGF_LEVEL))
+			రాయి("%s.", log_get_level_name(rec->level));
+		ఒకవేళ (fmt & బిట్టు(LOGF_CAT))
+			రాయి("%s,", log_get_cat_name(rec->cat));
+		ఒకవేళ (fmt & బిట్టు(LOGF_FILE))
+			రాయి("%s:", rec->file);
+		ఒకవేళ (fmt & బిట్టు(LOGF_పంక్తి))
+			రాయి("%d-", rec->పంక్తి);
+		ఒకవేళ (fmt & బిట్టు(LOGF_FUNC)) {
+			ఒకవేళ (CONFIG_IS_ENABLED(USE_TINY_PRINTF)) {
+				రాయి("%s()", rec->func ?: "?");
+			} లేకపోతే {
+				రాయి("%*s()", CONFIG_LOGF_FUNC_PAD,
 				       rec->func ?: "?");
 			}
 		}
 	}
-	if (fmt & BIT(LOGF_MSG))
-		printf("%s%s", add_space ? " " : "", rec->msg);
+	ఒకవేళ (fmt & బిట్టు(LOGF_సందేశం))
+		రాయి("%s%s", కూడు_space ? " " : "", rec->సందేశం);
 
-	return 0;
+	తిరిగి 0;
 }
 
 LOG_DRIVER(console) = {
