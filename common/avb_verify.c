@@ -3,18 +3,18 @@
  * (C) Copyright 2018, Linaro Limited
  */
 
-#include <avb_verify.h>
-#include <blk.h>
-#include <cpu_func.h>
-#include <image.h>
-#include <malloc.h>
-#include <part.h>
-#include <tee.h>
-#include <tee/optee_ta_avb.h>
-#include <u-boot/sha256.h>
+#ضمن <avb_verify.h>
+#ضمن <blk.h>
+#ضمن <cpu_func.h>
+#ضمن <image.h>
+#ضمن <malloc.h>
+#ضمن <part.h>
+#ضمن <tee.h>
+#ضمن <tee/optee_ta_avb.h>
+#ضمن <u-boot/sha256.h>
 
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
-static const unsigned char avb_root_pub[1032] = {
+#𐡄𐡍 CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
+ساكن ثابت unsigned حرف avb_root_pub[1032] = {
 	0x0, 0x0, 0x10, 0x0, 0x55, 0xd9, 0x4, 0xad, 0xd8, 0x4,
 	0xaf, 0xe3, 0xd3, 0x84, 0x6c, 0x7e, 0xd, 0x89, 0x3d, 0xc2,
 	0x8c, 0xd3, 0x12, 0x55, 0xe9, 0x62, 0xc9, 0xf1, 0xf, 0x5e,
@@ -122,53 +122,53 @@ static const unsigned char avb_root_pub[1032] = {
 };
 #endif /* AVB_ROOT_KEY_BUILTIN */
 
-const char *str_avb_io_error(AvbIOResult res)
+ثابت حرف *str_avb_io_error(AvbIOResult res)
 {
-	switch (res) {
-	case AVB_IO_RESULT_OK:
-		return "Requested operation was successful";
-	case AVB_IO_RESULT_ERROR_IO:
-		return "Underlying hardware encountered an I/O error";
-	case AVB_IO_RESULT_ERROR_OOM:
-		return "Unable to allocate memory";
-	case AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION:
-		return "Requested partition does not exist";
-	case AVB_IO_RESULT_ERROR_RANGE_OUTSIDE_PARTITION:
-		return "Bytes requested is outside the range of partition";
-	case AVB_IO_RESULT_ERROR_NO_SUCH_VALUE:
-		return "Named persistent value does not exist";
-	case AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE:
-		return "Named persistent value size is not supported";
-	case AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE:
-		return "Buffer is too small for the requested operation";
-	default:
-		return "Unknown AVB error";
+	بدل (res) {
+	حالة AVB_IO_RESULT_OK:
+		أرجع "Requested operation was successful";
+	حالة AVB_IO_RESULT_ERROR_IO:
+		أرجع "Underlying hardware encountered an I/O error";
+	حالة AVB_IO_RESULT_ERROR_OOM:
+		أرجع "Unable to allocate memory";
+	حالة AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION:
+		أرجع "Requested partition does not exist";
+	حالة AVB_IO_RESULT_ERROR_RANGE_OUTSIDE_PARTITION:
+		أرجع "Bytes requested is outside the range of partition";
+	حالة AVB_IO_RESULT_ERROR_NO_SUCH_VALUE:
+		أرجع "Named persistent value does not exist";
+	حالة AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE:
+		أرجع "Named persistent value size is not supported";
+	حالة AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE:
+		أرجع "Buffer is too small for the requested operation";
+	افتراضي:
+		أرجع "Unknown AVB error";
 	}
 }
 
-const char *str_avb_slot_error(AvbSlotVerifyResult res)
+ثابت حرف *str_avb_slot_error(AvbSlotVerifyResult res)
 {
-	switch (res) {
-	case AVB_SLOT_VERIFY_RESULT_OK:
-		return "Verification passed successfully";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_OOM:
-		return "Allocation of memory failed";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_IO:
-		return "I/O error occurred while trying to load data";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_VERIFICATION:
-		return "Digest didn't match or signature checks failed";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_ROLLBACK_INDEX:
-		return "Rollback index is less than its stored value";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_PUBLIC_KEY_REJECTED:
-		return "Public keys are not accepted";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_METADATA:
-		return "Metadata is invalid or inconsistent";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_UNSUPPORTED_VERSION:
-		return "Metadata requires a newer version of libavb";
-	case AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_ARGUMENT:
-		return "Invalid arguments are used";
-	default:
-		return "Unknown AVB slot verification error";
+	بدل (res) {
+	حالة AVB_SLOT_VERIFY_RESULT_OK:
+		أرجع "Verification passed successfully";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_OOM:
+		أرجع "Allocation of memory failed";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_IO:
+		أرجع "I/O error occurred while trying to load data";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_VERIFICATION:
+		أرجع "Digest didn't match or signature checks failed";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_ROLLBACK_INDEX:
+		أرجع "Rollback index is less than its stored value";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_PUBLIC_KEY_REJECTED:
+		أرجع "Public keys are not accepted";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_METADATA:
+		أرجع "Metadata is invalid or inconsistent";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_UNSUPPORTED_VERSION:
+		أرجع "Metadata requires a newer version of libavb";
+	حالة AVB_SLOT_VERIFY_RESULT_ERROR_INVALID_ARGUMENT:
+		أرجع "Invalid arguments are used";
+	افتراضي:
+		أرجع "Unknown AVB slot verification error";
 	}
 }
 /**
@@ -176,131 +176,131 @@ const char *str_avb_slot_error(AvbSlotVerifyResult res)
  * Boot states support (GREEN, YELLOW, ORANGE, RED) and dm_verity
  * ============================================================================
  */
-char *avb_set_state(AvbOps *ops, enum avb_boot_state boot_state)
+حرف *avb_set_state(AvbOps *ops, تعداد avb_boot_state boot_state)
 {
-	struct AvbOpsData *data;
-	char *cmdline = NULL;
+	بنية AvbOpsData *data;
+	حرف *cmdline = عدم;
 
-	if (!ops)
-		return NULL;
+	𐡄𐡍 (!ops)
+		أرجع عدم;
 
-	data = (struct AvbOpsData *)ops->user_data;
-	if (!data)
-		return NULL;
+	data = (بنية AvbOpsData *)ops->user_data;
+	𐡄𐡍 (!data)
+		أرجع عدم;
 
 	data->boot_state = boot_state;
-	switch (boot_state) {
-	case AVB_GREEN:
+	بدل (boot_state) {
+	حالة AVB_GREEN:
 		cmdline = "androidboot.verifiedbootstate=green";
-		break;
-	case AVB_YELLOW:
+		اكسر;
+	حالة AVB_YELLOW:
 		cmdline = "androidboot.verifiedbootstate=yellow";
-		break;
-	case AVB_ORANGE:
+		اكسر;
+	حالة AVB_ORANGE:
 		cmdline = "androidboot.verifiedbootstate=orange";
-		break;
-	case AVB_RED:
-		break;
+		اكسر;
+	حالة AVB_RED:
+		اكسر;
 	}
 
-	return cmdline;
+	أرجع cmdline;
 }
 
-char *append_cmd_line(char *cmdline_orig, char *cmdline_new)
+حرف *append_cmd_line(حرف *cmdline_orig, حرف *cmdline_new)
 {
-	char *cmd_line;
+	حرف *cmd_line;
 
-	if (!cmdline_new)
-		return cmdline_orig;
+	𐡄𐡍 (!cmdline_new)
+		أرجع cmdline_orig;
 
-	if (cmdline_orig)
+	𐡄𐡍 (cmdline_orig)
 		cmd_line = cmdline_orig;
-	else
+	وإلا
 		cmd_line = " ";
 
-	cmd_line = avb_strdupv(cmd_line, " ", cmdline_new, NULL);
+	cmd_line = avb_strdupv(cmd_line, " ", cmdline_new, عدم);
 
-	return cmd_line;
+	أرجع cmd_line;
 }
 
-static int avb_find_dm_args(char **args, char *str)
+ساكن صحيح avb_find_dm_args(حرف **args, حرف *str)
 {
-	int i;
+	صحيح i;
 
-	if (!str)
-		return -1;
+	𐡄𐡍 (!str)
+		أرجع -1;
 
-	for (i = 0; i < AVB_MAX_ARGS && args[i]; ++i) {
-		if (strstr(args[i], str))
-			return i;
+	لكل (i = 0; i < AVB_MAX_ARGS && args[i]; ++i) {
+		𐡄𐡍 (strstr(args[i], str))
+			أرجع i;
 	}
 
-	return -1;
+	أرجع -1;
 }
 
-static char *avb_set_enforce_option(const char *cmdline, const char *option)
+ساكن حرف *avb_set_enforce_option(ثابت حرف *cmdline, ثابت حرف *option)
 {
-	char *cmdarg[AVB_MAX_ARGS];
-	char *newargs = NULL;
-	int i = 0;
-	int total_args;
+	حرف *cmdarg[AVB_MAX_ARGS];
+	حرف *newargs = عدم;
+	صحيح i = 0;
+	صحيح total_args;
 
-	memset(cmdarg, 0, sizeof(cmdarg));
-	cmdarg[i++] = strtok((char *)cmdline, " ");
+	memset(cmdarg, 0, حجم(cmdarg));
+	cmdarg[i++] = strtok((حرف *)cmdline, " ");
 
-	do {
-		cmdarg[i] = strtok(NULL, " ");
-		if (!cmdarg[i])
-			break;
+	𐡏𐡁𐡃 {
+		cmdarg[i] = strtok(عدم, " ");
+		𐡄𐡍 (!cmdarg[i])
+			اكسر;
 
-		if (++i >= AVB_MAX_ARGS) {
+		𐡄𐡍 (++i >= AVB_MAX_ARGS) {
 			printf("%s: Can't handle more then %d args\n",
 			       __func__, i);
-			return NULL;
+			أرجع عدم;
 		}
-	} while (true);
+	} طالما (true);
 
 	total_args = i;
 	i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_LOGGING);
-	if (i >= 0) {
-		cmdarg[i] = (char *)option;
-	} else {
+	𐡄𐡍 (i >= 0) {
+		cmdarg[i] = (حرف *)option;
+	} وإلا {
 		i = avb_find_dm_args(&cmdarg[0], VERITY_TABLE_OPT_RESTART);
-		if (i < 0) {
+		𐡄𐡍 (i < 0) {
 			printf("%s: No verity options found\n", __func__);
-			return NULL;
+			أرجع عدم;
 		}
 
-		cmdarg[i] = (char *)option;
+		cmdarg[i] = (حرف *)option;
 	}
 
-	for (i = 0; i <= total_args; i++)
+	لكل (i = 0; i <= total_args; i++)
 		newargs = append_cmd_line(newargs, cmdarg[i]);
 
-	return newargs;
+	أرجع newargs;
 }
 
-char *avb_set_ignore_corruption(const char *cmdline)
+حرف *avb_set_ignore_corruption(ثابت حرف *cmdline)
 {
-	char *newargs = NULL;
+	حرف *newargs = عدم;
 
 	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_LOGGING);
-	if (newargs)
+	𐡄𐡍 (newargs)
 		newargs = append_cmd_line(newargs,
 					  "androidboot.veritymode=eio");
 
-	return newargs;
+	أرجع newargs;
 }
 
-char *avb_set_enforce_verity(const char *cmdline)
+حرف *avb_set_enforce_verity(ثابت حرف *cmdline)
 {
-	char *newargs;
+	حرف *newargs;
 
 	newargs = avb_set_enforce_option(cmdline, VERITY_TABLE_OPT_RESTART);
-	if (newargs)
+	𐡄𐡍 (newargs)
 		newargs = append_cmd_line(newargs,
 					  "androidboot.veritymode=enforcing");
-	return newargs;
+	أرجع newargs;
 }
 
 /**
@@ -308,21 +308,21 @@ char *avb_set_enforce_verity(const char *cmdline)
  * IO(mmc) auxiliary functions
  * ============================================================================
  */
-static unsigned long mmc_read_and_flush(struct mmc_part *part,
+ساكن unsigned long mmc_read_and_flush(بنية mmc_part *part,
 					lbaint_t start,
 					lbaint_t sectors,
-					void *buffer)
+					فراغ *buffer)
 {
 	unsigned long blks;
-	void *tmp_buf;
+	فراغ *tmp_buf;
 	size_t buf_size;
 	bool unaligned = is_buf_unaligned(buffer);
 
-	if (start < part->info.start) {
+	𐡄𐡍 (start < part->info.start) {
 		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+		أرجع 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
+	𐡄𐡍 ((start + sectors) > (part->info.start + part->info.size)) {
 		sectors = part->info.start + part->info.size - start;
 		printf("%s: read sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
@@ -332,14 +332,14 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	 * Reading fails on unaligned buffers, so we have to
 	 * use aligned temporary buffer and then copy to destination
 	 */
-	if (unaligned) {
+	𐡄𐡍 (unaligned) {
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
 		      __func__, buffer);
 		tmp_buf = get_sector_buf();
 		buf_size = get_sector_buf_size();
-		if (sectors > buf_size / part->info.blksz)
+		𐡄𐡍 (sectors > buf_size / part->info.blksz)
 			sectors = buf_size / part->info.blksz;
-	} else {
+	} وإلا {
 		tmp_buf = buffer;
 	}
 
@@ -348,186 +348,186 @@ static unsigned long mmc_read_and_flush(struct mmc_part *part,
 	/* flush cache after read */
 	flush_cache((ulong)tmp_buf, sectors * part->info.blksz);
 
-	if (unaligned)
+	𐡄𐡍 (unaligned)
 		memcpy(buffer, tmp_buf, sectors * part->info.blksz);
 
-	return blks;
+	أرجع blks;
 }
 
-static unsigned long mmc_write(struct mmc_part *part, lbaint_t start,
-			       lbaint_t sectors, void *buffer)
+ساكن unsigned long mmc_write(بنية mmc_part *part, lbaint_t start,
+			       lbaint_t sectors, فراغ *buffer)
 {
-	void *tmp_buf;
+	فراغ *tmp_buf;
 	size_t buf_size;
 	bool unaligned = is_buf_unaligned(buffer);
 
-	if (start < part->info.start) {
+	𐡄𐡍 (start < part->info.start) {
 		printf("%s: partition start out of bounds\n", __func__);
-		return 0;
+		أرجع 0;
 	}
-	if ((start + sectors) > (part->info.start + part->info.size)) {
+	𐡄𐡍 ((start + sectors) > (part->info.start + part->info.size)) {
 		sectors = part->info.start + part->info.size - start;
 		printf("%s: sector aligned to partition bounds (" LBAF ")\n",
 		       __func__, sectors);
 	}
-	if (unaligned) {
+	𐡄𐡍 (unaligned) {
 		tmp_buf = get_sector_buf();
 		buf_size = get_sector_buf_size();
 		debug("%s: handling unaligned read buffer, addr = 0x%p\n",
 		      __func__, buffer);
-		if (sectors > buf_size / part->info.blksz)
+		𐡄𐡍 (sectors > buf_size / part->info.blksz)
 			sectors = buf_size / part->info.blksz;
 
 		memcpy(tmp_buf, buffer, sectors * part->info.blksz);
-	} else {
+	} وإلا {
 		tmp_buf = buffer;
 	}
 
-	return blk_dwrite(part->mmc_blk,
+	أرجع blk_dwrite(part->mmc_blk,
 			  start, sectors, tmp_buf);
 }
 
-static struct mmc_part *get_partition(AvbOps *ops, const char *partition)
+ساكن بنية mmc_part *get_partition(AvbOps *ops, ثابت حرف *partition)
 {
-	int ret;
+	صحيح ret;
 	u8 dev_num;
-	int part_num = 0;
-	struct mmc_part *part;
-	struct blk_desc *mmc_blk;
+	صحيح part_num = 0;
+	بنية mmc_part *part;
+	بنية blk_desc *mmc_blk;
 
-	part = malloc(sizeof(struct mmc_part));
-	if (!part)
-		return NULL;
+	part = malloc(حجم(بنية mmc_part));
+	𐡄𐡍 (!part)
+		أرجع عدم;
 
 	dev_num = get_boot_device(ops);
 	part->mmc = find_mmc_device(dev_num);
-	if (!part->mmc) {
+	𐡄𐡍 (!part->mmc) {
 		printf("%s: no MMC device at slot %x\n", __func__, dev_num);
-		goto err;
+		اذهب err;
 	}
 
 	ret = mmc_init(part->mmc);
-	if (ret) {
+	𐡄𐡍 (ret) {
 		printf("%s: MMC initialization failed, err = %d\n",
 		       __func__, ret);
-		goto err;
+		اذهب err;
 	}
 
-	if (IS_MMC(part->mmc)) {
+	𐡄𐡍 (IS_MMC(part->mmc)) {
 		ret = mmc_switch_part(part->mmc, part_num);
-		if (ret) {
+		𐡄𐡍 (ret) {
 			printf("%s: MMC part switch failed, err = %d\n",
 			       __func__, ret);
-			goto err;
+			اذهب err;
 		}
 	}
 
 	mmc_blk = mmc_get_blk_desc(part->mmc);
-	if (!mmc_blk) {
+	𐡄𐡍 (!mmc_blk) {
 		printf("%s: failed to obtain block descriptor\n", __func__);
-		goto err;
+		اذهب err;
 	}
 
 	ret = part_get_info_by_name(mmc_blk, partition, &part->info);
-	if (ret < 0) {
+	𐡄𐡍 (ret < 0) {
 		printf("%s: can't find partition '%s'\n", __func__, partition);
-		goto err;
+		اذهب err;
 	}
 
 	part->dev_num = dev_num;
 	part->mmc_blk = mmc_blk;
 
-	return part;
+	أرجع part;
 err:
-	free(part);
-	return NULL;
+	حرر(part);
+	أرجع عدم;
 }
 
-static AvbIOResult mmc_byte_io(AvbOps *ops,
-			       const char *partition,
+ساكن AvbIOResult mmc_byte_io(AvbOps *ops,
+			       ثابت حرف *partition,
 			       s64 offset,
 			       size_t num_bytes,
-			       void *buffer,
+			       فراغ *buffer,
 			       size_t *out_num_read,
-			       enum mmc_io_type io_type)
+			       تعداد mmc_io_type io_type)
 {
 	ulong ret;
-	struct mmc_part *part;
+	بنية mmc_part *part;
 	u64 start_offset, start_sector, sectors, residue;
 	u8 *tmp_buf;
 	size_t io_cnt = 0;
 	AvbIOResult io_ret = AVB_IO_RESULT_OK;
 
-	if (!partition || !buffer || io_type > IO_WRITE)
-		return AVB_IO_RESULT_ERROR_IO;
+	𐡄𐡍 (!partition || !buffer || io_type > IO_WRITE)
+		أرجع AVB_IO_RESULT_ERROR_IO;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	𐡄𐡍 (!part)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
-	if (!part->info.blksz) {
+	𐡄𐡍 (!part->info.blksz) {
 		io_ret = AVB_IO_RESULT_ERROR_IO;
-		goto out;
+		اذهب out;
 	}
 
 	start_offset = calc_offset(part, offset);
-	while (num_bytes) {
+	طالما (num_bytes) {
 		start_sector = start_offset / part->info.blksz;
 		sectors = num_bytes / part->info.blksz;
 		/* handle non block-aligned reads */
-		if (start_offset % part->info.blksz ||
+		𐡄𐡍 (start_offset % part->info.blksz ||
 		    num_bytes < part->info.blksz) {
 			tmp_buf = get_sector_buf();
-			if (start_offset % part->info.blksz) {
+			𐡄𐡍 (start_offset % part->info.blksz) {
 				residue = part->info.blksz -
 					(start_offset % part->info.blksz);
-				if (residue > num_bytes)
+				𐡄𐡍 (residue > num_bytes)
 					residue = num_bytes;
-			} else {
+			} وإلا {
 				residue = num_bytes;
 			}
 
-			if (io_type == IO_READ) {
+			𐡄𐡍 (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
+				𐡄𐡍 (ret != 1) {
 					printf("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					اذهب out;
 				}
 				/*
 				 * if this is not aligned at sector start,
 				 * we have to adjust the tmp buffer
 				 */
 				tmp_buf += (start_offset % part->info.blksz);
-				memcpy(buffer, (void *)tmp_buf, residue);
-			} else {
+				memcpy(buffer, (فراغ *)tmp_buf, residue);
+			} وإلا {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 1, tmp_buf);
 
-				if (ret != 1) {
+				𐡄𐡍 (ret != 1) {
 					printf("%s: read error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					اذهب out;
 				}
-				memcpy((void *)tmp_buf +
+				memcpy((فراغ *)tmp_buf +
 					start_offset % part->info.blksz,
 					buffer, residue);
 
 				ret = mmc_write(part, part->info.start +
 						start_sector, 1, tmp_buf);
-				if (ret != 1) {
+				𐡄𐡍 (ret != 1) {
 					printf("%s: write error (%ld, %lld)\n",
 					       __func__, ret, start_sector);
 					io_ret = AVB_IO_RESULT_ERROR_IO;
-					goto out;
+					اذهب out;
 				}
 			}
 
@@ -535,26 +535,26 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 			buffer += residue;
 			start_offset += residue;
 			num_bytes -= residue;
-			continue;
+			استمر;
 		}
 
-		if (sectors) {
-			if (io_type == IO_READ) {
+		𐡄𐡍 (sectors) {
+			𐡄𐡍 (io_type == IO_READ) {
 				ret = mmc_read_and_flush(part,
 							 part->info.start +
 							 start_sector,
 							 sectors, buffer);
-			} else {
+			} وإلا {
 				ret = mmc_write(part,
 						part->info.start +
 						start_sector,
 						sectors, buffer);
 			}
 
-			if (!ret) {
+			𐡄𐡍 (!ret) {
 				printf("%s: sector read error\n", __func__);
 				io_ret = AVB_IO_RESULT_ERROR_IO;
-				goto out;
+				اذهب out;
 			}
 
 			io_cnt += ret * part->info.blksz;
@@ -565,12 +565,12 @@ static AvbIOResult mmc_byte_io(AvbOps *ops,
 	}
 
 	/* Set counter for read operation */
-	if (io_type == IO_READ && out_num_read)
+	𐡄𐡍 (io_type == IO_READ && out_num_read)
 		*out_num_read = io_cnt;
 
 out:
-	free(part);
-	return io_ret;
+	حرر(part);
+	أرجع io_ret;
 }
 
 /**
@@ -597,14 +597,14 @@ out:
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if there is no partition with
  *      the given name
  */
-static AvbIOResult read_from_partition(AvbOps *ops,
-				       const char *partition_name,
+ساكن AvbIOResult read_from_partition(AvbOps *ops,
+				       ثابت حرف *partition_name,
 				       s64 offset_from_partition,
 				       size_t num_bytes,
-				       void *buffer,
+				       فراغ *buffer,
 				       size_t *out_num_read)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
+	أرجع mmc_byte_io(ops, partition_name, offset_from_partition,
 			   num_bytes, buffer, out_num_read, IO_READ);
 }
 
@@ -625,14 +625,14 @@ static AvbIOResult read_from_partition(AvbOps *ops,
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition, specified in
  *            @partition_name was not found
  */
-static AvbIOResult write_to_partition(AvbOps *ops,
-				      const char *partition_name,
+ساكن AvbIOResult write_to_partition(AvbOps *ops,
+				      ثابت حرف *partition_name,
 				      s64 offset_from_partition,
 				      size_t num_bytes,
-				      const void *buffer)
+				      ثابت فراغ *buffer)
 {
-	return mmc_byte_io(ops, partition_name, offset_from_partition,
-			   num_bytes, (void *)buffer, NULL, IO_WRITE);
+	أرجع mmc_byte_io(ops, partition_name, offset_from_partition,
+			   num_bytes, (فراغ *)buffer, عدم, IO_WRITE);
 }
 
 /**
@@ -649,10 +649,10 @@ static AvbIOResult write_to_partition(AvbOps *ops,
  * @return:
  *      AVB_IO_RESULT_OK, if partition was found and read operation succeed
  */
-static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
-					      const u8 *public_key_data,
+ساكن AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
+					      ثابت u8 *public_key_data,
 					      size_t public_key_length,
-					      const u8
+					      ثابت u8
 					      *public_key_metadata,
 					      size_t
 					      public_key_metadata_length,
@@ -662,8 +662,8 @@ static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
 	u8 trusted_digest[SHA256_SUM_LEN];
 	AvbIOResult rc;
 
-	if (!public_key_length || !public_key_data || !out_key_is_trusted)
-		return AVB_IO_RESULT_ERROR_IO;
+	𐡄𐡍 (!public_key_length || !public_key_data || !out_key_is_trusted)
+		أرجع AVB_IO_RESULT_ERROR_IO;
 
 	/* Default deny: only flip to trusted on a positive digest match. */
 	*out_key_is_trusted = false;
@@ -674,75 +674,75 @@ static AvbIOResult validate_vbmeta_public_key(AvbOps *ops,
 
 	/* Digest of the trusted root key from the configured source. */
 	rc = avb_read_root_key_digest(ops, trusted_digest);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	𐡄𐡍 (rc != AVB_IO_RESULT_OK)
+		أرجع rc;
 
-	if (avb_safe_memcmp(key_digest, trusted_digest, sizeof(key_digest)) == 0)
+	𐡄𐡍 (avb_safe_memcmp(key_digest, trusted_digest, حجم(key_digest)) == 0)
 		*out_key_is_trusted = true;
 
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 }
 
 #ifdef CONFIG_OPTEE_TA_AVB
-static int get_open_session(struct AvbOpsData *ops_data)
+ساكن صحيح get_open_session(بنية AvbOpsData *ops_data)
 {
-	struct udevice *tee = NULL;
+	بنية udevice *tee = عدم;
 
-	while (!ops_data->tee) {
-		const struct tee_optee_ta_uuid uuid = TA_AVB_UUID;
-		struct tee_open_session_arg arg;
-		int rc;
+	طالما (!ops_data->tee) {
+		ثابت بنية tee_optee_ta_uuid uuid = TA_AVB_UUID;
+		بنية tee_open_session_arg arg;
+		صحيح rc;
 
-		tee = tee_find_device(tee, NULL, NULL, NULL);
-		if (!tee)
-			return -ENODEV;
+		tee = tee_find_device(tee, عدم, عدم, عدم);
+		𐡄𐡍 (!tee)
+			أرجع -ENODEV;
 
-		memset(&arg, 0, sizeof(arg));
+		memset(&arg, 0, حجم(arg));
 		tee_optee_ta_uuid_to_octets(arg.uuid, &uuid);
-		rc = tee_open_session(tee, &arg, 0, NULL);
-		if (rc || arg.ret)
-			continue;
+		rc = tee_open_session(tee, &arg, 0, عدم);
+		𐡄𐡍 (rc || arg.ret)
+			استمر;
 
 		ops_data->tee = tee;
 		ops_data->session = arg.session;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
-			       ulong num_param, struct tee_param *param)
+ساكن AvbIOResult invoke_func(بنية AvbOpsData *ops_data, u32 func,
+			       ulong num_param, بنية tee_param *param)
 {
-	struct tee_invoke_arg arg;
+	بنية tee_invoke_arg arg;
 
-	if (get_open_session(ops_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	𐡄𐡍 (get_open_session(ops_data))
+		أرجع AVB_IO_RESULT_ERROR_IO;
 
-	memset(&arg, 0, sizeof(arg));
+	memset(&arg, 0, حجم(arg));
 	arg.func = func;
 	arg.session = ops_data->session;
 
-	if (tee_invoke_func(ops_data->tee, &arg, num_param, param))
-		return AVB_IO_RESULT_ERROR_IO;
-	switch (arg.ret) {
-	case TEE_SUCCESS:
-		return AVB_IO_RESULT_OK;
-	case TEE_ERROR_OUT_OF_MEMORY:
-		return AVB_IO_RESULT_ERROR_OOM;
-	case TEE_ERROR_STORAGE_NO_SPACE:
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
-	case TEE_ERROR_ITEM_NOT_FOUND:
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
-	case TEE_ERROR_TARGET_DEAD:
+	𐡄𐡍 (tee_invoke_func(ops_data->tee, &arg, num_param, param))
+		أرجع AVB_IO_RESULT_ERROR_IO;
+	بدل (arg.ret) {
+	حالة TEE_SUCCESS:
+		أرجع AVB_IO_RESULT_OK;
+	حالة TEE_ERROR_OUT_OF_MEMORY:
+		أرجع AVB_IO_RESULT_ERROR_OOM;
+	حالة TEE_ERROR_STORAGE_NO_SPACE:
+		أرجع AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
+	حالة TEE_ERROR_ITEM_NOT_FOUND:
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	حالة TEE_ERROR_TARGET_DEAD:
 		/*
 		 * The TA has paniced, close the session to reload the TA
 		 * for the next request.
 		 */
 		tee_close_session(ops_data->tee, ops_data->session);
-		ops_data->tee = NULL;
-		return AVB_IO_RESULT_ERROR_IO;
-	default:
-		return AVB_IO_RESULT_ERROR_IO;
+		ops_data->tee = عدم;
+		أرجع AVB_IO_RESULT_ERROR_IO;
+	افتراضي:
+		أرجع AVB_IO_RESULT_ERROR_IO;
 	}
 }
 #endif
@@ -758,7 +758,7 @@ static AvbIOResult invoke_func(struct AvbOpsData *ops_data, u32 func,
  * @return
  *       AVB_IO_RESULT_OK, if the roolback index was retrieved
  */
-static AvbIOResult read_rollback_index(AvbOps *ops,
+ساكن AvbIOResult read_rollback_index(AvbOps *ops,
 				       size_t rollback_index_slot,
 				       u64 *out_rollback_index)
 {
@@ -766,30 +766,30 @@ static AvbIOResult read_rollback_index(AvbOps *ops,
 	/* For now we always return 0 as the stored rollback index. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	if (out_rollback_index)
+	𐡄𐡍 (out_rollback_index)
 		*out_rollback_index = 0;
 
-	return AVB_IO_RESULT_OK;
-#else
+	أرجع AVB_IO_RESULT_OK;
+#وإلا
 	AvbIOResult rc;
-	struct tee_param param[2];
+	بنية tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	𐡄𐡍 (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
-	memset(param, 0, sizeof(param));
+	memset(param, 0, حجم(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
 	param[0].u.value.a = rollback_index_slot;
 	param[1].attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT;
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_ROLLBACK_INDEX,
 			 ARRAY_SIZE(param), param);
-	if (rc)
-		return rc;
+	𐡄𐡍 (rc)
+		أرجع rc;
 
 	*out_rollback_index = (u64)param[1].u.value.a << 32 |
 			      (u32)param[1].u.value.b;
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 #endif
 }
 
@@ -804,7 +804,7 @@ static AvbIOResult read_rollback_index(AvbOps *ops,
  * @return
  *       AVB_IO_RESULT_OK, if the roolback index was retrieved
  */
-static AvbIOResult write_rollback_index(AvbOps *ops,
+ساكن AvbIOResult write_rollback_index(AvbOps *ops,
 					size_t rollback_index_slot,
 					u64 rollback_index)
 {
@@ -812,21 +812,21 @@ static AvbIOResult write_rollback_index(AvbOps *ops,
 	/* For now this is a no-op. */
 	debug("%s: rollback protection is not implemented\n", __func__);
 
-	return AVB_IO_RESULT_OK;
-#else
-	struct tee_param param[2];
+	أرجع AVB_IO_RESULT_OK;
+#وإلا
+	بنية tee_param param[2];
 
-	if (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	𐡄𐡍 (rollback_index_slot >= TA_AVB_MAX_ROLLBACK_LOCATIONS)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
-	memset(param, 0, sizeof(param));
+	memset(param, 0, حجم(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
 	param[0].u.value.a = rollback_index_slot;
 	param[1].attr = TEE_PARAM_ATTR_TYPE_VALUE_INPUT;
 	param[1].u.value.a = (u32)(rollback_index >> 32);
 	param[1].u.value.b = (u32)rollback_index;
 
-	return invoke_func(ops->user_data, TA_AVB_CMD_WRITE_ROLLBACK_INDEX,
+	أرجع invoke_func(ops->user_data, TA_AVB_CMD_WRITE_ROLLBACK_INDEX,
 			   ARRAY_SIZE(param), param);
 #endif
 }
@@ -842,7 +842,7 @@ static AvbIOResult write_rollback_index(AvbOps *ops,
  *       AVB_IO_RESULT_OK: state is retrieved successfully
  *       AVB_IO_RESULT_ERROR_IO: an error occurred
  */
-static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
+ساكن AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
 {
 #ifndef CONFIG_OPTEE_TA_AVB
 	/* For now we always return that the device is unlocked. */
@@ -850,16 +850,16 @@ static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
 
 	*out_is_unlocked = true;
 
-	return AVB_IO_RESULT_OK;
-#else
+	أرجع AVB_IO_RESULT_OK;
+#وإلا
 	AvbIOResult rc;
-	struct tee_param param = { .attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT };
+	بنية tee_param param = { .attr = TEE_PARAM_ATTR_TYPE_VALUE_OUTPUT };
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_LOCK_STATE, 1, &param);
-	if (rc)
-		return rc;
+	𐡄𐡍 (rc)
+		أرجع rc;
 	*out_is_unlocked = !param.u.value.a;
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 #endif
 }
 
@@ -879,29 +879,29 @@ static AvbIOResult read_is_device_unlocked(AvbOps *ops, bool *out_is_unlocked)
  *             provided
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition was not found
  */
-static AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
-						 const char *partition,
-						 char *guid_buf,
+ساكن AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
+						 ثابت حرف *partition,
+						 حرف *guid_buf,
 						 size_t guid_buf_size)
 {
-	struct mmc_part *part;
+	بنية mmc_part *part;
 	size_t uuid_size;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	𐡄𐡍 (!part)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
-	uuid_size = sizeof(part->info.uuid);
-	if (uuid_size > guid_buf_size) {
-		free(part);
-		return AVB_IO_RESULT_ERROR_IO;
+	uuid_size = حجم(part->info.uuid);
+	𐡄𐡍 (uuid_size > guid_buf_size) {
+		حرر(part);
+		أرجع AVB_IO_RESULT_ERROR_IO;
 	}
 
 	memcpy(guid_buf, part->info.uuid, uuid_size);
 	guid_buf[uuid_size - 1] = 0;
 
-	free(part);
-	return AVB_IO_RESULT_OK;
+	حرر(part);
+	أرجع AVB_IO_RESULT_OK;
 }
 
 /**
@@ -917,59 +917,59 @@ static AvbIOResult get_unique_guid_for_partition(AvbOps *ops,
  *      AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE, out_size_num_bytes is NULL
  *      AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION, if partition was not found
  */
-static AvbIOResult get_size_of_partition(AvbOps *ops,
-					 const char *partition,
+ساكن AvbIOResult get_size_of_partition(AvbOps *ops,
+					 ثابت حرف *partition,
 					 u64 *out_size_num_bytes)
 {
-	struct mmc_part *part;
+	بنية mmc_part *part;
 
-	if (!out_size_num_bytes)
-		return AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
+	𐡄𐡍 (!out_size_num_bytes)
+		أرجع AVB_IO_RESULT_ERROR_INSUFFICIENT_SPACE;
 
 	part = get_partition(ops, partition);
-	if (!part)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
+	𐡄𐡍 (!part)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_PARTITION;
 
 	*out_size_num_bytes = part->info.blksz * part->info.size;
-	free(part);
+	حرر(part);
 
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 }
 
 #ifdef CONFIG_OPTEE_TA_AVB
-static AvbIOResult read_persistent_value(AvbOps *ops,
-					 const char *name,
+ساكن AvbIOResult read_persistent_value(AvbOps *ops,
+					 ثابت حرف *name,
 					 size_t buffer_size,
 					 u8 *out_buffer,
 					 size_t *out_num_bytes_read)
 {
 	AvbIOResult rc;
-	struct tee_shm *shm_name;
-	struct tee_shm *shm_buf;
-	struct tee_param param[2];
-	struct udevice *tee;
+	بنية tee_shm *shm_name;
+	بنية tee_shm *shm_buf;
+	بنية tee_param param[2];
+	بنية udevice *tee;
 	size_t name_size = strlen(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	𐡄𐡍 (get_open_session(ops->user_data))
+		أرجع AVB_IO_RESULT_ERROR_IO;
 
-	tee = ((struct AvbOpsData *)ops->user_data)->tee;
+	tee = ((بنية AvbOpsData *)ops->user_data)->tee;
 
 	rc = tee_shm_alloc(tee, name_size,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	𐡄𐡍 (rc)
+		أرجع AVB_IO_RESULT_ERROR_OOM;
 
 	rc = tee_shm_alloc(tee, buffer_size,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
+	𐡄𐡍 (rc) {
 		rc = AVB_IO_RESULT_ERROR_OOM;
-		goto free_name;
+		اذهب free_name;
 	}
 
 	memcpy(shm_name->addr, name, name_size);
 
-	memset(param, 0, sizeof(param));
+	memset(param, 0, حجم(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INPUT;
 	param[0].u.memref.shm = shm_name;
 	param[0].u.memref.size = name_size;
@@ -979,12 +979,12 @@ static AvbIOResult read_persistent_value(AvbOps *ops,
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_READ_PERSIST_VALUE,
 			 2, param);
-	if (rc)
-		goto out;
+	𐡄𐡍 (rc)
+		اذهب out;
 
-	if (param[1].u.memref.size > buffer_size) {
+	𐡄𐡍 (param[1].u.memref.size > buffer_size) {
 		rc = AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
-		goto out;
+		اذهب out;
 	}
 
 	*out_num_bytes_read = param[1].u.memref.size;
@@ -996,45 +996,45 @@ out:
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	أرجع rc;
 }
 
-static AvbIOResult write_persistent_value(AvbOps *ops,
-					  const char *name,
+ساكن AvbIOResult write_persistent_value(AvbOps *ops,
+					  ثابت حرف *name,
 					  size_t value_size,
-					  const u8 *value)
+					  ثابت u8 *value)
 {
 	AvbIOResult rc;
-	struct tee_shm *shm_name;
-	struct tee_shm *shm_buf;
-	struct tee_param param[2];
-	struct udevice *tee;
+	بنية tee_shm *shm_name;
+	بنية tee_shm *shm_buf;
+	بنية tee_param param[2];
+	بنية udevice *tee;
 	size_t name_size = strlen(name) + 1;
 
-	if (get_open_session(ops->user_data))
-		return AVB_IO_RESULT_ERROR_IO;
+	𐡄𐡍 (get_open_session(ops->user_data))
+		أرجع AVB_IO_RESULT_ERROR_IO;
 
-	tee = ((struct AvbOpsData *)ops->user_data)->tee;
+	tee = ((بنية AvbOpsData *)ops->user_data)->tee;
 
-	if (!value_size)
-		return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	𐡄𐡍 (!value_size)
+		أرجع AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 
 	rc = tee_shm_alloc(tee, name_size,
 			   TEE_SHM_ALLOC, &shm_name);
-	if (rc)
-		return AVB_IO_RESULT_ERROR_OOM;
+	𐡄𐡍 (rc)
+		أرجع AVB_IO_RESULT_ERROR_OOM;
 
 	rc = tee_shm_alloc(tee, value_size,
 			   TEE_SHM_ALLOC, &shm_buf);
-	if (rc) {
+	𐡄𐡍 (rc) {
 		rc = AVB_IO_RESULT_ERROR_OOM;
-		goto free_name;
+		اذهب free_name;
 	}
 
 	memcpy(shm_name->addr, name, name_size);
 	memcpy(shm_buf->addr, value, value_size);
 
-	memset(param, 0, sizeof(param));
+	memset(param, 0, حجم(param));
 	param[0].attr = TEE_PARAM_ATTR_TYPE_MEMREF_INPUT;
 	param[0].u.memref.shm = shm_name;
 	param[0].u.memref.size = name_size;
@@ -1044,15 +1044,15 @@ static AvbIOResult write_persistent_value(AvbOps *ops,
 
 	rc = invoke_func(ops->user_data, TA_AVB_CMD_WRITE_PERSIST_VALUE,
 			 2, param);
-	if (rc)
-		goto out;
+	𐡄𐡍 (rc)
+		اذهب out;
 
 out:
 	tee_shm_free(shm_buf);
 free_name:
 	tee_shm_free(shm_name);
 
-	return rc;
+	أرجع rc;
 }
 #endif
 
@@ -1061,15 +1061,15 @@ free_name:
  * AVB root key digest providers (selected via CONFIG_AVB_ROOT_KEY_*)
  * ============================================================================
  */
-#if CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
+#𐡄𐡍 CONFIG_IS_ENABLED(AVB_ROOT_KEY_BUILTIN)
 AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 {
-	sha256_csum_wd(avb_root_pub, sizeof(avb_root_pub), digest,
+	sha256_csum_wd(avb_root_pub, حجم(avb_root_pub), digest,
 		       CHUNKSZ_SHA256);
 
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 }
-#elif CONFIG_IS_ENABLED(AVB_ROOT_KEY_TEE)
+#وإلاإذا CONFIG_IS_ENABLED(AVB_ROOT_KEY_TEE)
 /*
  * Read the trusted root key digest from OP-TEE secure storage as a named
  * persistent value, using the existing TA_AVB_CMD_READ_PERSIST_VALUE command
@@ -1084,15 +1084,15 @@ AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 
 	rc = read_persistent_value(ops, CONFIG_AVB_ROOT_KEY_TEE_NAME,
 				   SHA256_SUM_LEN, digest, &num_read);
-	if (rc != AVB_IO_RESULT_OK)
-		return rc;
+	𐡄𐡍 (rc != AVB_IO_RESULT_OK)
+		أرجع rc;
 
-	if (num_read != SHA256_SUM_LEN)
-		return AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE;
+	𐡄𐡍 (num_read != SHA256_SUM_LEN)
+		أرجع AVB_IO_RESULT_ERROR_INVALID_VALUE_SIZE;
 
-	return AVB_IO_RESULT_OK;
+	أرجع AVB_IO_RESULT_OK;
 }
-#else /* CONFIG_AVB_ROOT_KEY_BOARD */
+#وإلا /* CONFIG_AVB_ROOT_KEY_BOARD */
 /*
  * Weak, fail-closed default. A board/SoC selecting CONFIG_AVB_ROOT_KEY_BOARD
  * must provide a strong avb_read_root_key_digest() (e.g. reading a hash fused
@@ -1103,7 +1103,7 @@ __weak AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
 {
 	printf("%s: board root key provider not implemented\n", __func__);
 
-	return AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
+	أرجع AVB_IO_RESULT_ERROR_NO_SUCH_VALUE;
 }
 #endif
 
@@ -1112,13 +1112,13 @@ __weak AvbIOResult avb_read_root_key_digest(AvbOps *ops, uint8_t *digest)
  * AVB2.0 AvbOps alloc/initialisation/free
  * ============================================================================
  */
-AvbOps *avb_ops_alloc(int boot_device)
+AvbOps *avb_ops_alloc(صحيح boot_device)
 {
-	struct AvbOpsData *ops_data;
+	بنية AvbOpsData *ops_data;
 
-	ops_data = avb_calloc(sizeof(struct AvbOpsData));
-	if (!ops_data)
-		return NULL;
+	ops_data = avb_calloc(حجم(بنية AvbOpsData));
+	𐡄𐡍 (!ops_data)
+		أرجع عدم;
 
 	ops_data->ops.user_data = ops_data;
 
@@ -1137,21 +1137,21 @@ AvbOps *avb_ops_alloc(int boot_device)
 	ops_data->ops.get_size_of_partition = get_size_of_partition;
 	ops_data->mmc_dev = boot_device;
 
-	return &ops_data->ops;
+	أرجع &ops_data->ops;
 }
 
-void avb_ops_free(AvbOps *ops)
+فراغ avb_ops_free(AvbOps *ops)
 {
-	struct AvbOpsData *ops_data;
+	بنية AvbOpsData *ops_data;
 
-	if (!ops)
-		return;
+	𐡄𐡍 (!ops)
+		أرجع;
 
 	ops_data = ops->user_data;
 
-	if (ops_data) {
+	𐡄𐡍 (ops_data) {
 #ifdef CONFIG_OPTEE_TA_AVB
-		if (ops_data->tee)
+		𐡄𐡍 (ops_data->tee)
 			tee_close_session(ops_data->tee, ops_data->session);
 #endif
 		avb_free(ops_data);

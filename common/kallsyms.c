@@ -6,7 +6,7 @@
  */
 
 /* We need the weak marking as this symbol is provided specially */
-extern const char system_map[] __attribute__((weak));
+خارجي ثابت حرف system_map[] __attribute__((weak));
 
 /* Given an address, return a pointer to the symbol name and store
  * the base address in caddr.  So if the symbol map had an entry:
@@ -18,25 +18,25 @@ extern const char system_map[] __attribute__((weak));
  *		base = 0x03fb9b7c;
  *		sym = "_spi_cs_deactivate";
  */
-const char *symbol_lookup(unsigned long addr, unsigned long *caddr)
+ثابت حرف *symbol_lookup(unsigned long addr, unsigned long *caddr)
 {
-	const char *sym, *csym;
-	char *esym;
+	ثابت حرف *sym, *csym;
+	حرف *esym;
 	unsigned long sym_addr;
 
 	sym = system_map;
-	csym = NULL;
+	csym = عدم;
 	*caddr = 0;
 
-	while (*sym) {
+	طالما (*sym) {
 		sym_addr = hextoul(sym, &esym);
 		sym = esym;
-		if (sym_addr > addr)
-			break;
+		𐡄𐡍 (sym_addr > addr)
+			اكسر;
 		*caddr = sym_addr;
 		csym = sym;
 		sym += strlen(sym) + 1;
 	}
 
-	return csym;
+	أرجع csym;
 }

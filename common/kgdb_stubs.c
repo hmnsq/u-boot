@@ -7,27 +7,27 @@
  * Licensed under the GPL-2 or later.
  */
 
-#include <cpu_func.h>
-#include <kgdb.h>
-#include <serial.h>
-#include <asm/ptrace.h>
+#ضمن <cpu_func.h>
+#ضمن <kgdb.h>
+#ضمن <serial.h>
+#ضمن <asm/ptrace.h>
 
-int (*debugger_exception_handler)(struct pt_regs *);
+صحيح (*debugger_exception_handler)(بنية pt_regs *);
 
 __attribute__((weak))
-void kgdb_serial_init(void)
+فراغ kgdb_serial_init(فراغ)
 {
 	puts("[on serial] ");
 }
 
 __attribute__((weak))
-void putDebugChar(int c)
+فراغ putDebugChar(صحيح c)
 {
 	serial_putc(c);
 }
 
 __attribute__((weak))
-void putDebugStr(const char *str)
+فراغ putDebugStr(ثابت حرف *str)
 {
 #ifdef DEBUG
 	serial_puts(str);
@@ -35,31 +35,31 @@ void putDebugStr(const char *str)
 }
 
 __attribute__((weak))
-int getDebugChar(void)
+صحيح getDebugChar(فراغ)
 {
-	return serial_getc();
+	أرجع serial_getc();
 }
 
 __attribute__((weak))
-void kgdb_interruptible(int yes)
+فراغ kgdb_interruptible(صحيح yes)
 {
-	return;
+	أرجع;
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_range(void *from, void *to)
+فراغ kgdb_flush_cache_range(فراغ *from, فراغ *to)
 {
 	flush_cache((unsigned long)from, (unsigned long)(to - from));
 }
 
 __attribute__((weak))
-void kgdb_flush_cache_all(void)
+فراغ kgdb_flush_cache_all(فراغ)
 {
-	if (dcache_status()) {
+	𐡄𐡍 (dcache_status()) {
 		dcache_disable();
 		dcache_enable();
 	}
-	if (icache_status()) {
+	𐡄𐡍 (icache_status()) {
 		icache_disable();
 		icache_enable();
 	}
